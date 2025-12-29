@@ -61,6 +61,12 @@ parameters:
   - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
+  - name: EnvVars
+    type: object
+    default: {}
+  - name: PythonVersionForAnalyze
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build_Linux'
@@ -70,6 +76,13 @@ jobs:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
       os: linux
+
+    # Only run CG and codeql on internal build job
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      templateContext:
+        sdl:
+          componentgovernance:
+            enabled: true
 
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
@@ -134,6 +147,10 @@ jobs:
       image: $(LINUXVMIMAGE)
       os: linux
 
+    variables:
+      # default to true just in this job until #42714 can be completed
+      InstallPortAudio: true
+
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -192,12 +209,23 @@ jobs:
     dependsOn:
       - 'Build_Extended'
 
+    variables:
+      # default to true just in this job until #42714 can be completed
+      InstallPortAudio: true
+
     pool:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
       os: linux
 
     steps:
+    - task: UsePythonVersion@0
+      displayName: "Use Python ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}"
+      condition: succeededOrFailed()
+      inputs:
+        versionSpec: ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}
+    - template: /eng/pipelines/templates/steps/use-venv.yml
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
@@ -264,6 +292,7 @@ jobs:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.12'
+          - template: /eng/pipelines/templates/steps/use-venv.yml
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
@@ -271,6 +300,7 @@ jobs:
       CloudConfig:
         Cloud: Public
       AdditionalParameters:
+        EnvVars: ${{ parameters.EnvVars }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
@@ -289,7 +319,7 @@ jobs:
       OsVmImage: ubuntu-24.04
       Pool: azsdk-pool
       GenerateJobName: generate_regression_matrix
-      SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
+      SparseCheckoutPaths: [ "scripts/", "sdk/", "eng/tools/azure-sdk-tools/" ]
       MatrixConfigs:
           - Name: Python_regression_envs
             Path: eng/pipelines/templates/stages/regression-job-matrix.json
@@ -299,8 +329,11 @@ jobs:
         - task: UsePythonVersion@0
           inputs:
             versionSpec: '3.12'
+        - template: /eng/pipelines/templates/steps/use-venv.yml
         - pwsh: |
-            python -m pip install "./tools/azure-sdk-tools[build]"
+            $ErrorActionPreference = 'Stop'
+            $PSNativeCommandUseErrorActionPreference = $true
+            $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - task: PythonScript@0
           displayName: 'Ensure service coverage'

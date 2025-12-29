@@ -12,7 +12,8 @@ from ast import literal_eval
 from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
+from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage
 from azure.core.exceptions import HttpResponseError
 
 import jwt
@@ -319,8 +320,8 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         token = await fetch_or_reuse_token(credential, token)
         headers = get_common_headers(token)
 
-        async with get_async_http_client_with_timeout() as client:
-            response = await client.get(url, headers=headers)
+        async with get_async_http_client() as client:
+            response = await client.get(url, headers=headers, timeout=RAIService.TIMEOUT)
 
         if response.status_code == 200:
             return response.json()
@@ -411,6 +412,25 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 result[pm_metric_name + "_reason"] = (
                     parsed_response["reasoning"] if "reasoning" in parsed_response else ""
                 )
+                result[pm_metric_name + "_total_tokens"] = (
+                    parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_prompt_tokens"] = (
+                    parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_completion_tokens"] = (
+                    parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_finish_reason"] = (
+                    parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+                )
+                result[pm_metric_name + "_sample_input"] = (
+                    parsed_response["sample_input"] if "sample_input" in parsed_response else ""
+                )
+                result[pm_metric_name + "_sample_output"] = (
+                    parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+                )
+                result[pm_metric_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
             return result
         if metric_name not in batch_response[0]:
             return {}
@@ -442,9 +462,39 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():
-                if key not in {"label", "reasoning", "version"}:
+                if key not in {
+                    "label",
+                    "reasoning",
+                    "version",
+                    "totalTokenCount",
+                    "inputTokenCount",
+                    "outputTokenCount",
+                    "finish_reason",
+                    "sample_input",
+                    "sample_output",
+                    "model",
+                }:
                     details[key.replace("-", "_")] = value
             result[metric_display_name + "_details"] = details
+        result[metric_display_name + "_total_tokens"] = (
+            parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_prompt_tokens"] = (
+            parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_completion_tokens"] = (
+            parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_finish_reason"] = (
+            parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+        )
+        result[metric_display_name + "_sample_input"] = (
+            parsed_response["sample_input"] if "sample_input" in parsed_response else ""
+        )
+        result[metric_display_name + "_sample_output"] = (
+            parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+        )
+        result[metric_display_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
         return result
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
@@ -484,6 +534,13 @@ def _parse_content_harm_response(
     except Exception:  # pylint: disable=broad-exception-caught
         harm_response = response[metric_name]
 
+    total_tokens = 0
+    prompt_tokens = 0
+    completion_tokens = 0
+    finish_reason = ""
+    sample_input = ""
+    sample_output = ""
+    model = ""
     if harm_response != "" and isinstance(harm_response, dict):
         # check if "output" is one key in harm_response
         if "output" in harm_response:
@@ -511,6 +568,44 @@ def _parse_content_harm_response(
             reason = harm_response["reason"]
         else:
             reason = ""
+
+        # get token_usage
+        if "totalTokenCount" in harm_response:
+            total_tokens = harm_response["totalTokenCount"]
+        else:
+            total_tokens = 0
+        if "inputTokenCount" in harm_response:
+            prompt_tokens = harm_response["inputTokenCount"]
+        else:
+            prompt_tokens = 0
+        if "outputTokenCount" in harm_response:
+            completion_tokens = harm_response["outputTokenCount"]
+        else:
+            completion_tokens = 0
+
+        # get finish_reason
+        if "finish_reason" in harm_response:
+            finish_reason = harm_response["finish_reason"]
+        else:
+            finish_reason = ""
+
+        # get sample_input
+        if "sample_input" in harm_response:
+            sample_input = harm_response["sample_input"]
+        else:
+            sample_input = ""
+
+        # get sample_output
+        if "sample_output" in harm_response:
+            sample_output = harm_response["sample_output"]
+        else:
+            sample_output = ""
+
+        # get model
+        if "model" in harm_response:
+            model = harm_response["model"]
+        else:
+            model = ""
     elif harm_response != "" and isinstance(harm_response, str):
         metric_value_match = re.findall(r"(\b[0-7])\b", harm_response)
         if metric_value_match:
@@ -537,6 +632,13 @@ def _parse_content_harm_response(
     result[key] = get_harm_severity_level(harm_score)
     result[key + "_score"] = harm_score
     result[key + "_reason"] = reason
+    result[key + "_total_tokens"] = total_tokens
+    result[key + "_prompt_tokens"] = prompt_tokens
+    result[key + "_completion_tokens"] = completion_tokens
+    result[key + "_finish_reason"] = finish_reason
+    result[key + "_sample_input"] = sample_input
+    result[key + "_sample_output"] = sample_output
+    result[key + "_model"] = model
 
     return result
 
@@ -800,6 +902,203 @@ async def submit_multimodal_request_onedp(client: AIProjectClient, messages, met
     result = json.loads(response)
     operation_id = result["location"].split("/")[-1]
     return operation_id
+
+
+def _build_sync_eval_payload(
+    data: dict, metric_name: str, annotation_task: str, scan_session_id: Optional[str] = None
+) -> Dict:
+    """Build the sync_evals payload for evaluation using QueryResponseInlineMessage format.
+
+    :param data: The data to evaluate, containing 'query', 'response', and optionally 'context' and 'tool_calls'.
+    :type data: dict
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param annotation_task: The annotation task to use.
+    :type annotation_task: str
+    :param scan_session_id: The scan session ID to use for the evaluation.
+    :type scan_session_id: Optional[str]
+    :return: The sync_eval payload ready to send to the API.
+    :rtype: Dict
+    """
+
+    # Build properties/metadata (scenario, category, taxonomy, etc.)
+    properties = {}
+    if data.get("scenario") is not None:
+        properties["scenario"] = data["scenario"]
+    if data.get("risk_sub_type") is not None:
+        properties["category"] = data["risk_sub_type"]
+    if data.get("taxonomy") is not None:
+        properties["taxonomy"] = str(data["taxonomy"])  # Ensure taxonomy is converted to string
+
+    # Prepare context if available
+    context = None
+    if data.get("context") is not None:
+        context = " ".join(c["content"] for c in data["context"]["contexts"])
+
+    # Build QueryResponseInlineMessage object
+    item_content = QueryResponseInlineMessage(
+        query=data.get("query", ""),
+        response=data.get("response", ""),
+        context=context,
+        tools=data.get("tool_calls"),
+        properties=properties if properties else None,
+    )
+
+    # Build the data mapping using mustache syntax {{item.field}}
+    data_mapping = {
+        "query": "{{item.query}}",
+        "response": "{{item.response}}",
+    }
+
+    # Create the sync eval input payload
+    # Structure: Uses QueryResponseInlineMessage format with azure_ai_evaluator type
+    sync_eval_payload = {
+        "name": f"Safety Eval - {metric_name}",
+        "data_source": {
+            "type": "jsonl",
+            "source": {"type": "file_content", "content": {"item": item_content}},
+        },
+        "testing_criteria": [
+            {
+                "type": "azure_ai_evaluator",
+                "name": metric_name,
+                "evaluator_name": metric_name,
+                "data_mapping": data_mapping,
+            }
+        ],
+    }
+
+    return sync_eval_payload
+
+
+def _parse_sync_eval_result(
+    eval_result, metric_name: str, metric_display_name: Optional[str] = None
+) -> Dict[str, Union[str, float]]:
+    """Parse the result from sync_evals response (EvalRunOutputItem) into the standard format.
+
+    :param eval_result: The result from sync_evals.create() call (EvalRunOutputItem).
+    :param metric_name: The evaluation metric name.
+    :type metric_name: str
+    :param metric_display_name: The display name for the metric.
+    :type metric_display_name: Optional[str]
+    :return: The parsed result in standard format compatible with parse_response.
+    :rtype: Dict[str, Union[str, float]]
+    """
+    # Handle EvalRunOutputItem structure
+    # Expected structure: {'results': [{'name': 'violence', 'score': 0.0, 'reason': '...', ...}]}
+
+    display_name = metric_display_name or metric_name
+
+    # Handle both dict and object formats
+    if hasattr(eval_result, "results"):
+        results = eval_result.results
+    elif isinstance(eval_result, dict) and "results" in eval_result:
+        results = eval_result["results"]
+    else:
+        return {}
+
+    if not results or len(results) == 0:
+        return {}
+
+    # Find the result for our specific metric
+    target_result = None
+    for result_item in results:
+        if isinstance(result_item, dict):
+            if result_item.get("name") == metric_name or result_item.get("metric") == metric_name:
+                target_result = result_item
+                break
+        elif hasattr(result_item, "name") and result_item.name == metric_name:
+            target_result = result_item
+            break
+
+    if not target_result:
+        return {}
+
+    # Extract values from the result item
+    if isinstance(target_result, dict):
+        score = target_result.get("score", math.nan)
+        reason = target_result.get("reason", "")
+        # Also check properties.reasoning for additional reason text
+        if not reason and "properties" in target_result:
+            props = target_result["properties"]
+            if isinstance(props, dict):
+                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
+    else:
+        score = getattr(target_result, "score", math.nan)
+        reason = getattr(target_result, "reason", "")
+        if not reason and hasattr(target_result, "properties"):
+            props = target_result.properties
+            if isinstance(props, dict):
+                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
+
+    # Convert score to severity level using existing logic
+    harm_score = score if not math.isnan(score) else math.nan
+    severity_level = get_harm_severity_level(harm_score) if not math.isnan(harm_score) else math.nan
+
+    # Return in the standard format expected by the red team processor
+    return {display_name: severity_level, f"{display_name}_score": harm_score, f"{display_name}_reason": reason}
+
+
+async def evaluate_with_rai_service_sync(
+    data: dict,
+    metric_name: str,
+    project_scope: Union[str, AzureAIProject],
+    credential: TokenCredential,
+    annotation_task: str = Tasks.CONTENT_HARM,
+    metric_display_name=None,
+    evaluator_name=None,
+    scan_session_id: Optional[str] = None,
+):
+    """Evaluate the content safety of the response using sync_evals endpoint (OneDP only).
+
+    This function uses the sync_evals.create() API instead of the legacy evaluations.submit_annotation()
+    approach. It's specifically designed for OneDP projects and provides better integration with
+    the newer evaluation infrastructure. Returns the raw EvalRunOutputItem for direct use.
+
+    :param data: The data to evaluate.
+    :type data: dict
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param project_scope: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
+    :type project_scope: Union[str, AzureAIProject]
+    :param credential: The Azure authentication credential.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param annotation_task: The annotation task to use.
+    :type annotation_task: str
+    :param metric_display_name: The display name of metric to use.
+    :type metric_display_name: str
+    :param evaluator_name: The evaluator name to use.
+    :type evaluator_name: str
+    :param scan_session_id: The scan session ID to use for the evaluation.
+    :type scan_session_id: Optional[str]
+    :return: The EvalRunOutputItem containing the evaluation results.
+    :rtype: EvalRunOutputItem
+    :raises: EvaluationException if project_scope is not a OneDP project
+    """
+    if not is_onedp_project(project_scope):
+        msg = "evaluate_with_rai_service_sync only supports OneDP projects. Use evaluate_with_rai_service for legacy projects."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    client = AIProjectClient(
+        endpoint=project_scope,
+        credential=credential,
+        user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+    )
+
+    # Build the sync eval payload
+    sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
+    # Call sync_evals.create() with the JSON payload
+    eval_result = client.sync_evals.create(eval=sync_eval_payload)
+
+    # Return the raw EvalRunOutputItem for downstream processing
+    return eval_result
 
 
 async def evaluate_with_rai_service_multimodal(

@@ -132,13 +132,13 @@ class TestAIAgentConverter(unittest.TestCase):
                     "file_name": "dragons.txt",
                     "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT",
                     "score": 0.03201844170689583,
-                    "content": null
+                    "content": [{"type": "text", "text" : "Sample content"}]
                 },
                 {
                     "file_name": "dragons.txt",
                     "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT",
                     "score": 0.02539682574570179,
-                    "content": null
+                    "content": [{"type": "text", "text" : "Sample content"}]
                 }
             ]
         }
@@ -165,13 +165,13 @@ class TestAIAgentConverter(unittest.TestCase):
                     "file_name": "dragons.txt",
                     "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT",
                     "score": 0.03201844170689583,
-                    "content": None,
+                    "content": [{"type": "text", "text": "Sample content"}],
                 },
                 {
                     "file_name": "dragons.txt",
                     "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT",
                     "score": 0.02539682574570179,
-                    "content": None,
+                    "content": [{"type": "text", "text": "Sample content"}],
                 },
             ]
         )

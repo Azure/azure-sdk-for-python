@@ -368,8 +368,114 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(result_list) == 10
         assert response_hook.count > 0  # Ensure the response hook was called
 
+    async def test_hybrid_search_query_with_params_equivalence_async(self):
+        # Literal hybrid query
+        literal_query = (
+            "SELECT TOP 10 c.index, c.title FROM c "
+            "WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') "
+            "ORDER BY RANK FullTextScore(c.title, 'John')"
+        )
+        literal_results = self.test_container.query_items(literal_query)
+        literal_results = [res async for res in literal_results]
+        literal_indices = [res["index"] for res in literal_results]
 
+        # Parameterized hybrid query (same as above, but using @term)
+        param_query = (
+            "SELECT TOP 10 c.index, c.title FROM c "
+            "WHERE FullTextContains(c.title, @term) OR FullTextContains(c.text, @term) "
+            "ORDER BY RANK FullTextScore(c.title, @term)"
+        )
+        params = [{"name": "@term", "value": "John"}]
+        param_results = self.test_container.query_items(
+            param_query, parameters=params
+        )
+        param_results = [res async for res in param_results]
+        param_indices = [res["index"] for res in param_results]
 
+        # Checks: both forms produce the same results and match known expectation
+        assert len(literal_indices) == len(param_indices) == 3
+        assert set(literal_indices) == set(param_indices) == {2, 85, 57}
+
+    async def test_weighted_rrf_hybrid_search_with_params_and_response_hook_async(self):
+        # Literal weighted RRF hybrid query
+        literal_query = (
+            "SELECT TOP 10 c.index, c.title FROM c "
+            "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 0.5])"
+        )
+        literal_results = self.test_container.query_items(literal_query)
+        literal_results = [res async for res in literal_results]
+        literal_indices = [res["index"] for res in literal_results]
+
+        # Parameterized weighted RRF hybrid query (+ response hook)
+        response_hook = test_config.ResponseHookCaller()
+        param_query = (
+            "SELECT TOP 10 c.index, c.title FROM c "
+            "ORDER BY RANK RRF(FullTextScore(c.title, @titleTerm), FullTextScore(c.text, @textTerm), @weights)"
+        )
+        params = [
+            {"name": "@titleTerm", "value": "John"},
+            {"name": "@textTerm", "value": "United States"},
+            {"name": "@weights", "value": [1, 0.5]},
+        ]
+        param_results = self.test_container.query_items(
+            param_query, parameters=params, response_hook=response_hook
+        )
+        param_results = [res async for res in param_results]
+        param_indices = [res["index"] for res in param_results]
+
+        # Checks: number of results, equality against literal, and hook invoked
+        assert len(literal_indices) == len(param_indices) == 10
+        assert set(literal_indices) == set(param_indices)
+        assert response_hook.count > 0
+
+    async def test_hybrid_and_non_hybrid_param_queries_equivalence_async(self):
+        # Hybrid query with vector distance (literal vs param) and compare equality
+        item = await self.test_container.read_item('50', '1')
+        item_vector = item['vector']
+        literal_hybrid = (
+            "SELECT c.index, c.title FROM c "
+            "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) "
+            "OFFSET 0 LIMIT 10"
+        ).format(item_vector)
+        literal_hybrid_results = self.test_container.query_items(literal_hybrid)
+        literal_hybrid_results = [res async for res in literal_hybrid_results]
+        literal_hybrid_indices = [res["index"] for res in literal_hybrid_results]
+
+        param_hybrid = (
+            "SELECT c.index, c.title FROM c "
+            "ORDER BY RANK RRF(FullTextScore(c.text, @country), VectorDistance(c.vector, @vec)) "
+            "OFFSET 0 LIMIT 10"
+        )
+        params_hybrid = [
+            {"name": "@country", "value": "United States"},
+            {"name": "@vec", "value": item_vector},
+        ]
+        param_hybrid_results = self.test_container.query_items(
+            param_hybrid, parameters=params_hybrid
+        )
+        param_hybrid_results = [res async for res in param_hybrid_results]
+        param_hybrid_indices = [res["index"] for res in param_hybrid_results]
+
+        assert len(literal_hybrid_indices) == len(param_hybrid_indices) == 10
+        # Compare ordered lists to ensure identical ranking
+        assert literal_hybrid_indices == param_hybrid_indices
+
+        # Non-hybrid parameterized query equivalence on same container
+        literal_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = '1' ORDER BY c.index"
+        literal_simple_results = self.test_container.query_items(literal_simple)
+        literal_simple_results = [res async for res in literal_simple_results]
+        literal_simple_indices = [res["index"] for res in literal_simple_results]
+
+        param_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = @pk ORDER BY c.index"
+        params_simple = [{"name": "@pk", "value": "1"}]
+        param_simple_results = self.test_container.query_items(
+            param_simple, parameters=params_simple
+        )
+        param_simple_results = [res async for res in param_simple_results]
+        param_simple_indices = [res["index"] for res in param_simple_results]
+
+        assert len(literal_simple_indices) == len(param_simple_indices) == 5
+        assert literal_simple_indices == param_simple_indices
 
 
 if __name__ == "__main__":

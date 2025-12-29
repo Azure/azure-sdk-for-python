@@ -19,12 +19,12 @@
 # The perfstress framework
 
 The perfstress framework has been added to the `devtools_testutils` package. The code can be found
-[here](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils/perfstress_tests).
+[here](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils/perfstress_tests).
 The framework provides a baseclass to inherit from when writing tests, as well as some tools and utilities to
 facilitate running the tests. To start using the framework, make sure that `azure-sdk-tools` (which contains
 `devtools_testutils`) is included in the `dev_requirements.txt` for the SDK:
 ```
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ```
 The perfstress framework offers the following:
 - The `perfstress` commandline tool.

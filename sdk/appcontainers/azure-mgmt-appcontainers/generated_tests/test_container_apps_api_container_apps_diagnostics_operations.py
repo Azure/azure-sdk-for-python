@@ -24,7 +24,7 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
         response = self.client.container_apps_diagnostics.list_detectors(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             container_app_name="str",
             detector_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
         response = self.client.container_apps_diagnostics.list_revisions(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestContainerAppsAPIContainerAppsDiagnosticsOperations(AzureMgmtRecordedTe
         response = self.client.container_apps_diagnostics.get_root(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

@@ -21,6 +21,33 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_virtual_machine_scale_set_vm_run_commands_list(self, resource_group):
+        response = self.client.virtual_machine_scale_set_vm_run_commands.list(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            instance_id="str",
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_set_vm_run_commands_get(self, resource_group):
+        response = await self.client.virtual_machine_scale_set_vm_run_commands.get(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            instance_id="str",
+            run_command_name="str",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_virtual_machine_scale_set_vm_run_commands_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_machine_scale_set_vm_run_commands.begin_create_or_update(
@@ -30,7 +57,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                 run_command_name="str",
                 run_command={
                     "location": "str",
-                    "asyncExecution": False,
+                    "asyncExecution": bool,
                     "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
                     "errorBlobUri": "str",
                     "id": "str",
@@ -62,16 +89,26 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     "runAsUser": "str",
                     "source": {
                         "commandId": "str",
+                        "galleryScriptReferenceId": "str",
                         "script": "str",
+                        "scriptShell": "str",
                         "scriptUri": "str",
                         "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
                     },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "timeoutInSeconds": 0,
-                    "treatFailureAsDeploymentFailure": False,
+                    "treatFailureAsDeploymentFailure": bool,
                     "type": "str",
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,7 +125,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                 instance_id="str",
                 run_command_name="str",
                 run_command={
-                    "asyncExecution": False,
+                    "asyncExecution": bool,
                     "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},
                     "errorBlobUri": "str",
                     "instanceView": {
@@ -118,15 +155,17 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     "runAsUser": "str",
                     "source": {
                         "commandId": "str",
+                        "galleryScriptReferenceId": "str",
                         "script": "str",
+                        "scriptShell": "str",
                         "scriptUri": "str",
                         "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
                     },
                     "tags": {"str": "str"},
                     "timeoutInSeconds": 0,
-                    "treatFailureAsDeploymentFailure": False,
+                    "treatFailureAsDeploymentFailure": bool,
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -142,36 +181,9 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                 vm_scale_set_name="str",
                 instance_id="str",
                 run_command_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_set_vm_run_commands_get(self, resource_group):
-        response = await self.client.virtual_machine_scale_set_vm_run_commands.get(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            instance_id="str",
-            run_command_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_set_vm_run_commands_list(self, resource_group):
-        response = self.client.virtual_machine_scale_set_vm_run_commands.list(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            instance_id="str",
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

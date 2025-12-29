@@ -24,7 +24,7 @@ class TestSearchManagement(AzureMgmtRecordedTestCase):
         response = self.client.usage_by_subscription_sku(
             location="str",
             sku_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

@@ -17,7 +17,7 @@ from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOpt
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from .._internal import encode_base64, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
 
@@ -28,7 +28,11 @@ CLI_NOT_FOUND = (
     "Please visit https://aka.ms/azure-dev for installation instructions and then,"
     "once installed, authenticate to your Azure account using 'azd auth login'."
 )
-COMMAND_LINE = ["auth", "token", "--output", "json"]
+UNKNOWN_CLAIMS_FLAG = (
+    "Claims challenges are not supported by the Azure Developer CLI version you are using. "
+    "Please update to version 1.18.1 or later."
+)
+COMMAND_LINE = ["auth", "token", "--output", "json", "--no-prompt"]
 EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
 
@@ -99,7 +103,7 @@ class AzureDeveloperCliCredential:
     def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AccessToken:
@@ -111,7 +115,8 @@ class AzureDeveloperCliCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
-        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -125,6 +130,8 @@ class AzureDeveloperCliCredential:
         options: TokenRequestOptions = {}
         if tenant_id:
             options["tenant_id"] = tenant_id
+        if claims:
+            options["claims"] = claims
 
         token_info = self._get_token_base(*scopes, options=options, **kwargs)
         return AccessToken(token_info.token, token_info.expires_on)
@@ -159,6 +166,7 @@ class AzureDeveloperCliCredential:
             raise ValueError("Missing scope in request. \n")
 
         tenant_id = options.get("tenant_id") if options else None
+        claims = options.get("claims") if options else None
         if tenant_id:
             validate_tenant_id(tenant_id)
         for scope in scopes:
@@ -175,16 +183,23 @@ class AzureDeveloperCliCredential:
         )
         if tenant:
             command_args += ["--tenant-id", tenant]
+        if claims:
+            command_args += ["--claims", encode_base64(claims)]
         output = _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)
         if not token:
-            sanitized_output = sanitize_output(output)
-            message = (
-                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
-                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
-            )
+            # Try to extract a meaningful error from azd consoleMessage JSON lines
+            extracted = extract_cli_error_message(output)
+            if extracted:
+                message = extracted
+            else:
+                sanitized_output = sanitize_output(output)
+                message = (
+                    f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
+                    f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
+                )
             if within_dac.get():
                 raise CredentialUnavailableError(message=message)
             raise ClientAuthenticationError(message=message)
@@ -241,6 +256,54 @@ def sanitize_output(output: str) -> str:
     return re.sub(r"\"token\": \"(.*?)(\"|$)", "****", output)
 
 
+def extract_cli_error_message(output: str) -> Optional[str]:
+    """
+    Extract a single, user-friendly message from azd consoleMessage JSON output.
+
+    :param str output: The output from the Azure Developer CLI command.
+    :return: A user-friendly error message if found, otherwise None.
+    :rtype: Optional[str]
+
+    Preference order:
+    1) A message containing "Suggestion" (case-insensitive)
+    2) The second message if multiple are present
+    3) The first message if only one exists
+    Returns None if no messages can be parsed.
+    """
+    messages: List[str] = []
+    for line in output.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError:  # not JSON -> ignore
+            continue
+        if isinstance(obj, dict):
+            data = obj.get("data")
+            if isinstance(data, dict):
+                msg = data.get("message")
+                if isinstance(msg, str) and msg.strip():
+                    messages.append(msg.strip())
+                    continue
+            msg = obj.get("message")
+            if isinstance(msg, str) and msg.strip():
+                messages.append(msg.strip())
+
+    if not messages:
+        return None
+
+    # Prefer the suggestion line if present
+    for msg in messages:
+        if "suggestion" in msg.lower():
+            return sanitize_output(msg)
+
+    # If more than one message exists, return the last one
+    if len(messages) > 1:
+        return sanitize_output(messages[-1])
+    return sanitize_output(messages[0])
+
+
 def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     azd_path = shutil.which(EXECUTABLE_NAME)
@@ -267,16 +330,18 @@ def _run_command(command_args: List[str], timeout: int) -> str:
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or (ex.stderr is not None and ex.stderr.startswith("'azd' is not recognized")):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
-        if ex.stderr is not None and (
-            "not logged in, run `azd auth login` to login" in ex.stderr and "AADSTS" not in ex.stderr
-        ):
+        combined_text = "{}\n{}".format(ex.output or "", ex.stderr or "")
+        if "not logged in, run `azd auth login` to login" in combined_text and "AADSTS" not in combined_text:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
+        if "unknown flag: --claims" in combined_text:
+            raise CredentialUnavailableError(message=UNKNOWN_CLAIMS_FLAG) from ex
 
         # return code is from the CLI -> propagate its output
-        if ex.stderr:
-            message = sanitize_output(ex.stderr)
-        else:
-            message = "Failed to invoke Azure Developer CLI"
+        message = (
+            extract_cli_error_message(ex.output or "")
+            or extract_cli_error_message(ex.stderr or "")
+            or (sanitize_output(ex.stderr) if ex.stderr else "Failed to invoke Azure Developer CLI")
+        )
         if within_dac.get():
             raise CredentialUnavailableError(message=message) from ex
         raise ClientAuthenticationError(message=message) from ex

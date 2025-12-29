@@ -183,6 +183,7 @@ class SearchClient(HeadersMixin):
         debug: Optional[Union[str, QueryDebugMode]] = None,
         hybrid_search: Optional[HybridSearch] = None,
         x_ms_query_source_authorization: Optional[str] = None,
+        x_ms_enable_elevated_read: Optional[bool] = None,
         **kwargs: Any
     ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -314,6 +315,9 @@ class SearchClient(HeadersMixin):
             executed. This token is used to enforce security restrictions on documents. Default value is
             None.
         :paramtype x_ms_query_source_authorization: str
+        :keyword x_ms_enable_elevated_read: A value that enables elevated read that bypass document level 
+            permission checks for the query operation. Default value is None.
+        :paramtype x_ms_enable_elevated_read: bool
         :return: List of search results.
         :rtype:  SearchItemPaged[dict]
 
@@ -403,6 +407,7 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["x_ms_query_source_authorization"] = x_ms_query_source_authorization
+        kwargs["x_ms_enable_elevated_read"] = x_ms_enable_elevated_read
         kwargs["api_version"] = self._api_version
         return SearchItemPaged(self._client, query, kwargs, page_iterator_class=SearchPageIterator)
 
@@ -717,9 +722,7 @@ class SearchClient(HeadersMixin):
                 result_first_half = batch_response_first_half
             else:
                 result_first_half = []
-            batch_response_second_half = self._index_documents_actions(
-                actions=actions[pos:], **kwargs
-            )
+            batch_response_second_half = self._index_documents_actions(actions=actions[pos:], **kwargs)
             if batch_response_second_half:
                 result_second_half = batch_response_second_half
             else:

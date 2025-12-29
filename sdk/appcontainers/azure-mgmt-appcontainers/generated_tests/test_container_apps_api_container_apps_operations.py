@@ -22,7 +22,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_container_apps_list_by_subscription(self, resource_group):
         response = self.client.container_apps.list_by_subscription(
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
     def test_container_apps_list_by_resource_group(self, resource_group):
         response = self.client.container_apps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.container_apps.get(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -62,6 +62,13 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                 "configuration": {
                     "activeRevisionsMode": "Single",
                     "dapr": {
+                        "appHealth": {
+                            "enabled": bool,
+                            "path": "str",
+                            "probeIntervalSeconds": 0,
+                            "probeTimeoutMilliseconds": 0,
+                            "threshold": 0,
+                        },
                         "appId": "str",
                         "appPort": 0,
                         "appProtocol": "http",
@@ -70,6 +77,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                         "httpMaxRequestSize": 0,
                         "httpReadBufferSize": 0,
                         "logLevel": "str",
+                        "maxConcurrency": 0,
                     },
                     "identitySettings": [{"identity": "str", "lifecycle": "str"}],
                     "ingress": {
@@ -113,6 +121,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "kind": "str",
                 "latestReadyRevisionName": "str",
                 "latestRevisionFqdn": "str",
                 "latestRevisionName": "str",
@@ -223,7 +232,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "workloadProfileName": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -235,7 +244,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.container_apps.begin_delete(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -252,6 +261,13 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                 "configuration": {
                     "activeRevisionsMode": "Single",
                     "dapr": {
+                        "appHealth": {
+                            "enabled": bool,
+                            "path": "str",
+                            "probeIntervalSeconds": 0,
+                            "probeTimeoutMilliseconds": 0,
+                            "threshold": 0,
+                        },
                         "appId": "str",
                         "appPort": 0,
                         "appProtocol": "http",
@@ -260,6 +276,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                         "httpMaxRequestSize": 0,
                         "httpReadBufferSize": 0,
                         "logLevel": "str",
+                        "maxConcurrency": 0,
                     },
                     "identitySettings": [{"identity": "str", "lifecycle": "str"}],
                     "ingress": {
@@ -303,6 +320,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "kind": "str",
                 "latestReadyRevisionName": "str",
                 "latestRevisionFqdn": "str",
                 "latestRevisionName": "str",
@@ -413,7 +431,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "workloadProfileName": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -425,7 +443,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.container_apps.list_custom_host_name_analysis(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -437,7 +455,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.container_apps.list_secrets(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -449,7 +467,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.container_apps.get_auth_token(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -461,7 +479,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.container_apps.begin_start(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -473,7 +491,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.container_apps.begin_stop(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

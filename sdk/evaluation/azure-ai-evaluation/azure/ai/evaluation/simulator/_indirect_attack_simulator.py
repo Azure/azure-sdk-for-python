@@ -5,7 +5,8 @@
 # noqa: E501
 import asyncio
 import logging
-from typing import Callable, cast, Union
+import random
+from typing import Callable, cast, Union, Optional
 
 from tqdm import tqdm
 
@@ -14,7 +15,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._constants import TokenScope
 
@@ -105,6 +106,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: int = 0,
         concurrent_async_task: int = 3,
+        randomization_seed: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -130,6 +132,9 @@ class IndirectAttackSimulator(AdversarialSimulator):
         :keyword concurrent_async_task: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 3.
         :paramtype concurrent_async_task: int
+        :keyword randomization_seed: The seed used to randomize prompt selection. If unset, the system's
+            default seed is used. Defaults to None.
+        :paramtype randomization_seed: Optional[int]
         :return: A list of dictionaries, each representing a simulated conversation. Each dictionary contains:
 
          - 'template_parameters': A dictionary with parameters used in the conversation template,
@@ -190,6 +195,13 @@ class IndirectAttackSimulator(AdversarialSimulator):
             ncols=100,
             unit="simulations",
         )
+
+        # Apply randomization to templates if seed is provided
+        if randomization_seed is not None:
+            # Create a local random instance to avoid polluting global state
+            local_random = random.Random(randomization_seed)
+            local_random.shuffle(templates)
+
         for template in templates:
             for parameter in template.template_parameters:
                 tasks.append(

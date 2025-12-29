@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity --pre
+    pip install azure-ai-projects azure-ai-agents>=1.2.0b3 azure-identity --pre
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -29,7 +29,14 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import McpTool, RequiredMcpToolCall, SubmitToolApprovalAction, ToolApproval
+from azure.ai.agents.models import (
+    ListSortOrder,
+    McpTool,
+    RequiredMcpToolCall,
+    RunStepActivityDetails,
+    SubmitToolApprovalAction,
+    ToolApproval,
+)
 
 # Get MCP server configuration from environment variables
 mcp_server_url = os.environ.get("MCP_SERVER_URL", "https://gitmcp.io/Azure/azure-rest-api-specs")
@@ -145,10 +152,25 @@ with project_client:
                 print(f"    Tool Call ID: {call.get('id')}")
                 print(f"    Type: {call.get('type')}")
 
+        if isinstance(step_details, RunStepActivityDetails):
+            for activity in step_details.activities:
+                for function_name, function_definition in activity.tools.items():
+                    print(
+                        f'  The function {function_name} with description "{function_definition.description}" will be called.:'
+                    )
+                    if len(function_definition.parameters) > 0:
+                        print("  Function parameters:")
+                        for argument, func_argument in function_definition.parameters.properties.items():
+                            print(f"      {argument}")
+                            print(f"      Type: {func_argument.type}")
+                            print(f"      Description: {func_argument.description}")
+                    else:
+                        print("This function has no parameters")
+
         print()  # add an extra newline between steps
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     print("\nConversation:")
     print("-" * 50)
     for msg in messages:

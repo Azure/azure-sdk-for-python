@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web.v2024_11_01 import WebSiteManagementClient
+from azure.mgmt.web import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestWebSiteManagementProviderOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_provider_get_available_stacks(self, resource_group):
         response = self.client.provider.get_available_stacks(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestWebSiteManagementProviderOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_provider_get_function_app_stacks(self, resource_group):
         response = self.client.provider.get_function_app_stacks(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -43,7 +43,7 @@ class TestWebSiteManagementProviderOperations(AzureMgmtRecordedTestCase):
     def test_provider_get_function_app_stacks_for_location(self, resource_group):
         response = self.client.provider.get_function_app_stacks_for_location(
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestWebSiteManagementProviderOperations(AzureMgmtRecordedTestCase):
     def test_provider_get_web_app_stacks_for_location(self, resource_group):
         response = self.client.provider.get_web_app_stacks_for_location(
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestWebSiteManagementProviderOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_provider_list_operations(self, resource_group):
         response = self.client.provider.list_operations(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestWebSiteManagementProviderOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_provider_get_web_app_stacks(self, resource_group):
         response = self.client.provider.get_web_app_stacks(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestWebSiteManagementProviderOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_provider_get_available_stacks_on_prem(self, resource_group):
         response = self.client.provider.get_available_stacks_on_prem(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
+from unittest.mock import MagicMock
 
 import pytest
 import uuid
@@ -9,12 +10,15 @@ import uuid
 
 import test_config
 from azure.cosmos import http_constants
-import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
+from test_headers import partition_merge_support_response_hook
 
 client_throughput_bucket_number = 2
 request_throughput_bucket_number = 3
+client_priority = "Low"
+request_priority = "High"
+
 async def client_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(client_throughput_bucket_number))
@@ -22,6 +26,20 @@ async def client_raw_response_hook(response):
 async def request_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(request_throughput_bucket_number))
+
+async def client_priority_raw_response_hook(response):
+    assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
+            == client_priority)
+
+async def request_priority_raw_response_hook(response):
+    assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
+            == request_priority)
+
+
+class ClientIDVerificationError(Exception):
+    """Custom exception for client ID verification errors."""
+    pass
+
 
 @pytest.mark.cosmosEmulator
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
@@ -205,6 +223,52 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "specified for the header 'x-ms-cosmos-throughput-bucket' is invalid." in e.http_error_message
     """
+
+    async def side_effect_client_id(self, *args, **kwargs):
+        # This is a side effect to verify that the client ID is sent in the request headers
+        assert args[2].get(http_constants.HttpHeaders.ClientId) is not None
+        raise ClientIDVerificationError("Client ID verification complete")
+
+    async def test_client_id(self):
+        # Client ID should be sent on every request, Verify it is sent on a read_item request
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_client_id)
+        try:
+            await self.container.read_item(item="id-1", partition_key="pk-1")
+        except ClientIDVerificationError:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
+    async def test_partition_merge_support_header(self):
+        # This test only runs read API to verify if the header was set correctly, because all APIs are using the same
+        # base method to set the header(GetHeaders).
+        await self.container.read(raw_response_hook=partition_merge_support_response_hook)
+
+    async def test_client_level_priority_async(self):
+        # Test that priority level set at client level is used for all requests
+        async with CosmosClient(self.host, self.masterKey,
+            priority=client_priority,
+            raw_response_hook=client_priority_raw_response_hook) as client:
+            # Make a request to trigger the hook
+            database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+            container = database.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+            created_item = await container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+
+    async def test_request_precedence_priority_async(self):
+        # Test that request-level priority takes precedence over client-level priority
+        async with CosmosClient(self.host, self.masterKey,
+                                   priority=client_priority) as client:
+            database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+            created_container = database.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+            
+            # Create an item with request-level priority that overrides client-level priority
+            await created_container.create_item(
+                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                priority=request_priority,
+                raw_response_hook=request_priority_raw_response_hook)
 
 if __name__ == "__main__":
     unittest.main()

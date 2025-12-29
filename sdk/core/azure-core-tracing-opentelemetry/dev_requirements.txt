@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ../azure-core
 opentelemetry-sdk<2.0.0,>=1.12.0
 opentelemetry-instrumentation-requests>=0.32b0

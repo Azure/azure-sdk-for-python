@@ -1,5 +1,53 @@
 # Release History
 
+## 3.0.0 (2025-09-04)
+
+### Features Added
+
+  - Model `StorageMoverMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `StorageMoverMgmtClient` added method `send_request`
+  - Model `Endpoint` added property `identity`
+  - Model `EndpointBaseUpdateParameters` added property `identity`
+  - Enum `EndpointType` added member `AZURE_MULTI_CLOUD_CONNECTOR`
+  - Enum `EndpointType` added member `AZURE_STORAGE_NFS_FILE_SHARE`
+  - Model `StorageMoverUpdateParameters` added property `properties`
+  - Added model `AgentUpdateProperties`
+  - Added model `AzureMultiCloudConnectorEndpointProperties`
+  - Added model `AzureMultiCloudConnectorEndpointUpdateProperties`
+  - Added model `AzureStorageNfsFileShareEndpointProperties`
+  - Added model `AzureStorageNfsFileShareEndpointUpdateProperties`
+  - Added model `JobDefinitionPropertiesSourceTargetMap`
+  - Added model `JobDefinitionUpdateProperties`
+  - Added enum `JobType`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `ProjectUpdateProperties`
+  - Added model `SourceEndpoint`
+  - Added model `SourceEndpointProperties`
+  - Added model `SourceTargetMap`
+  - Added model `StorageMoverUpdateProperties`
+  - Added model `TargetEndpoint`
+  - Added model `TargetEndpointProperties`
+  - Added model `UserAssignedIdentity`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AgentUpdateParameters` deleted or renamed its instance variable `description`
+  - Model `AgentUpdateParameters` deleted or renamed its instance variable `upload_limit_schedule`
+  - Model `JobDefinitionUpdateParameters` deleted or renamed its instance variable `description`
+  - Model `JobDefinitionUpdateParameters` deleted or renamed its instance variable `copy_mode`
+  - Model `JobDefinitionUpdateParameters` deleted or renamed its instance variable `agent_name`
+  - Model `ProjectUpdateParameters` deleted or renamed its instance variable `description`
+  - Model `StorageMoverUpdateParameters` deleted or renamed its instance variable `description`
+  - Deleted or renamed model `AgentList`
+  - Deleted or renamed model `EndpointList`
+  - Deleted or renamed model `JobDefinitionList`
+  - Deleted or renamed model `JobRunList`
+  - Deleted or renamed model `ProjectList`
+  - Deleted or renamed model `StorageMoverList`
+  - Deleted or renamed model `UploadLimit`
+
 ## 2.1.0 (2024-06-17)
 
 ### Features Added

@@ -26,7 +26,7 @@ class TestSearchManagementQueryKeysOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             search_service_name="str",
             name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSearchManagementQueryKeysOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.query_keys.list_by_search_service(
             resource_group_name=resource_group.name,
             search_service_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestSearchManagementQueryKeysOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             search_service_name="str",
             key="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

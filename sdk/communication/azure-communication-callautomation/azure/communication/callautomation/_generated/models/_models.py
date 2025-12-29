@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
@@ -1326,7 +1327,8 @@ class CommunicationIdentifierModel(_serialization.Model):
     rawId, at most one further property may be set which must match the kind enum value.
 
     :ivar kind: The identifier kind. Only required in responses. Known values are: "unknown",
-     "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
+     "communicationUser", "phoneNumber", "microsoftTeamsUser", "microsoftTeamsApp", and
+     "teamsExtensionUser".
     :vartype kind: str or
      ~azure.communication.callautomation.models.CommunicationIdentifierModelKind
     :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses.
@@ -1342,6 +1344,9 @@ class CommunicationIdentifierModel(_serialization.Model):
     :ivar microsoft_teams_app: The Microsoft Teams application.
     :vartype microsoft_teams_app:
      ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
+    :ivar teams_extension_user: The Microsoft Teams Extension user.
+    :vartype teams_extension_user:
+     ~azure.communication.callautomation.models.TeamsExtensionUserIdentifierModel
     """
 
     _attribute_map = {
@@ -1351,6 +1356,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         "phone_number": {"key": "phoneNumber", "type": "PhoneNumberIdentifierModel"},
         "microsoft_teams_user": {"key": "microsoftTeamsUser", "type": "MicrosoftTeamsUserIdentifierModel"},
         "microsoft_teams_app": {"key": "microsoftTeamsApp", "type": "MicrosoftTeamsAppIdentifierModel"},
+        "teams_extension_user": {"key": "teamsExtensionUser", "type": "TeamsExtensionUserIdentifierModel"},
     }
 
     def __init__(
@@ -1362,11 +1368,13 @@ class CommunicationIdentifierModel(_serialization.Model):
         phone_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         microsoft_teams_user: Optional["_models.MicrosoftTeamsUserIdentifierModel"] = None,
         microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
+        teams_extension_user: Optional["_models.TeamsExtensionUserIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword kind: The identifier kind. Only required in responses. Known values are: "unknown",
-         "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
+         "communicationUser", "phoneNumber", "microsoftTeamsUser", "microsoftTeamsApp", and
+         "teamsExtensionUser".
         :paramtype kind: str or
          ~azure.communication.callautomation.models.CommunicationIdentifierModelKind
         :keyword raw_id: Raw Id of the identifier. Optional in requests, required in responses.
@@ -1382,6 +1390,9 @@ class CommunicationIdentifierModel(_serialization.Model):
         :keyword microsoft_teams_app: The Microsoft Teams application.
         :paramtype microsoft_teams_app:
          ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
+        :keyword teams_extension_user: The Microsoft Teams Extension user.
+        :paramtype teams_extension_user:
+         ~azure.communication.callautomation.models.TeamsExtensionUserIdentifierModel
         """
         super().__init__(**kwargs)
         self.kind = kind
@@ -1390,6 +1401,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         self.phone_number = phone_number
         self.microsoft_teams_user = microsoft_teams_user
         self.microsoft_teams_app = microsoft_teams_app
+        self.teams_extension_user = teams_extension_user
 
 
 class CommunicationUserIdentifierModel(_serialization.Model):
@@ -1876,6 +1888,10 @@ class CreateCallRequest(_serialization.Model):
      ~azure.communication.callautomation.models.MediaStreamingOptions
     :ivar transcription_options: Transcription Options.
     :vartype transcription_options: ~azure.communication.callautomation.models.TranscriptionOptions
+    :ivar teams_app_source: The identifier of the source for creating call with Teams resource
+     account ID.
+    :vartype teams_app_source:
+     ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
     """
 
     _validation = {
@@ -1893,6 +1909,7 @@ class CreateCallRequest(_serialization.Model):
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
         "media_streaming_options": {"key": "mediaStreamingOptions", "type": "MediaStreamingOptions"},
         "transcription_options": {"key": "transcriptionOptions", "type": "TranscriptionOptions"},
+        "teams_app_source": {"key": "teamsAppSource", "type": "MicrosoftTeamsAppIdentifierModel"},
     }
 
     def __init__(
@@ -1907,6 +1924,7 @@ class CreateCallRequest(_serialization.Model):
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
         media_streaming_options: Optional["_models.MediaStreamingOptions"] = None,
         transcription_options: Optional["_models.TranscriptionOptions"] = None,
+        teams_app_source: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1935,6 +1953,10 @@ class CreateCallRequest(_serialization.Model):
         :keyword transcription_options: Transcription Options.
         :paramtype transcription_options:
          ~azure.communication.callautomation.models.TranscriptionOptions
+        :keyword teams_app_source: The identifier of the source for creating call with Teams resource
+         account ID.
+        :paramtype teams_app_source:
+         ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
         """
         super().__init__(**kwargs)
         self.targets = targets
@@ -1946,6 +1968,7 @@ class CreateCallRequest(_serialization.Model):
         self.call_intelligence_options = call_intelligence_options
         self.media_streaming_options = media_streaming_options
         self.transcription_options = transcription_options
+        self.teams_app_source = teams_app_source
 
 
 class CustomCallingContext(_serialization.Model):
@@ -2664,8 +2687,8 @@ class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id
-     of the user. Required.
+    :ivar user_id: The Id of the Microsoft Teams user. If not anonymous, this is the Entra ID
+     object Id of the user. Required.
     :vartype user_id: str
     :ivar is_anonymous: True if the Microsoft Teams user is anonymous. By default false if missing.
     :vartype is_anonymous: bool
@@ -2694,8 +2717,8 @@ class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object
-         Id of the user. Required.
+        :keyword user_id: The Id of the Microsoft Teams user. If not anonymous, this is the Entra ID
+         object Id of the user. Required.
         :paramtype user_id: str
         :keyword is_anonymous: True if the Microsoft Teams user is anonymous. By default false if
          missing.
@@ -2842,8 +2865,14 @@ class PhoneNumberIdentifierModel(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: The phone number in E.164 format. Required.
+    :ivar value: The phone number, usually in E.164 format. Required.
     :vartype value: str
+    :ivar is_anonymous: True if the phone number is anonymous. By default false if missing. If the
+     phone number is anonymous, the value will be the string 'anonymous'.
+    :vartype is_anonymous: bool
+    :ivar asserted_id: The asserted Id of the phone number. An asserted Id gets generated when the
+     same phone number joins the same call more than once.
+    :vartype asserted_id: str
     """
 
     _validation = {
@@ -2852,15 +2881,27 @@ class PhoneNumberIdentifierModel(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "str"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "asserted_id": {"key": "assertedId", "type": "str"},
     }
 
-    def __init__(self, *, value: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: str, is_anonymous: Optional[bool] = None, asserted_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: The phone number in E.164 format. Required.
+        :keyword value: The phone number, usually in E.164 format. Required.
         :paramtype value: str
+        :keyword is_anonymous: True if the phone number is anonymous. By default false if missing. If
+         the phone number is anonymous, the value will be the string 'anonymous'.
+        :paramtype is_anonymous: bool
+        :keyword asserted_id: The asserted Id of the phone number. An asserted Id gets generated when
+         the same phone number joins the same call more than once.
+        :paramtype asserted_id: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.is_anonymous = is_anonymous
+        self.asserted_id = asserted_id
 
 
 class PlayCanceled(_serialization.Model):
@@ -4368,10 +4409,11 @@ class SsmlSource(_serialization.Model):
 class StartCallRecordingRequest(_serialization.Model):
     """The request payload start for call recording operation with call locator.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar call_locator: The call locator. Required.
+    :ivar call_locator: The call locator. (Only one of callLocator or callConnectionId to be used).
     :vartype call_locator: ~azure.communication.callautomation.models.CallLocator
+    :ivar call_connection_id: The call connection Id. (Only one of callLocator or callConnectionId
+     to be used).
+    :vartype call_connection_id: str
     :ivar recording_state_callback_uri: The uri to send notifications to.
     :vartype recording_state_callback_uri: str
     :ivar recording_content_type: The content type of call recording. Known values are: "audio" and
@@ -4409,12 +4451,9 @@ class StartCallRecordingRequest(_serialization.Model):
     :vartype external_storage: ~azure.communication.callautomation.models.ExternalStorage
     """
 
-    _validation = {
-        "call_locator": {"required": True},
-    }
-
     _attribute_map = {
         "call_locator": {"key": "callLocator", "type": "CallLocator"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "recording_state_callback_uri": {"key": "recordingStateCallbackUri", "type": "str"},
         "recording_content_type": {"key": "recordingContentType", "type": "str"},
         "recording_channel_type": {"key": "recordingChannelType", "type": "str"},
@@ -4431,7 +4470,8 @@ class StartCallRecordingRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        call_locator: "_models.CallLocator",
+        call_locator: Optional["_models.CallLocator"] = None,
+        call_connection_id: Optional[str] = None,
         recording_state_callback_uri: Optional[str] = None,
         recording_content_type: Optional[Union[str, "_models.RecordingContent"]] = None,
         recording_channel_type: Optional[Union[str, "_models.RecordingChannel"]] = None,
@@ -4443,8 +4483,12 @@ class StartCallRecordingRequest(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword call_locator: The call locator. Required.
+        :keyword call_locator: The call locator. (Only one of callLocator or callConnectionId to be
+         used).
         :paramtype call_locator: ~azure.communication.callautomation.models.CallLocator
+        :keyword call_connection_id: The call connection Id. (Only one of callLocator or
+         callConnectionId to be used).
+        :paramtype call_connection_id: str
         :keyword recording_state_callback_uri: The uri to send notifications to.
         :paramtype recording_state_callback_uri: str
         :keyword recording_content_type: The content type of call recording. Known values are: "audio"
@@ -4484,6 +4528,7 @@ class StartCallRecordingRequest(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.call_locator = call_locator
+        self.call_connection_id = call_connection_id
         self.recording_state_callback_uri = recording_state_callback_uri
         self.recording_content_type = recording_content_type
         self.recording_channel_type = recording_channel_type
@@ -4526,6 +4571,73 @@ class StartMediaStreamingRequest(_serialization.Model):
         super().__init__(**kwargs)
         self.operation_callback_uri = operation_callback_uri
         self.operation_context = operation_context
+
+
+class StartRecordingFailed(_serialization.Model):
+    """StartRecordingFailed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar recording_id: The call recording Id.
+    :vartype recording_id: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    """
+
+    _validation = {
+        "recording_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "recording_id": {"key": "recordingId", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        """
+        super().__init__(**kwargs)
+        self.recording_id: Optional[str] = None
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class StartTranscriptionRequest(_serialization.Model):
@@ -4648,6 +4760,67 @@ class StopTranscriptionRequest(_serialization.Model):
         super().__init__(**kwargs)
         self.operation_context = operation_context
         self.operation_callback_uri = operation_callback_uri
+
+
+class TeamsExtensionUserIdentifierModel(_serialization.Model):
+    """A Microsoft Teams Phone user who is using a Communication Services resource to extend their
+    Teams Phone set up.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar user_id: The Id of the Microsoft Teams Extension user, i.e. the Entra ID object Id of the
+     user. Required.
+    :vartype user_id: str
+    :ivar tenant_id: The tenant Id of the Microsoft Teams Extension user. Required.
+    :vartype tenant_id: str
+    :ivar resource_id: The Communication Services resource Id. Required.
+    :vartype resource_id: str
+    :ivar cloud: The cloud that the Microsoft Teams Extension user belongs to. By default 'public'
+     if missing. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or
+     ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
+    """
+
+    _validation = {
+        "user_id": {"required": True},
+        "tenant_id": {"required": True},
+        "resource_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "user_id": {"key": "userId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "cloud": {"key": "cloud", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_id: str,
+        tenant_id: str,
+        resource_id: str,
+        cloud: Optional[Union[str, "_models.CommunicationCloudEnvironmentModel"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword user_id: The Id of the Microsoft Teams Extension user, i.e. the Entra ID object Id of
+         the user. Required.
+        :paramtype user_id: str
+        :keyword tenant_id: The tenant Id of the Microsoft Teams Extension user. Required.
+        :paramtype tenant_id: str
+        :keyword resource_id: The Communication Services resource Id. Required.
+        :paramtype resource_id: str
+        :keyword cloud: The cloud that the Microsoft Teams Extension user belongs to. By default
+         'public' if missing. Known values are: "public", "dod", and "gcch".
+        :paramtype cloud: str or
+         ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
+        """
+        super().__init__(**kwargs)
+        self.user_id = user_id
+        self.tenant_id = tenant_id
+        self.resource_id = resource_id
+        self.cloud = cloud
 
 
 class TextSource(_serialization.Model):

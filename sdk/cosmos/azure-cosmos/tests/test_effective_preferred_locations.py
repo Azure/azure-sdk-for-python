@@ -15,8 +15,8 @@ from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 COLLECTION = "created_collection"
-REGION_1 = "West US 3"
-REGION_2 = "West US"
+REGION_1 = test_config.TestConfig.WRITE_LOCATION
+REGION_2 = test_config.TestConfig.READ_LOCATION
 REGION_3 = "West US 2"
 ACCOUNT_REGIONS = [REGION_1, REGION_2, REGION_3]
 
@@ -83,13 +83,16 @@ class TestPreferredLocations:
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
                                (FaultInjectionTransport.predicate_targets_region(r, uri_down) or
-                                FaultInjectionTransport.predicate_targets_region(r, default_endpoint)))
+                                FaultInjectionTransport.predicate_targets_region(r, default_endpoint)) and
+                               not FaultInjectionTransport.predicate_is_operation_type(r, "ReadFeed")
+                               )
+
         custom_transport.add_fault(predicate,
                                    error_lambda)
         client = CosmosClient(default_endpoint,
                               self.master_key,
                               multiple_write_locations=True,
-                              transport=custom_transport, **kwargs)
+                              transport=custom_transport, consistency_level="Session", **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
@@ -99,17 +102,17 @@ class TestPreferredLocations:
     def test_effective_preferred_regions(self, setup, preferred_location, default_endpoint):
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck
+        self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection.health_check
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
-        _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
+        _cosmos_client_connection.CosmosClientConnection.health_check = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
         try:
             client = CosmosClient(default_endpoint, self.master_key, preferred_locations=preferred_location)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-        expected_dual_endpoints = []
+            _cosmos_client_connection.CosmosClientConnection.health_check = self.original_getDatabaseAccountCheck
+        expected_endpoints = []
 
         # if preferred location set should use that
         if preferred_location:
@@ -123,13 +126,10 @@ class TestPreferredLocations:
 
         for location in expected_locations:
             locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, location)
-            if default_endpoint == self.host or preferred_location:
-                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
-            else:
-                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, default_endpoint))
+            expected_endpoints.append(RegionalRoutingContext(locational_endpoint))
 
-        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
-        assert read_dual_endpoints == expected_dual_endpoints
+        read_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
+        assert read_endpoints == expected_endpoints
 
     @pytest.mark.cosmosMultiRegion
     @pytest.mark.parametrize("error", error())
@@ -140,7 +140,7 @@ class TestPreferredLocations:
 
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransport()
-        error_lambda = lambda r:FaultInjectionTransport.error_after_delay(
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             error
         )

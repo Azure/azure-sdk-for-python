@@ -83,13 +83,13 @@ Similarly, find the `service` folder in the [SDK folder](https://github.com/Azur
 Such as [`resources` folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources).
 
 Then, you could find [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources). This step may be a little difficult for beginners. It requires some experience.
-Don't be frightened by a lot of folders here. You can choose the latest date to enter, like [this](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01).
+(Some libraries, like [`compute`](https://github.com/Azure/azure-sdk-for-python/tree/523ba9d5b13256c45d83904f8de264088059c1cb/sdk/compute/azure-mgmt-compute/azure/mgmt/compute), may have many API version folders. You can choose the latest date to enter, like [this](https://github.com/Azure/azure-sdk-for-python/tree/523ba9d5b13256c45d83904f8de264088059c1cb/sdk/compute/azure-mgmt-compute/azure/mgmt/compute/v2025_01_02).)
 
-Enter the [_operation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations/_operations.py) in the [operation folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations), and you can see the meta code.
+Enter the [_operation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations/_operations.py) in the [operation folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations), and you can see the meta code.
 
 In this file, you could search the function name to find the function definition.(Be careful, the function need under the correct class.)
-Above the `begin_delete` function, you could find it from [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations/_operations.py#L8784).
-The same, the `create_or_update` function is [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations/_operations.py#L9761).
+Above the `begin_delete` function, you could find it from [here](https://github.com/Azure/azure-sdk-for-python/blob/9d3f4aaf3125cc6ae63c8425d0d15d20d488d61e/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations/_operations.py#L4188).
+The same, the `create_or_update` function is [here](https://github.com/Azure/azure-sdk-for-python/blob/9d3f4aaf3125cc6ae63c8425d0d15d20d488d61e/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations/_operations.py#L4019).
 
 Finally, you also could find the usage of function by [Azure doc](https://docs.microsoft.com/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group) or [Azure samples](https://github.com/Azure-Samples/azure-samples-python-management).
 

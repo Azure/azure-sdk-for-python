@@ -25,7 +25,7 @@ class TestDataBoxEdgeManagementUsersOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.users.list_by_data_box_edge_device(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestDataBoxEdgeManagementUsersOperationsAsync(AzureMgmtRecordedTestCase):
             device_name="str",
             name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,6 @@ class TestDataBoxEdgeManagementUsersOperationsAsync(AzureMgmtRecordedTestCase):
                 name="str",
                 resource_group_name=resource_group.name,
                 user={
-                    "userType": "str",
                     "encryptedPassword": {
                         "encryptionAlgorithm": "str",
                         "value": "str",
@@ -62,9 +61,18 @@ class TestDataBoxEdgeManagementUsersOperationsAsync(AzureMgmtRecordedTestCase):
                     "id": "str",
                     "name": "str",
                     "shareAccessRights": [{"accessType": "str", "shareId": "str"}],
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "type": "str",
+                    "userType": "str",
                 },
-                api_version="2019-08-01",
+                api_version="2021-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +87,7 @@ class TestDataBoxEdgeManagementUsersOperationsAsync(AzureMgmtRecordedTestCase):
                 device_name="str",
                 name="str",
                 resource_group_name=resource_group.name,
-                api_version="2019-08-01",
+                api_version="2021-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

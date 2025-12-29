@@ -1,5 +1,217 @@
 # Release History
 
+## 14.1.0b4 (2025-12-05)
+
+### Other Changes
+
+  - Regular update
+
+## 14.1.0b3 (2025-11-05)
+
+### Features Added
+
+  - Model `ContainerRegistryManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.archives`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.archive_versions`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.export_pipelines`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.import_pipelines`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.pipeline_runs`
+  - Model `Policies` deleted or renamed its instance variable `soft_delete_policy`
+  - Model `Registry` deleted or renamed its instance variable `metadata_search`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `metadata_search`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `ActiveDirectoryObject`
+  - Deleted or renamed model `Archive`
+  - Deleted or renamed model `ArchivePackageSourceProperties`
+  - Deleted or renamed model `ArchiveProperties`
+  - Deleted or renamed model `ArchiveUpdateParameters`
+  - Deleted or renamed model `ArchiveVersion`
+  - Deleted or renamed model `DebianArchivePackageSourceProperties`
+  - Deleted or renamed model `DebianArchiveProperties`
+  - Deleted or renamed model `ExportPipeline`
+  - Deleted or renamed model `ExportPipelineTargetProperties`
+  - Deleted or renamed model `ImportPipeline`
+  - Deleted or renamed model `ImportPipelineSourceProperties`
+  - Deleted or renamed model `LastModifiedByType`
+  - Deleted or renamed model `MetadataSearch`
+  - Deleted or renamed model `PackageSourceType`
+  - Deleted or renamed model `PackageType`
+  - Deleted or renamed model `PipelineOptions`
+  - Deleted or renamed model `PipelineRun`
+  - Deleted or renamed model `PipelineRunRequest`
+  - Deleted or renamed model `PipelineRunResponse`
+  - Deleted or renamed model `PipelineRunSourceProperties`
+  - Deleted or renamed model `PipelineRunSourceType`
+  - Deleted or renamed model `PipelineRunTargetProperties`
+  - Deleted or renamed model `PipelineRunTargetType`
+  - Deleted or renamed model `PipelineSourceTriggerDescriptor`
+  - Deleted or renamed model `PipelineSourceTriggerProperties`
+  - Deleted or renamed model `PipelineSourceType`
+  - Deleted or renamed model `PipelineTriggerDescriptor`
+  - Deleted or renamed model `PipelineTriggerProperties`
+  - Deleted or renamed model `ProgressProperties`
+  - Deleted or renamed model `RunFilter`
+  - Deleted or renamed model `SoftDeletePolicy`
+  - Deleted or renamed model `StorageAccountProperties`
+
+## 14.1.0b2 (2025-08-15)
+
+### Features Added
+
+  - Client `ContainerRegistryManagementClient` added operation group `archives`
+  - Client `ContainerRegistryManagementClient` added operation group `archive_versions`
+  - Client `ContainerRegistryManagementClient` added operation group `export_pipelines`
+  - Client `ContainerRegistryManagementClient` added operation group `import_pipelines`
+  - Client `ContainerRegistryManagementClient` added operation group `pipeline_runs`
+  - Client `ContainerRegistryManagementClient` added operation group `agent_pools`
+  - Client `ContainerRegistryManagementClient` added operation group `runs`
+  - Client `ContainerRegistryManagementClient` added operation group `task_runs`
+  - Client `ContainerRegistryManagementClient` added operation group `tasks`
+  - Model `Policies` added property `soft_delete_policy`
+  - Model `Registry` added property `network_rule_bypass_allowed_for_tasks`
+  - Model `Registry` added property `metadata_search`
+  - Model `Registry` added property `auto_generated_domain_name_label_scope`
+  - Model `Registry` added property `role_assignment_mode`
+  - Model `RegistryNameCheckRequest` added property `resource_group_name`
+  - Model `RegistryNameCheckRequest` added property `auto_generated_domain_name_label_scope`
+  - Model `RegistryNameStatus` added property `available_login_server_name`
+  - Model `RegistryUpdateParameters` added property `network_rule_bypass_allowed_for_tasks`
+  - Model `RegistryUpdateParameters` added property `metadata_search`
+  - Model `RegistryUpdateParameters` added property `role_assignment_mode`
+  - Added model `AgentPool`
+  - Added model `AgentPoolListResult`
+  - Added model `AgentPoolQueueStatus`
+  - Added model `AgentPoolUpdateParameters`
+  - Added model `AgentProperties`
+  - Added enum `Architecture`
+  - Added model `Archive`
+  - Added model `ArchiveListResult`
+  - Added model `ArchivePackageSourceProperties`
+  - Added model `ArchiveProperties`
+  - Added model `ArchiveUpdateParameters`
+  - Added model `ArchiveVersion`
+  - Added model `ArchiveVersionListResult`
+  - Added model `Argument`
+  - Added model `AuthInfo`
+  - Added model `AuthInfoUpdateParameters`
+  - Added enum `AutoGeneratedDomainNameLabelScope`
+  - Added model `BaseImageDependency`
+  - Added enum `BaseImageDependencyType`
+  - Added model `BaseImageTrigger`
+  - Added enum `BaseImageTriggerType`
+  - Added model `BaseImageTriggerUpdateParameters`
+  - Added model `Credentials`
+  - Added model `CustomRegistryCredentials`
+  - Added model `DebianArchivePackageSourceProperties`
+  - Added model `DebianArchiveProperties`
+  - Added model `DockerBuildRequest`
+  - Added model `DockerBuildStep`
+  - Added model `DockerBuildStepUpdateParameters`
+  - Added model `EncodedTaskRunRequest`
+  - Added model `EncodedTaskStep`
+  - Added model `EncodedTaskStepUpdateParameters`
+  - Added model `ExportPipeline`
+  - Added model `ExportPipelineListResult`
+  - Added model `ExportPipelineTargetProperties`
+  - Added model `FileTaskRunRequest`
+  - Added model `FileTaskStep`
+  - Added model `FileTaskStepUpdateParameters`
+  - Added model `ImageDescriptor`
+  - Added model `ImageUpdateTrigger`
+  - Added model `ImportPipeline`
+  - Added model `ImportPipelineListResult`
+  - Added model `ImportPipelineSourceProperties`
+  - Added enum `MetadataSearch`
+  - Added enum `OS`
+  - Added model `OverrideTaskStepProperties`
+  - Added enum `PackageSourceType`
+  - Added enum `PipelineOptions`
+  - Added model `PipelineRun`
+  - Added model `PipelineRunListResult`
+  - Added model `PipelineRunRequest`
+  - Added model `PipelineRunResponse`
+  - Added model `PipelineRunSourceProperties`
+  - Added enum `PipelineRunSourceType`
+  - Added model `PipelineRunTargetProperties`
+  - Added enum `PipelineRunTargetType`
+  - Added model `PipelineSourceTriggerDescriptor`
+  - Added model `PipelineSourceTriggerProperties`
+  - Added enum `PipelineSourceType`
+  - Added model `PipelineTriggerDescriptor`
+  - Added model `PipelineTriggerProperties`
+  - Added model `PlatformProperties`
+  - Added model `PlatformUpdateParameters`
+  - Added model `ProgressProperties`
+  - Added enum `RoleAssignmentMode`
+  - Added model `Run`
+  - Added model `RunFilter`
+  - Added model `RunGetLogResult`
+  - Added model `RunListResult`
+  - Added model `RunRequest`
+  - Added enum `RunStatus`
+  - Added enum `RunType`
+  - Added model `RunUpdateParameters`
+  - Added model `SecretObject`
+  - Added enum `SecretObjectType`
+  - Added model `SetValue`
+  - Added model `SoftDeletePolicy`
+  - Added enum `SourceControlType`
+  - Added model `SourceProperties`
+  - Added model `SourceRegistryCredentials`
+  - Added enum `SourceRegistryLoginMode`
+  - Added model `SourceTrigger`
+  - Added model `SourceTriggerDescriptor`
+  - Added enum `SourceTriggerEvent`
+  - Added model `SourceTriggerUpdateParameters`
+  - Added model `SourceUpdateParameters`
+  - Added model `SourceUploadDefinition`
+  - Added enum `StepType`
+  - Added model `Task`
+  - Added model `TaskListResult`
+  - Added model `TaskRun`
+  - Added model `TaskRunListResult`
+  - Added model `TaskRunRequest`
+  - Added model `TaskRunUpdateParameters`
+  - Added enum `TaskStatus`
+  - Added model `TaskStepProperties`
+  - Added model `TaskStepUpdateParameters`
+  - Added model `TaskUpdateParameters`
+  - Added model `TimerTrigger`
+  - Added model `TimerTriggerDescriptor`
+  - Added model `TimerTriggerUpdateParameters`
+  - Added enum `TokenType`
+  - Added model `TriggerProperties`
+  - Added enum `TriggerStatus`
+  - Added model `TriggerUpdateParameters`
+  - Added enum `UpdateTriggerPayloadType`
+  - Added enum `Variant`
+  - Operation group `RegistriesOperations` added method `get_build_source_upload_url`
+  - Operation group `RegistriesOperations` added method `schedule_run`
+  - Added operation group `AgentPoolsOperations`
+  - Added operation group `ArchiveVersionsOperations`
+  - Added operation group `ArchivesOperations`
+  - Added operation group `ExportPipelinesOperations`
+  - Added operation group `ImportPipelinesOperations`
+  - Added operation group `PipelineRunsOperations`
+  - Added operation group `RunsOperations`
+  - Added operation group `TaskRunsOperations`
+  - Added operation group `TasksOperations`
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Deleted or renamed model `ConnectedRegistryProperties`
+  - Deleted or renamed model `ConnectedRegistryPropertiesActivation`
+  - Deleted or renamed model `ConnectedRegistryPropertiesAutoGenerated`
+  - Deleted or renamed model `ConnectedRegistryUpdateParametersProperties`
+  - Deleted or renamed model `ConnectedRegistryUpdateProperties`
+
 ## 14.1.0b1 (2025-05-15)
 
 ### Other Changes

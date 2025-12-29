@@ -55,7 +55,7 @@ class GleuScoreEvaluator(EvaluatorBase):
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
 
-    id = "azureml://registries/azureml/models/Gleu-Score-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/gleu_score"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

@@ -23,6 +23,13 @@ stages:
       - job: ValidateDependencies
         timeoutInMinutes: 120
         steps:
+          - task: UsePythonVersion@0
+            displayName: 'Use Python $(PythonVersion)'
+            condition: succeededOrFailed()
+            inputs:
+              versionSpec: '$(PythonVersion)'
+
+          - template: /eng/pipelines/templates/steps/use-venv.yml
 
           - template: /eng/pipelines/templates/steps/analyze_dependency.yml
             parameters:
@@ -99,14 +106,13 @@ stages:
     displayName: Compliance Tools
     dependsOn: []
 
+    variables:
+      Codeql.SkipTaskAutoInjection: false
+
     jobs:
       - job: ComplianceTools
         timeoutInMinutes: 120
         steps:
-          - template: /eng/common/pipelines/templates/steps/credscan.yml
-            parameters:
-              BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-
           - template: /eng/common/pipelines/templates/steps/policheck.yml
             parameters:
               PublishAnalysisLogs: false

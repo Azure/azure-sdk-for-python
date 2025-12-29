@@ -30,12 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.workspaces.delete(
+    client.workspaces.begin_delete(
         resource_group_name="rgworkspaces",
-        workspace_name="E___-3",
-    )
+        workspace_name="default",
+    ).result()
 
 
-# x-ms-original-file: 2025-04-01-preview/Workspaces_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Workspaces_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

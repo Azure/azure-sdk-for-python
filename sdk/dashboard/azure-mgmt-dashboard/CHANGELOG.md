@@ -1,5 +1,79 @@
 # Release History
 
+## 2.0.0 (2025-10-10)
+
+### Features Added
+
+  - Model `DashboardManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DashboardManagementClient` added method `send_request`
+  - Client `DashboardManagementClient` added operation group `integration_fabrics`
+  - Client `DashboardManagementClient` added operation group `managed_dashboards`
+  - Model `GrafanaAvailablePlugin` added property `type`
+  - Model `GrafanaAvailablePlugin` added property `author`
+  - Model `GrafanaConfigurations` added property `snapshots`
+  - Model `GrafanaConfigurations` added property `users`
+  - Model `GrafanaConfigurations` added property `security`
+  - Model `GrafanaConfigurations` added property `unified_alerting_screenshots`
+  - Model `ManagedGrafanaProperties` added property `creator_can_admin`
+  - Model `ManagedGrafanaPropertiesUpdateParameters` added property `creator_can_admin`
+  - Model `ResourceSku` added property `size`
+  - Added enum `CreatorCanAdmin`
+  - Added model `IntegrationFabric`
+  - Added model `IntegrationFabricProperties`
+  - Added model `IntegrationFabricPropertiesUpdateParameters`
+  - Added model `IntegrationFabricUpdateParameters`
+  - Added model `ManagedDashboard`
+  - Added model `ManagedDashboardProperties`
+  - Added model `ManagedDashboardUpdateParameters`
+  - Added model `ProxyResource`
+  - Added model `Security`
+  - Added enum `Size`
+  - Added model `Snapshots`
+  - Added model `UnifiedAlertingScreenshots`
+  - Added model `Users`
+  - Model `GrafanaOperations` added method `begin_update`
+  - Added operation group `IntegrationFabricsOperations`
+  - Added operation group `ManagedDashboardsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ManagedGrafanaListResponse`
+  - Deleted or renamed model `ManagedPrivateEndpointModelListResponse`
+  - Deleted or renamed method `GrafanaOperations.update`
+
+## 2.0.0b1 (2025-07-31)
+
+### Features Added
+
+  - Client `DashboardManagementClient` added operation group `integration_fabrics`
+  - Client `DashboardManagementClient` added operation group `managed_dashboards`
+  - Model `GrafanaConfigurations` added property `snapshots`
+  - Model `GrafanaConfigurations` added property `users`
+  - Model `GrafanaConfigurations` added property `security`
+  - Model `GrafanaConfigurations` added property `unified_alerting_screenshots`
+  - Added model `IntegrationFabric`
+  - Added model `IntegrationFabricProperties`
+  - Added model `IntegrationFabricPropertiesUpdateParameters`
+  - Added model `IntegrationFabricUpdateParameters`
+  - Added model `ManagedDashboard`
+  - Added model `ManagedDashboardProperties`
+  - Added model `ManagedDashboardUpdateParameters`
+  - Added model `ProxyResource`
+  - Added model `Security`
+  - Added model `Snapshots`
+  - Added model `UnifiedAlertingScreenshots`
+  - Added model `Users`
+  - Operation group `GrafanaOperations` added method `begin_update`
+  - Added operation group `IntegrationFabricsOperations`
+  - Added operation group `ManagedDashboardsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Deleted or renamed model `ManagedGrafanaListResponse`
+  - Deleted or renamed model `ManagedPrivateEndpointModelListResponse`
+  - Deleted or renamed method `GrafanaOperations.update`
+
 ## 1.1.0 (2023-11-20)
 
 ### Features Added

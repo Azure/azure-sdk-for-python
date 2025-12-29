@@ -20,13 +20,44 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_job_steps_list_by_version(self, resource_group):
+        response = self.client.job_steps.list_by_version(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            job_agent_name="str",
+            job_name="str",
+            job_version=0,
+            api_version="2020-11-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_job_steps_get_by_version(self, resource_group):
+        response = self.client.job_steps.get_by_version(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            job_agent_name="str",
+            job_name="str",
+            job_version=0,
+            step_name="str",
+            api_version="2020-11-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_job_steps_list_by_job(self, resource_group):
         response = self.client.job_steps.list_by_job(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +72,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             step_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,10 +100,10 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
                 "id": "str",
                 "name": "str",
                 "output": {
+                    "credential": "str",
                     "databaseName": "str",
                     "serverName": "str",
                     "tableName": "str",
-                    "credential": "str",
                     "resourceGroupName": "str",
                     "schemaName": "dbo",
                     "subscriptionId": "str",
@@ -82,7 +113,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
                 "targetGroup": "str",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -97,38 +128,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             step_name="str",
-            api_version="2024-05-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_steps_list_by_version(self, resource_group):
-        response = self.client.job_steps.list_by_version(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            job_agent_name="str",
-            job_name="str",
-            job_version=0,
-            api_version="2024-05-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_steps_get_by_version(self, resource_group):
-        response = self.client.job_steps.get_by_version(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            job_agent_name="str",
-            job_name="str",
-            job_version=0,
-            step_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

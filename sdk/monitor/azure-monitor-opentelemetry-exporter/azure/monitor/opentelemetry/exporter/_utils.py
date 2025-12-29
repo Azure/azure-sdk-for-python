@@ -9,6 +9,7 @@ import platform
 import threading
 import time
 import warnings
+import hashlib
 from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
@@ -83,8 +84,7 @@ def _is_attach_enabled():
     return False
 
 
-def _get_sdk_version_prefix():
-    sdk_version_prefix = ""
+def _get_rp():
     rp = "u"
     if _is_on_functions():
         rp = "f"
@@ -95,17 +95,31 @@ def _get_sdk_version_prefix():
     #     rp = 'v'
     elif _is_on_aks():
         rp = "k"
+    return rp
 
+
+def _get_os():
     os = "u"
     system = platform.system()
     if system == "Linux":
         os = "l"
     elif system == "Windows":
         os = "w"
+    return os
 
+
+def _get_attach_type():
     attach_type = "m"
     if _is_attach_enabled():
         attach_type = "i"
+    return attach_type
+
+
+def _get_sdk_version_prefix():
+    sdk_version_prefix = ""
+    rp = _get_rp()
+    os = _get_os()
+    attach_type = _get_attach_type()
     sdk_version_prefix = "{}{}{}_".format(rp, os, attach_type)
 
     return sdk_version_prefix
@@ -124,6 +138,7 @@ def _getlocale():
             # by continuing to use getdefaultlocale() even though it has been deprecated.
             # we ignore the deprecation warnings to reduce noise
             warnings.simplefilter("ignore", category=DeprecationWarning)
+            # pylint: disable=deprecated-method
             return locale.getdefaultlocale()[0]
     except AttributeError:
         # locale.getlocal() has issues on Windows: https://github.com/python/cpython/issues/82986
@@ -317,10 +332,9 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
         return False
 
     # Check both old and new semantic convention attributes for HTTP user agent
-    user_agent = (
-        properties.get("user_agent.original") or  # type: ignore  # New semantic convention
-        properties.get("http.user_agent")  # type: ignore  # Legacy semantic convention
-    )
+    user_agent = properties.get("user_agent.original") or properties.get(  # type: ignore  # New semantic convention
+        "http.user_agent"
+    )  # type: ignore  # Legacy semantic convention
 
     if user_agent and isinstance(user_agent, str):
         return "AlwaysOn" in user_agent
@@ -378,12 +392,24 @@ def _get_scope(aad_audience=None):
 
 
 class Singleton(type):
-    _instance = None
+    """Metaclass for creating thread-safe singleton instances.
 
-    def __call__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instance
+    Supports multiple singleton classes by maintaining a separate instance
+    for each class that uses this metaclass.
+    """
+
+    _instances = {}  # type: ignore
+    _lock = threading.Lock()
+
+    def __call__(cls, *args: Any, **kwargs: Any) -> Any:
+        if cls not in cls._instances:
+            with cls._lock:
+                # Double-check pattern to avoid race conditions
+                if cls not in cls._instances:
+                    instance = super().__call__(*args, **kwargs)
+                    cls._instances[cls] = instance  # type: ignore
+        return cls._instances[cls]
+
 
 def _get_telemetry_type(item: TelemetryItem):
     if hasattr(item, "data") and item.data is not None:
@@ -391,6 +417,7 @@ def _get_telemetry_type(item: TelemetryItem):
         if base_type:
             return _TYPE_MAP.get(base_type, _UNKNOWN)
     return _UNKNOWN
+
 
 def get_compute_type():
     if _is_on_functions():
@@ -400,3 +427,7 @@ def get_compute_type():
     if _is_on_aks():
         return _RP_Names.AKS.value
     return _RP_Names.UNKNOWN.value
+
+
+def _get_sha256_hash(input_str: str) -> str:
+    return hashlib.sha256(input_str.encode("utf-8")).hexdigest()

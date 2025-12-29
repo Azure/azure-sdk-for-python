@@ -1,5 +1,472 @@
 # Release History
 
+## 41.0.0b3 (2025-12-22)
+
+### Features Added
+
+  - Added model `MachineSecurityProfile`
+
+### Breaking Changes
+
+  - Model `AgentPoolUpgradeSettings` deleted or renamed its instance variable `min_surge`
+
+## 40.2.0 (2025-11-24)
+
+### Features Added
+
+  - Enum `OSSKU` added member `UBUNTU2404`
+
+## 41.0.0b2 (2025-11-17)
+
+### Features Added
+
+  - Model `ManagedClusterIngressProfile` added property `application_load_balancer`
+  - Model `ManagedClusterIngressProfileWebAppRouting` added property `default_domain`
+  - Enum `Mode` added member `NFTABLES`
+  - Enum `WorkloadRuntime` added member `KATA_VM_ISOLATION`
+  - Added model `ManagedClusterIngressDefaultDomainProfile`
+  - Added model `ManagedClusterIngressProfileApplicationLoadBalancer`
+
+## 40.1.0 (2025-10-31)
+
+### Features Added
+
+  - Client `ContainerServiceClient` added operation group `managed_namespaces`
+  - Model `AgentPool` added property `local_dns_profile`
+  - Model `IstioEgressGateway` added property `name`
+  - Model `IstioEgressGateway` added property `namespace`
+  - Model `IstioEgressGateway` added property `gateway_configuration_name`
+  - Model `ManagedClusterAgentPoolProfile` added property `local_dns_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `local_dns_profile`
+  - Enum `WorkloadRuntime` added member `KATA_VM_ISOLATION`
+  - Added enum `AdoptionPolicy`
+  - Added enum `DeletePolicy`
+  - Added enum `LocalDNSForwardDestination`
+  - Added enum `LocalDNSForwardPolicy`
+  - Added enum `LocalDNSMode`
+  - Added model `LocalDNSOverride`
+  - Added model `LocalDNSProfile`
+  - Added enum `LocalDNSProtocol`
+  - Added enum `LocalDNSQueryLogging`
+  - Added enum `LocalDNSServeStale`
+  - Added enum `LocalDNSState`
+  - Added model `ManagedNamespace`
+  - Added model `ManagedNamespaceListResult`
+  - Added model `NamespaceProperties`
+  - Added enum `NamespaceProvisioningState`
+  - Added model `NetworkPolicies`
+  - Added enum `PolicyRule`
+  - Added model `ResourceQuota`
+  - Added operation group `ManagedNamespacesOperations`
+
+## 41.0.0b1 (2025-10-24)
+
+### Features Added
+
+  - Client `ContainerServiceClient` added operation group `container_service`
+  - Client `ContainerServiceClient` added operation group `managed_namespaces`
+  - Client `ContainerServiceClient` added operation group `operation_status_result`
+  - Client `ContainerServiceClient` added operation group `managed_cluster_snapshots`
+  - Client `ContainerServiceClient` added operation group `load_balancers`
+  - Client `ContainerServiceClient` added operation group `identity_bindings`
+  - Client `ContainerServiceClient` added operation group `jwt_authenticators`
+  - Client `ContainerServiceClient` added operation group `mesh_memberships`
+  - Model `AdvancedNetworking` added property `performance`
+  - Model `AdvancedNetworkingSecurity` added property `transit_encryption`
+  - Model `AgentPool` added property `upgrade_strategy`
+  - Model `AgentPool` added property `upgrade_settings_blue_green`
+  - Model `AgentPool` added property `node_initialization_taints`
+  - Model `AgentPool` added property `artifact_streaming_profile`
+  - Model `AgentPool` added property `local_dns_profile`
+  - Model `AgentPool` added property `node_customization_profile`
+  - Enum `AgentPoolMode` added member `MACHINES`
+  - Enum `AgentPoolMode` added member `MANAGED_SYSTEM`
+  - Enum `AgentPoolSSHAccess` added member `ENTRA_ID`
+  - Model `AgentPoolUpgradeProfile` added property `components_by_releases`
+  - Model `AgentPoolUpgradeProfile` added property `recently_used_versions`
+  - Model `AgentPoolUpgradeProfilePropertiesUpgradesItem` added property `is_out_of_support`
+  - Model `AgentPoolUpgradeSettings` added property `min_surge`
+  - Model `AgentPoolUpgradeSettings` added property `max_blocked_nodes`
+  - Model `ContainerServiceNetworkProfile` added property `pod_link_local_access`
+  - Model `ContainerServiceNetworkProfile` added property `kube_proxy_config`
+  - Model `GPUProfile` added property `driver_type`
+  - Model `IstioComponents` added property `proxy_redirection_mechanism`
+  - Model `IstioEgressGateway` added property `name`
+  - Model `IstioEgressGateway` added property `namespace`
+  - Model `IstioEgressGateway` added property `gateway_configuration_name`
+  - Model `KubeletConfig` added property `seccomp_default`
+  - Model `MachineNetworkProperties` added property `vnet_subnet_id`
+  - Model `MachineNetworkProperties` added property `pod_subnet_id`
+  - Model `MachineNetworkProperties` added property `enable_node_public_ip`
+  - Model `MachineNetworkProperties` added property `node_public_ip_prefix_id`
+  - Model `MachineNetworkProperties` added property `node_public_ip_tags`
+  - Model `MachineProperties` added property `hardware`
+  - Model `MachineProperties` added property `operating_system`
+  - Model `MachineProperties` added property `kubernetes`
+  - Model `MachineProperties` added property `mode`
+  - Model `MachineProperties` added property `security`
+  - Model `MachineProperties` added property `priority`
+  - Model `MachineProperties` added property `node_image_version`
+  - Model `MachineProperties` added property `provisioning_state`
+  - Model `MachineProperties` added property `tags`
+  - Model `MachineProperties` added property `e_tag`
+  - Model `MachineProperties` added property `status`
+  - Model `ManagedCluster` added property `creation_data`
+  - Model `ManagedCluster` added property `enable_namespace_resources`
+  - Model `ManagedCluster` added property `scheduler_profile`
+  - Model `ManagedCluster` added property `hosted_system_profile`
+  - Model `ManagedClusterAgentPoolProfile` added property `upgrade_strategy`
+  - Model `ManagedClusterAgentPoolProfile` added property `upgrade_settings_blue_green`
+  - Model `ManagedClusterAgentPoolProfile` added property `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfile` added property `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfile` added property `local_dns_profile`
+  - Model `ManagedClusterAgentPoolProfile` added property `node_customization_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `upgrade_strategy`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `upgrade_settings_blue_green`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `local_dns_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `node_customization_profile`
+  - Model `ManagedClusterAzureMonitorProfile` added property `container_insights`
+  - Model `ManagedClusterAzureMonitorProfile` added property `app_monitoring`
+  - Model `ManagedClusterHTTPProxyConfig` added property `effective_no_proxy`
+  - Model `ManagedClusterHTTPProxyConfig` added property `enabled`
+  - Model `ManagedClusterIngressProfile` added property `gateway_api`
+  - Model `ManagedClusterLoadBalancerProfile` added property `cluster_service_load_balancer_health_probe_mode`
+  - Model `ManagedClusterPoolUpgradeProfile` added property `components_by_releases`
+  - Model `ManagedClusterPoolUpgradeProfileUpgradesItem` added property `is_out_of_support`
+  - Model `ManagedClusterSecurityProfile` added property `kubernetes_resource_object_encryption_profile`
+  - Model `ManagedClusterSecurityProfile` added property `image_integrity`
+  - Model `ManagedClusterSecurityProfile` added property `node_restriction`
+  - Model `ManagedClusterSecurityProfileDefender` added property `security_gating`
+  - Model `ManagedClusterStorageProfileDiskCSIDriver` added property `version`
+  - Model `ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler` added property `addon_autoscaling`
+  - Enum `OSSKU` added member `FLATCAR`
+  - Enum `OSSKU` added member `MARINER`
+  - Enum `OSSKU` added member `UBUNTU2404`
+  - Enum `OSSKU` added member `WINDOWS2025`
+  - Enum `OSSKU` added member `WINDOWS_ANNUAL`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Model `ScaleProfile` added property `autoscale`
+  - Enum `SnapshotType` added member `MANAGED_CLUSTER`
+  - Enum `WorkloadRuntime` added member `KATA_MSHV_VM_ISOLATION`
+  - Added enum `AccelerationMode`
+  - Added enum `AddonAutoscaling`
+  - Added enum `AdoptionPolicy`
+  - Added model `AdvancedNetworkingPerformance`
+  - Added model `AdvancedNetworkingSecurityTransitEncryption`
+  - Added model `AgentPoolArtifactStreamingProfile`
+  - Added model `AgentPoolBlueGreenUpgradeSettings`
+  - Added model `AgentPoolRecentlyUsedVersion`
+  - Added model `AutoScaleProfile`
+  - Added enum `ClusterServiceLoadBalancerHealthProbeMode`
+  - Added model `Component`
+  - Added model `ComponentsByRelease`
+  - Added model `ContainerServiceNetworkProfileKubeProxyConfig`
+  - Added model `ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig`
+  - Added enum `DeletePolicy`
+  - Added enum `DriftAction`
+  - Added enum `DriverType`
+  - Added model `GuardrailsAvailableVersion`
+  - Added model `GuardrailsAvailableVersionsList`
+  - Added model `GuardrailsAvailableVersionsProperties`
+  - Added enum `GuardrailsSupport`
+  - Added enum `IPFamily`
+  - Added model `IdentityBinding`
+  - Added model `IdentityBindingListResult`
+  - Added model `IdentityBindingManagedIdentityProfile`
+  - Added model `IdentityBindingOidcIssuerProfile`
+  - Added model `IdentityBindingProperties`
+  - Added enum `IdentityBindingProvisioningState`
+  - Added enum `InfrastructureEncryption`
+  - Added enum `IpvsScheduler`
+  - Added model `JWTAuthenticator`
+  - Added model `JWTAuthenticatorClaimMappingExpression`
+  - Added model `JWTAuthenticatorClaimMappings`
+  - Added model `JWTAuthenticatorExtraClaimMappingExpression`
+  - Added model `JWTAuthenticatorIssuer`
+  - Added model `JWTAuthenticatorListResult`
+  - Added model `JWTAuthenticatorProperties`
+  - Added enum `JWTAuthenticatorProvisioningState`
+  - Added model `JWTAuthenticatorValidationRule`
+  - Added model `KubernetesResourceObjectEncryptionProfile`
+  - Added model `LabelSelector`
+  - Added model `LabelSelectorRequirement`
+  - Added model `LoadBalancer`
+  - Added model `LoadBalancerListResult`
+  - Added enum `LocalDNSForwardDestination`
+  - Added enum `LocalDNSForwardPolicy`
+  - Added enum `LocalDNSMode`
+  - Added model `LocalDNSOverride`
+  - Added model `LocalDNSProfile`
+  - Added enum `LocalDNSProtocol`
+  - Added enum `LocalDNSQueryLogging`
+  - Added enum `LocalDNSServeStale`
+  - Added enum `LocalDNSState`
+  - Added model `MachineHardwareProfile`
+  - Added model `MachineKubernetesProfile`
+  - Added model `MachineOSProfile`
+  - Added model `MachineOSProfileLinuxProfile`
+  - Added model `MachineStatus`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoring`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics`
+  - Added model `ManagedClusterAzureMonitorProfileContainerInsights`
+  - Added model `ManagedClusterHostedSystemProfile`
+  - Added model `ManagedClusterIngressProfileGatewayConfiguration`
+  - Added model `ManagedClusterPropertiesForSnapshot`
+  - Added model `ManagedClusterSecurityProfileDefenderSecurityGating`
+  - Added model `ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem`
+  - Added model `ManagedClusterSecurityProfileImageIntegrity`
+  - Added model `ManagedClusterSecurityProfileNodeRestriction`
+  - Added model `ManagedClusterSnapshot`
+  - Added model `ManagedClusterSnapshotListResult`
+  - Added enum `ManagedGatewayType`
+  - Added model `ManagedNamespace`
+  - Added model `ManagedNamespaceListResult`
+  - Added model `MeshMembership`
+  - Added model `MeshMembershipProperties`
+  - Added enum `MeshMembershipProvisioningState`
+  - Added model `MeshMembershipsListResult`
+  - Added enum `Mode`
+  - Added model `NamespaceProperties`
+  - Added enum `NamespaceProvisioningState`
+  - Added model `NetworkPolicies`
+  - Added model `NetworkProfileForSnapshot`
+  - Added model `NodeCustomizationProfile`
+  - Added model `NodeImageVersion`
+  - Added model `NodeImageVersionsListResult`
+  - Added model `OperationStatusResult`
+  - Added model `OperationStatusResultList`
+  - Added enum `Operator`
+  - Added enum `PodLinkLocalAccess`
+  - Added enum `PolicyRule`
+  - Added enum `ProxyRedirectionMechanism`
+  - Added model `RebalanceLoadBalancersRequestBody`
+  - Added model `ResourceQuota`
+  - Added model `SafeguardsAvailableVersion`
+  - Added model `SafeguardsAvailableVersionsList`
+  - Added model `SafeguardsAvailableVersionsProperties`
+  - Added enum `SafeguardsSupport`
+  - Added enum `SchedulerConfigMode`
+  - Added model `SchedulerInstanceProfile`
+  - Added model `SchedulerProfile`
+  - Added model `SchedulerProfileSchedulerInstanceProfiles`
+  - Added enum `SeccompDefault`
+  - Added enum `TransitEncryptionType`
+  - Added enum `UpgradeStrategy`
+  - Added enum `VmState`
+  - Operation group `AgentPoolsOperations` added method `begin_complete_upgrade`
+  - Operation group `MachinesOperations` added method `begin_create_or_update`
+  - Operation group `ManagedClustersOperations` added method `begin_rebalance_load_balancers`
+  - Operation group `ManagedClustersOperations` added method `get_guardrails_versions`
+  - Operation group `ManagedClustersOperations` added method `get_safeguards_versions`
+  - Operation group `ManagedClustersOperations` added method `list_guardrails_versions`
+  - Operation group `ManagedClustersOperations` added method `list_safeguards_versions`
+  - Added operation group `ContainerServiceOperations`
+  - Added operation group `IdentityBindingsOperations`
+  - Added operation group `JWTAuthenticatorsOperations`
+  - Added operation group `LoadBalancersOperations`
+  - Added operation group `ManagedClusterSnapshotsOperations`
+  - Added operation group `ManagedNamespacesOperations`
+  - Added operation group `MeshMembershipsOperations`
+  - Added operation group `OperationStatusResultOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `IpFamily`
+
+## 40.0.0 (2025-10-10)
+
+### Features Added
+
+  - Model `ContainerServiceClient` added parameter `cloud_setting` in method `__init__`
+  - Model `AdvancedNetworkingSecurity` added property `advanced_network_policies`
+  - Model `AgentPoolSecurityProfile` added property `ssh_access`
+  - Added enum `AdvancedNetworkPolicies`
+  - Added enum `AgentPoolSSHAccess`
+
+### Breaking Changes
+
+  - Deleted or renamed model `CloudErrorBody`
+
+## 39.1.0 (2025-08-20)
+
+### Features Added
+
+  - Model `ManagedCluster` added property `kind`
+  - Enum `ManagedClusterSKUName` added member `AUTOMATIC`
+  - Enum `OSSKU` added member `AZURE_LINUX3`
+
+## 39.0.0 (2025-07-21)
+
+### Features Added
+
+  - Added enum `IpFamily`
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Deleted or renamed client operation group `ContainerServiceClient.container_service`
+  - Deleted or renamed client operation group `ContainerServiceClient.managed_namespaces`
+  - Deleted or renamed client operation group `ContainerServiceClient.operation_status_result`
+  - Deleted or renamed client operation group `ContainerServiceClient.managed_cluster_snapshots`
+  - Deleted or renamed client operation group `ContainerServiceClient.load_balancers`
+  - Model `AdvancedNetworkingSecurity` deleted or renamed its instance variable `advanced_network_policies`
+  - Model `AdvancedNetworkingSecurity` deleted or renamed its instance variable `transit_encryption`
+  - Model `AgentPool` deleted or renamed its instance variable `enable_custom_ca_trust`
+  - Model `AgentPool` deleted or renamed its instance variable `node_initialization_taints`
+  - Model `AgentPool` deleted or renamed its instance variable `artifact_streaming_profile`
+  - Model `AgentPool` deleted or renamed its instance variable `local_dns_profile`
+  - Deleted or renamed enum value `AgentPoolMode.MACHINES`
+  - Deleted or renamed enum value `AgentPoolMode.MANAGED_SYSTEM`
+  - Model `AgentPoolSecurityProfile` deleted or renamed its instance variable `ssh_access`
+  - Model `AgentPoolUpgradeProfile` deleted or renamed its instance variable `components_by_releases`
+  - Model `AgentPoolUpgradeProfilePropertiesUpgradesItem` deleted or renamed its instance variable `is_out_of_support`
+  - Model `AgentPoolUpgradeSettings` deleted or renamed its instance variable `max_blocked_nodes`
+  - Model `ContainerServiceNetworkProfile` deleted or renamed its instance variable `pod_link_local_access`
+  - Model `ContainerServiceNetworkProfile` deleted or renamed its instance variable `kube_proxy_config`
+  - Model `GPUProfile` deleted or renamed its instance variable `driver_type`
+  - Model `IstioEgressGateway` deleted or renamed its instance variable `name`
+  - Model `IstioEgressGateway` deleted or renamed its instance variable `namespace`
+  - Model `IstioEgressGateway` deleted or renamed its instance variable `gateway_configuration_name`
+  - Model `KubeletConfig` deleted or renamed its instance variable `seccomp_default`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `vnet_subnet_id`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `pod_subnet_id`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `enable_node_public_ip`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `node_public_ip_prefix_id`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `node_public_ip_tags`
+  - Model `MachineProperties` deleted or renamed its instance variable `hardware`
+  - Model `MachineProperties` deleted or renamed its instance variable `operating_system`
+  - Model `MachineProperties` deleted or renamed its instance variable `kubernetes`
+  - Model `MachineProperties` deleted or renamed its instance variable `mode`
+  - Model `MachineProperties` deleted or renamed its instance variable `security`
+  - Model `MachineProperties` deleted or renamed its instance variable `priority`
+  - Model `MachineProperties` deleted or renamed its instance variable `node_image_version`
+  - Model `MachineProperties` deleted or renamed its instance variable `provisioning_state`
+  - Model `MachineProperties` deleted or renamed its instance variable `tags`
+  - Model `MachineProperties` deleted or renamed its instance variable `e_tag`
+  - Model `MachineProperties` deleted or renamed its instance variable `status`
+  - Model `ManagedCluster` deleted or renamed its instance variable `kind`
+  - Model `ManagedCluster` deleted or renamed its instance variable `creation_data`
+  - Model `ManagedCluster` deleted or renamed its instance variable `enable_namespace_resources`
+  - Model `ManagedCluster` deleted or renamed its instance variable `scheduler_profile`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `enable_custom_ca_trust`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `local_dns_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `enable_custom_ca_trust`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `local_dns_profile`
+  - Model `ManagedClusterAzureMonitorProfile` deleted or renamed its instance variable `container_insights`
+  - Model `ManagedClusterAzureMonitorProfile` deleted or renamed its instance variable `app_monitoring`
+  - Model `ManagedClusterHTTPProxyConfig` deleted or renamed its instance variable `effective_no_proxy`
+  - Model `ManagedClusterHTTPProxyConfig` deleted or renamed its instance variable `enabled`
+  - Model `ManagedClusterLoadBalancerProfile` deleted or renamed its instance variable `cluster_service_load_balancer_health_probe_mode`
+  - Model `ManagedClusterPoolUpgradeProfile` deleted or renamed its instance variable `components_by_releases`
+  - Model `ManagedClusterPoolUpgradeProfileUpgradesItem` deleted or renamed its instance variable `is_out_of_support`
+  - Deleted or renamed enum value `ManagedClusterSKUName.AUTOMATIC`
+  - Model `ManagedClusterSecurityProfile` deleted or renamed its instance variable `image_integrity`
+  - Model `ManagedClusterSecurityProfile` deleted or renamed its instance variable `node_restriction`
+  - Model `ManagedClusterSecurityProfileDefender` deleted or renamed its instance variable `security_gating`
+  - Model `ManagedClusterStorageProfileDiskCSIDriver` deleted or renamed its instance variable `version`
+  - Model `ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler` deleted or renamed its instance variable `addon_autoscaling`
+  - Deleted or renamed enum value `OSSKU.MARINER`
+  - Deleted or renamed enum value `OSSKU.UBUNTU2404`
+  - Deleted or renamed enum value `OSSKU.WINDOWS_ANNUAL`
+  - Deleted or renamed enum value `PublicNetworkAccess.SECURED_BY_PERIMETER`
+  - Model `ScaleProfile` deleted or renamed its instance variable `autoscale`
+  - Deleted or renamed enum value `SnapshotType.MANAGED_CLUSTER`
+  - Deleted or renamed enum value `WorkloadRuntime.KATA_MSHV_VM_ISOLATION`
+  - Deleted or renamed model `AddonAutoscaling`
+  - Deleted or renamed model `AdoptionPolicy`
+  - Deleted or renamed model `AdvancedNetworkPolicies`
+  - Deleted or renamed model `AdvancedNetworkingSecurityTransitEncryption`
+  - Deleted or renamed model `AgentPoolArtifactStreamingProfile`
+  - Deleted or renamed model `AgentPoolSSHAccess`
+  - Deleted or renamed model `AutoScaleProfile`
+  - Deleted or renamed model `ClusterServiceLoadBalancerHealthProbeMode`
+  - Deleted or renamed model `Component`
+  - Deleted or renamed model `ComponentsByRelease`
+  - Deleted or renamed model `ContainerServiceNetworkProfileKubeProxyConfig`
+  - Deleted or renamed model `ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig`
+  - Deleted or renamed model `DeletePolicy`
+  - Deleted or renamed model `DriftAction`
+  - Deleted or renamed model `DriverType`
+  - Deleted or renamed model `GuardrailsAvailableVersion`
+  - Deleted or renamed model `GuardrailsAvailableVersionsList`
+  - Deleted or renamed model `GuardrailsAvailableVersionsProperties`
+  - Deleted or renamed model `GuardrailsSupport`
+  - Deleted or renamed model `IPFamily`
+  - Deleted or renamed model `IpvsScheduler`
+  - Deleted or renamed model `LabelSelector`
+  - Deleted or renamed model `LabelSelectorRequirement`
+  - Deleted or renamed model `LoadBalancer`
+  - Deleted or renamed model `LocalDNSForwardDestination`
+  - Deleted or renamed model `LocalDNSForwardPolicy`
+  - Deleted or renamed model `LocalDNSMode`
+  - Deleted or renamed model `LocalDNSOverride`
+  - Deleted or renamed model `LocalDNSProfile`
+  - Deleted or renamed model `LocalDNSProtocol`
+  - Deleted or renamed model `LocalDNSQueryLogging`
+  - Deleted or renamed model `LocalDNSServeStale`
+  - Deleted or renamed model `LocalDNSState`
+  - Deleted or renamed model `MachineHardwareProfile`
+  - Deleted or renamed model `MachineKubernetesProfile`
+  - Deleted or renamed model `MachineOSProfile`
+  - Deleted or renamed model `MachineOSProfileLinuxProfile`
+  - Deleted or renamed model `MachineStatus`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoring`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileContainerInsights`
+  - Deleted or renamed model `ManagedClusterPropertiesForSnapshot`
+  - Deleted or renamed model `ManagedClusterSecurityProfileDefenderSecurityGating`
+  - Deleted or renamed model `ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem`
+  - Deleted or renamed model `ManagedClusterSecurityProfileImageIntegrity`
+  - Deleted or renamed model `ManagedClusterSecurityProfileNodeRestriction`
+  - Deleted or renamed model `ManagedClusterSnapshot`
+  - Deleted or renamed model `ManagedNamespace`
+  - Deleted or renamed model `Mode`
+  - Deleted or renamed model `NamespaceProperties`
+  - Deleted or renamed model `NamespaceProvisioningState`
+  - Deleted or renamed model `NetworkPolicies`
+  - Deleted or renamed model `NetworkProfileForSnapshot`
+  - Deleted or renamed model `NodeImageVersion`
+  - Deleted or renamed model `OperationStatusResult`
+  - Deleted or renamed model `OperationStatusResultList`
+  - Deleted or renamed model `Operator`
+  - Deleted or renamed model `PodLinkLocalAccess`
+  - Deleted or renamed model `PolicyRule`
+  - Deleted or renamed model `RebalanceLoadBalancersRequestBody`
+  - Deleted or renamed model `ResourceQuota`
+  - Deleted or renamed model `SafeguardsAvailableVersion`
+  - Deleted or renamed model `SafeguardsAvailableVersionsList`
+  - Deleted or renamed model `SafeguardsAvailableVersionsProperties`
+  - Deleted or renamed model `SafeguardsSupport`
+  - Deleted or renamed model `SchedulerConfigMode`
+  - Deleted or renamed model `SchedulerInstanceProfile`
+  - Deleted or renamed model `SchedulerProfile`
+  - Deleted or renamed model `SchedulerProfileSchedulerInstanceProfiles`
+  - Deleted or renamed model `SeccompDefault`
+  - Deleted or renamed model `TransitEncryptionType`
+  - Deleted or renamed model `VmState`
+  - Deleted or renamed method `MachinesOperations.begin_create_or_update`
+  - Method `ManagedClustersOperations.begin_delete` deleted or renamed its parameter `ignore_pod_disruption_budget` of kind `positional_or_keyword`
+  - Deleted or renamed method `ManagedClustersOperations.begin_rebalance_load_balancers`
+  - Deleted or renamed method `ManagedClustersOperations.get_guardrails_versions`
+  - Deleted or renamed method `ManagedClustersOperations.get_safeguards_versions`
+  - Deleted or renamed method `ManagedClustersOperations.list_guardrails_versions`
+  - Deleted or renamed method `ManagedClustersOperations.list_safeguards_versions`
+  - Deleted or renamed operation group `ContainerServiceOperations`
+  - Deleted or renamed operation group `LoadBalancersOperations`
+  - Deleted or renamed operation group `ManagedClusterSnapshotsOperations`
+  - Deleted or renamed operation group `ManagedNamespacesOperations`
+  - Deleted or renamed operation group `OperationStatusResultOperations`
+
 ## 38.0.0 (2025-07-15)
 
 ### Features Added

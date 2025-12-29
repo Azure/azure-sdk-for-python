@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 -e ../../core/azure-core
 -e ../../identity/azure-identity
 azure-mgmt-storage==20.1.0

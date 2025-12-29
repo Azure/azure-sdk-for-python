@@ -1,77 +1,134 @@
 # Release History
-## 1.29.0 (unreleased)
+
+## 1.31.0 (unreleased)
 
 ### Features Added
 
+- Added support for `default_deployment_template` property in Model entity, allowing models to specify a default deployment template for online deployments.
+- Online deployments now display informational messages when deploying models with configured default deployment templates.
+
 ### Bugs Fixed
+
+### Other Changes
+
+- Ensuring that azureml-dataprep-rslex is only installed for PyPy below 3.10 and CPython below 3.13.
+- Adding support for Python 3.14.
+- Dropping support for Python 3.7 and 3.8.
+- Update the deployment template parameter `allowed_instance_type` -> `allowed_instance_types`
+
+## 1.30.0 (2025-10-29)
+
+### Features Added
+
+- Removed the dependencies - msrest and six
+- Added support for `Deployment Templates` along with the following operations:
+  - `ml_client.deployment_templates.create_or_update()`
+  - `ml_client.deployment_templates.list()`
+  - `ml_client.deployment_templates.get()`
+  - `ml_client.deployment_templates.archive()`
+  - `ml_client.deployment_templates.restore()`
+
+## 1.29.0 (2025-09-01)
+
+### Features Added
+
+- Removed the dependencies - msrest and six
+- Added support for `Deployment Templates` along with the following operations:
+  - `ml_client.deployment_templates.create_or_update()`
+  - `ml_client.deployment_templates.list()`
+  - `ml_client.deployment_templates.get()`
+  - `ml_client.deployment_templates.archive()`
+  - `ml_client.deployment_templates.restore()`
+
+### Bugs Fixed
+
+- Fix for registry resource group passed to OnlineEndpointOperations when model is in registry in different resource group compared to workspace.
+- Set defaults for min_instances, max_instances, idle_time_before_scale_down in AmlCompute
+
+### Other Changes
+
+- v2 component types are now case insensitive
 
 ## 1.28.1 (2025-07-08)
 
 ### Features Added
+
 - Added a workflow to create GitHub issues in case a major version of a dependency is released
 
 ## 1.27.1 (2025-05-13)
 
 ### Bugs Fixed
-  - Handle key error for missing props in PAT url case.
+
+- Handle key error for missing props in PAT url case.
 
 ## 1.27.0 (2025-05-07)
 
 ### Features Added
+
 - Added Target storage connection for capability host.
 
 ### Bugs Fixed
+
 - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
 - Removing Git-related properties from job properties if a PAT token is detected in the repository URL.
 - Fix deployment creation for registry models
 
 ### Other Changes
+
 - Hub and Project are officially GA'd and no longer experimental.
 - PipelineComponentBatchDeployment, ModelBatchDeployment, ModelBatchDeploymentSettings are GA
 
 ## 1.26.4 (2025-04-23)
 
 ### Other Changes
-  - Restrict major version auto updates for external dependencies to ensure stability and prevent build failures for breaking changes.
+
+- Restrict major version auto updates for external dependencies to ensure stability and prevent build failures for breaking changes.
 
 ## 1.26.3 (2025-04-17)
 
 ### Bugs Fixed
- - Updated `marshmallow` dependency to restrict versions to `>=3.5,<4.0.0` 
- in `install_requires` to ensure compatibility.
+
+- Updated `marshmallow` dependency to restrict versions to `>=3.5,<4.0.0`
+  in `install_requires` to ensure compatibility.
 
 ## 1.26.2 (2025-04-08)
 
 ### Bugs Fixed
- - Made AI Search connections property optional while creating capability host.
-  
+
+- Made AI Search connections property optional while creating capability host.
+
 ## 1.26.1 (2025-03-27)
 
 ### Bugs Fixed
- - Handle missing duration value in deployment poller result
+
+- Handle missing duration value in deployment poller result
 
 ## 1.26.0 (2025-03-11)
 
 ### Features Added
-  - Adding parent job support for command job.
-  - Adding multiple docker argument support for command job.
+
+- Adding parent job support for command job.
+- Adding multiple docker argument support for command job.
 
 ### Bugs Fixed
-  - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
-  - #39744 - Fixing a serialization issue in RecurrencePattern schedule.
-  - #39793 - Fixing bug in AML OBO to work with KV secret client.
-  - Fix environment archiving and restore
+
+- #37464 - Allowing to update a component in register with anonymousEnvironment environment.
+- #39744 - Fixing a serialization issue in RecurrencePattern schedule.
+- #39793 - Fixing bug in AML OBO to work with KV secret client.
+- Fix environment archiving and restore
 
 ### Other Changes
-  - Removing use of protected methods/classes imported from external libraries.
+
+- Removing use of protected methods/classes imported from external libraries.
 
 ## 1.25.0 (2025-02-11)
 
 ### Features Added
 
 ### Bugs Fixed
-  - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs.
-  - #37738 - documentation fix for deployment entities.
+
+- #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs.
+- #37738 - documentation fix for deployment entities.
 
 ### Other Changes
 
@@ -80,64 +137,68 @@
 ## 1.24.0 (2025-01-07)
 
 ### Bugs Fixed
-  - Fixed disableLocalAuthentication handling while creating amlCompute
-  - Fixed model download issue
+
+- Fixed disableLocalAuthentication handling while creating amlCompute
+- Fixed model download issue
 
 ## 1.23.1 (2025-01-07)
 
 ### Bugs Fixed
-  - Removed marshmallow _T reference
+
+- Removed marshmallow _T reference
 
 ## 1.23.0 (2024-12-05)
 
 ### Features Added
-  - Added support for IP-based access control to default and hub workspaces. 
-  - Add support for additional include in spark component.
-  - Adding enterprise agent feature for AI Hub and AI Project. Adding Create, Delete and Get operations.
-  - Removing preview tag for following connections type
-    - Azure AI Search
-    - Azure AI Content Safety
-    - Azure AI Speech
-    - Azure Blob Storage
-    - Microsoft OneLake
 
+- Added support for IP-based access control to default and hub workspaces.
+- Add support for additional include in spark component.
+- Adding enterprise agent feature for AI Hub and AI Project. Adding Create, Delete and Get operations.
+- Removing preview tag for following connections type
+  - Azure AI Search
+  - Azure AI Content Safety
+  - Azure AI Speech
+  - Azure Blob Storage
+  - Microsoft OneLake
 
 ## 1.22.3 (2024-11-20)
 
 ### Bugs Fixed
-  - Fix error message while resolving mlflow url in get workspace details
+
+- Fix error message while resolving mlflow url in get workspace details
 
 ## 1.22.2 (2024-11-18)
 
 ### Bugs Fixed
-  - **#3620407** - Fix Datastore credentials show up as NoneCredentials
+
+- **#3620407** - Fix Datastore credentials show up as NoneCredentials
 
 ## 1.22.1 (2024-11-13)
 
-
 ### Bugs Fixed
-  - **#38493** - Fix error NoneType object is not subscriptable
+
+- **#38493** - Fix error NoneType object is not subscriptable
 
 ## 1.22.0 (2024-11-11)
 
 ### Features Added
-  - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
-  AllowOnlyApprovedOutbound mode. FirewallSku options are `Standard` or `Basic`, defaults to `Standard`
-  - Update TLS version from 1.0 to 1.2
-  - Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.model_customization`
-  - Added Workspace property `ProvisionNetworkNow` to trigger the provisioning of the managed VNet with the default
-    Options when creating a Workspace with the managed VNet enabled, or else it does nothing
-### Bugs Fixed
-  - Fix send email notification issue in model monitoring
 
+- Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
+  AllowOnlyApprovedOutbound mode. FirewallSku options are `Standard` or `Basic`, defaults to `Standard`
+- Update TLS version from 1.0 to 1.2
+- Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.model_customization`
+- Added Workspace property `ProvisionNetworkNow` to trigger the provisioning of the managed VNet with the default
+  Options when creating a Workspace with the managed VNet enabled, or else it does nothing
+
+### Bugs Fixed
+
+- Fix send email notification issue in model monitoring
 
 ## 1.21.1 (2024-10-21)
-
 
 ### Bugs Fixed
 
 - **#37857** - Fix online deployment registry issue
-  
 
 ## 1.21.0 (2024-09-30)
 
@@ -710,4 +771,3 @@
 ### Features Added
 
 - First preview.
-

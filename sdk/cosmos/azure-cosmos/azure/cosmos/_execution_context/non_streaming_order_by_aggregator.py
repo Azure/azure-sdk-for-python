@@ -3,7 +3,6 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context import document_producer
@@ -22,7 +21,8 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
     by the user.
     """
 
-    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info, response_hook):
+    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info,
+                 response_hook, raw_response_hook):
         super(_NonStreamingOrderByContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -31,14 +31,15 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._resource_link = resource_link
         self._query = query
         self._partitioned_query_ex_info = partitioned_query_ex_info
-        self._sort_orders = partitioned_query_ex_info.get_order_by()
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
         self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
 
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = self._get_target_partition_key_range()
 
-        self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
+        sort_orders = partitioned_query_ex_info.get_order_by()
+        self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(sort_orders)
 
         targetPartitionQueryExecutionContextList = []
         for partitionTargetRange in targetPartitionRanges:
@@ -68,7 +69,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             while True:
                 try:
                     result = doc_producer.peek()
-                    item_result = document_producer._NonStreamingItemResultProducer(result, self._sort_orders)
+                    item_result = document_producer._NonStreamingItemResultProducer(result, sort_orders)
                     self._orderByPQ.push(item_result)
                     next(doc_producer)
                 except StopIteration:
@@ -143,11 +144,14 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             query,
             self._document_producer_comparator,
             self._options,
-            self._response_hook
+            self._response_hook,
+            self._raw_response_hook
         )
 
     def _get_target_partition_key_range(self):
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
-            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+            self._resource_link,
+            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            self._options
         )

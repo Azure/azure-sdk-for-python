@@ -281,7 +281,7 @@ class RegressionTest:
             logging.info("Extending dev requirement to include azure-sdk-tools")
             extend_dev_requirements(
                 filtered_dev_req_path,
-                ["../../../tools/azure-sdk-tools"],
+                ["../../../eng/tools/azure-sdk-tools"],
             )
             logging.info("Installing filtered dev requirements from {}".format(filtered_dev_req_path))
             run_check_call(

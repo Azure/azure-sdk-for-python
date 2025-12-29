@@ -24,7 +24,7 @@ class TestContainerAppsAPIManagedEnvironmentDiagnosticsOperations(AzureMgmtRecor
         response = self.client.managed_environment_diagnostics.list_detectors(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIManagedEnvironmentDiagnosticsOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             environment_name="str",
             detector_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

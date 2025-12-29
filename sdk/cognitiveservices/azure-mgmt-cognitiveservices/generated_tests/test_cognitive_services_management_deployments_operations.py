@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
         response = self.client.deployments.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -124,7 +124,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -141,7 +141,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -154,7 +154,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -167,7 +167,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

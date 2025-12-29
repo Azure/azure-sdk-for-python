@@ -17,21 +17,23 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @app_config_decorator
     def test_load_only_feature_flags(self, appconfiguration_connection_string):
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=[],
             feature_flag_enabled=True,
         )
         assert len(client.keys()) == 1
         assert FEATURE_MANAGEMENT_KEY in client
-        assert has_feature_flag(client, "Alpha")
-        assert "telemetry" not in get_feature_flag(client, "Alpha")
+        alpha = get_feature_flag(client, "Alpha")
+        assert alpha
+        assert "telemetry" in alpha
+        assert "enabled" not in alpha.get("telemetry")
 
     # method: load
     @recorded_by_proxy
     @app_config_decorator
     def test_select_feature_flags(self, appconfiguration_connection_string):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        setup_configs(client, None)
+        setup_configs(client, None, None)
 
         client = load(
             connection_string=appconfiguration_connection_string,

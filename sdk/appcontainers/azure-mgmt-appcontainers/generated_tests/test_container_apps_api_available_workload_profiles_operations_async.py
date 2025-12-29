@@ -24,7 +24,7 @@ class TestContainerAppsAPIAvailableWorkloadProfilesOperationsAsync(AzureMgmtReco
     async def test_available_workload_profiles_get(self, resource_group):
         response = self.client.available_workload_profiles.get(
             location="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

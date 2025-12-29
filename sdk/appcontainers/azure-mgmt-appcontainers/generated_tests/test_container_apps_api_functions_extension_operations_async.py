@@ -21,13 +21,13 @@ class TestContainerAppsAPIFunctionsExtensionOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_invoke_functions_host(self, resource_group):
+    async def test_functions_extension_invoke_functions_host(self, resource_group):
         response = await self.client.functions_extension.invoke_functions_host(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
             function_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself

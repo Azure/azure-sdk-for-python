@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
+from typing import TYPE_CHECKING
 from base64 import b64encode
 from hashlib import sha256
 from hmac import HMAC
@@ -12,6 +13,10 @@ import time
 from datetime import timezone
 from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload
+from .message import Properties
+
+if TYPE_CHECKING:
+    from .message import Message
 
 TZ_UTC: timezone = timezone.utc
 # Number of seconds between the Unix epoch (1/1/1970) and year 1 CE.
@@ -75,6 +80,13 @@ def add_batch(batch, message):
     encode_payload(output, message)
     batch[5].append(output)
 
+def set_message_properties(message, properties: list):
+    if not message[3]:
+        message[3] = Properties(*properties)
+
+def set_message_annotations(message, annotations: dict):
+    if not message[2]:
+        message[2] = annotations
 
 def encode_str(data, encoding="utf-8"):
     try:

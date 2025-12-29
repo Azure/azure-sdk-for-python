@@ -26,21 +26,21 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) SHAREPOINT_CONNECTION_ID  - The ID of the Sharepoint connection, in the format of:
-       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
+    3) SHAREPOINT_CONNECTION_NAME  - The name of a connection to the SharePoint resource as it is
+       listed in Azure AI Foundry connected resources.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import SharepointTool
+from azure.ai.agents.models import ListSortOrder, SharepointTool
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-conn_id = os.environ["SHAREPOINT_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["SHAREPOINT_CONNECTION_NAME"]).id
 
 # Initialize Sharepoint tool with connection id
 sharepoint = SharepointTool(connection_id=conn_id)
@@ -81,8 +81,15 @@ with project_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+            responses = []
+            for text_message in msg.text_messages:
+                responses.append(text_message.text.value)
+            message = " ".join(responses)
+            for annotation in msg.url_citation_annotations:
+                message = message.replace(
+                    annotation.text, f" [{annotation.url_citation.title}]({annotation.url_citation.url})"
+                )
+            print(f"{msg.role}: {message}")

@@ -3,7 +3,7 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-from typing import List, Union
+from typing import Union
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
@@ -36,7 +36,7 @@ def _retrieve_component_scores(drained_results):
     return component_scores_list
 
 
-def _compute_rrf_scores(ranks: List[List[int]], component_weights: List[Union[int, float]], query_results: List[dict]):
+def _compute_rrf_scores(ranks: list[list[int]], component_weights: list[Union[int, float]], query_results: list[dict]):
     component_count = len(ranks)
     for index, result in enumerate(query_results):
         rrf_score = 0.0
@@ -79,7 +79,7 @@ def _drain_and_coalesce_results(document_producers_to_drain):
     return all_results, is_singleton
 
 
-def _rewrite_query_infos(hybrid_search_query_info, global_statistics):
+def _rewrite_query_infos(hybrid_search_query_info, global_statistics, parameters=None):
     rewritten_query_infos = []
     for query_info in hybrid_search_query_info['componentQueryInfos']:
         assert query_info['orderBy']
@@ -90,6 +90,8 @@ def _rewrite_query_infos(hybrid_search_query_info, global_statistics):
                 _format_component_query_workaround(order_by_expression, global_statistics,
                                                    len(hybrid_search_query_info[
                                                            'componentQueryInfos'])))
+
+        query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], parameters)
         rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
                                                              global_statistics,
                                                              len(hybrid_search_query_info[
@@ -118,6 +120,10 @@ def _format_component_query(format_string, global_statistics):
 
 def _format_component_query_workaround(format_string, global_statistics, component_count):
     # TODO: remove this method once the fix is live and switch back to one above
+    parameters = None
+    if isinstance(format_string, dict):
+        parameters = format_string.get('parameters', None)
+        format_string = format_string['query']
     format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
     query = format_string.replace(_Placeholders.total_document_count,
                                   str(global_statistics['documentCount']))
@@ -137,10 +143,32 @@ def _format_component_query_workaround(format_string, global_statistics, compone
 
         statistics_index += 1
 
-    return query
+    return _attach_parameters(query, parameters)
 
 
-class _HybridSearchContextAggregator(_QueryExecutionContextBase):
+def _attach_parameters(query, parameters=None):
+    """Attach original query parameters (if any) without mutating the passed query object.
+
+    :param query: The original query text or a query payload dict which may already contain parameters.
+    :type query: str or dict
+    :param parameters: Optional sequence of parameter definitions to attach.
+    :type parameters: list or None
+    :returns: The original query if no parameters to attach or already present, otherwise a new dict containing the
+     query and parameters.
+    :rtype: str or dict
+    """
+    if not parameters:
+        return query
+    if isinstance(query, dict):
+        if "parameters" not in query:
+            new_query = dict(query)
+            new_query["parameters"] = parameters
+            return new_query
+        return query
+    return {"query": query, "parameters": parameters}
+
+
+class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
     """This class is a subclass of the query execution context base and serves for
     full text search and hybrid search queries. It is very similar to the existing MultiExecutionContextAggregator,
     but is needed since we have a lot more additional client-side logic to take care of.
@@ -151,7 +179,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
     """
 
     def __init__(self, client, resource_link, options,
-                 partitioned_query_execution_info, hybrid_search_query_info, response_hook):
+                 partitioned_query_execution_info, hybrid_search_query_info, response_hook, raw_response_hook):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -159,18 +187,28 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._client = client
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
+        self._parameters = None
+        # If the query uses parameters, we must save them to add them back to the component queries
+        query_execution_info = getattr(self._partitioned_query_ex_info, "_query_execution_info", None)
+        if query_execution_info:
+            self._parameters = (
+                query_execution_info.get("parameters")
+                if isinstance(query_execution_info, dict)
+                else getattr(query_execution_info, "parameters", None)
+            )
         self._hybrid_search_query_info = hybrid_search_query_info
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
         self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
 
     def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
-            global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
+            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -182,7 +220,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         global_statistics_query,
                         self._document_producer_comparator,
                         self._options,
-                        self._response_hook
+                        self._response_hook,
+                        self._raw_response_hook
                     )
                 )
 
@@ -207,7 +246,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         # re-write the component queries if needed
         if self._aggregated_global_statistics:
             rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
-                                                         self._aggregated_global_statistics)
+                                                         self._aggregated_global_statistics, self._parameters)
         else:
             rewritten_query_infos = self._hybrid_search_query_info['componentQueryInfos']
 
@@ -216,6 +255,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=False)
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
+                # If query was given parameters we must add them back in
+                if self._parameters:
+                    rewritten_query['rewrittenQuery'] = self._attach_parameters(rewritten_query['rewrittenQuery'])
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
@@ -224,7 +266,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         rewritten_query['rewrittenQuery'],
                         self._document_producer_comparator,
                         self._options,
-                        self._response_hook
+                        self._response_hook,
+                        self._raw_response_hook
                     )
                 )
         # verify all document producers have items/ no splits
@@ -284,6 +327,25 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
         self._format_final_results(drained_results)
 
+    def _attach_parameters(self, query):
+        """Attach original query parameters (if any) without mutating the passed query object.
+
+        :param query: Query text or a query payload dict which may already contain parameters.
+        :type query: str or dict
+        :return: The original query if no parameters to attach or already present; otherwise a new dict containing the
+         query and parameters.
+        :rtype: str or dict
+        """
+        if not self._parameters:
+            return query
+        if isinstance(query, dict):
+            if "parameters" not in query:
+                new_query = dict(query)
+                new_query["parameters"] = self._parameters
+                return new_query
+            return query
+        return {"query": query, "parameters": self._parameters}
+
     def _format_final_results(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0
         take = self._hybrid_search_query_info['take']
@@ -302,7 +364,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     _format_component_query_workaround(order_by_expression, self._aggregated_global_statistics,
                                                        len(self._hybrid_search_query_info[
                                                                'componentQueryInfos'])))
-
+            query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], self._parameters)
             rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
                                                                  self._aggregated_global_statistics,
                                                                  len(self._hybrid_search_query_info[
@@ -363,7 +425,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     query,
                     self._document_producer_comparator,
                     self._options,
-                    self._response_hook
+                    self._response_hook,
+                    self._raw_response_hook
                 )
             )
 
@@ -381,5 +444,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             return list(self._client._ReadPartitionKeyRanges(collection_link=self._resource_link))
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
-            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+            self._resource_link,
+            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            self._options
         )

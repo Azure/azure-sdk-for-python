@@ -24,7 +24,7 @@ class TestIotHubPrivateLinkResourcesOperations(AzureMgmtRecordedTestCase):
         response = self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestIotHubPrivateLinkResourcesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             group_id="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself

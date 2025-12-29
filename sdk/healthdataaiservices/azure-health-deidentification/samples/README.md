@@ -17,6 +17,7 @@ These code samples show common scenario operations with the Azure Health Data Se
 | [deidentify_text_tag.py][deidentify_text_tag] and [deidentify_text_tag_async.py][deidentify_text_tag_async] | De-identify text using the tag operation |
 | [deidentify_text_redact.py][deidentify_text_redact] and [deidentify_text_redact_async.py][deidentify_text_redact_async] | De-identify text using the redact operation |
 | [deidentify_text_surrogate.py][deidentify_text_surrogate] and [deidentify_text_surrogate_async.py][deidentify_text_surrogate_async] | De-identify text using the surrogate operation |
+| [deidentify_text_surrogate_only.py][deidentify_text_surrogate_only] and [deidentify_text_surrogate_only_async.py][deidentify_text_surrogate_only_async] | De-identify text using the surrogate only operation with specific entity tagging and input locale |
 | [deidentify_documents.py][deidentify_documents] and [deidentify_documents_async.py][deidentify_documents_async] | De-identify documents in Azure Storage with an asynchronous job |
 | [list_jobs.py][list_jobs] and [list_jobs_async.py][list_jobs_async] | List de-identification jobs |
 | [list_job_documents.py][list_job_documents] and [list_job_documents_async.py][list_job_documents_async] | List the documents processed by a de-identification job |
@@ -58,12 +59,14 @@ what you can do with the Azure Health Data Services de-identification service cl
 [deidentify_text_tag]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_tag.py
 [deidentify_text_redact]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_redact.py
 [deidentify_text_surrogate]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_surrogate.py
+[deidentify_text_surrogate_only]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_text_surrogate_only.py
 [deidentify_documents]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/deidentify_documents.py
 [list_jobs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/list_jobs.py
 [list_job_documents]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/list_job_documents.py
 [deidentify_text_tag_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_text_tag_async.py
 [deidentify_text_redact_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_text_redact_async.py
 [deidentify_text_surrogate_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_text_surrogate_async.py
+[deidentify_text_surrogate_only_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_text_surrogate_only_async.py
 [deidentify_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/deidentify_documents_async.py
 [list_jobs_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/list_jobs_async.py
 [list_job_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples/async_samples/list_job_documents_async.py

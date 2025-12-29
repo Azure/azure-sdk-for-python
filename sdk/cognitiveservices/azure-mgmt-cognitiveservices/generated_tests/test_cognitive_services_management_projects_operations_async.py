@@ -56,7 +56,7 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +100,7 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,7 +115,7 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 account_name="str",
                 project_name="str",
-                api_version="2025-04-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -129,7 +129,7 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             account_name="str",
             project_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -141,7 +141,7 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.projects.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

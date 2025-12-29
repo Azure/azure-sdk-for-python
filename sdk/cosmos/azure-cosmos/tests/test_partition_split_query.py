@@ -4,7 +4,6 @@
 import random
 import time
 import unittest
-import uuid
 import os
 
 import pytest
@@ -12,17 +11,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey, ContainerProxy
-from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-
-
-def get_test_item():
-    test_item = {
-        'id': 'Item_' + str(uuid.uuid4()),
-        'test_object': True,
-        'lastName': 'Smith',
-        'attr1': random.randint(0, 10)
-    }
-    return test_item
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 def run_queries(container, iterations):
@@ -41,7 +30,7 @@ def run_queries(container, iterations):
         print("validation succeeded for all query results")
 
 
-@pytest.mark.cosmosQuery
+@pytest.mark.cosmosSplit
 class TestPartitionSplitQuery(unittest.TestCase):
     database: DatabaseProxy = None
     container: ContainerProxy = None
@@ -52,6 +41,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
     throughput = 400
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Single-partition-container-without-throughput"
+    MAX_TIME = 60 * 10  # 10 minutes for the test to complete, should be enough for partition split to complete
 
     @classmethod
     def setUpClass(cls):
@@ -59,9 +49,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.container = cls.database.create_container(
             id=cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/id"))
-        if cls.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=cls.throughput)
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -72,12 +61,12 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
     def test_partition_split_query(self):
         for i in range(100):
-            body = get_test_item()
+            body = test_config.get_test_item()
             self.container.create_item(body=body)
 
         start_time = time.time()
         print("created items, changing offer to 11k and starting queries")
-        self.database.replace_throughput(11000)
+        self.container.replace_throughput(11000)
         offer_time = time.time()
         print("changed offer to 11k")
         print("--------------------------------")
@@ -85,13 +74,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
         run_queries(self.container, 100)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
-        offer = self.database.get_throughput()
+        offer = self.container.get_throughput()
         while True:
-            if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                raise unittest.SkipTest("Partition split didn't complete in time")
+            if time.time() - start_time > self.MAX_TIME:  # timeout test at 10 minutes
+                self.skipTest("Partition split didn't complete in time")
             if offer.properties['content'].get('isOfferReplacePending', False):
-                time.sleep(10)
-                offer = self.database.get_throughput()
+                time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
+                offer = self.container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
                 run_queries(self.container, 100)  # check queries work post partition split

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web.v2024_11_01 import WebSiteManagementClient
+from azure.mgmt.web import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_app_service_environments_list(self, resource_group):
         response = self.client.app_service_environments.list(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
     def test_app_service_environments_list_by_resource_group(self, resource_group):
         response = self.client.app_service_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "virtualNetwork": {"id": "str", "name": "str", "subnet": "str", "type": "str"},
                 "zoneRedundant": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.begin_delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -181,7 +181,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "virtualNetwork": {"id": "str", "name": "str", "subnet": "str", "type": "str"},
                 "zoneRedundant": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -193,7 +193,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_capacities(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -205,7 +205,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_vip_info(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -218,7 +218,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             vnet_info={"id": "str", "name": "str", "subnet": "str", "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -230,7 +230,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_ase_custom_dns_suffix_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -253,7 +253,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -265,7 +265,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.delete_ase_custom_dns_suffix_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -277,7 +277,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_ase_v3_networking_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -303,7 +303,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "type": "str",
                 "windowsOutboundIpAddresses": ["str"],
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -315,7 +315,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_diagnostics(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -328,7 +328,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             diagnostics_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -340,7 +340,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_inbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -352,7 +352,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_multi_role_pools(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -364,7 +364,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_multi_role_pool(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -397,7 +397,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -430,7 +430,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -443,7 +443,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             instance="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -455,7 +455,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_multi_role_metric_definitions(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -467,7 +467,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_multi_role_pool_skus(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -479,7 +479,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.test_upgrade_available_notification(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -491,7 +491,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.begin_upgrade(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -503,7 +503,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_multi_role_usages(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -515,7 +515,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_operations(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -527,7 +527,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -539,7 +539,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_private_endpoint_connection_list(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -552,7 +552,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -575,7 +575,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -588,7 +588,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -600,7 +600,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.get_private_link_resources(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -612,7 +612,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.reboot(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -624,7 +624,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.begin_resume(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -636,7 +636,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_app_service_plans(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -648,7 +648,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_web_apps(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -660,7 +660,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.begin_suspend(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -672,7 +672,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_usages(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -684,7 +684,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
         response = self.client.app_service_environments.list_worker_pools(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -697,7 +697,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -731,7 +731,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -765,7 +765,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -779,7 +779,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             name="str",
             worker_pool_name="str",
             instance="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -792,7 +792,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -805,7 +805,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -818,7 +818,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

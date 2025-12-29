@@ -37,6 +37,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         model: Optional[str] = None,
         prompt_template_key: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
+        context: Optional[str] = None,
     ) -> None:
         """Initialize the scorer.
 
@@ -52,6 +53,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         self._model = model
         self._prompt_template_key = prompt_template_key
         self.logger = logger
+        self.context = context
 
         # Use AzureRAIServiceTarget for scoring as well
         self._scoring_target_red_llm = RAIServiceEvalChatTarget(
@@ -59,6 +61,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
             credential=credential,
             azure_ai_project=azure_ai_project,
             risk_category=risk_category,
+            context=context,
         )
 
     async def score_async(
@@ -77,6 +80,9 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
 
         # Validate request_response
         self.validate(request_response, task=task)
+
+        if not self._scoring_target_red_llm.context:
+            self._scoring_target_red_llm.context = request_response.labels.get("context", "")
 
         unvalidated_score: UnvalidatedScore = await self._score_value_with_llm(
             prompt_target=self._scoring_target_red_llm,

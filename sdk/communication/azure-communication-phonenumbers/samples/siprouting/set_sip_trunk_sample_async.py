@@ -23,9 +23,9 @@ import asyncio
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting import SipTrunk
 
-connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
-signaling_port = os.getenv("COMMUNICATION_SAMPLES_SIGNALING_PORT")
+connection_string = os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"]
+fqdn = os.environ["COMMUNICATION_SAMPLES_TRUNK_FQDN"]
+signaling_port = os.environ["COMMUNICATION_SAMPLES_SIGNALING_PORT"]
 client = SipRoutingClient.from_connection_string(connection_string)
 new_trunk = SipTrunk(fqdn=fqdn, sip_signaling_port=signaling_port)
 

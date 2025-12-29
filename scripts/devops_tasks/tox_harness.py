@@ -11,7 +11,6 @@ from argparse import Namespace
 from common_tasks import (
     run_check_call,
     clean_coverage,
-    is_error_code_5_allowed,
     create_code_coverage_params,
 )
 
@@ -19,7 +18,7 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
-from ci_tools.functions import cleanup_directory
+from ci_tools.functions import cleanup_directory, is_error_code_5_allowed
 from ci_tools.parsing import ParsedSetup
 from packaging.requirements import Requirement
 import logging
@@ -302,7 +301,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
             if not filtered_tox_environment_set:
                 logging.info(
                     f'All requested tox environments "{parsed_args.tox_env}" for package {package_name} have been excluded as indicated by is_check_enabled().'
-                    + " Check file /tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
+                    + " Check file /eng/tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
                 )
 
                 continue

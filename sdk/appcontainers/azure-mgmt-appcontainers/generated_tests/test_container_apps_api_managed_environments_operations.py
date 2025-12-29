@@ -22,7 +22,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_managed_environments_list_by_subscription(self, resource_group):
         response = self.client.managed_environments.list_by_subscription(
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
     def test_managed_environments_list_by_resource_group(self, resource_group):
         response = self.client.managed_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.get(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -87,12 +87,42 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "infrastructureResourceGroup": "str",
+                "ingressConfiguration": {
+                    "headerCountLimit": 0,
+                    "requestIdleTimeout": 0,
+                    "terminationGracePeriodSeconds": 0,
+                    "workloadProfileName": "str",
+                },
                 "kedaConfiguration": {"version": "str"},
                 "kind": "str",
                 "name": "str",
                 "peerAuthentication": {"mtls": {"enabled": bool}},
                 "peerTrafficConfiguration": {"encryption": {"enabled": bool}},
+                "privateEndpointConnections": [
+                    {
+                        "groupIds": ["str"],
+                        "id": "str",
+                        "name": "str",
+                        "privateEndpoint": {"id": "str"},
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str",
+                        },
+                        "provisioningState": "str",
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
+                        "type": "str",
+                    }
+                ],
                 "provisioningState": "str",
+                "publicNetworkAccess": "str",
                 "staticIp": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -116,7 +146,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                 ],
                 "zoneRedundant": bool,
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -128,7 +158,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.begin_delete(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -170,12 +200,42 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "infrastructureResourceGroup": "str",
+                "ingressConfiguration": {
+                    "headerCountLimit": 0,
+                    "requestIdleTimeout": 0,
+                    "terminationGracePeriodSeconds": 0,
+                    "workloadProfileName": "str",
+                },
                 "kedaConfiguration": {"version": "str"},
                 "kind": "str",
                 "name": "str",
                 "peerAuthentication": {"mtls": {"enabled": bool}},
                 "peerTrafficConfiguration": {"encryption": {"enabled": bool}},
+                "privateEndpointConnections": [
+                    {
+                        "groupIds": ["str"],
+                        "id": "str",
+                        "name": "str",
+                        "privateEndpoint": {"id": "str"},
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str",
+                        },
+                        "provisioningState": "str",
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
+                        "type": "str",
+                    }
+                ],
                 "provisioningState": "str",
+                "publicNetworkAccess": "str",
                 "staticIp": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -199,7 +259,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                 ],
                 "zoneRedundant": bool,
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -211,7 +271,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.get_auth_token(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -223,7 +283,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.list_workload_profile_states(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

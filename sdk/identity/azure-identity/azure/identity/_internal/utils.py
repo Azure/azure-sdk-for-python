@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import os
+import platform
 import logging
 from contextvars import ContextVar
 from string import ascii_letters, digits
@@ -127,6 +129,11 @@ def resolve_tenant(
             tenant_id,
         )
         return tenant_id
+    # Some dev credentials commonly default to the "organizations" special tenant which can authenticate users against
+    # multiple tenants that the user belongs to. If an allowed tenant list was not provided and the credential's
+    # tenant is set to 'organizations', allow the request with the specified tenant ID.
+    if not additionally_allowed_tenants and default_tenant == "organizations":
+        return tenant_id
     raise ClientAuthenticationError(
         message="The current credential is not configured to acquire tokens for tenant {}. "
         "To enable acquiring tokens for this tenant add it to the additionally_allowed_tenants "
@@ -160,7 +167,7 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
 
     if token_credentials_env == "dev":
         # In dev mode, use only developer credentials
-        dev_credentials = {"cli", "developer_cli", "powershell", "shared_token_cache"}
+        dev_credentials = {"visual_studio_code", "cli", "developer_cli", "powershell", "shared_token_cache", "broker"}
         for cred_key in credential_config:
             exclude_flags[cred_key] = cred_key not in dev_credentials
     elif token_credentials_env == "prod":
@@ -209,3 +216,16 @@ def get_broker_credential() -> Optional[type]:
         return InteractiveBrowserBrokerCredential
     except ImportError:
         return None
+
+
+def is_wsl() -> bool:
+    # This is how MSAL checks for WSL.
+    uname = platform.uname()
+    platform_name = getattr(uname, "system", uname[0]).lower()
+    release = getattr(uname, "release", uname[2]).lower()
+    return platform_name == "linux" and "microsoft" in release
+
+
+def encode_base64(s: str) -> str:
+    encoded = base64.b64encode(s.encode("utf-8"))
+    return encoded.decode("utf-8")

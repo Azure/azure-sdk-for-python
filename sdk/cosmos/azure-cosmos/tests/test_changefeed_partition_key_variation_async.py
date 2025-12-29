@@ -231,7 +231,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
 
         # Simulate the version key not being in the definition
 
-        async def _get_properties_override():
+        async def _get_properties_override(**kwargs):
             properties = await original_get_properties()
             partition_key = properties["partitionKey"]
             partition_key.pop("version", None)  # Remove version key for validation
@@ -262,7 +262,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
 
             for item in items:
                 try:
-                    epk_range = container._get_epk_range_for_partition_key(container_properties, item["pk"])
+                    epk_range = await container._get_epk_range_for_partition_key(item["pk"])
                     assert epk_range is not None, f"EPK range should not be None for partition key {item['pk']}."
                 except Exception as e:
                     assert False, f"Failed to get EPK range for partition key {item['pk']}: {str(e)}"

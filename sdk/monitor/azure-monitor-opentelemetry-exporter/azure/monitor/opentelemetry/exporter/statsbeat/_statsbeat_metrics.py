@@ -7,14 +7,14 @@ import platform
 import re
 import sys
 import threading
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Optional, Iterable, List
 
+# mypy: disable-error-code="import-untyped"
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
 
-from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
     _FEATURE_METRIC_NAME,
@@ -35,8 +35,18 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     get_statsbeat_live_metrics_feature_set,
     get_statsbeat_custom_events_feature_set,
+    get_statsbeat_customer_sdkstats_feature_set,
 )
 from azure.monitor.opentelemetry.exporter import _utils
+
+
+# Use a function to get VERSION lazily
+def _get_version() -> str:
+    # Get VERSION using delayed import to avoid circular import.
+    from azure.monitor.opentelemetry.exporter import VERSION
+
+    return VERSION
+
 
 # cSpell:disable
 
@@ -70,6 +80,7 @@ class _StatsbeatFeature:
     CUSTOM_EVENTS_EXTENSION = 4
     DISTRO = 8
     LIVE_METRICS = 16
+    CUSTOMER_SDKSTATS = 32
 
 
 class _AttachTypes:
@@ -80,7 +91,6 @@ class _AttachTypes:
 
 # pylint: disable=R0902
 class _StatsbeatMetrics:
-
     _COMMON_ATTRIBUTES: Dict[str, Any] = {
         "rp": _RP_Names.UNKNOWN.value,
         "attach": _AttachTypes.MANUAL,
@@ -88,7 +98,7 @@ class _StatsbeatMetrics:
         "runtimeVersion": platform.python_version(),
         "os": platform.system(),
         "language": "python",
-        "version": VERSION,
+        "version": None,  # Will be set lazily
     }
 
     _NETWORK_ATTRIBUTES: Dict[str, Any] = {
@@ -114,8 +124,12 @@ class _StatsbeatMetrics:
         disable_offline_storage: bool,
         long_interval_threshold: int,
         has_credential: bool,
-        distro_version: str = "",
+        distro_version: Optional[str] = "",
     ) -> None:
+        # Set the version if not already set using delayed import
+        if _StatsbeatMetrics._COMMON_ATTRIBUTES["version"] is None:
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["version"] = _get_version()
+
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE
         if not disable_offline_storage:
@@ -128,6 +142,8 @@ class _StatsbeatMetrics:
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
         if get_statsbeat_live_metrics_feature_set():
             self._feature |= _StatsbeatFeature.LIVE_METRICS
+        if get_statsbeat_customer_sdkstats_feature_set():
+            self._feature |= _StatsbeatFeature.CUSTOMER_SDKSTATS
         self._ikey = instrumentation_key
         self._meter_provider = meter_provider
         self._meter = self._meter_provider.get_meter(__name__)
@@ -138,9 +154,12 @@ class _StatsbeatMetrics:
             _FEATURE_METRIC_NAME[0]: sys.maxsize,
         }
         self._long_interval_lock = threading.Lock()
+
+        # Initialize common attributes and set values
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         if _utils._is_attach_enabled():
             _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"] = _AttachTypes.INTEGRATED
+
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
         _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
@@ -191,7 +210,7 @@ class _StatsbeatMetrics:
             if _AKS_ARM_NAMESPACE_ID in os.environ:
                 rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
             else:
-                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST , "")
+                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST, "")
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value
@@ -247,6 +266,9 @@ class _StatsbeatMetrics:
         if get_statsbeat_live_metrics_feature_set():
             self._feature |= _StatsbeatFeature.LIVE_METRICS
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+        if get_statsbeat_customer_sdkstats_feature_set():
+            self._feature |= _StatsbeatFeature.CUSTOMER_SDKSTATS
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
 
         # Don't send observation if no features enabled
         if self._feature is not _StatsbeatFeature.NONE:
@@ -265,19 +287,19 @@ class _StatsbeatMetrics:
 
         return observations
 
-    def _meets_long_interval_threshold(self, name) -> bool:
+    def _meets_long_interval_threshold(self, name: str) -> bool:
         with self._long_interval_lock:
-            # if long interval theshold not met, it is not time to export
+            # if long interval threshold not met, it is not time to export
             # statsbeat metrics that are long intervals
             count = self._long_interval_count_map.get(name, sys.maxsize)
             if count < self._long_interval_threshold:
                 return False
-            # reset the count if long interval theshold is met
+            # reset the count if long interval threshold is met
             self._long_interval_count_map[name] = 0
             return True
 
     # pylint: disable=W0201
-    def init_non_initial_metrics(self):
+    def init_non_initial_metrics(self) -> None:
         # Network metrics - metrics related to request calls to ingestion service
         self._success_count = self._meter.create_observable_gauge(
             _REQ_SUCCESS_NAME[0],

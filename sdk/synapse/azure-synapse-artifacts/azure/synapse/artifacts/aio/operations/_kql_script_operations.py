@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,41 +7,33 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
-from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    StreamClosedError,
-    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._vendor import _convert_request
 from ...operations._kql_script_operations import (
     build_create_or_update_request,
     build_delete_by_name_request,
     build_get_by_name_request,
     build_rename_request,
 )
-from .._configuration import ArtifactsClientConfiguration
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -59,15 +52,15 @@ class KqlScriptOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     async def _create_or_update_initial(
-        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO], **kwargs: Any
+    ) -> Optional[_models.KqlScriptResource]:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -80,7 +73,7 @@ class KqlScriptOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.KqlScriptResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -99,13 +92,13 @@ class KqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -113,15 +106,13 @@ class KqlScriptOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("KqlScriptResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -146,6 +137,14 @@ class KqlScriptOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.KqlScriptResource]
@@ -154,17 +153,25 @@ class KqlScriptOperations:
 
     @overload
     async def begin_create_or_update(
-        self, kql_script_name: str, kql_script: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, kql_script_name: str, kql_script: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.KqlScriptResource]:
         """Creates or updates a KQL Script.
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
         :param kql_script: KQL script. Required.
-        :type kql_script: IO[bytes]
+        :type kql_script: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.KqlScriptResource]
@@ -173,15 +180,25 @@ class KqlScriptOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO[bytes]], **kwargs: Any
+        self, kql_script_name: str, kql_script: Union[_models.KqlScriptResource, IO], **kwargs: Any
     ) -> AsyncLROPoller[_models.KqlScriptResource]:
         """Creates or updates a KQL Script.
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
-        :param kql_script: KQL script. Is either a KqlScriptResource type or a IO[bytes] type.
-         Required.
-        :type kql_script: ~azure.synapse.artifacts.models.KqlScriptResource or IO[bytes]
+        :param kql_script: KQL script. Is either a KqlScriptResource type or a IO type. Required.
+        :type kql_script: ~azure.synapse.artifacts.models.KqlScriptResource or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.KqlScriptResource]
@@ -207,11 +224,10 @@ class KqlScriptOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("KqlScriptResource", pipeline_response.http_response)
+            deserialized = self._deserialize("KqlScriptResource", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -230,15 +246,13 @@ class KqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.KqlScriptResource].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.KqlScriptResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_by_name(self, kql_script_name: str, **kwargs: Any) -> _models.KqlScriptResource:
@@ -246,11 +260,12 @@ class KqlScriptOperations:
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KqlScriptResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.KqlScriptResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -270,6 +285,7 @@ class KqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -287,15 +303,17 @@ class KqlScriptOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("KqlScriptResource", pipeline_response.http_response)
+        deserialized = self._deserialize("KqlScriptResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _delete_by_name_initial(self, kql_script_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+    async def _delete_by_name_initial(  # pylint: disable=inconsistent-return-statements
+        self, kql_script_name: str, **kwargs: Any
+    ) -> None:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -307,7 +325,7 @@ class KqlScriptOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_by_name_request(
             kql_script_name=kql_script_name,
@@ -315,13 +333,13 @@ class KqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -329,20 +347,12 @@ class KqlScriptOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_by_name(self, kql_script_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -350,6 +360,14 @@ class KqlScriptOperations:
 
         :param kql_script_name: KQL script name. Required.
         :type kql_script_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -363,7 +381,7 @@ class KqlScriptOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_by_name_initial(
+            raw_result = await self._delete_by_name_initial(  # type: ignore
                 kql_script_name=kql_script_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -371,7 +389,6 @@ class KqlScriptOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -392,18 +409,18 @@ class KqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _rename_initial(
+    async def _rename_initial(  # pylint: disable=inconsistent-return-statements
         self, kql_script_name: str, new_name: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+    ) -> None:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -416,7 +433,7 @@ class KqlScriptOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _rename_request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_rename_request, "ArtifactRenameRequest")
@@ -429,13 +446,13 @@ class KqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -443,20 +460,12 @@ class KqlScriptOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_rename(
@@ -468,6 +477,14 @@ class KqlScriptOperations:
         :type kql_script_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -482,7 +499,7 @@ class KqlScriptOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._rename_initial(
+            raw_result = await self._rename_initial(  # type: ignore
                 kql_script_name=kql_script_name,
                 new_name=new_name,
                 api_version=api_version,
@@ -492,7 +509,6 @@ class KqlScriptOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -513,10 +529,10 @@ class KqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

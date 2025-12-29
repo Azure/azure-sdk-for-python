@@ -25,7 +25,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
         response = self.client.container_apps_source_controls.list_by_container_app(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             container_app_name="str",
             source_control_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
                     },
                     "type": "str",
                 },
-                api_version="2025-01-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +100,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
                 resource_group_name=resource_group.name,
                 container_app_name="str",
                 source_control_name="str",
-                api_version="2025-01-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

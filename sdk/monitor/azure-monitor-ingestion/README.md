@@ -18,7 +18,7 @@ This library allows you to send data from virtually any source to supported buil
 
 ### Prerequisites
 
-- Python 3.7 or later
+- Python 3.9 or later
 - An [Azure subscription][azure_subscription]
 - An [Azure Log Analytics workspace][azure_monitor_create_using_portal]
 - A [Data Collection Endpoint][data_collection_endpoint]

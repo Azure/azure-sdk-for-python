@@ -11,6 +11,7 @@ import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility, PartitionKey
 from azure.cosmos._location_cache import RegionalRoutingContext, EndpointOperationType
+from azure.cosmos._request_object import RequestObject
 
 COLLECTION = "created_collection"
 @pytest.fixture(scope="class")
@@ -78,9 +79,10 @@ class TestTimeoutRetryPolicy:
 
         created_document = setup[COLLECTION].create_item(body=document_definition)
         self.original_execute_function = _retry_utility.ExecuteFunction
+        num_exceptions = max(2, len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts))
         try:
-            # should retry once and then fail
-            mf = self.MockExecuteFunction(self.original_execute_function, 2, error_code)
+            # should retry and then fail
+            mf = self.MockExecuteFunction(self.original_execute_function, num_exceptions, error_code)
             _retry_utility.ExecuteFunction = mf
             setup[COLLECTION].read_item(item=created_document['id'],
                                               partition_key=created_document['pk'])
@@ -98,9 +100,11 @@ class TestTimeoutRetryPolicy:
                                'key': 'value'}
 
         self.original_execute_function = _retry_utility.ExecuteFunction
+        num_exceptions_503 = max(2, len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.write_regional_routing_contexts))
         try:
-            # timeouts should fail immediately for writes
-            mf = self.MockExecuteFunction(self.original_execute_function,0, error_code)
+            # timeouts should fail immediately for writes - except for 503s, which should retry on every preferred location
+            num_exceptions = num_exceptions_503 if error_code == 503 else 0
+            mf = self.MockExecuteFunction(self.original_execute_function, num_exceptions, error_code)
             _retry_utility.ExecuteFunction = mf
             try:
                 setup[COLLECTION].create_item(body=document_definition)
@@ -126,8 +130,8 @@ class TestTimeoutRetryPolicy:
         fake_endpoint = "other-region"
         region_1 = "East US"
         region_2 = "West US"
-        regional_routing_context = RegionalRoutingContext(self.host, self.host)
-        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
+        regional_routing_context = RegionalRoutingContext(self.host)
+        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint)
         original_location_cache.account_read_locations = [region_1, region_2]
         original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
                                                                                   region_2: regional_routing_context_2
@@ -150,14 +154,21 @@ class TestTimeoutRetryPolicy:
             self.status_code = status_code
 
         def __call__(self, func, *args, **kwargs):
-            if self.counter != 0 and self.counter >= self.num_exceptions:
-                return self.org_func(func, *args, **kwargs)
-            else:
-                self.counter += 1
-                raise exceptions.CosmosHttpResponseError(
-                    status_code=self.status_code,
-                    message="Some Exception",
-                    response=test_config.FakeResponse({}))
+            if args and isinstance(args[1], RequestObject):
+                request_obj = args[1]
+                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or \
+                        request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                    # Ignore query or ReadFeed requests
+                    return self.org_func(func, *args, **kwargs)
+                if self.counter != 0 and self.counter >= self.num_exceptions:
+                    return self.org_func(func, *args, **kwargs)
+                else:
+                    self.counter += 1
+                    raise exceptions.CosmosHttpResponseError(
+                        status_code=self.status_code,
+                        message="Some Exception",
+                        response=test_config.FakeResponse({}))
+            return self.org_func(func, *args, **kwargs)
 
     class MockExecuteFunctionCrossRegion(object):
         def __init__(self, org_func, status_code, location_endpoint_to_route):
@@ -167,16 +178,23 @@ class TestTimeoutRetryPolicy:
             self.location_endpoint_to_route = location_endpoint_to_route
 
         def __call__(self, func, *args, **kwargs):
-            if self.counter == 1:
-                assert args[1].location_endpoint_to_route == self.location_endpoint_to_route
-                args[1].location_endpoint_to_route = test_config.TestConfig.host
-                return self.org_func(func, *args, **kwargs)
-            else:
-                self.counter += 1
-                raise exceptions.CosmosHttpResponseError(
-                    status_code=self.status_code,
-                    message="Some Exception",
-                    response=test_config.FakeResponse({}))
+            if args and isinstance(args[1], RequestObject):
+                request_obj = args[1]
+                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or \
+                        request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                    # Ignore query or ReadFeed requests
+                    return self.org_func(func, *args, **kwargs)
+                if self.counter == 1:
+                    assert args[1].location_endpoint_to_route == self.location_endpoint_to_route
+                    args[1].location_endpoint_to_route = test_config.TestConfig.host
+                    return self.org_func(func, *args, **kwargs)
+                else:
+                    self.counter += 1
+                    raise exceptions.CosmosHttpResponseError(
+                        status_code=self.status_code,
+                        message="Some Exception",
+                        response=test_config.FakeResponse({}))
+            return self.org_func(func, *args, **kwargs)
 
 
 

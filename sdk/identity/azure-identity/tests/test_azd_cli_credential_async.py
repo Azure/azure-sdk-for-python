@@ -12,7 +12,7 @@ from unittest import mock
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import AzureDeveloperCliCredential
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
+from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN, COMMAND_LINE
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
 
@@ -122,6 +122,36 @@ async def test_get_token(get_token_method):
 
     assert token.token == access_token
     assert type(token.expires_on) == int
+    assert token.expires_on == expected_expires_on
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_command_list(get_token_method):
+    """The credential should formulate the command arg list correctly"""
+    access_token = "access token"
+    expected_expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "token": access_token,
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    def mock_exec_impl(*args, **_):
+        # args[0] is the executable, args[1:] are the command line arguments
+        command_line = list(args)
+        assert command_line == ["azd"] + COMMAND_LINE + ["--scope", "scope"]
+        return mock_exec(successful_output)()
+
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec_impl):
+            credential = AzureDeveloperCliCredential()
+            token = await getattr(credential, get_token_method)("scope")
+
+    assert token.token == access_token
     assert token.expires_on == expected_expires_on
 
 
@@ -303,3 +333,117 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
                     kwargs = {"options": kwargs}
                 token = await getattr(credential, get_token_method)("scope", **kwargs)
             assert token.token == expected_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_claims_challenge_raises_error(get_token_method):
+    """The credential should raise CredentialUnavailableError when claims challenge is provided"""
+
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    credential = AzureDeveloperCliCredential()
+
+    expected_message = "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
+    error_output = """\
+{"data":{"message":"\\nERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access 'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z\\n"}}
+{"data":{"message":"Suggestion: re-authentication required, run `azd auth login` to acquire a new token.\\n"}}"""
+
+    def fake_exec(*args, **kwargs):
+        # Return a failed process with error output
+        async def communicate():
+            return (b"", error_output.encode())
+
+        process = mock.Mock(communicate=communicate, returncode=1)
+        return get_completed_future(process)
+
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(SUBPROCESS_EXEC, fake_exec):
+            with pytest.raises(ClientAuthenticationError) as exc:
+                kwargs_param = {"claims": claims}
+                if get_token_method == "get_token_info":
+                    kwargs_param = {"options": kwargs_param}
+                await getattr(credential, get_token_method)("scope", **kwargs_param)
+            assert exc.value.message == expected_message
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_empty_claims_does_not_raise_error(get_token_method):
+    """The credential should not raise error when claims parameter is empty or None"""
+
+    access_token = "access token"
+    expected_expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "token": access_token,
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    # Mock the CLI to avoid actual invocation
+    exec_mock = mock_exec(successful_output)
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(SUBPROCESS_EXEC, exec_mock):
+            credential = AzureDeveloperCliCredential()
+
+            # Test with None (default)
+            token = await getattr(credential, get_token_method)("scope")
+            assert token.token == access_token
+
+            # Test with empty string claims
+            kwargs = {"claims": ""}
+            if get_token_method == "get_token_info":
+                kwargs = {"options": kwargs}
+            token = await getattr(credential, get_token_method)("scope", **kwargs)
+            assert token.token == access_token
+
+            # Test with None claims explicitly
+            kwargs = {"claims": None}
+            if get_token_method == "get_token_info":
+                kwargs = {"options": kwargs}
+            token = await getattr(credential, get_token_method)("scope", **kwargs)
+            assert token.token == access_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_claims_command_line_argument(get_token_method):
+    """The credential should pass claims as --claims argument to azd command"""
+
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
+    access_token = "access token"
+    expected_expires_on = 1602015811
+
+    def fake_exec(*args, **kwargs):
+        # Reconstruct command line from args (first arg is program, rest are arguments)
+        command_line = list(args)
+        # Verify that claims are passed as --claims argument
+        assert "--claims" in command_line
+        claims_index = command_line.index("--claims")
+        assert command_line[claims_index + 1] == expected_encoded_claims
+
+        output = json.dumps(
+            {
+                "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "token": access_token,
+                "subscription": "some-guid",
+                "tenant": "some-guid",
+                "tokenType": "Bearer",
+            }
+        )
+
+        async def communicate():
+            return (output.encode(), b"")
+
+        process = mock.Mock(communicate=communicate, returncode=0)
+        return get_completed_future(process)
+
+    credential = AzureDeveloperCliCredential()
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(SUBPROCESS_EXEC, fake_exec):
+            kwargs = {"claims": claims}
+            if get_token_method == "get_token_info":
+                kwargs = {"options": kwargs}
+            token = await getattr(credential, get_token_method)("scope", **kwargs)
+            assert token.token == access_token

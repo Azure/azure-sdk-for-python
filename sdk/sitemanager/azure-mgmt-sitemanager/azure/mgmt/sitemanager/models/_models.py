@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -53,9 +53,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -262,7 +262,7 @@ class SiteProperties(_Model):
         name="siteAddress", visibility=["read", "create", "update", "delete", "query"]
     )
     """Physical address of the site."""
-    labels: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    labels: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Key-value pairs for labeling the site resource."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -277,7 +277,7 @@ class SiteProperties(_Model):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         site_address: Optional["_models.SiteAddressProperties"] = None,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -344,7 +344,7 @@ class SiteUpdateProperties(_Model):
         name="siteAddress", visibility=["read", "create", "update", "delete", "query"]
     )
     """Physical address of the site."""
-    labels: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    labels: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Key-value pairs for labeling the site resource."""
 
     @overload
@@ -354,7 +354,7 @@ class SiteUpdateProperties(_Model):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         site_address: Optional["_models.SiteAddressProperties"] = None,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload

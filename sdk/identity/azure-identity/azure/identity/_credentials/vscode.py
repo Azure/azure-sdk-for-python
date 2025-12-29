@@ -129,6 +129,9 @@ def _validate_auth_record_json(data: dict) -> None:
 class VisualStudioCodeCredential:
     """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Resources' extension.
 
+    This currently only works in Windows/WSL environments and requires the 'azure-identity-broker'
+    package to be installed.
+
     :keyword str tenant_id: A Microsoft Entra tenant ID. Defaults to the tenant specified in the authentication
         record file used by the Azure Resources extension.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
@@ -161,6 +164,7 @@ class VisualStudioCodeCredential:
                     authentication_record=authentication_record,
                     parent_window_handle=msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE,
                     use_default_broker_account=True,
+                    disable_interactive_fallback=True,
                     **kwargs,
                 )
             except ValueError as ex:

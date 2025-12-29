@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web.v2024_11_01 import WebSiteManagementClient
+from azure.mgmt.web import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestWebSiteManagementDeletedWebAppsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_deleted_web_apps_list(self, resource_group):
         response = self.client.deleted_web_apps.list(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestWebSiteManagementDeletedWebAppsOperations(AzureMgmtRecordedTestCase):
     def test_deleted_web_apps_list_by_location(self, resource_group):
         response = self.client.deleted_web_apps.list_by_location(
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestWebSiteManagementDeletedWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deleted_web_apps.get_deleted_web_app_by_location(
             location="str",
             deleted_site_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

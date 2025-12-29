@@ -8,12 +8,11 @@
 # example snippets, take into consideration how this might affect
 # the readability and usability of the reference documentation.
 
+import os
+
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
-from typing import Dict, Any
-
-import os
 
 url = os.environ["ACCOUNT_URI"]
 key = os.environ["ACCOUNT_KEY"]
@@ -126,6 +125,65 @@ for queried_item in container.query_items(
 
 # [END priority_level option]
 
+# [START client_level_priority]
+# Priority can also be set at the client level, which will apply to all requests made by that client.
+# This is useful when you want all operations from a particular client to have the same priority.
+# The client-level priority is set during client initialization with the `priority` parameter.
+
+# Create a client with Low priority for all requests
+low_priority_client = CosmosClient(url, key, priority="Low")
+low_priority_database = low_priority_client.get_database_client(database_name)
+low_priority_container = low_priority_database.get_container_client(container_name)
+
+# Add some items to query
+for i in range(1, 4):
+    low_priority_container.upsert_item(
+        dict(id="low_priority_item{}".format(i), productName="Widget", productModel="Model {}".format(i))
+    )
+
+# All requests from this client will have Low priority by default
+for queried_item in low_priority_container.query_items(
+    query='SELECT * FROM products p WHERE p.productName = "Widget"',
+    enable_cross_partition_query=True
+):
+    print(json.dumps(queried_item, indent=True))
+
+# [END client_level_priority]
+
+# [START request_priority_precedence]
+# Request-level priority takes precedence over client-level priority.
+# This allows you to override the default priority for specific operations.
+
+# Create a client with Low priority
+client_with_default_priority = CosmosClient(url, key, priority="Low")
+database_with_priority = client_with_default_priority.get_database_client(database_name)
+container_with_priority = database_with_priority.get_container_client(container_name)
+
+# Add items with different priority levels to the container
+container_with_priority.upsert_item(
+    dict(id="urgent_item1", productName="Widget", priority="High", productModel="High Priority Model")
+)
+container_with_priority.upsert_item(
+    dict(id="normal_item1", productName="Widget", priority="Low", productModel="Low Priority Model")
+)
+
+# This query will use High priority, overriding the client's Low priority setting
+for important_item in container_with_priority.query_items(
+    query='SELECT * FROM products p WHERE p.priority = "High"',
+    enable_cross_partition_query=True,
+    priority="High"  # Request-level priority overrides client-level priority
+):
+    print(json.dumps(important_item, indent=True))
+
+# This query will use the client's default Low priority
+for normal_item in container_with_priority.query_items(
+    query='SELECT * FROM products p WHERE p.priority = "Low"',
+    enable_cross_partition_query=True
+):
+    print(json.dumps(normal_item, indent=True))
+
+# [END request_priority_precedence]
+
 # Delete items from the container.
 # The Cosmos DB SQL API does not support 'DELETE' queries,
 # so deletes must be done with the delete_item method
@@ -137,10 +195,23 @@ for queried_item in container.query_items(
     container.delete_item(queried_item, partition_key="Widget")
 # [END delete_items]
 
+# Query items with feed range is also supported. This example
+# gets all items within the feed range.
+# [START query_items_feed_range]
+import json
+
+for feed_range in container.read_feed_ranges():
+    for queried_item in container.query_items(
+        query='SELECT * FROM c',
+        feed_range=feed_range,
+    ):
+        print(json.dumps(queried_item, indent=True))
+# [END query_items_param]
+
 # Retrieve the properties of a database
 # [START get_database_properties]
-properties = database.read()
-print(json.dumps(properties, indent=True))
+read_properties = database.read()
+print(json.dumps(read_properties, indent=True))
 # [END get_database_properties]
 
 # Retrieve the properties of a container
@@ -289,3 +360,21 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0])
 for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
     print(json.dumps(queried_item, indent=True))
 # [END query_items_change_feed_from_beginning]
+
+# configure availability strategy config on request level
+# [START read_item_with_availability_strategy_config]
+strategy = {'threshold_ms':500, 'threshold_steps_ms':100}
+container.read_item(
+    item="id1",
+    partition_key="pk1",
+    availability_strategy_config=strategy)
+# [END read_item_with_availability_strategy_config]
+
+# disable availability strategy config on request level
+# [START read_item_with_disabled_availability_strategy_config]
+container.read_item(
+    item="id1",
+    partition_key="pk1",
+    availability_strategy_config=None
+)
+# [END read_item_with_disabled_availability_strategy_config]

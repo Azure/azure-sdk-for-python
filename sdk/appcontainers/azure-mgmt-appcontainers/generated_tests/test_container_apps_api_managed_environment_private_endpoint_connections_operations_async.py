@@ -21,11 +21,11 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_managed_environment_private_endpoint_connections_list(self, resource_group):
         response = self.client.managed_environment_private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_environment_private_endpoint_connections_get(self, resource_group):
         response = await self.client.managed_environment_private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             environment_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_managed_environment_private_endpoint_connections_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.managed_environment_private_endpoint_connections.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -73,7 +73,7 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
                     },
                     "type": "str",
                 },
-                api_version="2024-08-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,13 +82,13 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_managed_environment_private_endpoint_connections_begin_delete(self, resource_group):
         response = await (
             await self.client.managed_environment_private_endpoint_connections.begin_delete(
                 resource_group_name=resource_group.name,
                 environment_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2024-08-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

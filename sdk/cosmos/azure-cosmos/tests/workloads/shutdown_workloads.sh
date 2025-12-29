@@ -5,7 +5,7 @@ NO_REMOVE_LOGS=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --no-remove-logs)
+        --do-not-remove-logs)
             NO_REMOVE_LOGS=true
             ;;
         *)

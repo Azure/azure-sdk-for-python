@@ -25,7 +25,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
         response = self.client.rai_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             account_name="str",
             rai_policy_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -61,6 +61,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
                         {"blocking": bool, "enabled": bool, "name": "str", "severityThreshold": "str", "source": "str"}
                     ],
                     "customBlocklists": [{"blocking": bool, "blocklistName": "str", "source": "str"}],
+                    "customTopics": [{"blocking": bool, "source": "str", "topicName": "str"}],
                     "mode": "str",
                     "type": "str",
                 },
@@ -75,7 +76,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +90,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 account_name="str",
                 rai_policy_name="str",
-                api_version="2025-04-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

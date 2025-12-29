@@ -12,7 +12,7 @@ from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_cl
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._common.onedp.models import SimulationDTO
 from azure.ai.evaluation._common.constants import RAIService
 
@@ -208,7 +208,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             flag = True
             while flag:
                 try:
-                    response = session.evaluations.operation_results(operation_id, headers=headers)
+                    response = session.red_teams.operation_results(operation_id, headers=headers)
                 except Exception as e:
                     from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
 
@@ -217,9 +217,10 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                     response_data = response
                     flag = False
                     break
-                if response.status_code == 200:
-                    response_data = cast(List[Dict], response.json())
+                if not isinstance(response, SimpleNamespace) and response.get("object") == "chat.completion":
+                    response_data = response
                     flag = False
+                    break
                 else:
                     request_count += 1
                     sleep_time = RAIService.SLEEP_TIME**request_count

@@ -25,7 +25,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
         response = await self.client.managed_environments_storages.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             environment_name="str",
             storage_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,13 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "azureFile": {"accessMode": "str", "accountKey": "str", "accountName": "str", "shareName": "str"},
+                    "azureFile": {
+                        "accessMode": "str",
+                        "accountKey": "str",
+                        "accountKeyVaultProperties": {"identity": "str", "keyVaultUrl": "str"},
+                        "accountName": "str",
+                        "shareName": "str",
+                    },
                     "nfsAzureFile": {"accessMode": "str", "server": "str", "shareName": "str"},
                 },
                 "systemData": {
@@ -68,7 +74,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
                 },
                 "type": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +87,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             environment_name="str",
             storage_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

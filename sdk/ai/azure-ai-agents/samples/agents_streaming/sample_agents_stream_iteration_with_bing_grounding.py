@@ -21,11 +21,12 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, as found in the "Connected resources" tab
-       in your Azure AI Foundry project.
+    3) BING_CONNECTION_NAME - The name of a connection to the Bing search resource as it is
+       listed in Azure AI Foundry connected resources.
 """
 
 import os
+import re
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import AgentStreamEvent, RunStepDeltaChunk
 from azure.ai.agents.models import (
@@ -48,7 +49,7 @@ project_client = AIProjectClient(
 with project_client:
     agents_client = project_client.agents
 
-    bing_connection_id = os.environ["AZURE_BING_CONNECTION_ID"]
+    bing_connection_id = project_client.connections.get(os.environ["BING_CONNECTION_NAME"]).id
     bing = BingGroundingTool(connection_id=bing_connection_id)
     print(f"Bing Connection ID: {bing_connection_id}")
 
@@ -69,12 +70,15 @@ with project_client:
     print(f"Created message, message ID {message.id}")
 
     # Process Agent run and stream events back to the client. It may take a few minutes for the agent to complete the run.
+    reference_text = re.compile(r"\u3010(.+)\u3011")
     with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
         for event_type, event_data, _ in stream:
 
             if isinstance(event_data, MessageDeltaChunk):
-                print(f"Text delta received: {event_data.text}")
+                # Do not print reference text as we will show actual citation instead.
+                if reference_text.match(event_data.text) is None:
+                    print(f"Text delta received: {event_data.text}")
                 if event_data.delta.content and isinstance(event_data.delta.content[0], MessageDeltaTextContent):
                     delta_text_content = event_data.delta.content[0]
                     if delta_text_content.text and delta_text_content.text.annotations:
@@ -113,7 +117,12 @@ with project_client:
 
     response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
     if response_message:
+        responses = []
         for text_message in response_message.text_messages:
-            print(f"Agent response: {text_message.text.value}")
+            responses.append(text_message.text.value)
+        message = " ".join(responses)
         for annotation in response_message.url_citation_annotations:
-            print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+            message = message.replace(
+                annotation.text, f" [{annotation.url_citation.title}]({annotation.url_citation.url})"
+            )
+        print(f"Agent response: {message}")

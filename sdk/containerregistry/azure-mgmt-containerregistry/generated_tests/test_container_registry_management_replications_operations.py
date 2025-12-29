@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry.v2025_04_01 import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestContainerRegistryManagementReplicationsOperations(AzureMgmtRecordedTes
         response = self.client.replications.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerRegistryManagementReplicationsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             registry_name="str",
             replication_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -69,20 +69,7 @@ class TestContainerRegistryManagementReplicationsOperations(AzureMgmtRecordedTes
                 "type": "str",
                 "zoneRedundancy": "str",
             },
-            api_version="2025-04-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_replications_begin_delete(self, resource_group):
-        response = self.client.replications.begin_delete(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            replication_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -96,7 +83,20 @@ class TestContainerRegistryManagementReplicationsOperations(AzureMgmtRecordedTes
             registry_name="str",
             replication_name="str",
             replication_update_parameters={"regionEndpointEnabled": bool, "tags": {"str": "str"}},
-            api_version="2025-04-01",
+            api_version="2025-11-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_replications_begin_delete(self, resource_group):
+        response = self.client.replications.begin_delete(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            replication_name="str",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

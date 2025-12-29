@@ -21,12 +21,12 @@ class TestComputeManagementSharedGalleryImageVersionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_shared_gallery_image_versions_list(self, resource_group):
         response = self.client.shared_gallery_image_versions.list(
             location="str",
             gallery_unique_name="str",
             gallery_image_name="str",
-            api_version="2020-09-30",
+            api_version="2024-03-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestComputeManagementSharedGalleryImageVersionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_shared_gallery_image_versions_get(self, resource_group):
         response = await self.client.shared_gallery_image_versions.get(
             location="str",
             gallery_unique_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2020-09-30",
+            api_version="2024-03-03",
         )
 
         # please add some check logic here by yourself

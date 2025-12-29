@@ -23,7 +23,7 @@
 database service.
 """
 from collections import deque
-from typing import Any, Deque, Dict, Optional
+from typing import Any, Deque, Optional
 
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
 from azure.cosmos._change_feed.feed_range_internal import (FeedRangeInternal, FeedRangeInternalEpk,
@@ -55,7 +55,7 @@ class FeedRangeCompositeContinuation:
     def current_token(self) -> CompositeContinuationToken:
         return self._current_token
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         json_data = {
             self._version_property_name: "v2",
             self._container_rid_property_name: self._container_rid,
@@ -102,7 +102,7 @@ class FeedRangeCompositeContinuation:
             self,
             routing_provider: SmartRoutingMapProvider,
             collection_link: str,
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         overlapping_ranges = routing_provider.get_overlapping_ranges(collection_link,
                                                                      [self._current_token.feed_range], feed_options)
 
@@ -125,7 +125,7 @@ class FeedRangeCompositeContinuation:
             self,
             routing_provider: AsyncSmartRoutingMapProvider,
             collection_link: str,
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         overlapping_ranges = \
             await routing_provider.get_overlapping_ranges(
                 collection_link,

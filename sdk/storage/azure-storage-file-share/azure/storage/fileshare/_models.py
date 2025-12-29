@@ -17,16 +17,19 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 
+from ._generated._utils.serialization import Deserializer
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import DirectoryItem
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
+from ._generated.models import ShareNfsSettings as GeneratedShareNfsSettings
+from ._generated.models import ShareNfsSettingsEncryptionInTransit as GeneratedNfsEncryptionInTransit
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
+from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedSmbEncryptionInTransit
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
-from ._parser import _parse_datetime_from_str
 from ._shared.models import DictMixin, get_enum_value
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
@@ -206,53 +209,109 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     :keyword bool enabled: If SMB Multichannel is enabled.
     """
 
-    enabled: Optional[bool]
+    enabled: bool
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.enabled = kwargs.get('enabled')
-        if self.enabled is None:
-            raise ValueError("The value 'enabled' must be specified.")
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+        self.enabled = enabled
+
+
+class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
+    """Settings for encryption in transit.
+
+    :keyword bool required: If encryption in transit is required.
+    """
+
+    required: bool
+    """If encryption in transit is enabled."""
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+        self.required = required
 
 
 class ShareSmbSettings(GeneratedShareSmbSettings):
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
+    :keyword SmbEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    multichannel: SmbMultichannel
+    multichannel: Optional[SmbMultichannel]
     """Sets the multichannel settings."""
+    encryption_in_transit: Optional[SmbEncryptionInTransit]
+    """Sets the encryption in transit settings."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.multichannel = kwargs.get('multichannel')  # type: ignore [assignment]
-        if self.multichannel is None:
-            raise ValueError("The value 'multichannel' must be specified.")
+    def __init__(
+        self,
+        *,
+        multichannel: Optional[SmbMultichannel] = None,
+        encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
+        **kwargs: Any
+    ) -> None:
+        self.multichannel = multichannel
+        self.encryption_in_transit = encryption_in_transit
+        if self.multichannel is None and self.encryption_in_transit is None:
+            raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
+
+
+class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
+    """Settings for encryption in transit.
+
+    :keyword bool required: If encryption in transit is required.
+    """
+
+    required: bool
+    """If encryption in transit is enabled."""
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+        self.required = required
+
+
+class ShareNfsSettings(GeneratedShareNfsSettings):
+    """Settings for the NFS protocol.
+
+    :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
+    """
+
+    encryption_in_transit: NfsEncryptionInTransit
+    """Sets the encryption in transit settings."""
+
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+        self.encryption_in_transit = encryption_in_transit
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
-    Contains protocol properties of the share service such as the SMB setting of the share service.
+    Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
 
     :keyword ShareSmbSettings smb: Sets SMB settings.
+    :keyword ShareNfsSettings nfs: Sets NFS settings.
     """
 
-    smb: ShareSmbSettings
+    smb: Optional[ShareSmbSettings]
     """Sets the SMB settings."""
+    nfs: Optional[ShareNfsSettings]
+    """Sets the NFS settings."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.smb = kwargs.get('smb')  # type: ignore [assignment]
-        if self.smb is None:
-            raise ValueError("The value 'smb' must be specified.")
+    def __init__(
+        self,
+        *,
+        smb: Optional[ShareSmbSettings] = None,
+        nfs: Optional[ShareNfsSettings] = None,
+        **kwargs: Any
+    ) -> None:
+        self.smb = smb
+        self.nfs = nfs
+        if self.smb is None and self.nfs is None:
+            raise ValueError("The value 'smb' or 'nfs' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
-        return cls(
-            smb=generated.smb)
+        return cls(smb=generated.smb, nfs=generated.nfs)
 
 
-class ShareSasPermissions(object):
+class ShareSasPermissions:
     """ShareSasPermissions class to be used to be used with
     generating shared access signature and access policy operations.
 
@@ -561,8 +620,11 @@ class ShareProperties(DictMixin):
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
         self.provisioned_bandwidth = kwargs.get('x-ms-share-provisioned-bandwidth-mibps')
         self.lease = LeaseProperties(**kwargs)
-        self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
-            if kwargs.get('x-ms-enabled-protocols', None) else None
+        enabled_protocols = kwargs.get("x-ms-enabled-protocols", None)
+        if enabled_protocols is not None:
+            self.protocols = [protocol.strip() for protocol in enabled_protocols.split(',')]
+        else:
+            self.protocols = None
         self.root_squash = kwargs.get('x-ms-root-squash', None)
         self.enable_snapshot_virtual_directory_access = \
             kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
@@ -794,7 +856,7 @@ class HandlesPaged(PageIterator):
         return self._response.next_marker or None, self.current_page
 
 
-class NTFSAttributes(object):
+class NTFSAttributes:
     """Valid set of attributes to set for file or directory.
 
     To set attribute for directory, 'Directory' should always be enabled except setting 'None' for directory.
@@ -932,9 +994,12 @@ class DirectoryProperties(DictMixin):
         self.etag = kwargs.get('ETag')  # type: ignore [assignment]
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
         self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
-        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
-        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
-        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.change_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-change-time')) if (
+                kwargs.get('x-ms-file-change-time') is not None) else None
+        self.creation_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-creation-time')) if (
+                kwargs.get('x-ms-file-creation-time') is not None) else None
+        self.last_write_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-last-write-time')) if (
+                kwargs.get('x-ms-file-last-write-time') is not None) else None
         self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
         self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]
@@ -1024,7 +1089,6 @@ class DirectoryPropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
@@ -1181,9 +1245,12 @@ class FileProperties(DictMixin):
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
-        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
-        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
-        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.change_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-change-time')) if (
+            kwargs.get('x-ms-file-change-time') is not None) else None
+        self.creation_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-creation-time')) if (
+            kwargs.get('x-ms-file-creation-time') is not None) else None
+        self.last_write_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-last-write-time')) if (
+            kwargs.get('x-ms-file-last-write-time') is not None) else None
         self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
         self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]
@@ -1219,7 +1286,7 @@ class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NFS = "NFS"
 
 
-class FileSasPermissions(object):
+class FileSasPermissions:
     """FileSasPermissions class to be used with
     generating shared access signature operations.
 

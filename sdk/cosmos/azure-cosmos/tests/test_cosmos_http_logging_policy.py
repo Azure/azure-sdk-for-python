@@ -11,6 +11,7 @@ import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import PartitionKey, ContainerProxy
+from azure.cosmos.exceptions import CosmosHttpResponseError
 import test_config
 from _fault_injection_transport import FaultInjectionTransport
 from test_fault_injection_transport import TestFaultInjectionTransport
@@ -22,18 +23,6 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 
-
-class MockHandler(logging.Handler):
-
-    def __init__(self):
-        super(MockHandler, self).__init__()
-        self.messages = []
-
-    def reset(self):
-        self.messages = []
-
-    def emit(self, record):
-        self.messages.append(record)
 
 class FilterStatusCode(logging.Filter):
     def filter(self, record):
@@ -51,7 +40,7 @@ URL_TO_LOCATIONS = {
     L2_URL: L2}
 
 
-def create_logger(name: str, mock_handler: MockHandler, level: int = logging.INFO) -> logging.Logger:
+def create_logger(name: str, mock_handler: test_config.MockHandler, level: int = logging.INFO) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.addHandler(mock_handler)
     logger.setLevel(level)
@@ -87,9 +76,9 @@ class TestCosmosHttpLogger(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.mock_handler_default = MockHandler()
-        cls.mock_handler_diagnostic = MockHandler()
-        cls.mock_handler_filtered_diagnostic = MockHandler()
+        cls.mock_handler_default = test_config.MockHandler()
+        cls.mock_handler_diagnostic = test_config.MockHandler()
+        cls.mock_handler_filtered_diagnostic = test_config.MockHandler()
 
         # Add filter to the filtered diagnostics handler
 
@@ -112,6 +101,25 @@ class TestCosmosHttpLogger(unittest.TestCase):
                                                                     connection_policy=cls.connectionPolicy,
                                                                     logger=cls.logger_filtered_diagnostic,
                                                                     enable_diagnostics_logging=True)
+
+        # Create a root logger with a mock handler and a filter for status codes above 400
+        cls.root_mock_handler = test_config.MockHandler()
+        cls.root_mock_handler.addFilter(FilterStatusCode())
+        cls.root_logger = create_logger("rootLogger", cls.root_mock_handler)
+
+        # Create child loggers
+        cls.root_logger_child = logging.getLogger("rootLogger.child")
+        cls.root_logger_grandchild = logging.getLogger("rootLogger.child.grandchild")
+
+        # Use the grandchild logger for the Cosmos client
+        cls.client_grandchild_logger = cosmos_client.CosmosClient(
+            cls.host,
+            cls.masterKey,
+            consistency_level="Session",
+            connection_policy=cls.connectionPolicy,
+            logger=cls.root_logger_grandchild,
+            enable_diagnostics_logging=True
+        )
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database
@@ -146,12 +154,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "Read" == messages_request.operation_type
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
-        # Verify we only have a total of 4 logged messages: 2 from databaseaccount read and 2 from create database
-        assert len(self.mock_handler_diagnostic.messages) == 4
+        # Verify we only have a total of 6 logged messages: 2 from databaseaccount read, 2 from health check, and 2 from create database
+        assert len(self.mock_handler_diagnostic.messages) == 6
         # Test if we can log into from creating a database
-        # The request to create database should follow the databaseaccount read request immediately
-        messages_request = self.mock_handler_diagnostic.messages[2]
-        messages_response = self.mock_handler_diagnostic.messages[3]
+        # The request to create database should follow the health check request immediately
+        messages_request = self.mock_handler_diagnostic.messages[4]
+        messages_response = self.mock_handler_diagnostic.messages[5]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.verb == "POST"
@@ -233,7 +241,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         multiple_write_locations = True
 
         # Client setup
-        mock_handler = MockHandler()
+        mock_handler = test_config.MockHandler()
         logger = create_logger("test_logger_client_settings", mock_handler)
 
         custom_transport = FaultInjectionTransport()
@@ -288,7 +296,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_activity_id_logging_policy(self):
         # Create a mock handler and logger for the new client
-        self.mock_handler_activity_id = MockHandler()
+        self.mock_handler_activity_id = test_config.MockHandler()
         self.logger_activity_id = create_logger("test_logger_activity_id", self.mock_handler_activity_id)
 
         # Create a new client with the logger and enable diagnostics logging
@@ -339,6 +347,78 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.client_activity_id.delete_database(database_id)
         self.mock_handler_activity_id.reset()
 
+    def test_logging_exceptions_with_no_response(self):
+        # Create a mock handler and logger for capturing logs
+        mock_handler = test_config.MockHandler()
+        logger = create_logger("test_logger_fault_injection", mock_handler)
+
+        # Set up FaultInjectionTransport to inject a 502 error
+        id_value = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+        custom_transport = FaultInjectionTransport()
+        predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_req_for_document_with_id(
+            r, id_value)
+        custom_transport.add_fault(predicate, lambda r: FaultInjectionTransport.error_after_delay(
+            1000,
+            CosmosHttpResponseError(
+                status_code=502,
+                message="Some random reverse proxy error.")))
+
+
+        # Initialize the client with the custom transport and logger
+        initialized_objects = TestFaultInjectionTransport.setup_method_with_custom_transport(
+            custom_transport,
+            default_endpoint=CONFIG.host,
+            key=CONFIG.masterKey,
+            database_id=CONFIG.TEST_DATABASE_ID,
+            container_id=CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID,
+            preferred_locations=[L1, L2],
+            excluded_locations=[],
+            multiple_write_locations=True,
+            custom_logger=logger
+        )
+        mock_handler.reset()
+
+        # Attempt to create an item, which should trigger the injected 502 error
+        container: ContainerProxy = initialized_objects["col"]
+        try:
+            container.create_item(body=document_definition)
+            pytest.fail("Expected exception not thrown")
+        except CosmosHttpResponseError as cosmosError:
+            # Verify that the logger captured the 502 error and was called from on_exception
+            assert any(m.status_code == 502 and "on_exception" in m.funcName for m in mock_handler.messages)
+
+    def test_hierarchical_logger_with_filter(self):
+        # Reset the mock handler before the test
+        self.root_mock_handler.reset()
+
+        # Attempt to read a nonexistent item
+        database_id = "database_test_hierarchical_logger_" + str(uuid.uuid4())
+        container_id = "container_test_hierarchical_logger_" + str(uuid.uuid4())
+        database = self.client_grandchild_logger.create_database(id=database_id)
+        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+
+        try:
+            container.read_item(item="nonexistent_item", partition_key="nonexistent_pk")
+        except:
+            pass
+
+        # Verify that the error was logged by the root logger's mock handler
+        assert len(self.root_mock_handler.messages) == 2
+        log_record = self.root_mock_handler.messages[0]
+        assert hasattr(log_record, "status_code")
+        assert log_record.status_code == 404
+        assert log_record.name == "rootLogger.child.grandchild"
+        assert not bool(self.root_logger_grandchild.filters)
+        assert not bool(self.root_logger_child.filters)
+        assert bool(self.root_mock_handler.filters)
+
+        # Clean up
+        self.client_grandchild_logger.delete_database(database_id)
+        self.root_mock_handler.reset()
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,3 +1,46 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-template"
+authors = [
+    {name = "Microsoft Corporation", email = "azuresdkengsysadmins@microsoft.com"},
+]
+description = "Microsoft Azure Template Package Client Library for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "azure-core<2.0.0,>=1.23.0",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+"Bug Reports" = "https://github.com/Azure/azure-sdk-for-python/issues"
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.template._version.VERSION"}
+readme = {file = ["README.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "samples*", "azure", "build*"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 mypy = true
 type_check_samples = true
@@ -5,3 +48,5 @@ verifytypes = true
 pyright = true
 pylint = true
 black = true
+generate = false
+apistub = false

@@ -20,7 +20,7 @@ class TestContainerAppsAPIAppResiliencyOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_app_resiliency_create_or_update(self, resource_group):
         response = self.client.app_resiliency.create_or_update(
             resource_group_name=resource_group.name,
             app_name="str",
@@ -59,7 +59,7 @@ class TestContainerAppsAPIAppResiliencyOperations(AzureMgmtRecordedTestCase):
                 "timeoutPolicy": {"connectionTimeoutInSeconds": 0, "responseTimeoutInSeconds": 0},
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestContainerAppsAPIAppResiliencyOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_app_resiliency_update(self, resource_group):
         response = self.client.app_resiliency.update(
             resource_group_name=resource_group.name,
             app_name="str",
@@ -106,7 +106,7 @@ class TestContainerAppsAPIAppResiliencyOperations(AzureMgmtRecordedTestCase):
                 "timeoutPolicy": {"connectionTimeoutInSeconds": 0, "responseTimeoutInSeconds": 0},
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -114,12 +114,12 @@ class TestContainerAppsAPIAppResiliencyOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_app_resiliency_delete(self, resource_group):
         response = self.client.app_resiliency.delete(
             resource_group_name=resource_group.name,
             app_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -127,12 +127,12 @@ class TestContainerAppsAPIAppResiliencyOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_app_resiliency_get(self, resource_group):
         response = self.client.app_resiliency.get(
             resource_group_name=resource_group.name,
             app_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -140,11 +140,11 @@ class TestContainerAppsAPIAppResiliencyOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_app_resiliency_list(self, resource_group):
         response = self.client.app_resiliency.list(
             resource_group_name=resource_group.name,
             app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

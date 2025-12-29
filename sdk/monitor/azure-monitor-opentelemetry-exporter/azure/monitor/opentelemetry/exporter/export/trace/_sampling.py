@@ -2,9 +2,6 @@
 # Licensed under the MIT License.
 from typing import Optional, Sequence
 
-# pylint:disable=no-name-in-module
-from fixedint import Int32
-
 from opentelemetry.context import Context
 from opentelemetry.trace import Link, SpanKind, format_trace_id
 from opentelemetry.sdk.trace.sampling import (
@@ -16,12 +13,9 @@ from opentelemetry.sdk.trace.sampling import (
 from opentelemetry.trace.span import TraceState
 from opentelemetry.util.types import Attributes
 
+from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_sample_score
+
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
-
-
-_HASH = 5381
-_INTEGER_MAX: int = Int32.maxval
-_INTEGER_MIN: int = Int32.minval
 
 
 # Sampler is responsible for the following:
@@ -57,7 +51,7 @@ class ApplicationInsightsSampler(Sampler):
             decision = Decision.RECORD_AND_SAMPLE
         else:
             # Determine if should sample from ratio and traceId
-            sample_score = self._get_DJB2_sample_score(format_trace_id(trace_id).lower())
+            sample_score = _get_DJB2_sample_score(format_trace_id(trace_id).lower())
             if sample_score < self._ratio:
                 decision = Decision.RECORD_AND_SAMPLE
             else:
@@ -71,20 +65,6 @@ class ApplicationInsightsSampler(Sampler):
             attributes,
             _get_parent_trace_state(parent_context),  # type: ignore
         )
-
-    def _get_DJB2_sample_score(self, trace_id_hex: str) -> float:
-        # This algorithm uses 32bit integers
-        hash_value = Int32(_HASH)
-        for char in trace_id_hex:
-            hash_value = ((hash_value << 5) + hash_value) + ord(char)
-
-        if hash_value == _INTEGER_MIN:
-            hash_value = int(_INTEGER_MAX)
-        else:
-            hash_value = abs(hash_value)
-
-        # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
-        return float(hash_value) / _INTEGER_MAX
 
     def get_description(self) -> str:
         return "ApplicationInsightsSampler{}".format(self._ratio)

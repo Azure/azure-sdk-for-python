@@ -27,7 +27,7 @@ class TestEventGridManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecord
             parent_type="str",
             parent_name="str",
             private_link_resource_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestEventGridManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             parent_type="str",
             parent_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

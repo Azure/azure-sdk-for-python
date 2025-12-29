@@ -751,6 +751,82 @@ async def test_imds_user_assigned_identity(get_token_method):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_enable_imds_probe(get_token_method):
+    access_token = "****"
+    expires_on = 42
+    expected_token = access_token
+    scope = "scope"
+    transport = async_validating_transport(
+        requests=[
+            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
+            Request(
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"resource": scope},
+            ),
+        ],
+        responses=[
+            mock_response(status_code=400),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_in": 42,
+                    "expires_on": expires_on,
+                    "ext_expires_in": 42,
+                    "not_before": int(time.time()),
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+    credential = ManagedIdentityCredential(transport=transport, _enable_imds_probe=True)
+    token = await getattr(credential, get_token_method)(scope)
+    assert token.token == expected_token
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_imds_probe_enabled_in_chain(get_token_method):
+    access_token = "****"
+    expires_on = 42
+    expected_token = access_token
+    scope = "scope"
+    transport = async_validating_transport(
+        requests=[
+            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
+            Request(
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"resource": scope},
+            ),
+        ],
+        responses=[
+            mock_response(status_code=400),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_in": 42,
+                    "expires_on": expires_on,
+                    "ext_expires_in": 42,
+                    "not_before": int(time.time()),
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+    within_credential_chain.set(True)
+    credential = ManagedIdentityCredential(transport=transport)
+    token = await getattr(credential, get_token_method)(scope)
+    assert token.token == expected_token
+    within_credential_chain.set(False)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 async def test_imds_text_response(get_token_method):
     async def send(request, **kwargs):
         response = mock.Mock(

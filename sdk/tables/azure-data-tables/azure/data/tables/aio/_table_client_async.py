@@ -147,7 +147,7 @@ class TableClient(AsyncTablesBaseClient):
         cls,
         table_url: str,
         *,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] = None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.
@@ -156,10 +156,11 @@ class TableClient(AsyncTablesBaseClient):
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
             table URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-            AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
+            AzureSasCredential (azure-core), or a AsyncTokenCredential implementation from azure-identity.
         :paramtype credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
-            ~azure.core.credentials.AzureSasCredential or None
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or None
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """

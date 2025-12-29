@@ -1,5 +1,121 @@
 # Release History
 
+## 1.1.0 (2025-10-23)
+
+### Features Added
+
+  - Model `DeviceRegistryMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DeviceRegistryMgmtClient` added operation group `namespaces`
+  - Client `DeviceRegistryMgmtClient` added operation group `namespace_assets`
+  - Client `DeviceRegistryMgmtClient` added operation group `namespace_devices`
+  - Client `DeviceRegistryMgmtClient` added operation group `namespace_discovered_assets`
+  - Client `DeviceRegistryMgmtClient` added operation group `namespace_discovered_devices`
+  - Client `DeviceRegistryMgmtClient` added operation group `schema_registries`
+  - Client `DeviceRegistryMgmtClient` added operation group `schemas`
+  - Client `DeviceRegistryMgmtClient` added operation group `schema_versions`
+  - Added model `BrokerStateStoreDestinationConfiguration`
+  - Added model `DatasetBrokerStateStoreDestination`
+  - Added model `DatasetDestination`
+  - Added enum `DatasetDestinationTarget`
+  - Added model `DatasetMqttDestination`
+  - Added model `DatasetStorageDestination`
+  - Added model `DeviceMessagingEndpoint`
+  - Added model `DeviceRef`
+  - Added model `DeviceStatus`
+  - Added model `DeviceStatusEndpoint`
+  - Added model `DeviceStatusEndpoints`
+  - Added model `DiscoveredInboundEndpoints`
+  - Added model `DiscoveredMessagingEndpoints`
+  - Added model `DiscoveredOutboundEndpoints`
+  - Added model `ErrorDetails`
+  - Added model `EventDestination`
+  - Added enum `EventDestinationTarget`
+  - Added model `EventMqttDestination`
+  - Added model `EventStorageDestination`
+  - Added enum `Format`
+  - Added model `HostAuthentication`
+  - Added model `InboundEndpoints`
+  - Added model `ManagementAction`
+  - Added enum `ManagementActionType`
+  - Added model `ManagementGroup`
+  - Added model `Messaging`
+  - Added model `MessagingEndpoint`
+  - Added model `MessagingEndpoints`
+  - Added model `MqttDestinationConfiguration`
+  - Added enum `MqttDestinationQos`
+  - Added model `Namespace`
+  - Added model `NamespaceAsset`
+  - Added model `NamespaceAssetProperties`
+  - Added model `NamespaceAssetStatus`
+  - Added model `NamespaceAssetStatusDataset`
+  - Added model `NamespaceAssetStatusEvent`
+  - Added model `NamespaceAssetStatusEventGroup`
+  - Added model `NamespaceAssetStatusManagementAction`
+  - Added model `NamespaceAssetStatusManagementGroup`
+  - Added model `NamespaceAssetStatusStream`
+  - Added model `NamespaceAssetUpdate`
+  - Added model `NamespaceAssetUpdateProperties`
+  - Added model `NamespaceDataset`
+  - Added model `NamespaceDatasetDataPoint`
+  - Added model `NamespaceDevice`
+  - Added model `NamespaceDeviceProperties`
+  - Added model `NamespaceDeviceUpdate`
+  - Added model `NamespaceDeviceUpdateProperties`
+  - Added model `NamespaceDiscoveredAsset`
+  - Added model `NamespaceDiscoveredAssetProperties`
+  - Added model `NamespaceDiscoveredAssetUpdate`
+  - Added model `NamespaceDiscoveredAssetUpdateProperties`
+  - Added model `NamespaceDiscoveredDataset`
+  - Added model `NamespaceDiscoveredDatasetDataPoint`
+  - Added model `NamespaceDiscoveredDevice`
+  - Added model `NamespaceDiscoveredDeviceProperties`
+  - Added model `NamespaceDiscoveredDeviceUpdate`
+  - Added model `NamespaceDiscoveredDeviceUpdateProperties`
+  - Added model `NamespaceDiscoveredEvent`
+  - Added model `NamespaceDiscoveredEventGroup`
+  - Added model `NamespaceDiscoveredManagementAction`
+  - Added enum `NamespaceDiscoveredManagementActionType`
+  - Added model `NamespaceDiscoveredManagementGroup`
+  - Added model `NamespaceDiscoveredStream`
+  - Added model `NamespaceEvent`
+  - Added model `NamespaceEventGroup`
+  - Added model `NamespaceMessageSchemaReference`
+  - Added model `NamespaceMigrateRequest`
+  - Added model `NamespaceProperties`
+  - Added model `NamespaceStream`
+  - Added model `NamespaceUpdate`
+  - Added model `NamespaceUpdateProperties`
+  - Added model `OutboundEndpoints`
+  - Added model `Schema`
+  - Added model `SchemaProperties`
+  - Added model `SchemaRegistry`
+  - Added model `SchemaRegistryProperties`
+  - Added model `SchemaRegistryUpdate`
+  - Added model `SchemaRegistryUpdateProperties`
+  - Added enum `SchemaType`
+  - Added model `SchemaVersion`
+  - Added model `SchemaVersionProperties`
+  - Added enum `Scope`
+  - Added model `StatusConfig`
+  - Added model `StatusError`
+  - Added model `StorageDestinationConfiguration`
+  - Added model `StreamDestination`
+  - Added enum `StreamDestinationTarget`
+  - Added model `StreamMqttDestination`
+  - Added model `StreamStorageDestination`
+  - Added model `SystemAssignedServiceIdentity`
+  - Added enum `SystemAssignedServiceIdentityType`
+  - Added model `TrustSettings`
+  - Added model `X509CertificateCredentials`
+  - Added operation group `NamespaceAssetsOperations`
+  - Added operation group `NamespaceDevicesOperations`
+  - Added operation group `NamespaceDiscoveredAssetsOperations`
+  - Added operation group `NamespaceDiscoveredDevicesOperations`
+  - Added operation group `NamespacesOperations`
+  - Added operation group `SchemaRegistriesOperations`
+  - Added operation group `SchemaVersionsOperations`
+  - Added operation group `SchemasOperations`
+
 ## 1.0.0 (2025-02-26)
 
 ### Features Added

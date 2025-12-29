@@ -20,10 +20,21 @@ class TestMonitorManagementMetricDefinitionsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_metric_definitions_list_at_subscription_scope(self, resource_group):
+        response = self.client.metric_definitions.list_at_subscription_scope(
+            region="str",
+            api_version="2024-02-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_metric_definitions_list(self, resource_group):
         response = self.client.metric_definitions.list(
             resource_uri="str",
-            api_version="2018-01-01",
+            api_version="2024-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

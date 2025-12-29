@@ -1,14 +1,26 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 2.0.0b2 (2025-11-08)
 
 ### Features Added
 
+- Added new PII categories: DriversLicenseNumber, PassportNumber, PersonType, Organization, ABARoutingNumber, BankAccountNumber, DateOfBirth, InternationalBankingAccountNumber, SWIFTCode, VehicleIdentificationNumber, Age, Date, ZipCode, GovernmentIssuedId, CVV, HealthCardNumber, CASocialInsuranceNumber, USMedicareBeneficiaryId, GithubAccount, Location, and GPE.
+
+## 2.0.0b1 (2025-08-22)
+
+### Features Added
+- Added support for service version 2024-05-01, 2024-11-01, 2024-11-15-preview,2025-05-15-preview.
+
+- Added custom poller AnalyzeConversationLROPoller and AnalyzeConversationAsyncLROPoller, and make begin_analyze_conversation_job return AnalyzeConversationLROPoller[ItemPaged[ConversationActions]] or AnalyzeConversationAsyncLROPoller[ItemPaged[ConversationActions]].
+
+- Added three different type of Redaction Policy `CharacterMaskPolicyType`, `EntityMaskTypePolicyType` and `NoMaskPolicyType`.
+
+- Added AI Conversation Analyze (Multi-turn conversation prediction) feature.
+
+- Added tests and samples for new features.
+
 ### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Removed support for Conversations Authoring.
 
 ## 1.1.0 (2023-06-13)
 

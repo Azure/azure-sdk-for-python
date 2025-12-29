@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web.v2024_11_01.aio import WebSiteManagementClient
+from azure.mgmt.web.aio import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -23,7 +23,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_app_service_plans_list(self, resource_group):
         response = self.client.app_service_plans.list(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
     async def test_app_service_plans_list_by_resource_group(self, resource_group):
         response = self.client.app_service_plans.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.app_service_plans.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -69,6 +69,14 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                     "hostingEnvironmentProfile": {"id": "str", "name": "str", "type": "str"},
                     "hyperV": False,
                     "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "installScripts": [{"name": "str", "source": {"sourceUri": "str", "type": "str"}}],
+                    "isCustomMode": bool,
                     "isSpot": bool,
                     "isXenon": False,
                     "kind": "str",
@@ -76,10 +84,20 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                     "maximumElasticWorkerCount": 0,
                     "maximumNumberOfWorkers": 0,
                     "name": "str",
+                    "network": {"virtualNetworkSubnetId": "str"},
                     "numberOfSites": 0,
                     "numberOfWorkers": 0,
                     "perSiteScaling": False,
+                    "planDefaultIdentity": {"identityType": "str", "userAssignedIdentityResourceId": "str"},
                     "provisioningState": "str",
+                    "rdpEnabled": bool,
+                    "registryAdapters": [
+                        {
+                            "keyVaultSecretReference": {"referenceStatus": "str", "secretUri": "str"},
+                            "registryKey": "str",
+                            "type": "str",
+                        }
+                    ],
                     "reserved": False,
                     "resourceGroup": "str",
                     "sku": {
@@ -100,6 +118,15 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                     },
                     "spotExpirationTime": "2020-02-20 00:00:00",
                     "status": "str",
+                    "storageMounts": [
+                        {
+                            "credentialsKeyVaultReference": {"referenceStatus": "str", "secretUri": "str"},
+                            "destinationPath": "str",
+                            "name": "str",
+                            "source": "str",
+                            "type": "str",
+                        }
+                    ],
                     "subscription": "str",
                     "tags": {"str": "str"},
                     "targetWorkerCount": 0,
@@ -108,7 +135,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                     "workerTierName": "str",
                     "zoneRedundant": False,
                 },
-                api_version="2024-11-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -121,7 +148,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.app_service_plans.delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -140,6 +167,12 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "hostingEnvironmentProfile": {"id": "str", "name": "str", "type": "str"},
                 "hyperV": False,
                 "id": "str",
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "isSpot": bool,
                 "isXenon": False,
                 "kind": "str",
@@ -162,7 +195,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "workerTierName": "str",
                 "zoneRedundant": False,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -174,7 +207,19 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.app_service_plans.list_capabilities(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_app_service_plans_get_server_farm_rdp_password(self, resource_group):
+        response = await self.client.app_service_plans.get_server_farm_rdp_password(
+            resource_group_name=resource_group.name,
+            name="str",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -188,7 +233,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -202,7 +247,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -216,7 +261,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -230,7 +275,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -242,7 +287,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.app_service_plans.get_hybrid_connection_plan_limit(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -254,9 +299,21 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.app_service_plans.list_hybrid_connections(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_app_service_plans_get_server_farm_instance_details(self, resource_group):
+        response = await self.client.app_service_plans.get_server_farm_instance_details(
+            resource_group_name=resource_group.name,
+            name="str",
+            api_version="2025-03-01",
+        )
+
         # please add some check logic here by yourself
         # ...
 
@@ -266,7 +323,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.app_service_plans.restart_web_apps(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -278,7 +335,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.app_service_plans.list_web_apps(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -290,7 +347,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.app_service_plans.get_server_farm_skus(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -302,7 +359,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.app_service_plans.list_usages(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -314,7 +371,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.app_service_plans.list_vnets(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -327,7 +384,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -341,7 +398,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             name="str",
             vnet_name="str",
             gateway_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -363,7 +420,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "vnetName": "str",
                 "vpnPackageUri": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -376,7 +433,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -390,7 +447,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             name="str",
             vnet_name="str",
             route_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -413,7 +470,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "startAddress": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -427,7 +484,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             name="str",
             vnet_name="str",
             route_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -450,7 +507,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "startAddress": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -463,7 +520,20 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             name="str",
             worker_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_app_service_plans_recycle_managed_instance_worker(self, resource_group):
+        response = await self.client.app_service_plans.recycle_managed_instance_worker(
+            resource_group_name=resource_group.name,
+            name="str",
+            worker_name="str",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -49,6 +50,12 @@ def main():
                     "dnsSuffix": "www.my-name.com",
                 },
                 "daprAIConnectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://northcentralus-0.in.applicationinsights.azure.com/",
+                "ingressConfiguration": {
+                    "headerCountLimit": 30,
+                    "requestIdleTimeout": 5,
+                    "terminationGracePeriodSeconds": 3600,
+                    "workloadProfileName": "My-CO-01",
+                },
                 "peerAuthentication": {"mtls": {"enabled": True}},
                 "peerTrafficConfiguration": {"encryption": {"enabled": True}},
                 "vnetConfiguration": {
@@ -82,6 +89,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ManagedEnvironments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

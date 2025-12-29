@@ -21,11 +21,11 @@ class TestContainerAppsAPIManagedEnvironmentPrivateLinkResourcesOperationsAsync(
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_managed_environment_private_link_resources_list(self, resource_group):
         response = self.client.managed_environment_private_link_resources.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

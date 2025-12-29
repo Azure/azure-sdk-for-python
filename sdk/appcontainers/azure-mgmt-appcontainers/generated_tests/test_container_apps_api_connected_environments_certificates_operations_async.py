@@ -25,7 +25,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
         response = self.client.connected_environments_certificates.list(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             certificate_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -46,40 +46,46 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_connected_environments_certificates_create_or_update(self, resource_group):
-        response = await self.client.connected_environments_certificates.create_or_update(
-            resource_group_name=resource_group.name,
-            connected_environment_name="str",
-            certificate_name="str",
-            api_version="2025-01-01",
-        )
+    async def test_connected_environments_certificates_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.connected_environments_certificates.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                connected_environment_name="str",
+                certificate_name="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_connected_environments_certificates_delete(self, resource_group):
-        response = await self.client.connected_environments_certificates.delete(
-            resource_group_name=resource_group.name,
-            connected_environment_name="str",
-            certificate_name="str",
-            api_version="2025-01-01",
-        )
+    async def test_connected_environments_certificates_begin_delete(self, resource_group):
+        response = await (
+            await self.client.connected_environments_certificates.begin_delete(
+                resource_group_name=resource_group.name,
+                connected_environment_name="str",
+                certificate_name="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_connected_environments_certificates_update(self, resource_group):
-        response = await self.client.connected_environments_certificates.update(
-            resource_group_name=resource_group.name,
-            connected_environment_name="str",
-            certificate_name="str",
-            certificate_envelope={"tags": {"str": "str"}},
-            api_version="2025-01-01",
-        )
+    async def test_connected_environments_certificates_begin_update(self, resource_group):
+        response = await (
+            await self.client.connected_environments_certificates.begin_update(
+                resource_group_name=resource_group.name,
+                connected_environment_name="str",
+                certificate_name="str",
+                certificate_envelope={"tags": {"str": "str"}},
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

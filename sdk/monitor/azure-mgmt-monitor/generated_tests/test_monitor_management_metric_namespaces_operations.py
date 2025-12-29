@@ -23,7 +23,7 @@ class TestMonitorManagementMetricNamespacesOperations(AzureMgmtRecordedTestCase)
     def test_metric_namespaces_list(self, resource_group):
         response = self.client.metric_namespaces.list(
             resource_uri="str",
-            api_version="2017-12-01-preview",
+            api_version="2024-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -35,7 +35,7 @@ def main():
         resource_group_name="myResourceGroup",
         registry_name="myRegistry",
         registry_update_parameters={
-            "properties": {"adminUserEnabled": True},
+            "properties": {"adminUserEnabled": True, "roleAssignmentMode": "AbacRepositoryPermissions"},
             "sku": {"name": "Standard"},
             "tags": {"key": "value"},
         },
@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2025-04-01/examples/RegistryUpdate.json
+# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/Registry/stable/2025-11-01/examples/RegistryUpdate.json
 if __name__ == "__main__":
     main()

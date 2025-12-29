@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry.v2025_04_01 import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,12 +20,24 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_connected_registries_list(self, resource_group):
+        response = self.client.connected_registries.list(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            api_version="2025-11-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_connected_registries_get(self, resource_group):
         response = self.client.connected_registries.get(
             resource_group_name=resource_group.name,
             registry_name="str",
             connected_registry_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +97,7 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
                 "type": "str",
                 "version": "str",
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -105,7 +117,7 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
                 "notificationsList": ["str"],
                 "syncProperties": {"messageTtl": "1 day, 0:00:00", "schedule": "str", "syncWindow": "1 day, 0:00:00"},
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -118,21 +130,9 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             registry_name="str",
             connected_registry_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_connected_registries_list(self, resource_group):
-        response = self.client.connected_registries.list(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            api_version="2025-04-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -143,7 +143,7 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             registry_name="str",
             connected_registry_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

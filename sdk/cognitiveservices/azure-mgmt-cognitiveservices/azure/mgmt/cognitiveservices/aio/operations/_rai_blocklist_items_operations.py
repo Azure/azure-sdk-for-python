@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -45,7 +45,8 @@ from .._configuration import CognitiveServicesManagementClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RaiBlocklistItemsOperations:
@@ -72,7 +73,7 @@ class RaiBlocklistItemsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, rai_blocklist_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.RaiBlocklistItem"]:
+    ) -> AsyncItemPaged["_models.RaiBlocklistItem"]:
         """Gets the blocklist items associated with the custom blocklist.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

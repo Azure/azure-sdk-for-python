@@ -119,7 +119,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
         # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
         # to change an instance's assertion.
-        refresh_tokens = self._client.get_cached_refresh_tokens(scopes)
+        refresh_tokens = self._client.get_cached_refresh_tokens(scopes, **kwargs)
         if len(refresh_tokens) == 1:  # there should be only one
             try:
                 refresh_token = refresh_tokens[0]["secret"]

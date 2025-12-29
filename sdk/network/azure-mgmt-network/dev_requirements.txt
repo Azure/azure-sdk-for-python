@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 aiohttp>=3.0; python_version >= '3.5'
 -e ../../resources/azure-mgmt-resource
 -e ../../identity/azure-identity

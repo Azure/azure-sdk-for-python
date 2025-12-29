@@ -8,7 +8,6 @@ import codecs
 import hashlib
 import os
 import secrets
-from urllib.parse import urlparse
 
 from azure.keyvault.securitydomain.models import CertificateInfo, SecurityDomainJsonWebKey
 from cryptography.hazmat.backends import default_backend
@@ -16,7 +15,10 @@ from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import load_pem_x509_certificate
 
 
-PATH_PREFIX = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, os.pardir))
+PATH_PREFIX = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, "resources"))
+CERT_PATH_PREFIX = f"{PATH_PREFIX}/certificate"
+SECURITY_DOMAIN_PATH = f"{PATH_PREFIX}/security-domain.json"
+TRANSFER_KEY_PATH = f"{PATH_PREFIX}/transfer-key.pem"
 
 
 def _int_to_bytes(i):
@@ -79,10 +81,7 @@ class Utils:
 
 
 def get_certificate_info() -> CertificateInfo:
-    hsm_url = os.environ["AZURE_MANAGEDHSM_URL"]
-    hsm_name = urlparse(hsm_url).netloc.split(".")[0]
-    certs_path = f"{PATH_PREFIX}/{hsm_name}-certificate"
-    sd_wrapping_keys = [f"{certs_path}0.cer", f"{certs_path}1.cer", f"{certs_path}2.cer"]
+    sd_wrapping_keys = [f"{CERT_PATH_PREFIX}0.cer", f"{CERT_PATH_PREFIX}1.cer", f"{CERT_PATH_PREFIX}2.cer"]
     certificates = []
     for path in sd_wrapping_keys:
         with open(path, "rb") as f:
@@ -106,35 +105,28 @@ def get_certificate_info() -> CertificateInfo:
                 kid=cert.subject.rfc4514_string(),
                 kty=kty,
                 key_ops=key_ops,
-                n=n,
-                e=e,
+                n=n,  # type: ignore
+                e=e,  # type: ignore
                 x5_c=x5c,
                 alg=alg,
                 x5_t=x5t,
                 x5_t_s256=x5tS256,
             )
         )
-    return CertificateInfo(certificates=certificates)
+    return CertificateInfo(certificates=certificates, required=2)
 
 
 def write_security_domain(security_domain: str) -> None:
-    secondary_hsm_url = os.environ["SECONDARY_MANAGEDHSM_URL"]
-    secondary_hsm_name = urlparse(secondary_hsm_url).netloc.split(".")[0]
-    sd_path = f"{PATH_PREFIX}/{secondary_hsm_name}-security-domain.json"
     try:
-        with open(sd_path, "w") as f:
+        with open(SECURITY_DOMAIN_PATH, "w") as f:
             f.write(security_domain)
     except Exception as ex:  # pylint: disable=broad-except
-        if os.path.isfile(sd_path):
-            os.remove(sd_path)
+        if os.path.isfile(SECURITY_DOMAIN_PATH):
+            os.remove(SECURITY_DOMAIN_PATH)
         raise ex
 
 
 def write_transfer_key(transfer_key: dict) -> None:
-    secondary_hsm_url = os.environ["SECONDARY_MANAGEDHSM_URL"]
-    secondary_hsm_name = urlparse(secondary_hsm_url).netloc.split(".")[0]
-    key_path = f"{PATH_PREFIX}/{secondary_hsm_name}-transfer-key.pem"
-
     def get_x5c_as_pem():
         x5c = transfer_key.get("x5c", [])
         if not x5c:
@@ -151,11 +143,11 @@ def write_transfer_key(transfer_key: dict) -> None:
         return "\n".join(pem)
 
     try:
-        with open(key_path, "w") as f:
+        with open(TRANSFER_KEY_PATH, "w") as f:
             f.write(get_x5c_as_pem())
     except Exception as ex:  # pylint: disable=broad-except
-        if os.path.isfile(key_path):
-            os.remove(key_path)
+        if os.path.isfile(TRANSFER_KEY_PATH):
+            os.remove(TRANSFER_KEY_PATH)
         raise ex
 
 

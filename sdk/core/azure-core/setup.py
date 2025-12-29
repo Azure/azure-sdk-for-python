@@ -70,7 +70,6 @@ setup(
     python_requires=">=3.9",
     install_requires=[
         "requests>=2.21.0",
-        "six>=1.11.0",
         "typing-extensions>=4.6.0",
     ],
     extras_require={

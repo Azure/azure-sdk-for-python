@@ -23,20 +23,20 @@
 Cosmos database service.
 """
 import json
-from typing import Optional, Dict, Any, List, Union
+from typing import Optional, Any, Union
 
 from azure.core.pipeline.transport._base import HttpRequest
 
 from . import http_constants
-from .partition_key import _Empty, _Undefined
+from .partition_key import _Empty, _Undefined, _PartitionKeyKind
 
 
 # pylint: disable=protected-access
 
 
 class ContainerRecreateRetryPolicy:
-    def __init__(self, client: Optional[Any], container_caches: Optional[Dict[str, Dict[str, Any]]],
-                 request: Optional[HttpRequest], *args: Optional[List]):
+    def __init__(self, client: Optional[Any], container_caches: Optional[dict[str, dict[str, Any]]],
+                 request: Optional[HttpRequest], *args: Optional[list[Any]]):
         self.retry_after_in_milliseconds = 0  # Same as in .net
         self.refresh_container_properties_cache = True
         self.args = args
@@ -69,7 +69,7 @@ class ContainerRecreateRetryPolicy:
             return True
         return False
 
-    def __find_container_link_with_rid(self, container_properties_caches: Optional[Dict[str, Any]], rid: str) -> \
+    def __find_container_link_with_rid(self, container_properties_caches: Optional[dict[str, Any]], rid: str) -> \
             Optional[str]:
         if container_properties_caches:
             if rid in container_properties_caches:
@@ -79,16 +79,16 @@ class ContainerRecreateRetryPolicy:
         return None
 
     def check_if_rid_different(self, container_link: str,
-                               container_properties_caches: Optional[Dict[str, Any]], rid: str) -> bool:
+                               container_properties_caches: Optional[dict[str, Any]], rid: str) -> bool:
         if container_properties_caches:
             return container_properties_caches[container_link]["_rid"] == rid
         return not rid
 
-    def should_extract_partition_key(self, container_cache: Optional[Dict[str, Any]]) -> bool:
+    def should_extract_partition_key(self, container_cache: Optional[dict[str, Any]]) -> bool:
         if self._headers and http_constants.HttpHeaders.PartitionKey in self._headers:
             current_partition_key = self._headers[http_constants.HttpHeaders.PartitionKey]
             partition_key_definition = container_cache["partitionKey"] if container_cache else None
-            if partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            if partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
                 # A null in the multihash partition key indicates a failure in extracting partition keys
                 # from the document definition
                 return 'null' in current_partition_key
@@ -96,11 +96,11 @@ class ContainerRecreateRetryPolicy:
             return current_partition_key in ('[{}]', '[]', [{}], [])
         return False
 
-    def _extract_partition_key(self, client: Optional[Any], container_cache: Optional[Dict[str, Any]], body: str)\
-            -> Optional[Union[str, List, Dict]]:
+    def _extract_partition_key(self, client: Optional[Any], container_cache: Optional[dict[str, Any]], body: str)\
+            -> Optional[Union[str, list, dict]]:
         partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
-        new_partition_key: Optional[Union[str, List, Dict]] = None
+        new_partition_key: Optional[Union[str, list, dict]] = None
         if body_dict:
             options = client._AddPartitionKey(self.container_link, body_dict, {}) if client else {}
             # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
@@ -110,18 +110,18 @@ class ContainerRecreateRetryPolicy:
             elif options and isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])
         return new_partition_key
 
     async def _extract_partition_key_async(self, client: Optional[Any],
-                                           container_cache: Optional[Dict[str, Any]],
-                                           body: str) -> Optional[Union[str, List, Dict]]:
-        partition_key_definition: Optional[Dict[str, Any]] = container_cache["partitionKey"] if container_cache else None # pylint: disable=line-too-long
+                                           container_cache: Optional[dict[str, Any]],
+                                           body: str) -> Optional[Union[str, list, dict]]:
+        partition_key_definition: Optional[dict[str, Any]] = container_cache["partitionKey"] if container_cache else None # pylint: disable=line-too-long
         body_dict = self.__str_to_dict(body)
-        new_partition_key: Optional[Union[str, List, Dict]] = None
+        new_partition_key: Optional[Union[str, list, dict]] = None
         if body_dict:
             options = await client._AddPartitionKey(self.container_link, body_dict, {}) if client else {}
             # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
@@ -131,13 +131,13 @@ class ContainerRecreateRetryPolicy:
             elif isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])
         return new_partition_key
 
-    def should_update_throughput_link(self, body: Optional[str], cached_container: Optional[Dict[str, Any]]) -> bool:
+    def should_update_throughput_link(self, body: Optional[str], cached_container: Optional[dict[str, Any]]) -> bool:
         body_dict = self.__str_to_dict(body) if body else None
         if not body_dict:
             return False
@@ -157,7 +157,7 @@ class ContainerRecreateRetryPolicy:
         body_dict["parameters"][0]["value"] = self.link
         return json.dumps(body_dict, separators=(',', ':'))
 
-    def __str_to_dict(self, dict_string: str) -> Dict:
+    def __str_to_dict(self, dict_string: str) -> dict:
         try:
             # Use json.loads() to convert string to dictionary
             dict_obj = json.loads(dict_string)

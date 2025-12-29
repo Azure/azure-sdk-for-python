@@ -33,32 +33,13 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
 
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START ungrounded_attributes_evaluator]
-            :end-before: [END ungrounded_attributes_evaluator]
-            :language: python
-            :dedent: 8
-            :caption: Initialize and call a UngroundedAttributesEvaluator with a query, response and context.
-
-    .. admonition:: Example using Azure AI Project URL:
-
-        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
-            :start-after: [START ungrounded_attributes_evaluator]
-            :end-before: [END ungrounded_attributes_evaluator]
-            :language: python
-            :dedent: 8
-            :caption: Initialize and call UngroundedAttributesEvaluator using Azure AI Project URL in the following format
-                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
-
     .. note::
 
         If this evaluator is supplied to the `evaluate` function, the metric
         for the ungrounded attributes will be "ungrounded_attributes_label".
     """
 
-    id = "ungrounded_attributes"
+    id = "azureai://built-in/evaluators/ungrounded_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 
@@ -67,14 +48,17 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
-        *,
-        _evaluate_query: bool = True,
+        **kwargs,
     ):
+        # Set default for evaluate_query if not provided
+        if "evaluate_query" not in kwargs:
+            kwargs["evaluate_query"] = True
+
         super().__init__(
             eval_metric=EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            _evaluate_query=_evaluate_query,
+            **kwargs,
         )
 
     @overload

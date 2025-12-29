@@ -26,7 +26,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             account_name="str",
             rai_blocklist_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperationsAsync(AzureMgmtR
             account_name="str",
             rai_blocklist_name="str",
             rai_blocklist_item_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperationsAsync(AzureMgmtR
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperationsAsync(AzureMgmtR
                 account_name="str",
                 rai_blocklist_name="str",
                 rai_blocklist_item_name="str",
-                api_version="2025-04-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +100,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperationsAsync(AzureMgmtR
             account_name="str",
             rai_blocklist_name="str",
             rai_blocklist_items=[{"name": "str", "properties": {"isRegex": bool, "pattern": "str"}}],
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperationsAsync(AzureMgmtR
             account_name="str",
             rai_blocklist_name="str",
             rai_blocklist_items_names={},
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself

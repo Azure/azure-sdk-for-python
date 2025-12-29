@@ -24,8 +24,10 @@ from ._models import (  # type: ignore
     DeidentificationResult,
     PhiEntity,
     PhiTaggerResult,
+    SimplePhiEntity,
     SourceStorageLocation,
     StringIndex,
+    TaggedPhiEntities,
     TargetStorageLocation,
 )
 
@@ -33,6 +35,7 @@ from ._enums import (  # type: ignore
     DeidentificationOperationType,
     OperationStatus,
     PhiCategory,
+    TextEncodingType,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -49,12 +52,15 @@ __all__ = [
     "DeidentificationResult",
     "PhiEntity",
     "PhiTaggerResult",
+    "SimplePhiEntity",
     "SourceStorageLocation",
     "StringIndex",
+    "TaggedPhiEntities",
     "TargetStorageLocation",
     "DeidentificationOperationType",
     "OperationStatus",
     "PhiCategory",
+    "TextEncodingType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -24,7 +24,7 @@ class TestDataBoxEdgeManagementRolesOperations(AzureMgmtRecordedTestCase):
         response = self.client.roles.list_by_data_box_edge_device(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestDataBoxEdgeManagementRolesOperations(AzureMgmtRecordedTestCase):
             device_name="str",
             name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,43 +51,36 @@ class TestDataBoxEdgeManagementRolesOperations(AzureMgmtRecordedTestCase):
             name="str",
             resource_group_name=resource_group.name,
             role={
-                "kind": "IOT",
-                "hostPlatform": "str",
+                "kind": "CloudEdgeManagement",
+                "edgeProfile": {
+                    "subscription": {
+                        "id": "str",
+                        "locationPlacementId": "str",
+                        "quotaId": "str",
+                        "registeredFeatures": [{"name": "str", "state": "str"}],
+                        "registrationDate": "str",
+                        "registrationId": "str",
+                        "serializedDetails": "str",
+                        "state": "str",
+                        "subscriptionId": "str",
+                        "tenantId": "str",
+                    }
+                },
                 "id": "str",
-                "ioTDeviceDetails": {
-                    "deviceId": "str",
-                    "ioTHostHub": "str",
-                    "authentication": {
-                        "symmetricKey": {
-                            "connectionString": {
-                                "encryptionAlgorithm": "str",
-                                "value": "str",
-                                "encryptionCertThumbprint": "str",
-                            }
-                        }
-                    },
-                    "ioTHostHubId": "str",
-                },
-                "ioTEdgeDeviceDetails": {
-                    "deviceId": "str",
-                    "ioTHostHub": "str",
-                    "authentication": {
-                        "symmetricKey": {
-                            "connectionString": {
-                                "encryptionAlgorithm": "str",
-                                "value": "str",
-                                "encryptionCertThumbprint": "str",
-                            }
-                        }
-                    },
-                    "ioTHostHubId": "str",
-                },
+                "localManagementStatus": "str",
                 "name": "str",
                 "roleStatus": "str",
-                "shareMappings": [{"shareId": "str", "mountPoint": "str", "roleId": "str", "roleType": "str"}],
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -100,7 +93,7 @@ class TestDataBoxEdgeManagementRolesOperations(AzureMgmtRecordedTestCase):
             device_name="str",
             name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

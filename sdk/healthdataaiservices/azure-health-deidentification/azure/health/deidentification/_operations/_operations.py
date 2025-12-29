@@ -8,9 +8,10 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -30,9 +31,10 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
-from .._vendor import DeidentificationClientMixinABC
+from .._configuration import DeidentificationClientConfiguration
+from .._utils.model_base import SdkJSONEncoder, _deserialize
+from .._utils.serialization import Serializer
+from .._utils.utils import ClientMixinABC
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -46,7 +48,7 @@ def build_deidentification_get_job_request(job_name: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +75,7 @@ def build_deidentification_deidentify_documents_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +103,7 @@ def build_deidentification_list_jobs_internal_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +134,7 @@ def build_deidentification_list_job_documents_internal_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +166,7 @@ def build_deidentification_cancel_job_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +192,7 @@ def build_deidentification_delete_job_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +217,7 @@ def build_deidentification_deidentify_text_request(**kwargs: Any) -> HttpRequest
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -232,7 +234,9 @@ def build_deidentification_deidentify_text_request(**kwargs: Any) -> HttpRequest
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
+class _DeidentificationClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], DeidentificationClientConfiguration]
+):
 
     @distributed_trace
     def get_job(self, job_name: str, **kwargs: Any) -> _models.DeidentificationJob:
@@ -518,7 +522,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     @distributed_trace
     def _list_jobs_internal(
         self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.DeidentificationJob"]:
+    ) -> ItemPaged["_models.DeidentificationJob"]:
         """List de-identification jobs.
 
         Resource list operation template.
@@ -610,7 +614,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     @distributed_trace
     def _list_job_documents_internal(
         self, job_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.DeidentificationDocumentDetails"]:
+    ) -> ItemPaged["_models.DeidentificationDocumentDetails"]:
         """List processed documents within a job.
 
         Resource list operation template.

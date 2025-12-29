@@ -1,10 +1,15 @@
+# pylint: disable=line-too-long,useless-suppression
 import time
 import pytest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import (
+    NetworkFeatures,
+    ServiceLevel,
     Volume,
+    VolumeProperties,
     VolumePatch,
+    VolumePatchProperties,
     ReplicationObject,
     VolumePropertiesDataProtection,
     AuthorizeRequest,
@@ -23,8 +28,7 @@ SUBSID = "69a75bda-882e-44d5-8431-63421204132a"
 
 def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA_VNET, enable_subvolumes=None):
     default_protocol_type = ["NFSv3"]
-    volume_body = Volume(
-        location=location,
+    volume_properties = VolumeProperties(
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
@@ -40,6 +44,7 @@ def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA
         + setup.PERMA_SUBNET,
         network_features="Standard",
     )
+    volume_body = Volume(location=location, properties=volume_properties)
 
     return volume_body
 
@@ -81,16 +86,13 @@ def create_dp_volume(
         create_pool(client, rg, account_name, pool_name, location, False)
     print("Creating DP volume {0} in NetApp Account {1}".format(volume_name, account_name))
     # data protection and replication object
-    replication = ReplicationObject(
-        endpoint_type="dst", remote_volume_resource_id=source_volume.id, replication_schedule="_10minutely"
-    )
+    replication = ReplicationObject(remote_volume_resource_id=source_volume.id, replication_schedule="_10minutely")
 
     data_protection = VolumePropertiesDataProtection(replication=replication)
 
     default_protocol_type = ["NFSv3"]
 
-    volume_body = Volume(
-        location=location,
+    volume_properties = VolumeProperties(
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
@@ -105,7 +107,7 @@ def create_dp_volume(
         volume_type="DataProtection",
         data_protection=data_protection,
     )
-
+    volume_body = Volume(location=location, properties=volume_properties)
     destination_volume = client.volumes.begin_create_or_update(
         rg, account_name, pool_name, volume_name, volume_body
     ).result()
@@ -138,8 +140,7 @@ def create_migration_volume(
 
     default_protocol_type = ["NFSv3"]
 
-    volume_body = Volume(
-        location=location,
+    volume_properties = VolumeProperties(
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
@@ -154,7 +155,7 @@ def create_migration_volume(
         volume_type="Migration",
         data_protection=data_protection,
     )
-
+    volume_body = Volume(location=location, properties=volume_properties)
     destination_volume = client.volumes.begin_create_or_update(
         rg, account_name, pool_name, volume_name, volume_body
     ).result()
@@ -180,7 +181,7 @@ def wait_for_no_volume(client, rg, account_name, pool_name, volume_name):
             # but is what we are waiting for
             break
         if setup.LIVE:
-            time.sleep(3)
+            time.sleep(6)
         retry += 1
     if retry == 100:
         raise Exception("Timeout when waiting for no volume")
@@ -198,7 +199,7 @@ def wait_for_volume(client, rg, account_name, pool_name, volume_name):
             print("\t Wait for volume. Volume is in a failed state.")
             break
         if setup.LIVE:
-            time.sleep(3)
+            time.sleep(6)
         retry += 1
     if retry == 100:
         raise Exception("Timeout when waiting for volume")
@@ -208,7 +209,7 @@ def wait_for_volume(client, rg, account_name, pool_name, volume_name):
 def delete_volume(client, rg, account_name, pool_name, volume_name):
     print("Delete volume {0}".format(volume_name))
     retry = 0
-    while retry < 3:
+    while retry < 5:
         try:
             client.volumes.begin_delete(rg, account_name, pool_name, volume_name).wait()
             break
@@ -217,8 +218,8 @@ def delete_volume(client, rg, account_name, pool_name, volume_name):
             print(e)
             retry += 1
             if setup.LIVE:
-                time.sleep(10)
-    if retry == 3:
+                time.sleep(20)
+    if retry == 5:
         raise Exception("Timeout when trying to delete volume")
     wait_for_no_volume(client, rg, account_name, pool_name, volume_name)
     print("\tDone deleting volume {0}".format(volume_name))
@@ -236,6 +237,7 @@ def wait_for_replication_status(
     retry = 0
     while retry < 11:
         replication_status = client.volumes.replication_status(dp_rg, dp_account_name, dp_pool_name, dp_volume_name)
+        print("Waiting for replication status => {0}".format(replication_status.mirror_state))
         if replication_status.mirror_state == target_state:
             break
         if setup.LIVE:
@@ -378,6 +380,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
         print("Finished with test_list_volumes")
 
+    @pytest.mark.skip(reason="Skipping this test for service side issue re-enable when fixed")
     @recorded_by_proxy
     def test_volume_replication(self):
         set_bodiless_matcher()
@@ -407,6 +410,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             self.client.volumes.begin_authorize_replication(
                 setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1, body
             )
+            print("Start wait for succeded")
             wait_for_succeeded(
                 self.client,
                 setup.TEST_RG,
@@ -417,6 +421,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
                 dp_pool_name=setup.TEST_POOL_2,
                 dp_volume_name=dbVolumeName,
             )
+            print("wait for replication status")
             wait_for_replication_status(
                 self.client,
                 "Mirrored",
@@ -562,6 +567,9 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
                 setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName
             )
         finally:
+            # sleeep on this a bit seems to be a onpoing timout issue on service side.
+            if setup.LIVE:
+                time.sleep(40)
             # delete destination volume
             delete_volume(self.client, setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
             delete_pool(self.client, setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2)
@@ -619,11 +627,11 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             assert "Premium" == volume.service_level
             assert 100 * GIGABYTE == volume.usage_threshold
 
-            volume_body = Volume(
+            volume_properties = VolumeProperties(
                 usage_threshold=200 * GIGABYTE,
+                protocol_types=["NFSv3"],
                 creation_token=volumeName1,
-                SERVICE_LEVEL="Premium",  # cannot differ from pool
-                location=setup.LOCATION,
+                service_level=ServiceLevel.PREMIUM,  # cannot differ from pool
                 subnet_id="/subscriptions/"
                 + SUBSID
                 + "/resourceGroups/"
@@ -632,9 +640,9 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
                 + setup.PERMA_VNET
                 + "/subnets/"
                 + setup.PERMA_SUBNET,
-                network_features="Standard",
+                network_features=NetworkFeatures.STANDARD,
             )
-
+            volume_body = Volume(location=setup.LOCATION, properties=volume_properties)
             volume = self.client.volumes.begin_create_or_update(
                 setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, volume_body
             ).result()
@@ -663,7 +671,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             assert "Premium" == volume.service_level
             assert 100 * GIGABYTE == volume.usage_threshold
 
-            volume_patch = VolumePatch(usage_threshold=200 * GIGABYTE)
+            volume_patch_properties = VolumePatchProperties(usage_threshold=200 * GIGABYTE)
+            volume_patch = VolumePatch(properties=volume_patch_properties)
             volume = self.client.volumes.begin_update(
                 setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, volume_patch
             ).result()

@@ -39,6 +39,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/preview/2025-04-01-preview/examples/DeleteRaiBlocklistItems.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/DeleteRaiBlocklistItems.json
 if __name__ == "__main__":
     main()

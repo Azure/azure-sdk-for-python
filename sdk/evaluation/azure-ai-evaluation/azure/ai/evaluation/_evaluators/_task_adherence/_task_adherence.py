@@ -10,7 +10,10 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
+from ..._common.utils import (
+    reformat_conversation_history,
+    reformat_agent_response,
+)
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -19,20 +22,18 @@ logger = logging.getLogger(__name__)
 
 @experimental
 class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """The Task Adherence evaluator assesses how well an AI-generated response follows the assigned task based on:
+    """The Task Adherence evaluator assesses whether an AI assistant's actions fully align with the user's intent
+    and fully achieve the intended goal across three dimensions:
 
-        - Alignment with instructions and definitions
-        - Accuracy and clarity of the response
-        - Proper use of provided tool definitions
+        - Goal adherence: Did the assistant achieve the user's objective within scope and constraints?
+        - Rule adherence: Did the assistant respect safety, privacy, authorization, and presentation contracts?
+        - Procedural adherence: Did the assistant follow required workflows, tool use, sequencing, and verification?
 
-    Scoring is based on five levels:
-    1. Fully Inadherent - Response completely ignores instructions.
-    2. Barely Adherent - Partial alignment with critical gaps.
-    3. Moderately Adherent - Meets core requirements but lacks precision.
-    4. Mostly Adherent - Clear and accurate with minor issues.
-    5. Fully Adherent - Flawless adherence to instructions.
+    The evaluator returns a boolean flag indicating whether there was any material failure in any dimension.
+    A material failure is an issue that makes the output unusable, creates verifiable risk, violates an explicit
+    constraint, or is a critical issue as defined in the evaluation dimensions.
 
-    The evaluation includes a step-by-step reasoning process, a brief explanation, and a final integer score.
+    The evaluation includes step-by-step reasoning and a flagged boolean result.
 
 
     :param model_config: Configuration for the Azure OpenAI model.
@@ -40,6 +41,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
             :start-after: [START task_adherence_evaluator]
             :end-before: [END task_adherence_evaluator]
@@ -63,17 +65,24 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "task_adherence"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
-    _DEFAULT_TASK_ADHERENCE_SCORE = 3
+    _DEFAULT_TASK_ADHERENCE_SCORE = 0
 
-    id = None
+    id = "azureai://built-in/evaluators/task_adherence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
+        self.threshold = threshold  # to be removed in favor of _threshold
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            credential=credential,
+            _higher_is_better=True,
+            **kwargs,
+        )
 
     @overload
     def __call__(
@@ -83,33 +92,23 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         response: Union[str, List[dict]],
         tool_definitions: Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, float]]:
-        """Evaluate task adherence for a given query, response, and optional tool defintions.
-        The query and response can be either a string or a list of messages.
+        """Evaluate task adherence for a given query and response.
+        The query and response must be lists of messages in conversation format.
 
-
-        Example with string inputs and no tools:
-            evaluator = TaskAdherenceEvaluator(model_config)
-            query = "What is the weather today?"
-            response = "The weather is sunny."
-
-            result = evaluator(query=query, response=response)
 
         Example with list of messages:
             evaluator = TaskAdherenceEvaluator(model_config)
             query = [{'role': 'system', 'content': 'You are a friendly and helpful customer service agent.'}, {'createdAt': 1700000060, 'role': 'user', 'content': [{'type': 'text', 'text': 'Hi, I need help with the last 2 orders on my account #888. Could you please update me on their status?'}]}]
             response = [{'createdAt': 1700000070, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': 'Hello! Let me quickly look up your account details.'}]}, {'createdAt': 1700000075, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call': {'id': 'tool_call_20250310_001', 'type': 'function', 'function': {'name': 'get_orders', 'arguments': {'account_number': '888'}}}}]}, {'createdAt': 1700000080, 'run_id': '0', 'tool_call_id': 'tool_call_20250310_001', 'role': 'tool', 'content': [{'type': 'tool_result', 'tool_result': '[{ "order_id": "123" }, { "order_id": "124" }]'}]}, {'createdAt': 1700000085, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': 'Thanks for your patience. I see two orders on your account. Let me fetch the details for both.'}]}, {'createdAt': 1700000090, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call': {'id': 'tool_call_20250310_002', 'type': 'function', 'function': {'name': 'get_order', 'arguments': {'order_id': '123'}}}}, {'type': 'tool_call', 'tool_call': {'id': 'tool_call_20250310_003', 'type': 'function', 'function': {'name': 'get_order', 'arguments': {'order_id': '124'}}}}]}, {'createdAt': 1700000095, 'run_id': '0', 'tool_call_id': 'tool_call_20250310_002', 'role': 'tool', 'content': [{'type': 'tool_result', 'tool_result': '{ "order": { "id": "123", "status": "shipped", "delivery_date": "2025-03-15" } }'}]}, {'createdAt': 1700000100, 'run_id': '0', 'tool_call_id': 'tool_call_20250310_003', 'role': 'tool', 'content': [{'type': 'tool_result', 'tool_result': '{ "order": { "id": "124", "status": "delayed", "expected_delivery": "2025-03-20" } }'}]}, {'createdAt': 1700000105, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': 'The order with ID 123 has been shipped and is expected to be delivered on March 15, 2025. However, the order with ID 124 is delayed and should now arrive by March 20, 2025. Is there anything else I can help you with?'}]}]
-            tool_definitions = [{'name': 'get_orders', 'description': 'Get the list of orders for a given account number.', 'parameters': {'type': 'object', 'properties': {'account_number': {'type': 'string', 'description': 'The account number to get the orders for.'}}}}, {'name': 'get_order', 'description': 'Get the details of a specific order.', 'parameters': {'type': 'object', 'properties': {'order_id': {'type': 'string', 'description': 'The order ID to get the details for.'}}}}, {'name': 'initiate_return', 'description': 'Initiate the return process for an order.', 'parameters': {'type': 'object', 'properties': {'order_id': {'type': 'string', 'description': 'The order ID for the return process.'}}}}, {'name': 'update_shipping_address', 'description': 'Update the shipping address for a given account.', 'parameters': {'type': 'object', 'properties': {'account_number': {'type': 'string', 'description': 'The account number to update.'}, 'new_address': {'type': 'string', 'description': 'The new shipping address.'}}}}]
 
-            result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+            result = evaluator(query=query, response=response)
 
-        :keyword query: The query being evaluated, either a string or a list of messages.
+        :keyword query: The query being evaluated, must be a list of messages including system and user messages.
         :paramtype query: Union[str, List[dict]]
-        :keyword response: The response being evaluated, either a string or a list of messages (full agent response potentially including tool calls)
+        :keyword response: The response being evaluated, must be a list of messages (full agent response including tool calls and results)
         :paramtype response: Union[str, List[dict]]
-        :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
-        :paramtype tool_definitions: Optional[Union[dict, List[dict]]]
-        :return: A dictionary with the task adherence evaluation results.
-        :rtype: Dict[str, Union[str, float]]
+        :return: A dictionary with the task adherence evaluation results including flagged (bool) and reasoning (str).
+        :rtype: Dict[str, Union[str, float, bool]]
         """
 
     @override
@@ -126,7 +125,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         return super().__call__(*args, **kwargs)
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str, bool]]:  # type: ignore[override]
         """Do Task Adherence evaluation.
         :param eval_input: The input to the evaluator. Expected to contain whatever inputs are needed for the _flow method
         :type eval_input: Dict
@@ -135,7 +134,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
-        if "query" not in eval_input and "response" not in eval_input:
+        if "query" not in eval_input or "response" not in eval_input:
             raise EvaluationException(
                 message=f"Both query and response must be provided as input to the Task Adherence evaluator.",
                 internal_message=f"Both query and response must be provided as input to the Task Adherence evaluator.",
@@ -143,23 +142,85 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
-        eval_input["query"] = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
-        eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
-        if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
-            eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+
+        # Reformat conversation history and extract system message
+        query_messages = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
+        system_message = ""
+        user_query = ""
+
+        # Parse query messages to extract system message and user query
+        if isinstance(query_messages, list):
+            for msg in query_messages:
+                if isinstance(msg, dict) and msg.get("role") == "system":
+                    system_message = msg.get("content", "")
+                elif isinstance(msg, dict) and msg.get("role") == "user":
+                    user_query = msg.get("content", "")
+        elif isinstance(query_messages, str):
+            user_query = query_messages
+
+        # Reformat response and separate assistant messages from tool calls
+        response_messages = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
+        assistant_response = ""
+        tool_calls = ""
+
+        # Parse response messages to extract assistant response and tool calls
+        if isinstance(response_messages, list):
+            assistant_parts = []
+            tool_parts = []
+            for msg in response_messages:
+                if isinstance(msg, dict):
+                    role = msg.get("role", "")
+                    if role == "assistant":
+                        content = msg.get("content", "")
+                        if isinstance(content, list):
+                            for item in content:
+                                if isinstance(item, dict):
+                                    if item.get("type", None) in ("text", "input_text", "output_text"):
+                                        assistant_parts.append(item.get("text", ""))
+                                    elif item.get("type") == "tool_call":
+                                        tool_parts.append(str(item.get("tool_call", "")))
+                        else:
+                            assistant_parts.append(str(content))
+                    elif role == "tool":
+                        tool_parts.append(str(msg))
+            assistant_response = "\n".join(assistant_parts)
+            tool_calls = "\n".join(tool_parts)
+        elif isinstance(response_messages, str):
+            assistant_response = response_messages
+
+        # Prepare inputs for prompty
+        prompty_input = {
+            "system_message": system_message,
+            "query": user_query,
+            "response": assistant_response,
+            "tool_calls": tool_calls,
+        }
+
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **prompty_input)
+        llm_output = prompty_output_dict["llm_output"]
+
         if isinstance(llm_output, dict):
-            score = float(llm_output.get("score", math.nan))
-            score_result = "pass" if score >= self.threshold else "fail"
-            reason = llm_output.get("explanation", "")
+            flagged = llm_output.get("flagged", False)
+            reasoning = llm_output.get("reasoning", "")
+            # Convert flagged to numeric score for backward compatibility (1 = pass, 0 = fail)
+            score = 0.0 if flagged else 1.0
+            score_result = "fail" if flagged else "pass"
+
             return {
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
-                f"{self._result_key}_reason": reason,
-                # Uncomment the following line in the next iteration after UI contracts are validated.
-                # f"{self._result_key}_additional_details": llm_output
+                f"{self._result_key}_reason": reasoning,
+                f"{self._result_key}_details": llm_output.get("details", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
+
         if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-        return {self._result_key: math.nan}
+            logger.warning("LLM output is not a dictionary, returning 0 for the success.")
+
+        return {self._result_key: 0}

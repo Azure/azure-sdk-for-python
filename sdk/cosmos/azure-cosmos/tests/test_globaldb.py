@@ -54,7 +54,7 @@ def _mock_get_database_account(url_connection=None, **kwargs):
 
 
 def _mock_pipeline_run_function(pipeline_client, request, **kwargs):
-    assert "localhost" in request.url
+    assert "127.0.0.1" in request.url
     return test_config.FakePipelineResponse()
 
 @pytest.mark.cosmosEmulator

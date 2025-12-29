@@ -69,6 +69,7 @@ class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DISABLED = "Disabled"
     SNI_ENABLED = "SniEnabled"
+    AUTO = "Auto"
 
 
 class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -79,6 +80,7 @@ class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     CANCELED = "Canceled"
     DELETE_FAILED = "DeleteFailed"
     PENDING = "Pending"
+    DELETING = "Deleting"
 
 
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -99,6 +101,16 @@ class ConnectedEnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitive
     INFRASTRUCTURE_SETUP_IN_PROGRESS = "InfrastructureSetupInProgress"
     INFRASTRUCTURE_SETUP_COMPLETE = "InfrastructureSetupComplete"
     SCHEDULED_FOR_DELETE = "ScheduledForDelete"
+
+
+class ConnectedEnvironmentStorageProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the storage."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    IN_PROGRESS = "InProgress"
+    DELETING = "Deleting"
 
 
 class ContainerAppContainerRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,6 +177,16 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class DaprComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Dapr Component."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    IN_PROGRESS = "InProgress"
+    DELETING = "Deleting"
+
+
 class DnsVerificationTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DNS verification test result."""
 
@@ -200,6 +222,18 @@ class ForwardProxyConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NO_PROXY = "NoProxy"
     STANDARD = "Standard"
     CUSTOM = "Custom"
+
+
+class HttpRouteProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    WAITING = "Waiting"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    PENDING = "Pending"
 
 
 class IdentitySettingsLifeCycle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -273,6 +307,15 @@ class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
 
 
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metadata to represent the container app kind, representing if a container app is workflowapp or
+    functionapp.
+    """
+
+    WORKFLOWAPP = "workflowapp"
+    FUNCTIONAPP = "functionapp"
+
+
 class LifecycleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle type of the session pool."""
 
@@ -315,6 +358,34 @@ class PoolManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MANUAL = "Manual"
     DYNAMIC = "Dynamic"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    WAITING = "Waiting"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    PENDING = "Pending"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property to allow or block all public traffic. Allowed Values: 'Enabled', 'Disabled'."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class RevisionHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -411,3 +482,43 @@ class UnauthenticatedClientActionV2(str, Enum, metaclass=CaseInsensitiveEnumMeta
     ALLOW_ANONYMOUS = "AllowAnonymous"
     RETURN401 = "Return401"
     RETURN403 = "Return403"
+
+
+class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Day of the week when a managed environment can be patched."""
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+
+
+class WorkflowHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the workflow health state."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    HEALTHY = "Healthy"
+    UNHEALTHY = "Unhealthy"
+    UNKNOWN = "Unknown"
+
+
+class WorkflowKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the logic app hybrid workflow kind."""
+
+    STATEFUL = "Stateful"
+    STATELESS = "Stateless"
+    AGENTIC = "Agentic"
+
+
+class WorkflowState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The workflow state."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    COMPLETED = "Completed"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    DELETED = "Deleted"
+    SUSPENDED = "Suspended"

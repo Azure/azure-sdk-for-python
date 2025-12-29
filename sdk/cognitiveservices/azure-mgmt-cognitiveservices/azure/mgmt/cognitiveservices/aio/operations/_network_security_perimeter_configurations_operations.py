@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, Optional, TypeVar, Union, cast
+from typing import Any, AsyncIterator, Callable, Optional, TypeVar, Union, cast
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -41,7 +41,8 @@ from ...operations._network_security_perimeter_configurations_operations import 
 from .._configuration import CognitiveServicesManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
@@ -68,7 +69,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkSecurityPerimeterConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkSecurityPerimeterConfiguration"]:
         """Gets a list of NSP configurations for an account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

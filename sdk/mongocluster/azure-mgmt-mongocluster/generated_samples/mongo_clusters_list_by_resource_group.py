@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-04-01-preview/MongoClusters_ListByResourceGroup.json
+# x-ms-original-file: 2025-09-01/MongoClusters_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

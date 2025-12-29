@@ -65,7 +65,7 @@ class MeteorScoreEvaluator(EvaluatorBase):
             :caption: Initialize with threshold and call a MeteorScoreEvaluator.
     """
 
-    id = "azureml://registries/azureml/models/Meteor-Score-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/meteor_score"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

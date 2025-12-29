@@ -21,26 +21,13 @@ class TestSqlManagementManagedDatabaseSecurityAlertPoliciesOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_managed_database_security_alert_policies_list_by_database(self, resource_group):
-        response = self.client.managed_database_security_alert_policies.list_by_database(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            database_name="str",
-            api_version="2024-05-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_managed_database_security_alert_policies_get(self, resource_group):
         response = await self.client.managed_database_security_alert_policies.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             security_alert_policy_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,8 +54,21 @@ class TestSqlManagementManagedDatabaseSecurityAlertPoliciesOperationsAsync(Azure
                 "storageEndpoint": "str",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_managed_database_security_alert_policies_list_by_database(self, resource_group):
+        response = self.client.managed_database_security_alert_policies.list_by_database(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            api_version="2020-11-01-preview",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

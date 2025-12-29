@@ -46,13 +46,12 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -69,7 +68,6 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml>=5.1.0,<7.0.0",
-        "msrest>=0.6.18,<1.0.0",
         "azure-core>=1.23.0",
         "azure-mgmt-core>=1.3.0",
         "marshmallow>=3.5,<4.0.0",
@@ -88,8 +86,6 @@ setup(
         "azure-common>=1.1",
         "typing-extensions<5.0.0",
         "azure-monitor-opentelemetry",
-        # TODO: remove six after using new autorest
-        "six>=1.11.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package

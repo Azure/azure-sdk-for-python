@@ -14,6 +14,7 @@ import json
 import logging
 import re
 from abc import ABC, abstractmethod
+import time
 from typing import (
     Any,
     AsyncIterator,
@@ -30,13 +31,14 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    TYPE_CHECKING,
     cast,
     get_args,
     get_origin,
     overload,
 )
 
-from ._enums import AgentStreamEvent, AzureAISearchQueryType
+from ._enums import AgentStreamEvent, AzureAISearchQueryType, RunStatus
 from ._models import (
     AISearchIndexResource,
     AzureAISearchToolResource,
@@ -46,10 +48,15 @@ from ._models import (
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
     BingGroundingToolDefinition,
+    BrowserAutomationToolConnectionParameters,
+    BrowserAutomationToolDefinition,
+    BrowserAutomationToolParameters,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     ConnectedAgentToolDefinition,
     ConnectedAgentDetails,
+    ComputerUseToolDefinition,
+    ComputerUseToolParameters,
     FileSearchToolDefinition,
     FileSearchToolResource,
     FunctionDefinition,
@@ -77,6 +84,7 @@ from ._models import (
     BingCustomSearchToolParameters,
     SharepointToolDefinition,
     SharepointGroundingToolParameters,
+    ToolApproval,
     ToolConnection,
     MicrosoftFabricToolDefinition,
     FabricDataAgentToolParameters,
@@ -86,6 +94,9 @@ from ._models import (
     ToolResources,
     MessageDeltaTextContent,
     VectorStoreDataSource,
+    SubmitToolApprovalAction,
+    RequiredMcpToolCall,
+    RequiredFunctionToolCallDetails,
 )
 
 from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
@@ -95,9 +106,73 @@ from ._models import MessageAttachment as MessageAttachmentGenerated
 from .. import types as _types
 
 
+# NOTE: Avoid importing RunsOperations here to prevent circular import with operations package.
+
+
+if TYPE_CHECKING:
+    from ..operations import RunsOperations
+    from aio.operations import RunsOperations as AsyncRunsOperations
+
+
 logger = logging.getLogger(__name__)
 
-StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
+StreamEventData = Union["RunStepDeltaChunk", "MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
+
+
+def get_tool_resources(tools: List["Tool"]) -> ToolResources:
+    """
+    Get the tool resources from tools.
+
+    :param tools: The list of tool objects whose resources should be merged.
+    :type tools: List[Tool]
+    :return: A new ``ToolResources`` instance representing the merged view.
+    :rtype: ToolResources
+    """
+    tool_resources: Dict[str, Any] = {}
+    for tool in tools:
+        resources = tool.resources
+        for key, value in resources.items():
+            if key in tool_resources:
+                # Special handling for MCP resources - they need to be merged into a single list
+                if isinstance(tool_resources[key], list) and isinstance(value, list):
+                    tool_resources[key].extend(value)
+                elif isinstance(tool_resources[key], dict) and isinstance(value, dict):
+                    tool_resources[key].update(value)
+                else:
+                    # For other types, the new value overwrites the old one
+                    tool_resources[key] = value
+            else:
+                tool_resources[key] = value
+    return _create_tool_resources_from_dict(tool_resources)
+
+
+def get_tool_definitions(tools: List["Tool"]) -> List[ToolDefinition]:
+    """
+    Get the tool definitions from tools.
+
+    :param tools: Tools from which to collect definitions.
+    :type tools: List[Tool]
+    :return: List of collected tool definitions.
+    :rtype: List[ToolDefinition]
+    """
+    return [definition for tool in tools for definition in tool.definitions]
+
+
+def _create_tool_resources_from_dict(resources: Dict[str, Any]) -> ToolResources:
+    """
+    Safely converts a dictionary into a ToolResources instance.
+
+    :param resources: A dictionary of tool resources. Should be a mapping
+        accepted by ~azure.ai.agents.models.AzureAISearchToolResource
+    :type resources: Dict[str, Any]
+    :return: A ToolResources instance.
+    :rtype: ToolResources
+    """
+    try:
+        return ToolResources(**resources)
+    except TypeError as e:
+        logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
+        raise ValueError("Invalid resources for ToolResources.") from e
 
 
 def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
@@ -685,7 +760,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def __init__(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         spec: Any,
         auth: OpenApiAuthDetails,
         default_parameters: Optional[List[str]] = None,
@@ -727,7 +802,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def add_definition(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         spec: Any,
         auth: Optional[OpenApiAuthDetails] = None,
         default_parameters: Optional[List[str]] = None,
@@ -1085,8 +1160,8 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
             )
 
         self._deep_research_details = DeepResearchDetails(
-            deep_research_model=deep_research_model,
-            deep_research_bing_grounding_connections=[
+            model=deep_research_model,
+            bing_grounding_connections=[
                 DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)
             ],
         )
@@ -1110,6 +1185,93 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
         return ToolResources()
 
     def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
+    """
+    A tool that allows your Agent to perform real-world web browser navigation tasks through natural language prompts.
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize a Browser Automation tool with the ID of the connection to an Azure Playwright service.
+
+        :param connection_id: Connection ID to an Azure Playwright service, to be used by tool. Browser Automation tool allows only one connection.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._browser_automation_tool_parameters = BrowserAutomationToolParameters(
+            connection=BrowserAutomationToolConnectionParameters(id=connection_id)
+        )
+
+    @property
+    def definitions(self) -> List[BrowserAutomationToolDefinition]:
+        """
+        Get the Browser Automation tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [BrowserAutomationToolDefinition(browser_automation=self._browser_automation_tool_parameters)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class ComputerUseTool(Tool[ComputerUseToolDefinition]):
+    """
+    A tool that enables the agent to perform computer use actions (preview).
+
+    :param display_width: The display width for the computer use tool.
+    :type display_width: int
+    :param display_height: The display height for the computer use tool.
+    :type display_height: int
+    :param environment: The target environment for computer use, e.g. "browser", "windows", "mac", or "linux".
+    :type environment: str
+    """
+
+    def __init__(self, display_width: int, display_height: int, environment: str):
+        self._params = ComputerUseToolParameters(
+            display_width=display_width, display_height=display_height, environment=environment
+        )
+
+    @property
+    def definitions(self) -> List[ComputerUseToolDefinition]:
+        """
+        Get the Computer Use tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [ComputerUseToolDefinition(computer_use_preview=self._params)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:  # noqa: D401 - client-side execution not applicable
         pass
 
 
@@ -1380,13 +1542,26 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
     :param file_ids: A list of file IDs to interpret.
     :type file_ids: list[str]
+    :param data_sources: The list of data sources for the enterprise file search.
+    :type data_sources: list[VectorStoreDataSource]
+    :raises: ValueError if both file_ids and data_sources are provided.
     """
 
-    def __init__(self, file_ids: Optional[List[str]] = None):
-        if file_ids is None:
-            self.file_ids = set()
-        else:
+    _INVALID_CONFIGURATION = "file_ids and data_sources are mutually exclusive."
+
+    def __init__(
+        self,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[VectorStoreDataSource]] = None,
+    ):
+        if file_ids and data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.file_ids = set()
+        if file_ids:
             self.file_ids = set(file_ids)
+        self.data_sources: Dict[str, VectorStoreDataSource] = {}
+        if data_sources:
+            self.data_sources = {ds.asset_identifier: ds for ds in data_sources}
 
     def add_file(self, file_id: str) -> None:
         """
@@ -1394,8 +1569,23 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :param file_id: The ID of the file to interpret.
         :type file_id: str
+        :raises: ValueError if data_sources are provided.
         """
+        if self.data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
         self.file_ids.add(file_id)
+
+    def add_data_source(self, data_source: VectorStoreDataSource) -> None:
+        """
+        Add a data source to the list of data sources to interpret.
+
+        :param data_source: The new data source.
+        :type data_source: VectorStoreDataSource
+        :raises: ValueError if file_ids are provided.
+        """
+        if self.file_ids:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.data_sources[data_source.asset_identifier] = data_source
 
     def remove_file(self, file_id: str) -> None:
         """
@@ -1404,7 +1594,16 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         :param file_id: The ID of the file to remove.
         :type file_id: str
         """
-        self.file_ids.remove(file_id)
+        self.file_ids.discard(file_id)
+
+    def remove_data_source(self, asset_identifier: str) -> None:
+        """
+        Remove The asset from data_sources.
+
+        :param asset_identifier: The asset identifier to remove.
+        :type asset_identifier: str
+        """
+        self.data_sources.pop(asset_identifier, None)
 
     @property
     def definitions(self) -> List[CodeInterpreterToolDefinition]:
@@ -1422,45 +1621,168 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :rtype: ToolResources
         """
-        if not self.file_ids:
+        if not self.file_ids and not self.data_sources:
             return ToolResources()
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        if self.file_ids:
+            return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        return ToolResources(
+            code_interpreter=CodeInterpreterToolResource(data_sources=list(self.data_sources.values()))
+        )
 
     def execute(self, tool_call: Any) -> Any:
         pass
 
 
-class BaseToolSet:
-    """
-    Abstract class for a collection of tools that can be used by an agent.
+class BaseToolSet(ABC):
+    """Abstract base class for a collection of tools that can be used by an agent.
+
+    Subclasses must implement ``validate_tool_type`` to enforce any constraints on
+    what tool types are allowed in the set.
     """
 
-    def __init__(self) -> None:
+    def __init__(self) -> None:  # pragma: no cover - simple container init
         self._tools: List[Tool] = []
 
+    @abstractmethod
     def validate_tool_type(self, tool: Tool) -> None:
-        pass
+        """Validate that the provided tool is of an acceptable type for this tool set.
+
+        Implementations should raise ``ValueError`` (or a more specific exception) if
+        the tool type is not permitted.
+
+        :param tool: The tool to validate.
+        :type tool: Tool
+        :return: None
+        :rtype: None
+        :raises ValueError: If the tool type is not permitted for this tool set.
+        """
+        raise NotImplementedError
 
     def add(self, tool: Tool):
         """
         Add a tool to the tool set.
 
         :param Tool tool: The tool to add.
-        :raises ValueError: If a tool of the same type already exists.
+        :raises ValueError: If a tool of the same type already exists, or if an MCP tool with the same server label already exists.
         """
         self.validate_tool_type(tool)
 
+        # Special handling for OpenApiTool - add definitions to existing tool instead of raising error
+        if isinstance(tool, OpenApiTool):
+            # Find existing OpenApiTool if any
+            existing_openapi_tool = next((t for t in self._tools if isinstance(t, OpenApiTool)), None)
+            if existing_openapi_tool:
+                # Add all definitions from the new tool to the existing one
+                for definition in tool.definitions:
+                    existing_openapi_tool.add_definition(
+                        name=definition.openapi.name,
+                        description=definition.openapi.description,
+                        spec=definition.openapi.spec,
+                        auth=definition.openapi.auth,
+                        default_parameters=definition.openapi.default_params,
+                    )
+                return  # Early return since we added to existing tool
+
+        # Special handling for McpTool - check for same server label
+        if isinstance(tool, McpTool):
+            # Check if there's already an MCP tool with the same server label
+            for existing_tool in self._tools:
+                if isinstance(existing_tool, McpTool) and existing_tool.server_label == tool.server_label:
+                    raise ValueError(f"McpTool with server label '{tool.server_label}' already exists in the ToolSet.")
+            # Allow multiple MCP tools (with different server labels)
+            self._tools.append(tool)
+            return
+
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
-            raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
+            raise ValueError(f"Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
 
+    @overload
     def remove(self, tool_type: Type[Tool]) -> None:
+        """Remove a tool by name from the toolset.
+
+        :param tool_type: The tool class to target.
+        :type tool_type: Type[Tool]
+
+        """
+        ...
+
+    @overload
+    def remove(self, tool_type: Type[OpenApiTool], *, name: str) -> None:
+        """
+        Remove a specific API definition from an OpenApiTool by name.
+
+        :param tool_type: The tool class to target. Must be OpenApiTool.
+        :type tool_type: Type[OpenApiTool]
+        :keyword name: The name of the OpenAPI definition to remove from the tool.
+        :paramtype name: str
+        :raises ValueError: If the OpenApiTool isn't found or the named definition doesn't exist.
+        """
+        ...
+
+    @overload
+    def remove(self, tool_type: Type[McpTool], *, server_label: str) -> None:
+        """
+        Remove a specific McpTool from the toolset by its server label.
+
+        :param tool_type: The tool class to target. Must be McpTool.
+        :type tool_type: Type[McpTool]
+        :keyword server_label: The unique server label identifying the MCP tool to remove.
+        :paramtype server_label: str
+        :raises ValueError: If no McpTool with the given server label is found.
+        """
+        ...
+
+    def remove(self, tool_type: Type[Tool], *, name: Optional[str] = None, server_label: Optional[str] = None) -> None:
         """
         Remove a tool of the specified type from the tool set.
+        For OpenApiTool, if 'name' is provided, removes a specific API definition by name.
+        For McpTool, if 'server_label' is provided, removes a specific MCP tool by server label.
+        For McpTool without server_label, removes ALL MCP tools from the toolset.
+        Otherwise, removes the entire tool from the toolset.
 
-        :param Type[Tool] tool_type: The type of tool to remove.
+        :param tool_type: The type of tool to remove.
+        :type tool_type: Type[Tool]
+        :keyword name: The name of the OpenAPI definition to remove from the tool.
+        :paramtype name: str
+        :keyword server_label: The unique server label identifying the MCP tool to remove.
+        :paramtype server_label: Optional[str]
+        :return: None
+        :rtype: None
         :raises ValueError: If a tool of the specified type is not found.
         """
+        # Special handling for OpenApiTool with name parameter
+        if tool_type == OpenApiTool and name:
+            for i, tool in enumerate(self._tools):
+                if isinstance(tool, OpenApiTool):
+                    tool.remove_definition(name)  # This will raise ValueError if definition not found
+                    logger.info("API definition '%s' removed from OpenApiTool.", name)
+                    # Check if OpenApiTool has any definitions left
+                    if not tool.definitions:
+                        del self._tools[i]
+                        logger.info("OpenApiTool removed from ToolSet as it has no remaining definitions.")
+                    return
+            raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+
+        # Special handling for McpTool with server_label parameter
+        if tool_type == McpTool:
+
+            if server_label:
+                for i, tool in enumerate(self._tools):
+                    if isinstance(tool, McpTool) and tool.server_label == server_label:
+                        del self._tools[i]
+                        logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
+                        return
+                raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
+
+            # Special handling for McpTool without server_label - remove ALL MCP tools
+            filtered_removal = [t for t in self._tools if not isinstance(t, McpTool)]
+            if len(self._tools) == len(filtered_removal):
+                raise ValueError(f"No tools of type {tool_type.__name__} found in the ToolSet.")
+            self._tools = filtered_removal
+            return
+
+        # Standard tool removal
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
@@ -1475,10 +1797,7 @@ class BaseToolSet:
 
         :rtype: List[ToolDefinition]
         """
-        tools = []
-        for tool in self._tools:
-            tools.extend(tool.definitions)
-        return tools
+        return get_tool_definitions(self._tools)
 
     @property
     def resources(self) -> ToolResources:
@@ -1487,32 +1806,7 @@ class BaseToolSet:
 
         :rtype: ToolResources
         """
-        tool_resources: Dict[str, Any] = {}
-        for tool in self._tools:
-            resources = tool.resources
-            for key, value in resources.items():
-                if key in tool_resources:
-                    if isinstance(tool_resources[key], dict) and isinstance(value, dict):
-                        tool_resources[key].update(value)
-                else:
-                    tool_resources[key] = value
-        return self._create_tool_resources_from_dict(tool_resources)
-
-    def _create_tool_resources_from_dict(self, resources: Dict[str, Any]) -> ToolResources:
-        """
-        Safely converts a dictionary into a ToolResources instance.
-
-        :param resources: A dictionary of tool resources. Should be a mapping
-            accepted by ~azure.ai.agents.models.AzureAISearchToolResource
-        :type resources: Dict[str, Any]
-        :return: A ToolResources instance.
-        :rtype: ToolResources
-        """
-        try:
-            return ToolResources(**resources)
-        except TypeError as e:
-            logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
-            raise ValueError("Invalid resources for ToolResources.") from e
+        return get_tool_resources(self._tools)
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
         """
@@ -1526,15 +1820,80 @@ class BaseToolSet:
             "tools": self.definitions,
         }
 
+    @overload
+    def get_tool(self, tool_type: Type[McpTool]) -> McpTool:
+        """
+        Get an MCP tool from the tool set.
+
+        :param tool_type: The MCP tool type to get.
+        :type tool_type: Type[McpTool]
+        :return: The MCP tool.
+        :rtype: McpTool
+        """
+        ...
+
+    @overload
+    def get_tool(self, tool_type: Type[McpTool], *, server_label: str) -> McpTool:
+        """
+        Get an MCP tool with a specific server label from the tool set.
+
+        :param tool_type: The MCP tool type to get.
+        :type tool_type: Type[McpTool]
+        :keyword server_label: The server label of the specific MCP tool to get.
+        :paramtype server_label: str
+        :return: The MCP tool with the specified server label.
+        :rtype: McpTool
+        """
+        ...
+
+    @overload
     def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
 
-        :param Type[Tool] tool_type: The type of tool to get.
+        :param tool_type: The type of tool to get.
+        :type tool_type: Type[Tool]
         :return: The tool of the specified type.
         :rtype: Tool
-        :raises ValueError: If a tool of the specified type is not found.
         """
+        ...
+
+    def get_tool(self, tool_type: Type[ToolT], *, server_label: Optional[str] = None) -> ToolT:
+        """
+        Get a tool of the specified type from the tool set.
+        For McpTool, if 'server_label' is provided, returns the MCP tool with that specific server label.
+        If there are multiple MCP tools and no server_label is provided, raises an error.
+        Otherwise, returns the first (or only) tool of the specified type.
+
+        :param tool_type: The type of tool to get.
+        :type tool_type: Type[Tool]
+        :keyword server_label: The server label of the specific MCP tool to get.
+        :paramtype server_label: Optional[str]
+        :return: The tool of the specified type.
+        :rtype: Tool
+        :raises ValueError: If a tool of the specified type is not found, if no McpTool with the specified server_label is found, or if there are multiple MCP tools but no server_label is provided.
+        """
+        # Special handling for McpTool without server_label - check if there are multiple
+        if tool_type == McpTool:
+            # Special handling for McpTool with server_label parameter
+            if server_label is not None:
+                for tool in self._tools:
+                    if isinstance(tool, McpTool) and tool.server_label == server_label:
+                        return cast(ToolT, tool)
+                raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
+            mcp_tools = [tool for tool in self._tools if isinstance(tool, McpTool)]
+            if len(mcp_tools) == 0:
+                raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+            if len(mcp_tools) > 1:
+                server_labels = [tool.server_label for tool in mcp_tools]
+                raise ValueError(
+                    f"Multiple McpTool instances found with server labels: {server_labels}. "
+                    f"Please specify 'server_label' parameter to identify which MCP tool to retrieve."
+                )
+            # Only one MCP tool found, return it
+            return cast(ToolT, mcp_tools[0])
+
+        # Standard tool retrieval - return first tool of specified type
         for tool in self._tools:
             if isinstance(tool, tool_type):
                 return cast(ToolT, tool)
@@ -1567,21 +1926,38 @@ class ToolSet(BaseToolSet):
         :return: The output of the tool operations.
         :rtype: Any
         """
+        return self._execute_tool_calls(tool_calls)
+
+    def _execute_tool_calls(
+        self, tool_calls: List[Any], run: Optional[ThreadRun] = None, run_handler: Optional["RunHandler"] = None
+    ) -> Any:
         tool_outputs = []
 
         for tool_call in tool_calls:
-            try:
-                if tool_call.type == "function":
-                    tool = self.get_tool(FunctionTool)
-                    output = tool.execute(tool_call)
+            if tool_call.type == "function":
+                output: Optional[Any] = None
+
+                tool = self.get_tool(FunctionTool)
+                function_name = tool_call.function.name
+                try:
+                    if run_handler and run and function_name not in tool._functions:  # pylint: disable=protected-access
+                        output = run_handler.submit_function_call_output(
+                            run=run, tool_call=tool_call, tool_call_details=tool_call.function
+                        )
+                        if not output:
+                            error = f"Function '{function_name}' not handled in submit_function_call_output."
+                            logger.error(error)
+                            raise ValueError(error)
+                    else:
+                        output = tool.execute(tool_call)
                     tool_output = {
                         "tool_call_id": tool_call.id,
                         "output": str(output),
                     }
                     tool_outputs.append(tool_output)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
-                tool_outputs.append(tool_output)
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
+                    tool_outputs.append(tool_output)
 
         return tool_outputs
 
@@ -1604,13 +1980,26 @@ class AsyncToolSet(BaseToolSet):
                 + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
-    async def _execute_single_tool_call(self, tool_call: Any):
+    async def _execute_single_tool_call(
+        self, tool_call: Any, run: Optional[ThreadRun] = None, run_handler: Optional["AsyncRunHandler"] = None
+    ):
+        output: Optional[Any] = None
+        tool = self.get_tool(AsyncFunctionTool)
+        function_name = tool_call.function.name
         try:
-            tool = self.get_tool(AsyncFunctionTool)
-            output = await tool.execute(tool_call)
-            return {"tool_call_id": tool_call.id, "output": str(output)}
+            if run_handler and run and function_name not in tool._functions:  # pylint: disable=protected-access
+                output = await run_handler.submit_function_call_output(
+                    run=run, tool_call=tool_call, tool_call_details=tool_call.function
+                )
+                if not output:
+                    error = f"Function '{function_name}' not handled in submit_function_call_output."
+                    logger.error(error)
+                    raise ValueError(error)
+            else:
+                output = await tool.execute(tool_call)
         except Exception as e:  # pylint: disable=broad-exception-caught
             return {"tool_call_id": tool_call.id, "output": str(e)}
+        return {"tool_call_id": tool_call.id, "output": str(output)}
 
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
@@ -1621,9 +2010,15 @@ class AsyncToolSet(BaseToolSet):
         :rtype: Any
         """
 
+        return await self._execute_tool_calls(tool_calls)
+
+    async def _execute_tool_calls(
+        self, tool_calls: List[Any], run: Optional[ThreadRun] = None, run_handler: Optional["AsyncRunHandler"] = None
+    ) -> Any:
+
         # Execute all tool calls concurrently
         tool_outputs = await asyncio.gather(
-            *[self._execute_single_tool_call(tc) for tc in tool_calls if tc.type == "function"]
+            *[self._execute_single_tool_call(tc, run, run_handler) for tc in tool_calls if tc.type == "function"]
         )
 
         return tool_outputs
@@ -1632,7 +2027,7 @@ class AsyncToolSet(BaseToolSet):
 EventFunctionReturnT = TypeVar("EventFunctionReturnT")
 T = TypeVar("T")
 BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
-BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
+# BaseAgentEventHandlerT is defined after BaseAgentEventHandler class to avoid forward reference during parsing.
 
 
 async def async_chain(*iterators: AsyncIterator[T]) -> AsyncIterator[T]:
@@ -1707,6 +2102,286 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
             pass
 
 
+class RunHandler:
+    """Helper that drives a run to completion for the "create and process" pattern.
+
+    Extension Points:
+        * ``submit_function_call_output`` -- override to customize how function tool results are produced.
+        * ``submit_mcp_tool_approval`` -- override to implement an approval workflow (UI prompt, policy, etc.).
+    """
+
+    def _start(self, runs_operations: "RunsOperations", run: ThreadRun, polling_interval: int) -> ThreadRun:
+        """Poll and process a run until it reaches a terminal state or is cancelled.
+
+        :param runs_operations: Operations client used to retrieve, cancel, and submit tool outputs/approvals.
+        :type runs_operations: RunsOperations
+        :param run: The initial run returned from create/process call.
+        :type run: ThreadRun
+        :param polling_interval: Delay (in seconds) between polling attempts.
+        :type polling_interval: int
+        :return: The final terminal ``ThreadRun`` object (completed, failed, cancelled, or expired).
+        :rtype: ThreadRun
+        """
+        current_retry = 0
+        while run.status in [
+            RunStatus.QUEUED,
+            RunStatus.IN_PROGRESS,
+            RunStatus.REQUIRES_ACTION,
+        ]:
+            time.sleep(polling_interval)
+            run = runs_operations.get(thread_id=run.thread_id, run_id=run.id)
+
+            # pylint:disable=protected-access
+            if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolOutputsAction):
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = ToolSet()
+                    toolset.add(runs_operations._function_tool)
+                    tool_outputs = toolset._execute_tool_calls(tool_calls, run, self)
+
+                    if _has_errors_in_toolcalls_output(tool_outputs):
+                        if current_retry >= runs_operations._function_tool_max_retry:  # pylint:disable=no-else-return
+                            logger.warning(
+                                "Tool outputs contain errors - reaching max retry %s",
+                                runs_operations._function_tool_max_retry,
+                            )
+                            return runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                        else:
+                            logger.warning("Tool outputs contain errors - retrying")
+                            current_retry += 1
+
+                    logger.debug("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        run2 = runs_operations.submit_tool_outputs(
+                            thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, SubmitToolApprovalAction):
+                tool_calls = run.required_action.submit_tool_approval.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+
+                tool_approvals = []
+                for tool_call in tool_calls:
+                    if isinstance(tool_call, RequiredMcpToolCall):
+                        try:
+                            tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none,assignment-from-no-return
+                                run=run, tool_call=tool_call
+                            )
+                            tool_approvals.append(tool_approval)
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            logger.error("Error occurred while submitting MCP tool approval.")
+                            return runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+
+                if tool_approvals:
+                    run = runs_operations.submit_tool_outputs(
+                        thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals
+                    )
+
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
+        return run
+
+    def submit_function_call_output(
+        self,  # pylint: disable=unused-argument
+        *,
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
+        tool_call_details: RequiredFunctionToolCallDetails,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> Any:
+        """Produce (or override) the output for a required function tool call.
+
+        Override this to inject custom execution logic, caching, validation, or transformation.
+        Return ``None`` to fall back to the default execution path handled.
+
+        :keyword run: Current run requiring the function output.
+        :paramtype run: ThreadRun
+        :keyword tool_call: The tool call metadata referencing the function tool.
+        :paramtype tool_call: RequiredFunctionToolCall
+        :keyword tool_call_details: Function arguments/details object.
+        :paramtype tool_call_details: RequiredFunctionToolCallDetails
+        :paramtype kwargs: Additional keyword arguments for extensibility.
+        :return: Stringified result to send back to the service, or ``None`` to delegate to auto function calling.
+        :rtype: Any
+        """
+        error = f"run_handler isn't provided or submit_function_call_output isn't implemented to call {tool_call_details.name}."
+        logger.error(error)
+        raise NotImplementedError(error)
+
+    def submit_mcp_tool_approval(
+        self,  # pylint: disable=unused-argument
+        *,
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredMcpToolCall,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> ToolApproval:
+        # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
+        """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
+
+        Override this to implement approval policies (interactive prompt, RBAC, heuristic checks, etc.).
+        Returning ``None`` triggers cancellation logic in ``_start``.
+
+        :keyword run: Current run containing the MCP approval request.
+        :paramtype run: ThreadRun
+        :keyword tool_call: The MCP tool call requiring approval.
+        :paramtype tool_call: RequiredMcpToolCall
+        :paramtype kwargs: Additional keyword arguments for extensibility.
+        :return: A populated ``ToolApproval`` instance to approve or decline.
+        :rtype: ToolApproval
+        """
+        error = "run_handler isn't provided or submit_mcp_tool_approval isn't implemented to approve MCP tool calls."
+        logger.error(error)
+        raise NotImplementedError(error)
+
+
+class AsyncRunHandler:
+    """Helper that drives a run to completion for the "create and process" pattern.
+
+    Extension Points:
+        * ``submit_function_call_output`` -- override to customize how function tool results are produced.
+        * ``submit_mcp_tool_approval`` -- override to implement an approval workflow (UI prompt, policy, etc.).
+    """
+
+    async def _start(self, runs_operations: "AsyncRunsOperations", run: ThreadRun, polling_interval: int) -> ThreadRun:
+        """Poll and process a run until it reaches a terminal state or is cancelled.
+
+        :param runs_operations: Operations client used to retrieve, cancel, and submit tool outputs/approvals.
+        :type runs_operations: AsyncRunsOperations
+        :param run: The initial run returned from create/process call.
+        :type run: ThreadRun
+        :param polling_interval: Delay (in seconds) between polling attempts.
+        :type polling_interval: int
+        :return: The final terminal ``ThreadRun`` object (completed, failed, cancelled, or expired).
+        :rtype: ThreadRun
+        """
+        current_retry = 0
+        while run.status in [
+            RunStatus.QUEUED,
+            RunStatus.IN_PROGRESS,
+            RunStatus.REQUIRES_ACTION,
+        ]:
+            await asyncio.sleep(polling_interval)
+            run = await runs_operations.get(thread_id=run.thread_id, run_id=run.id)
+
+            # pylint:disable=protected-access
+            if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolOutputsAction):
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = AsyncToolSet()
+                    toolset.add(runs_operations._function_tool)
+                    tool_outputs = await toolset._execute_tool_calls(tool_calls, run, self)
+
+                    if _has_errors_in_toolcalls_output(tool_outputs):
+                        if current_retry >= runs_operations._function_tool_max_retry:  # pylint:disable=no-else-return
+                            logger.warning(
+                                "Tool outputs contain errors - reaching max retry %s",
+                                runs_operations._function_tool_max_retry,
+                            )
+                            return await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                        else:
+                            logger.warning("Tool outputs contain errors - retrying")
+                            current_retry += 1
+
+                    logger.debug("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        run2 = await runs_operations.submit_tool_outputs(
+                            thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, SubmitToolApprovalAction):
+                tool_calls = run.required_action.submit_tool_approval.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+
+                tool_approvals = []
+                for tool_call in tool_calls:
+                    if isinstance(tool_call, RequiredMcpToolCall):
+                        try:
+                            tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none,assignment-from-no-return
+                                run=run, tool_call=tool_call
+                            )
+                            tool_approvals.append(tool_approval)
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            logger.error("Error occurred while submitting MCP tool approval.")
+                            return await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+
+                if tool_approvals:
+                    run = await runs_operations.submit_tool_outputs(
+                        thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals
+                    )
+
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
+        return run
+
+    async def submit_function_call_output(
+        self,  # pylint: disable=unused-argument
+        *,
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
+        tool_call_details: RequiredFunctionToolCallDetails,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> Any:
+        """Produce (or override) the output for a required function tool call.
+
+        Override this to inject custom execution logic, caching, validation, or transformation.
+        Return ``None`` to fall back to the default execution path handled.
+
+        :keyword run: Current run requiring the function output.
+        :paramtype run: ThreadRun
+        :keyword tool_call: The tool call metadata referencing the function tool.
+        :paramtype tool_call: RequiredFunctionToolCall
+        :keyword tool_call_details: Function arguments/details object.
+        :paramtype tool_call_details: RequiredFunctionToolCallDetails
+        :paramtype kwargs: Additional keyword arguments for extensibility.
+        :return: Stringified result to send back to the service, or ``None`` to delegate to auto function calling.
+        :rtype: Any
+        """
+        error = f"run_handler isn't provided or submit_function_call_output isn't implemented to call {tool_call_details.name}."
+        logger.error(error)
+        raise NotImplementedError(error)
+
+    def submit_mcp_tool_approval(
+        self,  # pylint: disable=unused-argument
+        *,
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredMcpToolCall,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> ToolApproval:
+        # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
+        """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
+
+        Override this to implement approval policies (interactive prompt, RBAC, heuristic checks, etc.).
+        Returning ``None`` triggers cancellation logic.
+
+        :keyword run: Current run containing the MCP approval request.
+        :paramtype run: ThreadRun
+        :keyword tool_call: The MCP tool call requiring approval.
+        :paramtype tool_call: RequiredMcpToolCall
+        :paramtype kwargs: Additional keyword arguments for extensibility.
+        :return: A populated ``ToolApproval`` instance to approve or decline.
+        :rtype: ToolApproval
+        """
+        error = "run_handler isn't provided or submit_mcp_tool_approval isn't implemented to approve MCP tool calls."
+        logger.error(error)
+        raise NotImplementedError(error)
+
+
 class BaseAgentEventHandler(Iterator[T]):
 
     def __init__(self) -> None:
@@ -1766,6 +2441,10 @@ class BaseAgentEventHandler(Iterator[T]):
                 pass
         except StopIteration:
             pass
+
+
+# Now that BaseAgentEventHandler is defined, we can bind the TypeVar.
+BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
 
 
 class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
@@ -2103,6 +2782,8 @@ __all__: List[str] = [
     "AzureFunctionTool",
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
+    "BrowserAutomationTool",
+    "ComputerUseTool",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
     "DeepResearchTool",
@@ -2125,6 +2806,10 @@ __all__: List[str] = [
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
     "MessageAttachment",
+    "RunHandler",
+    "AsyncRunHandler",
+    "get_tool_resources",
+    "get_tool_definitions",
 ]  # Add all objects you want publicly available to users at this package level
 
 

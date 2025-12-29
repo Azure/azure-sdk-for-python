@@ -31,7 +31,7 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.project_connection.get(
+    response = client.project_connections.get(
         resource_group_name="resourceGroup-1",
         account_name="account-1",
         project_name="project-1",
@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/preview/2025-04-01-preview/examples/ProjectConnection/get.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/ProjectConnection/get.json
 if __name__ == "__main__":
     main()

@@ -23,7 +23,7 @@ class TestSqlManagementInstancePoolsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_instance_pools_list(self, resource_group):
         response = self.client.instance_pools.list(
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestSqlManagementInstancePoolsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_instance_pools_list_by_resource_group(self, resource_group):
         response = self.client.instance_pools.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestSqlManagementInstancePoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.instance_pools.get(
             resource_group_name=resource_group.name,
             instance_pool_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestSqlManagementInstancePoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "vCores": 0,
                 },
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,7 +86,7 @@ class TestSqlManagementInstancePoolsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.instance_pools.begin_delete(
                 resource_group_name=resource_group.name,
                 instance_pool_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -109,7 +109,7 @@ class TestSqlManagementInstancePoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "vCores": 0,
                 },
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

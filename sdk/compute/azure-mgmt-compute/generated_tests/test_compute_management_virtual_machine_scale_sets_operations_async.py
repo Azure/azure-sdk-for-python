@@ -24,9 +24,42 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
     async def test_virtual_machine_scale_sets_list_by_location(self, resource_group):
         response = self.client.virtual_machine_scale_sets.list_by_location(
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_list_all(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list_all(
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_list(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list(
+            resource_group_name=resource_group.name,
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_get(self, resource_group):
+        response = await self.client.virtual_machine_scale_sets.get(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2025-04-01",
+        )
+
         # please add some check logic here by yourself
         # ...
 
@@ -39,12 +72,17 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 vm_scale_set_name="str",
                 parameters={
                     "location": "str",
-                    "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                    "additionalCapabilities": {
+                        "enableFips1403Encryption": bool,
+                        "hibernationEnabled": bool,
+                        "ultraSSDEnabled": bool,
+                    },
                     "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
                     "constrainedMaximumCapacity": bool,
                     "doNotRunExtensionsOnOverprovisionedVMs": bool,
                     "etag": "str",
                     "extendedLocation": {"name": "str", "type": "str"},
+                    "highSpeedInterconnectPlacement": "str",
                     "hostGroup": {"id": "str"},
                     "id": "str",
                     "identity": {
@@ -56,6 +94,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "name": "str",
                     "orchestrationMode": "str",
                     "overprovision": bool,
+                    "placement": {"excludeZones": ["str"], "includeZones": ["str"], "zonePlacementPolicy": "str"},
                     "plan": {"name": "str", "product": "str", "promotionCode": "str", "publisher": "str"},
                     "platformFaultDomainCount": 0,
                     "priorityMixPolicy": {"baseRegularPriorityCount": 0, "regularPriorityPercentageAboveBase": 0},
@@ -69,10 +108,17 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                         },
                         "resilientVMCreationPolicy": {"enabled": bool},
                         "resilientVMDeletionPolicy": {"enabled": bool},
+                        "zoneAllocationPolicy": {
+                            "maxInstancePercentPerZonePolicy": {"enabled": bool, "value": 0},
+                            "maxZoneCount": 0,
+                        },
                     },
                     "scaleInPolicy": {"forceDeletion": bool, "prioritizeUnhealthyVMs": bool, "rules": ["str"]},
                     "scheduledEventsPolicy": {
-                        "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": bool}},
+                        "allInstancesDown": {"automaticallyApprove": bool},
+                        "scheduledEventsAdditionalPublishingTargets": {
+                            "eventGridAndResourceGraph": {"enable": bool, "scheduledEventsApiVersion": "str"}
+                        },
                         "userInitiatedReboot": {"automaticallyApprove": bool},
                         "userInitiatedRedeploy": {"automaticallyApprove": bool},
                     },
@@ -80,6 +126,14 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "sku": {"capacity": 0, "name": "str", "tier": "str"},
                     "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                     "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
@@ -178,12 +232,14 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                                                 "publicIPAddressVersion": "str",
                                                 "publicIPPrefix": {"id": "str"},
                                                 "sku": {"name": "str", "tier": "str"},
+                                                "tags": {"str": "str"},
                                             },
                                             "subnet": {"id": "str"},
                                         }
                                     ],
                                     "networkSecurityGroup": {"id": "str"},
                                     "primary": bool,
+                                    "tags": {"str": "str"},
                                 }
                             ],
                         },
@@ -249,6 +305,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                             "encryptionAtHost": bool,
                             "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                             "proxyAgentSettings": {
+                                "addProxyAgentExtension": bool,
                                 "enabled": bool,
                                 "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                 "keyIncarnationId": 0,
@@ -320,7 +377,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "zoneBalance": bool,
                     "zones": ["str"],
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -335,7 +392,11 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 parameters={
-                    "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                    "additionalCapabilities": {
+                        "enableFips1403Encryption": bool,
+                        "hibernationEnabled": bool,
+                        "ultraSSDEnabled": bool,
+                    },
                     "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
                     "doNotRunExtensionsOnOverprovisionedVMs": bool,
                     "identity": {
@@ -356,6 +417,10 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                         },
                         "resilientVMCreationPolicy": {"enabled": bool},
                         "resilientVMDeletionPolicy": {"enabled": bool},
+                        "zoneAllocationPolicy": {
+                            "maxInstancePercentPerZonePolicy": {"enabled": bool, "value": 0},
+                            "maxZoneCount": 0,
+                        },
                     },
                     "scaleInPolicy": {"forceDeletion": bool, "prioritizeUnhealthyVMs": bool, "rules": ["str"]},
                     "singlePlacementGroup": bool,
@@ -439,6 +504,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                                                 "idleTimeoutInMinutes": 0,
                                                 "name": "str",
                                                 "publicIPPrefix": {"id": "str"},
+                                                "tags": {"str": "str"},
                                             },
                                             "subnet": {"id": "str"},
                                         }
@@ -446,6 +512,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                                     "name": "str",
                                     "networkSecurityGroup": {"id": "str"},
                                     "primary": bool,
+                                    "tags": {"str": "str"},
                                 }
                             ],
                         },
@@ -505,6 +572,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                             "encryptionAtHost": bool,
                             "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                             "proxyAgentSettings": {
+                                "addProxyAgentExtension": bool,
                                 "enabled": bool,
                                 "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                 "keyIncarnationId": 0,
@@ -570,7 +638,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                     "zonalPlatformFaultDomainAlignMode": "str",
                     "zones": ["str"],
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -584,7 +652,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_delete(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -593,11 +661,26 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_get(self, resource_group):
-        response = await self.client.virtual_machine_scale_sets.get(
+    async def test_virtual_machine_scale_sets_begin_approve_rolling_upgrade(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_approve_rolling_upgrade(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_convert_to_single_placement_group(self, resource_group):
+        response = await self.client.virtual_machine_scale_sets.convert_to_single_placement_group(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2024-11-01",
+            parameters={"activePlacementGroupId": "str"},
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -610,7 +693,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
             await self.client.virtual_machine_scale_sets.begin_deallocate(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -625,205 +708,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 vm_instance_i_ds={"instanceIds": ["str"]},
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_get_instance_view(self, resource_group):
-        response = await self.client.virtual_machine_scale_sets.get_instance_view(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_list(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.list(
-            resource_group_name=resource_group.name,
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_list_all(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.list_all(
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_list_skus(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.list_skus(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_get_os_upgrade_history(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.get_os_upgrade_history(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_power_off(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_power_off(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_restart(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_restart(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_start(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_start(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_reapply(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_reapply(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_redeploy(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_redeploy(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_perform_maintenance(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_perform_maintenance(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_update_instances(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_update_instances(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                vm_instance_i_ds={"instanceIds": ["str"]},
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_reimage(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_reimage(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_reimage_all(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_reimage_all(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_approve_rolling_upgrade(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_approve_rolling_upgrade(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -840,7 +725,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 platform_update_domain=0,
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         )
 
@@ -849,13 +734,152 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_convert_to_single_placement_group(self, resource_group):
-        response = await self.client.virtual_machine_scale_sets.convert_to_single_placement_group(
+    async def test_virtual_machine_scale_sets_get_instance_view(self, resource_group):
+        response = await self.client.virtual_machine_scale_sets.get_instance_view(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            parameters={"activePlacementGroupId": "str"},
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_update_instances(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_update_instances(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                vm_instance_i_ds={"instanceIds": ["str"]},
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_get_os_upgrade_history(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.get_os_upgrade_history(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_perform_maintenance(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_perform_maintenance(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_power_off(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_power_off(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_reapply(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_reapply(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_redeploy(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_redeploy(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_reimage(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_reimage(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_reimage_all(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_reimage_all(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_restart(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_restart(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_scale_out(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_scale_out(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                parameters={"capacity": 0, "properties": {"zone": "str"}},
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -868,7 +892,33 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 parameters={"action": "str", "serviceName": "str"},
-                api_version="2024-11-01",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_list_skus(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list_skus(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_begin_start(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_sets.begin_start(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

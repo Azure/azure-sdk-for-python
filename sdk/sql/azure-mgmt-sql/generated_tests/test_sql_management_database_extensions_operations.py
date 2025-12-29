@@ -20,26 +20,13 @@ class TestSqlManagementDatabaseExtensionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_database_extensions_list_by_database(self, resource_group):
-        response = self.client.database_extensions.list_by_database(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            api_version="2024-05-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_database_extensions_get(self, resource_group):
         response = self.client.database_extensions.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             extension_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,23 +41,29 @@ class TestSqlManagementDatabaseExtensionsOperations(AzureMgmtRecordedTestCase):
             database_name="str",
             extension_name="str",
             parameters={
-                "administratorLogin": "str",
-                "administratorLoginPassword": "str",
-                "authenticationType": "str",
-                "databaseEdition": "str",
                 "id": "str",
-                "maxSizeBytes": "str",
                 "name": "str",
-                "networkIsolation": {"sqlServerResourceId": "str", "storageAccountResourceId": "str"},
                 "operationMode": "str",
-                "serviceObjectiveName": "str",
                 "storageKey": "str",
                 "storageKeyType": "str",
                 "storageUri": "str",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_database_extensions_list_by_database(self, resource_group):
+        response = self.client.database_extensions.list_by_database(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            api_version="2021-02-01-preview",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

@@ -5,17 +5,9 @@
 
 import os
 
-from azure.keyvault.certificates import ApiVersion
 from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
-
-
-def get_decorator(**kwargs):
-    """returns a test decorator for test parameterization"""
-    versions = kwargs.pop("api_versions", None) or ApiVersion
-    params = [pytest.param(api_version) for api_version in versions]
-    return params
 
 
 class AsyncCertificatesClientPreparer(AzureRecordedTestCase):

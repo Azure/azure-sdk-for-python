@@ -1,5 +1,71 @@
 # Release History
 
+## 3.0.0 (2025-10-15)
+
+### Features Added
+
+  - Model `OracleDatabaseMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `OracleDatabaseMgmtClient` added operation group `network_anchors`
+  - Client `OracleDatabaseMgmtClient` added operation group `resource_anchors`
+  - Client `OracleDatabaseMgmtClient` added operation group `db_systems`
+  - Client `OracleDatabaseMgmtClient` added operation group `db_versions`
+  - Model `CloudExadataInfrastructureProperties` added property `exascale_config`
+  - Model `CloudVmClusterProperties` added property `exascale_db_storage_vault_id`
+  - Model `CloudVmClusterProperties` added property `storage_management_type`
+  - Model `DbSystemShapeProperties` added property `shape_attributes`
+  - Model `ExadbVmClusterProperties` added property `shape_attribute`
+  - Model `ExascaleDbStorageVaultProperties` added property `exadata_infrastructure_id`
+  - Model `ExascaleDbStorageVaultProperties` added property `attached_shape_attributes`
+  - Added model `AutonomousDatabaseLifecycleAction`
+  - Added enum `AutonomousDatabaseLifecycleActionEnum`
+  - Added enum `BaseDbSystemShapes`
+  - Added model `ConfigureExascaleCloudExadataInfrastructureDetails`
+  - Added model `DbSystem`
+  - Added model `DbSystemBaseProperties`
+  - Added enum `DbSystemDatabaseEditionType`
+  - Added enum `DbSystemLifecycleState`
+  - Added model `DbSystemOptions`
+  - Added model `DbSystemProperties`
+  - Added enum `DbSystemSourceType`
+  - Added model `DbSystemUpdate`
+  - Added model `DbSystemUpdateProperties`
+  - Added model `DbVersion`
+  - Added model `DbVersionProperties`
+  - Added enum `DiskRedundancyType`
+  - Added model `DnsForwardingRule`
+  - Added enum `ExadataVmClusterStorageManagementType`
+  - Added model `ExascaleConfigDetails`
+  - Added model `NetworkAnchor`
+  - Added model `NetworkAnchorProperties`
+  - Added model `NetworkAnchorUpdate`
+  - Added model `NetworkAnchorUpdateProperties`
+  - Added model `ResourceAnchor`
+  - Added model `ResourceAnchorProperties`
+  - Added model `ResourceAnchorUpdate`
+  - Added enum `ShapeAttribute`
+  - Added enum `ShapeFamilyType`
+  - Added enum `StorageManagementType`
+  - Added enum `StorageVolumePerformanceMode`
+  - Model `AutonomousDatabasesOperations` added method `begin_action`
+  - Model `CloudExadataInfrastructuresOperations` added method `begin_configure_exascale`
+  - Model `DbSystemShapesOperations` added parameter `shape_attribute` in method `list_by_location`
+  - Model `GiVersionsOperations` added parameter `shape_attribute` in method `list_by_location`
+  - Added operation group `DbSystemsOperations`
+  - Added operation group `DbVersionsOperations`
+  - Added operation group `NetworkAnchorsOperations`
+  - Added operation group `ResourceAnchorsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `OracleDatabaseMgmtClient.list_actions`
+  - Model `AutonomousDatabaseBaseProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseCloneProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseUpdateProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Deleted or renamed operation group `ListActionsOperations`
+
 ## 2.0.0 (2025-06-05)
 
 ### Features Added

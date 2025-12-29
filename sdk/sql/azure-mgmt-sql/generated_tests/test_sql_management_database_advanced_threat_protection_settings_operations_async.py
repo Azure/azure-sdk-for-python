@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseAdvancedThreatProtectionSettingsOperationsAsync(A
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementDatabaseAdvancedThreatProtectionSettingsOperationsAsync(A
             server_name="str",
             database_name="str",
             advanced_threat_protection_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestSqlManagementDatabaseAdvancedThreatProtectionSettingsOperationsAsync(A
                 },
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself

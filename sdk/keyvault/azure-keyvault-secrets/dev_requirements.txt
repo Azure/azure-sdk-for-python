@@ -1,6 +1,6 @@
 ../../core/azure-core
 -e ../../identity/azure-identity
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ../../nspkg/azure-keyvault-nspkg
 aiohttp>=3.0
 parameterized>=0.7.3

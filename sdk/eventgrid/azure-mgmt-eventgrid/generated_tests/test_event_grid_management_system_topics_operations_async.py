@@ -25,7 +25,7 @@ class TestEventGridManagementSystemTopicsOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.system_topics.get(
             resource_group_name=resource_group.name,
             system_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestEventGridManagementSystemTopicsOperationsAsync(AzureMgmtRecordedTestCa
                     "topicType": "str",
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,7 +77,7 @@ class TestEventGridManagementSystemTopicsOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.system_topics.begin_delete(
                 resource_group_name=resource_group.name,
                 system_topic_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +100,7 @@ class TestEventGridManagementSystemTopicsOperationsAsync(AzureMgmtRecordedTestCa
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +111,7 @@ class TestEventGridManagementSystemTopicsOperationsAsync(AzureMgmtRecordedTestCa
     @recorded_by_proxy_async
     async def test_system_topics_list_by_subscription(self, resource_group):
         response = self.client.system_topics.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestEventGridManagementSystemTopicsOperationsAsync(AzureMgmtRecordedTestCa
     async def test_system_topics_list_by_resource_group(self, resource_group):
         response = self.client.system_topics.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

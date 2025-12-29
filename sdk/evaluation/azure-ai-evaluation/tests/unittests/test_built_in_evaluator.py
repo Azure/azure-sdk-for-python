@@ -1,13 +1,19 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from azure.ai.evaluation._exceptions import EvaluationException
-from azure.ai.evaluation import FluencyEvaluator, SimilarityEvaluator, RetrievalEvaluator, RelevanceEvaluator
+from azure.ai.evaluation import (
+    FluencyEvaluator,
+    SimilarityEvaluator,
+    RetrievalEvaluator,
+    RelevanceEvaluator,
+    GroundednessEvaluator,
+)
 
 
-async def quality_response_async_mock():
-    return (
+async def quality_response_async_mock(*args, **kwargs):
+    llm_output = (
         "<S0>Let's think step by step: The response 'Honolulu' is a single word. "
         "It does not form a complete sentence, lacks grammatical structure, and does not "
         "convey any clear idea or message. It is not possible to assess vocabulary range, "
@@ -17,10 +23,11 @@ async def quality_response_async_mock():
         " fluency. It is largely incomprehensible and does not meet the criteria for higher fluency "
         "levels.</S1><S2>1</S2>"
     )
+    return {"llm_output": llm_output}
 
 
 async def quality_no_response_async_mock():
-    return "1"
+    return {"llm_output": "1"}
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -66,9 +73,21 @@ class TestBuiltInEvaluators:
         )
         assert result["similarity"] == result["gpt_similarity"] == 1
         # Updated assertion to expect 4 keys instead of 2
-        assert len(result) == 4
+        assert len(result) == 11
         # Verify all expected keys are present
-        assert set(result.keys()) == {"similarity", "gpt_similarity", "similarity_result", "similarity_threshold"}
+        assert set(result.keys()) == {
+            "similarity",
+            "gpt_similarity",
+            "similarity_result",
+            "similarity_threshold",
+            "similarity_prompt_tokens",
+            "similarity_completion_tokens",
+            "similarity_total_tokens",
+            "similarity_finish_reason",
+            "similarity_model",
+            "similarity_sample_input",
+            "similarity_sample_output",
+        }
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
@@ -127,4 +146,100 @@ class TestBuiltInEvaluators:
 
         assert (
             "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+        )
+
+    @patch("azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load")
+    def test_groundedness_evaluator_with_agent_response(self, mock_async_prompty, mock_model_config):
+        """Test GroundednessEvaluator with query, response, and tool_definitions"""
+        groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
+        mock_async_prompty.return_value = quality_response_async_mock
+
+        # Test with query, response, and tool_definitions
+        result = groundedness_eval(
+            query="What is the capital of Japan?",
+            response=[
+                {
+                    "createdAt": "2025-08-01T00:02:38Z",
+                    "run_id": "run_CmSdDdrq0CzwGOwqmWVADYwi",
+                    "tool_call_id": "call_AU6kCcVwxv1cjM8HIQHMFFGh",
+                    "role": "tool",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_result": [
+                                {
+                                    "file_id": "assistant-6QeBNfMsJpL3AHnE3T6dwY",
+                                    "file_name": "product_info_1.md",
+                                    "score": 0.03333333507180214,
+                                    "attributes": {},
+                                    "content": [
+                                        {
+                                            "type": "text",
+                                            "text": "# Information about product item_number: 1\n\n## Brand\nContoso Galaxy Innovations\n\n## Category\nSmart Eyewear\n",
+                                        }
+                                    ],
+                                }
+                            ],
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-08-01T00:02:38Z",
+                    "run_id": "run_CmSdDdrq0CzwGOwqmWVADYwi",
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "One of the Contoso products identified is the **SmartView Glasses**"}
+                    ],
+                },
+                {
+                    "createdAt": "2025-08-01T00:02:38Z",
+                    "run_id": "run_CmSdDdrq0CzwGOwqmWVADYwi",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "tool_call",
+                            "tool_call_id": "call_AU6kCcVwxv1cjM8HIQHMFFGh",
+                            "name": "file_search",
+                            "arguments": {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}},
+                        }
+                    ],
+                },
+            ],
+            tool_definitions=[
+                {"name": "file_search", "type": "file_search", "description": "Search for information in files"}
+            ],
+        )
+
+        assert result is not None
+        assert result["groundedness"] == result["gpt_groundedness"] == 1
+        assert "groundedness_reason" in result
+
+    def test_groundedness_evaluator_with_context(self, mock_model_config):
+        """Test GroundednessEvaluator with direct context (traditional use)"""
+        groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
+        groundedness_eval._flow = MagicMock(return_value=quality_response_async_mock())
+
+        result = groundedness_eval(
+            response="The capital of Japan is Tokyo.",
+            context="Tokyo is the capital of Japan and is located on the eastern coast of Honshu island.",
+        )
+
+        assert result is not None
+        assert result["groundedness"] == result["gpt_groundedness"] == 1
+        assert "groundedness_reason" in result
+
+    def test_groundedness_evaluator_missing_required_inputs(self, mock_model_config):
+        """Test GroundednessEvaluator with missing required inputs for agent response mode"""
+        groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
+        groundedness_eval._flow = MagicMock(return_value=quality_response_async_mock())
+
+        with pytest.raises(EvaluationException) as exc_info:
+            groundedness_eval(
+                query="What is the capital of Japan?",
+                # Missing response
+            )
+
+        assert (
+            "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
+            in exc_info.value.args[0]
         )

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -42,7 +42,8 @@ from ...operations._rai_blocklists_operations import (
 from .._configuration import CognitiveServicesManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RaiBlocklistsOperations:
@@ -67,7 +68,9 @@ class RaiBlocklistsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncIterable["_models.RaiBlocklist"]:
+    def list(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.RaiBlocklist"]:
         """Gets the custom blocklists associated with the Azure OpenAI account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

@@ -32,30 +32,28 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_submit_start(
-        locationparameter="bgyvpodcjmcmbxohvil",
+        locationparameter="pxtvvk",
         request_body={
-            "correlationid": "bvmpxvbd",
+            "correlationid": "b211f086-4b91-4686-a453-2f5c012e4d80",
             "executionParameters": {
                 "optimizationPreference": "Cost",
-                "retryPolicy": {"retryCount": 25, "retryWindowInMinutes": 4},
+                "retryPolicy": {"retryCount": 17, "retryWindowInMinutes": 29},
             },
             "resources": {
                 "ids": [
-                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource3"
+                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource4"
                 ]
             },
             "schedule": {
-                "deadLine": "2025-04-15T19:47:04.403Z",
-                "deadline": "2025-04-15T19:47:04.403Z",
+                "deadLine": "2025-04-17T00:23:56.803Z",
                 "deadlineType": "Unknown",
-                "timeZone": "upnmayfebiadztdktxzq",
-                "timezone": "qacufsmctpgjozovlsihrzoctatcsj",
+                "timeZone": "aigbjdnldtzkteqi",
             },
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/ScheduledActions_VirtualMachinesSubmitStart_MaximumSet_Gen.json
+# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesSubmitStart_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

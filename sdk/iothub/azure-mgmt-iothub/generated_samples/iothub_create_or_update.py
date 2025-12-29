@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -42,11 +43,12 @@ def main():
                     "feedback": {"lockDurationAsIso8601": "PT1M", "maxDeliveryCount": 10, "ttlAsIso8601": "PT1H"},
                     "maxDeliveryCount": 10,
                 },
-                "enableDataResidency": False,
+                "enableDataResidency": True,
                 "enableFileUploadNotifications": False,
                 "eventHubEndpoints": {"events": {"partitionCount": 2, "retentionTimeInDays": 1}},
                 "features": "None",
                 "ipFilterRules": [],
+                "ipVersion": "ipv4ipv6",
                 "messagingEndpoints": {
                     "fileNotifications": {
                         "lockDurationAsIso8601": "PT1M",
@@ -63,6 +65,7 @@ def main():
                         {"action": "Allow", "filterName": "rule2", "ipMask": "157.55.59.128/25"},
                     ],
                 },
+                "rootCertificate": {"enableRootCertificateV2": True},
                 "routing": {
                     "endpoints": {
                         "eventHubs": [],
@@ -90,6 +93,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2023-06-30/examples/iothub_createOrUpdate.json
+# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/IoTHub/preview/2025-08-01-preview/examples/iothub_createOrUpdate.json
 if __name__ == "__main__":
     main()

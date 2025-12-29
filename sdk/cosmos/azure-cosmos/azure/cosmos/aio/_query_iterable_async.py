@@ -22,8 +22,13 @@
 """Iterable query results in the Azure Cosmos database service.
 """
 import asyncio # pylint: disable=do-not-import-asyncio
+import time
+
 from azure.core.async_paging import AsyncPageIterator
+
+from azure.cosmos._constants import _Constants, TimeoutScope
 from azure.cosmos._execution_context.aio import execution_dispatcher
+from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
 
@@ -44,7 +49,9 @@ class QueryIterable(AsyncPageIterator):
         database_link=None,
         partition_key=None,
         continuation_token=None,
+        resource_type=None,
         response_hook=None,
+        raw_response_hook=None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -55,7 +62,7 @@ class QueryIterable(AsyncPageIterator):
         :param (str or dict) query:
         :param dict options: The request options for the request.
         :param method fetch_function:
-        :param method resource_type: The type of the resource being queried
+        :param str resource_type: The type of the resource being queried
         :param str resource_link: If this is a Document query/feed collection_link is required.
 
         Example of `fetch_function`:
@@ -75,7 +82,8 @@ class QueryIterable(AsyncPageIterator):
         self._database_link = database_link
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
-            self._client, self._collection_link, self._query, self._options, self._fetch_function, response_hook)
+            self._client, self._collection_link, self._query, self._options, self._fetch_function,
+            response_hook, raw_response_hook, resource_type)
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     async def _unpack(self, block):
@@ -97,9 +105,23 @@ class QueryIterable(AsyncPageIterator):
         :return: List of results.
         :rtype: list
         """
+        timeout = self._options.get('timeout')
         if 'partitionKey' in self._options and asyncio.iscoroutine(self._options['partitionKey']):
             self._options['partitionKey'] = await self._options['partitionKey']
+
+        # Check timeout before fetching next block
+
+        if timeout and self._options.get(_Constants.TimeoutScope) != TimeoutScope.OPERATION:
+            self._options[_Constants.OperationStartTime] = time.time()
+
+        # Check timeout before fetching next block
+        if timeout:
+            elapsed = time.time() - self._options.get(_Constants.OperationStartTime)
+            if elapsed >= timeout:
+                raise exceptions.CosmosClientTimeoutError()
+
         block = await self._ex_context.fetch_next_block()
+
         if not block:
             raise StopAsyncIteration
         return block

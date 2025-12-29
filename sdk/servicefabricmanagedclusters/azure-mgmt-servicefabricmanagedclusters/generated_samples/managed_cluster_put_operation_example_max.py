@@ -61,6 +61,7 @@ def main():
                 "enableAutoOSUpgrade": True,
                 "enableHttpGatewayExclusiveAuthMode": True,
                 "enableIpv6": True,
+                "enableOutboundOnlyNodeTypes": True,
                 "fabricSettings": [
                     {"name": "ManagedIdentityTokenService", "parameters": [{"name": "IsEnabled", "value": "true"}]}
                 ],
@@ -118,7 +119,13 @@ def main():
                 ],
                 "publicIPPrefixId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/resRg/providers/Microsoft.Network/publicIPPrefixes/myPublicIPPrefix",
                 "publicIPv6PrefixId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/resRg/providers/Microsoft.Network/publicIPPrefixes/myPublicIPv6Prefix",
-                "serviceEndpoints": [{"locations": ["eastus2", "usnorth"], "service": "Microsoft.Storage"}],
+                "serviceEndpoints": [
+                    {
+                        "locations": ["eastus2", "usnorth"],
+                        "networkIdentifier": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Network/publicIPAddresses/myPublicIP",
+                        "service": "Microsoft.Storage",
+                    }
+                ],
                 "upgradeDescription": {
                     "deltaHealthPolicy": {
                         "maxPercentDeltaUnhealthyApplications": 40,
@@ -146,6 +153,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ManagedClusterPutOperation_example_max.json
+# x-ms-original-file: 2025-10-01-preview/ManagedClusterPutOperation_example_max.json
 if __name__ == "__main__":
     main()

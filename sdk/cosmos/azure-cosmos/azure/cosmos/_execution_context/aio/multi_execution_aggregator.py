@@ -21,7 +21,6 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
 from azure.cosmos._routing import routing_range
@@ -62,7 +61,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         def size(self):
             return len(self._heap)
 
-    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info, response_hook):
+    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info,
+                 response_hook, raw_response_hook):
         super(_MultiExecutionContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -73,6 +73,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
         self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
 
         if self._sort_orders:
             self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
@@ -155,11 +156,11 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             query,
             self._document_producer_comparator,
             self._options,
-            self._response_hook
+            self._response_hook,
+            self._raw_response_hook
         )
 
     async def _get_target_partition_key_range(self):
-
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link,

@@ -31,7 +31,7 @@ from typing import (
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-from ..models._enums import FilePurpose, RunStatus
+from ..models._enums import FilePurpose
 from ._operations import FilesOperations as FilesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
 from ._operations import ThreadsOperations as ThreadsOperationsGenerated
@@ -194,11 +194,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -363,11 +363,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -441,6 +441,7 @@ class RunsOperations(RunsOperationsGenerated):
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
+        run_handler: Optional[_models.RunHandler] = None,
         polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -507,11 +508,11 @@ class RunsOperations(RunsOperationsGenerated):
          ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -521,6 +522,9 @@ class RunsOperations(RunsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :keyword run_handler: Optional handler to customize run processing and tool execution.
+            Default value is None.
+        :paramtype run_handler: ~azure.ai.agents.models.RunHandler
         :keyword polling_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
         :paramtype polling_interval: int
@@ -552,48 +556,9 @@ class RunsOperations(RunsOperationsGenerated):
         )
 
         # Monitor and process the run status
-        current_retry = 0
-        while run.status in [
-            RunStatus.QUEUED,
-            RunStatus.IN_PROGRESS,
-            RunStatus.REQUIRES_ACTION,
-        ]:
-            time.sleep(polling_interval)
-            run = self.get(thread_id=thread_id, run_id=run.id)
+        run_handler_obj = run_handler or _models.RunHandler()
 
-            if run.status == RunStatus.REQUIRES_ACTION and isinstance(
-                run.required_action, _models.SubmitToolOutputsAction
-            ):
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                if not tool_calls:
-                    logger.warning("No tool calls provided - cancelling run")
-                    self.cancel(thread_id=thread_id, run_id=run.id)
-                    break
-                # We need tool set only if we are executing local function. In case if
-                # the tool is azure_function we just need to wait when it will be finished.
-                if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = _models.ToolSet()
-                    toolset.add(self._function_tool)
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-
-                    if _has_errors_in_toolcalls_output(tool_outputs):
-                        if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
-                            logger.warning(
-                                "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
-                            )
-                            return self.cancel(thread_id=thread_id, run_id=run.id)
-                        else:
-                            logger.warning("Tool outputs contain errors - retrying")
-                            current_retry += 1
-
-                    logger.debug("Tool outputs: %s", tool_outputs)
-                    if tool_outputs:
-                        run2 = self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
-                        logger.debug("Tool outputs submitted to run: %s", run2.id)
-
-            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
-
-        return run
+        return run_handler_obj._start(self, run, polling_interval)  # pylint: disable=protected-access
 
     @overload
     def stream(
@@ -689,11 +654,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -804,11 +769,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -990,11 +955,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -1063,7 +1028,7 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         event_handler: Optional[_models.AgentEventHandler] = None,
@@ -1079,7 +1044,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -1145,7 +1110,7 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = _Unset,
         tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -1161,7 +1126,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -1238,7 +1203,7 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         event_handler: _models.BaseAgentEventHandler,
@@ -1254,7 +1219,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -1273,7 +1238,7 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = _Unset,
         tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         event_handler: _models.BaseAgentEventHandler,
         **kwargs: Any,
@@ -1290,7 +1255,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -2265,7 +2230,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
     @distributed_trace
     def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> None:
-        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        """Deletes a vector store file. This removes the file-to-store link (does not delete the file
         itself).
 
         :param vector_store_id: Identifier of the vector store.
@@ -2330,6 +2295,18 @@ class MessagesOperations(MessagesOperationsGenerated):
             if text_contents:
                 return text_contents[-1]
         return None
+
+    @distributed_trace
+    def delete(self, thread_id: str, message_id: str, **kwargs: Any) -> None:
+        """Deletes an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        super()._delete(thread_id=thread_id, message_id=message_id, **kwargs)
 
 
 __all__: List[str] = [

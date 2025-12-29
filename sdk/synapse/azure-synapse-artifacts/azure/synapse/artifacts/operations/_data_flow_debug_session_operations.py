@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,36 +7,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
 
-from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    StreamClosedError,
-    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import ArtifactsClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._serialization import Serializer
+from .._vendor import _convert_request
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -166,15 +160,15 @@ class DataFlowDebugSessionOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _create_data_flow_debug_session_initial(
-        self, request: Union[_models.CreateDataFlowDebugSessionRequest, IO[bytes]], **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
+        self, request: Union[_models.CreateDataFlowDebugSessionRequest, IO], **kwargs: Any
+    ) -> Optional[_models.CreateDataFlowDebugSessionResponse]:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -187,7 +181,7 @@ class DataFlowDebugSessionOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.CreateDataFlowDebugSessionResponse]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -205,13 +199,13 @@ class DataFlowDebugSessionOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -219,18 +213,16 @@ class DataFlowDebugSessionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("CreateDataFlowDebugSessionResponse", pipeline_response)
+
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -252,6 +244,14 @@ class DataFlowDebugSessionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either CreateDataFlowDebugSessionResponse or the
          result of cls(response)
         :rtype:
@@ -261,15 +261,23 @@ class DataFlowDebugSessionOperations:
 
     @overload
     def begin_create_data_flow_debug_session(
-        self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.CreateDataFlowDebugSessionResponse]:
         """Creates a data flow debug session.
 
         :param request: Data flow debug session definition. Required.
-        :type request: IO[bytes]
+        :type request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either CreateDataFlowDebugSessionResponse or the
          result of cls(response)
         :rtype:
@@ -279,13 +287,24 @@ class DataFlowDebugSessionOperations:
 
     @distributed_trace
     def begin_create_data_flow_debug_session(
-        self, request: Union[_models.CreateDataFlowDebugSessionRequest, IO[bytes]], **kwargs: Any
+        self, request: Union[_models.CreateDataFlowDebugSessionRequest, IO], **kwargs: Any
     ) -> LROPoller[_models.CreateDataFlowDebugSessionResponse]:
         """Creates a data flow debug session.
 
         :param request: Data flow debug session definition. Is either a
-         CreateDataFlowDebugSessionRequest type or a IO[bytes] type. Required.
-        :type request: ~azure.synapse.artifacts.models.CreateDataFlowDebugSessionRequest or IO[bytes]
+         CreateDataFlowDebugSessionRequest type or a IO type. Required.
+        :type request: ~azure.synapse.artifacts.models.CreateDataFlowDebugSessionRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either CreateDataFlowDebugSessionResponse or the
          result of cls(response)
         :rtype:
@@ -311,11 +330,10 @@ class DataFlowDebugSessionOperations:
                 params=_params,
                 **kwargs,
             )
-            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("CreateDataFlowDebugSessionResponse", pipeline_response.http_response)
+            deserialized = self._deserialize("CreateDataFlowDebugSessionResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -333,15 +351,13 @@ class DataFlowDebugSessionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.CreateDataFlowDebugSessionResponse].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.CreateDataFlowDebugSessionResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def query_data_flow_debug_sessions_by_workspace(  # pylint: disable=name-too-long
@@ -349,6 +365,7 @@ class DataFlowDebugSessionOperations:
     ) -> Iterable["_models.DataFlowDebugSessionInfo"]:
         """Query all active data flow debug sessions.
 
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataFlowDebugSessionInfo or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.DataFlowDebugSessionInfo]
@@ -360,7 +377,7 @@ class DataFlowDebugSessionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.QueryDataFlowDebugSessionsResponse] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -376,6 +393,7 @@ class DataFlowDebugSessionOperations:
                     headers=_headers,
                     params=_params,
                 )
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -385,6 +403,7 @@ class DataFlowDebugSessionOperations:
 
             else:
                 _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -429,6 +448,7 @@ class DataFlowDebugSessionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddDataFlowToDebugSessionResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.AddDataFlowToDebugSessionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -436,15 +456,16 @@ class DataFlowDebugSessionOperations:
 
     @overload
     def add_data_flow(
-        self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AddDataFlowToDebugSessionResponse:
         """Add a data flow into debug session.
 
         :param request: Data flow debug session definition with debug content. Required.
-        :type request: IO[bytes]
+        :type request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddDataFlowToDebugSessionResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.AddDataFlowToDebugSessionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -452,18 +473,22 @@ class DataFlowDebugSessionOperations:
 
     @distributed_trace
     def add_data_flow(
-        self, request: Union[_models.DataFlowDebugPackage, IO[bytes]], **kwargs: Any
+        self, request: Union[_models.DataFlowDebugPackage, IO], **kwargs: Any
     ) -> _models.AddDataFlowToDebugSessionResponse:
         """Add a data flow into debug session.
 
         :param request: Data flow debug session definition with debug content. Is either a
-         DataFlowDebugPackage type or a IO[bytes] type. Required.
-        :type request: ~azure.synapse.artifacts.models.DataFlowDebugPackage or IO[bytes]
+         DataFlowDebugPackage type or a IO type. Required.
+        :type request: ~azure.synapse.artifacts.models.DataFlowDebugPackage or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddDataFlowToDebugSessionResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.AddDataFlowToDebugSessionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -494,6 +519,7 @@ class DataFlowDebugSessionOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -510,7 +536,7 @@ class DataFlowDebugSessionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("AddDataFlowToDebugSessionResponse", pipeline_response.http_response)
+        deserialized = self._deserialize("AddDataFlowToDebugSessionResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -518,7 +544,7 @@ class DataFlowDebugSessionOperations:
         return deserialized  # type: ignore
 
     @overload
-    def delete_data_flow_debug_session(
+    def delete_data_flow_debug_session(  # pylint: disable=inconsistent-return-statements
         self,
         request: _models.DeleteDataFlowDebugSessionRequest,
         *,
@@ -532,22 +558,24 @@ class DataFlowDebugSessionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def delete_data_flow_debug_session(
-        self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    def delete_data_flow_debug_session(  # pylint: disable=inconsistent-return-statements
+        self, request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Deletes a data flow debug session.
 
         :param request: Data flow debug session definition for deletion. Required.
-        :type request: IO[bytes]
+        :type request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -555,18 +583,22 @@ class DataFlowDebugSessionOperations:
 
     @distributed_trace
     def delete_data_flow_debug_session(  # pylint: disable=inconsistent-return-statements
-        self, request: Union[_models.DeleteDataFlowDebugSessionRequest, IO[bytes]], **kwargs: Any
+        self, request: Union[_models.DeleteDataFlowDebugSessionRequest, IO], **kwargs: Any
     ) -> None:
         """Deletes a data flow debug session.
 
         :param request: Data flow debug session definition for deletion. Is either a
-         DeleteDataFlowDebugSessionRequest type or a IO[bytes] type. Required.
-        :type request: ~azure.synapse.artifacts.models.DeleteDataFlowDebugSessionRequest or IO[bytes]
+         DeleteDataFlowDebugSessionRequest type or a IO type. Required.
+        :type request: ~azure.synapse.artifacts.models.DeleteDataFlowDebugSessionRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -597,6 +629,7 @@ class DataFlowDebugSessionOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -617,9 +650,9 @@ class DataFlowDebugSessionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _execute_command_initial(
-        self, request: Union[_models.DataFlowDebugCommandRequest, IO[bytes]], **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
+        self, request: Union[_models.DataFlowDebugCommandRequest, IO], **kwargs: Any
+    ) -> Optional[_models.DataFlowDebugCommandResponse]:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -632,7 +665,7 @@ class DataFlowDebugSessionOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.DataFlowDebugCommandResponse]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -650,13 +683,13 @@ class DataFlowDebugSessionOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -664,18 +697,16 @@ class DataFlowDebugSessionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("DataFlowDebugCommandResponse", pipeline_response)
+
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -693,6 +724,14 @@ class DataFlowDebugSessionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either DataFlowDebugCommandResponse or the
          result of cls(response)
         :rtype:
@@ -702,15 +741,23 @@ class DataFlowDebugSessionOperations:
 
     @overload
     def begin_execute_command(
-        self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DataFlowDebugCommandResponse]:
         """Execute a data flow debug command.
 
         :param request: Data flow debug command definition. Required.
-        :type request: IO[bytes]
+        :type request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either DataFlowDebugCommandResponse or the
          result of cls(response)
         :rtype:
@@ -720,13 +767,24 @@ class DataFlowDebugSessionOperations:
 
     @distributed_trace
     def begin_execute_command(
-        self, request: Union[_models.DataFlowDebugCommandRequest, IO[bytes]], **kwargs: Any
+        self, request: Union[_models.DataFlowDebugCommandRequest, IO], **kwargs: Any
     ) -> LROPoller[_models.DataFlowDebugCommandResponse]:
         """Execute a data flow debug command.
 
         :param request: Data flow debug command definition. Is either a DataFlowDebugCommandRequest
-         type or a IO[bytes] type. Required.
-        :type request: ~azure.synapse.artifacts.models.DataFlowDebugCommandRequest or IO[bytes]
+         type or a IO type. Required.
+        :type request: ~azure.synapse.artifacts.models.DataFlowDebugCommandRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either DataFlowDebugCommandResponse or the
          result of cls(response)
         :rtype:
@@ -752,11 +810,10 @@ class DataFlowDebugSessionOperations:
                 params=_params,
                 **kwargs,
             )
-            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DataFlowDebugCommandResponse", pipeline_response.http_response)
+            deserialized = self._deserialize("DataFlowDebugCommandResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -774,12 +831,10 @@ class DataFlowDebugSessionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.DataFlowDebugCommandResponse].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.DataFlowDebugCommandResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

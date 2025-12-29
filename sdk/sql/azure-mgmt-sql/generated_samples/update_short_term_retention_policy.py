@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,6 +10,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.sql import SqlManagementClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,22 +23,24 @@ from azure.mgmt.sql import SqlManagementClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = SqlManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.backup_short_term_retention_policies.begin_update(
-        resource_group_name='resourceGroup',
-        server_name='testsvr',
-        database_name='testdb',
-        policy_name='default',
-        parameters={'properties': {'diffBackupIntervalInHours': 24, 'retentionDays': 7}},
+    response = client.backup_short_term_retention_policies.begin_create_or_update(
+        resource_group_name="resourceGroup",
+        server_name="testsvr",
+        database_name="testdb",
+        policy_name="default",
+        parameters={"properties": {"diffBackupIntervalInHours": 24, "retentionDays": 7}},
     ).result()
     print(response)
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/UpdateShortTermRetentionPolicy.json
+
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-02-01-preview/examples/UpdateShortTermRetentionPolicy.json
 if __name__ == "__main__":
     main()
-   main()

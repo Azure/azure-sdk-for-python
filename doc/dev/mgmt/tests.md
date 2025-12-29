@@ -81,7 +81,7 @@ credentials = ClientSecretCredential(
     tenant = os.environ['AZURE_TENANT_ID']
 )
 ```
-Or you can use `DefaultAzureCredential`, which we prefer. 
+Or you can use `DefaultAzureCredential`, which we prefer.
 You can test with this code:
 ```python
 import os
@@ -92,7 +92,7 @@ credentials = DefaultAzureCredential()
 
 ## Providing credentials to the tests
 
-When you run tests in playback mode, they use a fake credentials file, located at [`tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake], to simulate authenticating with Azure. In most scenarios you will not have to adjust this file, you will have to make edits to this file if your service uses values that are not already included in the `mgmt_settings_fake.py` file.
+When you run tests in playback mode, they use a fake credentials file, located at [`eng/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake], to simulate authenticating with Azure. In most scenarios you will not have to adjust this file, you will have to make edits to this file if your service uses values that are not already included in the `mgmt_settings_fake.py` file.
 
 In live mode, you need to use real credentials like those you obtained in the previous section. To enable the tests to use them, make a copy of the `mgmt_settings_fake.py` file in the same location, and rename it `mgmt_settings_real.py`.
 Then make the following changes:
@@ -123,7 +123,7 @@ These two methods are used by the authentication methods within `AzureTestCase` 
 
 To configure the tests to run in live mode, you have two options:
 * Set the environment variable `AZURE_TEST_RUN_LIVE` to "true" or "yes".
-* Create the `tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file and copy and paste the following line:
+* Create the `eng/tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file and copy and paste the following line:
     ```
     live-mode: true
     ```
@@ -134,7 +134,7 @@ Now you can run tests using the same method described in [Running the tests](#ru
 ## Running tests in playback mode
 Now that the tests have been run against live resources and generated the HTTP recordings, you can run your tests in playback mode. There are two options for changing from live mode to playback mode:
 * Set the environment variable `AZURE_TEST_RUN_LIVE` to "false" or "no".
-* Change the `tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file to:
+* Change the `eng/tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file to:
     ```
     live-mode: false
     ```
@@ -158,7 +158,7 @@ For more information about legacy tests, see [Legacy tests](https://github.com/A
 
 Management plane SDKs are those that are formatted `azure-mgmt-xxxx`, otherwise the SDK is data plane. Management plane SDKs work against the [Azure Resource Manager APIs][arm_apis], while the data plane SDKs will work against service APIs. This section will demonstrate writing tests using `devtools_testutils` with a few increasingly sophisticated examples to show how to use some of the features of the underlying test frameworks.
 
-### Tips: 
+### Tips:
 After the migration of the test proxy, `conftests.py` needs to be configured under the tests folder.<br/>
 * For a sample about `conftest.py`, see [conftest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/advisor/azure-mgmt-advisor/tests/conftest.py). <br/>
 * For more information about test proxy, see [TestProxy][testproxy].
@@ -174,7 +174,7 @@ AZURE_LOCATION = 'eastus'
 class TestExampleResourceGroup(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ResourceManagementClient)
-    
+
     @recorded_by_proxy
     def test_create_resource_group(self):
         test_group_name = self.get_resource_name('testgroup')
@@ -190,7 +190,7 @@ This simple test creates a resource group and checks that its name is assigned c
 
 Notes:
 1. This test inherits all necessary behavior for HTTP recording and playback described previously in this document from its `AzureMgmtRecordedTestCase` superclass. You don't need to do anything special to implement it.
-2. The `get_resource_name()` helper method of `AzureMgmtRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducability and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
+2. The `get_resource_name()` helper method of `AzureMgmtRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducibility and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
 3. The `create_mgmt_client()` helper method of `AzureMgmtRecordedTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
 4. While the test cleans up the resource group it creates, you will need to manually delete any resources you've created independent of the test framework. But if you need something like a resource group as a prerequisite for what you're actually trying to test, you should use a "preparer" as demonstrated in the following two examples. Preparers will create and clean up helper resources for you.
 
@@ -211,7 +211,7 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_search_services(self, resource_group, location):
-        account_name = self.get_resource_name(''ptvstestsearch')
+        account_name = self.get_resource_name('search')
 
         service = self.client.services.begin_create_or_update(
             resource_group.name,
@@ -327,7 +327,7 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer(client_kwargs={'base_url':_CUSTOM_ENDPOINT})
     @recorded_by_proxy
     def test_search_services(self, resource_group, location):
-        account_name = self.get_resource_name(''ptvstestsearch')
+        account_name = self.get_resource_name('search')
 
         service = self.client.services.begin_create_or_update(
             resource_group.name,
@@ -351,11 +351,11 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 
 <!-- LINKS -->
 [arm_apis]: https://docs.microsoft.com/rest/api/resources/
-[azure_sdk_tools]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools
+[azure_sdk_tools]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools
 [azure_portal]: https://portal.azure.com/
 [decorators]: https://www.python.org/dev/peps/pep-0318/
 [dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md
-[devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils
-[mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
-[testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils
+[mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
+[testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
 [pytest]: https://docs.pytest.org/en/latest/

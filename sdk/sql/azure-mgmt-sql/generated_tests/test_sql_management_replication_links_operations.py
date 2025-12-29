@@ -25,7 +25,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             link_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
                 "startTime": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             link_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
             database_name="str",
             link_id="str",
             parameters={"id": "str", "linkType": "str", "name": "str", "type": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,7 +113,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             link_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -127,7 +127,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             link_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -139,7 +139,7 @@ class TestSqlManagementReplicationLinksOperations(AzureMgmtRecordedTestCase):
         response = self.client.replication_links.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

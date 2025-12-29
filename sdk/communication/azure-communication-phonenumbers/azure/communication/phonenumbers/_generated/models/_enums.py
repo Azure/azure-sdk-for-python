@@ -99,6 +99,7 @@ class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"
+    MOBILE = "mobile"
 
 
 class ReservationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

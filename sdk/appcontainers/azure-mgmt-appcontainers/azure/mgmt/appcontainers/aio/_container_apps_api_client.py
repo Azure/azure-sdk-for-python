@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContainerAppsAPIClientConfiguration
 from .operations import (
     AvailableWorkloadProfilesOperations,
@@ -26,7 +28,6 @@ from .operations import (
     ConnectedEnvironmentsDaprComponentsOperations,
     ConnectedEnvironmentsOperations,
     ConnectedEnvironmentsStoragesOperations,
-    ContainerAppsAPIClientOperationsMixin,
     ContainerAppsAuthConfigsOperations,
     ContainerAppsDiagnosticsOperations,
     ContainerAppsOperations,
@@ -35,11 +36,16 @@ from .operations import (
     ContainerAppsSessionPoolsOperations,
     ContainerAppsSourceControlsOperations,
     DaprComponentsOperations,
+    HttpRouteConfigOperations,
     JavaComponentsOperations,
     JobsExecutionsOperations,
     JobsOperations,
+    LogicAppsOperations,
+    MaintenanceConfigurationsOperations,
     ManagedCertificatesOperations,
     ManagedEnvironmentDiagnosticsOperations,
+    ManagedEnvironmentPrivateEndpointConnectionsOperations,
+    ManagedEnvironmentPrivateLinkResourcesOperations,
     ManagedEnvironmentUsagesOperations,
     ManagedEnvironmentsDiagnosticsOperations,
     ManagedEnvironmentsOperations,
@@ -47,14 +53,17 @@ from .operations import (
     NamespacesOperations,
     Operations,
     UsagesOperations,
+    _ContainerAppsAPIClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerAppsAPIClient(ContainerAppsAPIClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
-    """ContainerAppsAPIClient.
+class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+    """Logic app is an extension resource on container app and the extension resource enables logic
+    specific operations on the container app through the APIs listed.
 
     :ivar container_apps_auth_configs: ContainerAppsAuthConfigsOperations operations
     :vartype container_apps_auth_configs:
@@ -113,8 +122,21 @@ class ContainerAppsAPIClient(ContainerAppsAPIClientOperationsMixin):  # pylint: 
      azure.mgmt.appcontainers.aio.operations.ManagedCertificatesOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.appcontainers.aio.operations.NamespacesOperations
+    :ivar managed_environment_private_endpoint_connections:
+     ManagedEnvironmentPrivateEndpointConnectionsOperations operations
+    :vartype managed_environment_private_endpoint_connections:
+     azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentPrivateEndpointConnectionsOperations
+    :ivar managed_environment_private_link_resources:
+     ManagedEnvironmentPrivateLinkResourcesOperations operations
+    :vartype managed_environment_private_link_resources:
+     azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentPrivateLinkResourcesOperations
     :ivar dapr_components: DaprComponentsOperations operations
     :vartype dapr_components: azure.mgmt.appcontainers.aio.operations.DaprComponentsOperations
+    :ivar http_route_config: HttpRouteConfigOperations operations
+    :vartype http_route_config: azure.mgmt.appcontainers.aio.operations.HttpRouteConfigOperations
+    :ivar maintenance_configurations: MaintenanceConfigurationsOperations operations
+    :vartype maintenance_configurations:
+     azure.mgmt.appcontainers.aio.operations.MaintenanceConfigurationsOperations
     :ivar managed_environments_storages: ManagedEnvironmentsStoragesOperations operations
     :vartype managed_environments_storages:
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentsStoragesOperations
@@ -129,13 +151,18 @@ class ContainerAppsAPIClient(ContainerAppsAPIClientOperationsMixin):  # pylint: 
     :ivar managed_environment_usages: ManagedEnvironmentUsagesOperations operations
     :vartype managed_environment_usages:
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentUsagesOperations
+    :ivar logic_apps: LogicAppsOperations operations
+    :vartype logic_apps: azure.mgmt.appcontainers.aio.operations.LogicAppsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-01-01". Note that overriding this
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -146,12 +173,24 @@ class ContainerAppsAPIClient(ContainerAppsAPIClientOperationsMixin):  # pylint: 
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ContainerAppsAPIClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -170,7 +209,9 @@ class ContainerAppsAPIClient(ContainerAppsAPIClientOperationsMixin):  # pylint: 
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -223,7 +264,19 @@ class ContainerAppsAPIClient(ContainerAppsAPIClientOperationsMixin):  # pylint: 
             self._client, self._config, self._serialize, self._deserialize
         )
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_environment_private_endpoint_connections = ManagedEnvironmentPrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_environment_private_link_resources = ManagedEnvironmentPrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.dapr_components = DaprComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.http_route_config = HttpRouteConfigOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.maintenance_configurations = MaintenanceConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.managed_environments_storages = ManagedEnvironmentsStoragesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -237,6 +290,7 @@ class ContainerAppsAPIClient(ContainerAppsAPIClientOperationsMixin):  # pylint: 
         self.managed_environment_usages = ManagedEnvironmentUsagesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.logic_apps = LogicAppsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

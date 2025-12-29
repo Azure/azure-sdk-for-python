@@ -1,5 +1,17 @@
 # Azure Service Bus client library for Python (conda)
 
+## 2025.12.01
+
+### Packages included
+
+- azure-servicebus-7.14.3
+
+## 2025.09.01
+
+### Packages included
+
+- azure-servicebus-7.14.2
+
 ## 2025.06.01
 
 ### Packages included

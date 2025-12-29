@@ -1,5 +1,349 @@
 # Release History
 
+## 4.0.0 (2025-10-24)
+
+### Features Added
+
+  - Model `ContainerAppsAPIClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_endpoint_connections`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_link_resources`
+  - Client `ContainerAppsAPIClient` added operation group `http_route_config`
+  - Client `ContainerAppsAPIClient` added operation group `maintenance_configurations`
+  - Client `ContainerAppsAPIClient` added operation group `logic_apps`
+  - Model `AzureFileProperties` added property `account_key_vault_properties`
+  - Enum `BindingType` added member `AUTO`
+  - Model `CertificateProperties` added property `deployment_errors`
+  - Enum `CertificateProvisioningState` added member `DELETING`
+  - Model `ConnectedEnvironmentStorageProperties` added property `provisioning_state`
+  - Model `ConnectedEnvironmentStorageProperties` added property `deployment_errors`
+  - Model `ContainerApp` added property `kind`
+  - Model `Dapr` added property `app_health`
+  - Model `Dapr` added property `max_concurrency`
+  - Model `DaprComponent` added property `provisioning_state`
+  - Model `DaprComponent` added property `deployment_errors`
+  - Model `ManagedEnvironment` added property `ingress_configuration`
+  - Model `ManagedEnvironment` added property `private_endpoint_connections`
+  - Model `ManagedEnvironment` added property `public_network_access`
+  - Added model `ConnectedEnvironmentPatchResource`
+  - Added enum `ConnectedEnvironmentStorageProvisioningState`
+  - Added model `DaprAppHealth`
+  - Added enum `DaprComponentProvisioningState`
+  - Added model `ErrorEntity`
+  - Added model `HttpRoute`
+  - Added model `HttpRouteAction`
+  - Added model `HttpRouteConfig`
+  - Added model `HttpRouteConfigCollection`
+  - Added model `HttpRouteConfigProperties`
+  - Added model `HttpRouteMatch`
+  - Added model `HttpRouteProvisioningErrors`
+  - Added enum `HttpRouteProvisioningState`
+  - Added model `HttpRouteRule`
+  - Added model `HttpRouteTarget`
+  - Added model `IngressConfiguration`
+  - Added enum `Kind`
+  - Added model `LogicApp`
+  - Added model `MaintenanceConfigurationCollection`
+  - Added model `MaintenanceConfigurationResource`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionListResult`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added enum `PublicNetworkAccess`
+  - Added model `ResourceTags`
+  - Added model `ScheduledEntry`
+  - Added model `SecretKeyVaultProperties`
+  - Added enum `WeekDay`
+  - Added model `WorkflowEnvelope`
+  - Added model `WorkflowEnvelopeCollection`
+  - Added model `WorkflowEnvelopeProperties`
+  - Added model `WorkflowHealth`
+  - Added enum `WorkflowHealthState`
+  - Added enum `WorkflowKind`
+  - Added enum `WorkflowState`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
+  - Added operation group `HttpRouteConfigOperations`
+  - Added operation group `LogicAppsOperations`
+  - Added operation group `MaintenanceConfigurationsOperations`
+  - Added operation group `ManagedEnvironmentPrivateEndpointConnectionsOperations`
+  - Added operation group `ManagedEnvironmentPrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.delete`
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.update`
+  - Deleted or renamed method `ConnectedEnvironmentsDaprComponentsOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsDaprComponentsOperations.delete`
+  - Method `ConnectedEnvironmentsOperations.update` inserted a `positional_or_keyword` parameter `environment_envelope`
+  - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.delete`
+  - Deleted or renamed operation group `ContainerAppsAPIClientOperationsMixin`
+
+## 4.0.0b1 (2025-08-19)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added operation group `app_resiliency`
+  - Client `ContainerAppsAPIClient` added operation group `builders`
+  - Client `ContainerAppsAPIClient` added operation group `builds_by_builder_resource`
+  - Client `ContainerAppsAPIClient` added operation group `builds`
+  - Client `ContainerAppsAPIClient` added operation group `build_auth_token`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_builds_by_container_app`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_builds`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_label_history`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_patches`
+  - Client `ContainerAppsAPIClient` added operation group `dot_net_components`
+  - Client `ContainerAppsAPIClient` added operation group `functions_extension`
+  - Client `ContainerAppsAPIClient` added operation group `logic_apps`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_endpoint_connections`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_link_resources`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_component_resiliency_policies`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_subscriptions`
+  - Client `ContainerAppsAPIClient` added operation group `http_route_config`
+  - Client `ContainerAppsAPIClient` added operation group `maintenance_configurations`
+  - Enum `ActiveRevisionsMode` added member `LABELS`
+  - Model `AzureFileProperties` added property `account_key_vault_properties`
+  - Model `BaseContainer` added property `image_type`
+  - Enum `BindingType` added member `AUTO`
+  - Model `BlobStorageTokenStore` added property `blob_container_uri`
+  - Model `BlobStorageTokenStore` added property `client_id`
+  - Model `BlobStorageTokenStore` added property `managed_identity_resource_id`
+  - Model `CertificateProperties` added property `deployment_errors`
+  - Model `CertificateProperties` added property `certificate_type`
+  - Enum `CertificateProvisioningState` added member `DELETING`
+  - Model `Configuration` added property `target_label`
+  - Model `Configuration` added property `revision_transition_threshold`
+  - Model `ConnectedEnvironmentStorageProperties` added property `provisioning_state`
+  - Model `ConnectedEnvironmentStorageProperties` added property `deployment_errors`
+  - Model `ConnectedEnvironmentStorageProperties` added property `smb`
+  - Model `Container` added property `image_type`
+  - Model `ContainerApp` added property `kind`
+  - Model `ContainerApp` added property `deployment_errors`
+  - Model `ContainerApp` added property `patching_configuration`
+  - Model `ContainerResources` added property `gpu`
+  - Model `Dapr` added property `app_health`
+  - Model `Dapr` added property `max_concurrency`
+  - Model `DaprComponent` added property `service_component_bind`
+  - Model `GithubActionConfiguration` added property `dockerfile_path`
+  - Model `GithubActionConfiguration` added property `build_environment_variables`
+  - Model `Ingress` added property `target_port_http_scheme`
+  - Model `InitContainer` added property `image_type`
+  - Enum `JavaComponentType` added member `NACOS`
+  - Enum `JavaComponentType` added member `SPRING_CLOUD_GATEWAY`
+  - Model `Job` added property `extended_location`
+  - Model `Job` added property `running_state`
+  - Model `JobExecution` added property `detailed_status`
+  - Model `JobPatchProperties` added property `extended_location`
+  - Model `LogAnalyticsConfiguration` added property `dynamic_json_columns`
+  - Model `ManagedEnvironment` added property `private_link_default_domain`
+  - Model `ManagedEnvironment` added property `app_insights_configuration`
+  - Model `ManagedEnvironment` added property `open_telemetry_configuration`
+  - Model `ManagedEnvironment` added property `availability_zones`
+  - Model `ManagedEnvironment` added property `ingress_configuration`
+  - Model `ManagedEnvironment` added property `private_endpoint_connections`
+  - Model `ManagedEnvironment` added property `public_network_access`
+  - Model `ManagedEnvironment` added property `disk_encryption_configuration`
+  - Model `ReplicaContainer` added property `debug_endpoint`
+  - Model `Revision` added property `labels`
+  - Model `Runtime` added property `dotnet`
+  - Model `RuntimeJava` added property `java_agent`
+  - Model `ServiceBind` added property `client_type`
+  - Model `ServiceBind` added property `customized_keys`
+  - Model `SessionContainer` added property `probes`
+  - Enum `StorageType` added member `SMB`
+  - Model `WorkloadProfile` added property `enable_fips`
+  - Added model `AppInsightsConfiguration`
+  - Added model `AppResiliency`
+  - Added model `AppResiliencyCollection`
+  - Added model `BuildCollection`
+  - Added model `BuildConfiguration`
+  - Added enum `BuildProvisioningState`
+  - Added model `BuildResource`
+  - Added enum `BuildStatus`
+  - Added model `BuildToken`
+  - Added model `BuilderCollection`
+  - Added enum `BuilderProvisioningState`
+  - Added model `BuilderResource`
+  - Added model `BuilderResourceUpdate`
+  - Added enum `CertificateType`
+  - Added model `CircuitBreakerPolicy`
+  - Added model `ConnectedEnvironmentDaprComponent`
+  - Added model `ConnectedEnvironmentDaprComponentProperties`
+  - Added enum `ConnectedEnvironmentDaprComponentProvisioningState`
+  - Added model `ConnectedEnvironmentDaprComponentsCollection`
+  - Added model `ConnectedEnvironmentPatchResource`
+  - Added enum `ConnectedEnvironmentStorageProvisioningState`
+  - Added model `ContainerAppPropertiesPatchingConfiguration`
+  - Added model `ContainerAppsBuildCollection`
+  - Added model `ContainerAppsBuildConfiguration`
+  - Added model `ContainerAppsBuildResource`
+  - Added model `ContainerAppsPatchResource`
+  - Added model `ContainerExecutionStatus`
+  - Added model `ContainerRegistry`
+  - Added model `ContainerRegistryWithCustomImage`
+  - Added model `DaprAppHealth`
+  - Added model `DaprComponentProperties`
+  - Added model `DaprComponentResiliencyPoliciesCollection`
+  - Added model `DaprComponentResiliencyPolicy`
+  - Added model `DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyTimeoutPolicyConfiguration`
+  - Added model `DaprComponentServiceBinding`
+  - Added model `DaprServiceBindMetadata`
+  - Added model `DaprSubscription`
+  - Added model `DaprSubscriptionBulkSubscribeOptions`
+  - Added model `DaprSubscriptionRouteRule`
+  - Added model `DaprSubscriptionRoutes`
+  - Added model `DaprSubscriptionsCollection`
+  - Added model `DataDogConfiguration`
+  - Added model `DestinationsConfiguration`
+  - Added enum `DetectionStatus`
+  - Added model `DiskEncryptionConfiguration`
+  - Added model `DiskEncryptionConfigurationKeyVaultConfiguration`
+  - Added model `DiskEncryptionConfigurationKeyVaultConfigurationAuth`
+  - Added model `DotNetComponent`
+  - Added model `DotNetComponentConfigurationProperty`
+  - Added enum `DotNetComponentProvisioningState`
+  - Added model `DotNetComponentServiceBind`
+  - Added enum `DotNetComponentType`
+  - Added model `DotNetComponentsCollection`
+  - Added model `EnvironmentVariable`
+  - Added model `ErrorEntity`
+  - Added model `ExecutionStatus`
+  - Added model `Header`
+  - Added model `HeaderMatch`
+  - Added model `HttpConnectionPool`
+  - Added model `HttpGet`
+  - Added model `HttpRetryPolicy`
+  - Added model `HttpRoute`
+  - Added model `HttpRouteAction`
+  - Added model `HttpRouteConfig`
+  - Added model `HttpRouteConfigCollection`
+  - Added model `HttpRouteConfigProperties`
+  - Added model `HttpRouteMatch`
+  - Added model `HttpRouteProvisioningErrors`
+  - Added enum `HttpRouteProvisioningState`
+  - Added model `HttpRouteRule`
+  - Added model `HttpRouteTarget`
+  - Added enum `ImageType`
+  - Added model `IngressConfiguration`
+  - Added model `IngressConfigurationScale`
+  - Added enum `IngressTargetPortHttpScheme`
+  - Added enum `JobRunningState`
+  - Added enum `Kind`
+  - Added model `LabelHistory`
+  - Added model `LabelHistoryCollection`
+  - Added model `LabelHistoryProperties`
+  - Added model `LabelHistoryRecordItem`
+  - Added enum `Level`
+  - Added model `LoggerSetting`
+  - Added model `LogicApp`
+  - Added enum `LogicAppsProxyMethod`
+  - Added model `LogsConfiguration`
+  - Added model `MaintenanceConfigurationCollection`
+  - Added model `MaintenanceConfigurationResource`
+  - Added model `MetricsConfiguration`
+  - Added model `NacosComponent`
+  - Added model `OpenTelemetryConfiguration`
+  - Added model `OtlpConfiguration`
+  - Added enum `PatchApplyStatus`
+  - Added model `PatchCollection`
+  - Added model `PatchDetails`
+  - Added model `PatchDetailsNewLayer`
+  - Added model `PatchDetailsOldLayer`
+  - Added model `PatchProperties`
+  - Added model `PatchSkipConfig`
+  - Added enum `PatchType`
+  - Added enum `PatchingMode`
+  - Added model `PreBuildStep`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionListResult`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added enum `PublicNetworkAccess`
+  - Added model `ReplicaExecutionStatus`
+  - Added model `ResourceTags`
+  - Added model `RuntimeDotnet`
+  - Added model `RuntimeJavaAgent`
+  - Added model `RuntimeJavaAgentLogging`
+  - Added model `ScgRoute`
+  - Added model `ScheduledEntry`
+  - Added model `SecretKeyVaultProperties`
+  - Added model `SessionProbe`
+  - Added model `SessionProbeHttpGet`
+  - Added model `SessionProbeHttpGetHttpHeadersItem`
+  - Added model `SessionProbeTcpSocket`
+  - Added enum `SessionProbeType`
+  - Added model `SmbStorage`
+  - Added model `SpringCloudGatewayComponent`
+  - Added enum `Status`
+  - Added model `TcpConnectionPool`
+  - Added model `TcpRetryPolicy`
+  - Added model `TimeoutPolicy`
+  - Added model `TracesConfiguration`
+  - Added enum `WeekDay`
+  - Added model `WorkflowArtifacts`
+  - Added model `WorkflowEnvelope`
+  - Added model `WorkflowEnvelopeCollection`
+  - Added model `WorkflowEnvelopeProperties`
+  - Added model `WorkflowHealth`
+  - Added enum `WorkflowHealthState`
+  - Added enum `WorkflowState`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
+  - Operation group `JobsOperations` added method `begin_resume`
+  - Operation group `JobsOperations` added method `begin_suspend`
+  - Added operation group `AppResiliencyOperations`
+  - Added operation group `BuildAuthTokenOperations`
+  - Added operation group `BuildersOperations`
+  - Added operation group `BuildsByBuilderResourceOperations`
+  - Added operation group `BuildsOperations`
+  - Added operation group `ContainerAppsBuildsByContainerAppOperations`
+  - Added operation group `ContainerAppsBuildsOperations`
+  - Added operation group `ContainerAppsLabelHistoryOperations`
+  - Added operation group `ContainerAppsPatchesOperations`
+  - Added operation group `DaprComponentResiliencyPoliciesOperations`
+  - Added operation group `DaprSubscriptionsOperations`
+  - Added operation group `DotNetComponentsOperations`
+  - Added operation group `FunctionsExtensionOperations`
+  - Added operation group `HttpRouteConfigOperations`
+  - Added operation group `LogicAppsOperations`
+  - Added operation group `MaintenanceConfigurationsOperations`
+  - Added operation group `ManagedEnvironmentPrivateEndpointConnectionsOperations`
+  - Added operation group `ManagedEnvironmentPrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.delete`
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.update`
+  - Deleted or renamed method `ConnectedEnvironmentsDaprComponentsOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsDaprComponentsOperations.delete`
+  - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.delete`
+  - Deleted or renamed model `ContainerAppsAPIClientOperationsMixin`
+
 ## 3.2.0 (2025-04-20)
 
 ### Features Added

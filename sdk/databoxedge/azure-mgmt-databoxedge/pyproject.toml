@@ -4,3 +4,12 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[packaging]
+package_name = "azure-mgmt-databoxedge"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Data Box Edge Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+title = "DataBoxEdgeManagementClient"

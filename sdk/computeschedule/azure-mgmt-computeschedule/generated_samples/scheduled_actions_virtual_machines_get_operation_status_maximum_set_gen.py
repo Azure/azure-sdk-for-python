@@ -31,12 +31,15 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_get_operation_status(
-        locationparameter="fvyydtrzewnjtrezzieqxs",
-        request_body={"correlationid": "jtlszorevrftvfhnqoxlwpiwcbmj", "operationIds": ["hswzfrierpxdgcuu"]},
+        locationparameter="ntfcikxsmthfkdhdcjpevmydzu",
+        request_body={
+            "correlationid": "b211f086-4b91-4686-a453-2f5c012e4d80",
+            "operationIds": ["b211f086-4b91-4686-a453-2f5c012e4d80"],
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/ScheduledActions_VirtualMachinesGetOperationStatus_MaximumSet_Gen.json
+# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesGetOperationStatus_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

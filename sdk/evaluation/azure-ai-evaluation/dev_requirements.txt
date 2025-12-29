@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
 pytest
@@ -9,4 +9,7 @@ pytest-xdist
 azure-ai-inference>=1.0.0b4
 azure-ai-projects<=1.0.0b10
 aiohttp
--e ../azure-ai-evaluation
+filelock
+promptflow-core>=1.17.1
+promptflow-devkit>=1.17.1
+-e ../azure-ai-evaluation[redteam]

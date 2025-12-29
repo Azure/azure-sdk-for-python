@@ -309,8 +309,6 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 
     :param client_secret: The client secret.
     :type client_secret: str
-    :keyword kwargs: Additional arguments to pass to the parent class.
-    :paramtype kwargs: Optional[dict]
     """
 
     def __init__(

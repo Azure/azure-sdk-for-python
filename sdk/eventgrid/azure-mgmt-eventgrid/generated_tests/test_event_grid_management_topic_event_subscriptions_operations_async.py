@@ -26,7 +26,7 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,11 +57,19 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
                     "deadLetterDestination": "dead_letter_destination",
                     "deadLetterWithResourceIdentity": {
                         "deadLetterDestination": "dead_letter_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "deliveryWithResourceIdentity": {
                         "destination": "event_subscription_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "destination": "event_subscription_destination",
                     "eventDeliverySchema": "str",
@@ -90,7 +98,7 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
                     "topic": "str",
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -105,7 +113,7 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 topic_name="str",
                 event_subscription_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -124,11 +132,19 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
                     "deadLetterDestination": "dead_letter_destination",
                     "deadLetterWithResourceIdentity": {
                         "deadLetterDestination": "dead_letter_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "deliveryWithResourceIdentity": {
                         "destination": "event_subscription_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "destination": "event_subscription_destination",
                     "eventDeliverySchema": "str",
@@ -144,7 +160,7 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
                     "labels": ["str"],
                     "retryPolicy": {"eventTimeToLiveInMinutes": 1440, "maxDeliveryAttempts": 30},
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -158,7 +174,7 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -170,7 +186,7 @@ class TestEventGridManagementTopicEventSubscriptionsOperationsAsync(AzureMgmtRec
         response = self.client.topic_event_subscriptions.list(
             resource_group_name=resource_group.name,
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -36,8 +36,8 @@ def main():
         name="testStaticSite0",
         static_site_zip_deployment_envelope={
             "properties": {
-                "apiZipUrl": "https://teststorageaccount.net/happy-sea-15afae3e-master-81828877/api-zipdeploy.zip",
-                "appZipUrl": "https://teststorageaccount.net/happy-sea-15afae3e-master-81828877/app-zipdeploy.zip",
+                "apiZipUrl": "https://[examplestorageaccount].com/happy-sea-15afae3e-master-81828877/api-zipdeploy.zip",
+                "appZipUrl": "https://[examplestorageaccount].com/happy-sea-15afae3e-master-81828877/app-zipdeploy.zip",
                 "deploymentTitle": "Update index.html",
                 "functionLanguage": "testFunctionLanguage",
                 "provider": "testProvider",
@@ -46,6 +46,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/StaticSiteZipDeploy.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/AppService/stable/2025-03-01/examples/StaticSiteZipDeploy.json
 if __name__ == "__main__":
     main()

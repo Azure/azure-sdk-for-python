@@ -43,7 +43,7 @@ If you have a file in `samples\text_example_async.py` with a snippet named `asyn
 ## Run python_snippet_updater tool
 
 ```powershell
-python <azure-sdk-for-python>/tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py <path_to_the_service>
+python <azure-sdk-for-python>/eng/tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py <path_to_the_service>
 ```
 
 The script scans the snippets in samples folder and populates snippet references in README with the snippet definitions from samples folder.

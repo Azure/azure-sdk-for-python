@@ -37,13 +37,13 @@ def main():
         resource={
             "properties": {
                 "identityProvider": {"properties": {"principalType": "user"}, "type": "MicrosoftEntraID"},
-                "roles": [{"db": "admin", "role": "dbOwner"}],
+                "roles": [{"db": "admin", "role": "root"}],
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/MongoClusters_UserCreateOrUpdate.json
+# x-ms-original-file: 2025-09-01/MongoClusters_UserCreateOrUpdate.json
 if __name__ == "__main__":
     main()

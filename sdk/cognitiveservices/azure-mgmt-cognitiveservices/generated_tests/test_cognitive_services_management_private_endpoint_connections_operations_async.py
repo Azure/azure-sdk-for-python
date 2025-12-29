@@ -25,7 +25,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperationsAsync(A
         response = await self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperationsAsync(A
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperationsAsync(A
                     },
                     "type": "str",
                 },
-                api_version="2025-04-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +92,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperationsAsync(A
                 resource_group_name=resource_group.name,
                 account_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2025-04-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

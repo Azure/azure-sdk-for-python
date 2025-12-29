@@ -41,7 +41,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
-    "cryptography": "38.0.3",
+    "cryptography": "41.0.0",
     "msal": "1.23.0",
     "azure-storage-file-datalake": "12.2.0",
 }
@@ -70,6 +70,9 @@ MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 # PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
 # filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compat
 PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
+    ">=3.14.0": {
+        "typing-extensions": "4.15.0",
+    },
     ">=3.12.0": {
         "azure-core": "1.23.1",
         "aiohttp": "3.9.0",
@@ -77,7 +80,7 @@ PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
         "requests": "2.30.0"
     },
     ">=3.13.0": {
-        "typing-extensions": "4.12.0",
+        "typing-extensions": "4.13.0",
         "aiohttp": "3.10.6"
     }
 }
@@ -296,7 +299,7 @@ def check_req_against_exclusion(req, req_to_exclude):
     This function evaluates a requirement from a dev_requirements file against a file name. Returns True
     if the requirement is for the same package listed in "req_to_exclude". False otherwise.
 
-    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../tools/azure-sdk-tools",
+    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../eng/tools/azure-sdk-tools",
         "https://docsupport.blob.core.windows.net/repackaged/cffi-1.14.6-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'",
         "msrestazure>=0.4.11", "pytest" ]
 

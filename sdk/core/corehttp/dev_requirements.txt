@@ -3,7 +3,7 @@ requests
 aiohttp<3.8.6 ; platform_python_implementation == "PyPy"
 aiohttp ; platform_python_implementation != "PyPy"
 httpx>=0.25.0
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 -e tests/testserver_tests/coretestserver
 ../../core/azure-core
 azure-storage-blob

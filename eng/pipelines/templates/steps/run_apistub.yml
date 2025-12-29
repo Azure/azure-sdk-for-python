@@ -16,8 +16,14 @@ steps:
      versionSpec: '3.10'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 
-  - script: |
-      python -m pip install -r eng/ci_tools.txt
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      VirtualEnvironmentName: "venv-api-stub"
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $(PIP_EXE) install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 

@@ -34,11 +34,24 @@ def main():
     response = client.ddos_custom_policies.begin_create_or_update(
         resource_group_name="rg1",
         ddos_custom_policy_name="test-ddos-custom-policy",
-        parameters={"location": "centraluseuap"},
+        parameters={
+            "location": "centraluseuap",
+            "properties": {
+                "detectionRules": [
+                    {
+                        "name": "detectionRuleTcp",
+                        "properties": {
+                            "detectionMode": "TrafficThreshold",
+                            "trafficDetectionRule": {"packetsPerSecond": 1000000, "trafficType": "Tcp"},
+                        },
+                    }
+                ]
+            },
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/DdosCustomPolicyCreate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/DdosCustomPolicyCreate.json
 if __name__ == "__main__":
     main()

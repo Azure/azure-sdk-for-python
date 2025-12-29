@@ -63,7 +63,8 @@ def _get_policies(config, _per_retry_policies=None, **kwargs):
 def build_pipeline(transport=None, policies=None, **kwargs):
     if not policies:
         config = _get_config(**kwargs)
-        config.retry_policy = RetryPolicy(**kwargs)
+        retry_policy_class = kwargs.pop("retry_policy_class", None)
+        config.retry_policy = retry_policy_class(**kwargs) if retry_policy_class else RetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
         from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
@@ -82,7 +83,8 @@ def build_async_pipeline(transport=None, policies=None, **kwargs):
         from azure.core.pipeline.policies import AsyncRetryPolicy
 
         config = _get_config(**kwargs)
-        config.retry_policy = AsyncRetryPolicy(**kwargs)
+        retry_policy_class = kwargs.pop("retry_policy_class", None)
+        config.retry_policy = retry_policy_class(**kwargs) if retry_policy_class else AsyncRetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
         from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module

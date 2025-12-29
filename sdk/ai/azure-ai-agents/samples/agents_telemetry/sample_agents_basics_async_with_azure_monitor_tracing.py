@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,16 +18,14 @@ USAGE:
     pip install azure-ai-projects azure-ai-agents azure-identity opentelemetry-sdk azure-monitor-opentelemetry aiohttp
 
     Set these environment variables with your own values:
-    * PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-                          page of your Azure AI Foundry portal.
-    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
-      messages, which may contain personal data. False by default.
-    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
-      messages, which may contain personal data. False by default.
-    * APPLICATIONINSIGHTS_CONNECTION_STRING - Set to the connection string of your Application Insights resource.
-      This is used to send telemetry data to Azure Monitor. You can also get the connection string programmatically
-      from AIProjectClient using the `telemetry.get_connection_string` method. A code sample showing how to do this
-      can be found in the `sample_telemetry_async.py` file in the azure-ai-projects telemetry samples.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+       page of your Azure AI Foundry portal.
+    2) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+       messages, which may contain personal data. False by default.
+    3) APPLICATIONINSIGHTS_CONNECTION_STRING - Set to the connection string of your Application Insights resource.
+       This is used to send telemetry data to Azure Monitor. You can also get the connection string programmatically
+       from AIProjectClient using the `telemetry.get_application_insights_connection_string()` method. A code sample showing
+       how to do this can be found in the `sample_telemetry_async.py` file in the azure-ai-projects telemetry samples.
 """
 import asyncio
 import time

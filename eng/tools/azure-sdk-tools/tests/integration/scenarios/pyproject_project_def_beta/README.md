@@ -1,0 +1,1 @@
+This is an example of a package with all its metadata defined within the `[project]` setting of a `pyproject.toml`. This `pyproject.toml` file will not work with an actual build (none of the files/folders are present).

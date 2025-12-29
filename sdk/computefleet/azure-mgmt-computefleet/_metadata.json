@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-07-01-preview",
+  "commit": "551674fef42784a6d62d92149d637a5d450f5128",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/azurefleet/AzureFleet.Management",
+  "emitterVersion": "0.48.2"
+}

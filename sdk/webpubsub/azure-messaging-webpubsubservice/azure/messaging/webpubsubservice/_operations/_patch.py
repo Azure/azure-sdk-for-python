@@ -1,17 +1,19 @@
-# pylint: disable=line-too-long,useless-suppression
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
-
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, IO, Optional, Union, overload
-from datetime import datetime, timedelta, tzinfo
+from typing import Any, List, IO, Optional, Union, overload, MutableMapping
+from datetime import datetime, timedelta, timezone
 import jwt
 from azure.core.credentials import AzureKeyCredential
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.pipeline import PipelineResponse
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
@@ -24,41 +26,25 @@ from azure.core.exceptions import (
 )
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
-    WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
+    _WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
     JSON,
-    build_web_pub_sub_service_send_to_all_request,
-    build_web_pub_sub_service_send_to_connection_request,
-    build_web_pub_sub_service_send_to_user_request,
-    build_web_pub_sub_service_send_to_group_request,
+    _SERIALIZER,
+    ClsType,
 )
-from .._models import GroupMember
-
-
-class _UTC_TZ(tzinfo):
-    """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
-
-    ZERO = timedelta(0)
-
-    def utcoffset(self, dt):
-        return self.__class__.ZERO
-
-    def tzname(self, dt):
-        return "UTC"
-
-    def dst(self, dt):
-        return self.__class__.ZERO
+from ..models import GroupMember
 
 
 def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any) -> str:
-    """build token with access key.
-    :param endpoint:  HTTPS endpoint for the WebPubSub service instance.
+    """Build token with access key.
+
+    :param endpoint: HTTPS endpoint for the WebPubSub service instance.
     :type endpoint: str
-    :param path:  HTTPS path for the WebPubSub service instance.
-    :type endpoint: str
+    :param path: HTTPS path for the WebPubSub service instance.
+    :type path: str
     :param hub: The hub to give access to.
     :type hub: str
     :param key: The access key
-    :type hub: str
+    :type key: str
     :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
     :returns: token
     :rtype: str
@@ -71,8 +57,8 @@ def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any
 
     payload = {
         "aud": audience,
-        "iat": datetime.now(tz=_UTC_TZ()),
-        "exp": datetime.now(tz=_UTC_TZ()) + ttl,
+        "iat": datetime.now(tz=timezone.utc),
+        "exp": datetime.now(tz=timezone.utc) + ttl,
     }
     if user:
         payload["sub"] = user
@@ -84,7 +70,438 @@ def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any
     return encoded
 
 
-class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
+def build_web_pub_sub_service_send_to_all_request(  # pylint: disable=name-too-long
+    hub: str,
+    *,
+    content: IO[bytes],
+    excluded: Optional[List[str]] = None,
+    filter: Optional[str] = None,
+    message_ttl_seconds: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/:send"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if excluded is not None:
+        _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if message_ttl_seconds is not None:
+        _params["messageTtlSeconds"] = _SERIALIZER.query(
+            "message_ttl_seconds", message_ttl_seconds, "int", maximum=300, minimum=0
+        )
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
+def build_web_pub_sub_service_send_to_connection_request(  # pylint: disable=name-too-long
+    connection_id: str, hub: str, *, content: IO[bytes], message_ttl_seconds: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/connections/{connectionId}/:send"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if message_ttl_seconds is not None:
+        _params["messageTtlSeconds"] = _SERIALIZER.query(
+            "message_ttl_seconds", message_ttl_seconds, "int", maximum=300, minimum=0
+        )
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
+def build_web_pub_sub_service_send_to_user_request(  # pylint: disable=name-too-long
+    user_id: str,
+    hub: str,
+    *,
+    content: IO[bytes],
+    filter: Optional[str] = None,
+    message_ttl_seconds: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/users/{userId}/:send"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if message_ttl_seconds is not None:
+        _params["messageTtlSeconds"] = _SERIALIZER.query(
+            "message_ttl_seconds", message_ttl_seconds, "int", maximum=300, minimum=0
+        )
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
+def build_web_pub_sub_service_send_to_group_request(  # pylint: disable=name-too-long
+    group: str,
+    hub: str,
+    *,
+    content: IO[bytes],
+    excluded: Optional[List[str]] = None,
+    filter: Optional[str] = None,
+    message_ttl_seconds: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/groups/{group}/:send"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if excluded is not None:
+        _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if message_ttl_seconds is not None:
+        _params["messageTtlSeconds"] = _SERIALIZER.query(
+            "message_ttl_seconds", message_ttl_seconds, "int", maximum=300, minimum=0
+        )
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
+@distributed_trace
+def send_to_all(  # pylint: disable=inconsistent-return-statements
+    self,
+    message: IO[bytes],
+    *,
+    excluded: Optional[List[str]] = None,
+    filter: Optional[str] = None,
+    message_ttl_seconds: Optional[int] = None,
+    **kwargs: Any
+) -> None:
+    """Broadcast content inside request body to all the connected client connections.
+    Broadcast content inside request body to all the connected client connections.
+    :param message: The payload body. Required.
+    :type message: IO[bytes]
+    :keyword excluded: Excluded connection Ids. Default value is None.
+    :paramtype excluded: list[str]
+    :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+     messages. Default value is None.
+    :paramtype filter: str
+    :keyword message_ttl_seconds: The time-to-live (TTL) value in seconds for messages sent to the
+     service. 0 is the default value, which means the message never expires. 300 is the maximum
+     value. If this parameter is non-zero, messages that are not consumed by the client within the
+     specified TTL will be dropped by the service. This parameter can help when the client's
+     bandwidth is limited. Default value is None.
+    :paramtype message_ttl_seconds: int
+    :return: None
+    :rtype: None
+    :raises ~azure.core.exceptions.HttpResponseError:
+    """
+    error_map: MutableMapping = {
+        401: ClientAuthenticationError,
+        404: ResourceNotFoundError,
+        409: ResourceExistsError,
+        304: ResourceNotModifiedError,
+    }
+    error_map.update(kwargs.pop("error_map", {}) or {})
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = kwargs.pop("params", {}) or {}
+    content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+    cls: ClsType[None] = kwargs.pop("cls", None)
+    _content = message
+    _request = build_web_pub_sub_service_send_to_all_request(
+        hub=self._config.hub,
+        excluded=excluded,
+        filter=filter,
+        message_ttl_seconds=message_ttl_seconds,
+        content_type=content_type,
+        api_version=self._config.api_version,
+        content=_content,
+        headers=_headers,
+        params=_params,
+    )
+    path_format_arguments = {
+        "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+    }
+    _request.url = self._client.format_url(_request.url, **path_format_arguments)
+    _stream = False
+    pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        _request, stream=_stream, **kwargs
+    )
+    response = pipeline_response.http_response
+    if response.status_code not in [202]:
+        map_error(status_code=response.status_code, response=response, error_map=error_map)
+        raise HttpResponseError(response=response)
+    if cls:
+        return cls(pipeline_response, None, {})  # type: ignore
+
+
+@distributed_trace
+def send_to_connection(  # pylint: disable=inconsistent-return-statements
+    self, connection_id: str, message: IO[bytes], *, message_ttl_seconds: Optional[int] = None, **kwargs: Any
+) -> None:
+    """Send content inside request body to the specific connection.
+    Send content inside request body to the specific connection.
+    :param connection_id: The connection Id. Required.
+    :type connection_id: str
+    :param message: The payload body. Required.
+    :type message: IO[bytes]
+    :keyword message_ttl_seconds: The time-to-live (TTL) value in seconds for messages sent to the
+     service. 0 is the default value, which means the message never expires. 300 is the maximum
+     value. If this parameter is non-zero, messages that are not consumed by the client within the
+     specified TTL will be dropped by the service. This parameter can help when the client's
+     bandwidth is limited. Default value is None.
+    :paramtype message_ttl_seconds: int
+    :return: None
+    :rtype: None
+    :raises ~azure.core.exceptions.HttpResponseError:
+    """
+    error_map: MutableMapping = {
+        401: ClientAuthenticationError,
+        404: ResourceNotFoundError,
+        409: ResourceExistsError,
+        304: ResourceNotModifiedError,
+    }
+    error_map.update(kwargs.pop("error_map", {}) or {})
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = kwargs.pop("params", {}) or {}
+    content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+    cls: ClsType[None] = kwargs.pop("cls", None)
+    _content = message
+    _request = build_web_pub_sub_service_send_to_connection_request(
+        connection_id=connection_id,
+        hub=self._config.hub,
+        message_ttl_seconds=message_ttl_seconds,
+        content_type=content_type,
+        api_version=self._config.api_version,
+        content=_content,
+        headers=_headers,
+        params=_params,
+    )
+    path_format_arguments = {
+        "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+    }
+    _request.url = self._client.format_url(_request.url, **path_format_arguments)
+    _stream = False
+    pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        _request, stream=_stream, **kwargs
+    )
+    response = pipeline_response.http_response
+    if response.status_code not in [202]:
+        map_error(status_code=response.status_code, response=response, error_map=error_map)
+        raise HttpResponseError(response=response)
+    if cls:
+        return cls(pipeline_response, None, {})  # type: ignore
+
+
+@distributed_trace
+def send_to_group(  # pylint: disable=inconsistent-return-statements
+    self,
+    group: str,
+    message: IO[bytes],
+    *,
+    excluded: Optional[List[str]] = None,
+    filter: Optional[str] = None,
+    message_ttl_seconds: Optional[int] = None,
+    **kwargs: Any
+) -> None:
+    """Send content inside request body to a group of connections.
+    Send content inside request body to a group of connections.
+    :param group: Target group name, which length should be greater than 0 and less than 1025.
+     Required.
+    :type group: str
+    :param message: The payload body. Required.
+    :type message: IO[bytes]
+    :keyword excluded: Excluded connection Ids. Default value is None.
+    :paramtype excluded: list[str]
+    :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+     messages. Default value is None.
+    :paramtype filter: str
+    :keyword message_ttl_seconds: The time-to-live (TTL) value in seconds for messages sent to the
+     service. 0 is the default value, which means the message never expires. 300 is the maximum
+     value. If this parameter is non-zero, messages that are not consumed by the client within the
+     specified TTL will be dropped by the service. This parameter can help when the client's
+     bandwidth is limited. Default value is None.
+    :paramtype message_ttl_seconds: int
+    :return: None
+    :rtype: None
+    :raises ~azure.core.exceptions.HttpResponseError:
+    """
+    error_map: MutableMapping = {
+        401: ClientAuthenticationError,
+        404: ResourceNotFoundError,
+        409: ResourceExistsError,
+        304: ResourceNotModifiedError,
+    }
+    error_map.update(kwargs.pop("error_map", {}) or {})
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = kwargs.pop("params", {}) or {}
+    content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+    cls: ClsType[None] = kwargs.pop("cls", None)
+    _content = message
+    _request = build_web_pub_sub_service_send_to_group_request(
+        group=group,
+        hub=self._config.hub,
+        excluded=excluded,
+        filter=filter,
+        message_ttl_seconds=message_ttl_seconds,
+        content_type=content_type,
+        api_version=self._config.api_version,
+        content=_content,
+        headers=_headers,
+        params=_params,
+    )
+    path_format_arguments = {
+        "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+    }
+    _request.url = self._client.format_url(_request.url, **path_format_arguments)
+    _stream = False
+    pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        _request, stream=_stream, **kwargs
+    )
+    response = pipeline_response.http_response
+    if response.status_code not in [202]:
+        map_error(status_code=response.status_code, response=response, error_map=error_map)
+        raise HttpResponseError(response=response)
+    if cls:
+        return cls(pipeline_response, None, {})  # type: ignore
+
+
+@distributed_trace
+def send_to_user(  # pylint: disable=inconsistent-return-statements
+    self,
+    user_id: str,
+    message: IO[bytes],
+    *,
+    filter: Optional[str] = None,
+    message_ttl_seconds: Optional[int] = None,
+    **kwargs: Any
+) -> None:
+    """Send content inside request body to the specific user.
+    Send content inside request body to the specific user.
+    :param user_id: The user Id. Required.
+    :type user_id: str
+    :param message: The payload body. Required.
+    :type message: IO[bytes]
+    :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+     messages. Default value is None.
+    :paramtype filter: str
+    :keyword message_ttl_seconds: The time-to-live (TTL) value in seconds for messages sent to the
+     service. 0 is the default value, which means the message never expires. 300 is the maximum
+     value. If this parameter is non-zero, messages that are not consumed by the client within the
+     specified TTL will be dropped by the service. This parameter can help when the client's
+     bandwidth is limited. Default value is None.
+    :paramtype message_ttl_seconds: int
+    :return: None
+    :rtype: None
+    :raises ~azure.core.exceptions.HttpResponseError:
+    """
+    error_map: MutableMapping = {
+        401: ClientAuthenticationError,
+        404: ResourceNotFoundError,
+        409: ResourceExistsError,
+        304: ResourceNotModifiedError,
+    }
+    error_map.update(kwargs.pop("error_map", {}) or {})
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = kwargs.pop("params", {}) or {}
+    content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+    cls: ClsType[None] = kwargs.pop("cls", None)
+    _content = message
+    _request = build_web_pub_sub_service_send_to_user_request(
+        user_id=user_id,
+        hub=self._config.hub,
+        filter=filter,
+        message_ttl_seconds=message_ttl_seconds,
+        content_type=content_type,
+        api_version=self._config.api_version,
+        content=_content,
+        headers=_headers,
+        params=_params,
+    )
+    path_format_arguments = {
+        "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+    }
+    _request.url = self._client.format_url(_request.url, **path_format_arguments)
+    _stream = False
+    pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        _request, stream=_stream, **kwargs
+    )
+    response = pipeline_response.http_response
+    if response.status_code not in [202]:
+        map_error(status_code=response.status_code, response=response, error_map=error_map)
+        raise HttpResponseError(response=response)
+    if cls:
+        return cls(pipeline_response, None, {})  # type: ignore
+
+
+class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace
     def get_client_access_token(self, *, client_protocol: Optional[str] = "Default", **kwargs: Any) -> JSON:
         """Build an authentication token.
@@ -152,13 +569,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
 
     @distributed_trace
-    def list_connections(
-        self,
-        *,
-        group: str,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged[GroupMember]:
+    def list_connections(self, *, group: str, top: Optional[int] = None, **kwargs: Any) -> ItemPaged[GroupMember]:
         """List connections in a group.
 
         List connections in a group.
@@ -186,30 +597,20 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         """
         # Call the base implementation to get ItemPaged[dict]
-        paged_json = super().list_connections(
-            group=group,
-            top=top,
-            **kwargs
-        )
+        paged_json = super().list_connections(group=group, top=top, **kwargs)
 
         # Wrap the iterator to convert each item to GroupMember
         class GroupMemberPaged(ItemPaged):
             def __iter__(self_inner):
                 for item in paged_json:
-                    yield GroupMember(
-                        connection_id=item.get("connectionId"),
-                        user_id=item.get("userId")
-                    )
+                    yield GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId"))
 
             def by_page(self_inner, continuation_token: Optional[str] = None):
                 for page in paged_json.by_page(continuation_token=continuation_token):
                     yield [
-                        GroupMember(
-                            connection_id=item.get("connectionId"),
-                            user_id=item.get("userId")
-                        )
-                        for item in page
+                        GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in page
                     ]
+
         return GroupMemberPaged()
 
     @overload
@@ -864,7 +1265,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
 
 __all__: List[str] = [
-    "WebPubSubServiceClientOperationsMixin"
+    "_WebPubSubServiceClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 

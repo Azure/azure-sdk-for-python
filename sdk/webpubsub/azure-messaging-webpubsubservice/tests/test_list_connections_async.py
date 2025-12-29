@@ -10,6 +10,7 @@ from testcase import WebpubsubPowerShellPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase_async import WebpubsubAsyncTest
 
+
 @pytest.mark.asyncio
 class TestListConnectionsAsync(WebpubsubAsyncTest):
 
@@ -19,34 +20,19 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
         webpubsub_connection_string = kwargs.get("webpubsub_connection_string")
         # Test cases with different pagination scenarios
         test_cases = [
-            {
-                "total_connection_count": 6,
-                "max_count_to_list": 6,
-                "expected_total_count": 6,
-                "expected_page_count": 1
-            },
-            {
-                "total_connection_count": 6,
-                "max_count_to_list": 3,
-                "expected_total_count": 3,
-                "expected_page_count": 1
-            },
+            {"total_connection_count": 6, "max_count_to_list": 6, "expected_total_count": 6, "expected_page_count": 1},
+            {"total_connection_count": 6, "max_count_to_list": 3, "expected_total_count": 3, "expected_page_count": 1},
             {
                 "total_connection_count": 6,
                 "max_count_to_list": None,
                 "expected_total_count": 6,
-                "expected_page_count": 1
+                "expected_page_count": 1,
             },
-            {
-                "total_connection_count": 6,
-                "max_count_to_list": 5,
-                "expected_total_count": 5,
-                "expected_page_count": 1
-            }
+            {"total_connection_count": 6, "max_count_to_list": 5, "expected_total_count": 5, "expected_page_count": 1},
         ]
 
         for test_case in test_cases:
-            client = self.create_client(connection_string = webpubsub_connection_string, hub='test_list_connections')
+            client = self.create_client(connection_string=webpubsub_connection_string, hub="test_list_connections")
             async with client:
                 group_name = "group1"
                 ws_clients = []
@@ -66,10 +52,7 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
                 actual_connection_count = 0
 
                 # Get connections with pagination
-                connections = client.list_connections(
-                    group=group_name,
-                    top=test_case["max_count_to_list"]
-                )
+                connections = client.list_connections(group=group_name, top=test_case["max_count_to_list"])
 
                 async for member in connections:
                     assert member.connection_id is not None
@@ -83,10 +66,12 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
                     actual_page_count += 1
 
             # Verify results
-            assert actual_page_count == test_case["expected_page_count"], \
-                f"Expected {test_case['expected_page_count']} pages, got {actual_page_count}"
-            assert actual_connection_count == test_case["expected_total_count"], \
-                f"Expected {test_case['expected_total_count']} connections, got {actual_connection_count}"
+            assert (
+                actual_page_count == test_case["expected_page_count"]
+            ), f"Expected {test_case['expected_page_count']} pages, got {actual_page_count}"
+            assert (
+                actual_connection_count == test_case["expected_total_count"]
+            ), f"Expected {test_case['expected_total_count']} connections, got {actual_connection_count}"
 
             # Close WebSocket connections if not in playback mode
             if not self.is_playback():

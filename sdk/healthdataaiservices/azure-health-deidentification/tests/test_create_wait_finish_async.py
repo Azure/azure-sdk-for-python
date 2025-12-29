@@ -31,7 +31,6 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         )
 
         lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
-        await lro.wait()
 
         finished_job: DeidentificationJob = await lro.result()
 

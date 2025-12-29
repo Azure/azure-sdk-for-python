@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import requests
+import requests  # type: ignore[import-untyped]
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.sdk.trace import SpanProcessor
 from opentelemetry.trace import get_tracer, SpanContext, SpanKind, TraceFlags
@@ -12,7 +12,6 @@ from opentelemetry.trace import get_tracer, SpanContext, SpanKind, TraceFlags
 
 # Define a custom processor to filter your spans
 class SpanFilteringProcessor(SpanProcessor):
-
     # Prevents exporting spans that are of kind INTERNAL
     def on_start(self, span, parent_context):  # type: ignore
         # Check if the span is an internal activity.

@@ -80,7 +80,8 @@ def test_tenant_id(get_token_method):
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-def test_auth_code_credential(get_token_method):
+@pytest.mark.parametrize("enable_cae", [True, False])
+def test_auth_code_credential(get_token_method, enable_cae):
     client_id = "client id"
     secret = "fake-client-secret"
     tenant_id = "tenant"
@@ -118,6 +119,7 @@ def test_auth_code_credential(get_token_method):
         responses=[mock_response(json_payload=auth_response)] * 2,
     )
     cache = msal.TokenCache()
+    cae_cache = msal.TokenCache()
 
     credential = AuthorizationCodeCredential(
         client_id=client_id,
@@ -127,22 +129,29 @@ def test_auth_code_credential(get_token_method):
         redirect_uri=redirect_uri,
         transport=transport,
         cache=cache,
+        cae_cache=cae_cache,
     )
 
     # first call should redeem the auth code
-    token = getattr(credential, get_token_method)(expected_scope)
+    kwargs = {"enable_cae": enable_cae}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = getattr(credential, get_token_method)(expected_scope, **kwargs)
     assert token.token == expected_access_token
     assert transport.send.call_count == 1
 
     # no auth code -> credential should return cached token
-    token = getattr(credential, get_token_method)(expected_scope)
+    token = getattr(credential, get_token_method)(expected_scope, **kwargs)
     assert token.token == expected_access_token
     assert transport.send.call_count == 1
 
     # no auth code, no cached token -> credential should redeem refresh token
-    cached_access_token = list(cache.search(cache.CredentialType.ACCESS_TOKEN))[0]
-    cache.remove_at(cached_access_token)
-    token = getattr(credential, get_token_method)(expected_scope)
+    cache_being_used = cae_cache if enable_cae else cache
+    cached_tokens = list(cache_being_used.search(cache_being_used.CredentialType.ACCESS_TOKEN))
+    assert cached_tokens
+    cached_access_token = cached_tokens[0]
+    cache_being_used.remove_at(cached_access_token)
+    token = getattr(credential, get_token_method)(expected_scope, **kwargs)
     assert token.token == expected_access_token
     assert transport.send.call_count == 2
 

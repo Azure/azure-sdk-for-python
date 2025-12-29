@@ -1,7 +1,5 @@
 # requirements leveraged by ci tools
-# setuptools 75.3.2 is the last version of setuptools that supports python 3.8.
-# it can be bumped further only when py3.8 is completely eliminated from CI
-setuptools==75.3.2
+setuptools==77.0.3
 virtualenv==20.29.3
 wheel==0.45.1
 packaging==24.2
@@ -13,7 +11,7 @@ pkginfo==1.12.1.2
 pip==24.0
 typing-extensions==4.12.2
 pyproject-api==1.8.0
-cibuildwheel==2.16.5
+cibuildwheel==2.23.3
 importlib-metadata==8.5.0
 build==1.2.2.post1
 
@@ -32,4 +30,4 @@ urllib3==2.2.3
 six==1.17.0
 
 # local dev packages
-./tools/azure-sdk-tools[build]
+./eng/tools/azure-sdk-tools[build]

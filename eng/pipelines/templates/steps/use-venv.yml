@@ -8,8 +8,27 @@ parameters:
   - name: Condition
     type: string
     default: succeeded()
+  - name: UseUv
+    type: boolean
+    default: true
 
 steps:
+  - ${{ if eq(parameters.UseUv, true) }}:
+    - template: install-uv.yml
+
+    - pwsh: |
+        if (Get-Command uv -ErrorAction SilentlyContinue) {
+          Write-Host "##vso[task.setvariable variable=PIP_EXE]uv pip"
+        } else {
+          Write-Error "Expected 'uv' command to be available, but it was not. Exiting with error."
+          exit 1
+        }
+      displayName: Setting PIP_EXE to 'uv pip'
+  - ${{ else }}:
+    - pwsh: |
+        Write-Host "##vso[task.setvariable variable=PIP_EXE]python -m pip"
+      displayName: Setting PIP_EXE to 'python -m pip'
+
   - pwsh: |
       $(Build.SourcesDirectory)/eng/scripts/create-venv.ps1 `
         -VenvName "${{ parameters.VirtualEnvironmentName }}" `
@@ -24,3 +43,5 @@ steps:
           -RepoRoot "$(Build.SourcesDirectory)"
       displayName: Use ${{ parameters.VirtualEnvironmentName }} Virtual Environment
       condition: ${{ parameters.Condition }}
+
+    - template: install-portaudio.yml

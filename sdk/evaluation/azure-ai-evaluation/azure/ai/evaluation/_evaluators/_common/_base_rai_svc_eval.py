@@ -41,11 +41,12 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
     :param threshold: The threshold for the evaluation. Default is 3.
     :type threshold: Optional[int]
-    :param _evaluate_query: If True, the query will be included in the evaluation data when evaluating
-        query-response pairs. If False, only the response will be evaluated. Default is False.
-    :type _evaluate_query: bool
     :param _higher_is_better: If True, higher scores are better. Default is True.
     :type _higher_is_better: Optional[bool]
+    :param evaluate_query: If True, the query will be included in the evaluation data when evaluating
+        query-response pairs. If False, only the response will be evaluated. Default is False.
+        Can be passed as a keyword argument.
+    :type evaluate_query: bool
     """
 
     @override
@@ -57,8 +58,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
         threshold: int = 3,
-        _evaluate_query: bool = False,
         _higher_is_better: Optional[bool] = False,
+        **kwargs,
     ):
         super().__init__(
             eval_last_turn=eval_last_turn,
@@ -70,7 +71,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
-        self._evaluate_query = _evaluate_query
+
+        # Handle evaluate_query parameter from kwargs
+        self._evaluate_query = kwargs.get("evaluate_query", False)
         self._higher_is_better = _higher_is_better
 
     @override
@@ -150,7 +153,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         if query is not None and self._evaluate_query:
             input_data["query"] = str(query)
 
-        if "context" in self._singleton_inputs:
+        if "context" in self._get_all_singleton_inputs():
             context = eval_input.get("context", None)
             if context is None:
                 raise EvaluationException(

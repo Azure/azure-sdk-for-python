@@ -24,7 +24,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jobs.list_detectors(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             job_name="str",
             detector_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             job_name="str",
             api_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_jobs_list_by_subscription(self, resource_group):
         response = self.client.jobs.list_by_subscription(
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
     def test_jobs_list_by_resource_group(self, resource_group):
         response = self.client.jobs.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jobs.get(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -201,7 +201,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "workloadProfileName": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -213,7 +213,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jobs.begin_delete(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -325,7 +325,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -337,7 +337,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jobs.begin_start(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -350,7 +350,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             job_name="str",
             job_execution_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -362,7 +362,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jobs.begin_stop_multiple_executions(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -374,7 +374,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jobs.list_secrets(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

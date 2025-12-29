@@ -25,7 +25,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.topics.get(
             resource_group_name=resource_group.name,
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,6 +54,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "kind": "str",
                     },
+                    "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
                     "identity": {
                         "principalId": "str",
@@ -64,6 +65,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
                     "inboundIpRules": [{"action": "str", "ipMask": "str"}],
                     "inputSchema": "str",
                     "inputSchemaMapping": "input_schema_mapping",
+                    "kind": "Azure",
                     "metricResourceId": "str",
                     "minimumTlsVersionAllowed": "str",
                     "name": "str",
@@ -84,6 +86,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
                     ],
                     "provisioningState": "str",
                     "publicNetworkAccess": "str",
+                    "sku": {"name": "Basic"},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -95,7 +98,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -109,7 +112,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.topics.begin_delete(
                 resource_group_name=resource_group.name,
                 topic_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -146,9 +149,10 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
                     "inboundIpRules": [{"action": "str", "ipMask": "str"}],
                     "minimumTlsVersionAllowed": "str",
                     "publicNetworkAccess": "str",
+                    "sku": {"name": "Basic"},
                     "tags": {"str": "str"},
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -159,7 +163,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_topics_list_by_subscription(self, resource_group):
         response = self.client.topics.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -170,7 +174,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_topics_list_by_resource_group(self, resource_group):
         response = self.client.topics.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -182,7 +186,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.topics.list_shared_access_keys(
             resource_group_name=resource_group.name,
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -196,7 +200,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 topic_name="str",
                 regenerate_key_request={"keyName": "str"},
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -211,7 +215,7 @@ class TestEventGridManagementTopicsOperationsAsync(AzureMgmtRecordedTestCase):
             provider_namespace="str",
             resource_type_name="str",
             resource_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -4,14 +4,14 @@
 # license information.
 # -------------------------------------------------------------------------
 from datetime import datetime, timedelta, timezone
-from dateutil import parser
+import isodate
 from azure.communication.identity import CommunicationTokenScope
 
 
 def is_token_expiration_within_allowed_deviation(expected_token_expiration, token_expires_in, allowed_deviation=0.05):
     # type: (timedelta, datetime, float) -> bool
     utc_now = datetime.now(timezone.utc)
-    token_expiration = parser.parse(str(token_expires_in))
+    token_expiration = isodate.parse_datetime(str(token_expires_in))
     token_expiration_in_seconds = (token_expiration - utc_now).total_seconds()
     expected_seconds = expected_token_expiration.total_seconds()
     time_difference = abs(expected_seconds - token_expiration_in_seconds)

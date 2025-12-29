@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED,
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    _AZURE_AI_SDK_NAME,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
     _SAMPLE_RATE_KEY,
     _METRIC_ENVELOPE_NAME,
@@ -95,6 +96,8 @@ _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES = [
 _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
     _SAMPLE_RATE_KEY,
 ]
+
+_GEN_AI_ATTRIBUTE_PREFIX = "GenAI | {}"
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
@@ -280,8 +283,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     )
                 except Exception:  # pylint: disable=broad-except
                     pass
-            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) \
-                or span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or span.attributes.get(
+                SpanAttributes.HTTP_STATUS_CODE
+            )
             if status_code:
                 try:
                     status_code = int(status_code)  # type: ignore
@@ -318,7 +322,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             data.url = data.url[:2048]
     else:  # INTERNAL, CLIENT, PRODUCER
         envelope.name = _REMOTE_DEPENDENCY_ENVELOPE_NAME
-        # TODO: ai.operation.name for non-server spans
         time = 0
         if span.end_time and span.start_time:
             time = span.end_time - span.start_time
@@ -331,8 +334,12 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
+        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
         target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if span.kind is SpanKind.CLIENT:
+            gen_ai_attributes_val = ""
+            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                gen_ai_attributes_val = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
@@ -345,6 +352,12 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     # TODO: Not exposed in Swagger, need to update def
                     envelope.tags["ai.user.userAgent"] = user_agent
                 url = trace_utils._get_url_for_http_dependency(span.attributes)
+                # Http specific logic for ai.operation.name
+                if SpanAttributes.HTTP_ROUTE in span.attributes:
+                    envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
+                        span.attributes[SpanAttributes.HTTP_ROUTE],
+                    )
                 # data
                 if url:
                     data.data = url
@@ -355,12 +368,16 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # http specific logic for name
                 if path:
                     data.name = "{} {}".format(
-                        span.attributes.get(HTTP_REQUEST_METHOD) or \
-                            span.attributes.get(SpanAttributes.HTTP_METHOD),
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
-                status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
-                    span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+                    envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
+                        path,
+                    )
+                status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or span.attributes.get(
+                    SpanAttributes.HTTP_STATUS_CODE
+                )
                 if status_code:
                     try:
                         status_code = int(status_code)  # type: ignore
@@ -407,9 +424,18 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     span.attributes,
                 )
             elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
             else:
                 data.type = "N/A"
+            # gen_ai take precedence over other mappings (ex. HTTP)
+            # even if their attributes are also present on the span.
+            # following mappings will override the type
+            if gen_ai_attributes_val:
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
+            # If no fields are available to set target using standard rules,
+            # set Dependency Target to gen_ai.system if present
+            if not target and not data.target and gen_ai_attributes_val:
+                target = gen_ai_attributes_val
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
@@ -426,11 +452,15 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 )
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
-            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
+            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
+            elif _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
-        if data.name:
+        if envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME):
+            data.name = envelope.tags[ContextTagKeys.AI_OPERATION_NAME][:1024]
+        elif data.name:
             data.name = str(data.name)[:1024]
         if data.result_code:
             data.result_code = str(data.result_code)[:1024]
@@ -525,12 +555,17 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
 
 
 def _check_instrumentation_span(span: ReadableSpan) -> None:
-    # Special use-case for spans generated from azure-sdk services
-    # Identified by having az.namespace as a span attribute
-    if span.attributes and _AZURE_SDK_NAMESPACE_NAME in span.attributes:
-        _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
-        return
     if span.instrumentation_scope is None:
+        return
+
+    # Special use-case for spans generated from azure-sdk services
+    # `azure-` or `azure.` is a prefix
+    if span.instrumentation_scope.name.startswith("azure"):
+        # spec-case for Azure AI SDKs - identified by `az.namespace` attribute
+        if span.attributes and span.attributes.get(_AZURE_SDK_NAMESPACE_NAME) == "Microsoft.CognitiveServices":
+            _utils.add_instrumentation(_AZURE_AI_SDK_NAME)
+        else:
+            _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
         return
     # All instrumentation scope names from OpenTelemetry instrumentations have
     # `opentelemetry.instrumentation.` as a prefix
@@ -545,8 +580,7 @@ def _is_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
-    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or \
-        key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
+    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:

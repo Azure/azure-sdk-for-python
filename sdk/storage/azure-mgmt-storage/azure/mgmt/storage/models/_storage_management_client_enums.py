@@ -46,7 +46,11 @@ class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the Active Directory account type for Azure Storage."""
+    """Specifies the Active Directory account type for Azure Storage. If directoryServiceOptions is
+    set to AD (AD DS authentication), this property is optional. If provided, samAccountName should
+    also be provided. For directoryServiceOptions AADDS (Entra DS authentication) or AADKERB (Entra
+    authentication), this property can be omitted.
+    """
 
     USER = "User"
     COMPUTER = "Computer"
@@ -242,6 +246,15 @@ class ImmutabilityPolicyUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     PUT = "put"
     LOCK = "lock"
     EXTEND = "extend"
+
+
+class IntervalUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Run interval unit of task execution. This is a required field when
+    ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
+    ExecutionTrigger.properties.type is 'RunOnce'.
+    """
+
+    DAYS = "Days"
 
 
 class InventoryRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -713,3 +726,10 @@ class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERCENT = "Percent"
     COUNTS_PER_SECOND = "CountsPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
+
+
+class ZonePlacementPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The availability zone pinning policy for the storage account."""
+
+    ANY = "Any"
+    NONE = "None"

@@ -93,7 +93,7 @@ class TestLogsIngestionClientAsync(LogsIngestionClientTestCase):
             json.dump(LOGS_BODY, f)
 
         async with client:
-            with open(temp_file, "r") as f:
+            with open(temp_file, "rb") as f:
                 await client.upload(rule_id=monitor_info["dcr_id"], stream_name=monitor_info["stream_name"], logs=f)
         os.remove(temp_file)
         await credential.close()

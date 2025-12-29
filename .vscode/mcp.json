@@ -1,20 +1,9 @@
 {
     "servers": {
-        "azure-sdk-python-mcp": {
-            "command": "uv",
-            "args": [
-                "run",
-                "--index-url",
-                "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                "--with",
-                "azure-sdk-python-mcp",
-                "azure-sdk-python-mcp"
-            ],
-        },
         "azure-sdk-mcp": {
             "type": "stdio",
             "command": "pwsh",        
-            "args": ["${workspaceFolder}/eng/common/mcp/azure-sdk-mcp.ps1", "-Run", "-Version","1.0.0-dev.20250630.3"]
+            "args": ["${workspaceFolder}/eng/common/mcp/azure-sdk-mcp.ps1", "-Run"]
         }
     }
 }

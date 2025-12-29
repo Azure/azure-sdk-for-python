@@ -20,7 +20,7 @@ class TestSqlManagementServiceObjectivesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_service_objectives_get(self, resource_group):
         response = self.client.service_objectives.get(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -33,7 +33,7 @@ class TestSqlManagementServiceObjectivesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_server(self, resource_group):
+    def test_service_objectives_list_by_server(self, resource_group):
         response = self.client.service_objectives.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",

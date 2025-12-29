@@ -6,7 +6,7 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
 
 * [General Troubleshooting](#general-troubleshooting)
     * [Enable client logging](#enable-client-logging)
-    * [Troubleshooting authentication issues with logs and metrics query requests](#authentication-errors)
+    * [Troubleshooting authentication issues with query requests](#authentication-errors)
     * [Troubleshooting running async APIs](#errors-with-running-async-apis)
 * [Troubleshooting Logs Query](#troubleshooting-logs-query)
     * [Troubleshooting insufficient access error](#troubleshooting-insufficient-access-error-for-logs-query)
@@ -14,9 +14,6 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
     * [Troubleshooting empty log query results](#troubleshooting-empty-log-query-results)
     * [Troubleshooting server timeouts when executing logs query request](#troubleshooting-server-timeouts-when-executing-logs-query-request)
     * [Troubleshooting partially successful logs query requests](#troubleshooting-partially-successful-logs-query-requests)
-* [Troubleshooting Metrics Query](#troubleshooting-metrics-query)
-    * [Troubleshooting insufficient access error](#troubleshooting-insufficient-access-error-for-metrics-query)
-    * [Troubleshooting unsupported granularity for metrics query](#troubleshooting-unsupported-granularity-for-metrics-query)
 * [Additional azure-core configurations](#additional-azure-core-configurations)
 
 ## General Troubleshooting
@@ -53,11 +50,7 @@ client.query_workspace(logging_enable=True)
 
 ### Authentication errors
 
-Azure Monitor Query supports Azure Active Directory authentication. Both LogsQueryClient and
-MetricsQueryClient have methods to set the `credential`. To provide a valid credential, you can use
-`azure-identity` dependency. For more details on getting started, refer to
-the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query#create-the-client)
-of Azure Monitor Query library. You can also refer to
+Azure Monitor Query supports Microsoft Entra ID authentication. LogsQueryClient has methods to set the `credential`. To provide a valid credential, you can use the `azure-identity` package. For more details on getting started, refer to the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query#create-the-client) of the Azure Monitor Query library. You can also refer to
 the [Azure Identity documentation](https://learn.microsoft.com/python/api/overview/azure/identity-readme)
 for more details on the various types of credential supported in `azure-identity`.
 
@@ -173,39 +166,6 @@ response = client.query_workspace("{workspaceId}", "{kusto-query-string}", times
 data = response.partial_data
 error = response.partial_error
 ```
-
-## Troubleshooting Metrics Query
-
-### Troubleshooting insufficient access error for metrics query
-
-If you get an HTTP error with status code 403 (Forbidden), it means that the provided credentials does not have
-sufficient permissions to query the workspace.
-```text
-"{"error":{"message":"The provided credentials have insufficient access to perform the requested operation","code":"InsufficientAccessError","correlationId":""}}"
-```
-
-1. Check that the application or user that is making the request has sufficient permissions:
-    * You can refer to this document to [manage access to workspaces](https://learn.microsoft.com/azure/azure-monitor/logs/manage-access#manage-access-using-workspace-permissions)
-2. If the user or application is granted sufficient privileges to query the workspace, make sure you are
-   authenticating as that user/application. If you are authenticating using the
-   [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential)
-   then check the logs to verify that the credential used is the one you expected. To enable logging, see [enable
-   client logging](#enable-client-logging) section above.
-
-For more help on troubleshooting authentication errors please see the Azure Identity client library [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
-
-### Troubleshooting unsupported granularity for metrics query
-
-If you notice the following exception, this is due to an invalid time granularity in the metrics query request. Your
-query might have set the `granularity` keyword argument to an unsupported duration.
-
-```text
-"{"code":"BadRequest","message":"Invalid time grain duration: PT10M, supported ones are: 00:01:00,00:05:00,00:15:00,00:30:00,01:00:00,06:00:00,12:00:00,1.00:00:00"}"
-```
-
-As documented in the error message, the supported granularity for metrics queries are 1 minute, 5 minutes, 15 minutes,
-30 minutes, 1 hour, 6 hours, 12 hours and 1 day.
-
 
 ## Additional azure-core configurations
 

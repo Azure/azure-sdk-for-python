@@ -3,4 +3,4 @@ markdown==3.6
 PyGitHub>=1.59.0
 setuptools==74.1.3
 -e ./sdk/identity/azure-identity
--e ./tools/azure-sdk-tools
+-e ./eng/tools/azure-sdk-tools

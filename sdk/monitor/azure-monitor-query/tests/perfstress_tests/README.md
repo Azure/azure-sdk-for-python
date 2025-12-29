@@ -38,7 +38,6 @@ These options are available for all perf tests:
 The tests currently written for the T2 SDK:
 - `LogsPerfTest` queries a single query.
 - `LogsBatchPerfTest` queries multiple queries using the batch operation.
-- `MetricsPerfTest` to test a metrics query on eventgrid resource
 
 ## Example command
 ```cmd

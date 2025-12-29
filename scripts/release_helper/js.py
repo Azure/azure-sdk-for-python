@@ -4,7 +4,7 @@ from typing import Any, List
 
 # assignee dict which will be assigned to handle issues
 _JS_OWNER = {'lirenhe', 'kazrael2119', 'azure-sdk'}
-_JS_ASSIGNEE = {'qiaozha', 'MaryGao'}
+_JS_ASSIGNEE = {'qiaozha', 'MaryGao', 'JialinHuang803'}
 
 
 class IssueProcessJs(IssueProcess):

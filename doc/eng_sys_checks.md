@@ -273,7 +273,7 @@ to opt into the black invocation.
 
 ### Change log verification
 
-Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/)
+Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here.](https://azure.github.io/azure-sdk/policies_releases.html#change-logs/)
 
 ## PR Validation Checks
 

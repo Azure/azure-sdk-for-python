@@ -18,7 +18,7 @@ from ._deleted_accounts_operations import DeletedAccountsOperations  # type: ign
 from ._resource_skus_operations import ResourceSkusOperations  # type: ignore
 from ._usages_operations import UsagesOperations  # type: ignore
 from ._operations import Operations  # type: ignore
-from ._cognitive_services_management_client_operations import CognitiveServicesManagementClientOperationsMixin  # type: ignore
+from ._cognitive_services_management_client_operations import _CognitiveServicesManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._commitment_tiers_operations import CommitmentTiersOperations  # type: ignore
 from ._models_operations import ModelsOperations  # type: ignore
 from ._location_based_model_capacities_operations import LocationBasedModelCapacitiesOperations  # type: ignore
@@ -31,14 +31,16 @@ from ._encryption_scopes_operations import EncryptionScopesOperations  # type: i
 from ._rai_policies_operations import RaiPoliciesOperations  # type: ignore
 from ._rai_blocklists_operations import RaiBlocklistsOperations  # type: ignore
 from ._rai_blocklist_items_operations import RaiBlocklistItemsOperations  # type: ignore
+from ._rai_topics_operations import RaiTopicsOperations  # type: ignore
 from ._rai_content_filters_operations import RaiContentFiltersOperations  # type: ignore
 from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._defender_for_ai_settings_operations import DefenderForAISettingsOperations  # type: ignore
 from ._projects_operations import ProjectsOperations  # type: ignore
-from ._account_connection_operations import AccountConnectionOperations  # type: ignore
-from ._project_connection_operations import ProjectConnectionOperations  # type: ignore
+from ._account_connections_operations import AccountConnectionsOperations  # type: ignore
+from ._project_connections_operations import ProjectConnectionsOperations  # type: ignore
 from ._account_capability_hosts_operations import AccountCapabilityHostsOperations  # type: ignore
 from ._project_capability_hosts_operations import ProjectCapabilityHostsOperations  # type: ignore
+from ._quota_tiers_operations import QuotaTiersOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -50,7 +52,6 @@ __all__ = [
     "ResourceSkusOperations",
     "UsagesOperations",
     "Operations",
-    "CognitiveServicesManagementClientOperationsMixin",
     "CommitmentTiersOperations",
     "ModelsOperations",
     "LocationBasedModelCapacitiesOperations",
@@ -63,14 +64,16 @@ __all__ = [
     "RaiPoliciesOperations",
     "RaiBlocklistsOperations",
     "RaiBlocklistItemsOperations",
+    "RaiTopicsOperations",
     "RaiContentFiltersOperations",
     "NetworkSecurityPerimeterConfigurationsOperations",
     "DefenderForAISettingsOperations",
     "ProjectsOperations",
-    "AccountConnectionOperations",
-    "ProjectConnectionOperations",
+    "AccountConnectionsOperations",
+    "ProjectConnectionsOperations",
     "AccountCapabilityHostsOperations",
     "ProjectCapabilityHostsOperations",
+    "QuotaTiersOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -8,12 +8,13 @@ import logging
 import random
 from typing import Any, Callable, Dict, List, Optional, Union, cast
 import uuid
+import warnings
 
 from tqdm import tqdm
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
@@ -68,6 +69,14 @@ class AdversarialSimulator:
 
     def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
+        warnings.warn(
+            "DEPRECATION NOTE: Azure AI Evaluation SDK has discontinued active development on the AdversarialSimulator class."
+            + " While existing functionality remains available in preview, it is no longer recommended for production workloads or future integration. "
+            + "We recommend users migrate to the AI Red Teaming Agent for future use as it supports full parity of functionality."
+            + " See https://aka.ms/airedteamingagent-sample for details on AI Red Teaming Agent.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         if is_onedp_project(azure_ai_project):
             self.azure_ai_project = azure_ai_project
@@ -239,8 +248,11 @@ class AdversarialSimulator:
             # So randomize a the selection instead of the parameter list directly,
             # or a potentially large deep copy.
             if randomization_seed is not None:
-                random.seed(randomization_seed)
-            random.shuffle(templates)
+                # Create a local random instance to avoid polluting global state
+                local_random = random.Random(randomization_seed)
+                local_random.shuffle(templates)
+            else:
+                random.shuffle(templates)
 
         # Prepare task parameters based on scenario - but use a single append call for all scenarios
         tasks = []

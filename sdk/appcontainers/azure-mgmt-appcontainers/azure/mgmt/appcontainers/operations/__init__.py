@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -29,17 +30,22 @@ from ._jobs_operations import JobsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
 from ._java_components_operations import JavaComponentsOperations  # type: ignore
 from ._jobs_executions_operations import JobsExecutionsOperations  # type: ignore
-from ._container_apps_api_client_operations import ContainerAppsAPIClientOperationsMixin  # type: ignore
+from ._container_apps_api_client_operations import _ContainerAppsAPIClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._managed_environments_operations import ManagedEnvironmentsOperations  # type: ignore
 from ._certificates_operations import CertificatesOperations  # type: ignore
 from ._managed_certificates_operations import ManagedCertificatesOperations  # type: ignore
 from ._namespaces_operations import NamespacesOperations  # type: ignore
+from ._managed_environment_private_endpoint_connections_operations import ManagedEnvironmentPrivateEndpointConnectionsOperations  # type: ignore
+from ._managed_environment_private_link_resources_operations import ManagedEnvironmentPrivateLinkResourcesOperations  # type: ignore
 from ._dapr_components_operations import DaprComponentsOperations  # type: ignore
+from ._http_route_config_operations import HttpRouteConfigOperations  # type: ignore
+from ._maintenance_configurations_operations import MaintenanceConfigurationsOperations  # type: ignore
 from ._managed_environments_storages_operations import ManagedEnvironmentsStoragesOperations  # type: ignore
 from ._container_apps_session_pools_operations import ContainerAppsSessionPoolsOperations  # type: ignore
 from ._container_apps_source_controls_operations import ContainerAppsSourceControlsOperations  # type: ignore
 from ._usages_operations import UsagesOperations  # type: ignore
 from ._managed_environment_usages_operations import ManagedEnvironmentUsagesOperations  # type: ignore
+from ._logic_apps_operations import LogicAppsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -63,17 +69,21 @@ __all__ = [
     "Operations",
     "JavaComponentsOperations",
     "JobsExecutionsOperations",
-    "ContainerAppsAPIClientOperationsMixin",
     "ManagedEnvironmentsOperations",
     "CertificatesOperations",
     "ManagedCertificatesOperations",
     "NamespacesOperations",
+    "ManagedEnvironmentPrivateEndpointConnectionsOperations",
+    "ManagedEnvironmentPrivateLinkResourcesOperations",
     "DaprComponentsOperations",
+    "HttpRouteConfigOperations",
+    "MaintenanceConfigurationsOperations",
     "ManagedEnvironmentsStoragesOperations",
     "ContainerAppsSessionPoolsOperations",
     "ContainerAppsSourceControlsOperations",
     "UsagesOperations",
     "ManagedEnvironmentUsagesOperations",
+    "LogicAppsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

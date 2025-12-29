@@ -20,14 +20,24 @@ class TestSqlManagementGeoBackupPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_geo_backup_policies_list(self, resource_group):
-        response = self.client.geo_backup_policies.list(
+    def test_geo_backup_policies_create_or_update(self, resource_group):
+        response = self.client.geo_backup_policies.create_or_update(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            geo_backup_policy_name="str",
+            parameters={
+                "state": "str",
+                "id": "str",
+                "kind": "str",
+                "location": "str",
+                "name": "str",
+                "storageType": "str",
+                "type": "str",
+            },
+            api_version="2014-04-01",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 
@@ -39,7 +49,7 @@ class TestSqlManagementGeoBackupPoliciesOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             geo_backup_policy_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2014-04-01",
         )
 
         # please add some check logic here by yourself
@@ -47,23 +57,13 @@ class TestSqlManagementGeoBackupPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_geo_backup_policies_create_or_update(self, resource_group):
-        response = self.client.geo_backup_policies.create_or_update(
+    def test_geo_backup_policies_list_by_database(self, resource_group):
+        response = self.client.geo_backup_policies.list_by_database(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            geo_backup_policy_name="str",
-            parameters={
-                "id": "str",
-                "kind": "str",
-                "location": "str",
-                "name": "str",
-                "state": "str",
-                "storageType": "str",
-                "type": "str",
-            },
-            api_version="2024-05-01-preview",
+            api_version="2014-04-01",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

@@ -20,6 +20,25 @@ class RiskCategory(str, Enum):
     SelfHarm = "self_harm"
     ProtectedMaterial = "protected_material"
     CodeVulnerability = "code_vulnerability"
+    UngroundedAttributes = "ungrounded_attributes"
+    SensitiveDataLeakage = "sensitive_data_leakage"  # Agent targets only
+    TaskAdherence = "task_adherence"  # Agent targets only
+    ProhibitedActions = "prohibited_actions"  # Agent targets only
+
+
+@experimental
+class SupportedLanguages(Enum):
+    """Supported languages for attack objectives, using ISO standard language codes."""
+
+    Spanish = "es"
+    Italian = "it"
+    French = "fr"
+    German = "de"
+    SimplifiedChinese = "zh-cn"
+    Portuguese = "pt"
+    Japanese = "ja"
+    English = "en"
+    Korean = "ko"
 
 
 @experimental
@@ -219,10 +238,22 @@ class _AttackObjectiveGenerator:
             }
             self.logger.info(f"Prompt distribution by risk category: {category_counts}")
 
-            # Automatically extract risk categories from valid prompts if not provided
-            if not self.risk_categories:
-                categories_with_prompts = [cat for cat, prompts in self.valid_prompts_by_category.items() if prompts]
-                self.risk_categories = [RiskCategory(cat) for cat in categories_with_prompts]
+            # Merge risk categories from custom prompts with explicitly provided risk_categories
+            categories_with_prompts = [cat for cat, prompts in self.valid_prompts_by_category.items() if prompts]
+            categories_from_prompts = [RiskCategory(cat) for cat in categories_with_prompts]
+
+            if self.risk_categories:
+                # Combine explicitly provided categories with those from custom prompts
+                combined_categories = list(set(self.risk_categories + categories_from_prompts))
+                self.logger.info(
+                    f"Merging provided risk categories {[cat.value for cat in self.risk_categories]} "
+                    f"with categories from custom prompts {[cat.value for cat in categories_from_prompts]} "
+                    f"-> Combined: {[cat.value for cat in combined_categories]}"
+                )
+                self.risk_categories = combined_categories
+            else:
+                # No risk categories provided, use only those from custom prompts
+                self.risk_categories = categories_from_prompts
                 self.logger.info(
                     f"Automatically set risk categories based on valid prompts: {[cat.value for cat in self.risk_categories]}"
                 )

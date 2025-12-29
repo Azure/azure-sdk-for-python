@@ -6,11 +6,12 @@
 # -------------------------------------------------------------------------
 import pytest
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
-from azure.messaging.webpubsubservice._operations._operations import build_web_pub_sub_service_send_to_all_request
+from azure.messaging.webpubsubservice._operations._patch import build_web_pub_sub_service_send_to_all_request
 from azure.core.credentials import AzureKeyCredential
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.identity import DefaultAzureCredential
 from devtools_testutils import recorded_by_proxy
+
 
 @pytest.mark.live_test_only
 class TestWebpubsubReverseProxy(WebpubsubTest):
@@ -20,11 +21,14 @@ class TestWebpubsubReverseProxy(WebpubsubTest):
         def _callback(pipeline_request):
             assert pipeline_request.http_request.url.startswith("https://apim.contoso.com/")
             raise ValueError("Success!")
+
         wps_endpoint = "https://wps.contoso.com/"
         apim_endpoint = "https://apim.contoso.com/"
         credential = AzureKeyCredential("AzureKeyCredential")
         client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
-        request = build_web_pub_sub_service_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
+        request = build_web_pub_sub_service_send_to_all_request(
+            "Hub", content="test_webpubsub_send_request", content_type="text/plain"
+        )
 
         with pytest.raises(ValueError) as ex:
             client.send_request(request, raw_request_hook=_callback)
@@ -35,11 +39,14 @@ class TestWebpubsubReverseProxy(WebpubsubTest):
         def _callback(pipeline_request):
             assert pipeline_request.http_request.url.startswith("https://apim.contoso.com/")
             raise ValueError("Success!")
+
         wps_endpoint = "https://wps.contoso.com/"
         apim_endpoint = "https://apim.contoso.com/"
         credential = self.get_credential(WebPubSubServiceClient)
         client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
-        request = build_web_pub_sub_service_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
+        request = build_web_pub_sub_service_send_to_all_request(
+            "Hub", content="test_webpubsub_send_request", content_type="text/plain"
+        )
 
         with pytest.raises(ValueError) as ex:
             client.send_request(request, raw_request_hook=_callback)
@@ -50,8 +57,8 @@ class TestWebpubsubReverseProxy(WebpubsubTest):
     def test_reverse_proxy_call(self, webpubsub_connection_string, webpubsub_reverse_proxy_endpoint):
         client = self.create_client(
             connection_string=webpubsub_connection_string,
-            hub='hub',
+            hub="hub",
             logging_enable=True,
-            reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint
+            reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint,
         )
-        client.send_to_all({'Hello': 'reverse_proxy_endpoint!'})
+        client.send_to_all({"Hello": "reverse_proxy_endpoint!"})

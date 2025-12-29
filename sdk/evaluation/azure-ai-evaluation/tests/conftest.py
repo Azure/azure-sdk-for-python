@@ -13,6 +13,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
+import requests
 
 import pytest
 from ci_tools.variables import in_ci
@@ -42,6 +43,13 @@ PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
 CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json").resolve()
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
 ZERO_GUID: Final[str] = "00000000-0000-0000-0000-000000000000"
+
+# Connection file keys
+KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
+KEY_ONE_DP_AZURE_MODEL_CONFIG = "azure_openai_model_config_onedp"
+KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
+KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
+KEY_ONE_DP_PROJECT_SCOPE = "azure_ai_one_dp_project_scope"
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -301,17 +309,66 @@ def redirect_openai_requests():
 
 
 @pytest.fixture
-def recorded_test(recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic):
+def recorded_test(
+    recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic, mock_azure_management_api
+):
     return recorded_test
 
 
 @pytest.fixture(scope="session")
 def connection_file() -> Dict[str, Any]:
     if not CONNECTION_FILE.exists():
-        return {}
+        return _get_connection_from_env()
 
     with open(CONNECTION_FILE) as f:
         return json.load(f)
+
+
+def _get_connection_from_env() -> Dict[str, Any]:
+    """Get connection configuration from environment variables.
+
+    This is used when connections.json doesn't exist, typically in CI/CD pipelines
+    where test-resources.json ARM template provisions resources and sets environment variables.
+
+    Returns:
+        Dict[str, Any]: A dictionary matching the connections.json format, where each key
+            maps to a dict with a "value" key containing the actual configuration.
+            Example: {"azure_ai_project_scope": {"value": {"subscription_id": "...", ...}}}
+    """
+    connections = {}
+
+    # Build azure_ai_project_scope from environment variables if available
+    subscription_id = os.getenv("AZURE_AI_PROJECT_SUBSCRIPTION_ID")
+    resource_group_name = os.getenv("AZURE_AI_PROJECT_RESOURCE_GROUP_NAME")
+    project_name = os.getenv("AZURE_AI_PROJECT_NAME")
+
+    if subscription_id and resource_group_name and project_name:
+        connections[KEY_AZURE_PROJECT_SCOPE] = {
+            "value": {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+                "project_name": project_name,
+            }
+        }
+
+    # Build azure_openai_model_config from environment variables if available
+    azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+    api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+    deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+    api_key = os.getenv("AZURE_OPENAI_KEY")
+
+    if azure_endpoint and deployment_name:
+        connections[KEY_AZURE_MODEL_CONFIG] = {
+            "value": {
+                "azure_endpoint": azure_endpoint,
+                "api_version": api_version or "2023-07-01-preview",
+                "azure_deployment": deployment_name,
+            }
+        }
+        if api_key:
+            connections[KEY_AZURE_MODEL_CONFIG]["value"]["api_key"] = api_key
+
+    return connections
 
 
 def get_config(
@@ -359,15 +416,8 @@ def mock_project_scope() -> Dict[str, str]:
 
 
 @pytest.fixture(scope="session")
-def mock_onedp_project_scope() -> Dict[str, str]:
+def mock_onedp_project_scope() -> str:
     return "https://Sanitized.services.ai.azure.com/api/projects/00000"
-
-
-KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
-KEY_ONE_DP_AZURE_MODEL_CONFIG = "azure_openai_model_config_onedp"
-KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
-KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
-KEY_ONE_DP_PROJECT_SCOPE = "azure_ai_one_dp_project_scope"
 
 
 @pytest.fixture(scope="session")
@@ -628,3 +678,58 @@ def run_from_temp_dir(tmp_path):
     os.chdir(tmp_path)
     yield
     os.chdir(original_cwd)
+
+
+@pytest.fixture
+def mock_azure_management_api(project_scope: dict):
+    """Mock Azure Management API calls for service discovery during playback mode."""
+    if is_live():
+        # In live mode, let the real API calls go through
+        yield
+        return
+
+    # Mock response for the Azure Management API workspace discovery call
+    mock_response_data = {
+        "id": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.MachineLearningServices/workspaces/{project_scope['project_name']}",
+        "name": project_scope["project_name"],
+        "type": "Microsoft.MachineLearningServices/workspaces",
+        "location": "swedencentral",
+        "properties": {
+            "discoveryUrl": "https://swedencentral.api.azureml.ms",
+            "mlFlowTrackingUri": f"https://swedencentral.api.azureml.ms/mlflow/v1.0/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.MachineLearningServices/workspaces/{project_scope['project_name']}",
+            "workspaceId": project_scope["subscription_id"],
+            "friendlyName": project_scope["project_name"],
+            "description": "Test workspace for Azure AI evaluation",
+            "keyVault": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.KeyVault/vaults/kv-{project_scope['project_name']}",
+            "applicationInsights": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.Insights/components/ai-{project_scope['project_name']}",
+            "storageAccount": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.Storage/storageAccounts/st{project_scope['project_name']}",
+        },
+    }
+
+    class MockResponse:
+        def __init__(self, json_data, status_code):
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            return self.json_data
+
+    def mock_requests_get(url, **kwargs):
+        # Check if this is an Azure Management API call for workspace discovery
+        if (
+            "management.azure.com" in url
+            and "Microsoft.MachineLearningServices/workspaces" in url
+            and "api-version=" in url
+        ):
+            return MockResponse(mock_response_data, 200)
+
+        # For any other requests, call the original function
+        # This preserves other functionality while only mocking the specific API we need
+        return original_requests_get(url, **kwargs)
+
+    # Store the original requests.get function
+    original_requests_get = requests.get
+
+    # Apply the mock
+    with patch("requests.get", side_effect=mock_requests_get):
+        yield

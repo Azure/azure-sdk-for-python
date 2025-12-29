@@ -31,7 +31,7 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.account_connection.list(
+    response = client.account_connections.list(
         resource_group_name="resourceGroup-1",
         account_name="account-1",
     )
@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/preview/2025-04-01-preview/examples/AccountConnection/list.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/AccountConnection/list.json
 if __name__ == "__main__":
     main()

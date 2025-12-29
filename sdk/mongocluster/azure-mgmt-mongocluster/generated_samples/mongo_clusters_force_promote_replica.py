@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-04-01-preview/MongoClusters_ForcePromoteReplica.json
+# x-ms-original-file: 2025-09-01/MongoClusters_ForcePromoteReplica.json
 if __name__ == "__main__":
     main()

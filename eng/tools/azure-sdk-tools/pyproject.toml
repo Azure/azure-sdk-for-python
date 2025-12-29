@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-sdk-tools"
+version = "0.0.0"
+description = "Build and test tooling for the Azure SDK for Python"
+readme = "README.md"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" }
+]
+urls = { "Homepage" = "https://github.com/Azure/azure-sdk-for-python" }
+
+dependencies = [
+  "packaging",
+  "wheel",
+  "Jinja2",
+  "json-delta>=2.0",
+  "pytest-cov",
+  "pytest>=3.5.1",
+  "python-dotenv",
+  "PyYAML",
+  "urllib3",
+  "tomli-w==1.0.0",
+  "azure-core",
+  "ConfigArgParse>=0.12.0",
+  "pytest-asyncio>=0.9.0; python_version >= '3.5'",
+  "tomli; python_version < '3.11'",
+]
+
+[project.scripts]
+generate_package = "packaging_tools.generate_package:generate_main"
+generate_sdk = "packaging_tools.generate_sdk:generate_main"
+generate_client = "packaging_tools.generate_client:generate_main"
+generate_namereserve_package = "packaging_tools.generate_namereserve_package:generate_main"
+sdk_generator = "packaging_tools.sdk_generator:generate_main"
+sdk_changelog = "packaging_tools.sdk_changelog:generate_main"
+sdk_update_version = "packaging_tools.sdk_update_version:generate_main"
+sdk_update_metadata = "packaging_tools.sdk_update_metadata:generate_main"
+sdk_build = "ci_tools.build:build"
+sdk_build_package = "ci_tools.build:build_package"
+sdk_build_conda = "ci_tools.conda:entrypoint"
+sdk_set_dev_version = "ci_tools.versioning.version_set_dev:version_set_dev_main"
+sdk_set_version = "ci_tools.versioning.version_set:version_set_main"
+sdk_increment_version = "ci_tools.versioning.version_increment:version_increment_main"
+sdk_analyze_deps = "ci_tools.dependency_analysis:analyze_dependencies"
+sdk_find_invalid_versions = "ci_tools.versioning.find_invalid_versions:find_invalid_versions_main"
+sdk_verify_keywords = "ci_tools.keywords_verify:entrypoint"
+perfstress = "devtools_testutils.perfstress_tests:run_perfstress_cmd"
+perfstressdebug = "devtools_testutils.perfstress_tests:run_perfstress_debug_cmd"
+systemperf = "devtools_testutils.perfstress_tests:run_system_perfstress_tests_cmd"
+azpysdk = "azpysdk.main:main"
+
+[project.optional-dependencies]
+build = ["setuptools", "pyparsing", "certifi", "cibuildwheel", "pkginfo", "build"]
+conda = ["beautifulsoup4"]
+systemperf = ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"]
+ghtools = ["GitPython", "PyGithub>=1.59.0", "requests>=2.0"]
+sdkgenerator = ["tox"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"packaging_tools.templates.packaging_files" = ["*"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "build*"]
+
+[tool.black]
+line-length=120
+exclude="packaging_tools/templates/setup.py"

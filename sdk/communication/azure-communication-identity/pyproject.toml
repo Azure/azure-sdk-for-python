@@ -1,2 +1,5 @@
 [tool.azure-sdk-build]
 pyright = false
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"

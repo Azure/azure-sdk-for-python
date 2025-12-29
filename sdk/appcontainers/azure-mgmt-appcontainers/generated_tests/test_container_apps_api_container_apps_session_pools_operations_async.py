@@ -23,7 +23,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperationsAsync(AzureMgmtReco
     @recorded_by_proxy_async
     async def test_container_apps_session_pools_list_by_subscription(self, resource_group):
         response = self.client.container_apps_session_pools.list_by_subscription(
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperationsAsync(AzureMgmtReco
     async def test_container_apps_session_pools_list_by_resource_group(self, resource_group):
         response = self.client.container_apps_session_pools.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperationsAsync(AzureMgmtReco
         response = await self.client.container_apps_session_pools.get(
             resource_group_name=resource_group.name,
             session_pool_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -116,7 +116,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperationsAsync(AzureMgmtReco
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-01-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -168,7 +168,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperationsAsync(AzureMgmtReco
                     "sessionNetworkConfiguration": {"status": "str"},
                     "tags": {"str": "str"},
                 },
-                api_version="2025-01-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -182,7 +182,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperationsAsync(AzureMgmtReco
             await self.client.container_apps_session_pools.begin_delete(
                 resource_group_name=resource_group.name,
                 session_pool_name="str",
-                api_version="2025-01-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

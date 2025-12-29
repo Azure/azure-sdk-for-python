@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -44,6 +45,13 @@ def main():
             "properties": {
                 "configuration": {
                     "dapr": {
+                        "appHealth": {
+                            "enabled": True,
+                            "path": "/health",
+                            "probeIntervalSeconds": 3,
+                            "probeTimeoutMilliseconds": 1000,
+                            "threshold": 3,
+                        },
                         "appPort": 3000,
                         "appProtocol": "http",
                         "enableApiLogging": True,
@@ -51,6 +59,7 @@ def main():
                         "httpMaxRequestSize": 10,
                         "httpReadBufferSize": 30,
                         "logLevel": "debug",
+                        "maxConcurrency": 10,
                     },
                     "identitySettings": [
                         {
@@ -192,6 +201,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ContainerApps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

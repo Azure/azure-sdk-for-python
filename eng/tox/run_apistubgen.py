@@ -40,6 +40,12 @@ def get_package_wheel_path(pkg_root, out_path):
         out_token_path = os.path.join(out_path, os.path.basename(pkg_path))
     return  pkg_path, out_token_path
 
+def get_cross_language_mapping_path(pkg_root):
+    mapping_path = os.path.join(pkg_root, "apiview-properties.json")
+    if os.path.exists(mapping_path):
+        return mapping_path
+    return None
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Run apistubgen against target folder. "
@@ -73,10 +79,13 @@ if __name__ == "__main__":
     # Check if a wheel is already built for current package and install from wheel when available
     # If wheel is not available then install package from source
     pkg_path, out_token_path = get_package_wheel_path(args.target_package, args.out_path)
+    cross_language_mapping_path = get_cross_language_mapping_path(args.target_package)
 
     cmds = ["apistubgen", "--pkg-path", pkg_path]
     if out_token_path:
         cmds.extend(["--out-path", out_token_path])
+    if cross_language_mapping_path:
+        cmds.extend(["--mapping-path", cross_language_mapping_path])
 
     logging.info("Running apistubgen {}.".format(cmds))
     check_call(cmds, cwd=args.work_dir)

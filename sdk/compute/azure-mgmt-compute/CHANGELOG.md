@@ -1,5 +1,147 @@
 # Release History
 
+## 37.1.0 (2025-11-17)
+
+### Features Added
+
+  - Model AdditionalCapabilities has a new parameter enable_fips1403_encryption
+  - Model DiskRestorePointInstanceView has a new parameter snapshot_access_state
+  - Model RestorePoint has a new parameter instant_access_duration_minutes
+  - Model RestorePointCollection has a new parameter instant_access
+  - Model RestorePointCollectionUpdate has a new parameter instant_access
+
+## 37.0.1 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
+## 37.0.0 (2025-09-22)
+
+### Features Added
+
+  - Added operation VirtualMachineScaleSetsOperations.begin_scale_out
+  - Added operation group GalleryInVMAccessControlProfileVersionsOperations
+  - Added operation group GalleryInVMAccessControlProfilesOperations
+  - Added operation group SoftDeletedResourceOperations
+  - Model AccessUri has a new parameter security_metadata_access_sas
+  - Model CapacityReservation has a new parameter schedule_profile
+  - Model CapacityReservationGroup has a new parameter reservation_type
+  - Model CapacityReservationGroupUpdate has a new parameter reservation_type
+  - Model CapacityReservationUpdate has a new parameter schedule_profile
+  - Model CreationData has a new parameter instant_access_duration_minutes
+  - Model CreationData has a new parameter security_metadata_uri
+  - Model Disk has a new parameter availability_policy
+  - Model Disk has a new parameter system_data
+  - Model DiskAccess has a new parameter system_data
+  - Model DiskEncryptionSet has a new parameter system_data
+  - Model DiskRestorePoint has a new parameter logical_sector_size
+  - Model DiskRestorePoint has a new parameter system_data
+  - Model DiskUpdate has a new parameter availability_policy
+  - Model EventGridAndResourceGraph has a new parameter scheduled_events_api_version
+  - Model Gallery has a new parameter identity
+  - Model Gallery has a new parameter system_data
+  - Model GalleryApplication has a new parameter system_data
+  - Model GalleryApplicationVersion has a new parameter system_data
+  - Model GalleryImage has a new parameter allow_update_image
+  - Model GalleryImage has a new parameter system_data
+  - Model GalleryImageFeature has a new parameter starts_at_version
+  - Model GalleryImageUpdate has a new parameter allow_update_image
+  - Model GalleryImageVersion has a new parameter restore
+  - Model GalleryImageVersion has a new parameter system_data
+  - Model GalleryImageVersion has a new parameter validations_profile
+  - Model GalleryImageVersionSafetyProfile has a new parameter block_deletion_before_end_of_life
+  - Model GalleryImageVersionUpdate has a new parameter restore
+  - Model GalleryImageVersionUpdate has a new parameter validations_profile
+  - Model GalleryList has a new parameter security_profile
+  - Model GalleryUpdate has a new parameter identity
+  - Model OrchestrationServiceSummary has a new parameter last_status_change_time
+  - Model OrchestrationServiceSummary has a new parameter latest_operation_status
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model ProxyAgentSettings has a new parameter add_proxy_agent_extension
+  - Model ResiliencyPolicy has a new parameter zone_allocation_policy
+  - Model ScheduledEventsPolicy has a new parameter all_instances_down
+  - Model Snapshot has a new parameter snapshot_access_state
+  - Model Snapshot has a new parameter system_data
+  - Model SnapshotUpdate has a new parameter snapshot_access_state
+  - Model SupportedCapabilities has a new parameter supported_security_option
+  - Model TargetRegion has a new parameter additional_replica_sets
+  - Model UserArtifactSettings has a new parameter script_behavior_after_reboot
+  - Model VirtualMachineNetworkInterfaceConfiguration has a new parameter tags
+  - Model VirtualMachinePublicIPAddressConfiguration has a new parameter tags
+  - Model VirtualMachineRunCommandScriptSource has a new parameter gallery_script_reference_id
+  - Model VirtualMachineRunCommandScriptSource has a new parameter script_shell
+  - Model VirtualMachineScaleSet has a new parameter high_speed_interconnect_placement
+  - Model VirtualMachineScaleSet has a new parameter placement
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter tags
+  - Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter tags
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter tags
+  - Model VirtualMachineScaleSetUpdatePublicIPAddressConfiguration has a new parameter tags
+  - Model WindowsParameters has a new parameter patch_name_masks_to_exclude
+  - Model WindowsParameters has a new parameter patch_name_masks_to_include
+
+### Breaking Changes
+
+  - Parameter value of model PrivateEndpointConnectionListResult is now required
+
+## 36.0.0 (2025-08-22)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
+## 35.0.0 (2025-07-21)
+
+### Features Added
+
+  - Model AccessUri has a new parameter security_metadata_access_sas
+  - Model AvailabilitySet has a new parameter system_data
+  - Model CapacityReservation has a new parameter system_data
+  - Model CapacityReservationGroup has a new parameter system_data
+  - Model CreationData has a new parameter instant_access_duration_minutes
+  - Model CreationData has a new parameter security_metadata_uri
+  - Model DedicatedHost has a new parameter system_data
+  - Model DedicatedHostGroup has a new parameter system_data
+  - Model DedicatedHostSizeListResult has a new parameter next_link
+  - Model Disk has a new parameter availability_policy
+  - Model Disk has a new parameter system_data
+  - Model DiskAccess has a new parameter system_data
+  - Model DiskEncryptionSet has a new parameter system_data
+  - Model DiskRestorePoint has a new parameter system_data
+  - Model DiskUpdate has a new parameter availability_policy
+  - Model Image has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model ProximityPlacementGroup has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model RestorePoint has a new parameter system_data
+  - Model RestorePointCollection has a new parameter system_data
+  - Model RollingUpgradeStatusInfo has a new parameter system_data
+  - Model Snapshot has a new parameter snapshot_access_state
+  - Model Snapshot has a new parameter system_data
+  - Model SnapshotUpdate has a new parameter snapshot_access_state
+  - Model SshPublicKeyResource has a new parameter system_data
+  - Model SupportedCapabilities has a new parameter supported_security_option
+  - Model SystemData has a new parameter created_by
+  - Model SystemData has a new parameter created_by_type
+  - Model SystemData has a new parameter last_modified_by
+  - Model SystemData has a new parameter last_modified_by_type
+  - Model VirtualMachine has a new parameter system_data
+  - Model VirtualMachineExtension has a new parameter system_data
+  - Model VirtualMachineExtensionImage has a new parameter system_data
+  - Model VirtualMachineRunCommand has a new parameter system_data
+  - Model VirtualMachineScaleSet has a new parameter system_data
+  - Model VirtualMachineScaleSetVM has a new parameter system_data
+  - Model VirtualMachineSizeListResult has a new parameter next_link
+
+### Breaking Changes
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+  - Parameter location of model VirtualMachineExtension is now required
+  - Parameter value of model PrivateEndpointConnectionListResult is now required
+  - Parameter value of model RestorePointCollectionListResult is now required
+
 ## 34.1.0 (2025-03-24)
 
 ### Features Added

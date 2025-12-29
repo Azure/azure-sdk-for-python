@@ -6,7 +6,7 @@
 import json
 import random
 import uuid
-from typing import Dict, Any
+from typing import Dict, Any, List, Tuple
 
 from azure.cosmos import PartitionKey
 from azure.cosmos import CosmosClient
@@ -54,8 +54,7 @@ def storing_session_tokens_pk(container):
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
     # The cache is a Dict here for simplicity but in a real-world scenario, it would be some service.
-    feed_ranges_and_session_tokens = []
-    previous_session_token = ""
+    feed_ranges_and_session_tokens: List[Tuple[Dict[str, Any], str]] = []
 
     # populating cache with session tokens
     for i in range(5):
@@ -65,19 +64,24 @@ def storing_session_tokens_pk(container):
             'pk': 'A' + str(random.randint(1, 10))
         }
         target_feed_range = container.feed_range_from_partition_key(item['pk'])
-        response = container.create_item(item, session_token=previous_session_token)
-        session_token = response.get_response_headers()[HttpHeaders.SessionToken]
-        # adding everything in the cache in case consolidation is possible
-        for feed_range_json, session_token_cache in cache.items():
-            feed_range = json.loads(feed_range_json)
-            feed_ranges_and_session_tokens.append((feed_range, session_token_cache))
-        feed_ranges_and_session_tokens.append((target_feed_range, session_token))
-        latest_session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
-        # only doing this for the key to be immutable
-        feed_range_json = json.dumps(target_feed_range)
-        cache[feed_range_json] = latest_session_token
-        previous_session_token = session_token
+        perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item,
+                                                      target_feed_range)
 
+def perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item,
+                                                  target_feed_range):
+    # only doing this for the key to be immutable
+    feed_range_json = json.dumps(target_feed_range)
+    session_token = cache[feed_range_json] if feed_range_json in cache else None
+    response = container.create_item(item, session_token=session_token)
+    response_session_token = response.get_response_headers()[HttpHeaders.SessionToken]
+    # adding everything from the cache in case consolidation is possible
+    for feed_range_json, session_token_cache in cache.items():
+        feed_range = json.loads(feed_range_json)
+        feed_ranges_and_session_tokens.append((feed_range, session_token_cache))
+    feed_ranges_and_session_tokens.append((target_feed_range, response_session_token))
+    latest_session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
+    # only doing this for the key to be immutable
+    cache[feed_range_json] = latest_session_token
 
 def storing_session_tokens_container_feed_ranges(container):
     print('2. Storing session tokens in a cache by feed range from the container.')
@@ -87,8 +91,7 @@ def storing_session_tokens_container_feed_ranges(container):
 
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
-    feed_ranges_and_session_tokens = []
-    previous_session_token = ""
+    feed_ranges_and_session_tokens: List[Tuple[Dict[str, Any], str]] = []
     feed_ranges = list(container.read_feed_ranges())
 
     # populating cache with session tokens
@@ -99,24 +102,11 @@ def storing_session_tokens_container_feed_ranges(container):
             'pk': 'A' + str(random.randint(1, 10))
         }
         feed_range_from_pk = container.feed_range_from_partition_key(item['pk'])
-        response = container.create_item(item, session_token=previous_session_token)
-        session_token = response.get_response_headers()[HttpHeaders.SessionToken]
-        # adding everything in the cache in case consolidation is possible
-
-        for feed_range_json, session_token_cache in cache.items():
-            feed_range = json.loads(feed_range_json)
-            feed_ranges_and_session_tokens.append((feed_range, session_token_cache))
         target_feed_range: dict = next(
             (feed_range for feed_range in feed_ranges if container.is_feed_range_subset(feed_range, feed_range_from_pk)),
             {}
         )
-        feed_ranges_and_session_tokens.append((target_feed_range, session_token))
-        latest_session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
-        # only doing this for the key to be immutable
-        feed_range_json = json.dumps(target_feed_range)
-        cache[feed_range_json] = latest_session_token
-        previous_session_token = session_token
-
+        perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item, target_feed_range)
 
 def run_sample():
     with CosmosClient(HOST, CREDENTIAL) as client:

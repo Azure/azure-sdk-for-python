@@ -10,8 +10,9 @@ from aiohttp.client_exceptions import (ClientConnectionError, ClientConnectionRe
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
-from azure.cosmos import DatabaseAccount, _location_cache
+from azure.cosmos import DatabaseAccount
 from azure.cosmos._location_cache import RegionalRoutingContext
+from azure.cosmos._request_object import RequestObject
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, _global_endpoint_manager_async
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
@@ -26,7 +27,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGIONAL_ENDPOINT = RegionalRoutingContext(host, host)
+    REGIONAL_ENDPOINT = RegionalRoutingContext(host)
 
     @classmethod
     def setUpClass(cls):
@@ -68,7 +69,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             expected_counter = len(original_location_cache.read_regional_routing_contexts)
             try:
                 # Mock the function to return the ServiceRequestException we retry
-                mf = self.MockExecuteServiceRequestException()
+                mf = self.MockExecuteServiceRequestExceptionIgnoreQuery(self.original_execute_function)
                 _retry_utility_async.ExecuteFunctionAsync = mf
                 await container.read_item(created_item['id'], created_item['pk'])
                 pytest.fail("Exception was not raised.")
@@ -159,7 +160,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                                                                       self.REGIONAL_ENDPOINT]
             try:
                 # Mock the function to return the ClientConnectionError we retry
-                mf = self.MockExecuteServiceResponseException(AttributeError, None)
+                mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(AttributeError,
+                                                                         None, self.original_execute_function)
                 _retry_utility_async.ExecuteFunctionAsync = mf
                 await container.read_item(created_item['id'], created_item['pk'])
                 pytest.fail("Exception was not raised.")
@@ -224,7 +226,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=2)
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 2
@@ -424,8 +426,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert connection_retry_policy.counter == 3
-                # 4 total requests for each in-region (hub -> write locational endpoint)
-                assert len(connection_retry_policy.request_endpoints) == 8
+                # 4 total in region retries
+                assert len(connection_retry_policy.request_endpoints) == 4
             except CosmosHttpResponseError as e:
                 print(e)
             finally:
@@ -454,6 +456,25 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             exception.exc_type = Exception
             raise exception
 
+    class MockExecuteServiceRequestExceptionIgnoreQuery(object):
+        def __init__(self, original_execute_function):
+            self.counter = 0
+            self.original_execute_function = original_execute_function
+
+        def __call__(self, func, *args, **kwargs):
+
+            if args and isinstance(args[1], RequestObject):
+                request_obj = args[1]
+                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or\
+                    request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                    # Ignore query requests, As an additional ReadFeed might occur during a regular Read operation
+                    return self.original_execute_function(func, *args, **kwargs)
+                self.counter = self.counter + 1
+                exception = ServiceRequestError("mock exception")
+                exception.exc_type = Exception
+                raise exception
+            return self.original_execute_function(func, *args, **kwargs)
+
     class MockExecuteServiceResponseException(object):
         def __init__(self, err_type, inner_exception):
             self.err_type = err_type
@@ -466,6 +487,28 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             exception.exc_type = self.err_type
             exception.inner_exception = self.inner_exception
             raise exception
+
+    class MockExecuteServiceResponseExceptionIgnoreQuery(object):
+        def __init__(self, err_type, inner_exception, original_execute_function):
+            self.err_type = err_type
+            self.inner_exception = inner_exception
+            self.counter = 0
+            self.original_execute_function = original_execute_function
+
+        def __call__(self, func, *args, **kwargs):
+
+            if args and isinstance(args[1], RequestObject):
+                request_obj = args[1]
+                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or \
+                        request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                    # Ignore query requests, As an additional ReadFeed might occur during a regular Read operation
+                    return self.original_execute_function(func, *args, **kwargs)
+                self.counter = self.counter + 1
+                exception = ServiceResponseError("mock exception")
+                exception.exc_type = self.err_type
+                exception.inner_exception = self.inner_exception
+                raise exception
+            return self.original_execute_function(func, *args, **kwargs)
 
     async def MockGetDatabaseAccountStub(self, endpoint):
         read_regions = ["West US", "East US"]

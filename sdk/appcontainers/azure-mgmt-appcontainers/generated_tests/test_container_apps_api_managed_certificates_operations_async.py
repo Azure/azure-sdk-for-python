@@ -26,7 +26,7 @@ class TestContainerAppsAPIManagedCertificatesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             environment_name="str",
             managed_certificate_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestContainerAppsAPIManagedCertificatesOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 environment_name="str",
                 managed_certificate_name="str",
-                api_version="2025-01-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -54,7 +54,7 @@ class TestContainerAppsAPIManagedCertificatesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             environment_name="str",
             managed_certificate_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestContainerAppsAPIManagedCertificatesOperationsAsync(AzureMgmtRecordedTe
             environment_name="str",
             managed_certificate_name="str",
             managed_certificate_envelope={"tags": {"str": "str"}},
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestContainerAppsAPIManagedCertificatesOperationsAsync(AzureMgmtRecordedTe
         response = self.client.managed_certificates.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -25,7 +25,7 @@ class TestContainerAppsAPICertificatesOperationsAsync(AzureMgmtRecordedTestCase)
         response = self.client.certificates.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPICertificatesOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             environment_name="str",
             certificate_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestContainerAppsAPICertificatesOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             environment_name="str",
             certificate_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestContainerAppsAPICertificatesOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             environment_name="str",
             certificate_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestContainerAppsAPICertificatesOperationsAsync(AzureMgmtRecordedTestCase)
             environment_name="str",
             certificate_name="str",
             certificate_envelope={"tags": {"str": "str"}},
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

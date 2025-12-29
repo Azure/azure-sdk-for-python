@@ -15,7 +15,7 @@ parameters:
 stages:
   - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
-      - stage:
+      - stage: 'Release_${{artifact.safename}}'
         displayName: 'Release: ${{artifact.name}}'
         dependsOn: ${{parameters.DependsOn}}
         variables:
@@ -24,7 +24,7 @@ stages:
         jobs:
           - job: TagRepository
             displayName: "Create release tag"
-            condition: ne(variables['Skip.TagRepository'], 'true')
+            condition: and(succeeded(), ne(variables['Skip.TagRepository'], 'true'))
 
             pool:
               image: ubuntu-24.04
@@ -63,7 +63,7 @@ stages:
                   ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
               - script: |
-                  python -m pip install "./tools/azure-sdk-tools"
+                  python -m pip install "./eng/tools/azure-sdk-tools"
                 displayName: Install tool dependencies
 
               - task: PythonScript@0
@@ -185,8 +185,8 @@ stages:
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
-          - job: CreateApiView
-            displayName: "Create APIView"
+          - job: MarkPackageReleaseCompletion
+            displayName: "Mark package release completion"
             dependsOn: PublishPackage
 
             pool:
@@ -204,6 +204,11 @@ stages:
               - task: UsePythonVersion@0
                 inputs:
                   versionSpec: '3.9'
+
+              - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
+                parameters:
+                  ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
+                  PackageArtifactName: ${{artifact.name}}
 
               - template: /eng/common/pipelines/templates/steps/create-apireview.yml
                 parameters:
@@ -307,7 +312,7 @@ stages:
               - checkout: self
               - task: UsePythonVersion@0
               - script: |
-                  python -m pip install "./tools/azure-sdk-tools[build]"
+                  python -m pip install "./eng/tools/azure-sdk-tools[build]"
                 displayName: Install versioning tool dependencies
 
               - pwsh: |

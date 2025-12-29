@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, Optional, TypeVar, Union, cast
+from typing import Any, AsyncIterator, Callable, Optional, TypeVar, Union, cast
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -36,7 +36,8 @@ from ...operations._deleted_accounts_operations import build_get_request, build_
 from .._configuration import CognitiveServicesManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class DeletedAccountsOperations:
@@ -230,7 +231,7 @@ class DeletedAccountsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Account"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Account"]:
         """Returns all the resources of a particular type belonging to a subscription.
 
         :return: An iterator like instance of either Account or the result of cls(response)

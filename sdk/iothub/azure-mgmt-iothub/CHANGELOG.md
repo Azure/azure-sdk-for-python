@@ -1,5 +1,23 @@
 # Release History
 
+## 5.0.0b2 (2025-10-20)
+
+### Features Added
+
+  - Model `IotHubClient` added parameter `cloud_setting` in method `__init__`
+  - Model `CertificateProperties` added property `policy_resource_id`
+  - Model `CertificatePropertiesWithNonce` added property `policy_resource_id`
+  - Model `IotHubProperties` added property `device_registry`
+  - Enum `IotHubSku` added member `GEN2`
+  - Enum `IotHubSkuTier` added member `GENERATION2`
+  - Added model `DeviceRegistry`
+
+## 5.0.0b1 (2025-08-14)
+
+### Breaking Changes
+
+- This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
 ## 4.0.0 (2025-04-09)
 
 ### Breaking Changes

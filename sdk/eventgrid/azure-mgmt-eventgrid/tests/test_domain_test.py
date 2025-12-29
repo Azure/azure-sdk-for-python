@@ -14,6 +14,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 
 @pytest.mark.live_test_only
+@pytest.mark.skip("disallowed by policy")
 class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

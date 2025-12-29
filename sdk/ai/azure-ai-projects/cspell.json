@@ -1,19 +1,39 @@
 {
-    "ignoreWords": [
-        "aiproject",
-        "Prompty",
-        "azureopenai",
-        "GLEU",
-        "aiservices",
-        "azureai",
-        "GENAI",
-        "UPIA",
-        "ansii",
-        "getconnectionwithcredentials",
-        "quantitive",
-        "balapvbyostoragecanary",
-        "fspath",
-    ],
+  "ignoreWords": [
+    "agentic",
+    "aiproject",
+    "azureopenai",
+    "GLEU",
+    "aiservices",
+    "azureai",
+    "GENAI",
+    "UPIA",
+    "ansii",
+    "getconnectionwithcredentials",
+    "quantitive",
+    "balapvbyostoragecanary",
+    "fspath",
+    "aread",
+    "inpainting",
+    "CSDL",
+    "fstring",
+    "aiprojectclient",
+    "Tadmaq",
+    "Udbk",
+    "Ministral",
+    "cogsvc",
+    "evals",
+    "FineTuning",
+    "ftjob",
+    "ftchkpt",
+    "closefd"
+  ],
     "ignorePaths": [
+        "*.csv",
+        "*.json",
+        "*.jsonl"
+    ],
+    "words": [
+        "Pxqzykebv"
     ]
 }

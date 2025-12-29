@@ -23,10 +23,16 @@ _LOGGER = logging.getLogger(__name__)
 def _get_error_message(history):
     attempts = []
     for credential, error in history:
-        if error:
-            attempts.append("{}: {}".format(credential.__class__.__name__, error))
+        # Check if credential has a custom name (for DACErrorReporter instances)
+        if hasattr(credential, "_credential_name"):
+            credential_name = credential._credential_name  # pylint: disable=protected-access
         else:
-            attempts.append(credential.__class__.__name__)
+            credential_name = credential.__class__.__name__
+
+        if error:
+            attempts.append("{}: {}".format(credential_name, error))
+        else:
+            attempts.append(credential_name)
     return """
 Attempted credentials:\n\t{}""".format(
         "\n\t".join(attempts)
@@ -41,7 +47,7 @@ class ChainedTokenCredential:
     <"https://aka.ms/azsdk/python/identity/credential-chains#chainedtokencredential-overview">`__.
 
     :param credentials: credential instances to form the chain
-    :type credentials: ~azure.core.credentials.TokenCredential
+    :type credentials: ~azure.core.credentials.TokenProvider
 
     .. admonition:: Example:
 

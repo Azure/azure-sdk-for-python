@@ -6,17 +6,16 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
-
-from typing import Union, Optional, Any, TYPE_CHECKING
+from typing import Any, cast, Optional, Union, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
-
-from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.aio.operations import FileOperations, ShareOperations
+from .._shared.response_handlers import return_response_headers, process_storage_error
 
 if TYPE_CHECKING:
     from azure.storage.fileshare.aio import ShareClient, ShareFileClient
+    from datetime import datetime
 
 
 class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -42,6 +41,17 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
+
+    id: str
+    """The ID of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired."""
+    etag: Optional[str]
+    """The ETag of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired or modified."""
+    last_modified: Optional["datetime"]
+    """The last modified timestamp of the lease currently being maintained.
+        This will be `None` if no lease has yet been acquired or modified."""
+
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self, client: Union["ShareFileClient", "ShareClient"],
         lease_id: Optional[str] = None
@@ -246,4 +256,4 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return response.get('lease_time')  # type: ignore
+        return cast(int, response.get('lease_time'))

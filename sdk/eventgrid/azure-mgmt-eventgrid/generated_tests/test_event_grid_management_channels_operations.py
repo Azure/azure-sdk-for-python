@@ -25,7 +25,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             partner_namespace_name="str",
             channel_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -44,6 +44,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
                 "id": "str",
                 "messageForActivation": "str",
                 "name": "str",
+                "partnerDestinationInfo": "partner_destination_info",
                 "partnerTopicInfo": {
                     "azureSubscriptionId": "str",
                     "eventTypeInfo": {
@@ -73,7 +74,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +87,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             partner_namespace_name="str",
             channel_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,6 +102,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
             channel_name="str",
             channel_update_parameters={
                 "expirationTimeIfNotActivatedUtc": "2020-02-20 00:00:00",
+                "partnerDestinationInfo": "partner_update_destination_info",
                 "partnerTopicInfo": {
                     "eventTypeInfo": {
                         "inlineEventTypes": {
@@ -115,7 +117,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
                     }
                 },
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -127,7 +129,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
         response = self.client.channels.list_by_partner_namespace(
             resource_group_name=resource_group.name,
             partner_namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -140,7 +142,7 @@ class TestEventGridManagementChannelsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             partner_namespace_name="str",
             channel_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

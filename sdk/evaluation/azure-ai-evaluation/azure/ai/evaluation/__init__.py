@@ -32,6 +32,8 @@ from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._ungrounded_attributes import UngroundedAttributesEvaluator
 from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
 from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
+from ._evaluators._tool_output_utilization import _ToolOutputUtilizationEvaluator
+from ._evaluators._tool_call_success import _ToolCallSuccessEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -46,6 +48,7 @@ from ._aoai.label_grader import AzureOpenAILabelGrader
 from ._aoai.string_check_grader import AzureOpenAIStringCheckGrader
 from ._aoai.text_similarity_grader import AzureOpenAITextSimilarityGrader
 from ._aoai.score_model_grader import AzureOpenAIScoreModelGrader
+from ._aoai.python_grader import AzureOpenAIPythonGrader
 
 
 _patch_all = []
@@ -130,14 +133,14 @@ __all__ = [
     "CodeVulnerabilityEvaluator",
     "UngroundedAttributesEvaluator",
     "ToolCallAccuracyEvaluator",
+    "_ToolOutputUtilizationEvaluator",
+    "_ToolCallSuccessEvaluator",
     "AzureOpenAIGrader",
     "AzureOpenAILabelGrader",
     "AzureOpenAIStringCheckGrader",
     "AzureOpenAITextSimilarityGrader",
     "AzureOpenAIScoreModelGrader",
-    # Include lazy imports in __all__ so they appear as available
-    "AIAgentConverter",
-    "SKAgentConverter",
+    "AzureOpenAIPythonGrader",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -26,7 +26,7 @@ class TestContainerAppsAPIContainerAppsRevisionReplicasOperations(AzureMgmtRecor
             container_app_name="str",
             revision_name="str",
             replica_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestContainerAppsAPIContainerAppsRevisionReplicasOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.ai.agents.models._models import RunStepConnectedAgentToolCall
 
 """
 DESCRIPTION:
@@ -26,7 +27,7 @@ USAGE:
     Please see Getting Started with Azure Functions page for more information on Azure Functions:
     https://learn.microsoft.com/azure/azure-functions/functions-get-started
     **Note:** The Azure Function may be only used in standard agent setup. Please follow the instruction on the web page
-    https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup/41-standard-agent-setup
+    https://github.com/azure-ai-foundry/foundry-samples/tree/main/infrastructure/infrastructure-setup-bicep/41-standard-agent-setup
     to deploy an agent, capable of calling Azure Functions.
 """
 
@@ -154,11 +155,11 @@ with project_client:
     for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
         if isinstance(run_step.step_details, RunStepToolCallDetails):
             for tool_call in run_step.step_details.tool_calls:
-                print(
-                    f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                    f"query: {tool_call._data['connected_agent']['arguments']} ",
-                    f"output: {tool_call._data['connected_agent']['output']}",
-                )
+                if isinstance(tool_call, RunStepConnectedAgentToolCall):
+                    print(
+                        f"\tAgent: {tool_call.connected_agent.name} " f"query: {tool_call.connected_agent.arguments} ",
+                        f"output: {tool_call.connected_agent.output}",
+                    )
     # [END list_tool_calls]
 
     # [START list_messages]

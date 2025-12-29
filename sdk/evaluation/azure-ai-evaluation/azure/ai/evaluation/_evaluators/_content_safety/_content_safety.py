@@ -33,8 +33,8 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :type self_harm_threshold: int
     :param hate_unfairness_threshold: The threshold for hate/unfairness evaluation. Default is 3.
     :type hate_unfairness_threshold: int
-    :param _evaluate_query: Whether to also evaluate the query in addition to the response. Default is False.
-    :type _evaluate_query: bool
+    :param evaluate_query: Whether to also evaluate the query in addition to the response. Default is False.
+    :type evaluate_query: bool
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
@@ -68,7 +68,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a ContentSafetyEvaluator with a query and response.
     """
 
-    id = "content_safety"
+    id = "azureai://built-in/evaluators/content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 
@@ -81,7 +81,6 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         sexual_threshold: int = 3,
         self_harm_threshold: int = 3,
         hate_unfairness_threshold: int = 3,
-        _evaluate_query: bool = False,
         **kwargs,
     ):
         # Type checking
@@ -94,16 +93,17 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             if not isinstance(value, int):
                 raise TypeError(f"{name} must be an int, got {type(value)}")
 
+        # Extract evaluate_query from kwargs if present
+        evaluate_query_kwargs = {}
+        if "evaluate_query" in kwargs:
+            evaluate_query_kwargs["evaluate_query"] = kwargs["evaluate_query"]
+
         evaluators = [
-            ViolenceEvaluator(
-                credential, azure_ai_project, threshold=violence_threshold, _evaluate_query=_evaluate_query
-            ),
-            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, _evaluate_query=_evaluate_query),
-            SelfHarmEvaluator(
-                credential, azure_ai_project, threshold=self_harm_threshold, _evaluate_query=_evaluate_query
-            ),
+            ViolenceEvaluator(credential, azure_ai_project, threshold=violence_threshold, **evaluate_query_kwargs),
+            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, **evaluate_query_kwargs),
+            SelfHarmEvaluator(credential, azure_ai_project, threshold=self_harm_threshold, **evaluate_query_kwargs),
             HateUnfairnessEvaluator(
-                credential, azure_ai_project, threshold=hate_unfairness_threshold, _evaluate_query=_evaluate_query
+                credential, azure_ai_project, threshold=hate_unfairness_threshold, **evaluate_query_kwargs
             ),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

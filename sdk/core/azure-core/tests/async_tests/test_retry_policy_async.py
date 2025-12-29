@@ -314,3 +314,99 @@ async def test_does_not_sleep_after_timeout(combinations, http_request):
         await pipeline.run(http_request("GET", "http://localhost/"))
 
     assert transport.sleep.call_count == 1
+
+
+def test_configure_retries_uses_constructor_values():
+    """Test that configure_retries method correctly gets values from constructor."""
+    # Test with custom constructor values
+    retry_policy = AsyncRetryPolicy(
+        retry_total=5,
+        retry_connect=2,
+        retry_read=4,
+        retry_status=1,
+        retry_backoff_factor=0.5,
+        retry_backoff_max=60,
+        timeout=300,
+    )
+
+    # Call configure_retries with empty options to ensure it uses constructor values
+    retry_settings = retry_policy.configure_retries({})
+
+    # Verify that configure_retries returns constructor values as defaults
+    assert retry_settings["total"] == 5
+    assert retry_settings["connect"] == 2
+    assert retry_settings["read"] == 4
+    assert retry_settings["status"] == 1
+    assert retry_settings["backoff"] == 0.5
+    assert retry_settings["max_backoff"] == 60
+    assert retry_settings["timeout"] == 300
+    assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
+    assert retry_settings["history"] == []
+
+
+def test_configure_retries_options_override_constructor():
+    """Test that options passed to configure_retries override constructor values."""
+    # Test with custom constructor values
+    retry_policy = AsyncRetryPolicy(
+        retry_total=5,
+        retry_connect=2,
+        retry_read=4,
+        retry_status=1,
+        retry_backoff_factor=0.5,
+        retry_backoff_max=60,
+        timeout=300,
+    )
+
+    # Call configure_retries with options that should override constructor values
+    options = {
+        "retry_total": 8,
+        "retry_connect": 6,
+        "retry_read": 7,
+        "retry_status": 3,
+        "retry_backoff_factor": 1.0,
+        "retry_backoff_max": 180,
+        "timeout": 600,
+        "retry_on_methods": frozenset(["GET", "POST"]),
+    }
+    retry_settings = retry_policy.configure_retries(options)
+
+    # Verify that configure_retries returns option values, not constructor values
+    assert retry_settings["total"] == 8
+    assert retry_settings["connect"] == 6
+    assert retry_settings["read"] == 7
+    assert retry_settings["status"] == 3
+    assert retry_settings["backoff"] == 1.0
+    assert retry_settings["max_backoff"] == 180
+    assert retry_settings["timeout"] == 600
+    assert retry_settings["methods"] == frozenset(["GET", "POST"])
+    assert retry_settings["history"] == []
+
+    # Verify options dict was modified (values were popped)
+    assert "retry_total" not in options
+    assert "retry_connect" not in options
+    assert "retry_read" not in options
+    assert "retry_status" not in options
+    assert "retry_backoff_factor" not in options
+    assert "retry_backoff_max" not in options
+    assert "timeout" not in options
+    assert "retry_on_methods" not in options
+
+
+def test_configure_retries_default_values():
+    """Test that configure_retries uses default values when no constructor args or options provided."""
+    # Test with default constructor
+    retry_policy = AsyncRetryPolicy()
+
+    # Call configure_retries with empty options
+    retry_settings = retry_policy.configure_retries({})
+
+    # Verify default values from RetryPolicyBase.__init__
+    assert retry_settings["total"] == 10  # default retry_total
+    assert retry_settings["connect"] == 3  # default retry_connect
+    assert retry_settings["read"] == 3  # default retry_read
+    assert retry_settings["status"] == 3  # default retry_status
+    assert retry_settings["backoff"] == 0.8  # default retry_backoff_factor
+    assert retry_settings["max_backoff"] == 120  # default retry_backoff_max (BACKOFF_MAX)
+    assert retry_settings["timeout"] == 604800  # default timeout
+    assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
+    assert retry_settings["history"] == []

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web.v2024_11_01 import WebSiteManagementClient
+from azure.mgmt.web import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestWebSiteManagementCertificatesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_certificates_list(self, resource_group):
         response = self.client.certificates.list(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestWebSiteManagementCertificatesOperations(AzureMgmtRecordedTestCase):
     def test_certificates_list_by_resource_group(self, resource_group):
         response = self.client.certificates.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestWebSiteManagementCertificatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.certificates.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestWebSiteManagementCertificatesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestWebSiteManagementCertificatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.certificates.delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -137,7 +137,7 @@ class TestWebSiteManagementCertificatesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

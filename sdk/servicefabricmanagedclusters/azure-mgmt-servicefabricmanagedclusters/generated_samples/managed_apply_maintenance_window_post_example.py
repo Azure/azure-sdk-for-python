@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ManagedApplyMaintenanceWindowPost_example.json
+# x-ms-original-file: 2025-10-01-preview/ManagedApplyMaintenanceWindowPost_example.json
 if __name__ == "__main__":
     main()

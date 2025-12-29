@@ -74,7 +74,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.asyncio
     async def test_logs_query_batch_raises_on_no_timespan(self, monitor_info):
         with pytest.raises(TypeError):
-            LogsBatchQuery(
+            LogsBatchQuery(  # type: ignore
                 workspace_id=monitor_info["workspace_id"],
                 query="AzureActivity | summarize count()",
             )
@@ -128,7 +128,6 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
             assert response
             assert len(response.tables[0].rows) == 2
 
-    @pytest.mark.skip("Flaky deserialization issues with msrest. Re-enable after removing msrest dependency.")
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     @pytest.mark.asyncio
     async def test_logs_query_batch_additional_workspaces(self, monitor_info):
@@ -258,14 +257,15 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.asyncio
     async def test_client_different_endpoint(self):
         credential = self.get_credential(LogsQueryClient, is_async=True)
-        endpoint = "https://api.loganalytics.azure.cn/v1"
+        endpoint = "https://api.loganalytics.azure.cn/"
         client = LogsQueryClient(credential, endpoint=endpoint)
 
         assert client._endpoint == endpoint
-        assert "https://api.loganalytics.azure.cn/.default" in client._client._config.authentication_policy._scopes
+        assert client._config.authentication_policy
+        assert "https://api.loganalytics.azure.cn/.default" in client._config.authentication_policy._scopes
 
     @pytest.mark.asyncio
     async def test_client_user_agent(self):
         client: LogsQueryClient = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
-            assert f"monitor-query/{VERSION}" in client._client._config.user_agent_policy.user_agent
+            assert f"monitor-query/{VERSION}" in client._config.user_agent_policy.user_agent

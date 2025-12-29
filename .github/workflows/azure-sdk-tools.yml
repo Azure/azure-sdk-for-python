@@ -5,7 +5,8 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - "tools/azure-sdk-tools/**"
+      - "eng/tools/azure-sdk-tools/**"
+      - ".github/workflows/azure-sdk-tools.yml"
 
 jobs:
   build-and-test:
@@ -13,14 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.13
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install azure-sdk-tools
         run: |
-          python -m pip install -e tools/azure-sdk-tools[build,ghtools,conda]
+          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
           python -m pip freeze
         shell: bash
 
@@ -28,4 +29,104 @@ jobs:
         run: |
           pytest ./tests
         shell: bash
-        working-directory: tools/azure-sdk-tools
+        working-directory: eng/tools/azure-sdk-tools
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install azure-sdk-tools
+        run: |
+          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
+          python -m pip install black==24.4.0
+          python -m pip freeze
+        shell: bash
+
+      - name: Run black
+        run: |
+          black --check --config eng/black-pyproject.toml eng/tools/azure-sdk-tools --exclude 'templates'
+        shell: bash
+
+  verify-azpysdk-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+        shell: bash
+
+      - name: Install azure-sdk-tools on in global uv, discover azpysdk checks
+        run: |
+          uv pip install --system eng/tools/azure-sdk-tools[build,ghtools,conda]
+
+          # Discover available azpysdk commands from the {command1,command2,...} line in help output
+          CHECKS=$(azpysdk -h 2>&1 | \
+            grep -oP '\{[^}]+\}' | \
+            tail -1 | \
+            tr -d '{}' | \
+            tr ',' '\n' | \
+            grep -v '^next-' | \
+            sort | \
+            paste -sd,)
+
+          if [ -z "$CHECKS" ]; then
+            echo "No azpysdk check modules discovered from azpysdk -h" >&2
+            exit 1
+          fi
+          echo "Discovered azpysdk checks: $CHECKS"
+          echo "AZPYSDK_CHECKS=$CHECKS" >> "$GITHUB_ENV"
+        shell: bash
+
+      - name: Run all discovered checks against azure-template using uv as package manager
+        run: |
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
+        shell: bash
+        env:
+          TOX_PIP_IMPL: "uv"
+
+      - name: Install azure-sdk-tools on global pip env
+        run: |
+          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
+        shell: bash
+
+      - name: Run all discovered checks against azure-template using pip as package manager
+        run: |
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
+        shell: bash
+
+  dev-setup-and-import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Run dev_setup to install specified packages
+        run: |
+          python scripts/dev_setup.py --packageList azure-storage-blob,azure-appconfiguration
+        shell: bash
+
+      - name: Validate imports
+        run: |
+          python - <<'PY'
+          from azure.storage.blob import *
+          from azure.appconfiguration import *
+          print("Successful Imports")
+          PY
+        shell: bash

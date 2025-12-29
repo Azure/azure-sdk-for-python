@@ -23,7 +23,7 @@ class TestContainerAppsAPIBillingMetersOperations(AzureMgmtRecordedTestCase):
     def test_billing_meters_get(self, resource_group):
         response = self.client.billing_meters.get(
             location="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

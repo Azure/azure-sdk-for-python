@@ -24,7 +24,7 @@ class TestIotHubCertificatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.certificates.list_by_iot_hub(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestIotHubCertificatesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             certificate_name="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,13 +59,14 @@ class TestIotHubCertificatesOperations(AzureMgmtRecordedTestCase):
                     "created": "2020-02-20 00:00:00",
                     "expiry": "2020-02-20 00:00:00",
                     "isVerified": bool,
+                    "policyResourceId": "str",
                     "subject": "str",
                     "thumbprint": "str",
                     "updated": "2020-02-20 00:00:00",
                 },
                 "type": "str",
             },
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +80,7 @@ class TestIotHubCertificatesOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             certificate_name="str",
             if_match="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +94,7 @@ class TestIotHubCertificatesOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             certificate_name="str",
             if_match="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +109,7 @@ class TestIotHubCertificatesOperations(AzureMgmtRecordedTestCase):
             certificate_name="str",
             if_match="str",
             certificate_verification_body={"certificate": "str"},
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself

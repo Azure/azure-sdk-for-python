@@ -24,7 +24,7 @@ class TestSqlManagementServerKeysOperations(AzureMgmtRecordedTestCase):
         response = self.client.server_keys.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementServerKeysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             key_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestSqlManagementServerKeysOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "uri": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestSqlManagementServerKeysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             key_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

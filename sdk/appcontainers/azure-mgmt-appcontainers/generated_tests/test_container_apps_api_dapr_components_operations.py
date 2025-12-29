@@ -24,7 +24,7 @@ class TestContainerAppsAPIDaprComponentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.dapr_components.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIDaprComponentsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             environment_name="str",
             component_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -52,11 +52,13 @@ class TestContainerAppsAPIDaprComponentsOperations(AzureMgmtRecordedTestCase):
             component_name="str",
             dapr_component_envelope={
                 "componentType": "str",
+                "deploymentErrors": "str",
                 "id": "str",
                 "ignoreErrors": False,
                 "initTimeout": "str",
                 "metadata": [{"name": "str", "secretRef": "str", "value": "str"}],
                 "name": "str",
+                "provisioningState": "str",
                 "scopes": ["str"],
                 "secretStoreComponent": "str",
                 "secrets": [{"identity": "str", "keyVaultUrl": "str", "name": "str", "value": "str"}],
@@ -71,7 +73,7 @@ class TestContainerAppsAPIDaprComponentsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -84,7 +86,7 @@ class TestContainerAppsAPIDaprComponentsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             environment_name="str",
             component_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +99,7 @@ class TestContainerAppsAPIDaprComponentsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             environment_name="str",
             component_name="str",
-            api_version="2025-01-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

@@ -63,7 +63,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         def size(self):
             return len(self._heap)
 
-    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info, response_hook):
+    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info,
+                 response_hook, raw_response_hook):
         super(_MultiExecutionContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -74,41 +75,14 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
         self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
 
         if self._sort_orders:
             self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
         else:
             self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProducerComparator()
 
-        # will be a list of (partition_min, partition_max) tuples
-        targetPartitionRanges = self._get_target_partition_key_range()
-
-        targetPartitionQueryExecutionContextList = []
-        for partitionTargetRange in targetPartitionRanges:
-            # create and add the child execution context for the target range
-            targetPartitionQueryExecutionContextList.append(
-                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
-            )
-
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
-
-        for targetQueryExContext in targetPartitionQueryExecutionContextList:
-            try:
-                # TODO: we can also use more_itertools.peekable to be more python friendly
-                targetQueryExContext.peek()
-                # if there are matching results in the target ex range add it to the priority queue
-
-                self._orderByPQ.push(targetQueryExContext)
-
-            except exceptions.CosmosHttpResponseError as e:
-                if exceptions._partition_range_is_gone(e):
-                    # repairing document producer context on partition split
-                    self._repair_document_producer()
-                else:
-                    raise
-
-            except StopIteration:
-                continue
 
     def __next__(self):
         """Returns the next result
@@ -136,6 +110,35 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     def fetch_next_block(self):
 
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
+
+    def _configure_partition_ranges(self):
+        # will be a list of (partition_min, partition_max) tuples
+        targetPartitionRanges = self._get_target_partition_key_range()
+
+        targetPartitionQueryExecutionContextList = []
+        for partitionTargetRange in targetPartitionRanges:
+            # create and add the child execution context for the target range
+            targetPartitionQueryExecutionContextList.append(
+                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+            )
+
+        for targetQueryExContext in targetPartitionQueryExecutionContextList:
+            try:
+                # TODO: we can also use more_itertools.peekable to be more python friendly
+                targetQueryExContext.peek()
+                # if there are matching results in the target ex range add it to the priority queue
+
+                self._orderByPQ.push(targetQueryExContext)
+
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    # repairing document producer context on partition split
+                    self._repair_document_producer()
+                else:
+                    raise
+
+            except StopIteration:
+                continue
 
     def _repair_document_producer(self):
         """Repairs the document producer context by using the re-initialized routing map provider in the client,
@@ -187,11 +190,11 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             query,
             self._document_producer_comparator,
             self._options,
-            self._response_hook
+            self._response_hook,
+            self._raw_response_hook
         )
 
     def _get_target_partition_key_range(self):
-
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
             self._resource_link,

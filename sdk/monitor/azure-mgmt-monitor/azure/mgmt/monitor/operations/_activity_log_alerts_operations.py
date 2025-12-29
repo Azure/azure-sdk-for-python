@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -31,7 +31,8 @@ from .._configuration import MonitorManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -43,14 +44,14 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -79,13 +80,13 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -112,13 +113,13 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -145,14 +146,14 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -179,11 +180,11 @@ def build_list_by_subscription_id_request(subscription_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/microsoft.insights/activityLogAlerts")
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/activityLogAlerts")
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
@@ -203,13 +204,13 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -253,20 +254,21 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert: _models.ActivityLogAlertResource,
+        activity_log_alert_rule: _models.ActivityLogAlertResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
-        """Create a new activity log alert or update an existing one.
+        """Create a new Activity Log Alert rule or update an existing one.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert: The activity log alert to create or use for the update. Required.
-        :type activity_log_alert: ~azure.mgmt.monitor.models.ActivityLogAlertResource
+        :param activity_log_alert_rule: The Activity Log Alert rule to create or use for the update.
+         Required.
+        :type activity_log_alert_rule: ~azure.mgmt.monitor.models.ActivityLogAlertResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -280,20 +282,21 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert: IO[bytes],
+        activity_log_alert_rule: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
-        """Create a new activity log alert or update an existing one.
+        """Create a new Activity Log Alert rule or update an existing one.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert: The activity log alert to create or use for the update. Required.
-        :type activity_log_alert: IO[bytes]
+        :param activity_log_alert_rule: The Activity Log Alert rule to create or use for the update.
+         Required.
+        :type activity_log_alert_rule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -307,19 +310,19 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert: Union[_models.ActivityLogAlertResource, IO[bytes]],
+        activity_log_alert_rule: Union[_models.ActivityLogAlertResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
-        """Create a new activity log alert or update an existing one.
+        """Create a new Activity Log Alert rule or update an existing one.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert: The activity log alert to create or use for the update. Is either a
-         ActivityLogAlertResource type or a IO[bytes] type. Required.
-        :type activity_log_alert: ~azure.mgmt.monitor.models.ActivityLogAlertResource or IO[bytes]
+        :param activity_log_alert_rule: The Activity Log Alert rule to create or use for the update. Is
+         either a ActivityLogAlertResource type or a IO[bytes] type. Required.
+        :type activity_log_alert_rule: ~azure.mgmt.monitor.models.ActivityLogAlertResource or IO[bytes]
         :return: ActivityLogAlertResource or the result of cls(response)
         :rtype: ~azure.mgmt.monitor.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -335,17 +338,17 @@ class ActivityLogAlertsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ActivityLogAlertResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(activity_log_alert, (IOBase, bytes)):
-            _content = activity_log_alert
+        if isinstance(activity_log_alert_rule, (IOBase, bytes)):
+            _content = activity_log_alert_rule
         else:
-            _json = self._serialize.body(activity_log_alert, "ActivityLogAlertResource")
+            _json = self._serialize.body(activity_log_alert_rule, "ActivityLogAlertResource")
 
         _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -369,7 +372,10 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ActivityLogAlertResource", pipeline_response.http_response)
@@ -383,12 +389,12 @@ class ActivityLogAlertsOperations:
     def get(
         self, resource_group_name: str, activity_log_alert_name: str, **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
-        """Get an activity log alert.
+        """Get an Activity Log Alert rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
         :return: ActivityLogAlertResource or the result of cls(response)
         :rtype: ~azure.mgmt.monitor.models.ActivityLogAlertResource
@@ -405,7 +411,7 @@ class ActivityLogAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
         cls: ClsType[_models.ActivityLogAlertResource] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -427,7 +433,10 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ActivityLogAlertResource", pipeline_response.http_response)
@@ -441,12 +450,12 @@ class ActivityLogAlertsOperations:
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, activity_log_alert_name: str, **kwargs: Any
     ) -> None:
-        """Delete an activity log alert.
+        """Delete an Activity Log Alert rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
         :return: None or the result of cls(response)
         :rtype: None
@@ -463,7 +472,7 @@ class ActivityLogAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -485,7 +494,10 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -496,21 +508,22 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_patch: _models.ActivityLogAlertPatchBody,
+        activity_log_alert_rule_patch: _models.AlertRulePatchObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
-        """Updates an existing ActivityLogAlertResource's tags. To update other fields use the
-        CreateOrUpdate method.
+        """Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update
+        the Alert rule tags, and to enable or disable the Alert rule. To update other fields use
+        CreateOrUpdate operation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert_patch: Parameters supplied to the operation. Required.
-        :type activity_log_alert_patch: ~azure.mgmt.monitor.models.ActivityLogAlertPatchBody
+        :param activity_log_alert_rule_patch: Parameters supplied to the operation. Required.
+        :type activity_log_alert_rule_patch: ~azure.mgmt.monitor.models.AlertRulePatchObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -524,21 +537,22 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_patch: IO[bytes],
+        activity_log_alert_rule_patch: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
-        """Updates an existing ActivityLogAlertResource's tags. To update other fields use the
-        CreateOrUpdate method.
+        """Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update
+        the Alert rule tags, and to enable or disable the Alert rule. To update other fields use
+        CreateOrUpdate operation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert_patch: Parameters supplied to the operation. Required.
-        :type activity_log_alert_patch: IO[bytes]
+        :param activity_log_alert_rule_patch: Parameters supplied to the operation. Required.
+        :type activity_log_alert_rule_patch: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -552,20 +566,21 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_patch: Union[_models.ActivityLogAlertPatchBody, IO[bytes]],
+        activity_log_alert_rule_patch: Union[_models.AlertRulePatchObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
-        """Updates an existing ActivityLogAlertResource's tags. To update other fields use the
-        CreateOrUpdate method.
+        """Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update
+        the Alert rule tags, and to enable or disable the Alert rule. To update other fields use
+        CreateOrUpdate operation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param activity_log_alert_name: The name of the activity log alert. Required.
+        :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert_patch: Parameters supplied to the operation. Is either a
-         ActivityLogAlertPatchBody type or a IO[bytes] type. Required.
-        :type activity_log_alert_patch: ~azure.mgmt.monitor.models.ActivityLogAlertPatchBody or
+        :param activity_log_alert_rule_patch: Parameters supplied to the operation. Is either a
+         AlertRulePatchObject type or a IO[bytes] type. Required.
+        :type activity_log_alert_rule_patch: ~azure.mgmt.monitor.models.AlertRulePatchObject or
          IO[bytes]
         :return: ActivityLogAlertResource or the result of cls(response)
         :rtype: ~azure.mgmt.monitor.models.ActivityLogAlertResource
@@ -582,17 +597,17 @@ class ActivityLogAlertsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ActivityLogAlertResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(activity_log_alert_patch, (IOBase, bytes)):
-            _content = activity_log_alert_patch
+        if isinstance(activity_log_alert_rule_patch, (IOBase, bytes)):
+            _content = activity_log_alert_rule_patch
         else:
-            _json = self._serialize.body(activity_log_alert_patch, "ActivityLogAlertPatchBody")
+            _json = self._serialize.body(activity_log_alert_rule_patch, "AlertRulePatchObject")
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
@@ -616,7 +631,10 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ActivityLogAlertResource", pipeline_response.http_response)
@@ -628,7 +646,7 @@ class ActivityLogAlertsOperations:
 
     @distributed_trace
     def list_by_subscription_id(self, **kwargs: Any) -> ItemPaged["_models.ActivityLogAlertResource"]:
-        """Get a list of all activity log alerts in a subscription.
+        """Get a list of all Activity Log Alert rules in a subscription.
 
         :return: An iterator like instance of either ActivityLogAlertResource or the result of
          cls(response)
@@ -638,8 +656,8 @@ class ActivityLogAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
-        cls: ClsType[_models.ActivityLogAlertList] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
+        cls: ClsType[_models.AlertRuleList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -667,11 +685,11 @@ class ActivityLogAlertsOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ActivityLogAlertList", pipeline_response)
+            deserialized = self._deserialize("AlertRuleList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -684,7 +702,10 @@ class ActivityLogAlertsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -695,7 +716,7 @@ class ActivityLogAlertsOperations:
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> ItemPaged["_models.ActivityLogAlertResource"]:
-        """Get a list of all activity log alerts in a resource group.
+        """Get a list of all Activity Log Alert rules in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -708,8 +729,8 @@ class ActivityLogAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-04-01"))
-        cls: ClsType[_models.ActivityLogAlertList] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))
+        cls: ClsType[_models.AlertRuleList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -738,11 +759,11 @@ class ActivityLogAlertsOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ActivityLogAlertList", pipeline_response)
+            deserialized = self._deserialize("AlertRuleList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -755,7 +776,10 @@ class ActivityLogAlertsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

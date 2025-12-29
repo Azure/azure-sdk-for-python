@@ -34,7 +34,7 @@ def process_content(data: Any) -> bytes:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
 
-class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
+class _ChunkDownloader:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self, client: "FileOperations",
         total_size: int,
@@ -142,7 +142,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         return chunk_data
 
 
-class _ChunkIterator(object):
+class _ChunkIterator:
     """Iterator for chunks in file download stream."""
 
     def __init__(self, size: int, content: bytes, downloader: Optional[_ChunkDownloader], chunk_size: int) -> None:
@@ -195,7 +195,7 @@ class _ChunkIterator(object):
         return chunk_data
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage."""
 
     name: str

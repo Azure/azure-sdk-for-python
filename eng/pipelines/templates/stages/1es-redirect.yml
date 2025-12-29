@@ -36,6 +36,7 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
+      networkIsolationPolicy: Permissive
     sdl:
       ${{ if and(eq(variables['Build.DefinitionName'], 'python - core'), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['System.TeamProject'], 'internal')) }}:
         autobaseline:
@@ -53,11 +54,12 @@ extends:
       codeql:
         compiled:
           enabled: false
-          justificationForDisabling: "CodeQL times our pipelines out by running for 2+ hours before being force canceled."
+          justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
+      componentgovernance:
+        enabled: false
+        justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
       credscan:
         suppressionsFile: '$(Build.SourcesDirectory)/eng/CredScanSuppression.json'
-        toolVersion: '2.3.12.23'
-        baselineFiles: $(Build.SourcesDirectory)/eng/python.gdnbaselines
       psscriptanalyzer:
         compiled: true
         break: true

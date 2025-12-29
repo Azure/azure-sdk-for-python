@@ -22,7 +22,7 @@ omitted_paths:
 language: python
 root_check_enabled: True
 required_readme_sections:
-  - ^Azure (.+ client library for Python|Smoke Test for Python)
+  - ^Azure (.+ client library for Python|Smoke Test for Python|AI Agent Server Adapter for .*Python)
   - ^Getting started$
   - ^Key concepts$
   - ^Examples$
@@ -147,7 +147,6 @@ known_content_issues:
 
   # dev tools
   - ['doc/dev/mgmt/swagger/single_api/readme.md', 'dev readme']
-  - ['doc/dev/mgmt/swagger/multi_api/readme.md', 'dev readme']
   - ['doc/dev/mgmt/README.md', 'dev readme']
   - ['doc/dev/README.md', dev readme']
   - ['doc/README.md', 'dev readme']

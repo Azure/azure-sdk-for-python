@@ -21,7 +21,7 @@ class TestSqlManagementServiceObjectivesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_service_objectives_get(self, resource_group):
         response = await self.client.service_objectives.get(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -34,7 +34,7 @@ class TestSqlManagementServiceObjectivesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_server(self, resource_group):
+    async def test_service_objectives_list_by_server(self, resource_group):
         response = self.client.service_objectives.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",

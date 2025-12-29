@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
 
 """
@@ -29,11 +31,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.web_tests.delete(
+    client.web_tests.delete(
         resource_group_name="my-resource-group",
         web_test_name="my-webtest-01-mywebservice",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/applicationinsights/resource-manager/Microsoft.Insights/stable/2022-06-15/examples/WebTestDelete.json

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web.v2024_11_01.aio import WebSiteManagementClient
+from azure.mgmt.web.aio import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -26,7 +26,7 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
             name="str",
             workflow_name="str",
             trigger_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
             name="str",
             workflow_name="str",
             trigger_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
                 name="str",
                 workflow_name="str",
                 trigger_name="str",
-                api_version="2024-11-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +84,7 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
             name="str",
             workflow_name="str",
             trigger_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

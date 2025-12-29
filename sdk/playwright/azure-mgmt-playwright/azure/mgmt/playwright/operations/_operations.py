@@ -49,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_playwright_workspaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_playwright_workspaces_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +130,7 @@ def build_playwright_workspaces_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,12 +157,9 @@ def build_playwright_workspaces_update_request(  # pylint: disable=name-too-long
 def build_playwright_workspaces_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, playwright_workspace_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LoadTestService/playwrightWorkspaces/{playwrightWorkspaceName}"
     path_format_arguments = {
@@ -176,10 +173,7 @@ def build_playwright_workspaces_delete_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_playwright_workspaces_list_by_resource_group_request(  # pylint: disable=name-too-long
@@ -188,7 +182,7 @@ def build_playwright_workspaces_list_by_resource_group_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +209,7 @@ def build_playwright_workspaces_list_by_subscription_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -242,7 +236,7 @@ def build_playwright_workspaces_check_name_availability_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -270,7 +264,7 @@ def build_playwright_quotas_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -298,7 +292,7 @@ def build_playwright_quotas_list_by_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -329,7 +323,7 @@ def build_playwright_workspace_quotas_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +352,7 @@ def build_playwright_workspace_quotas_list_by_playwright_workspace_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -473,7 +467,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -553,7 +547,7 @@ class PlaywrightWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -622,7 +616,7 @@ class PlaywrightWorkspacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -808,7 +802,7 @@ class PlaywrightWorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -835,7 +829,7 @@ class PlaywrightWorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -862,7 +856,7 @@ class PlaywrightWorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -887,7 +881,7 @@ class PlaywrightWorkspacesOperations:
         properties: Union[_models.PlaywrightWorkspaceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -951,7 +945,7 @@ class PlaywrightWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1006,7 +1000,7 @@ class PlaywrightWorkspacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1023,7 +1017,7 @@ class PlaywrightWorkspacesOperations:
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, playwright_workspace_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Delete a PlaywrightWorkspace.
+        """Deletes a Playwright workspace resource asynchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1161,7 +1155,7 @@ class PlaywrightWorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1245,7 +1239,7 @@ class PlaywrightWorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1256,7 +1250,7 @@ class PlaywrightWorkspacesOperations:
     def check_name_availability(
         self, body: _models.CheckNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Required.
         :type body: ~azure.mgmt.playwright.models.CheckNameAvailabilityRequest
@@ -1273,7 +1267,7 @@ class PlaywrightWorkspacesOperations:
     def check_name_availability(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Required.
         :type body: JSON
@@ -1290,7 +1284,7 @@ class PlaywrightWorkspacesOperations:
     def check_name_availability(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Required.
         :type body: IO[bytes]
@@ -1307,7 +1301,7 @@ class PlaywrightWorkspacesOperations:
     def check_name_availability(
         self, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Is one of the following types:
          CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
@@ -1365,7 +1359,7 @@ class PlaywrightWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1400,7 +1394,7 @@ class PlaywrightQuotasOperations:
     def get(
         self, location: str, playwright_quota_name: Union[str, _models.QuotaName], **kwargs: Any
     ) -> _models.PlaywrightQuota:
-        """Get subscription-level location-based Playwright quota resource by name.
+        """Gets a subscription-level location-based Playwright quota resource by name.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1450,7 +1444,7 @@ class PlaywrightQuotasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1465,7 +1459,7 @@ class PlaywrightQuotasOperations:
 
     @distributed_trace
     def list_by_subscription(self, location: str, **kwargs: Any) -> ItemPaged["_models.PlaywrightQuota"]:
-        """List Playwright quota resources for a given subscription Id.
+        """Lists Playwright quota resources for a given subscription ID.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1543,7 +1537,7 @@ class PlaywrightQuotasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1576,7 +1570,7 @@ class PlaywrightWorkspaceQuotasOperations:
         quota_name: Union[str, _models.QuotaName],
         **kwargs: Any
     ) -> _models.PlaywrightWorkspaceQuota:
-        """Get Playwright workspace quota resource by name.
+        """Gets a Playwright workspace quota resource by name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1631,7 +1625,7 @@ class PlaywrightWorkspaceQuotasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1648,7 +1642,7 @@ class PlaywrightWorkspaceQuotasOperations:
     def list_by_playwright_workspace(
         self, resource_group_name: str, playwright_workspace_name: str, **kwargs: Any
     ) -> ItemPaged["_models.PlaywrightWorkspaceQuota"]:
-        """List quota resources for a given Playwright workspace resource.
+        """Lists quota resources for a given Playwright workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1730,7 +1724,7 @@ class PlaywrightWorkspaceQuotasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

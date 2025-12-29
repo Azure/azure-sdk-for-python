@@ -20,12 +20,12 @@ class TestContainerAppsAPIContainerAppsBuildsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_container_apps_builds_get(self, resource_group):
         response = self.client.container_apps_builds.get(
             resource_group_name=resource_group.name,
             container_app_name="str",
             build_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIContainerAppsBuildsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_container_apps_builds_begin_delete(self, resource_group):
         response = self.client.container_apps_builds.begin_delete(
             resource_group_name=resource_group.name,
             container_app_name="str",
             build_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

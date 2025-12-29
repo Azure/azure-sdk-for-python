@@ -33,6 +33,11 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the evaluation. Default is 3.
     :type threshold: float
+    :param credential: The credential for authenticating to Azure AI service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword is_reasoning_model: If True, the evaluator will use reasoning model configuration (o1/o3 models).
+        This will adjust parameters like max_completion_tokens and remove unsupported parameters. Default is False.
+    :paramtype is_reasoning_model: bool
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
@@ -74,11 +79,11 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "retrieval.prompty"
     _RESULT_KEY = "retrieval"
 
-    id = "azureml://registries/azureml/models/Retrieval-Evaluator/versions/1"
+    id = "azureai://built-in/evaluators/retrieval"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: float = 3):  # pylint: disable=super-init-not-called
+    def __init__(self, model_config, *, threshold: float = 3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -88,7 +93,9 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
+            credential=credential,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
 
     @overload
