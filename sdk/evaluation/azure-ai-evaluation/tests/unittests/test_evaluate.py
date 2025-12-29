@@ -1659,6 +1659,13 @@ class TestTagsInLoggingFunctions:
         This test validates the fix for the issue where custom code evaluators
         were dropping leading and trailing quotation marks from parameter values.
         The issue occurs when a CSV cell value starts AND ends with quotes.
+        
+        Test CSV contains:
+        - Row 0: test,"test" - unquoted vs quoted value
+        - Row 1: "quoted",quoted - quoted vs unquoted value
+        - Row 2: start,"""end" - tests that even multiple quotes are preserved as literals
+        
+        With QUOTE_NONE, all quotes are treated as literal characters, not delimiters.
         """
         # Get the test CSV file
         csv_file = _get_file("test_csv_quotes.csv")
@@ -1696,6 +1703,7 @@ class TestTagsInLoggingFunctions:
         assert row_result_df["outputs.quote_checker.match"][1] == 0
         
         # Row 2: response='start', ground_truth='"""end"' - should NOT match
+        # Note: With QUOTE_NONE, """end" is read as the literal string """end"
         assert row_result_df["outputs.quote_checker.response_value"][2] == 'start'
         assert row_result_df["outputs.quote_checker.ground_truth_value"][2] == '"""end"'
         assert row_result_df["outputs.quote_checker.match"][2] == 0
