@@ -12,7 +12,7 @@ from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import ResponseStreamEvent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
-from ..human_in_the_loop_helper import HumanInTheLoopHelper
+from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .response_event_generators import (
     ResponseEventGenerator,
     ResponseStreamEventGenerator,
@@ -22,7 +22,7 @@ from .response_event_generators import (
 logger = get_logger()
 
 
-class StreamResponseConverter(ABC):
+class ResponseAPIStreamResponseConverter(ABC):
     """
     Abstract base class for converting Langgraph streamed output to ResponseStreamEvent objects.
     One converter instance handles one response stream.
@@ -48,8 +48,8 @@ class StreamResponseConverter(ABC):
         pass
 
 
-class MessagesStreamResponseConverter(StreamResponseConverter):
-    def __init__(self, stream, context: AgentRunContext, hitl_helper: HumanInTheLoopHelper):
+class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConverter):
+    def __init__(self, context: AgentRunContext, hitl_helper: HumanInTheLoopHelper):
         # self.stream = stream
         self.context = context
         self.hitl_helper = hitl_helper
@@ -57,26 +57,31 @@ class MessagesStreamResponseConverter(StreamResponseConverter):
         self.stream_state = StreamEventState()
         self.current_generator: ResponseEventGenerator = None
 
-    async def convert(self, output_event: Union[AnyMessage, dict, Any, None]):
+    def convert(self, output_event: Union[AnyMessage, dict, Any, None]):
         try:
             if self.current_generator is None:
-                self.current_generator = ResponseStreamEventGenerator(logger, None)
+                self.current_generator = ResponseStreamEventGenerator(logger, None, self.hitl_helper)
             message= output_event[0] # expect a tuple
             converted = self.try_process_message(message, self.context)
-            for event in converted:
-                yield event  # yield each event separately
+            return converted
         except Exception as e:
             logger.error(f"Error converting message {message}: {e}")
             raise ValueError(f"Error converting message {message}") from e
     
-    async def finalize(self, args=None):
+    def finalize(self, graph_state=None):
         logger.info("Stream ended, finalizing response.")
+        res = []
+        # check and convert interrupts
+        if self.hitl_helper.has_interrupt(graph_state):
+            interrupt = graph_state.interrupts[0] # should have only one interrupt
+            converted = self.try_process_message(interrupt, self.context)
+            res.extend(converted)
         # finalize the stream
         converted = self.try_process_message(None, self.context)
-        for event in converted:
-            yield event  # yield each event separately
+        res.extend(converted)
+        return res
 
-    def try_process_message(self, event: AnyMessage, context: AgentRunContext) -> List[ResponseStreamEvent]:
+    def try_process_message(self, event: Union[AnyMessage, Any, None], context: AgentRunContext) -> List[ResponseStreamEvent]:
         if event and not self.current_generator:
             self.current_generator = ResponseStreamEventGenerator(logger, None)
 

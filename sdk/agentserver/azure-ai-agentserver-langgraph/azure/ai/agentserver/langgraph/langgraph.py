@@ -127,7 +127,7 @@ class LangGraphAdapter(FoundryCBAgent):
                             logger.warning(f"Error closing tool_client: {e}")
 
             # For streaming, pass tool_client to be closed after streaming completes
-            return self.agent_run_astream(input_data, context, graph, tool_client)
+            return self.agent_run_astream(input_arguments, context, graph, tool_client)
         except OAuthConsentRequiredError as e:
             # Clean up tool_client if OAuth error occurs before streaming starts
             if tool_client is not None:
@@ -258,7 +258,6 @@ class LangGraphAdapter(FoundryCBAgent):
         """
 
         try:
-            logger.info(f"Starting non-streaming agent run {input_arguments}")
             result = await graph.ainvoke(**input_arguments)
             output = await self.orchestrator.convert_response_non_stream(result, context)
             return output
@@ -268,7 +267,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
     async def agent_run_astream(
         self,
-        input_data: dict,
+        input_arguments: GraphInputArguments,
         context: AgentRunContext,
         graph: CompiledStateGraph,
         tool_client: "Optional[ToolClient]" = None
@@ -290,13 +289,9 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         try:
             logger.info(f"Starting streaming agent run {context.response_id}")
-            config = self.create_runnable_config(context, False)
-            stream_mode = self.state_converter.get_stream_mode(context)
-            stream = graph.astream(input=input_data, config=config, stream_mode=stream_mode)
-            async for result in self.state_converter.state_to_response_stream(stream, context, ):
-                yield result
-            state_after_stream = await graph.aget_state(config=config)
-        
+            stream = graph.astream(**input_arguments)
+            async for output_event in self.orchestrator.convert_response_stream(stream, context):
+                yield output_event
         except Exception as e:
             logger.error(f"Error during streaming agent run: {e}", exc_info=True)
             raise e
@@ -308,23 +303,6 @@ class LangGraphAdapter(FoundryCBAgent):
                     logger.debug("Closed tool_client after streaming completed")
                 except Exception as e:
                     logger.warning(f"Error closing tool_client in stream: {e}")
-    
-    def create_runnable_config(self, context: AgentRunContext, include_callbacks: bool = True) -> RunnableConfig:
-        """
-        Create a RunnableConfig from the converted request data.
-
-        :param context: The context for the agent run.
-        :type context: AgentRunContext
-
-        :return: The RunnableConfig for the agent run.
-        :rtype: RunnableConfig
-        """
-        callbacks = [self.azure_ai_tracer] if include_callbacks and self.azure_ai_tracer else None
-        config = RunnableConfig(
-            configurable=self.create_configurable(context),
-            callbacks=callbacks,
-        )
-        return config
 
     def insure_runnable_config(self, context: AgentRunContext, input_arguments: GraphInputArguments):
         """

@@ -10,8 +10,8 @@ from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
 from .response_api_request_converter import ResponseAPIRequestConverter, ResponseAPIMessageRequestConverter
-from .converters.stream_response_converter import StreamResponseConverter, MessagesStreamResponseConverter
-from .converters.non_stream_response_converter import NonStreamResponseConverter, MessagesNonStreamResponseConverter
+from .response_api_stream_response_converter import ResponseAPIStreamResponseConverter, ResponseAPIMessagesStreamResponseConverter
+from .response_api_non_stream_response_converter import ResponseAPINonStreamResponseConverter, ResponseAPIMessagesNonStreamResponseConverter
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .human_in_the_loop_json_helper import HumanInTheLoopJsonHelper
 from .response_api_converter import ResponseAPIConverter, GraphInputArguments
@@ -63,20 +63,20 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         return response
 
     async def convert_response_stream(
-        self, output: AsyncIterator[Dict[str, Any] | Any],
+        self,
+        output: AsyncIterator[Dict[str, Any] | Any],
         context: AgentRunContext,
     ) -> AsyncGenerator[ResponseStreamEvent, None]:
-    #     hitl_helper = self.create_human_in_the_loop_helper(context)
-    #     response_converter = (
-    #         stream_state, context, hitl_helper
-    #     )
-    #     converter = self.create_stream_response_converter(context) # create by factory if needed
-    #     async for event in output:
-    #         yield converter.convert(event)
-    #     state = await self._aget_state(context)
-    #     async for event in converter.finalize(state, context): # finalize the response with graph state after stream
-    #         yield event
-        raise NotImplementedError("Stream response conversion is not implemented yet.")
+        converter = self._create_stream_response_converter(context)
+        async for event in output:
+            output = converter.convert(event)
+            for e in output:
+                yield e
+        
+        state = await self._aget_state(context)
+        output = converter.finalize(state) # finalize the response with graph state after stream
+        for event in output:
+            yield event
 
     def get_stream_mode(self, context: AgentRunContext) -> str:
         if context.stream:
@@ -87,12 +87,13 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         data = context.request
         return ResponseAPIMessageRequestConverter(data)
     
-    def _create_stream_response_converter(self, context: AgentRunContext) -> StreamResponseConverter:
-        return MessagesStreamResponseConverter()
-    
-    def _create_non_stream_response_converter(self, context: AgentRunContext) -> NonStreamResponseConverter:
+    def _create_stream_response_converter(self, context: AgentRunContext) -> ResponseAPIMessagesStreamResponseConverter:
         hitl_helper = self._create_human_in_the_loop_helper(context)
-        return MessagesNonStreamResponseConverter(context, hitl_helper)
+        return ResponseAPIMessagesStreamResponseConverter(context, hitl_helper)
+    
+    def _create_non_stream_response_converter(self, context: AgentRunContext) -> ResponseAPINonStreamResponseConverter:
+        hitl_helper = self._create_human_in_the_loop_helper(context)
+        return ResponseAPIMessagesNonStreamResponseConverter(context, hitl_helper)
 
     def _create_human_in_the_loop_helper(self, context: AgentRunContext) -> HumanInTheLoopHelper:
         return HumanInTheLoopJsonHelper(context)

@@ -6,11 +6,11 @@ from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import projects as project_models
 
-from ...human_in_the_loop_helper import (
+from ..human_in_the_loop_helper import (
     HumanInTheLoopHelper,
     INTERRUPT_TOOL_NAME,
 )
-from ...utils import extract_function_call
+from ..utils import extract_function_call
 
 class ItemResourceHelper:
     def __init__(self, item_type: str, item_id: str = None):
@@ -73,14 +73,16 @@ class FunctionCallInterruptItemResourceHelper(ItemResourceHelper):
         self.interrupt = interrupt
 
     def create_item_resource(self, is_done: bool):
-        interrupt_list = self.hitl_helper.convert_interrupts(self.interrupt)
-        return interrupt_list[0] if interrupt_list else None
+        item_resource = self.hitl_helper.convert_interrupt(self.interrupt)
+        if not is_done:
+            item_resource.arguments = ""
+        return item_resource
 
     def add_aggregate_content(self, item):
         pass
 
     def get_aggregated_content(self):
-        return self.create_item_resource(is_done=False)
+        return self.create_item_resource(is_done=True)
 
 
 class FunctionCallOutputItemResourceHelper(ItemResourceHelper):

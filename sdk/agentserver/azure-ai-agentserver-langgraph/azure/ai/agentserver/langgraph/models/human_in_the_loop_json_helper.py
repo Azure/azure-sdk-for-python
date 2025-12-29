@@ -35,20 +35,33 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
     """
 
     def convert_interrupt(self, interrupt_info: Interrupt) -> project_models.ItemResource:
-        if not isinstance(interrupt_info, Interrupt):
-            logger.warning(f"Interrupt info is not of type Interrupt: {interrupt_info}")
-            return None
-        if isinstance(interrupt_info.value, str):
-            arguments = interrupt_info.value
-        else:
-            arguments = json.dumps(interrupt_info.value)
+        name, call_id, arguments = self.interrupt_to_function_call(interrupt_info)
         return project_models.FunctionToolCallItemResource(
-            call_id=interrupt_info.id,
-            name=INTERRUPT_TOOL_NAME,
+            call_id=call_id,
+            name=name,
             arguments=arguments,
             id=self.context.id_generator.generate_function_call_id(),
             status="inprogress",
         )
+    
+    def interrupt_to_function_call(self, interrupt: Interrupt) :
+        """
+        Convert an Interrupt to a function call tuple.
+
+        :param interrupt: The Interrupt object to convert.
+        :type interrupt: Interrupt
+
+        :return: A tuple of (name, call_id, argument).
+        :rtype: tuple[str | None, str | None, str | None]
+        """
+        if not isinstance(interrupt, Interrupt):
+            logger.warning(f"Interrupt is not of type Interrupt: {interrupt}")
+            return None
+        if isinstance(interrupt.value, str):
+            arguments = interrupt.value
+        else:
+            arguments = json.dumps(interrupt.value)
+        return INTERRUPT_TOOL_NAME, interrupt.id, arguments
     
     def validate_and_convert_human_feedback(
             self, state: StateSnapshot, input: Union[str, ResponseInputParam]

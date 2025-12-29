@@ -13,20 +13,24 @@ from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 from azure.ai.agentserver.core.server.common.id_generator.id_generator import IdGenerator
 
+from ..human_in_the_loop_helper import HumanInTheLoopHelper
 from . import ResponseEventGenerator, StreamEventState, item_resource_helpers
 from .response_content_part_event_generator import ResponseContentPartEventGenerator
 from .response_function_call_argument_event_generator import ResponseFunctionCallArgumentEventGenerator
 
 
 class ResponseOutputItemEventGenerator(ResponseEventGenerator):
-    def __init__(self, logger, parent: ResponseEventGenerator, output_index: int, message_id: str = None):
+    def __init__(self, logger, parent: ResponseEventGenerator,
+                 output_index: int, message_id: str = None,
+                 hitl_helper: HumanInTheLoopHelper = None):
         super().__init__(logger, parent)
         self.output_index = output_index
         self.message_id = message_id
         self.item_resource_helper = None
+        self.hitl_helper = hitl_helper
 
     def try_process_message(
-        self, message: Union[AnyMessage, Interrupt], context: AgentRunContext, stream_state: StreamEventState
+        self, message: Union[AnyMessage, Interrupt, None], context: AgentRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         next_processor = self
@@ -146,7 +150,9 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
             return True
         if isinstance(event, Interrupt):
             self.item_resource_helper = item_resource_helpers.FunctionCallInterruptItemResourceHelper(
-                item_id=id_generator.generate_function_output_id(), interrupt=event
+                item_id=id_generator.generate_function_output_id(),
+                hitl_helper=self.hitl_helper,
+                interrupt=event,
             )
             return True
         return False
@@ -161,6 +167,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
                 item_id=self.item_resource_helper.item_id,
                 message_id=message.id,
                 output_index=self.output_index,
+                hitl_helper=self.hitl_helper,
             )
         if self.item_resource_helper.item_type == project_models.ItemType.MESSAGE:
             return ResponseContentPartEventGenerator(

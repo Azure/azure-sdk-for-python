@@ -4,16 +4,15 @@
 # mypy: disable-error-code="call-overload,override"
 """Base interface for converting between LangGraph internal state and OpenAI-style responses.
 
-A LanggraphStateConverter implementation bridges:
-  1. Incoming CreateResponse (wrapped in AgentRunContext) -> initial graph state
-  2. Internal graph state -> final non-streaming Response
-  3. Streaming graph state events -> ResponseStreamEvent sequence
-  4. Declares which stream mode (if any) is supported for a given run context
+A ResponseAPIConverter implementation bridges:
+  1. Incoming CreateResponse (wrapped in AgentRunContext) -> GraphInputArguments to invoke graph
+  2. Graph output -> final non-streaming Response
+  3. Streaming graph output events -> ResponseStreamEvent sequence
 
 Concrete implementations should:
-  * Decide and document the shape of the state dict they return in request_to_state
-  * Handle aggregation, error mapping, and metadata propagation in state_to_response
-  * Incrementally translate async stream_state items in state_to_response_stream
+  * Decide and document the shape of input arguments they return in convert_request
+  * Handle aggregation, error mapping, and metadata propagation in convert_response_non_stream
+  * Incrementally translate async stream_state items in convert_response_stream
 
 Do NOT perform network I/O directly inside these methods (other than awaiting the
 provided async iterator). Keep them pure transformation layers so they are testable.
@@ -21,11 +20,10 @@ provided async iterator). Keep them pure transformation layers so they are testa
 
 from __future__ import annotations
 
-import time
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, AsyncIterator, Dict, TypedDict, Union
 
-from langgraph.types import Command, Interrupt, StateSnapshot
+from langgraph.types import Command
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
@@ -76,12 +74,18 @@ class ResponseAPIConverter(ABC):
         """
 
     @abstractmethod
-    async def convert_response_stream(self, output: Any, context: AgentRunContext) -> AsyncGenerator[ResponseStreamEvent, None]:
-        """Convert an async iterator of partial state updates into stream events.
+    async def convert_response_stream(
+            self,
+            output: AsyncIterator[Dict[str, Any] | Any],
+            context: AgentRunContext,
+        ) -> AsyncGenerator[ResponseStreamEvent, None]:
+        """Convert an async iterator of LangGraph stream events into stream events.
 
         This is a convenience wrapper around state_to_response_stream that retrieves
         the current stream of state updates asynchronously.
 
+        :param output: An async iterator yielding LangGraph stream events
+        :type output: AsyncIterator[Dict[str, Any] | Any]
         :param context: The context for the agent run.
         :type context: AgentRunContext
 

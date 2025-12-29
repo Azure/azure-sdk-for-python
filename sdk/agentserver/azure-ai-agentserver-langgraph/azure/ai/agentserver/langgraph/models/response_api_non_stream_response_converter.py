@@ -16,16 +16,16 @@ from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
-from ..human_in_the_loop_helper import (
+from .human_in_the_loop_helper import (
     HumanInTheLoopHelper,
     INTERRUPT_NODE_NAME,
 )
-from ..utils import extract_function_call
+from .utils import extract_function_call
 
 logger = get_logger()
 
 
-class NonStreamResponseConverter(ABC):
+class ResponseAPINonStreamResponseConverter(ABC):
     """
     Abstract base class for converting Langgraph output to items in Response format.
     One converter instance handles one response.
@@ -41,7 +41,7 @@ class NonStreamResponseConverter(ABC):
         pass
 
 
-class MessagesNonStreamResponseConverter(NonStreamResponseConverter):
+class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponseConverter):
     """
     Convert Langgraph MessageState output to ItemResource objects.
     """
