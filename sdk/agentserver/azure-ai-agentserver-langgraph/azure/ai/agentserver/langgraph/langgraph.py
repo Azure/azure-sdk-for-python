@@ -55,7 +55,7 @@ class LangGraphAdapter(FoundryCBAgent):
         self,
         graph: Union[CompiledStateGraph, GraphFactory],
         credentials: "Optional[AsyncTokenCredential]" = None,
-        orchestrator: "Optional[ResponseAPIConverter]" = None,
+        converter: "Optional[ResponseAPIConverter]" = None,
         **kwargs: Any
     ) -> None:
         """
@@ -66,8 +66,8 @@ class LangGraphAdapter(FoundryCBAgent):
         :type graph: Union[CompiledStateGraph, GraphFactory]
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
-        :param orchestrator: custom response converter orchestrator.
-        :type orchestrator: Optional[ResponseOrchestrator]
+        :param converter: custom response converter.
+        :type converter: Optional[ResponseAPIConverter]
         """
         super().__init__(credentials=credentials, **kwargs) # pylint: disable=unexpected-keyword-arg
         self._graph_or_factory: Union[CompiledStateGraph, GraphFactory] = graph
@@ -77,16 +77,16 @@ class LangGraphAdapter(FoundryCBAgent):
         # If graph is already compiled, validate and set up state converter
         if isinstance(graph, CompiledStateGraph):
             self._resolved_graph = graph
-            if not orchestrator:
+            if not converter:
                 if is_state_schema_valid(self._resolved_graph.builder.state_schema):
-                    self.orchestrator = ResponseAPIDefaultConverter(graph=self._resolved_graph)
+                    self.converter = ResponseAPIDefaultConverter(graph=self._resolved_graph)
                 else:
-                    raise ValueError("orchestrator is required for non-MessagesState graph.")
+                    raise ValueError("converter is required for non-MessagesState graph.")
             else:
-                self.orchestrator = orchestrator
+                self.converter = converter
         else:
             # Defer validation until graph is resolved
-            self.orchestrator = orchestrator
+            self.converter = converter
 
     @property
     def graph(self) -> "Optional[CompiledStateGraph]":
@@ -111,7 +111,7 @@ class LangGraphAdapter(FoundryCBAgent):
             else:
                 graph = self._resolved_graph
 
-            input_arguments = await self.orchestrator.convert_request(context)
+            input_arguments = await self.converter.convert_request(context)
             self.ensure_runnable_config(context, input_arguments)
             if not context.stream:
                 try:
@@ -146,7 +146,7 @@ class LangGraphAdapter(FoundryCBAgent):
     async def _resolve_graph(self, context: AgentRunContext):
         """Resolve the graph if it's a factory function (for single-use/first-time resolution).
         Creates a ToolClient and calls the factory function with it.
-        This is used for the initial resolution to set up orchestrator.
+        This is used for the initial resolution to set up converter.
 
         :param context: The context for the agent run.
         :type context: AgentRunContext
@@ -168,12 +168,11 @@ class LangGraphAdapter(FoundryCBAgent):
                 self._resolved_graph = result
 
             # Validate and set up state converter if not already set from initialization
-            if not self.orchestrator and self._resolved_graph is not None:
+            if not self.converter and self._resolved_graph is not None:
                 if is_state_schema_valid(self._resolved_graph.builder.state_schema):
-                    self.orchestrator = ResponseAPIDefaultConverter(graph=self._resolved_graph)
+                    self.converter = ResponseAPIDefaultConverter(graph=self._resolved_graph)
                 else:
-                    raise ValueError("orchestrator is required for non-MessagesState graph.")
-
+                    raise ValueError("converter is required for non-MessagesState graph.")
             logger.debug("Graph resolved successfully")
         else:
             # Should not reach here, but just in case
@@ -206,11 +205,11 @@ class LangGraphAdapter(FoundryCBAgent):
             graph = result
 
         # Ensure state converter is set up (use existing one or create new)
-        if not self.orchestrator:
+        if not self.converter:
             if is_state_schema_valid(graph.builder.state_schema):
-                self.orchestrator = ResponseAPIDefaultConverter(graph=graph)
+                self.converter = ResponseAPIDefaultConverter(graph=graph)
             else:
-                raise ValueError("orchestrator is required for non-MessagesState graph.")
+                raise ValueError("converter is required for non-MessagesState graph.")
         logger.debug("Fresh graph resolved successfully for request")
         return graph, tool_client_wrapper
 
@@ -259,7 +258,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
         try:
             result = await graph.ainvoke(**input_arguments)
-            output = await self.orchestrator.convert_response_non_stream(result, context)
+            output = await self.converter.convert_response_non_stream(result, context)
             return output
         except Exception as e:
             logger.error(f"Error during agent run: {e}", exc_info=True)
@@ -290,7 +289,7 @@ class LangGraphAdapter(FoundryCBAgent):
         try:
             logger.info(f"Starting streaming agent run {context.response_id}")
             stream = graph.astream(**input_arguments)
-            async for output_event in self.orchestrator.convert_response_stream(stream, context):
+            async for output_event in self.converter.convert_response_stream(stream, context):
                 yield output_event
         except Exception as e:
             logger.error(f"Error during streaming agent run: {e}", exc_info=True)
