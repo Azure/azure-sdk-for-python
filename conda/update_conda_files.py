@@ -334,10 +334,14 @@ def get_package_requirements(package_name: str) -> Tuple[List[str], List[str]]:
 
     for req in install_reqs:
         # TODO ?? is this correct behavior??????
-        req_name = re.split(r"[<>=!]", req)[0].strip()
-        if req_name in ["azure-core", "azure-identity"]:
+        req_name = req
+        name_unpinned = re.split(r"[>=<!]", req)[0].strip()
+        
+        # TODO idk if this is right, certain reqs never seem to have pinned versions like aiohttp or isodate
+        
+        if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
             req_name = (
-                f"{req_name} >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}"
+                f"{name_unpinned} >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}"
             )
 
         host_requirements.append(req_name)
@@ -357,6 +361,7 @@ def generate_data_plane_meta_yaml(
     src_distr_name = package_name.split("-")[-1].upper()
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
+    # TODO there can be subdirectory packages..... e.g. azure-ai-ml
     pkg_name_normalized = package_name.replace("-", ".")
 
     host_reqs, run_reqs = get_package_requirements(package_name)
@@ -408,7 +413,6 @@ extra:
   recipe-maintainers:
     - xiangyan99
 """
-    print(meta_yaml_content)
     return meta_yaml_content
 
 
