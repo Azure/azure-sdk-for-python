@@ -6,6 +6,8 @@ import json
 import csv
 import yaml
 import urllib.request
+import glob
+import re
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from ci_tools.logging import logger, configure_logging
@@ -13,6 +15,7 @@ from typing import Dict, List, Optional, Tuple
 
 # paths
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SDK_DIR = os.path.join(ROOT_DIR, "sdk")
 CONDA_DIR = os.path.join(ROOT_DIR, "conda")
 CONDA_RECIPES_DIR = os.path.join(CONDA_DIR, "conda-recipes")
 CONDA_RELEASE_LOGS_DIR = os.path.join(CONDA_DIR, "conda-releaselogs")
@@ -41,6 +44,7 @@ class quoted(str):
 
 
 def quoted_presenter(dumper, data):
+    """YAML presenter to force quotes around a string."""
     return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="'")
 
 
@@ -176,9 +180,8 @@ def get_package_data_from_pypi(
 
             # Get the latest version
             latest_version = data["info"]["version"]
-            # Construct download URL from releases data
             if latest_version in data["releases"] and data["releases"][latest_version]:
-                # Get the source distribution (sdist) if available, otherwise get the first file
+                # Get the source distribution (sdist) if available
                 files = data["releases"][latest_version]
                 source_dist = next(
                     (f for f in files if f["packagetype"] == "sdist"), None
@@ -271,6 +274,12 @@ def update_package_versions(
             curr_download_uri = checkout_item.get("download_uri", "")
             latest_version, download_uri = get_package_data_from_pypi(pkg_name)
 
+            if not latest_version or not download_uri:
+                logger.warning(
+                    f"Could not retrieve latest version or download URI for {pkg_name} from PyPI, skipping"
+                )
+                continue
+
             if curr_download_uri != download_uri:
                 # version needs update
                 logger.info(
@@ -299,13 +308,68 @@ def update_package_versions(
         logger.warning("No packages were found in the YAML file to update")
 
 
+def get_package_path(package_name: str) -> Optional[str]:
+    """Get filepath to a package from the package name."""
+    pattern = os.path.join(SDK_DIR, "*", package_name)
+    matches = glob.glob(pattern)
+    if matches:
+        logger.debug(f"Found package path for {package_name}: {matches[0]}")
+        return matches[0]
+
+
+def get_package_requirements(package_name: str) -> List[str]:
+    """Retrieve the install requirements for a package."""
+    requirements = []
+    try:
+        package_path = get_package_path(package_name)
+        if not package_path:
+            logger.error(f"Could not find package path for {package_name}")
+            return requirements
+
+        config_path = os.path.join(package_path, "setup.py")
+
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                setup_contents = f.read()
+
+                # A simple regex to find the install_requires list
+                match = re.search(
+                    r"install_requires=\[(.*?)\]", setup_contents, re.DOTALL
+                )
+                if match:
+                    reqs_str = match.group(1)
+                    # Split by commas and strip whitespace and quotes
+                    requirements = [
+                        req.strip().strip('"').strip("'") for req in reqs_str.split(",")
+                    ]
+        else:
+            config_path = os.path.join(package_path, "pyproject.toml")
+            if not os.path.exists(config_path):
+                logger.error(f"No setup.py or pyproject.toml found for {package_name}")
+                return requirements
+            # TODO?
+
+    except Exception as e:
+        logger.error(f"Failed to read install requirements for {package_name}: {e}")
+    print(f"Requirements for {package_name}: {requirements}")
+    return requirements
+
+
 def generate_data_plane_meta_yaml(
-    package_name: str, version: str, download_uri: Optional[str]
+    package_name: str, download_uri: Optional[str] = None
 ) -> str:
     """Generate the meta.yaml content for a data plane package."""
 
-    # TODO how to determine this? e.g. azure-ai-voicelive uses AGENTS_SOURCE_DISTRIBUTION
-    src_distribution_env_var = "AGENTS_SOURCE_DISTRIBUTION"  # TODO placeholder
+    # TODO is it correct that the env var name is arbitrary and replaced in conda_functions.py?
+    src_distr_name = package_name.split("-")[-1].upper()
+    src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
+
+    pkg_name_normalized = package_name.replace("-", ".")
+
+    # TODO how to get requirements ?
+    reqs = get_package_requirements(package_name)
+
+    # get about info
 
     meta_yaml_content = f"""
     {{% set name = "{package_name}" %}}
@@ -342,7 +406,7 @@ def generate_data_plane_meta_yaml(
 
     test:
         imports:
-            - azure.ai.agents
+            - {pkg_name_normalized}
 
     about:
         home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents"
@@ -360,6 +424,7 @@ def generate_data_plane_meta_yaml(
         recipe-maintainers:
           - xiangyan99
     """
+    print(meta_yaml_content)
     return meta_yaml_content
 
 
@@ -378,7 +443,14 @@ def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> None:
         pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, package_name, "meta.yaml")
         os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
 
-        # with open(pkg_yaml_path, "w") as f:
+        meta_yml = generate_data_plane_meta_yaml(package_name)
+
+        try:
+            with open(pkg_yaml_path, "w") as f:
+                f.write(meta_yml)
+            logger.info(f"Created meta.yaml for {package_name} at {pkg_yaml_path}")
+        except Exception as e:
+            logger.error(f"Failed to create meta.yaml for {package_name}: {e}")
 
 
 def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> None:
