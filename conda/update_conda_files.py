@@ -315,6 +315,17 @@ def get_package_path(package_name: str) -> Optional[str]:
         return matches[0]
 
 
+def format_requirement(req: str) -> str:
+    """Format a requirement string for conda meta.yaml."""
+    name_unpinned = re.split(r"[>=<!]", req)[0].strip()
+
+    # TODO idk if this is right, certain reqs never seem to have pinned versions like aiohttp or isodate
+
+    if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
+        return f"{name_unpinned} >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}"
+    return req
+
+
 def get_package_requirements(package_name: str) -> Tuple[List[str], List[str]]:
     """Retrieve the host and run requirements for a data plane package meta.yaml."""
     host_requirements = ["python", "pip"]
@@ -334,18 +345,23 @@ def get_package_requirements(package_name: str) -> Tuple[List[str], List[str]]:
 
     for req in install_reqs:
         # TODO ?? is this correct behavior??????
-        req_name = req
-        name_unpinned = re.split(r"[>=<!]", req)[0].strip()
-        
-        # TODO idk if this is right, certain reqs never seem to have pinned versions like aiohttp or isodate
-        
-        if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
-            req_name = (
-                f"{name_unpinned} >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}"
-            )
-
+        req_name = format_requirement(req)
         host_requirements.append(req_name)
         run_requirements.append(req_name)
+
+    # make sure essential reqs are added if they weren't in install_reqs
+    # TODO finalize actual list of essentials
+    for essential_req in [
+        "azure-identity",
+        "azure-core",
+        "aiohttp",
+        "requests-oauthlib >=0.5.0",
+        "cryptography",
+    ]:
+        req_name = format_requirement(essential_req)
+        if req_name not in host_requirements:
+            host_requirements.append(req_name)
+            run_requirements.append(req_name)
 
     # TODO there are other requirements to consider...
 
