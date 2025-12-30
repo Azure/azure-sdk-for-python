@@ -497,9 +497,12 @@ if __name__ == "__main__":
     )
 
     # handle new data plane libraries
-    add_new_data_plane_packages(new_data_plane_packages)
+    if len(new_data_plane_packages) > 0:
+        add_new_data_plane_packages(new_data_plane_packages)
 
     # handle new mgmt plane libraries
+    # if len(new_mgmt_plane_packages) > 0:
+    #     add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
     # update conda-sdk-client
 
