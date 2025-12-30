@@ -35,5 +35,5 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
-            project_endpoint=os.environ["azure_ai_projects_tests_agents_project_endpoint"],
+            project_endpoint=kwargs["azure_ai_projects_tests_agents_project_endpoint"],
         )
