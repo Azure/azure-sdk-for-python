@@ -1,48 +1,46 @@
-# LangGraph Agent Calculator Sample
+# LangGraph Human-in-the-Loop Sample
 
-This sample demonstrates how to create a calculator agent using LangGraph and using it with Container Agent Adapter. The agent can perform basic arithmetic operations (addition, multiplication, and division) by utilizing tools and making decisions about when to use them.
+This sample demonstrates how to create an intelligent agent with human-in-the-loop capabilities using LangGraph and Azure AI Agent Server. The agent can interrupt its execution to ask for human input when needed, making it ideal for scenarios requiring human judgment or additional information.
 
 ## Overview
 
 The sample consists of several key components:
 
-- **LangGraph Agent**: A calculator agent that uses tools to perform arithmetic operations
-- **Azure AI Agents Adapter**: Adapters of the LangGraph agents. It hosts the agent as a service on your local machine.
-
+- **LangGraph Agent**: An AI agent that can intelligently decide when to ask humans for input during task execution
+- **Human Interrupt Mechanism**: Uses LangGraph's `interrupt()` function to pause execution and wait for human feedback
+- **Azure AI Agent Server Adapter**: Hosts the LangGraph agent as an HTTP service
 
 ## Files Description
 
-- `langgraph_agent_calculator.py` - The main LangGraph agent implementation with calculator tools
-- `main.py` - HTTP server entry point using the agents adapter
-- `.env-template` A template of environment variables for Azure OpenAI configuration
+- `main.py` - The main LangGraph agent implementation with human-in-the-loop capabilities
+- `requirements.txt` - Python dependencies for the sample
 
 
 
 ## Setup
 
 1. **Environment Configuration**
+   
    Create a `.env` file in this directory with your Azure OpenAI configuration:
-   ```
+   ```env
    AZURE_OPENAI_API_KEY=your_api_key_here
    AZURE_OPENAI_ENDPOINT=your_endpoint_here
-   AZURE_OPENAI_API_VERSION=2024-02-15-preview
+   AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-4o
    ```
-   And install python-dotenv
-   ```bash
-   cd  container_agents/container_agent_adapter/python
-   pip install python-dotenv
-   ```
+   
+   Alternatively, if you're using Azure Identity (without API key), ensure your Azure credentials are configured.
 
 2. **Install Dependencies**
-   Required Python packages (install via pip):
+   
+   Install the required Python packages:
    ```bash
-   cd  container_agents/container_agent_adapter/python
-   pip install -e .[langgraph]
+   pip install python-dotenv
+   pip install azure-ai-agentserver[langgraph]
    ```
 
 ## Usage
 
-### Running as HTTP Server
+### Running the Agent Server
 
 1. Start the agent server:
    ```bash
@@ -50,35 +48,86 @@ The sample consists of several key components:
    ```
    The server will start on `http://localhost:8088`
 
-2. Test the agent:
-   ```bash
-   curl -X POST http://localhost:8088/responses \
-     -H "Content-Type: application/json" \
-     -d '{
-       "agent": {
-         "name": "local_agent",
-         "type": "agent_reference"
-       },
-       "stream": false,
-       "input": "What is 15 divided by 3?"
-     }'
-   ```
-   
-   or 
+### Making Requests
 
-   ```bash
-   curl -X POST http://localhost:8088/responses \
-     -H "Content-Type: application/json" \
-     -d '{
-       "agent": {
-         "name": "local_agent",
-         "type": "agent_reference"
-       },
-       "stream": false,
-       "input": [{
-          "type": "message",
-          "role": "user",
-          "content": [{"type": "input_text", "text": "What is 3 add 5?"}]
-        }]
-     }'
-   ```
+#### Initial Request (Triggering Human Input)
+
+Send a request that will cause the agent to ask for human input:
+
+```bash
+curl -X POST http://localhost:8088/responses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent": {
+      "name": "local_agent",
+      "type": "agent_reference"
+    },
+    "stream": false,
+    "input": "Ask the user where they are, then look up the weather there."
+  }'
+```
+
+**Response Structure:**
+
+The agent will respond with an interrupt request:
+
+```json
+{
+  "conversation": {
+    "id": "conv_abc123..."
+  },
+  "output": [
+    {
+      "type": "function_call",
+      "name": "__hosted_agent_adapter_interrupt__",
+      "call_id": "call_xyz789...",
+      "arguments": "{\"question\": \"Where are you located?\"}"
+    }
+  ]
+}
+```
+
+#### Providing Human Feedback
+
+Resume the conversation by providing the human's response:
+
+```bash
+curl -X POST http://localhost:8088/responses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent": {
+      "name": "local_agent",
+      "type": "agent_reference"
+    },
+    "stream": false,
+    "input": [
+      {
+        "type": "function_call_output",
+        "call_id": "call_xyz789...",
+        "output": "{\"resume\": \"San Francisco\"}"
+      }
+    ],
+    "conversation": {
+      "id": "conv_abc123..."
+    }
+  }'
+```
+
+**Final Response:**
+
+The agent will continue execution and provide the final result:
+
+```json
+{
+  "conversation": {
+    "id": "conv_abc123..."
+  },
+  "output": [
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": "I looked up the weather in San Francisco. Result: It's sunny in San Francisco."
+    }
+  ]
+}
+```

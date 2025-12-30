@@ -1,158 +1,204 @@
+"""
+Human-in-the-Loop Agent Example
+
+This sample demonstrates how to create a LangGraph agent that can interrupt 
+execution to ask for human input when needed. The agent uses Azure OpenAI 
+and includes a custom tool for asking human questions.
+"""
+
 import os
 
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from langchain.chat_models import init_chat_model
+from langchain_core.messages import ToolMessage
+from langchain_core.tools import tool
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph import END, START, MessagesState, StateGraph
+from langgraph.prebuilt import ToolNode
+from langgraph.types import interrupt
+
+from azure.ai.agentserver.langgraph import from_langgraph
+
+# Load environment variables
 load_dotenv()
 
-# Set up the state
-from langgraph.graph import MessagesState, START
-from langchain_core.messages import ToolMessage
 
-# Set up the tool
-# We will have one real tool - a search tool
-# We'll also have one "fake" tool - a "ask_human" tool
-# Here we define any ACTUAL tools
-from langchain_core.tools import tool
-from langgraph.prebuilt import ToolNode
+# =============================================================================
+# Configuration
+# =============================================================================
 
+DEPLOYMENT_NAME = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME", "gpt-4o")
+API_KEY = os.getenv("AZURE_OPENAI_API_KEY", "")
+
+
+# =============================================================================
+# Model Initialization
+# =============================================================================
+
+def initialize_llm():
+    """Initialize the language model with Azure OpenAI credentials."""
+    if API_KEY:
+        return init_chat_model(f"azure_openai:{DEPLOYMENT_NAME}")
+    else:
+        credential = DefaultAzureCredential()
+        token_provider = get_bearer_token_provider(
+            credential, "https://cognitiveservices.azure.com/.default"
+        )
+        return init_chat_model(
+            f"azure_openai:{DEPLOYMENT_NAME}",
+            azure_ad_token_provider=token_provider,
+        )
+
+
+llm = initialize_llm()
+
+# =============================================================================
+# Tools and Models
+# =============================================================================
 
 @tool
-def search(query: str):
-    """Call to surf the web."""
+def search(query: str) -> str:
+    """
+    Call to search the web for information.
+    
+    Args:
+        query: The search query string
+        
+    Returns:
+        Search results as a string
+    """
     # This is a placeholder for the actual implementation
-    # Don't let the LLM know this though 😊
-    return f"I looked up: {query}. Result: It's sunny in San Francisco, but you better look out if you're a Gemini 😈."
+    return f"I looked up: {query}. Result: It's sunny in San Francisco."
 
 
-tools = [search]
-tool_node = ToolNode(tools)
-
-# Set up the model
-from langchain.chat_models import init_chat_model
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-
-deployment_name = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME", "gpt-4o")
-api_key = os.getenv("AZURE_OPENAI_API_KEY", "")
-
-if api_key:
-    llm = init_chat_model(f"azure_openai:{deployment_name}")
-else:
-    credential = DefaultAzureCredential()
-    token_provider = get_bearer_token_provider(
-        credential, "https://cognitiveservices.azure.com/.default"
-    )
-    llm = init_chat_model(
-        f"azure_openai:{deployment_name}",
-        azure_ad_token_provider=token_provider,
-    )
-
-
-from pydantic import BaseModel
-from langgraph.types import Command, interrupt
-
-# We are going "bind" all tools to the model
-# We have the ACTUAL tools from above, but we also need a mock tool to ask a human
-# Since `bind_tools` takes in tools but also just tool definitions,
-# We can define a tool definition for `ask_human`
 class AskHuman(BaseModel):
-    """Ask the human a question"""
-
+    """Schema for asking the human a question."""
     question: str
 
 
+# Initialize tools and bind to model
+tools = [search]
+tool_node = ToolNode(tools)
 model = llm.bind_tools(tools + [AskHuman])
 
-# Define nodes and conditional edges
 
+# =============================================================================
+# Graph Nodes
+# =============================================================================
 
-# Define the function that determines whether to continue or not
-def should_continue(state):
-    messages = state["messages"]
-    last_message = messages[-1]
-    # If there is no function call, then we finish
-    if not last_message.tool_calls:
-        return END
-    # If tool call is asking Human, we return that node
-    # You could also add logic here to let some system know that there's something that requires Human input
-    # For example, send a slack message, etc
-    elif last_message.tool_calls[0]["name"] == "AskHuman":
-        return "ask_human"
-    # Otherwise if there is, we continue
-    else:
-        return "action"
-
-
-# Define the function that calls the model
-def call_model(state):
+def call_model(state: MessagesState) -> dict:
+    """
+    Call the language model with the current conversation state.
+    
+    Args:
+        state: The current messages state
+        
+    Returns:
+        Dictionary with the model's response message
+    """
     messages = state["messages"]
     response = model.invoke(messages)
-    # We return a list, because this will get added to the existing list
     return {"messages": [response]}
 
 
-# We define a fake node to ask the human
-def ask_human(state):
-    tool_call_id = state["messages"][-1].tool_calls[0]["id"]
-    ask = AskHuman.model_validate(state["messages"][-1].tool_calls[0]["args"])
+def ask_human(state: MessagesState) -> dict:
+    """
+    Interrupt execution to ask the human for input.
+    
+    Args:
+        state: The current messages state
+        
+    Returns:
+        Dictionary with the human's response as a tool message
+    """
+    last_message = state["messages"][-1]
+    tool_call_id = last_message.tool_calls[0]["id"]
+    ask = AskHuman.model_validate(last_message.tool_calls[0]["args"])
+    
+    # Interrupt and wait for human input
     location = interrupt(ask.question)
-    tool_message = [ToolMessage(tool_call_id=tool_call_id, content=location)]
-    return {"messages": tool_message}
+    
+    tool_message = ToolMessage(tool_call_id=tool_call_id, content=location)
+    return {"messages": [tool_message]}
 
 
-# Build the graph
+# =============================================================================
+# Graph Logic
+# =============================================================================
 
-from langgraph.graph import END, StateGraph
+def should_continue(state: MessagesState) -> str:
+    """
+    Determine the next step in the graph based on the last message.
+    
+    Args:
+        state: The current messages state
+        
+    Returns:
+        The name of the next node to execute, or END to finish
+    """
+    messages = state["messages"]
+    last_message = messages[-1]
+    
+    # If there's no function call, we're done
+    if not last_message.tool_calls:
+        return END
+    
+    # If asking for human input, route to ask_human node
+    if last_message.tool_calls[0]["name"] == "AskHuman":
+        return "ask_human"
+    
+    # Otherwise, execute the tool call
+    return "action"
 
-# Define a new graph
-workflow = StateGraph(MessagesState)
 
-# Define the three nodes we will cycle between
-workflow.add_node("agent", call_model)
-workflow.add_node("action", tool_node)
-workflow.add_node("ask_human", ask_human)
+# =============================================================================
+# Graph Construction
+# =============================================================================
 
-# Set the entrypoint as `agent`
-# This means that this node is the first one called
-workflow.add_edge(START, "agent")
+def build_graph() -> StateGraph:
+    """
+    Build and compile the LangGraph workflow.
+    
+    Returns:
+        Compiled StateGraph with checkpointing enabled
+    """
+    workflow = StateGraph(MessagesState)
+    
+    # Add nodes
+    workflow.add_node("agent", call_model)
+    workflow.add_node("action", tool_node)
+    workflow.add_node("ask_human", ask_human)
+    
+    # Set entry point
+    workflow.add_edge(START, "agent")
+    
+    # Add conditional routing from agent
+    workflow.add_conditional_edges(
+        "agent",
+        should_continue,
+        path_map=["ask_human", "action", END],
+    )
+    
+    # Add edges back to agent
+    workflow.add_edge("action", "agent")
+    workflow.add_edge("ask_human", "agent")
+    
+    # Compile with memory checkpointer
+    memory = InMemorySaver()
+    return workflow.compile(checkpointer=memory)
 
-# We now add a conditional edge
-workflow.add_conditional_edges(
-    # First, we define the start node. We use `agent`.
-    # This means these are the edges taken after the `agent` node is called.
-    "agent",
-    # Next, we pass in the function that will determine which node is called next.
-    should_continue,
-    path_map=["ask_human", "action", END],
-)
 
-# We now add a normal edge from `tools` to `agent`.
-# This means that after `tools` is called, `agent` node is called next.
-workflow.add_edge("action", "agent")
+app = build_graph()
 
-# After we get back the human response, we go back to the agent
-workflow.add_edge("ask_human", "agent")
 
-# Set up memory
-from langgraph.checkpoint.memory import InMemorySaver
-
-memory = InMemorySaver()
-
-# Finally, we compile it!
-# This compiles it into a LangChain Runnable,
-# meaning you can use it as you would any other runnable
-app = workflow.compile(checkpointer=memory)
-
-from azure.ai.agentserver.langgraph import from_langgraph
+# =============================================================================
+# Main Entry Point
+# =============================================================================
 
 if __name__ == "__main__":
     adapter = from_langgraph(app)
     adapter.run()
 
-# input = {"messages": [("user", "Ask the user where they are, then loop up the weather there.")]}
-# config = {"configurable": {"thread_id": "test_thread"}}
-# res1 = app.invoke(input, config=config)
-# print(res1)
-
-# user_response = Command(resume="San Francisco")
-# res2 = app.invoke(user_response, config=config)
-# print(res2)

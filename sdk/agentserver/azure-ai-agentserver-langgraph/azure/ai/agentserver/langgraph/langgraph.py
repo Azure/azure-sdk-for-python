@@ -322,20 +322,6 @@ class LangGraphAdapter(FoundryCBAgent):
             callbacks.append(self.azure_ai_tracer)
             config["callbacks"] = callbacks
         input_arguments["config"] = config
-    
-    def create_configurable(self, context: AgentRunContext) -> dict:
-        """
-        Create a configurable dict from the context.
-
-        :param context: The context for the agent run.
-        :type context: AgentRunContext
-
-        :return: The configurable dict containing conversation_id.
-        :rtype: dict
-        """
-        return {
-            "thread_id": context.conversation_id,
-        }
 
     def format_otlp_endpoint(self, endpoint: str) -> str:
         m = re.match(r"^(https?://[^/]+)", endpoint)
