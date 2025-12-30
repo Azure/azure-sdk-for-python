@@ -39,5 +39,5 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
-            project_endpoint=os.environ["azure_ai_projects_tests_agents_project_endpoint"],
+            project_endpoint=kwargs["azure_ai_projects_tests_agents_project_endpoint"],
         )
