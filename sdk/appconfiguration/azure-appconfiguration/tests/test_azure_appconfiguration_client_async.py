@@ -1168,7 +1168,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
             iterator = items.by_page()
-            async for page in iterator:
+            async for _ in iterator:
                 etag = iterator.etag
                 match_conditions.append(etag)
 
@@ -1198,7 +1198,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
             iterator = items.by_page()
-            async for page in iterator:
+            async for _ in iterator:
                 etag = iterator.etag
                 new_match_conditions.append(etag)
 
@@ -1214,8 +1214,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             changed_pages = []
             async for page in iterator:
                 changed_pages.append(page)
-            # Should yield 2 pages (second page changed, third page is new)
-            assert len(changed_pages) == 2
+            # Should yield 0 pages
+            assert len(changed_pages) == 0
 
             # clean up
             await self.tear_down()

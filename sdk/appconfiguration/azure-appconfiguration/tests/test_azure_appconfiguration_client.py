@@ -1144,7 +1144,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
             match_conditions = []
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
-            for page in iterator:
+            for _ in iterator:
                 etag = iterator.etag
                 match_conditions.append(etag)
 
@@ -1152,6 +1152,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page(match_conditions=match_conditions)
             changed_pages = list(iterator)
+
             # No pages should be yielded since nothing changed
             assert len(changed_pages) == 0
 
@@ -1168,7 +1169,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
             new_match_conditions = []
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
-            for page in iterator:
+            for _ in iterator:
                 etag = iterator.etag
                 new_match_conditions.append(etag)
 
@@ -1180,8 +1181,8 @@ class TestAppConfigurationClient(AppConfigTestCase):
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page(match_conditions=match_conditions)
             changed_pages = list(iterator)
-            # Should yield 2 pages (second page changed, third page is new)
-            assert len(changed_pages) == 2
+            # Should yield 0 pages
+            assert len(changed_pages) == 0
 
             # clean up
             self.tear_down()

@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast, Callable
 from urllib.parse import urlencode
 
+from azure.core import MatchConditions
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
@@ -743,36 +744,7 @@ class _BaseConfigurationSettingEtagPageIterator:
         self._label_filter = label_filter
         self._tags_filter = tags_filter
         self._base_iterator = base_iterator
-
-    def _build_query_params(self) -> Dict[str, Union[str, List[str]]]:
-        """Build query parameters for the request.
-
-        :return: Dictionary of query parameters
-        :rtype: dict[str, str or list[str]]
-        """
-        query_params: Dict[str, Union[str, List[str]]] = {
-            "api-version": self._client._impl._config.api_version  # pylint: disable=protected-access
-        }
-        if self._key_filter:
-            query_params["key"] = self._key_filter
-        if self._label_filter:
-            query_params["label"] = self._label_filter
-        if self._tags_filter:
-            query_params["tags"] = self._tags_filter
-        return query_params
-
-    def _build_request_url(self) -> str:
-        """Build the request URL based on continuation token.
-
-        :return: The constructed request URL
-        :rtype: str
-        """
-        if self._base_iterator.continuation_token is None:
-            query_string = urlencode(self._build_query_params(), doseq=True)  # cspell:disable-line
-            return f"{self._client._impl._client._base_url}/kv?{query_string}"  # pylint: disable=protected-access
-        base_url = self._client._impl._client._base_url  # pylint: disable=protected-access
-        token = self._base_iterator.continuation_token
-        return f"{base_url}{token}" if not token.startswith("http") else token
+        self._after_token = None
 
     def _update_continuation_token(self, link: Optional[str]) -> None:
         """Update the continuation token from the Link header.
@@ -782,12 +754,19 @@ class _BaseConfigurationSettingEtagPageIterator:
         """
         if link:
             try:
-                self._base_iterator.continuation_token = link[1 : link.index(">")]
-            except ValueError:
+                # Extract the after token from the Link header URL
+                url = link[1 : link.index(">")]
+                # Parse the after parameter from the URL
+                from urllib.parse import urlparse, parse_qs
+
+                parsed = urlparse(url)
+                params = parse_qs(parsed.query)
+                self._after_token = params.get("After", [None])[0]
+            except (ValueError, IndexError):
                 # Malformed Link header, set to None to stop iteration
-                self._base_iterator.continuation_token = None
+                self._after_token = None
         else:
-            self._base_iterator.continuation_token = None
+            self._after_token = None
 
     def _parse_response(self, response: HttpResponse) -> Any:
         """Parse the HTTP response and return an iterator of configuration settings.
@@ -825,21 +804,33 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
             # Yield remaining pages without etag check (they are new)
             return next(self._base_iterator)
 
-        request = HttpRequest(
-            method="GET",
-            url=self._build_request_url(),
-            headers={
-                "If-None-Match": self._match_conditions[self._match_condition_index],
-                "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-            },
-        )
+        from ._generated._operations._operations import build_azure_app_configuration_get_key_values_request
+
+        # If we have a continuation token, don't re-apply filters (they're already in the token)
+        if self._after_token:
+            request = build_azure_app_configuration_get_key_values_request(
+                after=self._after_token,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+        else:
+            request = build_azure_app_configuration_get_key_values_request(
+                key=self._key_filter,
+                label=self._label_filter,
+                tags=self._tags_filter,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+
         response = self._client.send_request(request)
         self._match_condition_index += 1
 
         if response.status_code == 304:
             # Page hasn't changed, skip to next
             self._update_continuation_token(response.headers.get("Link", None))
-            if self._base_iterator.continuation_token is None:
+            if self._after_token is None:
                 raise StopIteration("End of paging")
             return self.__next__()
         if response.status_code == 200:
@@ -939,14 +930,26 @@ class ConfigurationSettingEtagPageIteratorAsync(
             # Yield remaining pages without etag check (they are new)
             return await self._base_iterator.__anext__()
 
-        request = HttpRequest(
-            method="GET",
-            url=self._build_request_url(),
-            headers={
-                "If-None-Match": self._match_conditions[self._match_condition_index],
-                "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-            },
-        )
+        from ._generated._operations._operations import build_azure_app_configuration_get_key_values_request
+
+        # If we have a continuation token, don't re-apply filters (they're already in the token)
+        if self._after_token:
+            request = build_azure_app_configuration_get_key_values_request(
+                after=self._after_token,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+        else:
+            request = build_azure_app_configuration_get_key_values_request(
+                key=self._key_filter,
+                label=self._label_filter,
+                tags=self._tags_filter,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+
         response = await self._client.send_request(request)
         self._match_condition_index += 1
 
