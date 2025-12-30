@@ -17,6 +17,7 @@ from azure.cosmos import DatabaseAccount, _location_cache
 from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async, \
     _retry_utility_async
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
@@ -103,6 +104,42 @@ class TestHealthCheckAsync:
         for expected_endpoint in expected_endpoints:
             assert expected_endpoint in unavailable_endpoint_info.keys()
         await client.close()
+
+
+    async def test_health_check_task_exception_includes_endpoint_async(self):
+        """Test that exceptions from _GetDatabaseAccount include endpoint information."""
+        # Create the exception without endpoint - simulates what the SDK initially raises
+        error = CosmosHttpResponseError(
+            status_code=500,
+            message="Internal Server Error",
+            response=None
+        )
+
+        # Mock _GetDatabaseAccountStub to raise the exception
+        async def mock_get_database_account_stub(self, endpoint, **kwargs):
+            raise error
+
+        original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+
+        try:
+            # Create and initialize client BEFORE applying the mock
+            client = CosmosClient(self.host, self.masterKey)
+            await client.__aenter__()
+            endpoint_manager = client.client_connection._global_endpoint_manager
+
+            # Replace the stub with our mock that raises an exception
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = mock_get_database_account_stub
+
+            # Call _GetDatabaseAccount and expect it to raise the exception with endpoint info
+            with pytest.raises(CosmosHttpResponseError) as exc_info:
+                await endpoint_manager._GetDatabaseAccount()
+
+            # Verify the exception now has endpoint information
+            assert exc_info.value.endpoint == self.host
+
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = original_getDatabaseAccountStub
+            await client.close()
 
     async def test_health_check_background(self, setup):
         # makes sure the health check is in the background and doesn't block by mocking it with a large sleep value

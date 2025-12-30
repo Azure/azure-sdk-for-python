@@ -40,6 +40,7 @@ class CosmosHttpResponseError(HttpResponseError):
         """
         self.headers = response.headers if response else {}
         self.sub_status = kwargs.pop('sub_status', None)
+        self.endpoint = kwargs.pop('endpoint', None)
         self.http_error_message = message
         status = status_code or (int(response.status_code) if response else 0)
 
@@ -52,6 +53,12 @@ class CosmosHttpResponseError(HttpResponseError):
         super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
         self.status_code = status
 
+    def __str__(self):
+        parts = [super().__str__()]
+        if self.endpoint:
+            parts.append(f"Endpoint: {self.endpoint}")
+        # ...
+        return " , ".join(parts)
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
     """An HTTP error response with status code 404."""
