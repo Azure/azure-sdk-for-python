@@ -6,11 +6,12 @@ import json
 import csv
 import yaml
 import urllib.request
-import glob
 import re
+import glob
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from ci_tools.logging import logger, configure_logging
+from ci_tools.parsing import get_install_requires, ParsedSetup
 from typing import Dict, List, Optional, Tuple
 
 # paths
@@ -75,7 +76,6 @@ def update_conda_version() -> (
     return old_date, new_version
 
 
-# read from csv
 def parse_csv() -> List[Dict[str, str]]:
     """Download and parse the Azure SDK Python packages CSV file."""
     try:
@@ -309,50 +309,43 @@ def update_package_versions(
 
 
 def get_package_path(package_name: str) -> Optional[str]:
-    """Get filepath to a package from the package name."""
-    pattern = os.path.join(SDK_DIR, "*", package_name)
-    matches = glob.glob(pattern)
+    pattern = os.path.join(SDK_DIR, "**", package_name)
+    matches = glob.glob(pattern, recursive=True)
     if matches:
-        logger.debug(f"Found package path for {package_name}: {matches[0]}")
         return matches[0]
 
 
-def get_package_requirements(package_name: str) -> List[str]:
-    """Retrieve the install requirements for a package."""
-    requirements = []
+def get_package_requirements(package_name: str) -> Tuple[List[str], List[str]]:
+    """Retrieve the host and run requirements for a data plane package meta.yaml."""
+    host_requirements = ["python", "pip"]
+    run_requirements = ["python"]
+
+    package_path = get_package_path(package_name)
+    if not package_path:
+        logger.error(f"Could not find package path for {package_name}")
+        return host_requirements, run_requirements
+
+    # get requirements from setup.py or pyproject.toml
     try:
-        package_path = get_package_path(package_name)
-        if not package_path:
-            logger.error(f"Could not find package path for {package_name}")
-            return requirements
+        install_reqs = get_install_requires(package_path)
+    except ValueError as e:
+        logger.error(f"No setup.py or pyproject.toml found for {package_name}: {e}")
+        return host_requirements, run_requirements
 
-        config_path = os.path.join(package_path, "setup.py")
+    for req in install_reqs:
+        # TODO ?? is this correct behavior??????
+        req_name = re.split(r"[<>=!]", req)[0].strip()
+        if req_name in ["azure-core", "azure-identity"]:
+            req_name = (
+                f"{req_name} >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}"
+            )
 
-        if os.path.exists(config_path):
-            with open(config_path, "r") as f:
-                setup_contents = f.read()
+        host_requirements.append(req_name)
+        run_requirements.append(req_name)
 
-                # A simple regex to find the install_requires list
-                match = re.search(
-                    r"install_requires=\[(.*?)\]", setup_contents, re.DOTALL
-                )
-                if match:
-                    reqs_str = match.group(1)
-                    # Split by commas and strip whitespace and quotes
-                    requirements = [
-                        req.strip().strip('"').strip("'") for req in reqs_str.split(",")
-                    ]
-        else:
-            config_path = os.path.join(package_path, "pyproject.toml")
-            if not os.path.exists(config_path):
-                logger.error(f"No setup.py or pyproject.toml found for {package_name}")
-                return requirements
-            # TODO?
+    # TODO there are other requirements to consider...
 
-    except Exception as e:
-        logger.error(f"Failed to read install requirements for {package_name}: {e}")
-    print(f"Requirements for {package_name}: {requirements}")
-    return requirements
+    return host_requirements, run_requirements
 
 
 def generate_data_plane_meta_yaml(
@@ -366,64 +359,55 @@ def generate_data_plane_meta_yaml(
 
     pkg_name_normalized = package_name.replace("-", ".")
 
-    # TODO how to get requirements ?
-    reqs = get_package_requirements(package_name)
+    host_reqs, run_reqs = get_package_requirements(package_name)
 
-    # get about info
+    # Format requirements with proper YAML indentation
+    host_reqs_str = "\n    - ".join(host_reqs)
+    run_reqs_str = "\n    - ".join(run_reqs)
 
-    meta_yaml_content = f"""
-    {{% set name = "{package_name}" %}}
-    package:
-        name: "{{ name|lower }}"
-        version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    # TODO ... check import
+    # TODO get about info
 
-    source:
-       url: {{ environ.get('{src_distribution_env_var}', '') }}
+    meta_yaml_content = f"""{{% set name = "{package_name}" %}}
 
-    build:
-        noarch: python
-        number: 0
-        script: "{{ PYTHON }} -m pip install . -vv"
+package:
+  name: "{{{{ name|lower }}}}"
+  version: {{{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}}}
 
-    requirements:
-        host:
-            - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-            - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-            - cryptography
-            - pip
-            - python
-            - requests-oauthlib >=0.5.0
-            - aiohttp
-            - isodate
-    run:
-        - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-        - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-        - cryptography
-        - python
-        - requests-oauthlib >=0.5.0
-        - aiohttp
-        - isodate
+source:
+  url: {{{{ environ.get('{src_distribution_env_var}', '') }}}}
 
-    test:
-        imports:
-            - {pkg_name_normalized}
+build:
+  noarch: python
+  number: 0
+  script: "{{{{ PYTHON }}}} -m pip install . -vv"
 
-    about:
-        home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents"
-        license: MIT
-        license_family: MIT
-        license_file: 
-        summary: "Microsoft Azure AI Agents Client Library for Python"
-        description: |
-            This is the Microsoft Azure AI Agents Client Library.
-            Please see https://aka.ms/azsdk/conda/releases/agents for version details.
-        doc_url: 
-        dev_url: 
+requirements:
+  host:
+    - {host_reqs_str}
+  run:
+    - {run_reqs_str}
 
-    extra:
-        recipe-maintainers:
-          - xiangyan99
-    """
+test:
+  imports:
+    - {pkg_name_normalized}
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure AI Agents Client Library for Python"
+  description: |
+    This is the Microsoft Azure AI Agents Client Library.
+    Please see https://aka.ms/azsdk/conda/releases/agents for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99
+"""
     print(meta_yaml_content)
     return meta_yaml_content
 
