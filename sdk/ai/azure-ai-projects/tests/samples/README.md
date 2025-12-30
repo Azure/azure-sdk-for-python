@@ -4,7 +4,7 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 
 ### Prerequisites
 - In `.env`, set the variables required by your samples plus `AZURE_TEST_RUN_LIVE=true` and `AZURE_SKIP_LIVE_RECORDING=false` when capturing recordings. CI playback typically uses `AZURE_TEST_RUN_LIVE=false` and `AZURE_SKIP_LIVE_RECORDING=true`.
-- Provide sanitized defaults via `servicePreparer` so recordings do not leak secrets.
+- Provide sanitized defaults via `servicePreparer` so recordings do not leak secrets. All mandatory environment variables used by the tests/samples must be specified in `servicePreparer` (as sanitized values) so playback can run without access to real secrets.
 
 ### Sync example
 ```python
@@ -79,7 +79,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
 ```
 
 ### Key pieces
-- `@servicePreparer()`: Supplies sanitized environment variables for playback (often via `EnvironmentVariableLoader`). Use an empty string as the prefix if your variables do not share one.
+- `@servicePreparer()`: A custom helper you create for your test suite. It supplies sanitized environment variables for playback (often via `EnvironmentVariableLoader`). The name is up to you; these examples call it `servicePreparer` by convention.
 - Example:
 ```python
 import functools
@@ -108,3 +108,40 @@ def get_sample_environment_variables_map(operation_group: str | None = None) -> 
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
 - `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Optionally validate captured print output with LLM instructions and an explicit `project_endpoint` (and optional `model`).
 - `kwargs` in the test function: A dictionary with environment variables in key and value pairs.
+
+### Optional environment variables
+To run the “hero path” of a sample, your `@servicePreparer` should provide all mandatory environment variables.
+If a sample supports optional environment variables (for optional features/paths), use `@AdditionalTestsWithEnvironmentVariables` to generate additional recorded test cases with those optional variables set.
+
+```python
+@servicePreparer()
+@AdditionalTestsWithEnvironmentVariables(
+    [
+        (
+            "sample_agent_computer_use.py",
+            {"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model"},
+        ),
+        (
+            "sample_agent_computer_use.py",
+            {"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model", "SOME_FLAG": "true"},
+        )
+    ]
+)
+@pytest.mark.parametrize(
+    "sample_path",
+    get_sample_paths(
+        "agents/tools",
+        samples_to_skip=[],
+    ),
+)
+@SamplePathPasser()
+@recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
+    ...
+```
+
+In the example above, `sample_agent_computer_use.py` is executed multiple times with different optional environment variable sets.
+- Each tuple entry is one scenario. If you want multiple scenarios for the same sample file, add multiple entries with the same filename.
+- Live/recording: the value is read from your environment (for example, from `.env`).
+- Playback: the value is set to the provided sanitized value (`sanitized_model`).
+ 
