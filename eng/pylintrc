@@ -20,7 +20,7 @@ load-plugins=pylint_guidelines_checker
 # Let's black deal with bad-continuation
 
 # Added disables from super-with-arguments
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,consider-using-max-builtin,too-many-lines,possibly-used-before-assignment,do-not-hardcode-dedent,arguments-differ,signature-differs,deprecated-class,too-many-positional-arguments
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,consider-using-max-builtin,too-many-lines,possibly-used-before-assignment,do-not-hardcode-dedent,arguments-differ,signature-differs,deprecated-class,too-many-positional-arguments,use-maxsplit-arg
 
 
 [FORMAT]
@@ -39,6 +39,8 @@ max-branches=20
 max-attributes=10
 # Maximum number of ancestors
 max-parents=15
+# Maximum number of positional arugments for function / method
+max-positional-arguments=5
 
 [SIMILARITIES]
 min-similarity-lines=10
