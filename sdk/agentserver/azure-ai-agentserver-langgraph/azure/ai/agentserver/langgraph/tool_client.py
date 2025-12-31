@@ -9,7 +9,9 @@ from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field, create_model
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient, FoundryTool
+    from azure.ai.agentserver.core.client.tools.aio import FoundryToolClient
+    from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool
+
 
 # pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 class ToolClient:
@@ -57,7 +59,7 @@ class ToolClient:
     :meta private:
     """
 
-    def __init__(self, tool_client: "AzureAIToolClient") -> None:
+    def __init__(self, tool_client: "FoundryToolClient") -> None:
         """Initialize the ToolClient.
         
         :param tool_client: The AzureAIToolClient instance to use for tool operations.
@@ -101,7 +103,7 @@ class ToolClient:
 
         return self._langchain_tools_cache
 
-    def _convert_to_langchain_tool(self, azure_tool: "FoundryTool") -> StructuredTool:
+    def _convert_to_langchain_tool(self, azure_tool: "ResolvedFoundryTool") -> StructuredTool:
         """Convert an AzureAITool to a LangChain StructuredTool.
         
         :param azure_tool: The AzureAITool to convert.

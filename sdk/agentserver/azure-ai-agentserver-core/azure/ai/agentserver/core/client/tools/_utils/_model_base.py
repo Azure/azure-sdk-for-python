@@ -5,10 +5,9 @@
 # mypy: ignore-errors
 
 from dataclasses import dataclass, asdict, is_dataclass
-from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Set, Tuple
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple
 
-from .._model_base import ToolDefinition, FoundryTool, ToolSource, UserInfo
-
+from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool, FoundryTool, FoundryToolSource, UserInfo
 
 
 class ToolDescriptorBuilder:
@@ -17,26 +16,26 @@ class ToolDescriptorBuilder:
 	@staticmethod
 	def build_descriptors(
 		raw_tools: Iterable[Mapping[str, Any]],
-		source: ToolSource,
+		source: FoundryToolSource,
 		existing_names: Set[str],
-	) -> List[FoundryTool]:
+	) -> List[ResolvedFoundryTool]:
 		"""Build tool descriptors from raw tool data.
 		
 		Parameters
 		----------
 		raw_tools : Iterable[Mapping[str, Any]]
 			Raw tool data from API (can be dicts or dataclass objects)
-		source : ToolSource
+		source : FoundryToolSource
 			Source of the tools
 		existing_names : Set[str]
 			Set of existing tool names to avoid conflicts
 			
 		Returns
 		-------
-		List[FoundryTool]
+		List[ResolvedFoundryTool]
 			List of built tool descriptors
 		"""
-		descriptors: List[FoundryTool] = []
+		descriptors: List[ResolvedFoundryTool] = []
 		for raw in raw_tools:
 			# Convert dataclass objects to dictionaries
 			if is_dataclass(raw) and not isinstance(raw, type):
@@ -46,12 +45,10 @@ class ToolDescriptorBuilder:
 			if not name:
 				continue
 
-			key = ToolMetadataExtractor.derive_tool_key(raw, source)
 			description = description or ""
 			resolved_name = NameResolver.ensure_unique_name(name, existing_names)
 
-			descriptor = FoundryTool(
-				key=key,
+			descriptor = ResolvedFoundryTool(
 				name=resolved_name,
 				description=description,
 				source=source,
@@ -96,27 +93,6 @@ class ToolMetadataExtractor:
 			or raw.get("tool", {}).get("description")
 		)
 		return name, description
-
-	@staticmethod
-	def derive_tool_key(raw: Mapping[str, Any], source: ToolSource) -> str:
-		"""Derive unique key for a tool.
-		
-		Parameters
-		----------
-		raw : Mapping[str, Any]
-			Raw tool data
-		source : ToolSource
-			Source of the tool
-			
-		Returns
-		-------
-		str
-			Unique tool key
-		"""
-		for candidate in (raw.get("id"), raw.get("name"), raw.get("tool_name")):
-			if candidate:
-				return f"{source.value}:{candidate}"
-		return f"{source.value}:{id(raw)}"
 
 	@staticmethod
 	def extract_input_schema(raw: Mapping[str, Any]) -> Optional[Mapping[str, Any]]:
@@ -477,7 +453,7 @@ class EnrichedToolEntry(ToolManifest):
 	projectConnectionId: str
 	protocol: str
 	inputSchema: Optional[Mapping[str, Any]] = None
-	tool_definition: Optional[ToolDefinition] = None
+	tool_definition: Optional[FoundryTool] = None
 
 @dataclass
 class ToolEntry:
@@ -501,7 +477,7 @@ class ToolsResponse:
 	enriched_tools: List[EnrichedToolEntry]
 	
 	@classmethod
-	def from_dict(cls, data: Mapping[str, Any], tool_definitions: List[ToolDefinition]) -> "ToolsResponse":
+	def from_dict(cls, data: Mapping[str, Any], tool_definitions: List[FoundryTool]) -> "ToolsResponse":
 		"""Create a ToolsResponse from a dictionary.
 		
 		:param Mapping[str, Any] data: Dictionary representation of the API response.
@@ -510,7 +486,7 @@ class ToolsResponse:
 		"""
 		tool_defintions_map = {f"{td.type.lower()}_{td.project_connection_id.lower()}": td for td in tool_definitions}
 
-		def tool_definition_lookup(remote_server: RemoteServer) -> Optional[ToolDefinition]:
+		def tool_definition_lookup(remote_server: RemoteServer) -> Optional[FoundryTool]:
 			return tool_defintions_map.get(f"{remote_server.protocol.lower()}_{remote_server.projectConnectionId.lower()}")
 
 		
@@ -598,10 +574,10 @@ class ResolveToolsRequest:
 					}
 			elif hasattr(self.user, "objectId") and hasattr(self.user, "tenantId"):
 				# UserInfo object
-				if self.user.objectId and self.user.tenantId:
+				if self.user.object_id and self.user.tenant_id:
 					result["user"] = {
-						"objectId": self.user.objectId,
-						"tenantId": self.user.tenantId
+						"objectId": self.user.object_id,
+						"tenantId": self.user.tenant_id
 					}
 		return result
 	
@@ -629,12 +605,12 @@ class ToolConfigurationParser:
 				# Convert dict to ToolDefinition
 				tool_type = tool_def.get("type")
 				if tool_type:
-					self._tools_definitions.append(ToolDefinition(type=tool_type, **{k: v for k, v in tool_def.items() if k != "type"}))
-			elif isinstance(tool_def, ToolDefinition):
+					self._tools_definitions.append(FoundryTool(type=tool_type, **{k: v for k, v in tool_def.items() if k != "type"}))
+			elif isinstance(tool_def, FoundryTool):
 				self._tools_definitions.append(tool_def)
 		
-		self._remote_tools: List[ToolDefinition] = []
-		self._named_mcp_tools: List[ToolDefinition] = []
+		self._remote_tools: List[FoundryTool] = []
+		self._named_mcp_tools: List[FoundryTool] = []
 		self._parse_tools_config()
 
 	def _parse_tools_config(self) -> None:
@@ -650,10 +626,10 @@ class ToolConfigurationParser:
 			else:
 				self._named_mcp_tools.append(tool_definition)
 
-def to_remote_server(tool_definition: ToolDefinition) -> RemoteServer:
+def to_remote_server(tool_definition: FoundryTool) -> RemoteServer:
 	"""Convert ToolDefinition to RemoteServer.
 	
-	:param ToolDefinition tool_definition:
+	:param azure.ai.agentserver.core.tools._models.FoundryTool tool_definition:
 		Tool definition to convert.
 	:return: Converted RemoteServer instance.
 	:rtype: RemoteServer
@@ -664,133 +640,3 @@ def to_remote_server(tool_definition: ToolDefinition) -> RemoteServer:
 	)
 
 
-@dataclass
-class MCPToolSchema:
-	"""Represents the input schema for an MCP tool.
-	
-	:ivar str type: JSON schema type, typically "object".
-	:ivar Mapping[str, Any] properties: Dictionary of parameter properties.
-	:ivar List[str] required: List of required parameter names.
-	"""
-	
-	type: str
-	properties: Mapping[str, Any]
-	required: Optional[List[str]] = None
-
-
-@dataclass
-class MCPToolMetadata:
-	"""Represents the _meta field for an MCP tool.
-	
-	:ivar str type: JSON schema type, typically "object".
-	:ivar Mapping[str, Any] properties: Dictionary of metadata properties.
-	:ivar List[str] required: List of required metadata parameter names.
-	"""
-	
-	type: str
-	properties: Mapping[str, Any]
-	required: Optional[List[str]] = None
-
-
-@dataclass
-class MCPTool:
-	"""Represents a single MCP tool from the tools/list response.
-	
-	:ivar str name: Unique name of the tool.
-	:ivar str title: Display title of the tool.
-	:ivar str description: Detailed description of the tool's functionality.
-	:ivar MCPToolSchema inputSchema: Schema defining the tool's input parameters.
-	:ivar Optional[MCPToolMetadata] _meta: Optional metadata schema for the tool.
-	"""
-	
-	name: str
-	title: str
-	description: str
-	inputSchema: MCPToolSchema
-	_meta: Optional[MCPToolMetadata] = None
-
-@dataclass
-class EnrichedMCPTool(MCPTool):
-	"""Represents an enriched MCP tool with additional metadata.
-	
-	:ivar ToolDefinition tool_definition: Associated tool definition.
-	"""
-	tool_definition: Optional[ToolDefinition] = None
-
-@dataclass
-class MCPToolsListResult:
-	"""Represents the result field of an MCP tools/list response.
-	
-	:ivar List[MCPTool] tools: List of available MCP tools.
-	"""
-	
-	tools: List[MCPTool]
-
-
-@dataclass
-class MCPToolsListResponse:
-	"""Root response model for the MCP tools/list JSON-RPC response.
-	
-	:ivar str jsonrpc: JSON-RPC protocol version (e.g., "2.0").
-	:ivar int id: Request identifier.
-	:ivar MCPToolsListResult result: Result containing the list of tools.
-	"""
-	
-	jsonrpc: str
-	id: int
-	result: MCPToolsListResult
-	
-	@classmethod
-	def from_dict(cls, data: Mapping[str, Any], tool_definitions: List[ToolDefinition]) -> "MCPToolsListResponse":
-		"""Create an MCPToolsListResponse from a dictionary.
-		
-		:param Mapping[str, Any] data: Dictionary representation of the JSON-RPC response.
-		:return: Parsed MCPToolsListResponse instance.
-		:rtype: MCPToolsListResponse
-		"""
-		result_data = data.get("result", {})
-		tools_list = []
-		tool_definitions_map = {f"{td.type.lower()}": td for td in tool_definitions}
-		filter_tools = len(tool_definitions_map) > 0
-		for tool_data in result_data.get("tools", []):
-
-			if filter_tools and tool_data["name"].lower() not in tool_definitions_map:
-				continue
-			# Parse inputSchema
-			input_schema_data = tool_data.get("inputSchema", {})
-			input_schema = MCPToolSchema(
-				type=input_schema_data.get("type", "object"),
-				properties=input_schema_data.get("properties", {}),
-				required=input_schema_data.get("required")
-			)
-			
-			# Parse _meta if present
-			meta = None
-			meta_data = tool_data.get("_meta")
-			if meta_data:
-				meta = MCPToolMetadata(
-					type=meta_data.get("type", "object"),
-					properties=meta_data.get("properties", {}),
-					required=meta_data.get("required")
-				)
-			
-			# Create MCPTool
-			mcp_tool = EnrichedMCPTool(
-				name=tool_data["name"],
-				title=tool_data.get("title", tool_data["name"]),
-				description=tool_data.get("description", ""),
-				inputSchema=input_schema,
-				_meta=meta,
-				tool_definition=tool_definitions_map.get(tool_data["name"].lower())
-			)
-
-			tools_list.append(mcp_tool)
-		
-		# Create result
-		result = MCPToolsListResult(tools=tools_list)
-		
-		return cls(
-			jsonrpc=data.get("jsonrpc", "2.0"),
-			id=data.get("id", 0),
-			result=result
-		)

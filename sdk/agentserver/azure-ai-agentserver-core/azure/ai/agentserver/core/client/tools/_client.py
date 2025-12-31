@@ -11,7 +11,8 @@ from azure.core.tracing.decorator import distributed_trace
 from ._configuration import AzureAIToolClientConfiguration
 from .operations._operations import MCPToolsOperations, RemoteToolsOperations
 from ._utils._model_base import InvocationPayloadBuilder
-from ._model_base import FoundryTool, ToolSource
+from ...tools._models import ResolvedFoundryTool, FoundryToolSource
+
 
 class AzureAIToolClient:
     """Synchronous client for aggregating tools from Azure AI MCP and Tools APIs.
@@ -83,7 +84,7 @@ class AzureAIToolClient:
         self._mcp_tools = MCPToolsOperations(client=self._client, config=self._config)
         self._remote_tools = RemoteToolsOperations(client=self._client, config=self._config)
 
-    def list_tools(self) -> List[FoundryTool]:
+    def list_tools(self) -> List[ResolvedFoundryTool]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
@@ -101,15 +102,7 @@ class AzureAIToolClient:
 
         existing_names: set[str] = set()
 
-        tools: List[FoundryTool] = []
-
-        # Fetch MCP tools
-        if (
-            self._config.tool_config._named_mcp_tools
-            and len(self._config.tool_config._named_mcp_tools) > 0
-        ):
-            mcp_tools = self._mcp_tools.list_tools(existing_names)
-            tools.extend(mcp_tools)
+        tools: List[ResolvedFoundryTool] = []
 
         # Fetch Tools API tools
         if (
@@ -129,7 +122,7 @@ class AzureAIToolClient:
     @distributed_trace
     def invoke_tool(
         self,
-        tool: Union[str, FoundryTool],
+        tool: Union[str, ResolvedFoundryTool],
         *args: Any,
         **kwargs: Any,
     ) -> Any:
@@ -148,39 +141,39 @@ class AzureAIToolClient:
         return self._invoke_tool(descriptor, payload, **kwargs)
 
     def _resolve_tool_descriptor(
-        self, tool: Union[str, FoundryTool]
-    ) -> FoundryTool:
+        self, tool: Union[str, ResolvedFoundryTool]
+    ) -> ResolvedFoundryTool:
         """Resolve a tool reference to a descriptor.
 
         :param tool: Tool to resolve, either a FoundryTool instance or a string name/key.
-        :type tool: Union[str, FoundryTool]
+        :type tool: Union[str, ResolvedFoundryTool]
         :return: The resolved FoundryTool descriptor.
-        :rtype: FoundryTool
+        :rtype: ResolvedFoundryTool
         """
-        if isinstance(tool, FoundryTool):
+        if isinstance(tool, ResolvedFoundryTool):
             return tool
         if isinstance(tool, str):
             # Fetch all tools and find matching descriptor
             descriptors = self.list_tools()
             for descriptor in descriptors:
-                if tool in (descriptor.name, descriptor.key):
+                if tool in (descriptor.name):
                     return descriptor
             raise KeyError(f"Unknown tool: {tool}")
         raise TypeError("Tool must be an AzureAITool, FoundryTool, or registered name/key")
 
-    def _invoke_tool(self, descriptor: FoundryTool, arguments: Mapping[str, Any], **kwargs: Any) -> Any:
+    def _invoke_tool(self, descriptor: ResolvedFoundryTool, arguments: Mapping[str, Any], **kwargs: Any) -> Any:
         """Invoke a tool descriptor.
 
         :param descriptor: The tool descriptor to invoke.
-        :type descriptor: FoundryTool
+        :type descriptor: ResolvedFoundryTool
         :param arguments: Arguments to pass to the tool.
         :type arguments: Mapping[str, Any]
         :return: The result of the tool invocation.
         :rtype: Any
         """
-        if descriptor.source is ToolSource.MCP_TOOLS:
+        if descriptor.source is FoundryToolSource.HOSTED_MCP:
             return self._mcp_tools.invoke_tool(descriptor, arguments, **kwargs)
-        if descriptor.source is ToolSource.REMOTE_TOOLS:
+        if descriptor.source is FoundryToolSource.CONNECTED:
             return self._remote_tools.invoke_tool(descriptor, arguments, **kwargs)
         raise ValueError(f"Unsupported tool source: {descriptor.source}")
 

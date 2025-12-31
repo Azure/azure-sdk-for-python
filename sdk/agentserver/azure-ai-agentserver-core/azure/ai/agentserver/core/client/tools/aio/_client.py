@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access,do-not-import-asyncio
-from typing import Any, List, Mapping, Union, TYPE_CHECKING
+from typing import Any, Dict, List, Mapping, Union, TYPE_CHECKING
 from asyncio import gather
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -10,14 +10,15 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._configuration import AzureAIToolClientConfiguration
 from .._utils._model_base import InvocationPayloadBuilder
-from .._model_base import FoundryTool, ToolSource
+from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool, FoundryToolSource
 
-from .operations._operations import MCPToolsOperations, RemoteToolsOperations
+from azure.ai.agentserver.core.tools.operations._foundry_connected_tools import FoundryConnectedToolsOperations
+from azure.ai.agentserver.core.tools.operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-class AzureAIToolClient:
+class FoundryToolClient:
     """Asynchronous client for aggregating tools from Azure AI MCP and Tools APIs.
 
     This client provides access to tools from both MCP (Model Context Protocol) servers
@@ -84,10 +85,10 @@ class AzureAIToolClient:
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=endpoint, policies=_policies, **kwargs)
 
         # Initialize specialized clients with client and config
-        self._mcp_tools = MCPToolsOperations(client=self._client, config=self._config)
-        self._remote_tools = RemoteToolsOperations(client=self._client, config=self._config)
+        self._mcp_tools = FoundryMcpToolsOperations(client=self._client, config=self._config)
+        self._remote_tools = FoundryConnectedToolsOperations(client=self._client, config=self._config)
 
-    async def list_tools(self) -> List[FoundryTool]:
+    async def list_tools(self) -> List[ResolvedFoundryTool]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
@@ -105,7 +106,7 @@ class AzureAIToolClient:
 
         existing_names: set[str] = set()
 
-        tools: List[FoundryTool] = []
+        tools: List[ResolvedFoundryTool] = []
 
         # Fetch MCP tools and Tools API tools in parallel
         # Build list of coroutines to gather based on configuration
@@ -119,7 +120,7 @@ class AzureAIToolClient:
             self._config.tool_config._remote_tools
             and len(self._config.tool_config._remote_tools) > 0
         ):
-            tasks.append(self._remote_tools.resolve_tools(existing_names))
+            tasks.append(self._remote_tools.list_tools(existing_names))
 
         # Execute all tasks in parallel if any exist
         if tasks:
@@ -140,7 +141,7 @@ class AzureAIToolClient:
     @distributed_trace_async
     async def invoke_tool(
         self,
-        tool: Union[str, FoundryTool],
+        tool: Union[str, ResolvedFoundryTool],
         *args: Any,
         **kwargs: Any,
     ) -> Any:
@@ -159,39 +160,39 @@ class AzureAIToolClient:
         return await self._invoke_tool(descriptor, payload, **kwargs)
 
     async def _resolve_tool_descriptor(
-        self, tool: Union[str, FoundryTool]
-    ) -> FoundryTool:
+        self, tool: Union[str, ResolvedFoundryTool]
+    ) -> ResolvedFoundryTool:
         """Resolve a tool reference to a descriptor.
 
         :param tool: Tool to resolve, either a FoundryTool instance or a string name/key.
-        :type tool: Union[str, FoundryTool]
+        :type tool: Union[str, ResolvedFoundryTool]
         :return: The resolved FoundryTool descriptor.
-        :rtype: FoundryTool
+        :rtype: ResolvedFoundryTool
         """
-        if isinstance(tool, FoundryTool):
+        if isinstance(tool, ResolvedFoundryTool):
             return tool
         if isinstance(tool, str):
             # Fetch all tools and find matching descriptor
             descriptors = await self.list_tools()
             for descriptor in descriptors:
-                if tool in (descriptor.name, descriptor.key):
+                if tool in (descriptor.name):
                     return descriptor
             raise KeyError(f"Unknown tool: {tool}")
         raise TypeError("Tool must be an AsyncAzureAITool, FoundryTool, or registered name/key")
 
-    async def _invoke_tool(self, descriptor: FoundryTool, arguments: Mapping[str, Any], **kwargs: Any) -> Any: #pylint: disable=unused-argument
+    async def _invoke_tool(self, descriptor: ResolvedFoundryTool, arguments: Dict[str, Any]) -> Any:
         """Invoke a tool descriptor.
 
         :param descriptor: The tool descriptor to invoke.
-        :type descriptor: FoundryTool
+        :type descriptor: ResolvedFoundryTool
         :param arguments: Arguments to pass to the tool.
         :type arguments: Mapping[str, Any]
         :return: The result of the tool invocation.
         :rtype: Any
         """
-        if descriptor.source is ToolSource.MCP_TOOLS:
+        if descriptor.source is FoundryToolSource.HOSTED_MCP:
             return await self._mcp_tools.invoke_tool(descriptor, arguments)
-        if descriptor.source is ToolSource.REMOTE_TOOLS:
+        if descriptor.source is FoundryToolSource.CONNECTED:
             return await self._remote_tools.invoke_tool(descriptor, arguments)
         raise ValueError(f"Unsupported tool source: {descriptor.source}")
 
@@ -199,7 +200,7 @@ class AzureAIToolClient:
         """Close the underlying HTTP pipeline."""
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureAIToolClient":
+    async def __aenter__(self) -> "FoundryToolClient":
         await self._client.__aenter__()
         return self
 

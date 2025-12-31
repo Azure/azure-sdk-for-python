@@ -5,7 +5,8 @@
 from typing import Any, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
-from ._utils._model_base import ToolConfigurationParser, UserInfo, ToolDefinition
+from ._utils._model_base import ToolConfigurationParser
+from ...tools._models import FoundryTool, UserInfo
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -56,7 +57,7 @@ class AzureAIToolClientConfiguration:  # pylint: disable=too-many-instance-attri
 
         # Tool configuration
         self.agent_name: str = kwargs.pop("agent_name", "$default")
-        self.tools: Optional[List[ToolDefinition]] = kwargs.pop("tools", None)
+        self.tools: Optional[List[FoundryTool]] = kwargs.pop("tools", None)
         self.user: Optional[UserInfo] = kwargs.pop("user", None)
 
         # Initialize tool configuration parser

@@ -9,7 +9,8 @@ from agent_framework import AIFunction
 from pydantic import Field, create_model
 from azure.ai.agentserver.core.logger import get_logger
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient, FoundryTool
+    from azure.ai.agentserver.core.client.tools.aio import FoundryToolClient
+    from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool
 
 logger = get_logger()
 
@@ -51,7 +52,7 @@ class ToolClient:
     :meta private:
     """
 
-    def __init__(self, tool_client: "AzureAIToolClient") -> None:
+    def __init__(self, tool_client: "FoundryToolClient") -> None:
         """Initialize the ToolClient.
 
         :param tool_client: The AzureAIToolClient instance to use for tool operations.
@@ -92,7 +93,7 @@ class ToolClient:
 
         return self._aifunction_cache
 
-    def _convert_to_agent_framework_tool(self, azure_tool: "FoundryTool") -> AIFunction:
+    def _convert_to_agent_framework_tool(self, azure_tool: "ResolvedFoundryTool") -> AIFunction:
         """Convert an AzureAITool to an Agent Framework AI Function
 
         :param azure_tool: The AzureAITool to convert.

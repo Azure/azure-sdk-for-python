@@ -34,8 +34,8 @@ from ..models import (
 )
 from .common.agent_run_context import AgentRunContext
 
-from ..client.tools.aio._client import AzureAIToolClient
-from ..client.tools._utils._model_base import ToolDefinition, UserInfo
+from ..client.tools.aio._client import FoundryToolClient
+from ..tools._models import FoundryTool, UserInfo
 
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"
@@ -500,15 +500,15 @@ class FoundryCBAgent:
         return FoundryCBAgent._cached_tools_endpoint, FoundryCBAgent._cached_agent_name
 
     def get_tool_client(
-            self, tools: Optional[list[ToolDefinition]], user_info: Optional[UserInfo]
-        ) -> AzureAIToolClient:
+            self, tools: Optional[list[FoundryTool]], user_info: Optional[UserInfo]
+        ) -> FoundryToolClient:
         logger.debug("Creating AzureAIToolClient with tools: %s", tools)
         if not self.credentials:
             raise ValueError("Credentials are required to create Tool Client.")
 
         tools_endpoint, agent_name = self._configure_endpoint()
 
-        return AzureAIToolClient(
+        return FoundryToolClient(
             endpoint=tools_endpoint,
             credential=self.credentials,
             tools=tools,

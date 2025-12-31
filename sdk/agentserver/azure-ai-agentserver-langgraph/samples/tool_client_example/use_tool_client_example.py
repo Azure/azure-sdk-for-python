@@ -14,7 +14,7 @@ from importlib.metadata import version
 from langchain_openai import AzureChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 
-from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient
+from azure.ai.agentserver.core.client.tools.aio import FoundryToolClient
 from azure.ai.agentserver.langgraph import ToolClient, from_langgraph
 from azure.identity.aio import DefaultAzureCredential
 
@@ -59,7 +59,7 @@ async def quickstart():
     ]
     # Create the AzureAIToolClient
     # This client supports both MCP tools and Azure AI Tools API
-    tool_client = AzureAIToolClient(
+    tool_client = FoundryToolClient(
         endpoint=project_endpoint,
         credential=credential,
         tools=tool_definitions
