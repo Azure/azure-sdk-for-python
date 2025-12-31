@@ -210,6 +210,11 @@ def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int
     return package_index
 
 
+class IndentDumper(yaml.SafeDumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super().increase_indent(flow, False)
+
+
 def update_package_versions(
     packages: List[Dict[str, str]], prev_release_date: str
 ) -> None:
@@ -296,13 +301,18 @@ def update_package_versions(
                 f"Package {pkg_name} not found in conda-sdk-client.yml, skipping download_uri update"
             )
 
+    # TODO note this dump doesn't preserve some quotes like
+    #    displayName: 'azure-developer-loadtesting' but i don't think those functionally necessary?
+
     if updated_count > 0:
         with open(CONDA_CLIENT_YAML_PATH, "w") as file:
             yaml.dump(
                 conda_client_data,
                 file,
+                Dumper=IndentDumper,
                 default_flow_style=False,
                 sort_keys=False,
+                indent=2,
                 width=float("inf"),
             )
         logger.info(
