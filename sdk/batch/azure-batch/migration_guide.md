@@ -112,7 +112,7 @@ client = BatchClient(
 
 The error handling has been updated, moving from custom Batch-specific exception handling to a more standardized Azure Core exception handling process. This change helps bring consistency across Azure services and provides the same error information for debugging and troubleshooting.
 
-In version v15.x, we adopt the Azure Core exception framework, which provides a variety of exception types that map directly to HTTP status codes and common error scenarios. The base `HTTPResponseError` is the foundation, wich specialized exceptions like `ClientAuthenticationError`, `ResourceNotFoundError`, `ResourceExistsError`, and more, providing more specific error categorization. This system also provides direct access to HTTP status codes, response headers, and request information which we didn't have before.
+In version v15.x, we adopt the Azure Core exception framework, which provides a variety of exception types that map directly to HTTP status codes and common error scenarios. The base `HttpResponseError` is the foundation, with specialized exceptions like `ClientAuthenticationError`, `ResourceNotFoundError`, `ResourceExistsError`, and more providing specific error categorization. This system also provides direct access to HTTP status codes, response headers, and request information which we didn't have before.
 
 ```python
 # v15.x - Standardized Azure Exceptions
