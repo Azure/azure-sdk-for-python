@@ -6,13 +6,15 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 - In `.env`, set the variables required by your samples plus `AZURE_TEST_RUN_LIVE=true` and `AZURE_SKIP_LIVE_RECORDING=false` when capturing recordings. CI playback typically uses `AZURE_TEST_RUN_LIVE=false` and `AZURE_SKIP_LIVE_RECORDING=true`.
 - Provide sanitized defaults via `servicePreparer` so recordings do not leak secrets. All mandatory environment variables used by the tests/samples must be specified in `servicePreparer` (as sanitized values) so playback can run without access to real secrets.
 
+**VS Code tip (record a single sample):** Open the **Testing** tab, expand the pytest tree to find the specific sample test case (for example, one parameterized case for a particular `sample_path`), then right-click it and choose **Run Test** (or **Debug Test**). Make sure your `.env` (or your test run environment) includes `AZURE_TEST_RUN_LIVE=true` and `AZURE_SKIP_LIVE_RECORDING=false` so that run captures a new recording for just that sample.
+
 ### Sync example
 ```python
 import pytest
 import os
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
-from sample_executor import SyncSampleExecutor, get_sample_paths, SamplePathPasser
+from sample_executor import SyncSampleExecutor, get_sample_paths, samplePathPasser
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 class TestSamples(AzureRecordedTestCase):
@@ -32,7 +34,7 @@ class TestSamples(AzureRecordedTestCase):
             ],
         ),
     )
-    @SamplePathPasser()
+    @samplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map()
@@ -51,7 +53,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 import os
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
-from sample_executor import AsyncSampleExecutor, get_async_sample_paths, SamplePathPasser
+from sample_executor import AsyncSampleExecutor, get_async_sample_paths, samplePathPasser
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 class TestSamplesAsync(AzureRecordedTestCase):
@@ -66,7 +68,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             ],
         ),
     )
-    @SamplePathPasser()
+    @samplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map()
@@ -94,7 +96,7 @@ servicePreparer = functools.partial(
 )
 ```
 - `@pytest.mark.parametrize`: Drives one test per sample file. Use `samples_to_test` or `samples_to_skip` with `get_sample_paths` / `get_async_sample_paths`.
-- `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
+- `@samplePathPasser`: Forwards the sample path to the recorder decorators.
 - `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
 - `get_sample_environment_variables_map`: Map test env vars to the names expected by samples. Pass `{}` if you already export the sample variables directly. Example:
 ```python
@@ -111,20 +113,27 @@ def get_sample_environment_variables_map(operation_group: str | None = None) -> 
 
 ### Optional environment variables
 To run the “hero path” of a sample, your `@servicePreparer` should provide all mandatory environment variables.
-If a sample supports optional environment variables (for optional features/paths), use `@AdditionalTestsWithEnvironmentVariables` to generate additional recorded test cases with those optional variables set.
+If a sample supports optional environment variables (for optional features/paths), use `@additionalSampleTests` to generate additional recorded test cases with those optional variables set.
 
 ```python
+from sample_executor import AdditionalSampleTestDetail, additionalSampleTests
+
 @servicePreparer()
-@AdditionalTestsWithEnvironmentVariables(
+@additionalSampleTests(
     [
-        (
-            "sample_agent_computer_use.py",
-            {"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model"},
+        AdditionalSampleTestDetail(
+            sample_filename="sample_agent_computer_use.py",
+            env_vars={"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model"},
+            test_id="computer_use",
         ),
-        (
-            "sample_agent_computer_use.py",
-            {"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model", "SOME_FLAG": "true"},
-        )
+        AdditionalSampleTestDetail(
+            sample_filename="sample_agent_computer_use.py",
+            env_vars={
+                "COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model",
+                "SOME_FLAG": "true",
+            },
+            test_id="sample_agent_computer_use_with_flag",
+        ),
     ]
 )
 @pytest.mark.parametrize(
@@ -134,14 +143,19 @@ If a sample supports optional environment variables (for optional features/paths
         samples_to_skip=[],
     ),
 )
-@SamplePathPasser()
+@samplePathPasser()
 @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
 def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
     ...
 ```
 
-In the example above, `sample_agent_computer_use.py` is executed multiple times with different optional environment variable sets.
-- Each tuple entry is one scenario. If you want multiple scenarios for the same sample file, add multiple entries with the same filename.
-- Live/recording: the value is read from your environment (for example, from `.env`).
-- Playback: the value is set to the provided sanitized value (`sanitized_model`).
+Notes:
+- `AdditionalSampleTestDetail.env_vars` is a mapping of **sample env-var name** -> **sanitized playback value**.
+    - Live/recording (`AZURE_TEST_RUN_LIVE=true`): reads the real value from your environment (for example, from `.env`) and sanitizes it to the provided playback value.
+    - Playback (`AZURE_TEST_RUN_LIVE=false`): sets each key to the provided playback value.
+- `AdditionalSampleTestDetail.test_id` customizes the parameter id used for that variant.
+    - If omitted, the id is auto-generated from the sample filename and env-var keys (for example, `sample_agent_computer_use-[COMPUTER_USE_MODEL_DEPLOYMENT_NAME]`).
+    - If provided, it becomes the full parameter id for that variant (no filename prefix).
+    - If the auto-generated id makes the recording file path too long (most commonly on Windows), the recording file may fail to generate; set a short `test_id` (and keep it unique across all parametrized cases).
+- In VS Code’s **Testing** tab, these show up as additional parameterized cases for the same test, using the parameter id.
 
