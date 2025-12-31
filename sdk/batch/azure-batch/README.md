@@ -277,7 +277,7 @@ else:
 ```
 
 ## Job Schedule Operations
-Job schedules enable you to create recurring jobs within the Batch service. A job schedule specifies when to run jobs and includes the specifications for the jobs to be run. You can specify the duration of the schedule (how long and when the schedule is in effect) and how frequently jobs are created during the scheduled period. For more information, see [Scheduled Jobs in Azure Batch](https://learn.microsoft.com/en-us/azure/batch/jobs-and-tasks#scheduled-jobs).
+Job schedules enable you to create recurring jobs within the Batch service. A job schedule specifies when to run jobs and includes the specifications for the jobs to be run. You can specify the duration of the schedule (how long and when the schedule is in effect) and how frequently jobs are created during the scheduled period. For more information, see [Scheduled Jobs in Azure Batch](https://learn.microsoft.com/azure/batch/jobs-and-tasks#scheduled-jobs).
 
 ### Create job schedule
 The `create_job_schedule` method creates a new job schedule that automatically creates jobs based on the specified schedule.
@@ -433,7 +433,7 @@ client.delete_task(job_id="my-job", task_id="my-task")
 
 In Azure Batch, each task has a working directory under which it can create files and directories. This working directory can be used for storing the program that is run by the task, the data that it processes, and the output of the processing it performs. All files and directories of a task are owned by the task user.
 
-The Batch service exposes a portion of the file system on a node as the root directory. This root directory is located on the temporary storage drive of the VM, not directly on the OS drive. For more information, see [Files and Directories in Azure Batch](https://learn.microsoft.com/en-us/azure/batch/files-and-directories).
+The Batch service exposes a portion of the file system on a node as the root directory. This root directory is located on the temporary storage drive of the VM, not directly on the OS drive. For more information, see [Files and Directories in Azure Batch](https://learn.microsoft.com/azure/batch/files-and-directories).
 
 ### List task files
 List all files available in a task's directory using the `list_task_files` method:
@@ -447,7 +447,7 @@ for file in only_files:
 ```
 
 ## Node Operations
-A node is an Azure virtual machine (VM) or cloud service VM that is dedicated to processing a portion of your application's workload. The size of a node determines the number of CPU cores, memory capacity, and local file system size that is allocated to the node. For more information, please see [Nodes and Pools in Azure Batch](https://learn.microsoft.com/en-us/azure/batch/nodes-and-pools#nodes).
+A node is an Azure virtual machine (VM) or cloud service VM that is dedicated to processing a portion of your application's workload. The size of a node determines the number of CPU cores, memory capacity, and local file system size that is allocated to the node. For more information, please see [Nodes and Pools in Azure Batch](https://learn.microsoft.com/azure/batch/nodes-and-pools#nodes).
 
 ### Get node
 The `get_node` method retrieves details about a specific compute node in a pool.
