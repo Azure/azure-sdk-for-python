@@ -11,7 +11,7 @@ import glob
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from ci_tools.logging import logger, configure_logging
-from ci_tools.parsing import get_install_requires, ParsedSetup
+from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from typing import Dict, List, Optional, Tuple
 
 # paths
@@ -366,15 +366,19 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
     return list(host_requirements), list(run_requirements)
 
 
-def get_package_metadata(parsed: ParsedSetup, package_path: str) -> Dict[str, str]:
+def get_package_metadata(package_name: str, package_path: str) -> Dict[str, str]:
     """Extract metadata for the about section from package."""
-    package_name = parsed.name
+    metadata = extract_package_metadata(package_path)
+
     service_dir = os.path.basename(os.path.dirname(package_path))
 
     home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
-    pkg_display_name = package_name.replace("azure-", "").replace("-", " ").title()
-    summary = f"Microsoft Azure {pkg_display_name} Client Library for Python"
+    # TODO check this
+    if metadata and metadata.get("description"):
+        summary = metadata["description"]
+    else:
+        summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
 
     # TODO definitely need to check if this is actually correct
     conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
@@ -397,9 +401,7 @@ def generate_data_plane_meta_yaml(
 
     package_path = get_package_path(package_name)
 
-    # get parsed setup info to extract requirements and metadata
     parsed_setup = ParsedSetup.from_path(package_path)
-
     host_reqs, run_reqs = get_package_requirements(parsed_setup)
 
     # Format requirements with proper YAML indentation
@@ -410,7 +412,7 @@ def generate_data_plane_meta_yaml(
     pkg_name_normalized = package_name.replace("-", ".")
 
     # Get package metadata for about section
-    metadata = get_package_metadata(parsed_setup, package_path)
+    metadata = get_package_metadata(package_name, package_path)
 
     meta_yaml_content = f"""{{% set name = "{package_name}" %}}
 
