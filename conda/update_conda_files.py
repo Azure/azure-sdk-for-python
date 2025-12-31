@@ -291,6 +291,10 @@ def update_package_versions(
                     f"Updated download_uri for {pkg_name} with version {latest_version}: {download_uri}"
                 )
                 updated_count += 1
+        else:
+            logger.warning(
+                f"Package {pkg_name} not found in conda-sdk-client.yml, skipping download_uri update"
+            )
 
     if updated_count > 0:
         with open(CONDA_CLIENT_YAML_PATH, "w") as file:
@@ -309,6 +313,7 @@ def update_package_versions(
 
 
 def get_package_path(package_name: str) -> Optional[str]:
+    """Get the filesystem path of an SDK package given its name."""
     pattern = os.path.join(SDK_DIR, "**", package_name)
     matches = glob.glob(pattern, recursive=True)
     if matches:
@@ -322,7 +327,7 @@ def format_requirement(req: str) -> str:
     # TODO idk if this is right, certain reqs never seem to have pinned versions like aiohttp or isodate
 
     if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
-        return f"{name_unpinned} >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}"
+        return f"{name_unpinned} >={{{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}}}"
     return req
 
 
