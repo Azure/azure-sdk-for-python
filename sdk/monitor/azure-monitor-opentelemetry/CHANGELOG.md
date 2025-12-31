@@ -3,6 +3,8 @@
 ## 1.8.4 (Unreleased)
 
 ### Features Added
+- Added support for OTEL_TRACES_SAMPLER
+  ([#44535](https://github.com/Azure/azure-sdk-for-python/pull/44535))
 
 ### Breaking Changes
 
