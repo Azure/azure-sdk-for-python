@@ -638,14 +638,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(client.enable_job_schedule(schedule_id))
         assert response is None
 
-        # Test Update Job Schedule
+        # Test Replace Job Schedule
         job_spec = models.BatchJobSpecification(pool_info=models.BatchPoolInfo(pool_id="pool_id"))
         schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=10))
         params = models.BatchJobSchedule(schedule=schedule, job_specification=job_spec)
         response = await wrap_result(client.replace_job_schedule(schedule_id, params))
         assert response is None
 
-        # Test Patch Job Schedule
+        # Test Update Job Schedule
         schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=5))
         params = models.BatchJobScheduleUpdateOptions(schedule=schedule)
         response = await wrap_result(client.update_job_schedule(schedule_id, params))
