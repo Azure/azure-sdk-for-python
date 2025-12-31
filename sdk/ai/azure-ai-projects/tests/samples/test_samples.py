@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
 import pytest
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
