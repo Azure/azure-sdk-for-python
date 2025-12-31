@@ -11,6 +11,7 @@ import pytest
 import inspect
 import importlib.util
 import functools
+from dataclasses import dataclass, field
 from typing import overload, Union
 from pydantic import BaseModel
 
@@ -249,22 +250,28 @@ class BaseSampleExecutor:
         print(f"Reason: {test_report['reason']}")
 
 
-class SamplePathPasser:
-    """Decorator for passing sample path to test functions."""
+def samplePathPasser():
+    """Decorator factory for passing sample path to test functions.
 
-    def __call__(self, fn):
+    Usage: `@samplePathPasser()`.
+    """
+
+    def _decorator(fn):
         if inspect.iscoroutinefunction(fn):
 
+            @functools.wraps(fn)
             async def _wrapper_async(test_class, sample_path, **kwargs):
                 return await fn(test_class, sample_path, **kwargs)
 
             return _wrapper_async
-        else:
 
-            def _wrapper_sync(test_class, sample_path, **kwargs):
-                return fn(test_class, sample_path, **kwargs)
+        @functools.wraps(fn)
+        def _wrapper_sync(test_class, sample_path, **kwargs):
+            return fn(test_class, sample_path, **kwargs)
 
-            return _wrapper_sync
+        return _wrapper_sync
+
+    return _decorator
 
 
 class SyncSampleExecutor(BaseSampleExecutor):
@@ -459,11 +466,49 @@ def _register_env_var_sanitizers(
         add_general_string_sanitizer(function_scoped=True, target=live_value, value=playback_value)
 
 
-class AdditionalTestsWithEnvironmentVariables:
-    """Decorator that injects per-sample additional env vars for record/playback.
+@dataclass(slots=True, init=False)
+class AdditionalSampleTestDetail:
+    """Configuration for adding an additional parametrized test case for a specific sample.
+
+    In live mode (AZURE_TEST_RUN_LIVE=true), the values for keys in `env_vars` are read from the
+    environment and then sanitized to the provided playback values.
+
+    In playback mode, keys in `env_vars` are set to the provided playback values.
+    """
+
+    sample_filename: str
+    env_vars: dict[str, str]
+    _test_id: str | None = field(default=None, repr=False)
+
+    def __init__(
+        self,
+        *,
+        sample_filename: str,
+        env_vars: dict[str, str],
+        test_id: str | None = None,
+    ) -> None:
+        self.sample_filename = sample_filename
+        self.env_vars = env_vars
+        self._test_id = test_id
+
+    @property
+    def test_id(self) -> str:
+        if self._test_id is None:
+            sample_stem = os.path.splitext(os.path.basename(self.sample_filename))[0]
+            keys_suffix = ",".join(sorted(self.env_vars.keys()))
+            self._test_id = f"{sample_stem}-[{keys_suffix}]"
+        return self._test_id
+
+    @test_id.setter
+    def test_id(self, value: str) -> None:
+        self._test_id = value
+
+
+def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
+    """Decorator factory that adds additional test cases per sample for record/playback.
 
     Args:
-        samples_with_env_vars: List of tuples: (sample_filename, {ENV_KEY: playback_sanitized_value}).
+        additional_tests: List of `AdditionalSampleTestDetail` items.
             - In live mode (AZURE_TEST_RUN_LIVE=true): reads actual values from the environment for ENV_KEY,
               and registers function-scoped sanitizers to replace them with the provided playback values.
             - In playback mode: sets ENV_KEY to the provided playback value.
@@ -471,18 +516,17 @@ class AdditionalTestsWithEnvironmentVariables:
     The decorator also appends env-var keys to the pytest id for the matching sample.
     """
 
-    def __init__(self, samples_with_env_vars: list[tuple[str, dict[str, str]]]):
-        # Allow multiple env-var sets per sample (e.g. same sample file listed multiple times)
-        self._env_var_playback_values_by_sample: dict[str, list[dict[str, str]]] = {}
-        for sample_file, playback_values in samples_with_env_vars:
-            key = _normalize_sample_filename(sample_file)
-            self._env_var_playback_values_by_sample.setdefault(key, []).append(playback_values)
+    # Allow multiple env-var sets per sample (e.g. same sample file listed multiple times)
+    env_var_sets_by_sample: dict[str, list[AdditionalSampleTestDetail]] = {}
+    for item in additional_tests:
+        key = _normalize_sample_filename(item.sample_filename)
+        env_var_sets_by_sample.setdefault(key, []).append(item)
 
-        # Mapping from param-id (request.node.callspec.id) -> playback values dict.
-        # Populated when we expand parametrize ids.
-        self._playback_values_by_param_id: dict[str, dict[str, str]] = {}
+    # Mapping from param-id (request.node.callspec.id) -> playback values dict.
+    # Populated when we expand parametrize ids.
+    playback_values_by_param_id: dict[str, dict[str, str]] = {}
 
-    def __call__(self, fn):
+    def _decorator(fn):
         # Expand the existing sample_path parametrization:
         # - keep the original case (no extra env vars)
         # - add one extra case per env-var set, with a stable id suffix
@@ -545,35 +589,43 @@ class AdditionalTestsWithEnvironmentVariables:
                 if inferred_sample_dir is None:
                     inferred_sample_dir = os.path.dirname(str(sample_path))
 
-                playback_sets = self._env_var_playback_values_by_sample.get(sample_filename)
-                if not playback_sets:
+                additional_details = env_var_sets_by_sample.get(sample_filename)
+                if not additional_details:
                     continue
 
-                base_id = getattr(parameter_set, "id", None) or os.path.splitext(sample_filename)[0]
                 marks_for_param = getattr(parameter_set, "marks", ())
-                for playback_values in playback_sets:
-                    keys_suffix = "+".join(sorted(playback_values.keys()))
-                    new_id = f"{base_id}[{keys_suffix}]"
+                for detail in additional_details:
+                    new_id = detail.test_id
+
+                    if new_id in playback_values_by_param_id:
+                        raise ValueError(
+                            f"Duplicate additional sample test id '{new_id}'. "
+                            "When using test_id, ensure it is unique across all parametrized cases."
+                        )
                     expanded.append(pytest.param(*values, marks=marks_for_param, id=new_id))
-                    self._playback_values_by_param_id[new_id] = playback_values
+                    playback_values_by_param_id[new_id] = detail.env_vars
 
             # If a sample was excluded from discovery (e.g., via samples_to_skip), it won't appear in argvalues.
             # In that case, still synthesize *variant-only* cases for any configured env-var sets.
             if inferred_sample_dir and template_values is not None:
-                for sample_filename, playback_sets in self._env_var_playback_values_by_sample.items():
+                for sample_filename, playback_sets in env_var_sets_by_sample.items():
                     if sample_filename in seen_sample_filenames:
                         continue
 
                     synthetic_sample_path = os.path.join(inferred_sample_dir, sample_filename)
                     synthetic_values = list(template_values)
                     synthetic_values[sample_path_index] = synthetic_sample_path
-                    base_id = os.path.splitext(sample_filename)[0]
 
-                    for playback_values in playback_sets:
-                        keys_suffix = "+".join(sorted(playback_values.keys()))
-                        new_id = f"{base_id}[{keys_suffix}]"
+                    for detail in playback_sets:
+                        new_id = detail.test_id
+
+                        if new_id in playback_values_by_param_id:
+                            raise ValueError(
+                                f"Duplicate additional sample test id '{new_id}'. "
+                                "When using test_id, ensure it is unique across all parametrized cases."
+                            )
                         expanded.append(pytest.param(*synthetic_values, marks=template_marks, id=new_id))
-                        self._playback_values_by_param_id[new_id] = playback_values
+                        playback_values_by_param_id[new_id] = detail.env_vars
 
             # Keep a stable, deterministic order for test ids.
             expanded.sort(key=lambda p: str(getattr(p, "id", "") or ""))
@@ -591,7 +643,7 @@ class AdditionalTestsWithEnvironmentVariables:
             # This works even if the callspec id itself contains nested brackets like base_id[ENV1|ENV2].
             match = re.search(r"\[(?P<id>.*)\]", nodeid)
             case_id = match.group("id") if match else None
-            playback_values = self._playback_values_by_param_id.get(case_id) if case_id else None
+            playback_values = playback_values_by_param_id.get(case_id) if case_id else None
 
             if not playback_values:
                 return
@@ -619,3 +671,5 @@ class AdditionalTestsWithEnvironmentVariables:
             return fn(test_class, sample_path, *args, **kwargs)
 
         return _wrapper_sync
+
+    return _decorator
