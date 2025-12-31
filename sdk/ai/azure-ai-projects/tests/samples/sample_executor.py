@@ -419,12 +419,12 @@ def _resolve_additional_env_vars(
     *,
     sample_path: str,
     playback_values: dict[str, str],
-) -> dict[str, str] | None:
+) -> dict[str, str]:
     sample_filename = os.path.basename(sample_path)
 
     resolved: dict[str, str] = {}
     if _is_live_mode():
-        for env_key, playback_value in playback_values.items():
+        for env_key, _ in playback_values.items():
             live_value = os.environ.get(env_key)
             if not live_value:
                 raise ValueError(
