@@ -17,10 +17,8 @@ from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.server.base import FoundryCBAgent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
-from .models import (
-    LanggraphMessageStateConverter,
-    LanggraphStateConverter,
-)
+from .models.response_api_converter import ResponseAPIConverter, GraphInputArguments
+from .models.response_api_default_converter import ResponseAPIDefaultConverter
 from .models.utils import is_state_schema_valid
 from .tool_client import ToolClient
 
@@ -57,7 +55,7 @@ class LangGraphAdapter(FoundryCBAgent):
         self,
         graph: Union[CompiledStateGraph, GraphFactory],
         credentials: "Optional[AsyncTokenCredential]" = None,
-        state_converter: "Optional[LanggraphStateConverter]" = None,
+        converter: "Optional[ResponseAPIConverter]" = None,
         **kwargs: Any
     ) -> None:
         """
@@ -68,8 +66,8 @@ class LangGraphAdapter(FoundryCBAgent):
         :type graph: Union[CompiledStateGraph, GraphFactory]
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
-        :param state_converter: custom state converter. Required if graph state is not MessagesState.
-        :type state_converter: Optional[LanggraphStateConverter]
+        :param converter: custom response converter.
+        :type converter: Optional[ResponseAPIConverter]
         """
         super().__init__(credentials=credentials, **kwargs) # pylint: disable=unexpected-keyword-arg
         self._graph_or_factory: Union[CompiledStateGraph, GraphFactory] = graph
@@ -79,16 +77,16 @@ class LangGraphAdapter(FoundryCBAgent):
         # If graph is already compiled, validate and set up state converter
         if isinstance(graph, CompiledStateGraph):
             self._resolved_graph = graph
-            if not state_converter:
+            if not converter:
                 if is_state_schema_valid(self._resolved_graph.builder.state_schema):
-                    self.state_converter = LanggraphMessageStateConverter()
+                    self.converter = ResponseAPIDefaultConverter(graph=self._resolved_graph)
                 else:
-                    raise ValueError("state_converter is required for non-MessagesState graph.")
+                    raise ValueError("converter is required for non-MessagesState graph.")
             else:
-                self.state_converter = state_converter
+                self.converter = converter
         else:
             # Defer validation until graph is resolved
-            self.state_converter = state_converter
+            self.converter = converter
 
     @property
     def graph(self) -> "Optional[CompiledStateGraph]":
@@ -113,11 +111,11 @@ class LangGraphAdapter(FoundryCBAgent):
             else:
                 graph = self._resolved_graph
 
-            input_data = self.state_converter.request_to_state(context)
-            logger.debug(f"Converted input data: {input_data}")
+            input_arguments = await self.converter.convert_request(context)
+            self.ensure_runnable_config(context, input_arguments)
             if not context.stream:
                 try:
-                    response = await self.agent_run_non_stream(input_data, context, graph)
+                    response = await self.agent_run_non_stream(input_arguments, context, graph)
                     return response
                 finally:
                     # Close tool_client for non-streaming requests
@@ -129,7 +127,7 @@ class LangGraphAdapter(FoundryCBAgent):
                             logger.warning(f"Error closing tool_client: {e}")
 
             # For streaming, pass tool_client to be closed after streaming completes
-            return self.agent_run_astream(input_data, context, graph, tool_client)
+            return self.agent_run_astream(input_arguments, context, graph, tool_client)
         except OAuthConsentRequiredError as e:
             # Clean up tool_client if OAuth error occurs before streaming starts
             if tool_client is not None:
@@ -148,14 +146,13 @@ class LangGraphAdapter(FoundryCBAgent):
     async def _resolve_graph(self, context: AgentRunContext):
         """Resolve the graph if it's a factory function (for single-use/first-time resolution).
         Creates a ToolClient and calls the factory function with it.
-        This is used for the initial resolution to set up state_converter.
+        This is used for the initial resolution to set up converter.
 
         :param context: The context for the agent run.
         :type context: AgentRunContext
         """
         if callable(self._graph_or_factory):
             logger.debug("Resolving graph from factory function")
-
 
             # Create ToolClient with credentials
             tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info()) # pylint: disable=no-member
@@ -171,12 +168,11 @@ class LangGraphAdapter(FoundryCBAgent):
                 self._resolved_graph = result
 
             # Validate and set up state converter if not already set from initialization
-            if not self.state_converter and self._resolved_graph is not None:
+            if not self.converter and self._resolved_graph is not None:
                 if is_state_schema_valid(self._resolved_graph.builder.state_schema):
-                    self.state_converter = LanggraphMessageStateConverter()
+                    self.converter = ResponseAPIDefaultConverter(graph=self._resolved_graph)
                 else:
-                    raise ValueError("state_converter is required for non-MessagesState graph.")
-
+                    raise ValueError("converter is required for non-MessagesState graph.")
             logger.debug("Graph resolved successfully")
         else:
             # Should not reach here, but just in case
@@ -209,12 +205,11 @@ class LangGraphAdapter(FoundryCBAgent):
             graph = result
 
         # Ensure state converter is set up (use existing one or create new)
-        if not self.state_converter:
+        if not self.converter:
             if is_state_schema_valid(graph.builder.state_schema):
-                self.state_converter = LanggraphMessageStateConverter()
+                self.converter = ResponseAPIDefaultConverter(graph=graph)
             else:
-                raise ValueError("state_converter is required for non-MessagesState graph.")
-
+                raise ValueError("converter is required for non-MessagesState graph.")
         logger.debug("Fresh graph resolved successfully for request")
         return graph, tool_client_wrapper
 
@@ -246,7 +241,7 @@ class LangGraphAdapter(FoundryCBAgent):
         attrs["service.namespace"] = "azure.ai.agentserver.langgraph"
         return attrs
 
-    async def agent_run_non_stream(self, input_data: dict, context: AgentRunContext, graph: CompiledStateGraph):
+    async def agent_run_non_stream(self, input_arguments: GraphInputArguments, context: AgentRunContext, graph: CompiledStateGraph):
         """
         Run the agent with non-streaming response.
 
@@ -262,10 +257,8 @@ class LangGraphAdapter(FoundryCBAgent):
         """
 
         try:
-            config = self.create_runnable_config(context)
-            stream_mode = self.state_converter.get_stream_mode(context)
-            result = await graph.ainvoke(input_data, config=config, stream_mode=stream_mode)
-            output = self.state_converter.state_to_response(result, context)
+            result = await graph.ainvoke(**input_arguments)
+            output = await self.converter.convert_response_non_stream(result, context)
             return output
         except Exception as e:
             logger.error(f"Error during agent run: {e}", exc_info=True)
@@ -273,7 +266,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
     async def agent_run_astream(
         self,
-        input_data: dict,
+        input_arguments: GraphInputArguments,
         context: AgentRunContext,
         graph: CompiledStateGraph,
         tool_client: "Optional[ToolClient]" = None
@@ -295,11 +288,9 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         try:
             logger.info(f"Starting streaming agent run {context.response_id}")
-            config = self.create_runnable_config(context)
-            stream_mode = self.state_converter.get_stream_mode(context)
-            stream = graph.astream(input=input_data, config=config, stream_mode=stream_mode)
-            async for result in self.state_converter.state_to_response_stream(stream, context):
-                yield result
+            stream = graph.astream(**input_arguments)
+            async for output_event in self.converter.convert_response_stream(stream, context):
+                yield output_event
         except Exception as e:
             logger.error(f"Error during streaming agent run: {e}", exc_info=True)
             raise e
@@ -312,23 +303,25 @@ class LangGraphAdapter(FoundryCBAgent):
                 except Exception as e:
                     logger.warning(f"Error closing tool_client in stream: {e}")
 
-    def create_runnable_config(self, context: AgentRunContext) -> RunnableConfig:
+    def ensure_runnable_config(self, context: AgentRunContext, input_arguments: GraphInputArguments):
         """
-        Create a RunnableConfig from the converted request data.
+        Ensure the RunnableConfig is set in the input arguments.
 
         :param context: The context for the agent run.
         :type context: AgentRunContext
-
-        :return: The RunnableConfig for the agent run.
-        :rtype: RunnableConfig
+        :param input_arguments: The input arguments for the agent run.
+        :type input_arguments: GraphInputArguments
         """
-        config = RunnableConfig(
-            configurable={
-                "thread_id": context.conversation_id,
-            },
-            callbacks=[self.azure_ai_tracer] if self.azure_ai_tracer else None,
-        )
-        return config
+        config = input_arguments.get("config", {})
+        configurable = config.get("configurable", {})
+        configurable["thread_id"] = context.conversation_id
+        config["configurable"] = configurable
+
+        callbacks = config.get("callbacks", [])
+        if self.azure_ai_tracer and self.azure_ai_tracer not in callbacks:
+            callbacks.append(self.azure_ai_tracer)
+            config["callbacks"] = callbacks
+        input_arguments["config"] = config
 
     def format_otlp_endpoint(self, endpoint: str) -> str:
         m = re.match(r"^(https?://[^/]+)", endpoint)
