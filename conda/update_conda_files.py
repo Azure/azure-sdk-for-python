@@ -332,18 +332,18 @@ def update_conda_sdk_client_yml(
         parameters.append(new_parameter)
 
         # also add to CondaArtifacts
-        # TODO need to determine how to correctly get the service name
-        service_name = package_name.replace("azure-", "").replace("-", "")
-        # TODO how to determine common root
+        common_root, service_name = determine_service_info(package_name)
+
         new_artifact_entry = {
             "name": package_name,
-            "common_root": "azure",
+            "common_root": common_root,
             "service": service_name,
             "in_batch": f"${{{{ parameters.{release_name} }}}}",
             "checkout": [{"package": package_name, "version": pkg.get(VERSION_GA_COL)}],
         }
 
-        conda_artifacts.append(new_artifact_entry)
+        # append before azure-mgmt entry
+        conda_artifacts.insert(len(conda_artifacts) - 1, new_artifact_entry)
 
         added_count += 1
         logger.info(f"Added new data plane package: {package_name}")
@@ -356,7 +356,7 @@ def update_conda_sdk_client_yml(
 
     # TODO
 
-    # TODO note this dump doesn't preserve some quotes like
+    # TODO note this dump doesn't preserve some quotes like around
     #    displayName: 'azure-developer-loadtesting' but i don't think those functionally necessary?
 
     if updated_count > 0 or added_count > 0:
@@ -382,6 +382,48 @@ def get_package_path(package_name: str) -> str:
     pattern = os.path.join(SDK_DIR, "**", package_name)
     matches = glob.glob(pattern, recursive=True)
     return matches[0]
+
+
+def determine_service_info(package_name: str) -> Tuple[str, str]:
+    # TODO how to actually determine, this is mostly placeholder
+    """
+    Dynamically determine the common_root and service name based on package name and directory structure.
+
+    :param package_name: The name of the package (e.g., "azure-ai-textanalytics").
+    Returns:
+        Tuple of (common_root, service_name)
+    """
+    # Multi-package services that should have common_root like "azure/servicename"
+    multi_package_services = {
+        "azure-storage",
+        "azure-communication",
+        "azure-keyvault",
+        "azure-eventhub",
+        "azure-schemaregistry",
+        "azure-ai-vision",
+    }
+
+    # TODO not all existing packages follow this pattern tho,
+    # e.g. azure-ai-metricsadvisor has service cognitivelanguage <- does this one even exist anymore?
+    # e.g. azure-ai-translation-text has service translation
+    # e.g. azure-digitaltwins-core has service digitaltwins
+    # e.g. azure-monitor-ingestion has service monitor
+
+    # and some packages don't have a common_root field at all??
+
+    # TODO idk how to properly get the service name, e.g. azure-ai-voicelive is projects?
+    service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
+    print("!!!")
+    print(service_name)
+
+    # Determine common_root
+    if package_name in multi_package_services:
+        base_service = package_name[6:]  # Remove "azure-" prefix
+        common_root = f"azure/{base_service}"
+    else:
+        common_root = "azure"
+
+    return common_root, service_name
 
 
 def format_requirement(req: str) -> str:
@@ -614,7 +656,5 @@ if __name__ == "__main__":
 
     # handle new mgmt plane libraries
     add_new_mgmt_plane_packages(new_mgmt_plane_packages)
-
-    # update conda-sdk-client
 
     # add/update release logs
