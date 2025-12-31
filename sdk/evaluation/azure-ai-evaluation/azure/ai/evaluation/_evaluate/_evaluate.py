@@ -36,6 +36,7 @@ from .._constants import (
     EVALUATION_EVENT_NAME,
     _EvaluatorMetricMapping,
 )
+
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig, AppInsightsConfig
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
@@ -1048,7 +1049,14 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("_eval_meta_data")
     if kwargs.get("_convert_to_aoai_evaluation_result", False):
         _convert_results_to_aoai_evaluation_results(
-            result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data
+            result,
+            LOGGER,
+            eval_id,
+            eval_run_id,
+            evaluators_and_graders,
+            eval_run_summary_dict,
+            eval_meta_data,
+            evaluator_config,
         )
         if app_insights_configuration := kwargs.get("_app_insights_configuration"):
             emit_eval_result_events_to_app_insights(
@@ -1784,439 +1792,1254 @@ def _convert_results_to_aoai_evaluation_results(
     evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]] = None,
     eval_run_summary: Optional[Dict[str, Any]] = None,
     eval_meta_data: Optional[Dict[str, Any]] = None,
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
     """
     Convert evaluation results to AOAI evaluation results format.
 
-    Each row of input results.rows looks like:
+    This method transforms evaluation results from the legacy format into AOAI
+    evaluation result format, adding structured results and summary statistics.
+
+    Algorithm Summary:
+    1. **Metadata Extraction**: Extract testing criteria metadata (type, metrics, inverse flags)
+       from evaluators, evaluation metadata, and evaluator configuration
+    2. **Row-by-Row Conversion**: Transform each legacy result row into AOAI format:
+       - Parse row data to separate criteria-specific outputs from input data
+       - Group metrics by criteria name (e.g., "outputs.violence.violence_score" → violence criteria)
+       - Extract and normalize metric values (score, label, reason, threshold, sample data)
+       - Handle inverse metrics (where True indicates failure, like security violations)
+       - Create structured result objects with standardized fields
+       - Add error summaries for failed evaluations from run summary
+    3. **Summary Calculation**: Generate aggregate statistics across all converted rows
+    4. **In-Place Update**: Add '_evaluation_results_list' and '_evaluation_summary' to results
+
+    Data Transformation:
+    Legacy format (flat key-value pairs):
     {"inputs.query":"What is the capital of France?","inputs.context":"France is in Europe",
      "inputs.generated_response":"Paris is the capital of France.","inputs.ground_truth":"Paris is the capital of France.",
      "outputs.F1_score.f1_score":1.0,"outputs.F1_score.f1_result":"pass","outputs.F1_score.f1_threshold":0.5}
 
-    Convert each row into new RunOutputItem object with results array.
+    AOAI format (structured objects with results array):
+    {
+      "object": "eval.run.output_item",
+      "id": "1",
+      "datasource_item": {"query": "What is the capital of France?", ...},
+      "results": [
+        {
+          "type": "quality",
+          "name": "F1_score",
+          "metric": "f1_score",
+          "score": 1.0,
+          "label": "pass",
+          "passed": true,
+          "threshold": 0.5
+        }
+      ]
+    }
 
-    :param results: The evaluation results to convert
+    :param results: The evaluation results to convert (modified in-place)
     :type results: EvaluationResult
-    :param eval_meta_data: The evaluation metadata, containing eval_id, eval_run_id, and testing_criteria
-    :type eval_meta_data: Dict[str, Any]
-    :param logger: Logger instance
+    :param logger: Logger instance for debug and informational messages
     :type logger: logging.Logger
-    :return: EvaluationResult with converted evaluation results in AOAI format
-    :rtype: EvaluationResult
+    :param eval_id: The evaluation ID for tracking and identification
+    :type eval_id: Optional[str]
+    :param eval_run_id: The evaluation run ID for tracking and identification
+    :type eval_run_id: Optional[str]
+    :param evaluators: The dictionary of evaluators used in the evaluation
+    :type evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]]
+    :param eval_run_summary: Summary information about evaluation run including error details
+    :type eval_run_summary: Optional[Dict[str, Any]]
+    :param eval_meta_data: The evaluation metadata, containing testing_criteria and other configuration
+    :type eval_meta_data: Optional[Dict[str, Any]]
+    :param evaluator_config: The configuration for evaluators including metrics and definitions
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    :return: None (modifies results dictionary in-place, adding '_evaluation_results_list' and '_evaluation_summary')
+    :rtype: None
     """
-
     if evaluators is None:
         return
 
-    # Get the testing_criteria_name and testing_criteria_type from evaluators
-    testing_criteria_name_types_metrics: Optional[Dict[str, Any]] = {}
-    criteria_name_types_from_meta: Optional[Dict[str, str]] = {}
-    if eval_meta_data and "testing_criteria" in eval_meta_data:
-        testing_criteria_list: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
-        if testing_criteria_list is not None:
-            for criteria in testing_criteria_list:
-                criteria_name = criteria.get("name")
-                criteria_type = criteria.get("type")
-                if criteria_name is not None and criteria_type is not None:
-                    criteria_name_types_from_meta[criteria_name] = criteria
-
-    for criteria_name, evaluator in evaluators.items():
-        criteria_type = None
-        metrics = []
-        if criteria_name in criteria_name_types_from_meta:
-            criteria_type = criteria_name_types_from_meta[criteria_name].get("type", None)
-            evaluator_name = criteria_name_types_from_meta[criteria_name].get("evaluator_name", None)
-            current_evaluator_metrics = criteria_name_types_from_meta[criteria_name].get("metrics", None)
-            if current_evaluator_metrics and len(current_evaluator_metrics) > 0:
-                metrics.extend(current_evaluator_metrics)
-            elif evaluator_name:
-                if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
-                    evaluator_name = evaluator_name.replace("builtin.", "")
-                metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
-                if metrics_mapped and len(metrics_mapped) > 0:
-                    metrics.extend(metrics_mapped)
-                else:
-                    metrics.append(criteria_name)
-            else:
-                metrics.append(criteria_name)
-        elif isinstance(evaluator, AzureOpenAIGrader):
-            criteria_type = evaluator._type  # pylint: disable=protected-access
-            metrics.append(criteria_name)
-        elif isinstance(evaluator, EvaluatorBase):
-            criteria_type = "azure_ai_evaluator"
-            evaluator_class_name = evaluator.__class__.__name__
-            eval_name = _EvaluatorMetricMapping.EVAL_CLASS_NAME_MAP.get(evaluator_class_name, None)
-            if eval_name:
-                metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(eval_name, [])
-                if metrics_mapped and len(metrics_mapped) > 0:
-                    metrics.extend(metrics_mapped)
-            else:
-                metrics.append(criteria_name)
-        else:
-            criteria_type = "unknown"
-            metrics.append(criteria_name)
-        testing_criteria_name_types_metrics[criteria_name] = {"type": criteria_type, "metrics": metrics}
-
-    created_time = int(time.time())
+    # Extract metadata and configuration to get testing criteria type, testing criteria name, metrics, is_inverse
+    # for each testing criteria
+    testing_criteria_metadata = _extract_testing_criteria_metadata(
+        evaluators, eval_meta_data, evaluator_config, logger, eval_id, eval_run_id
+    )
+    # Convert each row
     converted_rows = []
+    created_time = int(time.time())
 
     for row_idx, row in enumerate(results.get("rows", [])):
-        # Group outputs by test criteria name
-        criteria_groups = {criteria: {} for criteria in testing_criteria_name_types_metrics.keys()}
-        input_groups = {}
-        top_sample = {}
-        for key, value in row.items():
-            if key.startswith("outputs."):
-                # Parse key: outputs.<test-criteria-name>.<metric>
-                parts = key.split(".", 2)  # Split into max 3 parts: ['outputs', '<criteria-name>', '<metric>']
-                if len(parts) >= 3:
-                    criteria_name = parts[1]
-                    metric_name = parts[2]
+        converted_row = _convert_single_row_to_aoai_format(
+            row, row_idx, eval_id, eval_run_id, created_time, testing_criteria_metadata, eval_run_summary, logger
+        )
+        converted_rows.append(converted_row)
 
-                    if criteria_name not in criteria_groups:
-                        criteria_groups[criteria_name] = {}
-
-                    criteria_groups[criteria_name][metric_name] = value
-            else:
-                input_key = key.replace("inputs.", "") if key.startswith("inputs.") else key
-                if input_key not in input_groups:
-                    input_groups[input_key] = value
-
-        # Convert each criteria group to RunOutputItem result
-        run_output_results = []
-        for criteria_name, metrics in criteria_groups.items():
-            # Extract metrics for this criteria
-            expected_metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
-            criteria_type = testing_criteria_name_types_metrics.get(criteria_name, {}).get("type", "unknown")
-            result_per_metric = {}
-            # Find score - look for various score patterns
-            for metric_key, metric_value in metrics.items():
-                if metric_key.endswith("_score") or metric_key == "score":
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"score": metric_value}
-                    else:
-                        result_per_metric[metric]["score"] = metric_value
-                    _append_indirect_attachments_to_results(result_per_metric, "score", metric, metric_value)
-                if metric_key == "passed":
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"passed": metric_value}
-                    else:
-                        result_per_metric[metric]["passed"] = metric_value
-                    _append_indirect_attachments_to_results(result_per_metric, "passed", metric, metric_value)
-                elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    label = metric_value
-                    passed = (
-                        True if (str(metric_value).lower() == "pass" or str(metric_value).lower() == "true") else False
-                    )
-                    if metric not in result_per_metric:
-                        if criteria_type == "azure_ai_evaluator":
-                            result_per_metric[metric] = {"label": label, "passed": passed}
-                        else:
-                            result_per_metric[metric] = {"label": label}
-                    else:
-                        result_per_metric[metric]["label"] = metric_value
-                        if criteria_type == "azure_ai_evaluator":
-                            result_per_metric[metric]["passed"] = passed
-                    _append_indirect_attachments_to_results(result_per_metric, "label", metric, label)
-                    if criteria_type == "azure_ai_evaluator":
-                        _append_indirect_attachments_to_results(result_per_metric, "passed", metric, passed)
-                elif (
-                    metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")
-                ) or metric_key == "reason":
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"reason": metric_value}
-                    else:
-                        result_per_metric[metric]["reason"] = metric_value
-                    _append_indirect_attachments_to_results(result_per_metric, "reason", metric, metric_value)
-                elif metric_key.endswith("_threshold") or metric_key == "threshold":
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"threshold": metric_value}
-                    else:
-                        result_per_metric[metric]["threshold"] = metric_value
-                    _append_indirect_attachments_to_results(result_per_metric, "threshold", metric, metric_value)
-                elif metric_key == "sample":
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": metric_value}
-                    else:
-                        result_per_metric[metric]["sample"] = metric_value
-                    _append_indirect_attachments_to_results(result_per_metric, "sample", metric, metric_value)
-                elif metric_key.endswith("_finish_reason"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": {"finish_reason": metric_value}}
-                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
-                        result_per_metric[metric]["sample"] = {"finish_reason": metric_value}
-                    elif (
-                        metric in result_per_metric
-                        and "sample" in result_per_metric[metric]
-                        and "finish_reason" not in result_per_metric[metric]["sample"]
-                    ):
-                        result_per_metric[metric]["sample"]["finish_reason"] = metric_value
-                    _append_indirect_attachments_to_results(
-                        result_per_metric, "sample", metric, metric_value, "finish_reason"
-                    )
-                elif metric_key.endswith("_model"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": {"model": metric_value}}
-                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
-                        result_per_metric[metric]["sample"] = {"model": metric_value}
-                    elif (
-                        metric in result_per_metric
-                        and "sample" in result_per_metric[metric]
-                        and "model" not in result_per_metric[metric]["sample"]
-                    ):
-                        result_per_metric[metric]["sample"]["model"] = metric_value
-                    _append_indirect_attachments_to_results(result_per_metric, "sample", metric, metric_value, "model")
-                elif metric_key.endswith("_sample_input"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    input_metric_val_json: Optional[List[Dict[str, Any]]] = []
-                    try:
-                        input_metric_val_json = json.loads(metric_value)
-                    except Exception as e:
-                        logger.warning(f"Failed to parse _sample_input value as JSON: {e}")
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": {"input": input_metric_val_json}}
-                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
-                        result_per_metric[metric]["sample"] = {"input": input_metric_val_json}
-                    elif (
-                        metric in result_per_metric
-                        and "sample" in result_per_metric[metric]
-                        and "input" not in result_per_metric[metric]["sample"]
-                    ):
-                        result_per_metric[metric]["sample"]["input"] = input_metric_val_json
-                    _append_indirect_attachments_to_results(
-                        result_per_metric, "sample", metric, input_metric_val_json, "input"
-                    )
-                elif metric_key.endswith("_sample_output"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    output_metric_val_json: Optional[List[Dict[str, Any]]] = []
-                    try:
-                        output_metric_val_json = json.loads(metric_value)
-                    except Exception as e:
-                        logger.warning(f"Failed to parse _sample_output value as JSON: {e}")
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": {"output": output_metric_val_json}}
-                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
-                        result_per_metric[metric]["sample"] = {"output": output_metric_val_json}
-                    elif (
-                        metric in result_per_metric
-                        and "sample" in result_per_metric[metric]
-                        and "output" not in result_per_metric[metric]["sample"]
-                    ):
-                        result_per_metric[metric]["sample"]["output"] = output_metric_val_json
-                    _append_indirect_attachments_to_results(
-                        result_per_metric, "sample", metric, output_metric_val_json, "output"
-                    )
-                elif metric_key.endswith("_total_tokens"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": {"usage": {"total_tokens": metric_value}}}
-                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
-                        result_per_metric[metric]["sample"] = {"usage": {"total_tokens": metric_value}}
-                    elif (
-                        metric in result_per_metric
-                        and "sample" in result_per_metric[metric]
-                        and "usage" not in result_per_metric[metric]["sample"]
-                    ):
-                        result_per_metric[metric]["sample"]["usage"] = {"total_tokens": metric_value}
-                    else:
-                        result_per_metric[metric]["sample"]["usage"]["total_tokens"] = metric_value
-                    _append_indirect_attachments_to_results(
-                        result_per_metric, "sample", metric, metric_value, "usage", "total_tokens"
-                    )
-                elif metric_key.endswith("_prompt_tokens"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": {"usage": {"prompt_tokens": metric_value}}}
-                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
-                        result_per_metric[metric]["sample"] = {"usage": {"prompt_tokens": metric_value}}
-                    elif (
-                        metric in result_per_metric
-                        and "sample" in result_per_metric[metric]
-                        and "usage" not in result_per_metric[metric]["sample"]
-                    ):
-                        result_per_metric[metric]["sample"]["usage"] = {"prompt_tokens": metric_value}
-                    else:
-                        result_per_metric[metric]["sample"]["usage"]["prompt_tokens"] = metric_value
-                    _append_indirect_attachments_to_results(
-                        result_per_metric, "sample", metric, metric_value, "usage", "prompt_tokens"
-                    )
-                elif metric_key.endswith("_completion_tokens"):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
-                    if metric not in result_per_metric:
-                        result_per_metric[metric] = {"sample": {"usage": {"completion_tokens": metric_value}}}
-                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
-                        result_per_metric[metric]["sample"] = {"usage": {"completion_tokens": metric_value}}
-                    elif (
-                        metric in result_per_metric
-                        and "sample" in result_per_metric[metric]
-                        and "usage" not in result_per_metric[metric]["sample"]
-                    ):
-                        result_per_metric[metric]["sample"]["usage"] = {"completion_tokens": metric_value}
-                    else:
-                        result_per_metric[metric]["sample"]["usage"]["completion_tokens"] = metric_value
-                    _append_indirect_attachments_to_results(
-                        result_per_metric, "sample", metric, metric_value, "usage", "completion_tokens"
-                    )
-                elif not any(
-                    metric_key.endswith(suffix)
-                    for suffix in [
-                        "_result",
-                        "_reason",
-                        "_threshold",
-                        "_label",
-                        "_score",
-                        "_model",
-                        "_finish_reason",
-                        "_sample_input",
-                        "_sample_output",
-                        "_total_tokens",
-                        "_prompt_tokens",
-                        "_completion_tokens",
-                    ]
-                ):
-                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
-                    # If no score found yet and this doesn't match other patterns, use as score
-                    if metric_key == metric and metric not in result_per_metric:
-                        result_per_metric[metric] = {"score": metric_value}
-                    elif metric_key == metric and result_per_metric[metric].get("score", None) is None:
-                        result_per_metric[metric]["score"] = metric_value
-
-            for metric, metric_values in result_per_metric.items():
-                score = metric_values.get("score", None)
-                label = metric_values.get("label", None)
-                reason = metric_values.get("reason", None)
-                threshold = metric_values.get("threshold", None)
-                passed = metric_values.get("passed", None)
-                sample = metric_values.get("sample", None)
-
-                # Create result object for this criteria
-                result_obj = {
-                    "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
-                        "type", "azure_ai_evaluator"
-                    ),
-                    "name": criteria_name,  # Use criteria name as name
-                    "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
-                }
-                # Add optional fields
-                if (
-                    metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
-                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
-                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"]
-                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["eci"]
-                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"]
-                ):
-                    copy_label = label
-                    if copy_label is not None and isinstance(copy_label, bool) and copy_label == True:
-                        label = "fail"
-                        score = 0.0
-                        passed = False
-                    else:
-                        label = "pass"
-                        score = 1.0
-                        passed = True
-                result_obj["score"] = (
-                    score if not (score is None or (isinstance(score, float) and math.isnan(score))) else None
-                )
-                result_obj["label"] = label
-                result_obj["reason"] = reason
-                result_obj["threshold"] = threshold
-                result_obj["passed"] = passed
-
-                if sample is not None:
-                    result_obj["sample"] = sample
-                    top_sample = sample  # Save top sample for the row
-                run_output_results.append(result_obj)
-
-            if (
-                eval_run_summary
-                and criteria_name in eval_run_summary
-                and isinstance(eval_run_summary[criteria_name], dict)
-                and "error_code" in eval_run_summary[criteria_name]
-            ) and eval_run_summary[criteria_name].get("error_code", None) is not None:
-                error_info = (
-                    {
-                        "code": eval_run_summary[criteria_name].get("error_code", None),
-                        "message": eval_run_summary[criteria_name].get("error_message", None),
-                    }
-                    if eval_run_summary[criteria_name].get("error_code", None) is not None
-                    else None
-                )
-                sample = {"error": error_info} if error_info is not None else None
-                # Create result object for this criteria
-                metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
-                for metric in metrics:
-                    should_add_error_summary = True
-                    for result in run_output_results:
-                        if result.get("name", None) == criteria_name and result.get("metric", None) == metric:
-                            rs_score = result.get("score", None)
-                            rs_threshold = result.get("threshold", None)
-                            rs_label = result.get("label", None)
-                            rs_reason = result.get("reason", None)
-                            if (
-                                _is_none_or_nan(rs_score)
-                                and _is_none_or_nan(rs_threshold)
-                                and _is_none_or_nan(rs_label)
-                                and _is_none_or_nan(rs_reason)
-                            ):
-                                run_output_results.remove(result)
-                            else:
-                                should_add_error_summary = False
-                            break  # Skip if already have result for this criteria and metric
-                    if should_add_error_summary:
-                        result_obj = {
-                            "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
-                                "type", "azure_ai_evaluator"
-                            ),
-                            "name": criteria_name,  # Use criteria name as name
-                            "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
-                            "score": None,
-                            "label": None,
-                            "reason": None,
-                            "threshold": None,
-                            "passed": None,
-                            "sample": sample,
-                        }
-                        run_output_results.append(result_obj)
-
-        # Create RunOutputItem structure
-        run_output_item = {
-            "object": "eval.run.output_item",
-            "id": f"{row_idx+1}",
-            "run_id": eval_run_id,
-            "eval_id": eval_id,
-            "created_at": created_time,
-            "datasource_item_id": row_idx,
-            "datasource_item": input_groups,
-            "results": run_output_results,
-            "status": "completed" if len(run_output_results) > 0 else "error",
-        }
-
-        run_output_item["sample"] = top_sample
-
-        converted_rows.append(run_output_item)
-
-    # Create converted results maintaining the same structure
+    # Update results with converted data
     results["_evaluation_results_list"] = converted_rows
     logger.info(
         f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
-    # Calculate summary statistics
-    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, criteria_name_types_from_meta)
+
+    # Calculate and add summary
+    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, testing_criteria_metadata)
     results["_evaluation_summary"] = evaluation_summary
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
+
+
+def _extract_testing_criteria_metadata(
+    evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]],
+    eval_meta_data: Optional[Dict[str, Any]],
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]],
+    logger: logging.Logger,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+) -> Dict[str, Any]:
+    """
+    Extract testing criteria metadata from evaluators and configuration.
+
+    This method processes evaluators to extract metadata including type and metrics
+    for each testing criteria.
+
+    :param evaluators: Dictionary mapping criteria names to evaluator instances
+    :type evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]]
+    :param eval_meta_data: Metadata containing testing criteria definitions
+    :type eval_meta_data: Optional[Dict[str, Any]]
+    :param evaluator_config: Configuration for evaluators including metrics and definitions
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    :param logger: Logger instance for debug and warning messages
+    :type logger: logging.Logger
+    :param eval_id: Evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: Dictionary mapping criteria names to their metadata (type, metrics, is_inverse)
+    :rtype: Dict[str, Any]
+
+    Input example:
+    evaluators = {
+        "violence": ViolenceEvaluator(),
+        "fluency": FluencyEvaluator()
+    }
+    eval_meta_data = {
+        "testing_criteria": [
+            {"name": "violence", "type": "azure_ai_evaluator", "evaluator_name": "builtin.violence"}
+        ]
+    }
+    evaluator_config = {
+        "my_violence": {
+            "column_mapping": {
+                "query": "${data.item.query}",
+                "response": "${data.item.response}",
+                "context": "${data.item.context}",
+                "ground_truth": "${data.item.ground_truth}"
+            },
+            "_evaluator_definition": {
+                "type": "service",
+                "metrics": {
+                    "violence": {
+                        "type": "ordinal",
+                        "desirable_direction": "decrease",
+                        "min_value": 0.0,
+                        "max_value": 7.0
+                    }
+                }
+            },
+            "_evaluator_id": "azureml://registries/azureml/evaluators/builtin.violence/versions/2"
+        }
+    }
+
+    Output example:
+    {
+        "violence": {"type": "azure_ai_evaluator", "evaluator_name": "builtin.violence", "metrics": ["violence"], "is_inverse": False}
+    }
+    """
+    testing_criteria_metadata = {}
+    criteria_name_types_from_meta = _extract_criteria_name_types(eval_meta_data)
+
+    for criteria_name, evaluator in evaluators.items():
+        criteria_type, evaluator_name, metrics, inverse_metrics = _determine_criteria_type_and_metrics(
+            criteria_name, evaluator, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
+        )
+        is_inverse = len(metrics) > 0 and all(
+            _is_inverse_metric(metric, inverse_metrics, logger, eval_id, eval_run_id) for metric in metrics
+        )
+        testing_criteria_metadata[criteria_name] = {
+            "type": criteria_type,
+            "evaluator_name": evaluator_name,
+            "metrics": metrics,
+            "is_inverse": is_inverse,
+        }
+
+    return testing_criteria_metadata
+
+
+def _extract_criteria_name_types(eval_meta_data: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Extract criteria name types from evaluation metadata.
+
+    This method processes the testing_criteria section from evaluation metadata
+    to create a lookup dictionary for criteria information.
+
+    :param eval_meta_data: Evaluation metadata containing testing criteria definitions
+    :type eval_meta_data: Optional[Dict[str, Any]]
+    :return: Dictionary mapping criteria names to their full metadata objects
+    :rtype: Dict[str, Any]
+
+    Input example:
+    eval_meta_data = {
+        "testing_criteria": [
+            {"name": "violence", "type": "azure_ai_evaluator", "evaluator_name": "violence"},
+            {"name": "fluency", "type": "azure_ai_evaluator", "evaluator_name": "fluency"}
+        ]
+    }
+
+    Output example:
+    {
+        "violence": {"name": "violence", "type": "azure_ai_evaluator", "evaluator_name": "violence"},
+        "fluency": {"name": "fluency", "type": "azure_ai_evaluator", "evaluator_name": "fluency"}
+    }
+    """
+    criteria_name_types = {}
+    if eval_meta_data and "testing_criteria" in eval_meta_data:
+        testing_criteria_list = eval_meta_data.get("testing_criteria")
+        if testing_criteria_list is not None:
+            for criteria in testing_criteria_list:
+                criteria_name = criteria.get("name")
+                if criteria_name is not None:
+                    criteria_name_types[criteria_name] = criteria
+    return criteria_name_types
+
+
+def _determine_criteria_type_and_metrics(
+    criteria_name: str,
+    evaluator: Union[Callable, AzureOpenAIGrader],
+    criteria_name_types_from_meta: Dict[str, Any],
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]],
+    logger: logging.Logger,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+) -> Tuple[Optional[str], Optional[str], List[str], List[str]]:
+    """
+    Determine criteria type and metrics for a given evaluator.
+
+    This method analyzes an evaluator instance to determine its type and
+    associated metrics, using metadata, evaluator configuration, or introspection.
+
+    Input example:
+    criteria_name = "violence"
+    evaluator = ViolenceEvaluator()
+    criteria_name_types_from_meta = {
+        "violence": {"name": "violence", "type": "azure_ai_evaluator", "metrics": ["violence"]}
+    }
+
+    Output example:
+    ("azure_ai_evaluator", "builtin.violence", ["violence"], [])
+    """
+    if criteria_name in criteria_name_types_from_meta:
+        result = _extract_from_metadata(
+            criteria_name, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
+        )
+    elif isinstance(evaluator, AzureOpenAIGrader):
+        result = evaluator._type, "", [criteria_name], []  # pylint: disable=protected-access
+    elif isinstance(evaluator, EvaluatorBase):
+        result = _extract_from_evaluator_base(evaluator, criteria_name)
+    else:
+        result = "unknown", "", [criteria_name], []
+    return result
+
+
+def _extract_from_metadata(
+    criteria_name: str,
+    criteria_name_types_from_meta: Dict[str, Any],
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]],
+    logger: logging.Logger,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+) -> Tuple[Optional[str], Optional[str], List[str], List[str]]:
+    """
+    Extract criteria type and metrics from metadata.
+
+    This method extracts evaluator information from pre-existing metadata,
+    falling back to evaluator configuration or evaluator name mapping.
+
+    Input example:
+    criteria_name = "violence"
+    criteria_name_types_from_meta = {
+        "violence": {
+            "name": "violence",
+            "type": "azure_ai_evaluator",
+            "evaluator_name": "builtin.violence",
+            "metrics": ["violence"]
+        }
+    }
+
+    Output example:
+    ("azure_ai_evaluator", "builtin.violence", ["violence"], [])
+    """
+    criteria_info = criteria_name_types_from_meta[criteria_name]
+    criteria_type = criteria_info.get("type", None)
+    evaluator_name = criteria_info.get("evaluator_name", None)
+    current_evaluator_metrics = criteria_info.get("metrics", None)
+
+    metrics = []
+    inverse_metrics = []
+    if current_evaluator_metrics and len(current_evaluator_metrics) > 0:
+        metrics.extend(current_evaluator_metrics)
+    elif _has_evaluator_definition(evaluator_config, criteria_name):
+        metrics, inverse_metrics = _extract_metrics_from_definition(evaluator_config[criteria_name])
+    elif evaluator_name:
+        metrics = _extract_metrics_from_evaluator_name(
+            evaluator_name, criteria_name, criteria_type, logger, eval_id, eval_run_id
+        )
+    else:
+        metrics.append(criteria_name)
+
+    return (criteria_type, evaluator_name, metrics, inverse_metrics)
+
+
+def _has_evaluator_definition(evaluator_config: Optional[Dict[str, EvaluatorConfig]], criteria_name: str) -> bool:
+    """
+    Check if evaluator config has evaluator definition.
+
+    This method checks if the evaluator configuration contains a definition
+    for the specified criteria, which includes metric specifications.
+
+    Input example:
+    evaluator_config = {
+        "violence": {
+            "_evaluator_definition": {
+                "metrics": {"violence": {"type": "boolean"}}
+            }
+        }
+    }
+    criteria_name = "violence"
+
+    Output example:
+    True
+    """
+    return (
+        evaluator_config
+        and criteria_name in evaluator_config
+        and isinstance(evaluator_config[criteria_name], dict)
+        and "_evaluator_definition" in evaluator_config[criteria_name]
+    )
+
+
+def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) -> Tuple[List[str], List[str]]:
+    """
+    Extract metrics from evaluator definition.
+
+    This method extracts metric names from the evaluator definition structure
+    found in the testing criteria configuration.
+
+    Input example:
+    testing_criteria_config = {
+        "_evaluator_definition": {
+            "metrics": {
+                "violence": {"type": "boolean"},
+                "violence_score": {"type": "numeric"}
+            }
+        }
+    }
+
+    Output example:
+    (["violence", "violence_score"], [])
+    """
+    inverse_metrics = []
+    if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
+        metric_config_detail = evaluator_definition.get("metrics")
+        if metric_config_detail and isinstance(metric_config_detail, dict) and len(metric_config_detail) > 0:
+            inverse_metrics = _get_metrics_need_extra_reverse(metric_config_detail)
+            return list(metric_config_detail.keys()), inverse_metrics
+    return [], []
+
+
+def _extract_metrics_from_evaluator_name(
+    evaluator_name: str,
+    criteria_name: str,
+    criteria_type: Optional[str],
+    logger: logging.Logger,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+) -> List[str]:
+    """
+    Extract metrics from evaluator name.
+
+    This method looks up metrics in the evaluator mapping based on the evaluator name,
+    handling built-in evaluator name prefixes and providing fallback behavior.
+
+    Input example:
+    evaluator_name = "builtin.violence"
+    criteria_name = "violence"
+    criteria_type = "azure_ai_evaluator"
+
+    Output example:
+    ["violence"]
+    """
+    logger.info(
+        f"Calculating criteria_type and metrics for {criteria_name}, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
+    )
+
+    if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+        evaluator_name = evaluator_name.replace("builtin.", "")
+
+    metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
+    return metrics_mapped if metrics_mapped else [criteria_name]
+
+
+def _extract_from_evaluator_base(evaluator: EvaluatorBase, criteria_name: str) -> Tuple[str, str, List[str], List[str]]:
+    """
+    Extract criteria type and metrics from EvaluatorBase.
+
+    This method inspects an EvaluatorBase instance to determine its type and
+    associated metrics by examining the class name and mapping it to known evaluators.
+
+    Input example:
+    evaluator = ViolenceEvaluator()  # instance of EvaluatorBase
+    criteria_name = "violence"
+
+    Output example:
+    ("azure_ai_evaluator", "violence", ["violence"], [])
+    """
+    # Extract evaluator class name
+    evaluator_class_name = evaluator.__class__.__name__
+
+    eval_name = _EvaluatorMetricMapping.EVAL_CLASS_NAME_MAP.get(evaluator_class_name, None)
+
+    metrics = []
+    if eval_name:
+        metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(eval_name, [])
+        metrics = metrics_mapped if metrics_mapped else [criteria_name]
+    else:
+        metrics = [criteria_name]
+        eval_name = ""
+
+    return ("azure_ai_evaluator", eval_name, metrics, [])
+
+
+def _convert_single_row_to_aoai_format(
+    row: Dict[str, Any],
+    row_idx: int,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+    created_time: int,
+    testing_criteria_metadata: Dict[str, Any],
+    eval_run_summary: Optional[Dict[str, Any]],
+    logger: logging.Logger,
+) -> Dict[str, Any]:
+    """
+    Convert a single evaluation row to AOAI format.
+
+    This method transforms a single evaluation result row into the AOAI evaluation
+    format, including parsing metrics, processing criteria, and formatting results.
+
+    :param row: Raw evaluation result row from DataFrame with inputs and outputs
+    :type row: Dict[str, Any]
+    :param row_idx: Zero-based index of the row for ID generation
+    :type row_idx: int
+    :param eval_id: Evaluation ID for tracking and identification
+    :type eval_id: Optional[str]
+    :param eval_run_id: Evaluation run ID for tracking and identification
+    :type eval_run_id: Optional[str]
+    :param created_time: Unix timestamp when the evaluation was created
+    :type created_time: int
+    :param testing_criteria_metadata: Metadata about testing criteria types and metrics
+    :type testing_criteria_metadata: Dict[str, Any]
+    :param eval_run_summary: Summary information about evaluation run including errors
+    :type eval_run_summary: Optional[Dict[str, Any]]
+    :param logger: Logger instance for debug and warning messages
+    :type logger: logging.Logger
+    :return: AOAI-formatted evaluation result object
+    :rtype: Dict[str, Any]
+
+    Input example:
+    row = {
+        "inputs.query": "What is violence?",
+        "inputs.response": "Violence is harmful",
+        "outputs.violence.violence": "Very low",
+        "outputs.violence.violence_score": 0,
+        "outputs.violence.violence_reason": "No violent content detected"
+    }
+    row_idx = 0
+
+    Output example:
+    {
+        "object": "eval.run.output_item",
+        "id": "1",
+        "run_id": "eval_run_123",
+        "eval_id": "eval_123",
+        "created_at": 1699876543,
+        "datasource_item_id": 0,
+        "datasource_item": {"query": "What is violence?", "response": "Violence is harmful"},
+        "results": [
+            {
+                "type": "azure_ai_evaluator",
+                "name": "violence",
+                "metric": "violence",
+                "score": 0,
+                "label": "Very low",
+                "reason": "No violent content detected",
+                "passed": True
+            }
+        ],
+        "status": "completed",
+        "sample": {}
+    }
+    """
+    # Parse row data
+    criteria_groups, input_data = _parse_row_data(row, testing_criteria_metadata)
+
+    # Convert criteria groups to results
+    run_output_results = []
+    top_sample = {}
+
+    # Process each criteria group to extract metric results of output items.
+    for criteria_name, metrics in criteria_groups.items():
+        criteria_results, sample = _process_criteria_metrics(
+            criteria_name, metrics, testing_criteria_metadata, logger, eval_id, eval_run_id
+        )
+        run_output_results.extend(criteria_results)
+        if sample:
+            top_sample = sample
+
+    # Add error summaries if needed
+    _add_error_summaries(run_output_results, eval_run_summary, testing_criteria_metadata)
+
+    return {
+        "object": "eval.run.output_item",
+        "id": f"{row_idx+1}",
+        "run_id": eval_run_id,
+        "eval_id": eval_id,
+        "created_at": created_time,
+        "datasource_item_id": row_idx,
+        "datasource_item": input_data,
+        "results": run_output_results,
+        "status": "completed" if len(run_output_results) > 0 else "error",
+        "sample": top_sample,
+    }
+
+
+def _parse_row_data(
+    row: Dict[str, Any], testing_criteria_metadata: Dict[str, Any]
+) -> Tuple[Dict[str, Dict], Dict[str, Any]]:
+    """Parse row data into criteria groups and input groups.
+
+    This method separates evaluation result row data into criteria-specific outputs
+    and input data, organizing them for further processing.
+
+    :param row: Raw evaluation result row data from DataFrame
+    :type row: Dict[str, Any]
+    :param testing_criteria_metadata: Metadata about available testing criteria
+    :type testing_criteria_metadata: Dict[str, Any]
+    :return: Tuple of (criteria_groups, input_groups) where criteria_groups maps criteria names to their metrics and input_groups contains input data
+    :rtype: Tuple[Dict[str, Dict], Dict[str, Any]]
+
+    Example Input:
+        row = {
+            "outputs.coherence.score": 4.5,
+            "outputs.coherence.reason": "Good flow",
+            "outputs.relevance.passed": True,
+            "inputs.question": "What is AI?",
+            "user_id": "123"
+        }
+        testing_criteria_metadata = {"coherence": {...}, "relevance": {...}}
+
+    Example Output:
+        (
+            {
+                "coherence": {"score": 4.5, "reason": "Good flow"},
+                "relevance": {"passed": True}
+            },
+            {
+                "question": "What is AI?",
+                "user_id": "123"
+            }
+        )
+    """
+    criteria_groups = {criteria: {} for criteria in testing_criteria_metadata.keys()}
+    input_groups = {}
+
+    for key, value in row.items():
+        if key.startswith("outputs."):
+            # Parse key: outputs.<test-criteria-name>.<metric>
+            parts = key.split(".", 2)  # Split into max 3 parts
+            if len(parts) >= 3:
+                criteria_name = parts[1]
+                metric_name = parts[2]
+                if criteria_name not in criteria_groups:
+                    criteria_groups[criteria_name] = {}
+                criteria_groups[criteria_name][metric_name] = value
+        else:
+            input_key = key.replace("inputs.", "") if key.startswith("inputs.") else key
+            if input_key not in input_groups:
+                input_groups[input_key] = value
+
+    return (criteria_groups, input_groups)
+
+
+def _process_criteria_metrics(
+    criteria_name: str,
+    metrics: Dict[str, Any],
+    testing_criteria_metadata: Dict[str, Any],
+    logger: logging.Logger,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """Process metrics for a single criteria and return results and sample.
+
+    This method processes metrics for a specific evaluation criteria, extracting and
+    organizing metric values into AOAI result objects with proper formatting.
+
+    :param criteria_name: Name of the evaluation criteria (e.g. 'coherence')
+    :type criteria_name: str
+    :param metrics: Dictionary of metric values for this criteria
+    :type metrics: Dict[str, Any]
+    :param testing_criteria_metadata: Metadata about available testing criteria including types and expected metrics
+    :type testing_criteria_metadata: Dict[str, Any]
+    :param logger: Logger instance for warnings and debug messages
+    :type logger: logging.Logger
+    :param eval_id: Optional evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Optional evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: Tuple of (list of result objects, sample data for top-level)
+    :rtype: Tuple[List[Dict[str, Any]], Dict[str, Any]]
+
+    Example Input:
+        criteria_name = "coherence"
+        metrics = {
+            "score": 4.5,
+            "reason": "Good logical flow",
+            "threshold": 3.0,
+            "sample": {"input": "...", "output": "..."}
+        }
+        testing_criteria_metadata = {"coherence": {"metrics": ["score"], "type": "quality"}}
+
+    Example Output:
+        (
+            [{
+                "type": "quality",
+                "name": "coherence",
+                "metric": "score",
+                "score": 4.5,
+                "reason": "Good logical flow",
+                "threshold": 3.0,
+                ...
+            }],
+            {"input": "...", "output": "..."}
+        )
+    """
+    expected_metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
+    criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "")
+    is_inverse = testing_criteria_metadata.get(criteria_name, {}).get("is_inverse", False)
+
+    if _is_none_or_nan(criteria_type) or _is_none_or_nan(criteria_name):
+        logger.warning(
+            f"Skipping criteria '{criteria_name}' due to missing type/name or no valid metrics, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
+        )
+        return ([], {})
+
+    # Extract metric values
+    result_per_metric = _extract_metric_values(criteria_name, criteria_type, metrics, expected_metrics, logger)
+
+    # Convert to result objects
+    results = []
+    top_sample = {}
+
+    for metric, metric_values in result_per_metric.items():
+        result_obj = _create_result_object(
+            criteria_name, metric, metric_values, criteria_type, is_inverse, logger, eval_id, eval_run_id
+        )
+        results.append(result_obj)
+
+        # Save sample for top-level
+        if sample := metric_values.get("sample"):
+            top_sample = sample
+
+    return (results, top_sample)
+
+
+def _extract_metric_values(
+    criteria_name: str, criteria_type: str, metrics: Dict[str, Any], expected_metrics: List[str], logger: logging.Logger
+) -> Dict[str, Dict[str, Any]]:
+    """Extract and organize metric values by metric name.
+
+    This method processes raw metrics from evaluation results and organizes them
+    by metric name, handling metric key transformations and value assignments.
+
+    :param criteria_name: Name of the evaluation criteria (e.g. 'coherence')
+    :type criteria_name: str
+    :param criteria_type: Type of the criteria (e.g. 'azure_ai_evaluator')
+    :type criteria_type: str
+    :param metrics: Raw metrics dictionary from parsed row data
+    :type metrics: Dict[str, Any]
+    :param expected_metrics: List of expected metric names for this criteria
+    :type expected_metrics: List[str]
+    :param logger: Logger instance for warnings and debug messages
+    :type logger: logging.Logger
+    :return: Dictionary mapping metric names to their extracted values
+    :rtype: Dict[str, Dict[str, Any]]
+
+    Example Input:
+        criteria_name = "coherence"
+        metrics = {
+            "score": 4.5,
+            "coherence_reason": "Good flow",
+            "threshold": 3.0,
+            "sample": {...}
+        }
+        expected_metrics = ["score"]
+
+    Example Output:
+        {
+            "score": {
+                "score": 4.5,
+                "reason": "Good flow",
+                "threshold": 3.0,
+                "sample": {...}
+            }
+        }
+    """
+    result_per_metric = {}
+
+    for metric_key, metric_value in metrics.items():
+        metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+        temp_result_per_metric = {}
+        if metric not in result_per_metric:
+            result_per_metric[metric] = {}
+
+        result_name, result_name_child_level, result_name_nested_child_level, derived_passed = _update_metric_value(
+            criteria_type, result_per_metric[metric], metric_key, metric, metric_value, logger
+        )
+        _append_indirect_attachments_to_results(
+            result_per_metric,
+            result_name,
+            metric,
+            metric_value,
+            result_name_child_level,
+            result_name_nested_child_level,
+        )
+        if result_name == "label" and criteria_type == "azure_ai_evaluator" and derived_passed is not None:
+            _append_indirect_attachments_to_results(result_per_metric, "passed", metric, derived_passed, None, None)
+
+    empty_metrics = []
+    empty_metrics.extend(
+        metric for metric, metric_dict in result_per_metric.items() if metric_dict is None or len(metric_dict) == 0
+    )
+    for metric in empty_metrics:
+        result_per_metric.pop(metric)
+
+    return result_per_metric
+
+
+def _update_metric_value(
+    criteria_type: str,
+    metric_dict: Dict[str, Any],
+    metric_key: str,
+    metric: str,
+    metric_value: Any,
+    logger: logging.Logger,
+) -> Tuple[str, str, str]:
+    """Update metric dictionary with the appropriate field based on metric key.
+
+    This method processes a single metric key-value pair and updates the metric dictionary
+    with the appropriate field assignment based on the key pattern. It handles various
+    metric types including scores, results, reasons, thresholds, and sample data.
+
+    :param criteria_type: Type of the evaluation criteria (e.g. 'azure_ai_evaluator')
+    :type criteria_type: str
+    :param metric_dict: Dictionary to update with metric values
+    :type metric_dict: Dict[str, Any]
+    :param metric_key: Key name of the metric (determines field assignment)
+    :type metric_key: str
+    :param metric: Name of the metric being processed
+    :type metric: str
+    :param metric_value: Value to assign to the appropriate field
+    :type metric_value: Any
+    :param logger: Logger instance for warnings/errors
+    :type logger: logging.Logger
+    :return: Tuple of (result_name, result_name_child_level, result_name_nested_child_level, derived_passed)
+    :rtype: Tuple[str, str, str]
+
+    Example Input:
+        metric_dict = {}
+        metric_key = "coherence_score"
+        metric_value = 4.5
+
+    Example Output:
+        metric_dict becomes {"score": 4.5}
+        Returns: ("score", None, None, None)
+
+    Example Input:
+        metric_dict = {}
+        metric_key = "coherence_result"
+        metric_value = "pass"
+
+    Example Output:
+        metric_dict becomes {"label": "pass", "passed": True}
+        Returns: ("label", None, None, True)
+    """
+    result_name = None
+    result_name_child_level = None
+    result_name_nested_child_level = None
+    derived_passed = None
+
+    if metric_key.endswith("_score") or metric_key == "score":
+        metric_dict["score"] = metric_value
+        result_name = "score"
+    elif metric_key == "passed":
+        metric_dict["passed"] = metric_value
+        result_name = "passed"
+    elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
+        metric_dict["label"] = metric_value
+        result_name = "label"
+        if criteria_type == "azure_ai_evaluator":
+            passed = str(metric_value).lower() in ["pass", "true"]
+            metric_dict["passed"] = passed
+            derived_passed = passed
+    elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
+        metric_dict["reason"] = metric_value
+        result_name = "reason"
+    elif metric_key.endswith("_threshold") or metric_key == "threshold":
+        metric_dict["threshold"] = metric_value
+        result_name = "threshold"
+    elif metric_key == "sample":
+        metric_dict["sample"] = metric_value
+        result_name = "sample"
+    elif metric_key.endswith("_finish_reason"):
+        _ensure_sample_dict(metric_dict)
+        metric_dict["sample"]["finish_reason"] = metric_value
+        result_name = "sample"
+        result_name_child_level = "finish_reason"
+    elif metric_key.endswith("_model"):
+        _ensure_sample_dict(metric_dict)
+        metric_dict["sample"]["model"] = metric_value
+        result_name = "sample"
+        result_name_child_level = "model"
+    elif metric_key.endswith("_sample_input"):
+        _ensure_sample_dict(metric_dict)
+        try:
+            metric_dict["sample"]["input"] = json.loads(metric_value)
+            result_name = "sample"
+            result_name_child_level = "input"
+        except Exception as e:
+            logger.warning(f"Failed to parse _sample_input value as JSON: {e}")
+    elif metric_key.endswith("_sample_output"):
+        _ensure_sample_dict(metric_dict)
+        try:
+            metric_dict["sample"]["output"] = json.loads(metric_value)
+            result_name = "sample"
+            result_name_child_level = "output"
+        except Exception as e:
+            logger.warning(f"Failed to parse _sample_output value as JSON: {e}")
+    elif metric_key.endswith("_total_tokens"):
+        _ensure_usage_dict(metric_dict)
+        metric_dict["sample"]["usage"]["total_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        result_name = "sample"
+        result_name_child_level = "usage"
+        result_name_nested_child_level = "total_tokens"
+    elif metric_key.endswith("_prompt_tokens"):
+        _ensure_usage_dict(metric_dict)
+        metric_dict["sample"]["usage"]["prompt_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        result_name = "sample"
+        result_name_child_level = "usage"
+        result_name_nested_child_level = "prompt_tokens"
+    elif metric_key.endswith("_completion_tokens"):
+        _ensure_usage_dict(metric_dict)
+        metric_dict["sample"]["usage"]["completion_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        result_name = "sample"
+        result_name_child_level = "usage"
+        result_name_nested_child_level = "completion_tokens"
+    elif not any(
+        metric_key.endswith(suffix)
+        for suffix in [
+            "_result",
+            "_reason",
+            "_threshold",
+            "_label",
+            "_score",
+            "_model",
+            "_finish_reason",
+            "_sample_input",
+            "_sample_output",
+            "_total_tokens",
+            "_prompt_tokens",
+            "_completion_tokens",
+        ]
+    ):
+        # If no score found yet and this doesn't match other patterns, use as score
+        if metric_key == metric and metric_dict.get("score", None) is None:
+            metric_dict["score"] = metric_value
+
+    return result_name, result_name_child_level, result_name_nested_child_level, derived_passed
+
+
+def _ensure_sample_dict(metric_dict: Dict[str, Any]) -> None:
+    """Ensure sample dictionary exists in metric_dict.
+
+    This method checks if a 'sample' key exists in the metric dictionary and
+    creates an empty dictionary for it if it doesn't exist. This ensures that
+    sample-related data can be safely added to the metric dictionary.
+
+    :param metric_dict: Metric dictionary to modify
+    :type metric_dict: Dict[str, Any]
+    :return: None (modifies metric_dict in place)
+    :rtype: None
+
+    Example Input:
+        metric_dict = {"score": 4.5}
+
+    Example Output:
+        metric_dict becomes {"score": 4.5, "sample": {}}
+    """
+    if "sample" not in metric_dict:
+        metric_dict["sample"] = {}
+
+
+def _ensure_usage_dict(metric_dict: Dict[str, Any]) -> None:
+    """Ensure sample.usage dictionary exists in metric_dict.
+
+    This method ensures that the metric dictionary has a nested sample.usage
+    structure for storing token usage statistics.
+
+    :param metric_dict: Metric dictionary to modify
+    :type metric_dict: Dict[str, Any]
+    :return: None (modifies metric_dict in place)
+    :rtype: None
+
+    Example Input:
+        metric_dict = {"score": 4.5}
+
+    Example Output:
+        metric_dict becomes {"score": 4.5, "sample": {"usage": {}}}
+    """
+    _ensure_sample_dict(metric_dict)
+    if "usage" not in metric_dict["sample"]:
+        metric_dict["sample"]["usage"] = {}
+
+
+def _create_result_object(
+    criteria_name: str,
+    metric: str,
+    metric_values: Dict[str, Any],
+    criteria_type: str,
+    is_inverse: bool,
+    logger: logging.Logger,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+) -> Dict[str, Any]:
+    """Create a result object for AOAI format.
+
+    This method constructs a standardized AOAI evaluation result object from
+    metric values, handling inverse metrics and proper field assignments.
+
+    :param criteria_name: Name of the evaluation criteria (e.g. 'coherence')
+    :type criteria_name: str
+    :param metric: Name of the metric (e.g. 'score')
+    :type metric: str
+    :param metric_values: Dictionary containing all metric values
+    :type metric_values: Dict[str, Any]
+    :param criteria_type: Type of criteria (e.g. 'azure_ai_evaluator')
+    :type criteria_type: str
+    :param is_inverse: Whether this is an inverse metric that should be inverted
+    :type is_inverse: bool
+    :param logger: Logger instance for warnings and debug messages
+    :type logger: logging.Logger
+    :param eval_id: Optional evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Optional evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: Dictionary representing AOAI evaluation result object
+    :rtype: Dict[str, Any]
+
+    Example Input:
+        criteria_name = "coherence"
+        metric = "score"
+        metric_values = {
+            "score": 4.5,
+            "reason": "Good logical flow",
+            "threshold": 3.0,
+            "sample": {"input": "...", "output": "..."}
+        }
+        criteria_type = "quality"
+
+    Example Output:
+        {
+            "type": "quality",
+            "name": "coherence",
+            "metric": "score",
+            "score": 4.5,
+            "label": None,
+            "reason": "Good logical flow",
+            "threshold": 3.0,
+            "passed": None,
+            "sample": {"input": "...", "output": "..."}
+        }
+    """
+    # Extract values
+    score = metric_values.get("score")
+    label = metric_values.get("label")
+    reason = metric_values.get("reason")
+    threshold = metric_values.get("threshold")
+    passed = metric_values.get("passed")
+    sample = metric_values.get("sample")
+
+    # Handle decrease boolean metrics
+    if is_inverse:
+        score, label, passed = _adjust_for_inverse_metric(label)
+
+    # Create result object
+    result_obj = {
+        "type": criteria_type,
+        "name": criteria_name,
+        "metric": metric if metric is not None else criteria_name,
+        "score": score if not (score is None or (isinstance(score, float) and math.isnan(score))) else None,
+        "label": label,
+        "reason": reason,
+        "threshold": threshold,
+        "passed": passed,
+    }
+
+    if sample is not None:
+        result_obj["sample"] = sample
+
+    return result_obj
+
+
+def _is_inverse_metric(
+    metric: str,
+    inverse_metric: List[str],
+    logger: logging.Logger,
+    eval_id: Optional[str],
+    eval_run_id: Optional[str],
+) -> bool:
+    """Check if metric is a decrease boolean metric that needs value inversion.
+
+    This method determines if a metric should be treated as an inverse/decrease boolean
+    metric, where True values indicate negative results that should be inverted.
+
+    :param metric: Name of the metric to check
+    :type metric: str
+    :param inverse_metric: List of explicitly configured decrease boolean metrics
+    :type inverse_metric: List[str]
+    :param logger: Logger instance for debug and info messages
+    :type logger: logging.Logger
+    :param eval_id: Optional evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Optional evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: True if metric should be treated as decrease boolean, False otherwise
+    :rtype: bool
+
+    Example Input:
+        metric = "indirect_attack"
+        inverse_metric = []
+
+    Example Output:
+        True (because indirect_attack is in predefined decrease metric lists)
+
+    Example Input:
+        metric = "custom_attack"
+        inverse_metric = ["custom_attack"]
+
+    Example Output:
+        True (because custom_attack is explicitly configured)
+    """
+    if metric in inverse_metric:
+        logger.info(
+            f"Metric {metric} is identified as decrease boolean metric, eval_id: {eval_id}, eval_run_id: {eval_run_id}."
+        )
+        return True
+
+    inverse_metric_lists = [
+        _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"],
+        _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"],
+        _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"],
+        _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["eci"],
+        _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"],
+    ]
+
+    return any(metric in metric_list for metric_list in inverse_metric_lists)
+
+
+def _adjust_for_inverse_metric(label: Any) -> Tuple[float, str, bool]:
+    """Adjust values for inverse metrics by inverting the logic.
+    This method inverts the evaluation logic for metrics where True indicates
+    a negative result (like security violations or attacks detected).
+
+    :param label: The original label value (typically boolean)
+    :type label: Any
+    :return: Tuple of (adjusted_score, adjusted_label, adjusted_passed)
+    :rtype: Tuple[float, str, bool]
+
+    Example Input:
+        label = True (indicating violation/attack found)
+
+    Example Output:
+        (0.0, "fail", False) (violation should result in failure)
+
+    Example Input:
+        label = False (indicating no violation)
+
+    Example Output:
+        (1.0, "pass", True) (no violation should result in pass)
+    """
+    if label is not None and isinstance(label, bool) and label == True:
+        return 0.0, "fail", False
+    else:
+        return 1.0, "pass", True
+
+
+def _add_error_summaries(
+    run_output_results: List[Dict[str, Any]],
+    eval_run_summary: Optional[Dict[str, Any]],
+    testing_criteria_metadata: Dict[str, Any],
+) -> None:
+    """Add error summaries to results for failed evaluations.
+
+    This method processes evaluation run summary to add error result objects
+    for criteria that failed during evaluation, ensuring proper error reporting.
+
+    :param run_output_results: List to append error result objects to
+    :type run_output_results: List[Dict[str, Any]]
+    :param eval_run_summary: Summary containing error information per criteria
+    :type eval_run_summary: Optional[Dict[str, Any]]
+    :param testing_criteria_metadata: Metadata about available testing criteria including metrics and types
+    :type testing_criteria_metadata: Dict[str, Any]
+    :return: None (modifies run_output_results in place)
+    :rtype: None
+
+    Example Input:
+        run_output_results = []
+        eval_run_summary = {
+            "coherence": {
+                "error_code": "TIMEOUT",
+                "error_message": "Evaluation timed out"
+            }
+        }
+        testing_criteria_metadata = {
+            "coherence": {"metrics": ["score"], "type": "quality"}
+        }
+
+    Example Output:
+        run_output_results becomes [
+            {
+                "type": "quality",
+                "name": "coherence",
+                "metric": "score",
+                "score": None,
+                "label": None,
+                "reason": None,
+                "threshold": None,
+                "passed": None,
+                "sample": {
+                    "error": {
+                        "code": "TIMEOUT",
+                        "message": "Evaluation timed out"
+                    }
+                }
+            }
+        ]
+    """
+    if not eval_run_summary:
+        return
+
+    for criteria_name, criteria_summary in eval_run_summary.items():
+        if not isinstance(criteria_summary, dict) or criteria_summary.get("error_code") is None:
+            continue
+
+        error_info = {
+            "code": criteria_summary.get("error_code"),
+            "message": criteria_summary.get("error_message"),
+        }
+        sample = {"error": error_info} if error_info["code"] is not None else None
+
+        metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
+        criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "azure_ai_evaluator")
+
+        for metric in metrics:
+            if not _should_add_error_summary(run_output_results, criteria_name, metric):
+                continue
+
+            error_result = {
+                "type": criteria_type,
+                "name": criteria_name,
+                "metric": metric if metric is not None else criteria_name,
+                "score": None,
+                "label": None,
+                "reason": None,
+                "threshold": None,
+                "passed": None,
+                "sample": sample,
+            }
+            run_output_results.append(error_result)
+
+
+def _should_add_error_summary(run_output_results: List[Dict[str, Any]], criteria_name: str, metric: str) -> bool:
+    """Check if error summary should be added for given criteria and metric.
+
+    This method determines whether an error summary should be added by checking
+    if valid results already exist for the given criteria and metric combination.
+    It removes empty results and indicates whether error reporting is needed.
+
+    :param run_output_results: List of existing result objects to check and modify
+    :type run_output_results: List[Dict[str, Any]]
+    :param criteria_name: Name of the criteria to check for
+    :type criteria_name: str
+    :param metric: Name of the metric to check for
+    :type metric: str
+    :return: True if error summary should be added, False if valid result already exists
+    :rtype: bool
+
+    Example Input:
+        run_output_results = [
+            {
+                "name": "coherence",
+                "metric": "score",
+                "score": None,
+                "label": None,
+                "reason": None,
+                "threshold": None
+            }
+        ]
+        criteria_name = "coherence"
+        metric = "score"
+
+    Example Output:
+        True (and the empty result is removed from run_output_results)
+
+    Example Input:
+        run_output_results = [
+            {
+                "name": "coherence",
+                "metric": "score",
+                "score": 4.5,
+                "label": "pass"
+            }
+        ]
+        criteria_name = "coherence"
+        metric = "score"
+
+    Example Output:
+        False (valid result exists, no error summary needed)
+    """
+    for result_item in run_output_results[:]:  # Create a copy to safely modify during iteration
+        if result_item.get("name") == criteria_name and result_item.get("metric") == metric:
+            # Check if all values are None/NaN
+            score = result_item.get("score")
+            threshold = result_item.get("threshold")
+            label = result_item.get("label")
+            reason = result_item.get("reason")
+
+            if all(_is_none_or_nan(val) for val in [score, threshold, label, reason]):
+                run_output_results.remove(result_item)
+                return True
+            else:
+                return False
+
+    return True
 
 
 def _is_none_or_nan(value: Any) -> bool:
@@ -2235,6 +3058,32 @@ def _is_none_or_nan(value: Any) -> bool:
     if isinstance(value, str) and value.lower() in ["nan", "null", "none", ""]:
         return True
     return False
+
+
+def _get_metrics_need_extra_reverse(
+    metric_config_detail: Optional[Dict[str, Any]] = None,
+) -> List[str]:
+    """
+    Get the list of inverse metrics.
+
+    :param metric_config_detail: Optional dictionary of metric configurations
+    :type metric_config_detail: Optional[Dict[str, Any]]
+    :return: List of inverse metric names
+    :rtype: List[str]
+    """
+    inverse_metrics = []
+    if metric_config_detail and isinstance(metric_config_detail, dict):
+        for metric_name, metric_info in metric_config_detail.items():
+            if (
+                metric_info
+                and isinstance(metric_info, dict)
+                and "desirable_direction" in metric_info
+                and metric_info["desirable_direction"] == "decrease"
+                and "type" in metric_info
+                and metric_info["type"] == "boolean"
+            ):
+                inverse_metrics.append(metric_name)
+    return inverse_metrics
 
 
 def _append_indirect_attachments_to_results(
@@ -2365,10 +3214,24 @@ def _calculate_aoai_evaluation_summary(
     """
     Calculate summary statistics for AOAI evaluation results.
 
+    This method processes AOAI evaluation results to compute summary statistics including
+    result counts (passed/failed/errored), per-model usage statistics, and per-criteria statistics.
+
     :param aoai_results: List of AOAI result objects (run_output_items)
     :type aoai_results: list
-    :return: Summary statistics dictionary
+    :param logger: Logger instance for debug and informational messages
+    :type logger: logging.Logger
+    :param criteria_name_types_from_meta: Metadata about criteria including evaluator names for primary metric detection
+    :type criteria_name_types_from_meta: Optional[Dict[str, Any]]
+    :return: Summary statistics dictionary with result counts, model usage, and per-criteria results
     :rtype: Dict[str, Any]
+
+    Return structure:
+    {
+        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int},
+        "per_model_usage": [{"model_name": str, "invocation_count": int, "total_tokens": int, ...}],
+        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int}]
+    }
     """
     # Calculate result counts based on aoaiResults
     result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0}
@@ -2400,7 +3263,12 @@ def _calculate_aoai_evaluation_summary(
                     ):
                         evaluator_name = criteria_name_types_from_meta[testing_criteria].get("evaluator_name", None)
                         criteria_type = criteria_name_types_from_meta[testing_criteria].get("type", None)
-                        if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+                        if (
+                            isinstance(criteria_type, str)
+                            and criteria_type == "azure_ai_evaluator"
+                            and isinstance(evaluator_name, str)
+                            and evaluator_name.startswith("builtin.")
+                        ):
                             evaluator_name = evaluator_name.replace("builtin.", "")
                         is_primary_metric = _is_primary_metric(result_item.get("metric", ""), evaluator_name)
                     if not is_primary_metric:
