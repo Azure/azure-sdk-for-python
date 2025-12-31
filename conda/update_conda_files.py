@@ -312,12 +312,11 @@ def update_package_versions(
         logger.warning("No packages were found in the YAML file to update")
 
 
-def get_package_path(package_name: str) -> Optional[str]:
+def get_package_path(package_name: str) -> str:
     """Get the filesystem path of an SDK package given its name."""
     pattern = os.path.join(SDK_DIR, "**", package_name)
     matches = glob.glob(pattern, recursive=True)
-    if matches:
-        return matches[0]
+    return matches[0]
 
 
 def format_requirement(req: str) -> str:
@@ -331,46 +330,70 @@ def format_requirement(req: str) -> str:
     return req
 
 
-def get_package_requirements(package_name: str) -> Tuple[List[str], List[str]]:
+def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]:
     """Retrieve the host and run requirements for a data plane package meta.yaml."""
-    host_requirements = ["python", "pip"]
-    run_requirements = ["python"]
+    host_requirements = set(["pip"])
+    run_requirements = set()
 
-    package_path = get_package_path(package_name)
-    if not package_path:
-        logger.error(f"Could not find package path for {package_name}")
-        return host_requirements, run_requirements
-
-    # get requirements from setup.py or pyproject.toml
-    try:
-        install_reqs = get_install_requires(package_path)
-    except ValueError as e:
-        logger.error(f"No setup.py or pyproject.toml found for {package_name}: {e}")
-        return host_requirements, run_requirements
-
-    for req in install_reqs:
-        # TODO ?? is this correct behavior??????
-        req_name = format_requirement(req)
-        host_requirements.append(req_name)
-        run_requirements.append(req_name)
-
-    # make sure essential reqs are added if they weren't in install_reqs
-    # TODO finalize actual list of essentials
+    # TODO finalize actual list of essentials, this is more of a placeholder with reqs idk how to find dynamically
     for essential_req in [
         "azure-identity",
         "azure-core",
+        "python",
         "aiohttp",
         "requests-oauthlib >=0.5.0",
         "cryptography",
     ]:
         req_name = format_requirement(essential_req)
-        if req_name not in host_requirements:
-            host_requirements.append(req_name)
-            run_requirements.append(req_name)
+        host_requirements.add(req_name)
+        run_requirements.add(req_name)
+
+    package_path = get_package_path(parsed.name)
+    if not package_path:
+        logger.error(f"Could not find package path for {parsed.name}")
+        return list(host_requirements), list(run_requirements)
+
+    # get requirements from setup.py or pyproject.toml
+    install_reqs = parsed.requires
+
+    for req in install_reqs:
+        req_name = format_requirement(req)
+        host_requirements.add(req_name)
+        run_requirements.add(req_name)
 
     # TODO there are other requirements to consider...
 
-    return host_requirements, run_requirements
+    return list(host_requirements), list(run_requirements)
+
+
+def get_package_metadata(parsed: ParsedSetup, package_path: str) -> Dict[str, str]:
+    """Extract metadata for the about section from package."""
+    package_name = parsed.name
+    service_dir = os.path.basename(os.path.dirname(package_path))
+
+    home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
+
+    # Get summary from package metadata or construct default
+    summary = parsed.classifiers
+    if summary and any("Description" in c for c in summary):
+        summary = next(
+            (c.split("::")[-1].strip() for c in summary if "Description" in c),
+            f"Microsoft Azure {package_name.replace('azure-', '').title()} Client Library for Python",
+        )
+    else:
+        # Construct from package name
+        pkg_display_name = package_name.replace("azure-", "").replace("-", " ").title()
+        summary = f"Microsoft Azure {pkg_display_name} Client Library for Python"
+
+    # Conda release notes URL - use service shortname
+    service_shortname = service_dir.replace("-", "")
+    conda_url = f"https://aka.ms/azsdk/conda/releases/{service_shortname}"
+
+    return {
+        "home": home_url,
+        "summary": summary,
+        "description": f"This is the {summary}.\n    Please see {conda_url} for version details.",
+    }
 
 
 def generate_data_plane_meta_yaml(
@@ -382,17 +405,22 @@ def generate_data_plane_meta_yaml(
     src_distr_name = package_name.split("-")[-1].upper()
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
-    # TODO there can be subdirectory packages..... e.g. azure-ai-ml
-    pkg_name_normalized = package_name.replace("-", ".")
+    package_path = get_package_path(package_name)
 
-    host_reqs, run_reqs = get_package_requirements(package_name)
+    # get parsed setup info to extract requirements and metadata
+    parsed_setup = ParsedSetup.from_path(package_path)
+
+    host_reqs, run_reqs = get_package_requirements(parsed_setup)
 
     # Format requirements with proper YAML indentation
     host_reqs_str = "\n    - ".join(host_reqs)
     run_reqs_str = "\n    - ".join(run_reqs)
 
-    # TODO ... check import
-    # TODO get about info
+    # TODO there can be subdirectory packages..... e.g. azure-ai-ml, may need more import logic
+    pkg_name_normalized = package_name.replace("-", ".")
+
+    # Get package metadata for about section
+    metadata = get_package_metadata(parsed_setup, package_path)
 
     meta_yaml_content = f"""{{% set name = "{package_name}" %}}
 
@@ -419,14 +447,13 @@ test:
     - {pkg_name_normalized}
 
 about:
-  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents"
+  home: "{metadata['home']}"
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Microsoft Azure AI Agents Client Library for Python"
+  summary: "{metadata['summary']}"
   description: |
-    This is the Microsoft Azure AI Agents Client Library.
-    Please see https://aka.ms/azsdk/conda/releases/agents for version details.
+    {metadata['description']}
   doc_url: 
   dev_url: 
 
@@ -452,7 +479,14 @@ def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> None:
         pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, package_name, "meta.yaml")
         os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
 
-        meta_yml = generate_data_plane_meta_yaml(package_name)
+        try:
+            # TODO maybe compile list of failed packages to report at end
+            meta_yml = generate_data_plane_meta_yaml(package_name)
+        except Exception as e:
+            logger.error(
+                f"Failed to generate meta.yaml content for {package_name} and skipping, error: {e}"
+            )
+            continue
 
         try:
             with open(pkg_yaml_path, "w") as f:
