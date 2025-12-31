@@ -373,21 +373,11 @@ def get_package_metadata(parsed: ParsedSetup, package_path: str) -> Dict[str, st
 
     home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
-    # Get summary from package metadata or construct default
-    summary = parsed.classifiers
-    if summary and any("Description" in c for c in summary):
-        summary = next(
-            (c.split("::")[-1].strip() for c in summary if "Description" in c),
-            f"Microsoft Azure {package_name.replace('azure-', '').title()} Client Library for Python",
-        )
-    else:
-        # Construct from package name
-        pkg_display_name = package_name.replace("azure-", "").replace("-", " ").title()
-        summary = f"Microsoft Azure {pkg_display_name} Client Library for Python"
+    pkg_display_name = package_name.replace("azure-", "").replace("-", " ").title()
+    summary = f"Microsoft Azure {pkg_display_name} Client Library for Python"
 
-    # Conda release notes URL - use service shortname
-    service_shortname = service_dir.replace("-", "")
-    conda_url = f"https://aka.ms/azsdk/conda/releases/{service_shortname}"
+    # TODO definitely need to check if this is actually correct
+    conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
 
     return {
         "home": home_url,
