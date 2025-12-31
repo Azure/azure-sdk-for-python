@@ -317,7 +317,7 @@ def update_conda_sdk_client_yml(
         # TODO commented out for testing purposes only
         # if package_name in package_index:
         #     logger.warning(
-        #         f"Package {package_name} already exists in conda-sdk-client.yml, skipping addition"
+        #         f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
         #     )
         #     continue
 
@@ -390,19 +390,7 @@ def determine_service_info(package_name: str) -> Tuple[str, str]:
     Dynamically determine the common_root and service name based on package name and directory structure.
 
     :param package_name: The name of the package (e.g., "azure-ai-textanalytics").
-    Returns:
-        Tuple of (common_root, service_name)
     """
-    # Multi-package services that should have common_root like "azure/servicename"
-    multi_package_services = {
-        "azure-storage",
-        "azure-communication",
-        "azure-keyvault",
-        "azure-eventhub",
-        "azure-schemaregistry",
-        "azure-ai-vision",
-    }
-
     # TODO not all existing packages follow this pattern tho,
     # e.g. azure-ai-metricsadvisor has service cognitivelanguage <- does this one even exist anymore?
     # e.g. azure-ai-translation-text has service translation
@@ -411,17 +399,14 @@ def determine_service_info(package_name: str) -> Tuple[str, str]:
 
     # and some packages don't have a common_root field at all??
 
+    # services with a shared common root include 
+    # "azure-ai", "azure-mgmt", "azure-storage", "azure-communication", etc.
+
     # TODO idk how to properly get the service name, e.g. azure-ai-voicelive is projects?
     service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
-    print("!!!")
-    print(service_name)
 
-    # Determine common_root
-    if package_name in multi_package_services:
-        base_service = package_name[6:]  # Remove "azure-" prefix
-        common_root = f"azure/{base_service}"
-    else:
-        common_root = "azure"
+    # TODO Determine common_root
+    common_root = "azure"
 
     return common_root, service_name
 
@@ -658,3 +643,5 @@ if __name__ == "__main__":
     add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
     # add/update release logs
+
+    # print a final report of changes made
