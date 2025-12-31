@@ -236,9 +236,6 @@ class AzureAppConfigurationClient:
             select=select,
             tags=tags,
             client=self,
-            key_filter=key_filter,
-            label_filter=label_filter,
-            tags_filter=tags,
             page_iterator_class=ConfigurationSettingPropertiesPaged,
         )
 

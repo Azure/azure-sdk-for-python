@@ -5,10 +5,9 @@
 import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast, Callable
-from urllib.parse import urlencode
 
 from azure.core import MatchConditions
-from azure.core.rest import HttpResponse, HttpRequest
+from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 from ._generated._serialization import Model
@@ -683,9 +682,6 @@ class ConfigurationSettingPaged(ItemPaged):
         :param kwargs: Keyword arguments to pass to the PageIterator constructor
         """
         self._client = kwargs.pop("client", None)
-        self._key_filter = kwargs.pop("key_filter", None)
-        self._label_filter = kwargs.pop("label_filter", None)
-        self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPaged, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
@@ -744,7 +740,7 @@ class _BaseConfigurationSettingEtagPageIterator:
         self._label_filter = label_filter
         self._tags_filter = tags_filter
         self._base_iterator = base_iterator
-        self._after_token = None
+        self._after_token: Optional[str] = None
 
     def _update_continuation_token(self, link: Optional[str]) -> None:
         """Update the continuation token from the Link header.
@@ -875,9 +871,6 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         :param kwargs: Keyword arguments to pass to the PageIterator constructor
         """
         self._client = kwargs.pop("client", None)
-        self._key_filter = kwargs.pop("key_filter", None)
-        self._label_filter = kwargs.pop("label_filter", None)
-        self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPagedAsync, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
