@@ -460,7 +460,7 @@ def _register_env_var_sanitizers(
         add_general_string_sanitizer(function_scoped=True, target=live_value, value=playback_value)
 
 
-@dataclass(slots=True, init=False)
+@dataclass(init=False)
 class AdditionalSampleTestDetail:
     """Configuration for adding an additional parametrized test case for a specific sample.
 
