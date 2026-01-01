@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.connectedcache import ConnectedCacheMgmtClient
     pip install azure-identity
     pip install azure-mgmt-connectedcache
 # USAGE
-    python cache_nodes_operations_get_maximum_set_gen.py
+    python enterprise_mcc_cache_nodes_operations_get_cache_node_auto_update_history_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cache_nodes_operations.get(
+    response = client.enterprise_mcc_cache_nodes_operations.get_cache_node_auto_update_history(
         resource_group_name="rgConnectedCache",
-        customer_resource_name="nqoxkgorhuzbhjwcegymzqbeydzjupemekt",
+        customer_resource_name="MccRPTest1",
+        cache_node_resource_name="MCCCachenode1",
     )
     print(response)
 
 
-# x-ms-original-file: 2023-05-01-preview/CacheNodesOperations_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2024-11-30-preview/EnterpriseMccCacheNodesOperations_GetCacheNodeAutoUpdateHistory_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
