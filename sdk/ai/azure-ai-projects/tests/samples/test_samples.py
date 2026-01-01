@@ -11,7 +11,7 @@ from sample_executor import (
     SyncSampleExecutor,
     additionalSampleTests,
     get_sample_paths,
-    samplePathPasser,
+    SamplePathPasser,
 )
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
@@ -44,7 +44,7 @@ class TestSamples(AzureRecordedTestCase):
             ],
         ),
     )
-    @samplePathPasser()
+    @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
