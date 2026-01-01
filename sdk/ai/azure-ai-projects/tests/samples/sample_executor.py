@@ -12,7 +12,7 @@ import inspect
 import importlib.util
 import functools
 from dataclasses import dataclass, field
-from typing import overload, Union
+from typing import overload, Union, Optional
 from pydantic import BaseModel
 
 import json
@@ -472,7 +472,7 @@ class AdditionalSampleTestDetail:
 
     sample_filename: str
     env_vars: dict[str, str]
-    _test_id: str | None = field(default=None, repr=False)
+    _test_id: Optional[str] = field(default=None, repr=False)
 
     def __init__(
         self,
