@@ -6,9 +6,10 @@ import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast, Callable
 
+from azure.core import MatchConditions
 from azure.core.rest import HttpResponse
-from azure.core.paging import PageIterator
-from azure.core.async_paging import AsyncPageIterator
+from azure.core.paging import PageIterator, ItemPaged
+from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
@@ -582,17 +583,17 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
     """The etag of current page."""
 
     def __init__(self, command: Callable, **kwargs: Any):
-        super(ConfigurationSettingPropertiesPaged, self).__init__(
-            self._get_next_cb,
-            self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token"),
-        )
         self._command = command
         self._key = kwargs.get("key")
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._tags = kwargs.get("tags")
+        super(ConfigurationSettingPropertiesPaged, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
@@ -653,3 +654,313 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
         self.etag = response_headers.pop("ETag")
         return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
+
+
+class ConfigurationSettingPaged(ItemPaged):
+    """
+    An iterable of ConfigurationSettings that supports etag-based change detection.
+
+    This class extends ItemPaged to provide efficient monitoring of configuration changes
+    by using ETags. When used with the `match_conditions` parameter in `by_page()`,
+    it only returns pages that have changed since the provided ETags were collected.
+
+    Example:
+        # Get initial page ETags
+        items = client.list_configuration_settings(key_filter="sample_*")
+        match_conditions = [page.etag for page in items.by_page()]
+
+        # Later, check for changes - only changed pages are returned
+        items = client.list_configuration_settings(key_filter="sample_*")
+        for page in items.by_page(match_conditions=match_conditions):
+             # Process only changed pages
+             pass
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the ItemPaged iterator with etag support.
+        :param args: Arguments to pass to the PageIterator constructor
+        :param kwargs: Keyword arguments to pass to the PageIterator constructor
+        """
+        self._client = kwargs.pop("client", None)
+        self._key_filter = kwargs.pop("key_filter", None)
+        self._label_filter = kwargs.pop("label_filter", None)
+        self._tags_filter = kwargs.pop("tags_filter", None)
+        super(ConfigurationSettingPaged, self).__init__(*args, **kwargs)
+
+    def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
+        """Get an iterator of pages of objects, instead of an iterator of objects.
+
+        :param str continuation_token:
+            An opaque continuation token. This value can be retrieved from the
+            continuation_token field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :keyword match_conditions: A list of etags to check for changes. If provided, the iterator will
+            check each page against the corresponding etag and only return pages that have changed.
+        :paramtype match_conditions: list[str] or None
+        :returns: An iterator of pages (themselves iterator of objects)
+        :rtype: iterator[iterator[ReturnType]]
+        """
+        if match_conditions is not None and self._client is not None:
+            # Get the base page iterator first
+            base_iterator = super(ConfigurationSettingPaged, self).by_page(continuation_token=continuation_token)
+            # Wrap it with our etag-checking iterator
+            return ConfigurationSettingEtagPageIterator(
+                self._client,
+                match_conditions,
+                base_iterator,
+                key_filter=self._key_filter,
+                label_filter=self._label_filter,
+                tags_filter=self._tags_filter,
+            )
+        return super(ConfigurationSettingPaged, self).by_page(continuation_token=continuation_token)
+
+
+class _BaseConfigurationSettingEtagPageIterator:
+    """Base class for etag page iterators with shared helper methods."""
+
+    def __init__(
+        self,
+        client: Any,
+        match_conditions: List[str],
+        base_iterator: Any,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        tags_filter: Optional[List[str]] = None,
+    ) -> None:
+        """Initialize the etag-checking page iterator.
+
+        :param client: The client instance to use for checking etags
+        :param match_conditions: List of etags to check against
+        :param base_iterator: The base page iterator to wrap
+        :param key_filter: Key filter for configuration settings
+        :param label_filter: Label filter for configuration settings
+        :param tags_filter: Tags filter for configuration settings
+        """
+        self._client = client
+        self._match_conditions = match_conditions
+        self._match_condition_index = 0
+        self._key_filter = key_filter
+        self._label_filter = label_filter
+        self._tags_filter = tags_filter
+        self._base_iterator = base_iterator
+        self._after_token: Optional[str] = None
+
+    def _update_continuation_token(self, link: Optional[str]) -> None:
+        """Update the continuation token from the Link header.
+
+        :param link: The Link header value from the HTTP response
+        :type link: str or None
+        """
+        if link:
+            try:
+                # Extract the after token from the Link header URL
+                url = link[1 : link.index(">")]
+                # Parse the after parameter from the URL
+                from urllib.parse import urlparse, parse_qs
+
+                parsed = urlparse(url)
+                params = parse_qs(parsed.query)
+                self._after_token = params.get("After", [None])[0]
+            except (ValueError, IndexError):
+                # Malformed Link header, set to None to stop iteration
+                self._after_token = None
+        else:
+            self._after_token = None
+
+    def _parse_response(self, response: HttpResponse) -> Any:
+        """Parse the HTTP response and return an iterator of configuration settings.
+
+        :param response: The HTTP response to parse
+        :type response: HttpResponse
+        :return: An iterator of configuration settings
+        :rtype: Iterator[ConfigurationSetting]
+        """
+        deserialized = json.loads(response.text())
+        list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
+        settings = [ConfigurationSetting._from_generated(x) for x in list_of_elem]  # pylint: disable=protected-access
+        # Update continuation token for next page
+        self._update_continuation_token(response.headers.get("Link", None))
+        return iter(settings)
+
+
+class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIterator):
+    """A page iterator that checks etags before returning pages."""
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Any:
+        """Get the next page, checking etag first.
+
+        :returns: An iterator of objects in the next page.
+        :rtype: Iterator[ReturnType]
+        :raises StopIteration: If there are no more pages or if the page hasn't changed.
+        """
+        if self._match_condition_index >= len(self._match_conditions):
+            # No more etags, but there might be new pages
+            if self._base_iterator.continuation_token is None:
+                raise StopIteration("End of paging")
+            # Yield remaining pages without etag check (they are new)
+            return next(self._base_iterator)
+
+        from ._generated._operations._operations import build_azure_app_configuration_get_key_values_request
+
+        # If we have a continuation token, don't re-apply filters (they're already in the token)
+        if self._after_token:
+            request = build_azure_app_configuration_get_key_values_request(
+                after=self._after_token,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+        else:
+            request = build_azure_app_configuration_get_key_values_request(
+                key=self._key_filter,
+                label=self._label_filter,
+                tags=self._tags_filter,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+
+        response = self._client.send_request(request)
+        self._match_condition_index += 1
+
+        if response.status_code == 304:
+            # Page hasn't changed, skip to next
+            self._update_continuation_token(response.headers.get("Link", None))
+            if self._after_token is None:
+                raise StopIteration("End of paging")
+            return self.__next__()
+        if response.status_code == 200:
+            # Page has changed (200), parse the response directly
+            return self._parse_response(response)
+        # Unexpected status code, raise an error
+        response.raise_for_status()
+        return iter([])  # This line is never reached but satisfies pylint
+
+
+class ConfigurationSettingPagedAsync(AsyncItemPaged):
+    """
+    An async iterable of ConfigurationSettings that supports etag-based change detection.
+
+    This class provides asynchronous iteration over configuration settings, with optional support for
+    etag-based change detection. By supplying a list of etags via the `match_conditions` parameter to
+    the `by_page` method, you can efficiently detect and retrieve only those pages that have changed
+    since your last retrieval.
+
+    Example usage:
+
+        async for setting in ConfigurationSettingPagedAsync(...):
+            # Process each setting asynchronously
+            print(setting)
+
+        # To iterate by page and use etag-based change detection:
+        etags = ["etag1", "etag2", "etag3"]
+        async for page in paged.by_page(match_conditions=etags):
+            async for setting in page:
+                print(setting)
+
+    When `match_conditions` is provided, each page is checked against the corresponding etag.
+    If the page has not changed (HTTP 304), it is skipped. If the page has changed (HTTP 200),
+    the new page is returned. This allows efficient polling for changes without retrieving
+    unchanged data.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize the ItemPaged iterator with etag support.
+        :param args: Arguments to pass to the PageIterator constructor
+        :param kwargs: Keyword arguments to pass to the PageIterator constructor
+        """
+        self._client = kwargs.pop("client", None)
+        self._key_filter = kwargs.pop("key_filter", None)
+        self._label_filter = kwargs.pop("label_filter", None)
+        self._tags_filter = kwargs.pop("tags_filter", None)
+        super(ConfigurationSettingPagedAsync, self).__init__(*args, **kwargs)
+
+    def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
+        """Get an async iterator of pages of objects, instead of an iterator of objects.
+
+        :param str continuation_token:
+            An opaque continuation token. This value can be retrieved from the
+            continuation_token field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :keyword match_conditions: A list of etags to check for changes. If provided, the iterator will
+            check each page against the corresponding etag and only return pages that have changed.
+        :paramtype match_conditions: list[str] or None
+        :returns: An async iterator of pages (themselves iterator of objects)
+        :rtype: AsyncIterator[AsyncIterator[ReturnType]]
+        """
+        if match_conditions is not None and self._client is not None:
+            # Get the base page iterator first
+            base_iterator = super(ConfigurationSettingPagedAsync, self).by_page(continuation_token=continuation_token)
+            # Wrap it with our etag-checking iterator
+            return ConfigurationSettingEtagPageIteratorAsync(
+                self._client,
+                match_conditions,
+                base_iterator,
+                key_filter=self._key_filter,
+                label_filter=self._label_filter,
+                tags_filter=self._tags_filter,
+            )
+        return super(ConfigurationSettingPagedAsync, self).by_page(continuation_token=continuation_token)
+
+
+class ConfigurationSettingEtagPageIteratorAsync(
+    _BaseConfigurationSettingEtagPageIterator
+):  # pylint: disable=name-too-long
+    """An async page iterator that checks etags before returning pages."""
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self) -> Any:
+        """Get the next page, checking etag first.
+
+        :returns: An iterator of objects in the next page.
+        :rtype: AsyncIterator[ReturnType]
+        :raises StopAsyncIteration: If there are no more pages or if the page hasn't changed.
+        """
+        if self._match_condition_index >= len(self._match_conditions):
+            # No more etags, but there might be new pages
+            if self._base_iterator.continuation_token is None:
+                raise StopAsyncIteration("End of paging")
+            # Yield remaining pages without etag check (they are new)
+            return await self._base_iterator.__anext__()
+
+        from ._generated._operations._operations import build_azure_app_configuration_get_key_values_request
+
+        # If we have a continuation token, don't re-apply filters (they're already in the token)
+        if self._after_token:
+            request = build_azure_app_configuration_get_key_values_request(
+                after=self._after_token,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+        else:
+            request = build_azure_app_configuration_get_key_values_request(
+                key=self._key_filter,
+                label=self._label_filter,
+                tags=self._tags_filter,
+                etag=self._match_conditions[self._match_condition_index],
+                match_condition=MatchConditions.IfModified,
+                api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
+            )
+
+        response = await self._client.send_request(request)
+        self._match_condition_index += 1
+
+        if response.status_code == 304:
+            # Page hasn't changed, skip to next
+            self._update_continuation_token(response.headers.get("Link", None))
+            if self._base_iterator.continuation_token is None:
+                raise StopAsyncIteration("End of paging")
+            return await self.__anext__()
+        if response.status_code == 200:
+            # Page has changed (200), parse the response directly
+            return self._parse_response(response)
+        # Unexpected status code, raise an error
+        response.raise_for_status()
+        return iter([])  # This line is never reached but satisfies pylint

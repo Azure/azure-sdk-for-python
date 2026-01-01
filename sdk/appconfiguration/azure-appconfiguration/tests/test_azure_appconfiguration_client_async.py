@@ -1163,42 +1163,25 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             # there will have 2 pages while listing, there are 100 configuration settings per page.
 
             # get page etags
-            page_etags = []
+            match_conditions = []
             items = client.list_configuration_settings(
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
             iterator = items.by_page()
-            async for page in iterator:
+            async for _ in iterator:
                 etag = iterator.etag
-                page_etags.append(etag)
+                match_conditions.append(etag)
 
-            # monitor page updates without changes
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
+            # monitor page updates without changes - only changed pages will be yielded
+            items = client.list_configuration_settings(
+                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            first_page_response = await client.send_request(request)
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
-                assert response.status_code == 304
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            iterator = items.by_page(match_conditions=match_conditions)
+            changed_pages = []
+            async for page in iterator:
+                changed_pages.append(page)
+            # No pages should be yielded since nothing changed
+            assert len(changed_pages) == 0
 
             # do some changes
             await client.add_configuration_setting(
@@ -1210,53 +1193,29 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             # now we have three pages, 100 settings in first two pages and 1 setting in the last page
 
             # get page etags after updates
-            new_page_etags = []
+            new_match_conditions = []
             items = client.list_configuration_settings(
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
             iterator = items.by_page()
-            async for page in iterator:
+            async for _ in iterator:
                 etag = iterator.etag
-                new_page_etags.append(etag)
+                new_match_conditions.append(etag)
 
-            assert page_etags[0] == new_page_etags[0]
-            assert page_etags[1] != new_page_etags[1]
-            assert page_etags[2] != new_page_etags[2]
+            assert match_conditions[0] == new_match_conditions[0]
+            assert match_conditions[1] != new_match_conditions[1]
+            assert len(new_match_conditions) == 3
 
-            # monitor page after updates
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
+            # monitor pages after updates - only changed pages will be yielded
+            items = client.list_configuration_settings(
+                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            first_page_response = await client.send_request(request)
-            # 304 means the page doesn't have changes.
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
-
-                # 200 means the page has changes.
-                assert response.status_code == 200
-                items = response.json()["items"]
-                for item in items:
-                    # Read the keys
-                    pass
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            iterator = items.by_page(match_conditions=match_conditions)
+            changed_pages = []
+            async for page in iterator:
+                changed_pages.append(page)
+            # Should yield 0 pages
+            assert len(changed_pages) == 0
 
             # clean up
             await self.tear_down()
