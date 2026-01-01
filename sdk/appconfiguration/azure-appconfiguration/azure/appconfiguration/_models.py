@@ -682,6 +682,9 @@ class ConfigurationSettingPaged(ItemPaged):
         :param kwargs: Keyword arguments to pass to the PageIterator constructor
         """
         self._client = kwargs.pop("client", None)
+        self._key_filter = kwargs.pop("key_filter", None)
+        self._label_filter = kwargs.pop("label_filter", None)
+        self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPaged, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
@@ -871,6 +874,9 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         :param kwargs: Keyword arguments to pass to the PageIterator constructor
         """
         self._client = kwargs.pop("client", None)
+        self._key_filter = kwargs.pop("key_filter", None)
+        self._label_filter = kwargs.pop("label_filter", None)
+        self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPagedAsync, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
