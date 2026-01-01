@@ -250,28 +250,22 @@ class BaseSampleExecutor:
         print(f"Reason: {test_report['reason']}")
 
 
-def samplePathPasser():
-    """Decorator factory for passing sample path to test functions.
+class SamplePathPasser:
+    """Decorator for passing sample path to test functions."""
 
-    Usage: `@samplePathPasser()`.
-    """
-
-    def _decorator(fn):
+    def __call__(self, fn):
         if inspect.iscoroutinefunction(fn):
 
-            @functools.wraps(fn)
             async def _wrapper_async(test_class, sample_path, **kwargs):
                 return await fn(test_class, sample_path, **kwargs)
 
             return _wrapper_async
+        else:
 
-        @functools.wraps(fn)
-        def _wrapper_sync(test_class, sample_path, **kwargs):
-            return fn(test_class, sample_path, **kwargs)
+            def _wrapper_sync(test_class, sample_path, **kwargs):
+                return fn(test_class, sample_path, **kwargs)
 
-        return _wrapper_sync
-
-    return _decorator
+            return _wrapper_sync
 
 
 class SyncSampleExecutor(BaseSampleExecutor):
