@@ -9,7 +9,7 @@ from devtools_testutils import AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import (
     AsyncSampleExecutor,
-    samplePathPasser,
+    SamplePathPasser,
     get_async_sample_paths,
 )
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
@@ -28,7 +28,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             samples_to_skip=["sample_agent_mcp_with_project_connection_async.py"],
         ),
     )
-    @samplePathPasser()
+    @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
