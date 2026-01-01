@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import csv
 import json
 import logging
 import os
@@ -479,7 +480,11 @@ class CSVDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_csv(self.filename, dtype=str)
+        # Use QUOTE_NONE to preserve quotation marks as literal characters in cell values.
+        # By default, pandas treats quotes as CSV field delimiters and strips them.
+        # This ensures that values like "test" are read as "test" (with quotes), not test.
+        # The escapechar allows escaping special characters like commas within values.
+        return pd.read_csv(self.filename, dtype=str, quoting=csv.QUOTE_NONE, escapechar="\\")
 
 
 class DataLoaderFactory:
