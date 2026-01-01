@@ -1652,3 +1652,49 @@ class TestTagsInLoggingFunctions:
         call_args = mock_client.start_evaluation_run.call_args
         eval_upload = call_args[1]["evaluation"]
         assert eval_upload.tags == tags
+
+    def test_column_mapping_with_target_and_pf_client(self, mock_model_config):
+        """Test that column mapping works correctly when using _use_pf_client=True with a target function.
+        
+        This test validates the fix for the issue where user-provided column mappings with ${target.}
+        references were not being converted to ${data.__outputs.} format when using ProxyClient.
+        """
+        # Create a simple CSV test file
+        test_data_file = _get_file("test_column_mapping_pf_client.csv")
+        
+        # Define a simple target function that returns a response
+        def simple_target(query):
+            return {"response": f"Response to: {query}"}
+        
+        # Define an evaluator that requires both query and response
+        def simple_evaluator(query, response):
+            return {"score": len(response)}
+        
+        # Test with column mapping that uses ${target.response}
+        result = evaluate(
+            data=test_data_file,
+            target=simple_target,
+            evaluators={"test": simple_evaluator},
+            evaluator_config={
+                "default": {
+                    "column_mapping": {
+                        "query": "${data.query}",
+                        "response": "${target.response}",
+                    }
+                }
+            },
+            _use_pf_client=True,
+        )
+        
+        # Verify the evaluation completed successfully
+        assert result is not None
+        assert "rows" in result
+        assert len(result["rows"]) > 0
+        
+        # Verify that the evaluator ran and produced scores
+        row_df = pd.DataFrame(result["rows"])
+        assert "outputs.test.score" in row_df.columns
+        
+        # Verify that all rows have scores (no NaN values from column mapping errors)
+        scores = row_df["outputs.test.score"]
+        assert not scores.isna().any(), "Some evaluations failed due to column mapping errors"
