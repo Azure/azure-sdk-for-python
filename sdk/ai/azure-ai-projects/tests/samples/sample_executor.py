@@ -273,7 +273,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
 
     def __init__(self, test_instance, sample_path: str, env_var_mapping: dict[str, str], **kwargs):
         super().__init__(test_instance, sample_path, env_var_mapping, **kwargs)
-        self.tokenCredential: TokenCredential | FakeTokenCredential | None = None
+        self.tokenCredential: Optional[TokenCredential] | Optional[FakeTokenCredential] = None
 
     def _get_mock_credential(self):
         """Get a mock credential that supports context manager protocol."""
@@ -343,7 +343,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
 
     def __init__(self, test_instance, sample_path: str, env_var_mapping: dict[str, str], **kwargs):
         super().__init__(test_instance, sample_path, env_var_mapping, **kwargs)
-        self.tokenCredential: AsyncTokenCredential | AsyncFakeCredential | None = None
+        self.tokenCredential: Optional[AsyncTokenCredential | AsyncFakeCredential] = None
 
     def _get_mock_credential(self):
         """Get a mock credential that supports async context manager protocol."""
@@ -479,7 +479,7 @@ class AdditionalSampleTestDetail:
         *,
         sample_filename: str,
         env_vars: dict[str, str],
-        test_id: str | None = None,
+        test_id: Optional[str] = None,
     ) -> None:
         self.sample_filename = sample_filename
         self.env_vars = env_vars
@@ -549,8 +549,8 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
 
             expanded: list = []
 
-            inferred_sample_dir: str | None = None
-            template_values: tuple | None = None
+            inferred_sample_dir: Optional[str] = None
+            template_values: Optional[tuple] = None
             template_marks: tuple = ()
             seen_sample_filenames: set[str] = set()
 
