@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Dict, List, Tuple, Union, cast
+from typing import Any, Dict, List, Tuple, Union, cast, Optional
 from azure.core.exceptions import HttpResponseError
 
 from ._models import IndexDocumentsBatch as IndexDocumentsBatchGenerated
@@ -45,9 +45,9 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
     to the batch.
     """
 
-    def __init__(self) -> None:
-        super().__init__(actions=[])
-        self._actions: List[IndexAction] = []
+    def __init__(self, *, actions: Optional[List[IndexAction]] = None) -> None:
+        super().__init__(actions=actions if actions is not None else [])
+        self._actions: List[IndexAction] = actions if actions is not None else []
 
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions) if self.actions else 0)[:1024]
@@ -137,14 +137,14 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
             self._actions = []
         return list(self._actions)
 
-    # @actions.setter
-    # def actions(self, value: List[IndexAction]) -> None:
-    #     """Set the list of index actions.
+    @actions.setter
+    def actions(self, value: List[IndexAction]) -> None:
+        """Set the list of index actions.
 
-    #     :param value: The list of index actions
-    #     :type value: list[~azure.search.documents.models.IndexAction]
-    #     """
-    #     self._actions = value if value is not None else []
+        :param value: The list of index actions
+        :type value: list[~azure.search.documents.models.IndexAction]
+        """
+        self._actions = value if value is not None else []
 
     def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument

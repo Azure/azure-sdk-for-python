@@ -200,13 +200,18 @@ def _build_search_request(
         if query_rewrites_count is not None:
             rewrites = f"{rewrites}|count-{query_rewrites_count}"
 
+    # Convert highlight_fields from comma-separated string to list
+    highlight_fields_list: Optional[List[str]] = None
+    if highlight_fields is not None:
+        highlight_fields_list = [f.strip() for f in highlight_fields.split(",") if f.strip()]
+
     # Build and return the search request
-    return _models.SearchRequest(
+    return _models.SearchRequest(  # type: ignore[misc]
         search_text=search_text,
         include_total_count=include_total_count,
         facets=facets,
         filter=filter,
-        highlight_fields=highlight_fields,
+        highlight_fields=highlight_fields_list,
         highlight_post_tag=highlight_post_tag,
         highlight_pre_tag=highlight_pre_tag,
         minimum_coverage=minimum_coverage,
@@ -293,7 +298,7 @@ class SearchPageIterator(PageIterator):
     def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
         self.continuation_token = None
         response = cast(_models.SearchDocumentsResult, self._response)
-        return response.answers
+        return cast(Optional[List[_models.QueryAnswerResult]], response.answers)
 
     @_ensure_response
     def get_debug_info(self) -> Optional[_models.DebugInfo]:
