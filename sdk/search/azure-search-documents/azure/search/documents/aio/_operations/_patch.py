@@ -166,7 +166,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: answers
         :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
         """
-        return await self._first_iterator_instance().get_answers()
+        return cast(Optional[List[_models.QueryAnswerResult]], await self._first_iterator_instance().get_answers())
 
     async def get_debug_info(self) -> _models.DebugInfo:
         """Return the debug information for the query.

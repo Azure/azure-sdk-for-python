@@ -180,7 +180,7 @@ class SearchIndexingBufferedSender:
                         else:
                             self._on_error(action)
                 raise ServiceResponseTimeoutError("Service response time out")
-            result = await self._process(timeout=remaining, raise_error=False)
+            result = await self._process(timeout=int(remaining), raise_error=False)
             if result:
                 has_error = True
         return has_error

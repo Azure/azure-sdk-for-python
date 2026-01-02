@@ -358,7 +358,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :return: answers
         :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
         """
-        return self._first_iterator_instance().get_answers()
+        return cast(Optional[List[_models.QueryAnswerResult]], self._first_iterator_instance().get_answers())
 
     def get_debug_info(self) -> _models.DebugInfo:
         """Return the debug information for the query.
