@@ -591,12 +591,20 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
                 _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
                 return await fn(test_class, sample_path, *args, **kwargs)
 
+            # Explicitly set the signature to avoid pytest issues when wrapped function (e.g. from recorded_by_proxy)
+            # hides the original signature.
+            setattr(_wrapper_async, "__signature__", inspect.signature(_wrapper_async, follow_wrapped=False))
             return _wrapper_async
 
         @functools.wraps(fn)
         def _wrapper_sync(test_class, sample_path: str, *args, **kwargs):
             _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
             return fn(test_class, sample_path, *args, **kwargs)
+
+        # Explicitly set the signature to avoid pytest issues when wrapped function (e.g. from recorded_by_proxy)
+        # hides the original signature.
+        setattr(_wrapper_sync, "__signature__", inspect.signature(_wrapper_sync, follow_wrapped=False))
+        return _wrapper_sync
 
         return _wrapper_sync
 
