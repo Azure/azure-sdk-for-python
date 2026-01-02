@@ -14,13 +14,16 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_cre
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
-    KnowledgeRetrievalMediumReasoningEffort,
-    KnowledgeRetrievalMinimalReasoningEffort,
     KnowledgeSourceReference,
     WebKnowledgeSource,
     WebKnowledgeSourceDomain,
     WebKnowledgeSourceDomains,
     WebKnowledgeSourceParameters,
+)
+
+from azure.search.documents.knowledgebase.models import (
+    KnowledgeRetrievalMediumReasoningEffort,
+    KnowledgeRetrievalMinimalReasoningEffort,
 )
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -94,9 +97,7 @@ class TestKnowledgeBaseConfigurationLive(AzureRecordedTestCase):
                 pass
             raise
 
-        return _TestContext(
-            index_client, source_name, created_source, base_name, created_base
-        )
+        return _TestContext(index_client, source_name, created_source, base_name, created_base)
 
     def _cleanup(self, ctx: "_TestContext") -> None:
         try:
