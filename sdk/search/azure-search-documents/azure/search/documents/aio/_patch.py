@@ -3,13 +3,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-# pylint: too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, Union, List, Dict, Optional, cast
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -311,7 +311,7 @@ class SearchIndexingBufferedSender:
 
         batch = IndexDocumentsBatch(actions=actions)
         try:
-            batch_response = await self._client.index_documents(batch=batch, **kwargs)
+            batch_response = await self._client.index_documents(batch=batch, **kwargs)  # pylint: disable=no-member
             return cast(List[IndexingResult], batch_response)
         except RequestEntityTooLargeError as ex:
             if len(actions) == 1:

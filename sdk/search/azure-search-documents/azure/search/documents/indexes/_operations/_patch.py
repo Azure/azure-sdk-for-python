@@ -15,13 +15,13 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-
-if TYPE_CHECKING:
-    from ... import SearchClient
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
     _SearchIndexerClientOperationsMixin as _SearchIndexerClientOperationsMixinGenerated,
 )
+
+if TYPE_CHECKING:
+    from ... import SearchClient
 
 
 class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):
@@ -658,7 +658,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_skillsets(**kwargs)
+        result = self._get_skillsets(select=select, **kwargs)
         assert result.skillsets is not None  # Hint for mypy
         # typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
         typed_result = result.skillsets
@@ -676,7 +676,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_indexers(**kwargs)
+        result = self._get_indexers(select=select, **kwargs)
         assert result.indexers is not None  # Hint for mypy
         # typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
         typed_result = result.indexers
@@ -715,7 +715,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_data_source_connections(**kwargs)
+        result = self._get_data_source_connections(select=select, **kwargs)
         assert result.data_sources is not None  # Hint for mypy
         # typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
         typed_result = result.data_sources
