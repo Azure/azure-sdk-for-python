@@ -256,12 +256,14 @@ class SamplePathPasser:
     def __call__(self, fn):
         if inspect.iscoroutinefunction(fn):
 
+            @functools.wraps(fn)
             async def _wrapper_async(test_class, sample_path, **kwargs):
                 return await fn(test_class, sample_path, **kwargs)
 
             return _wrapper_async
         else:
 
+            @functools.wraps(fn)
             def _wrapper_sync(test_class, sample_path, **kwargs):
                 return fn(test_class, sample_path, **kwargs)
 
@@ -521,111 +523,37 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
     playback_values_by_param_id: dict[str, dict[str, str]] = {}
 
     def _decorator(fn):
-        # Expand the existing sample_path parametrization:
-        # - keep the original case (no extra env vars)
-        # - add one extra case per env-var set, with a stable id suffix
-        marks = getattr(fn, "pytestmark", [])
-        for mark in marks:
-            if getattr(mark, "name", None) != "parametrize":
-                continue
-            if not getattr(mark, "args", None) or len(mark.args) < 2:
-                continue
+        # Attach configuration and storage to the function for pytest_generate_tests to use
+        fn._additional_tests_config = env_var_sets_by_sample
+        fn._playback_values = playback_values_by_param_id
 
-            def _split_argnames(argnames) -> list[str]:
-                if isinstance(argnames, str):
-                    return [a.strip() for a in argnames.split(",") if a.strip()]
-                try:
-                    return list(argnames)
-                except TypeError:
-                    return [str(argnames)]
+        # Also try to run the logic immediately if marks are present (backward compatibility)
+        _expand_sample_tests(fn, env_var_sets_by_sample, playback_values_by_param_id)
 
-            argnames = _split_argnames(mark.args[0])
-            if "sample_path" not in argnames:
-                continue
-            sample_path_index = argnames.index("sample_path")
-            argvalues = mark.args[1]
-            if not isinstance(argvalues, list):
-                continue
+        # Inject pytest_generate_tests into the module of the decorated function
+        # This avoids modifying conftest.py or the test file directly
+        module = sys.modules.get(fn.__module__)
+        if module:
+            if not hasattr(module, "pytest_generate_tests"):
+                # Define the hook if it doesn't exist
+                def pytest_generate_tests(metafunc):
+                    process_additional_sample_tests(metafunc)
 
-            expanded: list = []
+                setattr(module, "pytest_generate_tests", pytest_generate_tests)
+            else:
+                # If it exists, wrap it to include our logic
+                original_hook = getattr(module, "pytest_generate_tests")
 
-            inferred_sample_dir: Optional[str] = None
-            template_values: Optional[tuple] = None
-            template_marks: tuple = ()
-            seen_sample_filenames: set[str] = set()
+                # Check if we already wrapped it to avoid infinite recursion or double wrapping
+                if not getattr(original_hook, "_is_wrapped_additional_sample_tests", False):
 
-            for parameter_set in list(argvalues):
-                values = getattr(parameter_set, "values", None)
-                if values is None:
-                    continue
+                    @functools.wraps(original_hook)
+                    def wrapped_pytest_generate_tests(metafunc):
+                        process_additional_sample_tests(metafunc)
+                        original_hook(metafunc)
 
-                if template_values is None:
-                    if isinstance(values, tuple):
-                        template_values = values
-                    elif isinstance(values, list):
-                        template_values = tuple(values)
-
-                    if template_values is not None:
-                        template_marks = tuple(getattr(parameter_set, "marks", ()))
-
-                expanded.append(parameter_set)  # baseline / original
-
-                if not isinstance(values, (list, tuple)):
-                    continue
-                if sample_path_index >= len(values):
-                    continue
-
-                sample_path = values[sample_path_index]
-
-                sample_filename = os.path.basename(str(sample_path))
-                seen_sample_filenames.add(sample_filename)
-
-                if inferred_sample_dir is None:
-                    inferred_sample_dir = os.path.dirname(str(sample_path))
-
-                additional_details = env_var_sets_by_sample.get(sample_filename)
-                if not additional_details:
-                    continue
-
-                marks_for_param = getattr(parameter_set, "marks", ())
-                for detail in additional_details:
-                    new_id = detail.test_id
-
-                    if new_id in playback_values_by_param_id:
-                        raise ValueError(
-                            f"Duplicate additional sample test id '{new_id}'. "
-                            "When using test_id, ensure it is unique across all parametrized cases."
-                        )
-                    expanded.append(pytest.param(*values, marks=marks_for_param, id=new_id))
-                    playback_values_by_param_id[new_id] = detail.env_vars
-
-            # If a sample was excluded from discovery (e.g., via samples_to_skip), it won't appear in argvalues.
-            # In that case, still synthesize *variant-only* cases for any configured env-var sets.
-            if inferred_sample_dir and template_values is not None:
-                for sample_filename, playback_sets in env_var_sets_by_sample.items():
-                    if sample_filename in seen_sample_filenames:
-                        continue
-
-                    synthetic_sample_path = os.path.join(inferred_sample_dir, sample_filename)
-                    synthetic_values = list(template_values)
-                    synthetic_values[sample_path_index] = synthetic_sample_path
-
-                    for detail in playback_sets:
-                        new_id = detail.test_id
-
-                        if new_id in playback_values_by_param_id:
-                            raise ValueError(
-                                f"Duplicate additional sample test id '{new_id}'. "
-                                "When using test_id, ensure it is unique across all parametrized cases."
-                            )
-                        expanded.append(pytest.param(*synthetic_values, marks=template_marks, id=new_id))
-                        playback_values_by_param_id[new_id] = detail.env_vars
-
-            # Keep a stable, deterministic order for test ids.
-            expanded.sort(key=lambda p: str(getattr(p, "id", "") or ""))
-
-            # Mutate the existing list in-place so pytest sees the expanded cases.
-            argvalues[:] = expanded
+                    setattr(wrapped_pytest_generate_tests, "_is_wrapped_additional_sample_tests", True)
+                    setattr(module, "pytest_generate_tests", wrapped_pytest_generate_tests)
 
         def _inject_env_vars(*, sample_path: str, kwargs: dict) -> None:
             # Determine which env-var set applies for this specific parametrized case.
@@ -667,3 +595,113 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
         return _wrapper_sync
 
     return _decorator
+
+
+def _expand_sample_tests(fn, env_var_sets_by_sample, playback_values_by_param_id):
+    """Helper to expand sample tests, used by decorator and pytest_generate_tests."""
+    marks = getattr(fn, "pytestmark", [])
+    for mark in marks:
+        if getattr(mark, "name", None) != "parametrize":
+            continue
+        if not getattr(mark, "args", None) or len(mark.args) < 2:
+            continue
+
+        def _split_argnames(argnames) -> list[str]:
+            if isinstance(argnames, str):
+                return [a.strip() for a in argnames.split(",") if a.strip()]
+            try:
+                return list(argnames)
+            except TypeError:
+                return [str(argnames)]
+
+        argnames = _split_argnames(mark.args[0])
+        if "sample_path" not in argnames:
+            continue
+        sample_path_index = argnames.index("sample_path")
+        argvalues = mark.args[1]
+        if not isinstance(argvalues, list):
+            continue
+
+        expanded: list = []
+        inferred_sample_dir: Optional[str] = None
+        template_values: Optional[tuple] = None
+        template_marks: tuple = ()
+        seen_sample_filenames: set[str] = set()
+
+        for parameter_set in list(argvalues):
+            values = getattr(parameter_set, "values", None)
+            if values is None:
+                continue
+
+            if template_values is None:
+                if isinstance(values, tuple):
+                    template_values = values
+                elif isinstance(values, list):
+                    template_values = tuple(values)
+
+                if template_values is not None:
+                    template_marks = tuple(getattr(parameter_set, "marks", ()))
+
+            expanded.append(parameter_set)  # baseline / original
+
+            if not isinstance(values, (list, tuple)):
+                continue
+            if sample_path_index >= len(values):
+                continue
+
+            sample_path = values[sample_path_index]
+
+            sample_filename = os.path.basename(str(sample_path))
+            seen_sample_filenames.add(sample_filename)
+
+            if inferred_sample_dir is None:
+                inferred_sample_dir = os.path.dirname(str(sample_path))
+
+            additional_details = env_var_sets_by_sample.get(sample_filename)
+            if not additional_details:
+                continue
+
+            marks_for_param = getattr(parameter_set, "marks", ())
+            for detail in additional_details:
+                new_id = detail.test_id
+
+                if new_id in playback_values_by_param_id:
+                    # Skip if already added (idempotency for pytest_generate_tests)
+                    continue
+                expanded.append(pytest.param(*values, marks=marks_for_param, id=new_id))
+                playback_values_by_param_id[new_id] = detail.env_vars
+
+        # If a sample was excluded from discovery (e.g., via samples_to_skip), it won't appear in argvalues.
+        # In that case, still synthesize *variant-only* cases for any configured env-var sets.
+        if inferred_sample_dir and template_values is not None:
+            for sample_filename, playback_sets in env_var_sets_by_sample.items():
+                if sample_filename in seen_sample_filenames:
+                    continue
+
+                synthetic_sample_path = os.path.join(inferred_sample_dir, sample_filename)
+                synthetic_values = list(template_values)
+                synthetic_values[sample_path_index] = synthetic_sample_path
+
+                for detail in playback_sets:
+                    new_id = detail.test_id
+
+                    if new_id in playback_values_by_param_id:
+                        continue
+                    expanded.append(pytest.param(*synthetic_values, marks=template_marks, id=new_id))
+                    playback_values_by_param_id[new_id] = detail.env_vars
+
+        # Keep a stable, deterministic order for test ids.
+        expanded.sort(key=lambda p: str(getattr(p, "id", "") or ""))
+
+        # Mutate the existing list in-place so pytest sees the expanded cases.
+        argvalues[:] = expanded
+
+
+def process_additional_sample_tests(metafunc):
+    """Hook to be called from pytest_generate_tests to process additional sample tests."""
+    fn = metafunc.function
+    env_var_sets_by_sample = getattr(fn, "_additional_tests_config", None)
+    playback_values_by_param_id = getattr(fn, "_playback_values", None)
+
+    if env_var_sets_by_sample and playback_values_by_param_id is not None:
+        _expand_sample_tests(fn, env_var_sets_by_sample, playback_values_by_param_id)

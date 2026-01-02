@@ -21,14 +21,6 @@ class TestSamples(AzureRecordedTestCase):
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_memory_search]
     @servicePreparer()
-    @additionalSampleTests(
-        [
-            AdditionalSampleTestDetail(
-                sample_filename="sample_agent_computer_use.py",
-                env_vars={"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model"},
-            ),
-        ]
-    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
@@ -45,6 +37,14 @@ class TestSamples(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                sample_filename="sample_agent_computer_use.py",
+                env_vars={"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model"},
+            ),
+        ]
+    )
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map(operation_group="agents")

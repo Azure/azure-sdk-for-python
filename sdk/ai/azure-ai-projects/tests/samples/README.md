@@ -123,6 +123,14 @@ If a sample supports optional environment variables (for optional features/paths
 from sample_executor import AdditionalSampleTestDetail, additionalSampleTests
 
 @servicePreparer()
+@pytest.mark.parametrize(
+    "sample_path",
+    get_sample_paths(
+        "agents/tools",
+        samples_to_skip=[],
+    ),
+)
+@samplePathPasser()
 @additionalSampleTests(
     [
         AdditionalSampleTestDetail(
@@ -140,14 +148,6 @@ from sample_executor import AdditionalSampleTestDetail, additionalSampleTests
         ),
     ]
 )
-@pytest.mark.parametrize(
-    "sample_path",
-    get_sample_paths(
-        "agents/tools",
-        samples_to_skip=[],
-    ),
-)
-@samplePathPasser()
 @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
 def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
     ...
