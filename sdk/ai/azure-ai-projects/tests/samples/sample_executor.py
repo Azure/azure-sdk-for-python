@@ -12,7 +12,7 @@ import inspect
 import importlib.util
 import functools
 from dataclasses import dataclass, field
-from typing import overload, Union, Optional
+from typing import Callable, Optional, Union, overload
 from pydantic import BaseModel
 
 import json
@@ -260,6 +260,9 @@ class SamplePathPasser:
             async def _wrapper_async(test_class, sample_path, **kwargs):
                 return await fn(test_class, sample_path, **kwargs)
 
+            # Explicitly set the signature to avoid pytest issues when wrapped function (e.g. from recorded_by_proxy)
+            # hides the original signature.
+            setattr(_wrapper_async, "__signature__", inspect.signature(_wrapper_async, follow_wrapped=False))
             return _wrapper_async
         else:
 
@@ -267,6 +270,9 @@ class SamplePathPasser:
             def _wrapper_sync(test_class, sample_path, **kwargs):
                 return fn(test_class, sample_path, **kwargs)
 
+            # Explicitly set the signature to avoid pytest issues when wrapped function (e.g. from recorded_by_proxy)
+            # hides the original signature.
+            setattr(_wrapper_sync, "__signature__", inspect.signature(_wrapper_sync, follow_wrapped=False))
             return _wrapper_sync
 
 
@@ -275,7 +281,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
 
     def __init__(self, test_instance, sample_path: str, env_var_mapping: dict[str, str], **kwargs):
         super().__init__(test_instance, sample_path, env_var_mapping, **kwargs)
-        self.tokenCredential: Optional[TokenCredential] | Optional[FakeTokenCredential] = None
+        self.tokenCredential: Optional[TokenCredential | FakeTokenCredential] = None
 
     def _get_mock_credential(self):
         """Get a mock credential that supports context manager protocol."""
@@ -597,7 +603,11 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
     return _decorator
 
 
-def _expand_sample_tests(fn, env_var_sets_by_sample, playback_values_by_param_id):
+def _expand_sample_tests(
+    fn: Callable,
+    env_var_sets_by_sample: dict[str, list[AdditionalSampleTestDetail]],
+    playback_values_by_param_id: dict[str, dict[str, str]],
+) -> None:
     """Helper to expand sample tests, used by decorator and pytest_generate_tests."""
     marks = getattr(fn, "pytestmark", [])
     for mark in marks:
@@ -624,7 +634,15 @@ def _expand_sample_tests(fn, env_var_sets_by_sample, playback_values_by_param_id
 
         expanded: list = []
         inferred_sample_dir: Optional[str] = None
-        template_values: Optional[tuple] = None
+        # template_values stores the values for the test parameters from the first valid parameter set.
+        # Examples:
+        # - ("path/to/sample.py",)
+        template_values: Optional[tuple[str]] = None
+        # template_marks stores pytest marks (e.g., pytest.mark.skip) from the first valid parameter set.
+        # Examples:
+        # - (pytest.mark.skip(reason="Not ready"),)
+        # - (pytest.mark.xfail,)
+        # - (pytest.mark.slow, pytest.mark.windows_only)
         template_marks: tuple = ()
         seen_sample_filenames: set[str] = set()
 
@@ -697,7 +715,7 @@ def _expand_sample_tests(fn, env_var_sets_by_sample, playback_values_by_param_id
         argvalues[:] = expanded
 
 
-def process_additional_sample_tests(metafunc):
+def process_additional_sample_tests(metafunc: pytest.Metafunc) -> None:
     """Hook to be called from pytest_generate_tests to process additional sample tests."""
     fn = metafunc.function
     env_var_sets_by_sample = getattr(fn, "_additional_tests_config", None)
