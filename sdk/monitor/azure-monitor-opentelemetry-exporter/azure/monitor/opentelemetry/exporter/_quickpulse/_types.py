@@ -59,8 +59,7 @@ class _RequestData(_TelemetryData):
         if span.attributes:
             attributes = span.attributes
             url = trace_utils._get_url_for_http_request(attributes)
-            status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
-                attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:
                     status_code = int(status_code)

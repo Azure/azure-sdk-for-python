@@ -15,7 +15,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated import Quickpul
 # We use a custom RedirectPolicy to handle this use case
 # pylint: disable=protected-access
 class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
-
     def __init__(self, **kwargs: Any) -> None:
         # Weakref to QuickPulseClient instance
         self._qp_client_ref: Optional[ReferenceType[QuickpulseClient]] = None

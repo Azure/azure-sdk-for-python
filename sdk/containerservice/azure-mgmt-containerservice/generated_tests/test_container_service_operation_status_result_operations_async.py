@@ -25,7 +25,7 @@ class TestContainerServiceOperationStatusResultOperationsAsync(AzureMgmtRecorded
         response = self.client.operation_status_result.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-09-02-preview",
+            api_version="2025-10-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceOperationStatusResultOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             resource_name="str",
             operation_id="str",
-            api_version="2025-09-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestContainerServiceOperationStatusResultOperationsAsync(AzureMgmtRecorded
             resource_name="str",
             agent_pool_name="str",
             operation_id="str",
-            api_version="2025-09-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
