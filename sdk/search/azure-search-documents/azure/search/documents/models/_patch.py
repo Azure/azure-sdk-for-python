@@ -22,6 +22,11 @@ def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, An
     Supports both:
     - add_upload_actions([doc1, doc2])  # single list
     - add_upload_actions(doc1, doc2)    # multiple args
+
+    :param args: Variadic arguments containing documents or lists of documents.
+    :type args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]
+    :return: A flattened list of document dictionaries.
+    :rtype: List[Dict]
     """
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
         return cast(List[Dict], args[0])

@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-# pylint: too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -323,14 +323,12 @@ class SearchIndexingBufferedSender:
         return self._index_documents_actions(actions=batch.actions if batch.actions else [], **kwargs)
 
     def _index_documents_actions(self, actions: List[IndexAction], **kwargs) -> List[IndexingResult]:
-        error_map = {413: RequestEntityTooLargeError}
-
         timeout = kwargs.pop("timeout", 86400)
         begin_time = int(time.time())
 
         batch = IndexDocumentsBatch(actions=actions)
         try:
-            batch_response = self._client.index_documents(batch=batch, **kwargs)
+            batch_response = self._client.index_documents(batch=batch, **kwargs)  # pylint: disable=no-member
             return cast(List[IndexingResult], batch_response)
         except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
