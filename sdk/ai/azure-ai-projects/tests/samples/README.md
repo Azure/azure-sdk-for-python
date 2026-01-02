@@ -14,7 +14,7 @@ import pytest
 import os
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
-from sample_executor import SyncSampleExecutor, get_sample_paths, samplePathPasser
+from sample_executor import SyncSampleExecutor, get_sample_paths, SamplePathPasser
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 class TestSamples(AzureRecordedTestCase):
@@ -34,7 +34,7 @@ class TestSamples(AzureRecordedTestCase):
             ],
         ),
     )
-    @samplePathPasser()
+    @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map()
@@ -53,7 +53,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 import os
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
-from sample_executor import AsyncSampleExecutor, get_async_sample_paths, samplePathPasser
+from sample_executor import AsyncSampleExecutor, get_async_sample_paths, SamplePathPasser
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 class TestSamplesAsync(AzureRecordedTestCase):
@@ -68,7 +68,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             ],
         ),
     )
-    @samplePathPasser()
+    @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map()
@@ -96,9 +96,13 @@ servicePreparer = functools.partial(
 )
 ```
 - `@pytest.mark.parametrize`: Drives one test per sample file. Use `samples_to_test` or `samples_to_skip` with `get_sample_paths` / `get_async_sample_paths`.
-- `@samplePathPasser`: Forwards the sample path to the recorder decorators.
+- `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
 - `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
-- `get_sample_environment_variables_map`: Map test env vars to the names expected by samples. Pass `{}` if you already export the sample variables directly. Example:
+- `get_sample_environment_variables_map`: Your function that returns a mapping of **sample env-var name** -> **test env-var name**.
+    - The executor reads values from `**kwargs` using the *test env-var name* (typically injected by `@servicePreparer()`), then sets `os.environ[<sample env-var name>]` before running the sample.
+    - If your `@servicePreparer()` (or other decorators) already provide the sample env-var names directly (for example, `AZURE_AI_PROJECT_ENDPOINT=...`), pass `{}` to `SyncSampleExecutor` / `AsyncSampleExecutor`.
+
+Example:
 ```python
 def get_sample_environment_variables_map(operation_group: str | None = None) -> dict[str, str]:
     return {
