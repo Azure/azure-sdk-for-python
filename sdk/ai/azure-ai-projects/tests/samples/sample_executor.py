@@ -550,7 +550,7 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
                     frame_module = inspect.getmodule(frame_info.frame)
                     if frame_module and frame_module.__name__ != __name__:
                         # Check if this looks like a test file
-                        if "test" in frame_module.__name__ or "sample" in frame_module.__name__:
+                        if "test" in frame_module.__name__:
                             module = frame_module
                             break
             except (AttributeError, ValueError):
