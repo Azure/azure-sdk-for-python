@@ -13,8 +13,6 @@ from ._models import SearchField
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
-    PermissionFilter,
-    VectorEncodingFormat,
 )
 
 # Re-export SearchFieldDataType and add Collection helper
@@ -80,13 +78,14 @@ def SimpleField(
         type SearchFieldDataType.String. Key fields can be used to look up documents directly and
         update or delete specific documents. Default is False
     :paramtype key: bool
-    :ivar retrievable: A value indicating whether the field can be returned in a search result.
+    :keyword retrievable: A value indicating whether the field can be returned in a search result.
         You can disable this option if you want to use a field (for example, margin) as a filter,
         sorting, or scoring mechanism but do not want the field to be visible to the end user. This
         property must be true for key fields, and it must be null for complex fields. This property can be
         changed on existing fields. Enabling this property does not cause any increase in index storage
         requirements. Default is true for simple fields, false for vector fields, and null for complex
         fields.
+    :paramtype retrievable: bool
     :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
         queries. filterable differs from searchable in how strings are handled. Fields of type
         SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
@@ -153,13 +152,14 @@ def SearchableField(
         type SearchFieldDataType.String. Key fields can be used to look up documents directly and update or delete
         specific documents. Default is False
     :paramtype key: bool
-    :ivar retrievable: A value indicating whether the field can be returned in a search result.
+    :keyword retrievable: A value indicating whether the field can be returned in a search result.
         You can disable this option if you want to use a field (for example, margin) as a filter,
         sorting, or scoring mechanism but do not want the field to be visible to the end user. This
         property must be true for key fields, and it must be null for complex fields. This property can be
         changed on existing fields. Enabling this property does not cause any increase in index storage
         requirements. Default is true for simple fields, false for vector fields, and null for complex
         fields.
+    :paramtype retrievable: bool
     :keyword searchable: A value indicating whether the field is full-text searchable. This means it
         will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
         value like "sunny day", internally it will be split into the individual tokens "sunny" and

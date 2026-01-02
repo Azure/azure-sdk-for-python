@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# pylint: too-many-instance-attributes
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -16,14 +17,12 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ServiceResponseTimeoutError
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 
 from ._client import SearchClient as _SearchClient
 from ._operations._patch import SearchItemPaged
 from .models._patch import RequestEntityTooLargeError, IndexDocumentsBatch
 from .models import IndexAction, IndexingResult
 from .indexes import SearchIndexClient
-from ._version import VERSION as SDK_MONIKER
 
 
 def is_retryable_status_code(status_code: int) -> bool:

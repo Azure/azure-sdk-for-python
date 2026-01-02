@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# pylint: too-many-instance-attributes
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -20,8 +21,7 @@ from ._operations._patch import AsyncSearchItemPaged
 from ..models._patch import RequestEntityTooLargeError, IndexDocumentsBatch
 from ..models import IndexAction, IndexingResult
 from ..indexes.aio import SearchIndexClient
-from .._patch import ApiVersion, DEFAULT_VERSION, is_retryable_status_code
-from .._version import VERSION as SDK_MONIKER
+from .._patch import DEFAULT_VERSION, is_retryable_status_code
 
 
 class SearchClient(_SearchClient):
