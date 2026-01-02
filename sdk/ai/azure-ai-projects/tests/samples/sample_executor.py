@@ -539,6 +539,23 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
         # Inject pytest_generate_tests into the module of the decorated function
         # This avoids modifying conftest.py or the test file directly
         module = sys.modules.get(fn.__module__)
+
+        # Fallback: If the module seems incorrect (e.g. points to a library like devtools_testutils
+        # because of a decorator wrapper that didn't use functools.wraps), try to find the
+        # actual calling module from the stack.
+        if not module or "devtools_testutils" in getattr(module, "__name__", ""):
+            try:
+                # Walk up the stack to find the first frame that isn't in this file
+                for frame_info in inspect.stack():
+                    frame_module = inspect.getmodule(frame_info.frame)
+                    if frame_module and frame_module.__name__ != __name__:
+                        # Check if this looks like a test file
+                        if "test" in frame_module.__name__ or "sample" in frame_module.__name__:
+                            module = frame_module
+                            break
+            except (AttributeError, ValueError):
+                pass
+
         if module:
             if not hasattr(module, "pytest_generate_tests"):
                 # Define the hook if it doesn't exist
