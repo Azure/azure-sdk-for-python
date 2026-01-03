@@ -2,14 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # mypy: ignore-errors
-from typing import Any, Dict, List, Mapping, Optional, Tuple
-
-from azure.core.configuration import Configuration
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline import policies
-
-from azure.ai.agentserver.core.context._package_metadata import get_current_app
-from azure.ai.agentserver.core.tools._models import FoundryTool
+from typing import Any, Dict, Mapping, Optional, Tuple
 
 
 class MetadataMapper:
@@ -189,78 +182,4 @@ class InvocationPayloadBuilder:
 
 		return {}
 
-
-class ToolConfigurationParser:
-	"""Parses and processes tool configuration.
-
-	This class handles parsing and categorizing tool configurations into
-	remote tools (MCP/A2A) and named MCP tools.
-
-	:param List[Mapping[str, Any]] tools_config:
-		List of tool configurations to parse. Can be None.
-	"""
-
-	def __init__(self, tools_definitions: Optional[List[Any]] = None):
-		"""Initialize the parser.
-
-		:param tools_definitions: List of tool configurations (can be dicts or ToolDefinition objects), or None.
-		:type tools_definitions: Optional[List[Any]]
-		"""
-		# Convert dictionaries to ToolDefinition objects if needed
-		self._tools_definitions = []
-		for tool_def in (tools_definitions or []):
-			if isinstance(tool_def, dict):
-				# Convert dict to ToolDefinition
-				tool_type = tool_def.get("type")
-				if tool_type:
-					self._tools_definitions.append(FoundryTool(type=tool_type, **{k: v for k, v in tool_def.items() if k != "type"}))
-			elif isinstance(tool_def, FoundryTool):
-				self._tools_definitions.append(tool_def)
-
-		self._remote_tools: List[FoundryTool] = []
-		self._named_mcp_tools: List[FoundryTool] = []
-		self._parse_tools_config()
-
-	def _parse_tools_config(self) -> None:
-		"""Parse tools configuration into categorized lists.
-
-		Separates tool configurations into remote tools (MCP/A2A types) and
-		named MCP tools based on the 'type' field in each configuration.
-		"""
-		for tool_definition in self._tools_definitions:
-			tool_type = tool_definition.type.lower()
-			if tool_type in ["mcp", "a2a"]:
-				self._remote_tools.append(tool_definition)
-			else:
-				self._named_mcp_tools.append(tool_definition)
-
-
-class FoundryToolClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-	"""Configuration for Azure AI Tool Client.
-
-	Manages authentication, endpoint configuration, and policy settings for the
-	Azure AI Tool Client. This class is used internally by the client and should
-	not typically be instantiated directly.
-
-	:param credential:
-		Azure TokenCredential for authentication.
-	:type credential: ~azure.core.credentials.TokenCredential
-	"""
-
-	def __init__(self, credential: "AsyncTokenCredential"):
-		super().__init__()
-
-		# Initialize tool configuration parser
-		self.tool_config = ToolConfigurationParser(None)
-
-		self.retry_policy = policies.AsyncRetryPolicy()
-		self.logging_policy = policies.NetworkTraceLoggingPolicy()
-		self.request_id_policy = policies.RequestIdPolicy()
-		self.http_logging_policy = policies.HttpLoggingPolicy()
-		self.user_agent_policy = policies.UserAgentPolicy(
-			base_user_agent=get_current_app().as_user_agent("FoundryToolClient"))
-		self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
-			credential, "https://ai.azure.com/.default"
-		)
-		self.redirect_policy = policies.AsyncRedirectPolicy()
 

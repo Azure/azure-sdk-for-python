@@ -11,7 +11,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
 from azure.ai.agentserver.core.tools._models import FoundryTool, FoundryToolSource, ResolvedFoundryTool, UserInfo
-from azure.ai.agentserver.core.tools._to_be_deleted import FoundryToolClientConfiguration
+from azure.ai.agentserver.core.tools._configuration import FoundryToolClientConfiguration
 from azure.ai.agentserver.core.tools.operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from azure.ai.agentserver.core.tools.operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
 from azure.ai.agentserver.core.utils._credential import AsyncTokenCredentialAdapter
