@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, Iterable, List, cast
+from typing import Any, ClassVar, Dict, List, cast
 
 from azure.core.rest import HttpRequest
 
-from azure.ai.agentserver.core.tools._to_be_deleted import MetadataMapper
 from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
-from azure.ai.agentserver.core.tools._models import FoundryHostedMcpTool, ListFoundryHostedMcpToolsResponse, FoundryToolSource, \
-	ResolvedFoundryTool
+from azure.ai.agentserver.core.tools._models import FoundryHostedMcpTool, FoundryToolSource, \
+	ListFoundryHostedMcpToolsResponse, ResolvedFoundryTool
+from azure.ai.agentserver.core.tools._to_be_deleted import MetadataMapper
 from azure.ai.agentserver.core.tools.operations._base import BaseOperations
 
 
@@ -65,13 +65,13 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 
 	@staticmethod
 	def convert_listed_tools(response: ListFoundryHostedMcpToolsResponse,
-							 allowed_tools: Iterable[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
+							 allowed_tools: List[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
 		"""Convert listed tools response to ResolvedFoundryTool list.
 
 		:param response: Response from listing MCP tools.
 		:type response: ListFoundryHostedMcpToolsResponse
-		:param allowed_tools: Iterable of allowed MCP tools to filter.
-		:type allowed_tools: Iterable[FoundryHostedMcpTool]
+		:param allowed_tools: List of allowed MCP tools to filter.
+		:type allowed_tools: List[FoundryHostedMcpTool]
 		:return: List of resolved MCP tools.
 		:rtype: List[ResolvedFoundryTool]
 		"""
@@ -119,11 +119,11 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 	"""Operations for Foundry-hosted MCP tools."""
 
-	async def list_tools(self, allowed_tools: Iterable[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
+	async def list_tools(self, allowed_tools: List[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
 		"""List MCP tools.
 
-		:param allowed_tools: Iterable of allowed MCP tools to filter.
-		:type allowed_tools: Iterable[FoundryHostedMcpTool]
+		:param allowed_tools: List of allowed MCP tools to filter.
+		:type allowed_tools: List[FoundryHostedMcpTool]
 		:return: List of tool descriptors from MCP server.
 		:rtype: ListFoundryHostedMcpToolsResponse
 		"""
