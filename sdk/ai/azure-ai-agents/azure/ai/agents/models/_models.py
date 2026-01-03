@@ -10,6 +10,11 @@
 import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
+from azure.ai.agentserver.core.tools import _models
+from azure.ai.agentserver.core.tools import _models
+from azure.ai.agentserver.core.tools import _models
+from azure.ai.agentserver.core.tools import _models
+
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from .._utils.utils import FileType
 from ._enums import (

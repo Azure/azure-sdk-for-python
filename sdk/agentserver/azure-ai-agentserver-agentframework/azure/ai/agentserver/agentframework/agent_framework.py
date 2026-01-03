@@ -12,7 +12,7 @@ from agent_framework import AgentProtocol, AIFunction
 from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
-from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
+from ..core.tools._exceptions import OAuthConsentRequiredError
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
 from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
