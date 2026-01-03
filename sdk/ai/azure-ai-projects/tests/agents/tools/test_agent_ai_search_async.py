@@ -148,7 +148,7 @@ class TestAgentAISearchAsync(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -157,14 +157,14 @@ class TestAgentAISearchAsync(TestBase):
             openai_client = project_client.get_openai_client()
 
             # Get AI Search connection and index from environment
-            ai_search_connection_id = kwargs.get("azure_ai_projects_tests_ai_search_project_connection_id")
-            ai_search_index_name = kwargs.get("azure_ai_projects_tests_ai_search_index_name")
+            ai_search_connection_id = kwargs.get("AI_SEARCH_PROJECT_CONNECTION_ID")
+            ai_search_index_name = kwargs.get("AI_SEARCH_INDEX_NAME")
 
             if not ai_search_connection_id:
-                pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
+                pytest.fail("AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
 
             if not ai_search_index_name:
-                pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_INDEX_NAME environment variable not set")
+                pytest.fail("AI_SEARCH_INDEX_NAME environment variable not set")
 
             assert isinstance(ai_search_connection_id, str), "ai_search_connection_id must be a string"
             assert isinstance(ai_search_index_name, str), "ai_search_index_name must be a string"

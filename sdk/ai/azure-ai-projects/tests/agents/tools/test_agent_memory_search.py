@@ -50,9 +50,9 @@ class TestAgentMemorySearch(TestBase):
         DELETE /memory_stores/{memory_store_name}            project_client.memory_stores.delete()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
-        chat_model = kwargs.get("azure_ai_projects_tests_memory_store_chat_model_deployment_name")
-        embedding_model = kwargs.get("azure_ai_projects_tests_memory_store_embedding_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+        chat_model = kwargs.get("MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME")
+        embedding_model = kwargs.get("MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME")
 
         assert isinstance(model, str)
         assert isinstance(chat_model, str)

@@ -43,31 +43,29 @@ _BUILTIN_OPEN = open
 # Load secrets from environment variables
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_tests",
-    azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_agents_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_model_deployment_name="gpt-4o",
-    azure_ai_projects_tests_image_generation_model_deployment_name="gpt-image-1-mini",
-    azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
-    azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
-    azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
-    azure_ai_projects_tests_ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
-    azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
-    azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
-    azure_ai_projects_tests_sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
-    azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
-    azure_ai_projects_tests_completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
-    azure_ai_projects_tests_completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
-    azure_ai_projects_tests_completed_oss_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
-    azure_ai_projects_tests_running_fine_tuning_job_id="sanitized-ftjob-id",
-    azure_ai_projects_tests_paused_fine_tuning_job_id="sanitized-ftjob-id",
-    azure_ai_projects_tests_azure_subscription_id="00000000-0000-0000-0000-000000000000",
-    azure_ai_projects_tests_azure_resource_group="sanitized-resource-group",
-    azure_ai_projects_tests_ai_search_user_input="What is Azure AI Projects?",
-    azure_ai_projects_tests_sharepoint_user_input="What is SharePoint?",
-    azure_ai_projects_tests_memory_store_chat_model_deployment_name="gpt-4.1-mini",
-    azure_ai_projects_tests_memory_store_embedding_model_deployment_name="text-embedding-ada-002",
+    "",
+    AZURE_AI_PROJECT_ENDPOINT="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o",
+    IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME="gpt-image-1-mini",
+    CONTAINER_APP_RESOURCE_ID="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
+    CONTAINER_INGRESS_SUBDOMAIN_SUFFIX="00000",
+    BING_PROJECT_CONNECTION_ID="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
+    AI_SEARCH_PROJECT_CONNECTION_ID="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    AI_SEARCH_INDEX_NAME="sanitized-index-name",
+    MCP_PROJECT_CONNECTION_ID="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    SHAREPOINT_PROJECT_CONNECTION_ID="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID="sanitized-ftjob-id",
+    COMPLETED_OAI_MODEL_RFT_FINE_TUNING_JOB_ID="sanitized-ftjob-id",
+    COMPLETED_OAI_MODEL_DPO_FINE_TUNING_JOB_ID="sanitized-ftjob-id",
+    COMPLETED_OSS_MODEL_SFT_FINE_TUNING_JOB_ID="sanitized-ftjob-id",
+    RUNNING_FINE_TUNING_JOB_ID="sanitized-ftjob-id",
+    PAUSED_FINE_TUNING_JOB_ID="sanitized-ftjob-id",
+    AZURE_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000",
+    AZURE_RESOURCE_GROUP="sanitized-resource-group",
+    AI_SEARCH_USER_INPUT="What is Azure AI Projects?",
+    SHAREPOINT_USER_INPUT="What is SharePoint?",
+    MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME="gpt-4.1-mini",
+    MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-ada-002",
 )
 
 # Fine-tuning job type constants
@@ -287,12 +285,7 @@ class TestBase(AzureRecordedTestCase):
     # helper function: create projects client using environment variables
     def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:
         # fetch environment variables
-        project_endpoint_env_variable = (
-            f"azure_ai_projects_tests_{operation_group}_project_endpoint"
-            if operation_group
-            else "azure_ai_projects_tests_project_endpoint"
-        )
-        endpoint = kwargs.pop(project_endpoint_env_variable)
+        endpoint = kwargs.pop("AZURE_AI_PROJECT_ENDPOINT")
         credential = self.get_credential(AIProjectClient, is_async=False)
 
         print(f"Creating AIProjectClient with endpoint: {endpoint}")
@@ -308,12 +301,7 @@ class TestBase(AzureRecordedTestCase):
     # helper function: create async projects client using environment variables
     def create_async_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AsyncAIProjectClient:
         # fetch environment variables
-        project_endpoint_env_variable = (
-            f"azure_ai_projects_tests_{operation_group}_project_endpoint"
-            if operation_group
-            else "azure_ai_projects_tests_project_endpoint"
-        )
-        endpoint = kwargs.pop(project_endpoint_env_variable)
+        endpoint = kwargs.pop("AZURE_AI_PROJECT_ENDPOINT")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
 
         print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")

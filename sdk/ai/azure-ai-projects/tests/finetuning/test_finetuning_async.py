@@ -300,13 +300,13 @@ class TestFineTuningAsync(TestBase):
         if not completed_job_id:
             pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")
 
-        subscription_id = kwargs.get("azure_ai_projects_tests_azure_subscription_id")
-        resource_group = kwargs.get("azure_ai_projects_tests_azure_resource_group")
-        project_endpoint = kwargs.get("azure_ai_projects_tests_project_endpoint")
+        subscription_id = kwargs.get("AZURE_SUBSCRIPTION_ID")
+        resource_group = kwargs.get("AZURE_RESOURCE_GROUP")
+        project_endpoint = kwargs.get("AZURE_AI_PROJECT_ENDPOINT")
 
         if not all([subscription_id, resource_group, project_endpoint]):
             pytest.skip(
-                f"Missing required environment variables for deployment (AZURE_AI_PROJECTS_TESTS_AZURE_SUBSCRIPTION_ID, AZURE_AI_PROJECTS_TESTS_AZURE_RESOURCE_GROUP, AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT) - skipping {test_prefix} deploy and infer test"
+                f"Missing required environment variables for deployment (AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP, AZURE_AI_PROJECT_ENDPOINT) - skipping {test_prefix} deploy and infer test"
             )
 
         account_name = self._extract_account_name_from_endpoint(project_endpoint, test_prefix)
@@ -658,12 +658,10 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_pause_job_async(self, **kwargs):
-        running_job_id = kwargs.get("azure_ai_projects_tests_running_fine_tuning_job_id")
+        running_job_id = kwargs.get("RUNNING_FINE_TUNING_JOB_ID")
 
         if not running_job_id:
-            pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_RUNNING_FINE_TUNING_JOB_ID environment variable not set - skipping pause test"
-            )
+            pytest.skip("RUNNING_FINE_TUNING_JOB_ID environment variable not set - skipping pause test")
 
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
@@ -691,12 +689,10 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_resume_job_async(self, **kwargs):
-        paused_job_id = kwargs.get("azure_ai_projects_tests_paused_fine_tuning_job_id")
+        paused_job_id = kwargs.get("PAUSED_FINE_TUNING_JOB_ID")
 
         if not paused_job_id:
-            pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_PAUSED_FINE_TUNING_JOB_ID environment variable not set - skipping resume test"
-            )
+            pytest.skip("PAUSED_FINE_TUNING_JOB_ID environment variable not set - skipping resume test")
 
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
@@ -724,11 +720,11 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_list_checkpoints_async(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID")
 
         if not completed_job_id:
             pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID environment variable not set - skipping checkpoints test"
+                "COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID environment variable not set - skipping checkpoints test"
             )
 
         project_client = self.create_async_client(**kwargs)
@@ -767,7 +763,7 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oai_model_sft_job_async(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID")
         await self._test_deploy_and_infer_helper_async(
             completed_job_id,
             "OpenAI",
@@ -780,7 +776,7 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oai_model_rft_job_async(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_rft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("COMPLETED_OAI_MODEL_RFT_FINE_TUNING_JOB_ID")
         await self._test_deploy_and_infer_helper_async(
             completed_job_id,
             "OpenAI",
@@ -793,7 +789,7 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oai_model_dpo_job_async(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_dpo_fine_tuning_job_id")
+        completed_job_id = kwargs.get("COMPLETED_OAI_MODEL_DPO_FINE_TUNING_JOB_ID")
         await self._test_deploy_and_infer_helper_async(
             completed_job_id,
             "OpenAI",
@@ -806,7 +802,7 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oss_model_sft_job_async(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oss_model_sft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("COMPLETED_OSS_MODEL_SFT_FINE_TUNING_JOB_ID")
         await self._test_deploy_and_infer_helper_async(
             completed_job_id,
             "Mistral AI",

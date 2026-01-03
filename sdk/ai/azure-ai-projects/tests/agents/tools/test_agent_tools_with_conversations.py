@@ -38,7 +38,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Using conversation_id parameter
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -199,7 +199,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Conversation context retention
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -316,7 +316,7 @@ Widget C:
         - Variables/state persistence across turns
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -401,7 +401,7 @@ Widget C:
         - Server-side code execution with file access and chart generation
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
         import os
 
         with (

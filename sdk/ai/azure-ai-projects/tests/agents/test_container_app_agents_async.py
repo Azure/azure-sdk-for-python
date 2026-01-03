@@ -23,8 +23,8 @@ class TestContainerAppAgentsAsync(TestBase):
     )
     async def test_container_app_agent_async(self, **kwargs):
 
-        container_app_resource_id = kwargs.pop("azure_ai_projects_tests_container_app_resource_id")
-        ingress_subdomain_suffix = kwargs.pop("azure_ai_projects_tests_container_ingress_subdomain_suffix")
+        container_app_resource_id = kwargs.pop("CONTAINER_APP_RESOURCE_ID")
+        ingress_subdomain_suffix = kwargs.pop("CONTAINER_INGRESS_SUBDOMAIN_SUFFIX")
 
         projects_client = self.create_async_client(operation_group="container", **kwargs)
         openai_client = await projects_client.get_openai_client()
