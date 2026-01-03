@@ -34,7 +34,7 @@ from ..models import (
 )
 from .common.agent_run_context import AgentRunContext
 
-from ..client.tools.aio._client import FoundryToolClient
+from ..tools._client import FoundryToolClient
 from ..tools._models import FoundryTool, UserInfo
 
 logger = get_logger()

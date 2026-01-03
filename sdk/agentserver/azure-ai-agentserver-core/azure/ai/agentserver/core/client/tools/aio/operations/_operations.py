@@ -1,6 +1,0 @@
-# ---------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# ---------------------------------------------------------
-# mypy: ignore-errors
-
-

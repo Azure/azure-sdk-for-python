@@ -7,10 +7,12 @@ import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Awaitable, Callable, Dict, List, Literal, Mapping, Optional, Type, TypedDict
+from typing import Annotated, Any, Awaitable, Callable, ClassVar, Dict, List, Literal, Mapping, Optional, Type, TypedDict, Union
 
 from azure.core import CaseInsensitiveEnumMeta
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, AliasPath, BaseModel, Discriminator, Field, ModelWrapValidatorHandler, Tag, TypeAdapter, model_validator
+
+from azure.ai.agentserver.core.tools._exceptions import OAuthConsentRequiredError
 
 
 class FoundryToolSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -33,11 +35,7 @@ class FoundryToolProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 @dataclass(frozen=True, kw_only=True)
 class FoundryTool(ABC):
-	"""Definition of a foundry tool including its parameters.
-
-	:ivar Mapping[str, Any] configuration: Tools configuration.
-	"""
-	configuration: Optional[Mapping[str, Any]] = None
+	"""Definition of a foundry tool including its parameters."""
 
 	@property
 	@abstractmethod
@@ -60,8 +58,10 @@ class FoundryHostedMcpTool(FoundryTool):
 	"""Foundry MCP tool definition.
 
 	:ivar str name: Name of MCP tool.
+	:ivar Mapping[str, Any] configuration: Tools configuration.
 	"""
 	name: str
+	configuration: Optional[Mapping[str, Any]] = None
 
 	@property
 	def source(self) -> Literal[FoundryToolSource.HOSTED_MCP]:
@@ -103,7 +103,7 @@ class ResolvedFoundryTool:
 
 	name: str
 	description: str
-	tool_definition: FoundryTool
+	definition: FoundryTool
 	input_schema: "SchemaDefinition"
 	metadata: Optional["SchemaDefinition"] = None
 	invoker: Optional[Callable[..., Awaitable[Any]]] = None  # TODO: deprecated
@@ -111,7 +111,7 @@ class ResolvedFoundryTool:
 	@property
 	def source(self) -> FoundryToolSource:
 		"""Origin of the tool."""
-		return self.tool_definition.source
+		return self.definition.source
 
 	def invoke(self, *args: Any, **kwargs: Any) -> Any:
 		"""Invoke the tool synchronously.
@@ -289,6 +289,15 @@ class SchemaProperty(BaseModel):
 	default: Any = None
 	required: Optional[List[str]] = None
 
+	def has_default(self) -> bool:
+		"""
+		Check if the property has a default value defined.
+
+		:return: True if a default value is set, False otherwise.
+		:rtype: bool
+		"""
+		return "default" in self.model_fields_set
+
 
 class SchemaDefinition(BaseModel):
 	"""
@@ -320,12 +329,9 @@ class RawFoundryHostedMcpTool(BaseModel):
 	description: str = ""
 	input_schema: SchemaDefinition = Field(
 		default_factory=SchemaDefinition,
-		alias="inputSchema"
+		validation_alias="inputSchema"
 	)
-	meta: Optional[SchemaDefinition] = Field(default=None, alias="_meta")
-
-	class Config:
-		populate_by_name = True
+	meta: Optional[SchemaDefinition] = Field(default=None, validation_alias="_meta")
 
 	def model_post_init(self, __context: Any) -> None:
 		if self.title is None:
@@ -341,7 +347,7 @@ class RawFoundryHostedMcpTools(BaseModel):
 	tools: List[RawFoundryHostedMcpTool] = Field(default_factory=list)
 
 
-class FoundryHostedMcpToolsResponse(BaseModel):
+class ListFoundryHostedMcpToolsResponse(BaseModel):
 	"""Pydantic model for the complete MCP tools/list JSON-RPC response.
 
 	:ivar str jsonrpc: JSON-RPC version, defaults to "2.0".
@@ -354,3 +360,176 @@ class FoundryHostedMcpToolsResponse(BaseModel):
 	result: RawFoundryHostedMcpTools = Field(
 		default_factory=RawFoundryHostedMcpTools
 	)
+
+
+class BaseConnectedToolsErrorResult(BaseModel, ABC):
+	"""Base model for connected tools error responses."""
+
+	@abstractmethod
+	def as_exception(self) -> Exception:
+		"""Convert the error result to an appropriate exception.
+
+		:return: An exception representing the error.
+		:rtype: Exception
+		"""
+		raise NotImplementedError
+
+
+class OAuthConsentRequiredErrorResult(BaseConnectedToolsErrorResult):
+	"""Model for OAuth consent required error responses.
+
+	:ivar Literal["OAuthConsentRequired"] type: Error type identifier.
+	:ivar Optional[str] consent_url: URL for user consent, if available.
+	:ivar Optional[str] message: Human-readable error message.
+	:ivar Optional[str] project_connection_id: Project connection ID related to the error.
+	"""
+
+	type: Literal["OAuthConsentRequired"]
+	consent_url: str = Field(
+		validation_alias=AliasChoices(
+            AliasPath("toolResult", "consentUrl"),
+            AliasPath("toolResult", "message"),
+        ),
+	)
+	message: str = Field(
+		validation_alias=AliasPath("toolResult", "message"),
+	)
+	project_connection_id: str = Field(
+		validation_alias=AliasPath("toolResult", "projectConnectionId"),
+	)
+
+	def as_exception(self) -> Exception:
+		return OAuthConsentRequiredError(self.message, self.consent_url, self.project_connection_id)
+
+
+class RawFoundryConnectedTool(BaseModel):
+	"""Pydantic model for a single connected tool.
+
+	:ivar str name: Name of the tool.
+	:ivar str description: Description of the tool.
+	:ivar Optional[SchemaDefinition] input_schema: Input schema for the tool parameters.
+	"""
+	name: str
+	description: str
+	input_schema: SchemaDefinition = Field(
+		default=SchemaDefinition,
+		validation_alias="parameters",
+	)
+
+
+class RawFoundryConnectedRemoteServer(BaseModel):
+	"""Pydantic model for a connected remote server.
+
+	:ivar str protocol: Protocol used by the remote server.
+	:ivar str project_connection_id: Project connection ID of the remote server.
+	:ivar List[RawFoundryConnectedTool] tools: List of connected tools from this server.
+	"""
+	protocol: str = Field(
+		validation_alias=AliasPath("remoteServer", "protocol"),
+	)
+	project_connection_id: str = Field(
+		validation_alias=AliasPath("remoteServer", "projectConnectionId"),
+	)
+	tools: List[RawFoundryConnectedTool] = Field(
+		default_factory=list,
+		validation_alias="manifest",
+	)
+
+
+class ListConnectedToolsResult(BaseModel):
+	"""Pydantic model for the result of listing connected tools.
+
+	:ivar List[ConnectedRemoteServer] servers: List of connected remote servers.
+	"""
+	servers: List[RawFoundryConnectedRemoteServer] = Field(
+		default_factory=list,
+		validation_alias="tools",
+	)
+
+
+class ListFoundryConnectedToolsResponse(BaseModel):
+	"""Pydantic model for the response of listing the connected tools.
+
+	:ivar Optional[ConnectedToolsResult] result: Result containing connected tool servers.
+	:ivar Optional[BaseConnectedToolsErrorResult] error: Error result, if any.
+	"""
+
+	result: Optional[ListConnectedToolsResult] = None
+	error: Optional[BaseConnectedToolsErrorResult] = None
+
+	# noinspection DuplicatedCode
+	_TYPE_ADAPTER: ClassVar[TypeAdapter] = TypeAdapter(
+		Annotated[
+			Union[
+				 Annotated[
+					 Annotated[
+						 Union[OAuthConsentRequiredErrorResult],
+						 Field(discriminator="type")
+					 ],
+					 Tag("ErrorType")
+				 ],
+				 Annotated[ListConnectedToolsResult, Tag("ResultType")],
+			],
+			Discriminator(
+				lambda payload: "ErrorType" if isinstance(payload, dict) and "type" in payload else "ResultType"
+			),
+		])
+
+	@model_validator(mode="wrap")
+	@classmethod
+	def _validator(cls, data: Any, handler: ModelWrapValidatorHandler) -> "ListFoundryConnectedToolsResponse":
+		parsed = cls._TYPE_ADAPTER.validate_python(data)
+		normalized = {}
+		if isinstance(parsed, ListConnectedToolsResult):
+			normalized["result"] = parsed
+		elif isinstance(parsed, BaseConnectedToolsErrorResult):
+			normalized["error"] = parsed
+		return handler(normalized)
+
+
+class InvokeConnectedToolsResult(BaseModel):
+	"""Pydantic model for the result of invoking a connected tool.
+
+	:ivar Any value: The result value from the tool invocation.
+	"""
+	value: Any = Field(serialization_alias="toolResult")
+
+
+
+class InvokeFoundryConnectedToolsResponse(BaseModel):
+	"""Pydantic model for the response of invoking a connected tool.
+
+	:ivar Optional[InvokeConnectedToolsResult] result: Result of the tool invocation.
+	:ivar Optional[BaseConnectedToolsErrorResult] error: Error result, if any.
+	"""
+	result: Optional[InvokeConnectedToolsResult] = None
+	error: Optional[BaseConnectedToolsErrorResult] = None
+
+	# noinspection DuplicatedCode
+	_TYPE_ADAPTER: ClassVar[TypeAdapter] = TypeAdapter(
+		Annotated[
+			Union[
+				Annotated[
+					Annotated[
+						Union[OAuthConsentRequiredErrorResult],
+						Field(discriminator="type")
+					],
+					Tag("ErrorType")
+				],
+				Annotated[InvokeConnectedToolsResult, Tag("ResultType")],
+			],
+			Discriminator(
+				lambda payload: "ErrorType" if isinstance(payload, dict) and "type" in payload else "ResultType"
+			),
+		])
+
+	@model_validator(mode="wrap")
+	@classmethod
+	def _validator(cls, data: Any, handler: ModelWrapValidatorHandler) -> "InvokeFoundryConnectedToolsResponse":
+		parsed = cls._TYPE_ADAPTER.validate_python(data)
+		normalized = {}
+		if isinstance(parsed, InvokeConnectedToolsResult):
+			normalized["result"] = parsed
+		elif isinstance(parsed, BaseConnectedToolsErrorResult):
+			normalized["error"] = parsed
+		return handler(normalized)

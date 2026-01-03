@@ -11,7 +11,7 @@ from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import StructuredTool
 from langgraph.graph.state import CompiledStateGraph
 
-from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
+from ..core.tools._exceptions import OAuthConsentRequiredError
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.server.base import FoundryCBAgent

@@ -9,7 +9,7 @@ from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field, create_model
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.client.tools.aio import FoundryToolClient
+    from azure.ai.agentserver.core.tools._client import FoundryToolClient
     from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool
 
 

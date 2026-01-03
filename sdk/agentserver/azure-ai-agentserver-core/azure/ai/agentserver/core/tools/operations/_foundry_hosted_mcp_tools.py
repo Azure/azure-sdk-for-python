@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, Iterable, List, cast
 
 from azure.core.rest import HttpRequest
 
-from azure.ai.agentserver.core.client.tools._utils._model_base import MetadataMapper
-from azure.ai.agentserver.core.tools._models import FoundryHostedMcpTool, FoundryHostedMcpToolsResponse, FoundryToolSource, \
+from azure.ai.agentserver.core.tools._to_be_deleted import MetadataMapper
+from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
+from azure.ai.agentserver.core.tools._models import FoundryHostedMcpTool, ListFoundryHostedMcpToolsResponse, FoundryToolSource, \
 	ResolvedFoundryTool
 from azure.ai.agentserver.core.tools.operations._base import BaseOperations
 
@@ -63,20 +64,27 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 								content=self._LIST_TOOLS_REQUEST_BODY)
 
 	@staticmethod
-	def convert_listed_tools(response: FoundryHostedMcpToolsResponse) -> List[ResolvedFoundryTool]:
+	def convert_listed_tools(response: ListFoundryHostedMcpToolsResponse,
+							 allowed_tools: Iterable[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
 		"""Convert listed tools response to ResolvedFoundryTool list.
 
 		:param response: Response from listing MCP tools.
-		:type response: FoundryHostedMcpToolsResponse
+		:type response: ListFoundryHostedMcpToolsResponse
+		:param allowed_tools: Iterable of allowed MCP tools to filter.
+		:type allowed_tools: Iterable[FoundryHostedMcpTool]
 		:return: List of resolved MCP tools.
 		:rtype: List[ResolvedFoundryTool]
 		"""
+		allowlist = {tool.name: tool for tool in allowed_tools}
 		result = []
 		for tool in response.result.tools:
+			definition = allowlist.get(tool.name)
+			if not definition:
+				continue
 			resolved = ResolvedFoundryTool(
 				name=tool.name,
 				description=tool.description,
-				tool_definition=FoundryHostedMcpTool(tool.name),
+				definition=definition,
 				metadata=tool.metadata,
 				input_schema=tool.input_schema)
 			result.append(resolved)
@@ -84,6 +92,9 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 		return result
 
 	def build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
+		if tool.definition.source != FoundryToolSource.FOUNDRY_HOSTED_MCP:
+			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry-hosted MCP tool.", tool=tool)
+
 		payload = dict(self._INVOKE_TOOL_REQUEST_BODY_TEMPLATE)
 		payload["params"] = {
 			"name": tool.name,
@@ -94,7 +105,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 			# TODO: refactor MetadataMapper to avoid model_dump call
 			meta_config = MetadataMapper.extract_metadata_config(
 				tool.metadata.model_dump(),
-				tool.tool_definition.configuration,
+				cast(FoundryHostedMcpTool, tool.definition).configuration,
 				key_overrides
 			)
 			payload["_meta"] = meta_config
@@ -106,19 +117,21 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 
 
 class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
+	"""Operations for Foundry-hosted MCP tools."""
 
-	async def list_tools(self) -> List[ResolvedFoundryTool]:
+	async def list_tools(self, allowed_tools: Iterable[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
 		"""List MCP tools.
 
+		:param allowed_tools: Iterable of allowed MCP tools to filter.
+		:type allowed_tools: Iterable[FoundryHostedMcpTool]
 		:return: List of tool descriptors from MCP server.
-		:rtype: FoundryHostedMcpToolsResponse
+		:rtype: ListFoundryHostedMcpToolsResponse
 		"""
 		request = self.build_list_tools_request()
 		response = await self.send_request(request)
 		async with response:
-			# TODO: filter tools by name outside
-			tools_response = FoundryHostedMcpToolsResponse.model_validate(response.json())
-		return self.convert_listed_tools(tools_response)
+			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(response.json())
+		return self.convert_listed_tools(tools_response, allowed_tools)
 
 	async def invoke_tool(
 		self,

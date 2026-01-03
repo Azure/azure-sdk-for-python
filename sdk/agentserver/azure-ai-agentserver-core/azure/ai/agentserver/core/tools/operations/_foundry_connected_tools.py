@@ -2,19 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List, Mapping
+from typing import Any, ClassVar, Dict, List, Mapping, cast
 
-from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 
-from azure.ai.agentserver.core.client.tools.operations._operations import build_invoke_remote_tool_request, \
-	handle_response_error, process_invoke_remote_tool_response, \
-	process_resolve_tools_response
-from azure.ai.agentserver.core.tools._models import FoundryConnectedTool, ResolvedFoundryTool, UserInfo
+from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
+from azure.ai.agentserver.core.tools._models import FoundryConnectedTool, FoundryToolSource, \
+	InvokeFoundryConnectedToolsResponse, ListFoundryConnectedToolsResponse, ResolvedFoundryTool, UserInfo
 from azure.ai.agentserver.core.tools.operations._base import BaseOperations
 
 
 class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
+	"""Base operations for Foundry connected tools."""
+
 	_API_VERSION: ClassVar[str] = "2025-11-15-preview"
 
 	_HEADERS: ClassVar[Dict[str, str]] = {
@@ -27,13 +27,28 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 	}
 
 	@staticmethod
-	def _path(agent_name: str) -> str:
+	def _list_tools_path(agent_name: str) -> str:
 		return f"/agents/{agent_name}/tools/resolve"
+
+	@staticmethod
+	def _invoke_tool_path(agent_name: str) -> str:
+		return f"/agents/{agent_name}/tools/invoke"
 
 	def build_list_tools_request(self,
 								 agent_name: str,
 								 tools: List[FoundryConnectedTool],
 								 user: UserInfo) -> HttpRequest:
+		"""Build request for listing connected tools.
+
+		:param agent_name: Name of the agent.
+		:type agent_name: str
+		:param tools: List of connected tool definitions.
+		:type tools: List[FoundryConnectedTool]
+		:param user: User information for the request.
+		:type user: UserInfo
+		:return: Request for listing connected tools.
+		:rtype: HttpRequest
+		"""
 		payload = {
 			"remoteServers": [
 				{
@@ -47,24 +62,121 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 			}
 		}
 		return self.client.post(
-			self._path(agent_name),
+			self._list_tools_path(agent_name),
 			params=self._QUERY_PARAMS,
 			headers=self._HEADERS,
 			content=payload)
 
 	@classmethod
-	def process_list_tools_response(cls):
-		pass
+	def convert_listed_tools(cls,
+							 resp: ListFoundryConnectedToolsResponse,
+							 input_tools: List[FoundryConnectedTool]) -> List[ResolvedFoundryTool]:
+		"""Convert listed tools response to ResolvedFoundryTool list.
+
+		:param resp: Response from listing connected tools.
+		:type resp: ListFoundryConnectedToolsResponse
+		:param input_tools: Original list of connected tool definitions.
+		:type input_tools: List[FoundryConnectedTool]
+		:return: List of resolved connected tools.
+		:rtype: List[ResolvedFoundryTool]
+		:raises ToolInvocationError: If there is an error in the response.
+		"""
+		if resp.error:
+			raise resp.error.as_exception()
+		if not resp.tools:
+			return []
+
+		tool_map = {(tool.project_connection_id, tool.protocol): tool for tool in input_tools}
+		result = []
+		for server in resp.result.servers:
+			input_tool = tool_map.get((server.project_connection_id, server.protocol))
+			if not input_tool:
+				continue
+
+			for tool in server.tools:
+				resolved_tool = ResolvedFoundryTool(
+					name=tool.name,
+					description=tool.description,
+					definition=input_tool,
+					input_schema=tool.input_schema,
+				)
+				result.append(resolved_tool)
+
+		return result
+
+	def build_invoke_tool_request(self,
+								  agent_name: str,
+								  tool: ResolvedFoundryTool,
+								  arguments: Dict[str, Any],
+								  user: UserInfo) -> HttpRequest:
+		"""Build request for invoking a connected tool.
+
+		:param agent_name: Name of the agent.
+		:type agent_name: str
+		:param tool: Tool descriptor to invoke.
+		:type tool: ResolvedFoundryTool
+		:param arguments: Input arguments for the tool.
+		:type arguments: Dict[str, Any]
+		:param user: User information for the request.
+		:type user: UserInfo
+		:return: Request for invoking the connected tool.
+		:rtype: HttpRequest
+		"""
+		if tool.definition.source != FoundryToolSource.CONNECTED:
+			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry connected tool.", tool=tool)
+
+		tool_def = cast(FoundryConnectedTool, tool.definition)
+		payload = {
+			"toolName": tool.name,
+			"arguments": arguments,
+			"remoteServer": {
+				"projectConnectionId": tool_def.project_connection_id,
+				"protocol": tool_def.protocol,
+			},
+			"user": {
+				"objectId": user.object_id,
+				"tenantId": user.tenant_id,
+			}
+		}
+		return self.client.post(
+			self._list_tools_path(agent_name),
+			params=self._QUERY_PARAMS,
+			headers=self._HEADERS,
+			content=payload)
+
+	@classmethod
+	def convert_invoke_result(cls, resp: InvokeFoundryConnectedToolsResponse) -> Any:
+		"""Convert invoke tool response to result.
+
+		:param resp: Response from invoking the connected tool.
+		:type resp: InvokeFoundryConnectedToolsResponse
+		:return: Result of the tool invocation.
+		:rtype: Any
+		:raises ToolInvocationError: If there is an error in the response.
+		"""
+		if resp.error:
+			raise resp.error.as_exception()
+		if not resp.result:
+			return None
+		return resp.result.value
 
 
 class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
+	"""Operations for managing Foundry connected tools."""
+
 	async def list_tools(self,
 						 agent_name: str,
 						 tools: List[FoundryConnectedTool],
 						 user: UserInfo) -> List[ResolvedFoundryTool]:
-		"""Resolve remote tools from Azure AI Tools API.
+		"""List connected tools.
 
-		:return: List of tool descriptors from Tools API.
+		:param agent_name: Name of the agent.
+		:type agent_name: str
+		:param tools: List of connected tool definitions.
+		:type tools: List[FoundryConnectedTool]
+		:param user: User information for the request.
+		:type user: UserInfo
+		:return: List of resolved connected tools.
 		:rtype: List[ResolvedFoundryTool]
 		"""
 		if not tools:
@@ -72,31 +184,31 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		request = self.build_list_tools_request(agent_name, tools, user)
 		response = await self.send_request(request)
 		async with response:
-			pass
+			tools_response = ListFoundryConnectedToolsResponse.model_validate(response.json())
+		return self.convert_listed_tools(tools_response, tools)
 
-		return process_resolve_tools_response(response, self._config.tool_config._remote_tools, existing_names)
 
 	async def invoke_tool(
 		self,
+		agent_name: str,
 		tool: ResolvedFoundryTool,
-		arguments: Mapping[str, Any],
-	) -> Any:
-		"""Invoke a remote tool.
+		arguments: Dict[str, Any],
+		user: UserInfo) -> Any:
+		"""Invoke a connected tool.
 
+		:param agent_name: Name of the agent.
+		:type agent_name: str
 		:param tool: Tool descriptor to invoke.
 		:type tool: ResolvedFoundryTool
 		:param arguments: Input arguments for the tool.
 		:type arguments: Mapping[str, Any]
+		:param user: User information for the request.
+		:type user: UserInfo
 		:return: Result of the tool invocation.
 		:rtype: Any
 		"""
-		_request, error_map = build_invoke_remote_tool_request(self.agent, self._api_version, tool, self._config.user, arguments)
-
-		path_format_arguments = {"endpoint": self._config.endpoint}
-		_request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-		pipeline_response: PipelineResponse = await self._client._pipeline.run(_request)
-		response = pipeline_response.http_response
-
-		handle_response_error(response, error_map)
-		return process_invoke_remote_tool_response(response)
+		request = self.build_invoke_tool_request(agent_name, tool, arguments, user)
+		response = await self.send_request(request)
+		async with response:
+			invoke_response = InvokeFoundryConnectedToolsResponse.model_validate(response.json())
+		return self.convert_invoke_result(invoke_response)
