@@ -26,7 +26,7 @@ class TestResponses(TestBase):
         ------+---------------------------------------------+-----------------------------------
         POST   /openai/responses                             client.responses.create()
         """
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         client = self.create_client(operation_group="agents", **kwargs).get_openai_client()
 

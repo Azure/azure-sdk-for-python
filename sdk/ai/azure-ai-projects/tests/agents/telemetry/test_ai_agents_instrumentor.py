@@ -194,7 +194,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
             print(f"Using model deployment: {model}")
 
             agent_definition = PromptAgentDefinition(
@@ -288,7 +288,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
             agent_definition = PromptAgentDefinition(
                 # Required parameter
                 model=model,
@@ -520,7 +520,7 @@ trigger:
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
             # Define a JSON schema for structured output
             test_schema = {
@@ -607,7 +607,7 @@ trigger:
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
             test_schema = {
                 "type": "object",
@@ -681,7 +681,7 @@ trigger:
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
             test_schema = {
                 "type": "object",
@@ -763,7 +763,7 @@ trigger:
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
             test_schema = {
                 "type": "object",

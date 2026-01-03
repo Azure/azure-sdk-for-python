@@ -12,7 +12,7 @@ from sample_executor import (
     SamplePathPasser,
     get_async_sample_paths,
 )
-from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
+from test_samples_helpers import agent_tools_instructions
 
 
 class TestSamplesAsync(AzureRecordedTestCase):
@@ -31,15 +31,13 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
         executor = AsyncSampleExecutor(
             self,
             sample_path,
-            env_var_mapping,
             **kwargs,
         )
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_projects_tests_agents_project_endpoint"],
+            project_endpoint=kwargs["AZURE_AI_PROJECT_ENDPOINT"],
         )

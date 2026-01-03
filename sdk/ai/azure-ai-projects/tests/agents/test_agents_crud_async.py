@@ -23,7 +23,7 @@ class TestAgentCrudAsync(TestBase):
         It then gets, lists, and deletes them, validating at each step.
         It uses different ways of creating agents: strongly typed, dictionary, and IO[bytes].
         """
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
         project_client = self.create_async_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"

@@ -21,8 +21,8 @@ class TestAgentImageGenerationAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_image_generation_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
-        image_model = kwargs.get("azure_ai_projects_tests_image_generation_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+        image_model = kwargs.get("IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME")
         agent_name = "image-gen-agent"
 
         async with (

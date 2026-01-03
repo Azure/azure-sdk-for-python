@@ -165,7 +165,8 @@ class BaseSampleExecutor:
         self,
         test_instance,
         sample_path: str,
-        env_var_mapping: dict[str, str],
+        *,
+        env_var_mapping: dict[str, str] = {},
         **kwargs,
     ):
         self.test_instance = test_instance
@@ -271,8 +272,8 @@ class SamplePathPasser:
 class SyncSampleExecutor(BaseSampleExecutor):
     """Synchronous sample executor that only uses sync credentials."""
 
-    def __init__(self, test_instance, sample_path: str, env_var_mapping: dict[str, str], **kwargs):
-        super().__init__(test_instance, sample_path, env_var_mapping, **kwargs)
+    def __init__(self, test_instance, sample_path: str, *, env_var_mapping: dict[str, str] = {}, **kwargs):
+        super().__init__(test_instance, sample_path, env_var_mapping=env_var_mapping, **kwargs)
         self.tokenCredential: Optional[TokenCredential] | Optional[FakeTokenCredential] = None
 
     def _get_mock_credential(self):
@@ -341,8 +342,8 @@ class SyncSampleExecutor(BaseSampleExecutor):
 class AsyncSampleExecutor(BaseSampleExecutor):
     """Asynchronous sample executor that uses async credentials."""
 
-    def __init__(self, test_instance, sample_path: str, env_var_mapping: dict[str, str], **kwargs):
-        super().__init__(test_instance, sample_path, env_var_mapping, **kwargs)
+    def __init__(self, test_instance, sample_path: str, *, env_var_mapping: dict[str, str] = {}, **kwargs):
+        super().__init__(test_instance, sample_path, env_var_mapping=env_var_mapping, **kwargs)
         self.tokenCredential: Optional[AsyncTokenCredential | AsyncFakeCredential] = None
 
     def _get_mock_credential(self):

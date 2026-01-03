@@ -30,7 +30,7 @@ class TestAgentFileSearchAndFunction(TestBase):
         Test data analysis workflow: upload data, search, save results.
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -161,7 +161,7 @@ Overall Total Revenue: $129,000
         Test how agent handles empty vector store (no files uploaded).
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -240,7 +240,7 @@ Overall Total Revenue: $129,000
         2. Function Tool: Agent saves the code review findings
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -370,7 +370,7 @@ print(f"Sum: {result}")
         - Context retention across searches and function calls
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

@@ -13,7 +13,7 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
+from test_samples_helpers import agent_tools_instructions
 
 
 class TestSamples(AzureRecordedTestCase):
@@ -47,10 +47,9 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        executor = SyncSampleExecutor(self, sample_path, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_projects_tests_agents_project_endpoint"],
+            project_endpoint=kwargs["AZURE_AI_PROJECT_ENDPOINT"],
         )
