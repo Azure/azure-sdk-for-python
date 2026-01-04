@@ -31,7 +31,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
         executor = AsyncSampleExecutor(
             self,
             sample_path,
@@ -41,5 +41,5 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_projects_tests_agents_project_endpoint"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
         )

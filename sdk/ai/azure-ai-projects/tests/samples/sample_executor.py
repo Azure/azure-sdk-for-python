@@ -177,6 +177,8 @@ class BaseSampleExecutor:
         # Prepare environment variables
         self.env_vars = {}
         for sample_var, test_var in env_var_mapping.items():
+            if not isinstance(test_var, str):
+                continue
             value = kwargs.pop(test_var, None)
             if value is not None:
                 self.env_vars[sample_var] = value
