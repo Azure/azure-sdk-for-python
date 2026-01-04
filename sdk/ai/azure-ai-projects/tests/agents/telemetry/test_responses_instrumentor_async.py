@@ -48,7 +48,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -130,7 +130,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -220,7 +220,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -267,7 +267,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -353,7 +353,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -551,7 +551,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -739,7 +739,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -835,7 +835,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -939,7 +939,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -1037,7 +1037,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1108,7 +1108,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1178,7 +1178,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1248,7 +1248,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1322,7 +1322,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1397,7 +1397,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1471,7 +1471,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1545,7 +1545,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1623,7 +1623,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1702,7 +1702,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1780,7 +1780,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1858,7 +1858,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1940,7 +1940,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2022,7 +2022,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2104,7 +2104,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2186,7 +2186,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2270,7 +2270,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -2377,7 +2377,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             conversation = await client.conversations.create()
 
@@ -2457,7 +2457,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             conversation = await client.conversations.create()
 
@@ -2539,7 +2539,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -2693,7 +2693,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -2833,7 +2833,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Create a simple workflow agent
@@ -2942,7 +2942,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             workflow_yaml = """
@@ -3054,7 +3054,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             workflow_yaml = """
@@ -3167,7 +3167,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             workflow_yaml = """
