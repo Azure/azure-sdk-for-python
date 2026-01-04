@@ -1,6 +1,7 @@
 {
-  "commit": "a3baecd6571d7e4b979a7aef527d29a3509d4dc7",
+  "apiVersion": "2025-03-21",
+  "commit": "be36de931322b23890d3353e06bcc6ad34212877",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/dell/Dell.Storage.Management",
-  "@azure-tools/typespec-python": "0.44.1"
+  "emitterVersion": "0.56.1"
 }
