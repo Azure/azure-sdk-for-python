@@ -37,12 +37,15 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map()
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        executor = SyncSampleExecutor(
+            self,
+            sample_path,
+            **kwargs,
+        )
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_projects_tests_project_endpoint"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
         )        
 ```
 
@@ -71,12 +74,15 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map()
-        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        executor = AsyncSampleExecutor(
+            self,
+            sample_path,
+            **kwargs,
+        )
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_projects_tests_project_endpoint"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
         )
 ```
 
@@ -89,31 +95,40 @@ from devtools_testutils import EnvironmentVariableLoader
 
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_tests",
-    azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_model_deployment_name="gpt-4o",
+        "",
+        azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+        azure_ai_model_deployment_name="gpt-4o",
+    # add other sanitized vars here
+)
+```
+- If all your test environment variables share a prefix (for example `azure_ai_projects_tests`), pass that prefix as the second positional
+    argument to `EnvironmentVariableLoader` and include the prefix on the keys you provide.  For example:
+```python
+servicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+        "azure_ai_projects_tests",
+        azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+        azure_ai_projects_tests_model_deployment_name="gpt-4o",
     # add other sanitized vars here
 )
 ```
 - `@pytest.mark.parametrize`: Drives one test per sample file. Use `samples_to_test` or `samples_to_skip` with `get_sample_paths` / `get_async_sample_paths`.
 - `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
 - `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
-- `get_sample_environment_variables_map`: Your function that returns a mapping of **sample env-var name** -> **test env-var name**.
-    - The executor reads values from `**kwargs` using the *test env-var name* (typically injected by `@servicePreparer()`), then sets `os.environ[<sample env-var name>]` before running the sample.
-    - If your `@servicePreparer()` (or other decorators) already provide the sample env-var names directly (for example, `AZURE_AI_PROJECT_ENDPOINT=...`), pass `{}` to `SyncSampleExecutor` / `AsyncSampleExecutor`.
-
-Example:
-```python
-def get_sample_environment_variables_map(operation_group: str | None = None) -> dict[str, str]:
-    return {
-        "AZURE_AI_PROJECT_ENDPOINT":  "azure_ai_projects_tests_project_endpoint",
-        "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
-        # add other mappings as needed
-    }
-```
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
 - `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Optionally validate captured print output with LLM instructions and an explicit `project_endpoint` (and optional `model`).
 - `kwargs` in the test function: A dictionary with environment variables in key and value pairs.
+
+### Optional test environment variables mapping
+If you need to remap the environment variable names provided by your fixtures to the names the sample expects, pass a dictionary via the `env_var_mapping` kwarg on the sample executors. When your fixtures already supply the sample-ready names, you can omit `env_var_mapping`.
+
+```python
+env_var_mapping = {
+    "AZURE_AI_PROJECT_ENDPOINT": "TEST_AZURE_AI_PROJECT_ENDPOINT",
+    "AZURE_AI_MODEL_DEPLOYMENT_NAME": "TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME",
+}
+executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+```
 
 ### Optional environment variables
 To run the “hero path” of a sample, your `@servicePreparer` should provide all mandatory environment variables.
@@ -147,7 +162,7 @@ from sample_executor import AdditionalSampleTestDetail, additionalSampleTests
         samples_to_skip=[],
     ),
 )
-@samplePathPasser()
+@SamplePathPasser()
 @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
 def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
     ...

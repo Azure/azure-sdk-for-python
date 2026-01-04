@@ -48,7 +48,7 @@ class TestSamples(AzureRecordedTestCase):
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,

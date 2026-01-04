@@ -35,7 +35,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         executor = AsyncSampleExecutor(
             self,
             sample_path,
-            env_var_mapping,
+            env_var_mapping=env_var_mapping,
             **kwargs,
         )
         await executor.execute_async()
