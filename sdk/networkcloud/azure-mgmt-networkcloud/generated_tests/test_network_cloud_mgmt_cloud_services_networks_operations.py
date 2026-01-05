@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_cloud_services_networks_list_by_subscription(self, resource_group):
         response = self.client.cloud_services_networks.list_by_subscription(
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperations(AzureMgmtRecordedTestC
     def test_cloud_services_networks_list_by_resource_group(self, resource_group):
         response = self.client.cloud_services_networks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperations(AzureMgmtRecordedTestC
         response = self.client.cloud_services_networks.get(
             resource_group_name=resource_group.name,
             cloud_services_network_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +93,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperations(AzureMgmtRecordedTestC
                 "type": "str",
                 "virtualMachinesAssociatedIds": ["str"],
             },
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperations(AzureMgmtRecordedTestC
         response = self.client.cloud_services_networks.begin_delete(
             resource_group_name=resource_group.name,
             cloud_services_network_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -117,7 +117,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperations(AzureMgmtRecordedTestC
         response = self.client.cloud_services_networks.begin_update(
             resource_group_name=resource_group.name,
             cloud_services_network_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
