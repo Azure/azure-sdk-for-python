@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Updated CodeVulnerability and UngroundedAttributes evaluators for RedTeam to use the binary true/false scoring pattern so their results align with service responses.
+- Fixed handling of nested fields for AOAI graders when using files as datasource 
 
 ### Other Changes
 
