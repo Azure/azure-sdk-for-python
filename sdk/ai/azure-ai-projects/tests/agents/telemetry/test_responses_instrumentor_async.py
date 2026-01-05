@@ -3281,7 +3281,7 @@ trigger:
         self.setup_telemetry()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -3351,7 +3351,7 @@ trigger:
         self.setup_telemetry()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
