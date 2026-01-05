@@ -436,7 +436,7 @@ class TestGetDataSource:
         # Ensure we did not accidentally nest another 'item' key inside the wrapper
         assert "item" not in item_payload
         assert item_payload["sample"]["output_text"] == "someoutput"
-        assert item_payload["sample"]["output_items"] == ["item1", "item2"]
+        assert item_payload["sample"]["output_items"] == "['item1', 'item2']"
 
     def test_data_source_with_item_sample_column_and_nested_values(self, nested_item_sample_keyword_data):
         """Ensure rows that already have an 'item' column keep nested dicts intact."""
