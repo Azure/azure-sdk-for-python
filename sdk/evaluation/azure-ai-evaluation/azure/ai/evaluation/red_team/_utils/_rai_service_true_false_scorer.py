@@ -62,6 +62,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
             azure_ai_project=azure_ai_project,
             risk_category=risk_category,
             context=context,
+            _use_legacy_endpoint=kwargs.get("_use_legacy_endpoint", False),
         )
 
     async def score_async(

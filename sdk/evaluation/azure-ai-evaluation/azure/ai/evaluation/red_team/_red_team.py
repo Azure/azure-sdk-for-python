@@ -126,6 +126,7 @@ class RedTeam:
         language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
         attack_success_thresholds: Optional[Dict[RiskCategory, int]] = None,
+        _use_legacy_endpoint: bool = False,
     ):
         """Initialize a new Red Team agent for AI model evaluation.
 
@@ -155,6 +156,8 @@ class RedTeam:
             or None to use default binary evaluation (evaluation results determine success).
             When using thresholds, scores >= threshold are considered successful attacks.
         :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
+        :param _use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+        :type _use_legacy_endpoint: bool
         """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
@@ -162,6 +165,7 @@ class RedTeam:
         self.output_dir = output_dir
         self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
+        self._use_legacy_endpoint = _use_legacy_endpoint
 
         # Configure attack success thresholds
         self.attack_success_thresholds = self._configure_attack_success_thresholds(attack_success_thresholds)
@@ -287,6 +291,7 @@ class RedTeam:
             retry_config=retry_config,
             scan_output_dir=self.scan_output_dir,
             red_team=self,
+            _use_legacy_endpoint=self._use_legacy_endpoint,
         )
 
         # Initialize evaluation processor
@@ -299,6 +304,7 @@ class RedTeam:
             scan_session_id=self.scan_session_id,
             scan_output_dir=self.scan_output_dir,
             taxonomy_risk_categories=getattr(self, "taxonomy_risk_categories", None),
+            _use_legacy_endpoint=self._use_legacy_endpoint,
         )
 
         # Initialize MLflow integration

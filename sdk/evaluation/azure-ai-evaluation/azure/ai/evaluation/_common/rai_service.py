@@ -750,7 +750,7 @@ async def evaluate_with_rai_service(
     evaluator_name=None,
     scan_session_id: Optional[str] = None,
 ) -> Dict[str, Union[str, float]]:
-    """Evaluate the content safety of the response using Responsible AI service
+    """Evaluate the content safety of the response using Responsible AI service (legacy endpoint)
 
     :param data: The data to evaluate.
     :type data: dict
@@ -996,12 +996,12 @@ async def evaluate_with_rai_service_sync(
     metric_display_name=None,
     evaluator_name=None,
     scan_session_id: Optional[str] = None,
+    use_legacy_endpoint: bool = False,
 ):
-    """Evaluate the content safety of the response using sync_evals endpoint (OneDP only).
+    """Evaluate the content safety of the response using Responsible AI service.
 
-    This function uses the sync_evals.create() API instead of the legacy evaluations.submit_annotation()
-    approach. It's specifically designed for OneDP projects and provides better integration with
-    the newer evaluation infrastructure. Returns the raw EvalRunOutputItem for direct use.
+    This is the main entry point for RAI service evaluation. By default, uses the sync_evals endpoint.
+    Set use_legacy_endpoint=True to use the legacy polling-based annotation endpoint.
 
     :param data: The data to evaluate.
     :type data: dict
@@ -1020,10 +1020,25 @@ async def evaluate_with_rai_service_sync(
     :type evaluator_name: str
     :param scan_session_id: The scan session ID to use for the evaluation.
     :type scan_session_id: Optional[str]
-    :return: The EvalRunOutputItem containing the evaluation results.
-    :rtype: EvalRunOutputItem
-    :raises: EvaluationException if project_scope is not a OneDP project
+    :param use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+    :type use_legacy_endpoint: bool
+    :return: The EvalRunOutputItem containing the evaluation results (or parsed dict if legacy).
+    :rtype: Union[EvalRunOutputItem, Dict[str, Union[str, float]]]
     """
+    # Route to legacy endpoint if requested
+    if use_legacy_endpoint:
+        return await evaluate_with_rai_service(
+            data=data,
+            metric_name=metric_name,
+            project_scope=project_scope,
+            credential=credential,
+            annotation_task=annotation_task,
+            metric_display_name=metric_display_name,
+            evaluator_name=evaluator_name,
+            scan_session_id=scan_session_id,
+        )
+
+    # Sync evals endpoint implementation (default)
     api_version = "2025-10-15-preview"
     if not is_onedp_project(project_scope):
         # Get RAI service URL from discovery service and check service availability
@@ -1205,8 +1220,12 @@ async def evaluate_with_rai_service_sync_multimodal(
     project_scope: Union[str, AzureAIProject],
     credential: TokenCredential,
     scan_session_id: Optional[str] = None,
+    use_legacy_endpoint: bool = False,
 ):
-    """Evaluate multimodal content using the sync_evals endpoint.
+    """Evaluate multimodal content using Responsible AI service.
+
+    This is the main entry point for multimodal RAI service evaluation. By default, uses the sync_evals endpoint.
+    Set use_legacy_endpoint=True to use the legacy polling-based annotation endpoint.
 
     :param messages: The normalized list of conversation messages.
     :type messages: list
@@ -1218,10 +1237,21 @@ async def evaluate_with_rai_service_sync_multimodal(
     :type credential: ~azure.core.credentials.TokenCredential
     :param scan_session_id: Optional scan session identifier for correlation.
     :type scan_session_id: Optional[str]
+    :param use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+    :type use_legacy_endpoint: bool
     :return: The EvalRunOutputItem or legacy response payload.
     :rtype: Union[Dict, EvalRunOutputItem]
     """
+    # Route to legacy endpoint if requested
+    if use_legacy_endpoint:
+        return await evaluate_with_rai_service_multimodal(
+            messages=messages,
+            metric_name=metric_name,
+            project_scope=project_scope,
+            credential=credential,
+        )
 
+    # Sync evals endpoint implementation (default)
     api_version = "2025-10-15-preview"
     sync_eval_payload = _build_sync_eval_multimodal_payload(messages, metric_name)
 
@@ -1263,9 +1293,12 @@ async def evaluate_with_rai_service_sync_multimodal(
 
 
 async def evaluate_with_rai_service_multimodal(
-    messages, metric_name: str, project_scope: Union[str, AzureAIProject], credential: TokenCredential
+    messages,
+    metric_name: str,
+    project_scope: Union[str, AzureAIProject],
+    credential: TokenCredential,
 ):
-    """ "Evaluate the content safety of the response using Responsible AI service
+    """Evaluate the content safety of the response using Responsible AI service (legacy endpoint)
     :param messages: The normalized list of messages.
     :type messages: str
     :param metric_name: The evaluation metric to use.

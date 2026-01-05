@@ -50,6 +50,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         query-response pairs. If False, only the response will be evaluated. Default is False.
         Can be passed as a keyword argument.
     :type evaluate_query: bool
+    :keyword _use_legacy_endpoint: Whether to use the legacy evaluation endpoint instead of the sync_evals endpoint.
+        Defaults to False. Can be passed as a keyword argument.
+    :paramtype _use_legacy_endpoint: bool
     """
 
     @override
@@ -78,6 +81,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         # Handle evaluate_query parameter from kwargs
         self._evaluate_query = kwargs.get("evaluate_query", False)
         self._higher_is_better = _higher_is_better
+        # Handle _use_legacy_endpoint parameter from kwargs
+        self._use_legacy_endpoint = kwargs.get("_use_legacy_endpoint", False)
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
@@ -138,6 +143,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 metric_name=metric_value,
                 project_scope=self._azure_ai_project,
                 credential=self._credential,
+                use_legacy_endpoint=self._use_legacy_endpoint,
             )
             parsed = self._parse_eval_result(turn_result)
             per_turn_results.append(parsed)
@@ -204,6 +210,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             credential=self._credential,
             annotation_task=self._get_task(),
             evaluator_name=self.__class__.__name__,
+            use_legacy_endpoint=self._use_legacy_endpoint,
         )
 
         # Parse the EvalRunOutputItem format to the expected dict format

@@ -35,6 +35,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         logger: Optional[logging.Logger] = None,
         evaluator_name: Optional[str] = None,
         context: Optional[str] = None,
+        _use_legacy_endpoint: bool = False,
     ) -> None:
         """Initialize the RAIServiceEvalChatTarget.
 
@@ -42,6 +43,8 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         :type endpoint: str
         :param credential: The credential object for authentication.
         :type credential: Any
+        :param _use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+        :type _use_legacy_endpoint: bool
         """
         super().__init__()
         self.logger = logger
@@ -50,6 +53,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         self.credential = credential
         self.azure_ai_project = azure_ai_project
         self.context = context
+        self._use_legacy_endpoint = _use_legacy_endpoint
 
     async def send_prompt_async(
         self, *, prompt_request: PromptRequestResponse, objective: str = ""
@@ -69,6 +73,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
             project_scope=self.azure_ai_project,
             credential=self.credential,
             annotation_task=annotation_task,
+            use_legacy_endpoint=self._use_legacy_endpoint,
         )
         self.logger.info(f"Evaluation result: {eval_result}")
 

@@ -55,6 +55,7 @@ class EvaluationProcessor:
         scan_session_id=None,
         scan_output_dir=None,
         taxonomy_risk_categories=None,
+        _use_legacy_endpoint=False,
     ):
         """Initialize the evaluation processor.
 
@@ -66,6 +67,7 @@ class EvaluationProcessor:
         :param scan_session_id: Session ID for the current scan
         :param scan_output_dir: Directory for scan outputs
         :param taxonomy_risk_categories: Dictionary mapping risk categories to taxonomy values
+        :param _use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
         """
         self.logger = logger
         self.azure_ai_project = azure_ai_project
@@ -75,6 +77,7 @@ class EvaluationProcessor:
         self.scan_session_id = scan_session_id
         self.scan_output_dir = scan_output_dir
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
+        self._use_legacy_endpoint = _use_legacy_endpoint
 
     async def evaluate_conversation(
         self,
@@ -164,6 +167,7 @@ class EvaluationProcessor:
                             credential=self.credential,
                             annotation_task=annotation_task,
                             scan_session_id=self.scan_session_id,
+                            use_legacy_endpoint=self._use_legacy_endpoint,
                         )
                     except (
                         httpx.ConnectTimeout,

@@ -282,6 +282,43 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
+    def test_content_safety_evaluator_violence_with_legacy_endpoint(self, request, proj_scope, cred):
+        """Test ViolenceEvaluator with _use_legacy_endpoint=True to use legacy polling-based endpoint"""
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+
+        # Test with legacy endpoint
+        eval_fn_legacy = ViolenceEvaluator(azure_cred, project_scope, _use_legacy_endpoint=True)
+        score_legacy = eval_fn_legacy(
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.",
+        )
+        assert score_legacy is not None
+        assert score_legacy["violence"] == "Very low"
+        assert score_legacy["violence_score"] < 1.0
+        assert score_legacy["violence_reason"], "violence_reason must not be None or empty."
+
+        # Test with new sync endpoint (default)
+        eval_fn_sync = ViolenceEvaluator(azure_cred, project_scope, _use_legacy_endpoint=False)
+        score_sync = eval_fn_sync(
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.",
+        )
+        assert score_sync is not None
+        assert score_sync["violence"] == "Very low"
+        assert score_sync["violence_score"] < 1.0
+        assert score_sync["violence_reason"], "violence_reason must not be None or empty."
+
+        # Both endpoints should produce similar results
+        assert score_legacy["violence"] == score_sync["violence"]
+
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        ),
+    )
     def test_code_vulnerability_evaluator(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
