@@ -1179,7 +1179,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
             # monitor pages after updates - only changed pages will be yielded
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page(match_conditions=match_conditions)
+            iterator = items.by_page(match_conditions=new_match_conditions)
             changed_pages = list(iterator)
             # Should yield 0 pages
             assert len(changed_pages) == 0
