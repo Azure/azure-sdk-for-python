@@ -39,6 +39,7 @@ from .._serialization import Serializer
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated):
     @distributed_trace
     def get_key_values_in_one_page(
@@ -150,7 +151,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                
+
                 # Add etag and match_condition to headers
                 _next_headers = dict(_headers)
                 accept = _headers.pop("Accept", None)
@@ -168,7 +169,10 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
                     if if_none_match is not None:
                         _next_headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers=_next_headers
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers=_next_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

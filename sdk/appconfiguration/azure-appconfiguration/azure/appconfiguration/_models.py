@@ -2,15 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import collections
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast, Callable, TypeVar, Iterator
+from typing import Any, Dict, List, Optional, Union, cast, Callable, TypeVar, Iterator, AsyncIterator
 
 from azure.core import MatchConditions
 from azure.core.exceptions import AzureError
 from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator, ItemPaged
-from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
+from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged, AsyncList
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
@@ -579,13 +580,22 @@ def _return_deserialized_and_headers(_, deserialized, response_headers):
     return deserialized, response_headers
 
 
-class ConfigurationSettingPropertiesPaged(PageIterator):
-    """An iterable of ConfigurationSetting properties."""
+class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instance-attributes
+    """Base class for iterable of ConfigurationSetting properties."""
 
     etag: str
-    """The etag of current page."""
+    """The current etag"""
+    _etags: List[str]
+    """The etag expected for the pages."""
+    _current_etag: int = 0
+    """Current index in the etags list."""
 
     def __init__(self, command: Callable, **kwargs: Any):
+        """Initialize common attributes for paged configuration settings.
+
+        :param command: The command to execute for pagination.
+        :type command: Callable
+        """
         self._command = command
         self._key = kwargs.get("key")
         self._label = kwargs.get("label")
@@ -595,20 +605,44 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._etags: List[str] = kwargs.get("etags", [])
         self._current_etag = 0
         self._match_condition = kwargs.get("match_condition")
-        super(ConfigurationSettingPropertiesPaged, self).__init__(
-            self._get_next_cb,
-            self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token"),
-        )
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
 
-    def _get_next_cb(self, continuation_token, **kwargs):
+    def _next_etag(self):
         etag = None
         if self._etags and len(self._etags) > self._current_etag:
             etag = self._etags[self._current_etag]
             self._current_etag += 1
+        return etag
+
+    def _extract_data_cb_base(self, get_next_return):
+        deserialized, response_headers = get_next_return
+        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
+        next_link = deserialized.get("@nextLink") or None
+        page = None
+        if "items" in deserialized:
+            list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
+            page = iter(self._deserializer(list_of_elem))
+        return next_link, page
+
+
+class ConfigurationSettingPropertiesPaged(
+    ConfigurationSettingPropertiesPagedBase, PageIterator
+):  # pylint:disable=too-many-instance-attributes
+    """An iterable of ConfigurationSetting properties."""
+
+    def __init__(self, command: Callable, **kwargs: Any):
+        super().__init__(command, **kwargs)
+        PageIterator.__init__(
+            self,
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
+
+    def _get_next_cb(self, continuation_token, **kwargs):
+        etag = self._next_etag()
         return self._command(
             key=self._key,
             label=self._label,
@@ -622,14 +656,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         )
 
     def _extract_data_cb(self, get_next_return):
-        deserialized, response_headers = get_next_return
-        list_of_elem = []
-        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
-        if "items" in deserialized:
-            list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
-            return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
-        return deserialized.get("@nextLink") or None, None
-
+        return self._extract_data_cb_base(get_next_return)
 
     def __next__(self) -> Iterator[ReturnType]:
         """Get the next page in the iterator.
@@ -656,36 +683,23 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
             return self.__next__()
         return iter(self._current_page)
 
-class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
+
+class ConfigurationSettingPropertiesPagedAsync(
+    ConfigurationSettingPropertiesPagedBase, AsyncPageIterator
+):  # pylint:disable=too-many-instance-attributes
     """An iterable of ConfigurationSetting properties."""
 
-    etag: str
-    """The etag of current page."""
-
     def __init__(self, command: Callable, **kwargs: Any):
-        super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
+        ConfigurationSettingPropertiesPagedBase.__init__(self, command, **kwargs)
+        AsyncPageIterator.__init__(
+            self,
             self._get_next_cb,
             self._extract_data_cb,
             continuation_token=kwargs.get("continuation_token"),
         )
-        self._command = command
-        self._key = kwargs.get("key")
-        self._label = kwargs.get("label")
-        self._accept_datetime = kwargs.get("accept_datetime")
-        self._select = kwargs.get("select")
-        self._tags = kwargs.get("tags")
-        self._etags: List[str] = kwargs.get("etags", [])
-        self._current_etag = 0
-        self._match_condition = kwargs.get("match_condition")
-        self._deserializer = lambda objs: [
-            ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
-        ]
 
     async def _get_next_cb(self, continuation_token, **kwargs):
-        etag = None
-        if self._etags and len(self._etags) > self._current_etag:
-            etag = self._etags[self._current_etag]
-            self._current_etag += 1
+        etag = self._next_etag()
         return await self._command(
             key=self._key,
             label=self._label,
@@ -699,15 +713,9 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         )
 
     async def _extract_data_cb(self, get_next_return):
-        deserialized, response_headers = get_next_return
-        list_of_elem = []
-        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
-        if "items" in deserialized:
-            list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
-            return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
-        return deserialized.get("@nextLink") or None, None
+        return self._extract_data_cb_base(get_next_return)
 
-    def __next__(self) -> Iterator[ReturnType]:
+    async def __anext__(self) -> AsyncIterator[ReturnType]:
         """Get the next page in the iterator.
 
         :returns: An iterator of objects in the next page.
@@ -716,9 +724,9 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         :raises AzureError: If the request fails.
         """
         if self.continuation_token is None and self._did_a_call_already:
-            raise StopIteration("End of paging")
+            raise StopAsyncIteration("End of paging")
         try:
-            self._response = self._get_next(self.continuation_token)
+            self._response = await self._get_next(self.continuation_token)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token
@@ -726,11 +734,18 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
 
         self._did_a_call_already = True
 
-        self.continuation_token, self._current_page = self._extract_data(self._response)
+        self.continuation_token, self._current_page = await self._extract_data(self._response)
+
         if self._current_page is None:
             # We skip over pages that are empty, change from mach conditions
-            return self.__next__()
-        return iter(self._current_page)
+            return await self.__anext__()
+
+        # If current_page was a sync list, wrap it async-like
+        if isinstance(self._current_page, collections.abc.Iterable):
+            self._current_page = AsyncList(self._current_page)
+
+        return self._current_page
+
 
 class ConfigurationSettingPaged(ItemPaged):
     """
@@ -751,13 +766,6 @@ class ConfigurationSettingPaged(ItemPaged):
              # Process only changed pages
              pass
     """
-
-    def __init__(self, *args, **kwargs):
-        """Initialize the ItemPaged iterator with etag support.
-        :param args: Arguments to pass to the PageIterator constructor
-        :param kwargs: Keyword arguments to pass to the PageIterator constructor
-        """
-        super(ConfigurationSettingPaged, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
         """Get an iterator of pages of objects, instead of an iterator of objects.
@@ -804,14 +812,6 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
     the new page is returned. This allows efficient polling for changes without retrieving
     unchanged data.
     """
-
-    def __init__(self, *args, **kwargs):
-        """
-        Initialize the ItemPaged iterator with etag support.
-        :param args: Arguments to pass to the PageIterator constructor
-        :param kwargs: Keyword arguments to pass to the PageIterator constructor
-        """
-        super(ConfigurationSettingPagedAsync, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
         """Get an async iterator of pages of objects, instead of an iterator of objects.

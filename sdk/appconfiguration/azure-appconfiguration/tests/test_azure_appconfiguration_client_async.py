@@ -1154,7 +1154,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             self.client = client
             # prepare 200 configuration settings
             for i in range(200):
-                await client.add_configuration_setting(
+                await client.set_configuration_setting(
                     ConfigurationSetting(
                         key=f"async_sample_key_{str(i)}",
                         label=f"async_sample_label_{str(i)}",
@@ -1184,7 +1184,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             assert len(changed_pages) == 0
 
             # do some changes
-            await client.add_configuration_setting(
+            await client.set_configuration_setting(
                 ConfigurationSetting(
                     key="async_sample_key_201",
                     label="async_sample_label_202",
