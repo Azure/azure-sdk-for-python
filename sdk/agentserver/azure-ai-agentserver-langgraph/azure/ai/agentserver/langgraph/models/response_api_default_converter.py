@@ -89,7 +89,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
     
     def _create_stream_response_converter(self, context: AgentRunContext) -> ResponseAPIMessagesStreamResponseConverter:
         hitl_helper = self._create_human_in_the_loop_helper(context)
-        return ResponseAPIMessagesStreamResponseConverter(context, hitl_helper)
+        return ResponseAPIMessagesStreamResponseConverter(context, hitl_helper=hitl_helper)
     
     def _create_non_stream_response_converter(self, context: AgentRunContext) -> ResponseAPINonStreamResponseConverter:
         hitl_helper = self._create_human_in_the_loop_helper(context)

@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 import copy
 import json
-from typing import Any, List
+from typing import Any, Collection, List
 
 from langchain_core import messages
 from langchain_core.messages import AnyMessage
@@ -63,7 +63,7 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                     res.extend(interrupt_messages)
                 else:
                     message_arr = node_output.get("messages")
-                    if not message_arr or not isinstance(message_arr, list):
+                    if not message_arr or not isinstance(message_arr, Collection):
                         logger.warning(f"No messages found in node {node_name} output: {node_output}")
                         continue
                     for message in message_arr:
