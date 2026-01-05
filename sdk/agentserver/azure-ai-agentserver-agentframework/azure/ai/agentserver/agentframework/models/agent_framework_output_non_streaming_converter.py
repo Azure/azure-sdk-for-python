@@ -7,7 +7,14 @@ import datetime
 import json
 from typing import Any, List
 
-from agent_framework import AgentRunResponse, FunctionCallContent, FunctionResultContent, ErrorContent, TextContent
+from agent_framework import (
+    AgentRunResponse,
+    FunctionCallContent,
+    FunctionResultContent,
+    ErrorContent,
+    TextContent,
+)
+from agent_framework._types import UserInputRequestContents
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
@@ -32,6 +39,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         self._context = context
         self._response_id = None
         self._response_created_at = None
+        self.hitl_helper = None
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
@@ -120,6 +128,8 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             self._append_function_call_content(content, sink, author_name)
         elif isinstance(content, FunctionResultContent):
             self._append_function_result_content(content, sink, author_name)
+        elif isinstance(content, UserInputRequestContents):
+            self._append_user_input_request_contents(content, sink, author_name)
         elif isinstance(content, ErrorContent):
             raise ValueError(f"ErrorContent received: code={content.error_code}, message={content.message}")
         else:
@@ -205,6 +215,25 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             call_id,
             len(result),
         )
+    
+    def _append_user_input_request_contents(self, content: UserInputRequestContents, sink: List[dict], author_name: str) -> None:
+        item_id = self._context.id_generator.generate_message_id()
+        content = self.hitl_helper.convert_user_input_request_content(content)
+        if not content:
+            logger.warning("UserInputRequestContents conversion returned empty content, skipping.")
+            return
+        sink.append(
+            {
+                "id": item_id,
+                "type": "function_call",
+                "status": "inprogress",
+                "call_id": content["call_id"],
+                "name": content["name"],
+                "arguments": content["arguments"],
+                "created_by": self._build_created_by(author_name),
+            }
+        )
+        logger.debug("    added user_input_request item id=%s call_id=%s", item_id, content["call_id"])
 
     # ------------- simple normalization helper -------------------------
     def _coerce_result_text(self, value: Any) -> str | dict:
