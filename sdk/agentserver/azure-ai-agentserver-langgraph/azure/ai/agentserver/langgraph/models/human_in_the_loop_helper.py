@@ -10,6 +10,7 @@ from langgraph.types import (
     StateSnapshot,
 )
 
+from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.models.openai import (
     ResponseInputParam,
@@ -18,7 +19,7 @@ from azure.ai.agentserver.core.models.openai import (
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
 INTERRUPT_NODE_NAME = "__interrupt__"
-
+logger = get_logger()
 
 class HumanInTheLoopHelper:
     """Helper class for managing human-in-the-loop interactions in LangGraph."""
@@ -71,7 +72,41 @@ class HumanInTheLoopHelper:
         :return: Command if valid feedback is provided, else None.
         :rtype: Union[Command, None]
         """
-        raise NotImplementedError("Subclasses must implement validate_and_convert_human_feedback method.")
+        if not self.has_interrupt(state):
+            # No interrupt in state
+            logger.info("No interrupt found in state.")
+            return None
+        interrupt_obj = state.interrupts[0]  # Assume single interrupt for simplicity
+        if not interrupt_obj or not isinstance(interrupt_obj, Interrupt):
+            logger.warning(f"No interrupt object found in state")
+            return None
+        
+        logger.info(f"Retrived interrupt from state, validating and converting human feedback.")
+        if isinstance(input, str):
+            # expect a list of function call output items
+            logger.warning(f"Expecting function call output item, got string: {input}")
+            return None
+        if isinstance(input, list):
+            if len(input) != 1:
+                # expect exactly one function call output item
+                logger.warning(f"Expected exactly one interrupt input item, got {len(input)} items.")
+                return None
+            item = input[0]
+            # validate item type
+            item_type = item.get("type", None)
+            if item_type != project_models.ItemType.FUNCTION_CALL_OUTPUT:
+                logger.warning(f"Invalid interrupt input item type: {item_type}, expected FUNCTION_CALL_OUTPUT.")
+                return None
+            
+            # validate call_id matches
+            if item.get("call_id") != interrupt_obj.id:
+                logger.warning(f"Interrupt input call_id {item.call_id} does not match interrupt id {interrupt_obj.id}.")
+                return None
+            
+            return self.convert_input_item_to_command(item)
+        else:
+            logger.error(f"Unsupported interrupt input type: {type(input)}, {input}")
+            return None
 
     def convert_input_item_to_command(self, input: ResponseInputItemParam) -> Union[Command, None]:
         """Convert ItemParams to a LangGraph Command for interrupt handling.
