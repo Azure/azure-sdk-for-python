@@ -682,9 +682,9 @@ class ConfigurationSettingPaged(ItemPaged):
         :param kwargs: Keyword arguments to pass to the PageIterator constructor
         """
         self._client = kwargs.pop("client", None)
-        self._key_filter = kwargs.pop("key_filter", None)
-        self._label_filter = kwargs.pop("label_filter", None)
-        self._tags_filter = kwargs.pop("tags_filter", None)
+        self._key_filter = kwargs.get("key", None)
+        self._label_filter = kwargs.get("label", None)
+        self._tags_filter = kwargs.get("tags", None)
         super(ConfigurationSettingPaged, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
@@ -809,7 +809,7 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
         if self._after_token:
             request = build_azure_app_configuration_get_key_values_request(
                 after=self._after_token,
-                etag=self._match_conditions[self._match_condition_index],
+                etag=self._match_conditions[self._match_condition_index].strip('"'),
                 match_condition=MatchConditions.IfModified,
                 api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
             )
@@ -818,7 +818,7 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
                 key=self._key_filter,
                 label=self._label_filter,
                 tags=self._tags_filter,
-                etag=self._match_conditions[self._match_condition_index],
+                etag=self._match_conditions[self._match_condition_index].strip('"'),
                 match_condition=MatchConditions.IfModified,
                 api_version=self._client._impl._config.api_version,  # pylint: disable=protected-access
             )
