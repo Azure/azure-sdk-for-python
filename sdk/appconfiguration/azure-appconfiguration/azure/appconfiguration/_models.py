@@ -607,26 +607,24 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         if self._etags and len(self._etags) > self._current_etag:
             etag = self._etags[self._current_etag].strip('"')
             self._current_etag += 1
-        try:
-            return self._command(
-                key=self._key,
-                label=self._label,
-                accept_datetime=self._accept_datetime,
-                select=self._select,
-                tags=self._tags,
-                etag=etag,
-                match_condition=self._match_condition,
-                continuation_token=continuation_token,
-                cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
-            )
-        except ResourceNotModifiedError as e:
-            unparsed_link = e.response.headers.get("Link")
-            return {"items":[], "@nextLink":unparsed_link[1:-13]}, {"ETag": self._etags[self._current_etag - 1]}
+        return self._command(
+            key=self._key,
+            label=self._label,
+            accept_datetime=self._accept_datetime,
+            select=self._select,
+            tags=self._tags,
+            etag=etag,
+            match_condition=self._match_condition,
+            continuation_token=continuation_token,
+            cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
+        )
 
     def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
-        list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
-        self.etag = response_headers.pop("ETag")
+        list_of_elem = []
+        if "items" in deserialized:
+            list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
+        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
         return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
 
 
