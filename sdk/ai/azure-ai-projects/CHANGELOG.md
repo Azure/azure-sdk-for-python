@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
+## 2.0.0b3 (2026-01-06)
 
 ### Features Added
 
@@ -34,6 +34,9 @@
 * Improved MCP client sample showing direct MCP tool invocation. See `samples/mcp_client/sample_mcp_tool_async.py`.
 * Samples that download generated files (code interpreter and image generation) now save files to the system temp directory instead of the current working directory. See `sample_agent_code_interpreter.py`, `sample_agent_code_interpreter_async.py`, `sample_agent_image_generation.py`, and `sample_agent_image_generation_async.py`.
 * The Agent to Agent sample was updated to allow "Custom keys" connection type.
+* Update Fine-Tuning supervised job samples to show waiting for model result instead of polling
+* Add evaluations sample `samples/evaluations/sample_evaluations_score_model_grader_with_image.py`.
+* Add basic steam event samples `samples/agents/sample_agent_stream_events.py` and `samples/responses/sample_responses_stream_events.py`
 
 ## 2.0.0b2 (2025-11-14)
 
