@@ -27,6 +27,7 @@ from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
+from .models.human_in_the_loop_helper import HumanInTheLoopHelper
 from .models.constants import Constants
 from .tool_client import ToolClient
 
@@ -223,6 +224,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
+            hitl_helper = HumanInTheLoopHelper()
 
             input_converter = AgentFrameworkInputConverter()
             message = input_converter.transform_input(request_input)
@@ -255,7 +257,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
-            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context)
+            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=hitl_helper)
             result = await agent.run(message)
             logger.debug(f"Agent run completed, result type: {type(result)}")
             transformed_result = non_streaming_converter.transform_output_for_response(result)

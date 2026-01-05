@@ -28,6 +28,7 @@ from azure.ai.agentserver.core.models.projects import (
 
 from .agent_id_generator import AgentIdGenerator
 from .constants import Constants
+from .human_in_the_loop_helper import HumanInTheLoopHelper
 
 logger = get_logger()
 
@@ -35,11 +36,11 @@ logger = get_logger()
 class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-long
     """Non-streaming converter: AgentRunResponse -> OpenAIResponse."""
 
-    def __init__(self, context: AgentRunContext):
+    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper):
         self._context = context
         self._response_id = None
         self._response_created_at = None
-        self.hitl_helper = None
+        self._hitl_helper = hitl_helper
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
@@ -218,7 +219,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
     
     def _append_user_input_request_contents(self, content: UserInputRequestContents, sink: List[dict], author_name: str) -> None:
         item_id = self._context.id_generator.generate_message_id()
-        content = self.hitl_helper.convert_user_input_request_content(content)
+        content = self._hitl_helper.convert_user_input_request_content(content)
         if not content:
             logger.warning("UserInputRequestContents conversion returned empty content, skipping.")
             return

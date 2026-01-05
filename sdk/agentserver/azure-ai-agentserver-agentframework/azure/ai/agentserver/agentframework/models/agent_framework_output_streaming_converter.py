@@ -14,9 +14,11 @@ from agent_framework._types import (
     ErrorContent,
     FunctionCallContent,
     TextContent,
+    UserInputRequestContents,
 )
 
 from azure.ai.agentserver.core import AgentRunContext
+from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
@@ -43,8 +45,10 @@ from azure.ai.agentserver.core.models.projects import (
 )
 
 from .agent_id_generator import AgentIdGenerator
+from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .utils.async_iter import chunk_on_change, peek
 
+logger = get_logger()
 
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
@@ -198,6 +202,86 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             self._parent.add_completed_output_item(item)  # pylint: disable=protected-access
 
 
+class _UserInputRequestState(_BaseStreamingState):
+    """State handler for function_call content during streaming."""
+
+    def __init__(self,
+            parent: AgentFrameworkOutputStreamingConverter,
+            hitl_helper: HumanInTheLoopHelper):
+        self._parent = parent
+        self._hitl_helper = hitl_helper
+
+    async def convert_contents(
+            self, contents: AsyncIterable[UserInputRequestContents], author_name: str
+        ) -> AsyncIterable[ResponseStreamEvent]:
+        content_by_call_id = {}
+        ids_by_call_id = {}
+
+        async for content in contents:
+            content = self._hitl_helper.convert_user_input_request_content(content)
+            if not content:
+                logger.warning("UserInputRequestContents conversion returned empty content, skipping.")
+                return
+            
+            if content["call_id"] not in content_by_call_id:
+                item_id = self._parent.context.id_generator.generate_function_call_id()
+                output_index = self._parent.next_output_index()
+
+                content_by_call_id[content["call_id"]] = content
+                ids_by_call_id[content["call_id"]] = (item_id, output_index)
+
+                yield ResponseOutputItemAddedEvent(
+                    sequence_number=self._parent.next_sequence(),
+                    output_index=output_index,
+                    item=FunctionToolCallItemResource(
+                        id=item_id,
+                        status="in_progress",
+                        call_id=content["call_id"],
+                        name=content["name"],
+                        arguments="",
+                        created_by=self._parent._build_created_by(author_name),
+                    ),
+                )
+            else:
+                prev_content = content_by_call_id[content["call_id"]]
+                prev_content["arguments"] = prev_content["arguments"] + content["arguments"]
+                item_id, output_index = ids_by_call_id[content["call_id"]]
+
+                args_delta = content["arguments"] if isinstance(content["arguments"], str) else ""
+                yield ResponseFunctionCallArgumentsDeltaEvent(
+                    sequence_number=self._parent.next_sequence(),
+                    item_id=item_id,
+                    output_index=output_index,
+                    delta=args_delta,
+                )
+
+        for call_id, content in content_by_call_id.items():
+            item_id, output_index = ids_by_call_id[call_id]
+            args = content["arguments"]
+            yield ResponseFunctionCallArgumentsDoneEvent(
+                sequence_number=self._parent.next_sequence(),
+                item_id=item_id,
+                output_index=output_index,
+                arguments=args,
+            )
+
+            item = FunctionToolCallItemResource(
+                id=item_id,
+                status="completed",
+                call_id=call_id,
+                name=content["name"],
+                arguments=args,
+                created_by=self._parent._build_created_by(author_name),
+            )
+            yield ResponseOutputItemDoneEvent(
+                sequence_number=self._parent.next_sequence(),
+                output_index=output_index,
+                item=item,
+            )
+
+            self._parent.add_completed_output_item(item)  # pylint: disable=protected-access
+
+
 class _FunctionCallOutputStreamingState(_BaseStreamingState):
     """Handles function_call_output items streaming (non-chunked simple output)."""
 
@@ -255,7 +339,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
 class AgentFrameworkOutputStreamingConverter:
     """Streaming converter using content-type-specific state handlers."""
 
-    def __init__(self, context: AgentRunContext) -> None:
+    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper=None) -> None:
         self._context = context
         # sequence numbers must start at 0 for first emitted event
         self._sequence = -1
@@ -263,6 +347,7 @@ class AgentFrameworkOutputStreamingConverter:
         self._response_id = self._context.response_id
         self._response_created_at = None
         self._completed_output_items: List[ItemResource] = []
+        self._hitl_helper = hitl_helper
 
     def next_sequence(self) -> int:
         self._sequence += 1
@@ -294,7 +379,10 @@ class AgentFrameworkOutputStreamingConverter:
         )
 
         is_changed = (
-            lambda a, b: a is not None and b is not None and a.message_id != b.message_id  # pylint: disable=unnecessary-lambda-assignment
+            lambda a, b: a is not None \
+                and b is not None \
+                and (a.message_id != b.message_id \
+                or type(a) != type(b))  # pylint: disable=unnecessary-lambda-assignment
         )
         async for group in chunk_on_change(updates, is_changed):
             has_value, first_tuple, contents_with_author = await peek(self._read_updates(group))
@@ -304,12 +392,16 @@ class AgentFrameworkOutputStreamingConverter:
             first, author_name = first_tuple  # Extract content and author_name from tuple
 
             state = None
+            logger.info(f"First content type in group: {type(first).__name__}")
+            logger.info(f"First content type in group: {first.to_dict()}")
             if isinstance(first, TextContent):
                 state = _TextContentStreamingState(self)
-            elif isinstance(first, (FunctionCallContent, FunctionApprovalRequestContent)):
+            elif isinstance(first, FunctionCallContent):
                 state = _FunctionCallStreamingState(self)
             elif isinstance(first, FunctionResultContent):
                 state = _FunctionCallOutputStreamingState(self)
+            elif isinstance(first, UserInputRequestContents):
+                state = _UserInputRequestState(self, self._hitl_helper)
             elif isinstance(first, ErrorContent):
                 raise ValueError(f"ErrorContent received: code={first.error_code}, message={first.message}")
             if not state:
@@ -355,6 +447,7 @@ class AgentFrameworkOutputStreamingConverter:
                               ErrorContent)
             for content in update.contents:
                 if isinstance(content, accepted_types):
+                    logger.info(f"Yield update {type(content)}: {content.to_dict()}")
                     yield (content, author_name)
 
     def _ensure_response_started(self) -> None:
