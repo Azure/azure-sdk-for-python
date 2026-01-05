@@ -118,7 +118,7 @@ def separate_packages_by_type(
         else:
             data_plane_packages.append(pkg)
 
-    logger.info(
+    logger.debug(
         f"Separated {len(data_plane_packages)} data plane and {len(mgmt_plane_packages)} management plane packages"
     )
 
@@ -202,6 +202,7 @@ def get_package_data_from_pypi(
 def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int]]:
     """Build an index of package name -> (artifact_idx, checkout_idx) for fast lookups in conda-sdk-client.yml."""
     package_index = {}
+
     for artifact_idx, artifact in enumerate(conda_artifacts):
         if "checkout" in artifact:
             for checkout_idx, checkout_item in enumerate(artifact["checkout"]):
@@ -222,16 +223,18 @@ def update_conda_sdk_client_yml(
     packages_to_update: List[Dict[str, str]],
     new_data_plane_packages: List[Dict[str, str]],
     new_mgmt_plane_packages: List[Dict[str, str]],
-) -> None:
+) -> List[str]:
     """
     Update outdated package versions and add new entries in conda-sdk-client.yml file
 
     :param packages_to_update: List of package rows from the CSV that need updates.
     :param new_data_plane_packages: List of new data plane package rows from the CSV.
     :param new_mgmt_plane_packages: List of new management plane package rows from the CSV.
+    :return: List of package names that were not updated or added and may require manual action.
     """
     updated_count = 0
     added_count = 0
+    result = []
 
     with open(CONDA_CLIENT_YAML_PATH, "r") as file:
         conda_client_data = yaml.safe_load(file)
@@ -263,10 +266,12 @@ def update_conda_sdk_client_yml(
                 logger.warning(
                     f"Package {pkg_name} has no 'version' field, skipping update"
                 )
+                result.append(pkg_name)
         else:
             logger.warning(
                 f"Package {pkg_name} not found in conda-sdk-client.yml, skipping update"
             )
+            result.append(pkg_name)
 
     # handle download_uri for packages known to be missing from the csv
     for pkg_name in PACKAGES_WITH_DOWNLOAD_URI:
@@ -281,6 +286,7 @@ def update_conda_sdk_client_yml(
                 logger.warning(
                     f"Could not retrieve latest version or download URI for {pkg_name} from PyPI, skipping"
                 )
+                result.append(pkg_name)
                 continue
 
             if curr_download_uri != download_uri:
@@ -298,8 +304,9 @@ def update_conda_sdk_client_yml(
             logger.warning(
                 f"Package {pkg_name} not found in conda-sdk-client.yml, skipping download_uri update"
             )
+            result.append(pkg_name)
 
-    # add new data plane packages
+    # Add new data plane packages
 
     logger.info(
         f"Detected {len(new_data_plane_packages)} new data plane packages to add to conda-sdk-client.yml"
@@ -319,6 +326,7 @@ def update_conda_sdk_client_yml(
         #     logger.warning(
         #         f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
         #     )
+        #     result.append(package_name)
         #     continue
 
         # TODO what is the case where we batch multiple subservices under one???
@@ -349,13 +357,42 @@ def update_conda_sdk_client_yml(
         added_count += 1
         logger.info(f"Added new data plane package: {package_name}")
 
-    # add new mgmt plane packages
+    # Add new mgmt plane packages
 
     logger.info(
         f"Detected {len(new_mgmt_plane_packages)} new management plane packages to add to conda-sdk-client.yml"
     )
 
-    # TODO
+    # assumes azure-mgmt will always be the last CondaArtifacts entry
+    azure_mgmt_artifact_checkout = conda_artifacts[-1]["checkout"]
+
+    for pkg in new_mgmt_plane_packages:
+        package_name = pkg.get(PACKAGE_COL)
+
+        if not package_name:
+            logger.warning("Skipping package with missing name")
+            continue
+
+        # TODO commented out for testing purposes only
+        # if package_name in package_index:
+        #     logger.warning(
+        #         f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
+        #     )
+        #     result.append(package_name)
+        #     continue
+
+        new_mgmt_entry = {
+            "package": package_name,
+            "version": pkg.get(VERSION_GA_COL),
+        }
+
+        azure_mgmt_artifact_checkout.append(new_mgmt_entry)
+
+        added_count += 1
+        logger.info(f"Added new management plane package: {package_name}")
+
+    # sort mgmt packages alphabetically
+    azure_mgmt_artifact_checkout.sort(key=lambda x: x["package"])
 
     # TODO note this dump doesn't preserve some quotes like around
     #    displayName: 'azure-developer-loadtesting' but i don't think those functionally necessary?
@@ -377,6 +414,7 @@ def update_conda_sdk_client_yml(
         )
     else:
         logger.warning("No packages were found in the YAML file to update")
+    return result
 
 
 def get_package_path(package_name: str) -> str:
@@ -550,12 +588,13 @@ extra:
     return meta_yaml_content
 
 
-def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> None:
+def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]:
     """Create meta.yaml files for new data plane packages and add import tests."""
     if len(new_packages) == 0:
-        return
+        return []
 
     logger.info(f"Adding {len(new_packages)} new data plane packages")
+    result = []
 
     for pkg in new_packages:
         package_name = pkg.get(PACKAGE_COL)
@@ -569,12 +608,12 @@ def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> None:
         os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
 
         try:
-            # TODO maybe compile list of failed packages to report at end
             meta_yml = generate_data_plane_meta_yaml(package_name)
         except Exception as e:
             logger.error(
                 f"Failed to generate meta.yaml content for {package_name} and skipping, error: {e}"
             )
+            result.append(package_name)
             continue
 
         try:
@@ -583,15 +622,18 @@ def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> None:
             logger.info(f"Created meta.yaml for {package_name} at {pkg_yaml_path}")
         except Exception as e:
             logger.error(f"Failed to create meta.yaml for {package_name}: {e}")
+            result.append(package_name)
 
         # TODO AKA link stuff needs to happen, either do it or return packages that need action
+        return result
 
 
-def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> None:
+def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]:
     """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
     if len(new_packages) == 0:
-        return
+        return []
     logger.info(f"Adding {len(new_packages)} new management plane packages")
+    result = []
 
     # can't use pyyaml due to jinja2
     with open(CONDA_MGMT_META_YAML_PATH, "r") as file:
@@ -602,7 +644,8 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> None:
     )
     if not test_match:
         logger.error("Could not find 'test: imports:' section in meta.yaml")
-        return
+        result.extend([pkg.get(PACKAGE_COL) for pkg in new_packages])
+        return result
 
     existing_imports_text = test_match.group(1)
     existing_imports = [
@@ -652,12 +695,15 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> None:
         flags=re.MULTILINE | re.DOTALL,
     )
 
-    with open(CONDA_MGMT_META_YAML_PATH, "w") as file:
-        file.write(updated_content)
+    try:
+        with open(CONDA_MGMT_META_YAML_PATH, "w") as file:
+            file.write(updated_content)
+    except Exception as e:
+        logger.error(f"Failed to update {CONDA_MGMT_META_YAML_PATH}: {e}")
+        result.extend([pkg.get(PACKAGE_COL) for pkg in new_packages])
 
-    logger.info(
-        f"Added {len(new_packages)} new management plane packages to meta.yaml in alphabetical order"
-    )
+    logger.info(f"Added {len(new_packages)} new management plane packages to meta.yaml")
+    return result
 
 
 if __name__ == "__main__":
@@ -697,16 +743,38 @@ if __name__ == "__main__":
 
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
-    update_conda_sdk_client_yml(
+
+    conda_sdk_client_pkgs_result = update_conda_sdk_client_yml(
         outdated_packages, new_data_plane_packages, new_mgmt_plane_packages
     )
 
     # handle new data plane libraries
-    add_new_data_plane_packages(new_data_plane_packages)
+    new_data_plane_results = add_new_data_plane_packages(new_data_plane_packages)
 
     # handle new mgmt plane libraries
-    add_new_mgmt_plane_packages(new_mgmt_plane_packages)
+    new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
     # add/update release logs
 
-    # print a final report of changes made
+    print("=== REPORT ===")
+
+    if conda_sdk_client_pkgs_result:
+        print(
+            "The following packages may require manual adjustments in conda-sdk-client.yml:"
+        )
+        for pkg_name in conda_sdk_client_pkgs_result:
+            print(f"- {pkg_name}")
+
+    if new_data_plane_results:
+        print(
+            "\nThe following new data plane packages may require manual meta.yaml creation or adjustments:"
+        )
+        for pkg_name in new_data_plane_results:
+            print(f"- {pkg_name}")
+
+    if new_mgmt_plane_results:
+        print(
+            "\nThe following new management plane packages may require manual adjustments in azure-mgmt/meta.yaml:"
+        )
+        for pkg_name in new_mgmt_plane_results:
+            print(f"- {pkg_name}")
