@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Declare support for Python 3.13 and 3.14.
+
 ## 1.8.3 (2025-12-04)
 
 ### Breaking Changes
