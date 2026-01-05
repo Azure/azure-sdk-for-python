@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Containerservice Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -29,7 +29,7 @@ keywords = [
     "azure sdk",
 ]
 dependencies = [
-    "msrest>=0.7.1",
+    "isodate>=0.6.1",
     "azure-mgmt-core>=1.6.0",
     "typing-extensions>=4.6.0",
 ]
@@ -78,7 +78,7 @@ verifytypes = false
 package_name = "azure-mgmt-containerservice"
 package_pprint_name = "Container Service Management"
 package_doc_id = "container-service"
-is_stable = true
+is_stable = false
 sample_link = ""
 title = "ContainerServiceClient"
 package_nspkg = "azure-mgmt-nspkg"

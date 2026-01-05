@@ -37,7 +37,7 @@ class TestMultiToolWithConversations(TestBase):
         - Verifying conversation state preserves all tool interactions
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -149,7 +149,7 @@ Total Revenue: $144,000
         )
         print(f"Response 3: {response_3.output_text[:150]}...")
 
-        print("\n✓ Mixed tools with conversation successful!")
+        print("\n[PASS] Mixed tools with conversation successful!")
         print("  - File search (server-side) worked")
         print("  - Function call (client-side) worked")
         print("  - Both tools used in same conversation")
@@ -185,7 +185,7 @@ Total Revenue: $144,000
         assert function_calls >= 1, "Expected at least 1 function call (save_report)"
         assert function_outputs >= 1, "Expected at least 1 function output"
 
-        print("\n✓ Multi-tool conversation state verified")
+        print("\n[PASS] Multi-tool conversation state verified")
         print("  - Both server-side (FileSearch) and client-side (Function) tools tracked")
         print("  - All 3 turns preserved in conversation")
 

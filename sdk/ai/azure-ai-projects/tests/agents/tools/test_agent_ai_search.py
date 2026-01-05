@@ -19,6 +19,7 @@ from azure.ai.projects.models import (
 # The tests in this file rely on an existing Azure AI Search project connection that has been populated with the following document:
 # https://arxiv.org/pdf/2508.03680
 
+
 class TestAgentAISearch(TestBase):
 
     # Test questions with expected answers
@@ -80,7 +81,7 @@ class TestAgentAISearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         # Get AI Search connection and index from environment
         ai_search_connection_id = kwargs.get("azure_ai_projects_tests_ai_search_project_connection_id")

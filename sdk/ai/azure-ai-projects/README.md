@@ -259,7 +259,11 @@ Generate images based on text prompts with customizable resolution, quality, and
 <!-- SNIPPET:sample_agent_image_generation.tool_declaration -->
 
 ```python
-tool = ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")  # type: ignore
+tool = ImageGenTool(  # type: ignore[call-overload]
+    model=image_generation_model,  # Model such as "gpt-image-1-mini"  # type: ignore
+    quality="low",
+    size="1024x1024",
+)
 ```
 
 <!-- END SNIPPET -->
@@ -572,6 +576,9 @@ Enable multi-agent collaboration where agents can communicate and delegate tasks
 tool = A2ATool(
     project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
 )
+# If the connection is missing target, we need to set the A2A endpoint URL.
+if os.environ.get("A2A_ENDPOINT"):
+    tool.base_url = os.environ["A2A_ENDPOINT"]
 ```
 
 <!-- END SNIPPET -->
@@ -625,7 +632,7 @@ with (
     agent = project_client.agents.create_version(
         agent_name=os.environ["AZURE_AI_AGENT_NAME"],
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=model_deployment_name,
             instructions="You are a helpful assistant that answers general questions",
         ),
     )
@@ -636,13 +643,30 @@ with (
         item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
         include_sample_schema=True,
     )
+    # Notes: for data_mapping:
+    # sample.output_text is the string output of the agent
+    # sample.output_items is the structured JSON output of the agent, including tool calls information
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
             "name": "violence_detection",
             "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-        }
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        },
+        {
+            "type": "azure_ai_evaluator",
+            "name": "fluency",
+            "evaluator_name": "builtin.fluency",
+            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        },
+        {
+            "type": "azure_ai_evaluator",
+            "name": "task_adherence",
+            "evaluator_name": "builtin.task_adherence",
+            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
+        },
     ]
     eval_object = openai_client.evals.create(
         name="Agent Evaluation",

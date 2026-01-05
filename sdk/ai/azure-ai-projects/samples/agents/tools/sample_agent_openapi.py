@@ -76,8 +76,7 @@ with (
         input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
-    # Print result (should contain "\u00b0F")
-    print(f"==> Result: {response.output_text}")
+    print(f"Agent response: {response.output_text}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

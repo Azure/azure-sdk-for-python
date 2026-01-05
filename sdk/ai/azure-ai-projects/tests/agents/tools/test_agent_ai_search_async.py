@@ -20,6 +20,7 @@ from azure.ai.projects.models import (
 # The tests in this file rely on an existing Azure AI Search project connection that has been populated with the following document:
 # https://arxiv.org/pdf/2508.03680
 
+
 class TestAgentAISearchAsync(TestBase):
 
     # Test questions with expected answers
@@ -147,7 +148,7 @@ class TestAgentAISearchAsync(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
