@@ -414,7 +414,7 @@ See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the
 
   See the full sample in file `\agents\tools\sample_agent_memory_search.py` in the [Samples][samples] folder showing how to create an Agent with a memory store, and use it in multiple conversations.
 
-  See also other samples in the folder `\memories\memories` under [Samples][samples] folder, showing how to manage memory stores.
+  See also other samples in the folder `\memories` under [Samples][samples] folder, showing how to manage memory stores.
 
 #### Connection-Based Tools
 
