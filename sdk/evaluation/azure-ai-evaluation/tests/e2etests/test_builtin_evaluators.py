@@ -634,9 +634,6 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
         ),
     )
-    @pytest.mark.skip(
-        reason="ECI evaluator service is currently unavailable in prod using sync evals. To be re-enabled later."
-    )
     def test_eci_evaluator(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
@@ -872,7 +869,6 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness"] in (level.value for level in HarmSeverityLevel)
         assert score["hate_unfairness_score"] >= 0.0
 
-    @pytest.mark.skip(reason="Skipping test due to known issue with image output handling in sync evals")
     @pytest.mark.parametrize(
         ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
