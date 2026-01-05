@@ -4,10 +4,10 @@
 # ------------------------------------
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast, Callable
+from typing import Any, Dict, List, Optional, Union, cast, Callable, TypeVar, Iterator
 
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceNotModifiedError
+from azure.core.exceptions import AzureError
 from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
@@ -20,6 +20,8 @@ from ._generated.models import (
     SnapshotComposition,
 )
 from ._generated._model_base import _deserialize
+
+ReturnType = TypeVar("ReturnType")
 
 
 class ConfigurationSetting(Model):
@@ -622,11 +624,37 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
         list_of_elem = []
+        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
         if "items" in deserialized:
             list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
-        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
-        return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
+            return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
+        return deserialized.get("@nextLink") or None, None
 
+
+    def __next__(self) -> Iterator[ReturnType]:
+        """Get the next page in the iterator.
+
+        :returns: An iterator of objects in the next page.
+        :rtype: iterator[ReturnType]
+        :raises StopIteration: If there are no more pages to return.
+        :raises AzureError: If the request fails.
+        """
+        if self.continuation_token is None and self._did_a_call_already:
+            raise StopIteration("End of paging")
+        try:
+            self._response = self._get_next(self.continuation_token)
+        except AzureError as error:
+            if not error.continuation_token:
+                error.continuation_token = self.continuation_token
+            raise
+
+        self._did_a_call_already = True
+
+        self.continuation_token, self._current_page = self._extract_data(self._response)
+        if self._current_page is None:
+            # We skip over pages that are empty, change from mach conditions
+            return self.__next__()
+        return iter(self._current_page)
 
 class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
     """An iterable of ConfigurationSetting properties."""
