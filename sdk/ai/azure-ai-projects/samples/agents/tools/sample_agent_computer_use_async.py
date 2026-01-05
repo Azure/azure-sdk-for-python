@@ -34,7 +34,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ComputerUsePreviewTool
+from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
 from computer_use_util import (
     SearchState,
     load_screenshot_assets,
@@ -103,7 +103,7 @@ async def main():
                     ],
                 }
             ],
-            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 
@@ -155,7 +155,7 @@ async def main():
                         },
                     }
                 ],
-                extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
                 truncation="auto",
             )
 

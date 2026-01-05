@@ -23,6 +23,7 @@ def collect_customer_sdkstats(exporter: "BaseExporter") -> None:  # type: ignore
         customer_stats.initialize(connection_string=exporter._connection_string)  # type: ignore
     set_statsbeat_customer_sdkstats_feature_set()
 
+
 def shutdown_customer_sdkstats_metrics() -> None:
     # Shutdown customer SDKStats metrics collection.
     customer_stats = get_customer_stats_manager()

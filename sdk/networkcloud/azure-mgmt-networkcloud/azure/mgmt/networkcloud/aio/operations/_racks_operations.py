@@ -148,7 +148,10 @@ class RacksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -240,7 +243,10 @@ class RacksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -295,7 +301,10 @@ class RacksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Rack", pipeline_response.http_response)
@@ -366,7 +375,10 @@ class RacksOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -396,9 +408,8 @@ class RacksOperations:
     ) -> AsyncLROPoller[_models.Rack]:
         """Create or update the rack.
 
-        Create a new rack or update properties of the existing one.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Create a new rack or update properties of the existing one. All customer initiated requests
+        will be rejected as the life cycle of this resource is managed by the system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -437,9 +448,8 @@ class RacksOperations:
     ) -> AsyncLROPoller[_models.Rack]:
         """Create or update the rack.
 
-        Create a new rack or update properties of the existing one.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Create a new rack or update properties of the existing one. All customer initiated requests
+        will be rejected as the life cycle of this resource is managed by the system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -476,9 +486,8 @@ class RacksOperations:
     ) -> AsyncLROPoller[_models.Rack]:
         """Create or update the rack.
 
-        Create a new rack or update properties of the existing one.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Create a new rack or update properties of the existing one. All customer initiated requests
+        will be rejected as the life cycle of this resource is managed by the system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -599,7 +608,10 @@ class RacksOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -624,9 +636,8 @@ class RacksOperations:
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Delete the rack.
 
-        Delete the provided rack.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Delete the provided rack. All customer initiated requests will be rejected as the life cycle of
+        this resource is managed by the system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -760,7 +771,10 @@ class RacksOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
