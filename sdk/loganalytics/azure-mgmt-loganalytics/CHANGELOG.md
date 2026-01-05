@@ -1,8 +1,10 @@
 # Release History
 
-## 13.2.0 (2025-12-21)
+## 13.1.1 (2025-01-05)
 
-tool can't generate changelog for this release, please update manually.
+### Bug Fixed
+
+  - Made the destination_table field writable in RuleDefinition.
 
 ## 13.1.0 (2025-12-08)
 
