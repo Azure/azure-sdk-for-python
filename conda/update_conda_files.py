@@ -321,6 +321,7 @@ def update_conda_sdk_client_yml(
         #     )
         #     continue
 
+        # TODO what is the case where we batch multiple subservices under one???
         release_name = f"release_{package_name.replace('-', '_')}"
         new_parameter = {
             "name": release_name,
@@ -358,6 +359,7 @@ def update_conda_sdk_client_yml(
 
     # TODO note this dump doesn't preserve some quotes like around
     #    displayName: 'azure-developer-loadtesting' but i don't think those functionally necessary?
+    # double check that this is ok, esp for URLs... ^
 
     if updated_count > 0 or added_count > 0:
         with open(CONDA_CLIENT_YAML_PATH, "w") as file:
@@ -385,7 +387,7 @@ def get_package_path(package_name: str) -> str:
 
 
 def determine_service_info(package_name: str) -> Tuple[str, str]:
-    # TODO how to actually determine, this is mostly placeholder
+    # TODO how to actually determine?, this is mostly placeholder
     """
     Dynamically determine the common_root and service name based on package name and directory structure.
 
@@ -399,7 +401,7 @@ def determine_service_info(package_name: str) -> Tuple[str, str]:
 
     # and some packages don't have a common_root field at all??
 
-    # services with a shared common root include 
+    # services with a shared common root include
     # "azure-ai", "azure-mgmt", "azure-storage", "azure-communication", etc.
 
     # TODO idk how to properly get the service name, e.g. azure-ai-voicelive is projects?
@@ -591,8 +593,72 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> None:
         return
     logger.info(f"Adding {len(new_packages)} new management plane packages")
 
-    # with open(CONDA_MGMT_META_YAML_PATH, "r") as file:
-    #     mgmt_meta_data = yaml.safe_load(file)
+    # can't use pyyaml due to jinja2
+    with open(CONDA_MGMT_META_YAML_PATH, "r") as file:
+        content = file.read()
+
+    test_match = re.search(
+        r"^test:\s*\n\s*imports:(.*?)^(?=\w)", content, re.MULTILINE | re.DOTALL
+    )
+    if not test_match:
+        logger.error("Could not find 'test: imports:' section in meta.yaml")
+        return
+
+    existing_imports_text = test_match.group(1)
+    existing_imports = [
+        line.strip()
+        for line in existing_imports_text.strip().split("\n")
+        if line.strip().startswith("-")
+    ]
+
+    new_imports = []
+    for pkg in new_packages:
+        package_name = pkg.get(PACKAGE_COL)
+        if not package_name:
+            logger.warning("Skipping package with missing name")
+            continue
+
+        # TODO there are some existing packages that have hyphens instead lf . which must be wrong
+        # ^ should manually edit these before running this script coz it messes with sort
+
+        # convert package name to module name (e.g., azure-mgmt-advisor -> azure.mgmt.advisor)
+        module_name = package_name.replace("-", ".")
+
+        # Standard import patterns for mgmt packages
+        imports = [
+            f"- {module_name}",
+            f"- {module_name}.aio",
+            f"- {module_name}.aio.operations",
+            f"- {module_name}.models",
+            f"- {module_name}.operations",
+        ]
+
+        new_imports.extend(imports)
+        logger.info(f"Generated import statements for {package_name}")
+
+    all_imports = list(set(existing_imports + new_imports))
+
+    # sort alphabetically
+    all_imports.sort()
+
+    # format imports with proper indentation
+    formatted_imports = "\n".join(f"    {imp}" for imp in all_imports)
+
+    # replace the imports section
+    new_imports_section = f"test:\n  imports:\n{formatted_imports}\n\n"
+    updated_content = re.sub(
+        r"^test:\s*\n\s*imports:.*?^(?=\w)",
+        new_imports_section,
+        content,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+
+    with open(CONDA_MGMT_META_YAML_PATH, "w") as file:
+        file.write(updated_content)
+
+    logger.info(
+        f"Added {len(new_packages)} new management plane packages to meta.yaml in alphabetical order"
+    )
 
 
 if __name__ == "__main__":
@@ -632,12 +698,12 @@ if __name__ == "__main__":
 
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
-    update_conda_sdk_client_yml(
-        outdated_packages, new_data_plane_packages, new_mgmt_plane_packages
-    )
+    # update_conda_sdk_client_yml(
+    #     outdated_packages, new_data_plane_packages, new_mgmt_plane_packages
+    # )
 
     # handle new data plane libraries
-    add_new_data_plane_packages(new_data_plane_packages)
+    # add_new_data_plane_packages(new_data_plane_packages)
 
     # handle new mgmt plane libraries
     add_new_mgmt_plane_packages(new_mgmt_plane_packages)
