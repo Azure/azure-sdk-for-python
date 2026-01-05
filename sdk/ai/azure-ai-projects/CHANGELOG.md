@@ -5,7 +5,7 @@
 ### Features Added
 
 * The package now takes dependency on openai and azure-identity packages. No need to install them separately.
-* Tracing: support for tracing the schema when agent is created with structured output definition.
+* Tracing: support for tracing the schema when an Agent is created with structured output definition.
 
 ### Breaking changes
 
@@ -23,6 +23,7 @@
 * Tracing: changed the tool calls to use the api definitions as the types in traces. For example "function_call" instead of "function" and "function_call_output" instead of "function"
 
 ### Bugs Fixed
+
 * Tracing: fixed a bug with computer use tool call output including screenshot binary data even when binary data tracing is off.
 
 ### Sample updates
