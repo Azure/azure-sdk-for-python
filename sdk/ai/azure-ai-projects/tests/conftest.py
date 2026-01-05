@@ -22,9 +22,8 @@ from devtools_testutils import (
     add_body_regex_sanitizer,
 )
 
-if not load_dotenv(find_dotenv(filename=".test.env"), override=True):
-    print("Failed to apply environment variables for azure-ai-projects tests.")
-
+if not load_dotenv(find_dotenv(), override=True):
+    print("Did not find a .env file. Using default environment variable values for tests.")
 
 def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
