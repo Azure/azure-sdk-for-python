@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Union
+from typing import Optional, Union
 
 from langgraph.types import (
     Command,
@@ -60,7 +60,7 @@ class HumanInTheLoopHelper:
 
     def validate_and_convert_human_feedback(
             self, state: StateSnapshot, input: Union[str, ResponseInputParam]
-            ) -> Union[Command, None]:
+            ) -> Optional[Command]:
         """Validate if the human feedback input corresponds to the interrupt in state.
         If valid, convert the input to a LangGraph Command.
 
