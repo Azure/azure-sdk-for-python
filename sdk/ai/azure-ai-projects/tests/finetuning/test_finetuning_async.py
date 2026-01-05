@@ -18,7 +18,7 @@ from test_base import (
     DEVELOPER_TIER_TRAINING_TYPE,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import is_live_and_not_recording, RecordedTransport
+from devtools_testutils import is_live, RecordedTransport
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
@@ -345,14 +345,15 @@ class TestFineTuningAsync(TestBase):
                     deployment_name=deployment_name,
                     deployment=deployment_config,
                 )
-
-                while deployment_operation.status() not in ["Succeeded", "Failed"]:
-                    await asyncio.sleep(30)
+                if is_live():
+                    print(f"[{test_prefix}] Waiting for deployment to complete...")
+                    await deployment_operation.result()
                     print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
 
                 print(f"[{test_prefix}] Deployment completed successfully")
-                print(f"[{test_prefix}] Waiting for 120 seconds for deployment to be fully ready.")
-                await asyncio.sleep(120)
+                if is_live():
+                    print(f"[{test_prefix}] Waiting for 10 minutes for deployment to be fully ready.")
+                    await asyncio.sleep(600)
                 print(f"[{test_prefix}] Testing inference on deployment: {deployment_name}")
 
                 response = await openai_client.responses.create(
@@ -654,10 +655,6 @@ class TestFineTuningAsync(TestBase):
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to pause any job",
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_pause_job_async(self, **kwargs):
@@ -691,10 +688,6 @@ class TestFineTuningAsync(TestBase):
             print(f"[test_finetuning_pause_job] Job status after pause: {paused_job.status}")
             print(f"[test_finetuning_pause_job] Successfully paused and verified job: {running_job_id}")
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to pause any job",
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_resume_job_async(self, **kwargs):
@@ -771,12 +764,8 @@ class TestFineTuningAsync(TestBase):
                 f"[test_finetuning_list_checkpoints] Successfully validated {len(checkpoints_list)} checkpoints for job: {completed_job_id}"
             )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because API not sending completed or failed status despite job being complete",
-    )
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oai_model_sft_job_async(self, **kwargs):
         completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id")
         await self._test_deploy_and_infer_helper_async(
@@ -788,12 +777,8 @@ class TestFineTuningAsync(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to complete any RFT job",
-    )
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oai_model_rft_job_async(self, **kwargs):
         completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_rft_fine_tuning_job_id")
         await self._test_deploy_and_infer_helper_async(
@@ -805,12 +790,8 @@ class TestFineTuningAsync(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because API not sending completed or failed status despite job being complete",
-    )
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oai_model_dpo_job_async(self, **kwargs):
         completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_dpo_fine_tuning_job_id")
         await self._test_deploy_and_infer_helper_async(
@@ -822,12 +803,8 @@ class TestFineTuningAsync(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because API not sending completed or failed status despite job being complete",
-    )
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_deploy_and_infer_oss_model_sft_job_async(self, **kwargs):
         completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oss_model_sft_fine_tuning_job_id")
         await self._test_deploy_and_infer_helper_async(

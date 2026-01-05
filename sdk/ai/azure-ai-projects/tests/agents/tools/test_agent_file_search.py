@@ -45,7 +45,7 @@ class TestAgentFileSearch(TestBase):
         DELETE /vector_stores/{id}                           openai_client.vector_stores.delete()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -203,7 +203,7 @@ Widget B,Q2,25000"""
         while using File Search to answer follow-up questions.
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

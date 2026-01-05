@@ -47,6 +47,8 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_agents_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_model_deployment_name="gpt-4o",
+    azure_ai_projects_tests_image_generation_model_deployment_name="gpt-image-1-mini",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
     azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
@@ -64,6 +66,8 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_azure_resource_group="sanitized-resource-group",
     azure_ai_projects_tests_ai_search_user_input="What is Azure AI Projects?",
     azure_ai_projects_tests_sharepoint_user_input="What is SharePoint?",
+    azure_ai_projects_tests_memory_store_chat_model_deployment_name="gpt-4.1-mini",
+    azure_ai_projects_tests_memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
 
 # Fine-tuning job type constants
@@ -162,12 +166,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
-    }
-
-    test_agents_tools_params = {
-        "image_generation_model_deployment_name": "gpt-image-1-mini",
     }
 
     test_inference_params = {
@@ -296,6 +295,8 @@ class TestBase(AzureRecordedTestCase):
         endpoint = kwargs.pop(project_endpoint_env_variable)
         credential = self.get_credential(AIProjectClient, is_async=False)
 
+        print(f"Creating AIProjectClient with endpoint: {endpoint}")
+
         # create and return client
         client = AIProjectClient(
             endpoint=endpoint,
@@ -314,6 +315,8 @@ class TestBase(AzureRecordedTestCase):
         )
         endpoint = kwargs.pop(project_endpoint_env_variable)
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+
+        print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 
         # create and return async client
         client = AsyncAIProjectClient(
