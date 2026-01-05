@@ -85,6 +85,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
         project_scope=mock_azure_ai_project,
         credential=MockCredential,
         annotation_task="content harm",
+        use_legacy_endpoint=False,
     )
 
     assert len(response.request_pieces) == 1

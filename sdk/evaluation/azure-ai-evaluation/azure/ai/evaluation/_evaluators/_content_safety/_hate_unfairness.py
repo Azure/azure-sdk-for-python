@@ -100,7 +100,6 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
             threshold=threshold,
             _higher_is_better=False,
-            _use_legacy_endpoint=_use_legacy_endpoint,
             **kwargs,
         )
 

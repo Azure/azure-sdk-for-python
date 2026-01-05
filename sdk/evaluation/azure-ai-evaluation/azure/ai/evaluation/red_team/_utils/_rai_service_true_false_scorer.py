@@ -38,6 +38,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         prompt_template_key: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
         context: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Initialize the scorer.
 
