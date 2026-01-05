@@ -41,6 +41,7 @@ def main():
                     "binDelay": 10,
                     "binSize": 180,
                     "binStartTime": "2020-02-03T04:05:06Z",
+                    "destinationTable": "MyDestinationTable_CL",
                     "query": "MyTable_CL",
                 },
                 "ruleType": "User",
