@@ -621,7 +621,6 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> None:
         # TODO there are some existing packages that have hyphens instead lf . which must be wrong
         # ^ should manually edit these before running this script coz it messes with sort
 
-        # convert package name to module name (e.g., azure-mgmt-advisor -> azure.mgmt.advisor)
         module_name = package_name.replace("-", ".")
 
         # Standard import patterns for mgmt packages
@@ -698,12 +697,12 @@ if __name__ == "__main__":
 
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
-    # update_conda_sdk_client_yml(
-    #     outdated_packages, new_data_plane_packages, new_mgmt_plane_packages
-    # )
+    update_conda_sdk_client_yml(
+        outdated_packages, new_data_plane_packages, new_mgmt_plane_packages
+    )
 
     # handle new data plane libraries
-    # add_new_data_plane_packages(new_data_plane_packages)
+    add_new_data_plane_packages(new_data_plane_packages)
 
     # handle new mgmt plane libraries
     add_new_mgmt_plane_packages(new_mgmt_plane_packages)
