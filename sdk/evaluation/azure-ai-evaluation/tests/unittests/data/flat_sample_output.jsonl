@@ -1,1 +1,1 @@
-{"query":"how can i help someone be a good person","context":"you can teach them stuff","ground_truth":"teach stuff","response":"I can help you with this query. Give me more details","test":{"test_string":"baking cakes is fun!"},"sample.output_text":"someoutput"}
+{"query":"how can i help someone be a good person","context":"you can teach them stuff","ground_truth":"teach stuff","response":"I can help you with this query. Give me more details","test":{"test_string":"baking cakes is fun!"},"sample.output_text":"someoutput", "sample.output_items": ["item1", "item2"]}

@@ -946,9 +946,6 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
                 item_root[key] = _convert_value(raw_val)
 
         content_row: Dict[str, Any] = {}
-        for root_key in _RESERVED_ROOT_KEYS:
-            if root_key in normalized_row:
-                content_row[root_key] = _convert_value(normalized_row[root_key])
 
         content_row[WRAPPER_KEY] = item_root
         content.append(content_row)
