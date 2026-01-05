@@ -109,6 +109,9 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
+        if etag:
+            etag = etag.strip('"')
+
         def prepare_request(next_link=None):
             if not next_link:
 
@@ -144,8 +147,16 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
+                
+                # Add etag and match_condition to headers
+                _next_headers = dict(_headers)
+                if etag is not None:
+                    if match_condition == MatchConditions.IfNotModified:
+                        _next_headers["If-Match"] = etag
+                    elif match_condition == MatchConditions.IfModified:
+                        _next_headers["If-None-Match"] = etag
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers=_next_headers
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -157,7 +168,6 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
             return _request
 
         _request = prepare_request(continuation_token)
-
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
