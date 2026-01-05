@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 
@@ -51,7 +51,7 @@ class Element(_Model):
     :vartype recursive_element: list[~modeltypes.models.RecursiveElement]
     """
 
-    recursive_element: Optional[List["_models.RecursiveElement"]] = rest_field(
+    recursive_element: Optional[list["_models.RecursiveElement"]] = rest_field(
         name="recursiveElement", visibility=["read", "create", "update", "delete", "query"]
     )
 
@@ -59,7 +59,7 @@ class Element(_Model):
     def __init__(
         self,
         *,
-        recursive_element: Optional[List["_models.RecursiveElement"]] = None,
+        recursive_element: Optional[list["_models.RecursiveElement"]] = None,
     ) -> None: ...
 
     @overload
@@ -85,7 +85,7 @@ class Fish(_Model):
     :vartype age: int
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind")
     """Discriminator property for Fish. Required. Default value is None."""
     age: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -178,7 +178,7 @@ class Shark(Fish, discriminator="shark"):
     :vartype shark_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: Literal["shark"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"shark\"."""
     shark_type: str = rest_discriminator(name="sharkType", visibility=["read", "create", "update", "delete", "query"])
@@ -200,7 +200,8 @@ class Shark(Fish, discriminator="shark"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind="shark", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = "shark"  # type: ignore
 
 
 class GoblinShark(Shark, discriminator="goblin"):
@@ -214,7 +215,7 @@ class GoblinShark(Shark, discriminator="goblin"):
     :vartype shark_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     shark_type: Literal["goblin"] = rest_discriminator(name="sharkType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"goblin\"."""
 
@@ -233,7 +234,8 @@ class GoblinShark(Shark, discriminator="goblin"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, shark_type="goblin", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.shark_type = "goblin"  # type: ignore
 
 
 class PropertiesModel(_Model):
@@ -326,8 +328,8 @@ class Salmon(Fish, discriminator="salmon"):
 
     kind: Literal["salmon"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"salmon\"."""
-    friends: Optional[List["_models.Fish"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    hate: Optional[Dict[str, "_models.Fish"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    friends: Optional[list["_models.Fish"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    hate: Optional[dict[str, "_models.Fish"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     life_partner: Optional["_models.Fish"] = rest_field(
         name="lifePartner", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -337,8 +339,8 @@ class Salmon(Fish, discriminator="salmon"):
         self,
         *,
         age: int,
-        friends: Optional[List["_models.Fish"]] = None,
-        hate: Optional[Dict[str, "_models.Fish"]] = None,
+        friends: Optional[list["_models.Fish"]] = None,
+        hate: Optional[dict[str, "_models.Fish"]] = None,
         life_partner: Optional["_models.Fish"] = None,
     ) -> None: ...
 
@@ -350,7 +352,8 @@ class Salmon(Fish, discriminator="salmon"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind="salmon", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = "salmon"  # type: ignore
 
 
 class SawShark(Shark, discriminator="saw"):
@@ -364,7 +367,7 @@ class SawShark(Shark, discriminator="saw"):
     :vartype shark_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     shark_type: Literal["saw"] = rest_discriminator(name="sharkType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"saw\"."""
 
@@ -383,7 +386,8 @@ class SawShark(Shark, discriminator="saw"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, shark_type="saw", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.shark_type = "saw"  # type: ignore
 
 
 class Scratch(_Model):
