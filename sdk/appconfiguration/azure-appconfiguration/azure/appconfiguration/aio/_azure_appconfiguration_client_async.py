@@ -241,7 +241,6 @@ class AzureAppConfigurationClient:
             accept_datetime=accept_datetime,
             select=select,
             tags=tags,
-            client=self,
             page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
         )
 

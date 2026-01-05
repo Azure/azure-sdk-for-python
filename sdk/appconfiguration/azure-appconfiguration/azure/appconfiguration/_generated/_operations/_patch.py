@@ -115,9 +115,6 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        if etag:
-            etag = etag.strip('"')
-
         def prepare_request(next_link=None):
             if not next_link:
 

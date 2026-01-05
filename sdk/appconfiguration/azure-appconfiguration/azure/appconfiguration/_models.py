@@ -607,7 +607,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
     def _get_next_cb(self, continuation_token, **kwargs):
         etag = None
         if self._etags and len(self._etags) > self._current_etag:
-            etag = self._etags[self._current_etag].strip('"')
+            etag = self._etags[self._current_etag]
             self._current_etag += 1
         return self._command(
             key=self._key,
@@ -674,29 +674,63 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._tags = kwargs.get("tags")
+        self._etags: List[str] = kwargs.get("etags", [])
+        self._current_etag = 0
+        self._match_condition = kwargs.get("match_condition")
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
 
     async def _get_next_cb(self, continuation_token, **kwargs):
+        etag = None
+        if self._etags and len(self._etags) > self._current_etag:
+            etag = self._etags[self._current_etag]
+            self._current_etag += 1
         return await self._command(
             key=self._key,
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
             tags=self._tags,
-            etag=self._kwargs["etags"],
-            match_condition=self._kwargs["match_condition"],
+            etag=etag,
+            match_condition=self._match_condition,
             continuation_token=continuation_token,
             cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
         )
 
     async def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
-        list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
-        self.etag = response_headers.pop("ETag")
-        return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
+        list_of_elem = []
+        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
+        if "items" in deserialized:
+            list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
+            return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
+        return deserialized.get("@nextLink") or None, None
 
+    def __next__(self) -> Iterator[ReturnType]:
+        """Get the next page in the iterator.
+
+        :returns: An iterator of objects in the next page.
+        :rtype: iterator[ReturnType]
+        :raises StopIteration: If there are no more pages to return.
+        :raises AzureError: If the request fails.
+        """
+        if self.continuation_token is None and self._did_a_call_already:
+            raise StopIteration("End of paging")
+        try:
+            self._response = self._get_next(self.continuation_token)
+        except AzureError as error:
+            if not error.continuation_token:
+                error.continuation_token = self.continuation_token
+            raise
+
+        self._did_a_call_already = True
+
+        self.continuation_token, self._current_page = self._extract_data(self._response)
+        if self._current_page is None:
+            # We skip over pages that are empty, change from mach conditions
+            return self.__next__()
+        return iter(self._current_page)
 
 class ConfigurationSettingPaged(ItemPaged):
     """
@@ -777,10 +811,6 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         :param args: Arguments to pass to the PageIterator constructor
         :param kwargs: Keyword arguments to pass to the PageIterator constructor
         """
-        self._client = kwargs.pop("client", None)
-        self._key_filter = kwargs.pop("key_filter", None)
-        self._label_filter = kwargs.pop("label_filter", None)
-        self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPagedAsync, self).__init__(*args, **kwargs)
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
@@ -796,5 +826,7 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         :returns: An async iterator of pages (themselves iterator of objects)
         :rtype: AsyncIterator[AsyncIterator[ReturnType]]
         """
+        if "match_conditions" not in self._kwargs and match_conditions:
+            self._kwargs["etags"] = match_conditions
+            self._kwargs["match_condition"] = MatchConditions.IfModified
         return self._page_iterator_class(continuation_token=continuation_token, *self._args, **self._kwargs)
-
