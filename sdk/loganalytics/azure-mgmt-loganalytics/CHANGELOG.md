@@ -2,7 +2,7 @@
 
 ## 13.1.1 (2025-01-05)
 
-### Bug Fixed
+### Bugs Fixed
 
   - Made the destination_table field writable in RuleDefinition.
 
