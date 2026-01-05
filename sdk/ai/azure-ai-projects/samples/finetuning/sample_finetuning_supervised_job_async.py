@@ -107,9 +107,8 @@ async def deploy_model(openai_client, credential, job_id):
             deployment=deployment_config,
         )
 
-        while deployment.status() not in ["Succeeded", "Failed"]:
-            await asyncio.sleep(30)
-            print(f"Deployment status: {deployment.status()}")
+        print(f"Waiting for deployment to complete...")
+        await deployment.result()
 
     print(f"Model deployment completed: {deployment_name}")
     return deployment_name
