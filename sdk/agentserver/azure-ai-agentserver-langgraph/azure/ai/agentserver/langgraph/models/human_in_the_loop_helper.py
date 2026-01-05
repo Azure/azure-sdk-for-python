@@ -38,6 +38,9 @@ class HumanInTheLoopHelper:
         result = []
         # should be only one interrupt for now
         for interrupt_info in interrupts:
+            if not isinstance(interrupt_info, Interrupt):
+                # skip invalid interrupt
+                continue
             item = self.convert_interrupt(interrupt_info)
             if item:
                 result.append(item)

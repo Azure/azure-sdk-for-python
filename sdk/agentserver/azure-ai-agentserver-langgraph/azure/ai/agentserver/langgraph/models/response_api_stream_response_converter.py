@@ -49,7 +49,7 @@ class ResponseAPIStreamResponseConverter(ABC):
 
 
 class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConverter):
-    def __init__(self, context: AgentRunContext, hitl_helper: HumanInTheLoopHelper):
+    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper):
         # self.stream = stream
         self.context = context
         self.hitl_helper = hitl_helper
@@ -60,7 +60,7 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
     def convert(self, output_event: Union[AnyMessage, dict, Any, None]):
         try:
             if self.current_generator is None:
-                self.current_generator = ResponseStreamEventGenerator(logger, None, self.hitl_helper)
+                self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
             message= output_event[0] # expect a tuple
             converted = self.try_process_message(message, self.context)
             return converted
@@ -83,7 +83,7 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
 
     def try_process_message(self, event: Union[AnyMessage, Any, None], context: AgentRunContext) -> List[ResponseStreamEvent]:
         if event and not self.current_generator:
-            self.current_generator = ResponseStreamEventGenerator(logger, None)
+            self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
 
         is_processed = False
         next_processor = self.current_generator

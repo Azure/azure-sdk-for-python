@@ -24,7 +24,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
     Response stream event generator.
     """
 
-    def __init__(self, logger, parent, hitl_helper=None):
+    def __init__(self, logger, parent, *, hitl_helper=None):
         super().__init__(logger, parent)
         self.hitl_helper = hitl_helper
         self.aggregated_contents: List[project_models.ItemResource] = []

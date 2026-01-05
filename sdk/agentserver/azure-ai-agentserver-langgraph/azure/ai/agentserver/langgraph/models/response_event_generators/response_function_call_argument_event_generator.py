@@ -18,11 +18,15 @@ from . import ResponseEventGenerator, StreamEventState
 
 
 class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
-    def __init__(self,
-            logger,
-            parent: ResponseEventGenerator,
-            item_id, message_id, output_index: int,
-            hitl_helper: HumanInTheLoopHelper = None
+    def __init__(
+        self,
+        logger,
+        parent: ResponseEventGenerator,
+        item_id,
+        message_id,
+        output_index: int,
+        *,
+        hitl_helper: HumanInTheLoopHelper = None,
     ):
         super().__init__(logger, parent)
         self.item_id = item_id

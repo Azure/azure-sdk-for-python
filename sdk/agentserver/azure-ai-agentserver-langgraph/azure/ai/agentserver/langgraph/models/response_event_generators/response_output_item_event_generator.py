@@ -22,7 +22,7 @@ from .response_function_call_argument_event_generator import ResponseFunctionCal
 class ResponseOutputItemEventGenerator(ResponseEventGenerator):
     def __init__(self, logger, parent: ResponseEventGenerator,
                  output_index: int, message_id: str = None,
-                 hitl_helper: HumanInTheLoopHelper = None):
+                 *, hitl_helper: HumanInTheLoopHelper = None):
         super().__init__(logger, parent)
         self.output_index = output_index
         self.message_id = message_id
