@@ -1173,7 +1173,7 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
+Have a look at the [Samples][samples] folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
 ## Contributing
 
