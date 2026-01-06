@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Updated CodeVulnerability and UngroundedAttributes evaluators for RedTeam to use the binary true/false scoring pattern so their results align with service responses.
+- Fixed `GroundednessEvaluator` with `query` not honoring `is_reasoning_model` (and `credential`) when reloading the query prompty, which could cause `max_tokens` to be sent to reasoning models. [#44385](https://github.com/Azure/azure-sdk-for-python/issues/44385)
 
 ### Other Changes
 
