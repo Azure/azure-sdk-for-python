@@ -105,9 +105,8 @@ def deploy_model(openai_client, credential, job_id):
             deployment=deployment_config,
         )
 
-        while deployment.status() not in ["Succeeded", "Failed"]:
-            time.sleep(30)
-            print(f"Deployment status: {deployment.status()}")
+        print("Waiting for deployment to complete...")
+        deployment.result()
 
     print(f"Model deployment completed: {deployment_name}")
     return deployment_name
