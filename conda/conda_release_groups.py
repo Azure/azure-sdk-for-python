@@ -22,8 +22,7 @@ RELEASE_GROUPS = {
         "common_root": "azure",
         "service": "core",
     },
-    
-    # Communication 
+    # Communication
     "azure-communication": {
         "packages": [
             "azure-communication-chat",
@@ -39,7 +38,6 @@ RELEASE_GROUPS = {
         "common_root": "azure/communication",
         "service": "communication",
     },
-    
     # Storage
     "azure-storage": {
         "packages": [
@@ -51,8 +49,7 @@ RELEASE_GROUPS = {
         "common_root": "azure/storage",
         "service": "storage",
     },
-    
-    # Schema Registry       
+    # Schema Registry
     "azure-schemaregistry": {
         "packages": [
             "azure-schemaregistry",
@@ -61,7 +58,6 @@ RELEASE_GROUPS = {
         "common_root": "azure/schemaregistry",
         "service": "schemaregistry",
     },
-    
     # Event Hub
     "azure-eventhub": {
         "packages": [
@@ -72,28 +68,26 @@ RELEASE_GROUPS = {
         "common_root": "azure/eventhub",
         "service": "eventhub",
     },
-
     "azure-keyvault": {
-        "packages": ["azure-keyvault-secrets", "azure-keyvault-keys", "azure-keyvault-certificates"],
+        "packages": [
+            "azure-keyvault-administration",
+            "azure-keyvault-secrets",
+            "azure-keyvault-keys",
+            "azure-keyvault-certificates",
+        ],
         "common_root": "azure/keyvault",
         "service": "keyvault",
     },
-    
-    # Packages with common root exceptions 
-
-    "msrest": {
-        "packages": ["msrest"],
-        "common_root": None
-    },
-    
-    "msal": {
-        "packages": ["msal"],
-        "common_root": None
-    },
-    
+    # Packages with common root exceptions
+    "msrest": {"packages": ["msrest"], "common_root": None},
+    "msal": {"packages": ["msal"], "common_root": None},
     "msal-extensions": {
         "packages": ["msal-extensions"],
         "common_root": "msal",
+    },
+    "azure-ai-vision": {
+        "packages": ["azure-ai-vision-imageanalysis"],
+        "common_root": "azure/vision",
     },
 }
 
@@ -106,20 +100,22 @@ def get_package_to_group_mapping():
             mapping[package] = group_name
     return mapping
 
+
 def get_release_group(package_name: str, package_to_group: dict) -> str:
     """
     Get the release group name for a given package.
-    
+
     :param package_name: The package name (e.g., "azure-core", "azure-communication-chat")
     :return: The release group name (e.g., "azure-core", "azure-communication")
     """
     return package_to_group.get(package_name, package_name)
 
+
 def get_package_group_data(group_name: str) -> dict:
     """
     Get all packages that belong to a release group.
-    
+
     :param group_name: The release group name
-    :return: The group data dictionary 
+    :return: The group data dictionary
     """
     return RELEASE_GROUPS.get(group_name, {})
