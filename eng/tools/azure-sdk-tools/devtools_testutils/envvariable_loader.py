@@ -192,7 +192,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
 
 class EnvironmentVariable:
-    def __init__(self, secret):
+    def __init__(self, secret: str) -> None:
         self.secret = secret
 
     def __str__(self):
