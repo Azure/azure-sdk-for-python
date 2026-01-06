@@ -58,6 +58,7 @@ FileSharePreparer = functools.partial(
     premium_storage_file_account_key=STORAGE_ACCOUNT_FAKE_KEY,
     secondary_storage_account_name="pyrmtstoragestorname",
     secondary_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    hide_secrets=["storage_account_key", "secondary_storage_account_key", "premium_storage_file_account_key"],
 )
 
 
