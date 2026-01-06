@@ -190,7 +190,11 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        valid_status_codes = [200]
+        if etag is not None and match_condition is not None:
+            valid_status_codes.append(304)
+
+        if response.status_code not in valid_status_codes:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)

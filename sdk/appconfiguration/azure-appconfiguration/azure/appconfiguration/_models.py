@@ -609,22 +609,41 @@ class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instan
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
 
-    def _next_etag(self):
-        etag = None
-        if self._etags and len(self._etags) > self._current_etag:
-            etag = self._etags[self._current_etag]
-            self._current_etag += 1
+    def _next_etag(self) -> Optional[str]:
+        """Get the next etag from the list and increment the current position.
+
+        :return: The next etag if available, otherwise None.
+        :rtype: str or None
+        """
+        if not self._etags or self._current_etag >= len(self._etags):
+            return None
+        etag = self._etags[self._current_etag]
+        self._current_etag += 1
         return etag
 
-    def _extract_data_cb_base(self, get_next_return):
+    def _extract_data_cb_base(self, get_next_return) -> tuple:
+        """Extract pagination data from the response.
+
+        :param get_next_return: Tuple of (deserialized response, response headers)
+        :return: Tuple of (next_link, page iterator or None)
+        :rtype: tuple
+        """
         deserialized, response_headers = get_next_return
-        self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1] if self._etags else None)
-        next_link = deserialized.get("@nextLink") or None
-        page = None
+
+        # Set etag from response headers, or fall back to expected etag if available
+        self.etag = response_headers.get("ETag")
+        if self._etags and self._current_etag > 0:
+            # There was a 304 Not Modified response, we need to set the etag
+            self.etag = response_headers.get("ETag", self._etags[self._current_etag - 1])
+
+        next_link = deserialized.get("@nextLink")
+
         if "items" in deserialized:
             list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
-            page = iter(self._deserializer(list_of_elem))
-        return next_link, page
+            return next_link, iter(self._deserializer(list_of_elem))
+
+        # No items found in the response, skipping the page
+        return next_link, None
 
 
 class ConfigurationSettingPropertiesPaged(

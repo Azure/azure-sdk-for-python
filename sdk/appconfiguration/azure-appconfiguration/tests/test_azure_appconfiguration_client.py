@@ -1175,6 +1175,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
             assert match_conditions[0] == new_match_conditions[0]
             assert match_conditions[1] != new_match_conditions[1]
+            assert match_conditions[2] != new_match_conditions[2]
             assert len(new_match_conditions) == 3
 
             # monitor pages after updates - only changed pages will be yielded

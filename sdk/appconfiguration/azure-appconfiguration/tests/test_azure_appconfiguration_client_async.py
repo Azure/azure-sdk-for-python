@@ -1177,9 +1177,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
             iterator = items.by_page(match_conditions=match_conditions)
-            changed_pages = []
-            async for page in iterator:
-                changed_pages.append(page)
+            changed_pages = [page async for page in iterator]
             # No pages should be yielded since nothing changed
             assert len(changed_pages) == 0
 
@@ -1204,16 +1202,16 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
             assert match_conditions[0] == new_match_conditions[0]
             assert match_conditions[1] != new_match_conditions[1]
+            assert match_conditions[2] == new_match_conditions[2]
             assert len(new_match_conditions) == 3
 
             # monitor pages after updates - only changed pages will be yielded
             items = client.list_configuration_settings(
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            iterator = items.by_page(match_conditions=match_conditions)
-            changed_pages = []
-            async for page in iterator:
-                changed_pages.append(page)
+            iterator = items.by_page(match_conditions=new_match_conditions)
+            changed_pages = [page async for page in iterator]
+
             # Should yield 0 pages
             assert len(changed_pages) == 0
 
