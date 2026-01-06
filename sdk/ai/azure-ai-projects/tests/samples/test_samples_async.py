@@ -6,17 +6,13 @@
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
-from test_samples import (
-    SampleExecutor,
+from test_base import servicePreparer
+from sample_executor import (
+    AsyncSampleExecutor,
     SamplePathPasser,
-    get_sample_paths,
-    get_sample_environment_variables_map,
-    servicePreparer,
+    get_async_sample_paths,
 )
-
-
-def _get_async_sample_paths(sub_folder: str, *, samples_to_skip: list[str]) -> list:
-    return get_sample_paths(sub_folder, samples_to_skip=samples_to_skip, is_async=True)
+from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 
 class TestSamplesAsync(AzureRecordedTestCase):
@@ -27,16 +23,23 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @servicePreparer()
     @pytest.mark.parametrize(
         "sample_path",
-        _get_async_sample_paths(
+        get_async_sample_paths(
             "agents/tools",
-            samples_to_skip=[
-                "sample_agent_mcp_with_project_connection_async.py",
-            ],
+            samples_to_skip=["sample_agent_mcp_with_project_connection_async.py"],
         ),
     )
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
-        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = AsyncSampleExecutor(
+            self,
+            sample_path,
+            env_var_mapping=env_var_mapping,
+            **kwargs,
+        )
         await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async(
+            instructions=agent_tools_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+        )

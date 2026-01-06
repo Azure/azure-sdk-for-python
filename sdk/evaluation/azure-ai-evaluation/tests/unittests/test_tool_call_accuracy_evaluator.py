@@ -297,7 +297,7 @@ class TestToolCallAccuracyEvaluator:
 
         assert "Invalid score value" in str(exc_info.value)
 
-    def test_evaluate_tools_some_not_applicable(self, mock_model_config):
+    def test_evaluate_tools_some_missing_tool_definitions(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
@@ -331,21 +331,7 @@ class TestToolCallAccuracyEvaluator:
                         }
                     },
                 },
-            },
-            {
-                "name": "buy_jacket",
-                "type": "another_built_in",  # This tool will be filtered out
-                "description": "Buy a jacket of the given type.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "type": {
-                            "type": "string",
-                            "description": "The type of jacket to buy.",
-                        }
-                    },
-                },
-            },
+            },  # buy_jacket definition is missing
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
@@ -357,7 +343,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
         assert result[f"{key}_details"] == {}
 
-    def test_evaluate_tools_all_not_applicable(self, mock_model_config):
+    def test_evaluate_tools_built_in_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
@@ -374,7 +360,7 @@ class TestToolCallAccuracyEvaluator:
         tool_definitions = [
             {
                 "name": "fetch_weather",
-                "type": "some_built_in",  # Not a 'function' type
+                "type": "some_built_in",  # Not a 'function' type but shouldn't be filtered out
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
@@ -391,11 +377,13 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert result[key] == 5.0  # All good gets score 5
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result[f"{key}_details"] == {}
+        assert f"{key}_reason" in result
+        assert result[f"{key}_reason"] == "Evaluated 1 tool calls with 1 correct calls."
+        assert f"{key}_details" in result
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
