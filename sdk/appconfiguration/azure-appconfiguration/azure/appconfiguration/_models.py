@@ -625,6 +625,7 @@ class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instan
         """Extract pagination data from the response.
 
         :param get_next_return: Tuple of (deserialized response, response headers)
+        :type get_next_return: tuple
         :return: Tuple of (next_link, page iterator or None)
         :rtype: tuple
         """
