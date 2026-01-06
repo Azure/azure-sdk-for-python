@@ -16,6 +16,36 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class BackcompatModel(_Model):
+    """BackcompatModel.
+
+    :ivar keys_property: Required.
+    :vartype keys_property: dict[str, str]
+    """
+
+    keys_property: dict[str, str] = rest_field(
+        name="keys", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="keys"
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        keys_property: dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ClientNameAndJsonEncodedNameModel(_Model):
     """Model with a property that has a client name.
 

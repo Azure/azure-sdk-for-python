@@ -86,3 +86,7 @@ model RecursiveElement extends Element {
 model Element {
   recursiveElement?: RecursiveElement[];
 }
+
+model BackcompatModel {
+  keys: Record<string>;
+}
