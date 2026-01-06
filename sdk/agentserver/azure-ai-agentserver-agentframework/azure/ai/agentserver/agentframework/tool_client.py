@@ -9,8 +9,7 @@ from agent_framework import AIFunction
 from pydantic import Field, create_model
 from azure.ai.agentserver.core.logger import get_logger
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.tools._client import FoundryToolClient
-    from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool
+    from azure.ai.agentserver.core.tools import FoundryToolClient, ResolvedFoundryTool
 
 logger = get_logger()
 

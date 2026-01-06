@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Optional, Any
 from ._version import VERSION
 from .tool_client import ToolClient
 from .langgraph import LangGraphAdapter
+from azure.ai.agentserver.core.context._package_metadata import PackageMetadata, set_current_app
 
 if TYPE_CHECKING:  # pragma: no cover
     from . import models
@@ -26,3 +27,5 @@ def from_langgraph(
 
 __all__ = ["from_langgraph", "ToolClient"]
 __version__ = VERSION
+
+set_current_app(PackageMetadata.from_dist("azure-ai-agentserver-langgraph"))

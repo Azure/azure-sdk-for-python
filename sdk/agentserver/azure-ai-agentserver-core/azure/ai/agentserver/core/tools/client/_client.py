@@ -9,12 +9,12 @@ from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
-from azure.ai.agentserver.core.tools._models import FoundryTool, FoundryToolSource, ResolvedFoundryTool, UserInfo
-from azure.ai.agentserver.core.tools._configuration import FoundryToolClientConfiguration
-from azure.ai.agentserver.core.tools.operations._foundry_connected_tools import FoundryConnectedToolsOperations
-from azure.ai.agentserver.core.tools.operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
-from azure.ai.agentserver.core.utils._credential import AsyncTokenCredentialAdapter
+from ._models import FoundryTool, FoundryToolSource, ResolvedFoundryTool, UserInfo
+from ._configuration import FoundryToolClientConfiguration
+from ._exceptions import ToolInvocationError
+from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
+from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
+from ...utils._credential import AsyncTokenCredentialAdapter
 
 
 class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):

@@ -6,11 +6,11 @@ from typing import Any, ClassVar, Dict, List, cast
 
 from azure.core.rest import HttpRequest
 
-from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
-from azure.ai.agentserver.core.tools._models import FoundryHostedMcpTool, FoundryToolSource, \
-	ListFoundryHostedMcpToolsResponse, ResolvedFoundryTool
+from azure.ai.agentserver.core.tools import FoundryHostedMcpTool, FoundryToolSource, ResolvedFoundryTool, \
+    ToolInvocationError
 from azure.ai.agentserver.core.tools._to_be_deleted import MetadataMapper
-from azure.ai.agentserver.core.tools.operations._base import BaseOperations
+from azure.ai.agentserver.core.tools.client._models import ListFoundryHostedMcpToolsResponse
+from azure.ai.agentserver.core.tools.client.operations._base import BaseOperations
 
 
 class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):

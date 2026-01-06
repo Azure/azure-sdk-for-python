@@ -5,7 +5,7 @@ from azure.core.configuration import Configuration
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import policies
 
-from azure.ai.agentserver.core.context._package_metadata import get_current_app
+from ...context._package_metadata import get_current_app
 
 
 class FoundryToolClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes

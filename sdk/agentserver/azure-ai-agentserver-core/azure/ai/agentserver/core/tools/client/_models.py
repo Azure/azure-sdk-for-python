@@ -5,14 +5,15 @@ import asyncio
 import inspect
 import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Annotated, Any, Awaitable, Callable, ClassVar, Dict, List, Literal, Mapping, Optional, Type, TypedDict, Union
+from typing import Annotated, Any, Awaitable, Callable, ClassVar, List, Literal, Mapping, Optional, Type, Union
 
 from azure.core import CaseInsensitiveEnumMeta
-from pydantic import AliasChoices, AliasPath, BaseModel, Discriminator, Field, ModelWrapValidatorHandler, Tag, TypeAdapter, model_validator
+from pydantic import AliasChoices, AliasPath, BaseModel, Discriminator, Field, ModelWrapValidatorHandler, Tag, \
+    TypeAdapter, model_validator
 
-from azure.ai.agentserver.core.tools._exceptions import OAuthConsentRequiredError
+from ._exceptions import OAuthConsentRequiredError
 
 
 class FoundryToolSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -50,7 +51,6 @@ class FoundryTool(ABC):
 		:rtype: str
 		"""
 		return json.dumps(self.__dict__, default=str)
-
 
 
 @dataclass(frozen=True)
@@ -493,7 +493,6 @@ class InvokeConnectedToolsResult(BaseModel):
 	:ivar Any value: The result value from the tool invocation.
 	"""
 	value: Any = Field(serialization_alias="toolResult")
-
 
 
 class InvokeFoundryConnectedToolsResponse(BaseModel):

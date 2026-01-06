@@ -5,9 +5,10 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from typing import TYPE_CHECKING, Optional, Any
 
-from .agent_framework import AgentFrameworkCBAgent
-from .tool_client import ToolClient
-from ._version import VERSION
+from azure.ai.agentserver.agentframework.agent_framework import AgentFrameworkCBAgent
+from azure.ai.agentserver.agentframework.tool_client import ToolClient
+from azure.ai.agentserver.agentframework._version import VERSION
+from azure.ai.agentserver.core.context._package_metadata import PackageMetadata, set_current_app
 
 if TYPE_CHECKING:  # pragma: no cover
     from azure.core.credentials_async import AsyncTokenCredential
@@ -22,3 +23,5 @@ def from_agent_framework(agent,
 
 __all__ = ["from_agent_framework", "ToolClient"]
 __version__ = VERSION
+
+set_current_app(PackageMetadata.from_dist("azure-ai-agentserver-agentframework"))

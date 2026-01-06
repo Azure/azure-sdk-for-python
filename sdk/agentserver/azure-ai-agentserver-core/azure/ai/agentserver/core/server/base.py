@@ -34,8 +34,7 @@ from ..models import (
 )
 from .common.agent_run_context import AgentRunContext
 
-from ..tools._client import FoundryToolClient
-from ..tools._models import FoundryTool, UserInfo
+from ..tools import FoundryTool, FoundryToolClient, UserInfo
 
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"

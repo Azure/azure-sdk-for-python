@@ -9,8 +9,7 @@ from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field, create_model
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.tools._client import FoundryToolClient
-    from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool
+    from azure.ai.agentserver.core.tools import FoundryToolClient, ResolvedFoundryTool
 
 
 # pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs

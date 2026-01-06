@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.agentserver.core.tools._models import ResolvedFoundryTool
+from ._models import ResolvedFoundryTool
 
 
 class ToolInvocationError(RuntimeError):

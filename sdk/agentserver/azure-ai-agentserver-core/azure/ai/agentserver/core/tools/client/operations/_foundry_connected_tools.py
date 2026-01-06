@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List, Mapping, cast
+from typing import Any, ClassVar, Dict, List, cast
 
 from azure.core.pipeline.transport import HttpRequest
 
-from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
-from azure.ai.agentserver.core.tools._models import FoundryConnectedTool, FoundryToolSource, \
-	InvokeFoundryConnectedToolsResponse, ListFoundryConnectedToolsResponse, ResolvedFoundryTool, UserInfo
-from azure.ai.agentserver.core.tools.operations._base import BaseOperations
+from .._models import FoundryConnectedTool, FoundryToolSource, InvokeFoundryConnectedToolsResponse, \
+	ListFoundryConnectedToolsResponse, ResolvedFoundryTool, UserInfo
+from .._exceptions import ToolInvocationError
+from ._base import BaseOperations
 
 
 class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):

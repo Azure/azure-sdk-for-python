@@ -7,7 +7,7 @@ from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
 from .id_generator.foundry_id_generator import FoundryIdGenerator
 from .id_generator.id_generator import IdGenerator
-from ...tools._models import UserInfo
+from ...tools import UserInfo
 
 logger = get_logger()
 

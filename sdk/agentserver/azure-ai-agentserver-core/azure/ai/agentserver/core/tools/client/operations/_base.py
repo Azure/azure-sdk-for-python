@@ -9,8 +9,7 @@ from typing import Any, ClassVar, MutableMapping, Type
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, \
     ResourceNotFoundError, ResourceNotModifiedError, map_error
-from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
-
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 ErrorMapping = MutableMapping[int, Type[HttpResponseError]]
 
