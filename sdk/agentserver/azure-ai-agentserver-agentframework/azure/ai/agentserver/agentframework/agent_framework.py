@@ -74,6 +74,8 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def __init__(self, agent: Union[AgentProtocol, AgentFactory],
                  credentials: "Optional[AsyncTokenCredential]" = None,
+                 *,
+                 hitl_helper: Optional[HumanInTheLoopHelper] = None,
                  **kwargs: Any):
         """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
 
@@ -86,6 +88,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         self._agent_or_factory: Union[AgentProtocol, AgentFactory] = agent
         self._resolved_agent: "Optional[AgentProtocol]" = None
+        self._hitl_helper = hitl_helper
         # If agent is already instantiated, use it directly
         if isinstance(agent, AgentProtocol):
             self._resolved_agent = agent
@@ -224,16 +227,15 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
-            hitl_helper = HumanInTheLoopHelper()
 
-            input_converter = AgentFrameworkInputConverter()
+            input_converter = AgentFrameworkInputConverter(agent=agent, hitl_helper=self._hitl_helper)
             message = input_converter.transform_input(request_input)
             logger.debug(f"Transformed input message type: {type(message)}")
 
             # Use split converters
             if context.stream:
                 logger.info("Running agent in streaming mode")
-                streaming_converter = AgentFrameworkOutputStreamingConverter(context)
+                streaming_converter = AgentFrameworkOutputStreamingConverter(context, hitl_helper=self._hitl_helper)
 
                 async def stream_updates():
                     try:
@@ -257,7 +259,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
-            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=hitl_helper)
+            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
             result = await agent.run(message)
             logger.debug(f"Agent run completed, result type: {type(result)}")
             transformed_result = non_streaming_converter.transform_output_for_response(result)

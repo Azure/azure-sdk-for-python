@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft. All rights reserved.
 
 import asyncio
+import json
 import sys
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -35,6 +36,7 @@ from workflow_as_agent_reflection_pattern import (  # noqa: E402
 )
 
 from azure.ai.agentserver.agentframework import from_agent_framework
+from azure.ai.agentserver.agentframework.models.human_in_the_loop_helper import HumanInTheLoopHelper
 
 """
 Sample: Workflow Agent with Human-in-the-Loop
@@ -60,6 +62,23 @@ class HumanReviewRequest:
     """A request message type for escalation to a human reviewer."""
 
     agent_request: ReviewRequest | None = None
+
+    def convert_to_payload(self) -> str:
+        """Convert the HumanReviewRequest to a JSON payload string."""
+        user_messages = [msg.to_dict() for msg in self.agent_request.user_messages
+        ] if self.agent_request else []
+        agent_messages = [msg.to_dict() for msg in self.agent_request.agent_messages
+        ] if self.agent_request else []
+        payload = {
+            "agent_request": {
+                "request_id": self.agent_request.request_id,
+                "user_messages": user_messages,
+                "agent_messages": agent_messages,
+            }
+            if self.agent_request
+            else None
+        }
+        return json.dumps(payload, indent=2)
 
 
 class ReviewerWithHumanInTheLoop(Executor):
@@ -188,9 +207,10 @@ async def main() -> None:
 
 async def run_agent() -> None:
     agent = build_agent()
-    await from_agent_framework(agent).run_async()
+    hitl_helper = HumanInTheLoopHelper()
+    await from_agent_framework(agent, hitl_helper=hitl_helper).run_async()
 
 if __name__ == "__main__":
     print("Initializing Workflow as Agent Sample...")
-    asyncio.run(main())
-    #asyncio.run(run_agent())
+    # asyncio.run(main())
+    asyncio.run(run_agent())

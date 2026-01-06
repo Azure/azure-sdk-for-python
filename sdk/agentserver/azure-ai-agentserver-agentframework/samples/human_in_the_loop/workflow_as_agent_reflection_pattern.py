@@ -2,6 +2,7 @@
 
 import asyncio
 from dataclasses import dataclass
+import json
 from uuid import uuid4
 
 from agent_framework import (
@@ -59,6 +60,16 @@ class ReviewResponse:
     request_id: str
     feedback: str
     approved: bool
+
+    @staticmethod
+    def convert_from_payload(payload: str) -> "ReviewResponse":
+        """Convert a JSON payload string to a ReviewResponse instance."""
+        data = json.loads(payload)
+        return ReviewResponse(
+            request_id=data["request_id"],
+            feedback=data["feedback"],
+            approved=data["approved"],
+        )
 
 
 class Reviewer(Executor):

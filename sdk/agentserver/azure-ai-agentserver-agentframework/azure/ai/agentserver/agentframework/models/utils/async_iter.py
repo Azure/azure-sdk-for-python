@@ -14,6 +14,7 @@ T = TypeVar("T")
 async def chunk_on_change(
     source: AsyncIterable[TSource],
     is_changed: Optional[Callable[[Optional[TSource], Optional[TSource]], bool]] = None,
+    logger=None,
 ) -> AsyncIterator[AsyncIterable[TSource]]:
     """
     Chunks an async iterable into groups based on when consecutive elements change.
@@ -36,7 +37,7 @@ async def chunk_on_change(
         def key_equal(a: TSource, b: TSource) -> bool:
             return not is_changed(a, b)
 
-        async for group in chunk_by_key(source, lambda x: x, key_equal=key_equal):
+        async for group in chunk_by_key(source, lambda x: x, key_equal=key_equal, logger=logger):
             yield group
 
 
@@ -44,6 +45,7 @@ async def chunk_by_key(
     source: AsyncIterable[TSource],
     key_selector: Callable[[TSource], TKey],
     key_equal: Optional[Callable[[TKey, TKey], bool]] = None,
+    logger=None,
 ) -> AsyncIterator[AsyncIterable[TSource]]:
     """
     Chunks the async iterable into groups based on a key selector.
@@ -92,6 +94,7 @@ async def chunk_by_key(
                     return
 
                 k = key_selector(item)
+                logger.info(f"Considering item with key: {k.to_dict()}, current_key: {current_key.to_dict()}", )
                 if not key_equal(k, current_key):
                     # Hand first item of next group back to outer loop
                     pending = item
