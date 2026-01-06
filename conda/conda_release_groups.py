@@ -116,6 +116,6 @@ def get_package_group_data(group_name: str) -> dict:
     Get all packages that belong to a release group.
 
     :param group_name: The release group name
-    :return: The group data dictionary
+    :return: The group data dictionary, or empty dict if not found
     """
     return RELEASE_GROUPS.get(group_name, {})

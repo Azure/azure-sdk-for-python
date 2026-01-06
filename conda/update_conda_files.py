@@ -326,7 +326,10 @@ def update_conda_sdk_client_yml(
 
     package_to_group = get_package_to_group_mapping()
     parameters = conda_client_data["parameters"]
+
+    # quick look up for handling grouped package releases
     existing_parameter_names = [p.get("name") for p in parameters]
+    existing_artifact_names = [a.get("name") for a in conda_artifacts] 
 
     for package_name in new_data_plane_packages:
         pkg = package_dict.get(package_name, {})
@@ -344,6 +347,7 @@ def update_conda_sdk_client_yml(
         group_data = get_package_group_data(group_name)
 
         if group_data:
+            # package is part of a release group
             logger.info(
                 f"Package {package_name} belongs to release group {group_name}"
             )
@@ -366,30 +370,50 @@ def update_conda_sdk_client_yml(
 
         # add to CondaArtifacts
         common_root, service_name = determine_service_info(pkg, package_to_group)
-
+        
+        # TODO check this logic with a dummy new package group
         # build checkout packages 
         if group_data:
             checkout_packages = []
-            for grouped_pkg in group_data["packages"]:
-                checkout_packages.append(
-                    {"package": grouped_pkg, "version": pkg.get(VERSION_GA_COL)}
-                )
+            for grouped_pkg_name in group_data["packages"]:
+                curr_pkg = package_dict.get(grouped_pkg_name, {})
+                if not curr_pkg:
+                    logger.error(
+                        f"Package {grouped_pkg_name} listed in group {group_name} not found in CSV data, skipping"
+                    )
+                    result.append(grouped_pkg_name)
+                    continue
+                curr_version = curr_pkg.get(VERSION_GA_COL)
+                if curr_version:
+                    checkout_packages.append(
+                        {"package": grouped_pkg_name, "version": curr_version}
+                    )
+                else:
+                    logger.error(
+                        f"Package {grouped_pkg_name} in group {group_name} is missing version info, skipping"
+                    )
+                    result.append(grouped_pkg_name)
         else:
             checkout_packages = [{"package": package_name, "version": pkg.get(VERSION_GA_COL)}]
 
-        new_artifact_entry = {
-            "name": package_name,
-            "common_root": common_root,
-            "service": service_name,
-            "in_batch": f"${{{{ parameters.{release_name} }}}}",
-            "checkout": checkout_packages,
-        }
+        if group_name not in existing_artifact_names:
+            new_artifact_entry = {
+                "name": group_name if group_data else package_name,
+                "common_root": common_root,
+                "service": service_name,
+                "in_batch": f"${{{{ parameters.{release_name} }}}}",
+                "checkout": checkout_packages,
+            }
 
-        # append before azure-mgmt entry
-        conda_artifacts.insert(len(conda_artifacts) - 1, new_artifact_entry)
+            # append before azure-mgmt entry
+            conda_artifacts.insert(len(conda_artifacts) - 1, new_artifact_entry)
 
-        added_count += 1
-        logger.info(f"Added new data plane package: {package_name}")
+            added_count += 1
+            logger.info(f"Added new data plane package: {package_name}")
+        else:
+            logger.info(
+                f"CondaArtifact for {group_name if group_data else package_name} already exists in conda-sdk-client.yml, skipping addition"
+            )
 
     # Add new mgmt plane packages
 
@@ -426,7 +450,7 @@ def update_conda_sdk_client_yml(
 
     # TODO note this dump doesn't preserve some quotes like around
     #    displayName: 'azure-developer-loadtesting' but i don't think those functionally necessary?
-    # double check that this is ok, esp for URLs... ^
+    #   double check that this is ok, esp for URLs... ^
 
     if updated_count > 0 or added_count > 0:
         with open(CONDA_CLIENT_YAML_PATH, "w") as file:
