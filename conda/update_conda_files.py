@@ -33,6 +33,10 @@ PACKAGE_COL = "Package"
 LATEST_GA_DATE_COL = "LatestGADate"
 VERSION_GA_COL = "VersionGA"
 FIRST_GA_DATE_COL = "FirstGADate"
+DISPLAY_NAME_COL = "DisplayName"
+SERVICE_NAME_COL = "ServiceName"
+REPO_PATH_COL = "RepoPath"
+TYPE_COL = "Type"
 
 # packages that should be shipped but are known to be missing from the csv
 PACKAGES_WITH_DOWNLOAD_URI = [
@@ -50,9 +54,7 @@ def quoted_presenter(dumper, data):
     return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="'")
 
 
-def update_conda_version() -> (
-    Tuple[datetime, str]
-):
+def update_conda_version() -> Tuple[datetime, str]:
     """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the old and new versions."""
 
     with open(CONDA_ENV_PATH, "r") as file:
@@ -98,10 +100,17 @@ def parse_csv() -> List[Dict[str, str]]:
         return []
 
 
-def is_mgmt_package(pkg_name: str) -> bool:
-    return pkg_name != "azure-mgmt-core" and (
-        "mgmt" in pkg_name or "cognitiveservices" in pkg_name
-    )
+def is_mgmt_package(pkg: Dict[str, str]) -> bool:
+    pkg_name = pkg.get(PACKAGE_COL, "")
+    _type = pkg.get(TYPE_COL, "")
+    if _type == "mgmt":
+        return True
+    elif _type == "client":
+        return False
+    else:
+        return pkg_name != "azure-mgmt-core" and (
+            "mgmt" in pkg_name or "cognitiveservices" in pkg_name
+        )
 
 
 def separate_packages_by_type(
@@ -112,8 +121,7 @@ def separate_packages_by_type(
     mgmt_plane_packages = []
 
     for pkg in packages:
-        package_name = pkg.get(PACKAGE_COL, "")
-        if is_mgmt_package(package_name):
+        if is_mgmt_package(pkg):
             mgmt_plane_packages.append(pkg)
         else:
             data_plane_packages.append(pkg)
@@ -312,6 +320,13 @@ def update_conda_sdk_client_yml(
         f"Detected {len(new_data_plane_packages)} new data plane packages to add to conda-sdk-client.yml"
     )
 
+    # TODO when do we batch packages together that have the same root repoPath??
+    # e.g. 'core' encompasses azure-core and azure-common:
+    # there's only 1 parameter release_azure_core, and those packages are grouped under the same checkout
+
+    # however, 'ai' packages have multiple params
+    # e.g. azure-ai-agents and azure-ai-projects are separated
+
     parameters = conda_client_data["parameters"]
 
     for pkg in new_data_plane_packages:
@@ -330,6 +345,7 @@ def update_conda_sdk_client_yml(
         #     continue
 
         # TODO what is the case where we batch multiple subservices under one???
+
         release_name = f"release_{package_name.replace('-', '_')}"
         new_parameter = {
             "name": release_name,
@@ -424,26 +440,23 @@ def get_package_path(package_name: str) -> str:
     return matches[0]
 
 
-def determine_service_info(package_name: str) -> Tuple[str, str]:
+def determine_service_info(pkg: Dict[str, str]) -> Tuple[str, str]:
     # TODO how to actually determine?, this is mostly placeholder
     """
     Dynamically determine the common_root and service name based on package name and directory structure.
 
     :param package_name: The name of the package (e.g., "azure-ai-textanalytics").
     """
-    # TODO not all existing packages follow this pattern tho,
-    # e.g. azure-ai-metricsadvisor has service cognitivelanguage <- does this one even exist anymore?
-    # e.g. azure-ai-translation-text has service translation
-    # e.g. azure-digitaltwins-core has service digitaltwins
-    # e.g. azure-monitor-ingestion has service monitor
+    package_name = pkg.get(PACKAGE_COL, "")
+    service_name = pkg.get(REPO_PATH_COL, "")
 
-    # and some packages don't have a common_root field at all??
+    # TODO not all existing packages follow this pattern
+    # - some packages in the yml don't have a common_root field at all??
+    # - communication has common root of azure/communication instead of azure
+    # - azure-ai-voicelive's service name is currently projects?
 
-    # services with a shared common root include
-    # "azure-ai", "azure-mgmt", "azure-storage", "azure-communication", etc.
-
-    # TODO idk how to properly get the service name, e.g. azure-ai-voicelive is projects?
-    service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
+    if not service_name:
+        service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
 
     # TODO Determine common_root
     common_root = "azure"
@@ -703,7 +716,10 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
     logger.info(f"Added {len(new_packages)} new management plane packages to meta.yaml")
     return result
 
-def update_release_logs(packages_to_update: List[Dict[str, str]], release_date: str) -> List[str]:
+
+def update_release_logs(
+    packages_to_update: List[Dict[str, str]], release_date: str
+) -> List[str]:
     """Add and update release logs for conda packages."""
     result = []
 
@@ -714,35 +730,33 @@ def update_release_logs(packages_to_update: List[Dict[str, str]], release_date: 
     for pkg in packages_to_update:
         package_name = pkg.get(PACKAGE_COL)
         version = pkg.get(VERSION_GA_COL)
-        
+
         if not package_name:
             logger.warning("Skipping package with missing name")
             continue
-        
+
         if not version:
             logger.warning(f"Skipping {package_name} with missing version")
             result.append(package_name)
             continue
 
-        release_log_path = os.path.join(
-            CONDA_RELEASE_LOGS_DIR, f"{package_name}.md"
-        )
+        release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{package_name}.md")
 
         if not os.path.exists(release_log_path):
             # Add new release log
             logger.info(f"Creating new release log for: {package_name}")
-            
+
             try:
                 title_parts = package_name.replace("azure-", "").split("-")
                 title = " ".join(word.title() for word in title_parts)
-                
+
                 content = f"# Azure {title} client library for Python (conda)\n\n"
                 content += f"## {release_date}\n\n"
                 content += "### Packages included\n\n"
 
                 # TODO what about when there's multiple packages...e.g. azure-schemaregistry
                 content += f"- {package_name}-{version}\n"
-                
+
                 with open(release_log_path, "w") as f:
                     f.write(content)
                 logger.info(f"Created new release log for {package_name}")
@@ -755,35 +769,40 @@ def update_release_logs(packages_to_update: List[Dict[str, str]], release_date: 
             try:
                 with open(release_log_path, "r") as f:
                     existing_content = f.read()
-                
+
                 lines = existing_content.split("\n")
-                
+
                 new_release = f"\n## {release_date}\n\n"
                 new_release += "### Packages included\n\n"
                 new_release += f"- {package_name}-{version}\n"
-                
+
                 lines.insert(1, new_release)
                 updated_content = "\n".join(lines)
-                
+
                 with open(release_log_path, "w") as f:
                     f.write(updated_content)
-                    
+
                 logger.info(f"Updated release log for {package_name}")
             except Exception as e:
                 logger.error(f"Failed to update release log for {package_name}: {e}")
                 result.append(package_name)
 
-    # TODO AKA link pointing to new release logs needs to happen 
-    
+    # TODO AKA link pointing to new release logs needs to happen
+
     return result
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Update conda package files and versions for release."
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable debug logging",
+    )
 
     args = parser.parse_args()
-    args.debug = True  # TODO remove this
     configure_logging(args)
 
     old_date, new_version = update_conda_version()
@@ -826,7 +845,9 @@ if __name__ == "__main__":
     new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
     # add/update release logs
-    release_log_results = update_release_logs(outdated_packages + new_packages, new_version)
+    release_log_results = update_release_logs(
+        outdated_packages + new_packages, new_version
+    )
 
     print("=== REPORT ===")
 
