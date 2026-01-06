@@ -47,7 +47,7 @@ from ...operations._operations import (
     build_bots_update_request,
     build_operations_list_request,
 )
-from .._configuration import HealthBotClientConfiguration
+from .._configuration import HealthBotMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -61,14 +61,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.healthbot.aio.HealthBotClient`'s
+        :class:`~azure.mgmt.healthbot.aio.HealthBotMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HealthBotClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HealthBotMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -165,14 +165,14 @@ class BotsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.healthbot.aio.HealthBotClient`'s
+        :class:`~azure.mgmt.healthbot.aio.HealthBotMgmtClient`'s
         :attr:`bots` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HealthBotClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HealthBotMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

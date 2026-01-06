@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import HealthBotClientConfiguration
+from ._configuration import HealthBotMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import BotsOperations, Operations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class HealthBotClient:
+class HealthBotMgmtClient:
     """Azure Health Bot is a cloud platform that empowers developers in Healthcare organizations to
     build and deploy their compliant, AI-powered virtual health assistants and health bots, that
     help them improve processes and reduce costs.
@@ -66,7 +66,7 @@ class HealthBotClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = HealthBotClientConfiguration(
+        self._config = HealthBotMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

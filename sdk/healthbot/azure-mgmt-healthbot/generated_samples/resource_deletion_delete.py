@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.healthbot import HealthBotClient
+from azure.mgmt.healthbot import HealthBotMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.healthbot import HealthBotClient
 
 
 def main():
-    client = HealthBotClient(
+    client = HealthBotMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

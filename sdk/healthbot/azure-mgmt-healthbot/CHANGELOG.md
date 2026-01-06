@@ -1,5 +1,26 @@
 # Release History
 
+## 1.0.0 (2026-01-06)
+
+### Features Added
+
+  - Model `HealthBotMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `HealthBotMgmtClient` added method `send_request`
+  - Model `HealthBotProperties` added property `access_control_method`
+  - Enum `SkuName` added member `C1`
+  - Enum `SkuName` added member `PES`
+  - Added enum `CreatedByType`
+  - Model `BotsOperations` added method `begin_update`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `SkuName.S1`
+  - Deleted or renamed model `AvailableOperations`
+  - Deleted or renamed model `BotResponseList`
+  - Deleted or renamed model `IdentityType`
+  - Deleted or renamed model `ValidationResult`
+  - Deleted or renamed method `BotsOperations.update`
+
 ## 1.0.0 (2025-12-30)
 
 ### Features Added

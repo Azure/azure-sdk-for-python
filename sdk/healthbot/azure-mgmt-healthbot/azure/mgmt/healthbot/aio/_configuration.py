@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class HealthBotClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for HealthBotClient.
+class HealthBotMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for HealthBotMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
