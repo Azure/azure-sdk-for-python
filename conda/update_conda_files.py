@@ -329,7 +329,7 @@ def update_conda_sdk_client_yml(
 
     # quick look up for handling grouped package releases
     existing_parameter_names = [p.get("name") for p in parameters]
-    existing_artifact_names = [a.get("name") for a in conda_artifacts] 
+    existing_artifact_names = {a.get("name"): idx for idx, a in enumerate(conda_artifacts)}
 
     for package_name in new_data_plane_packages:
         pkg = package_dict.get(package_name, {})
@@ -371,7 +371,6 @@ def update_conda_sdk_client_yml(
         # add to CondaArtifacts
         common_root, service_name = determine_service_info(pkg, package_to_group)
         
-        # TODO check this logic with a dummy new package group
         # build checkout packages 
         if group_data:
             checkout_packages = []
@@ -412,8 +411,19 @@ def update_conda_sdk_client_yml(
             logger.info(f"Added new data plane package: {package_name}")
         else:
             logger.info(
-                f"CondaArtifact for {group_name if group_data else package_name} already exists in conda-sdk-client.yml, skipping addition"
+                f"CondaArtifact for {group_name if group_data else package_name} already exists in conda-sdk-client.yml"
             )
+            curr_artifact_checkout = conda_artifacts[existing_artifact_names[group_name]]["checkout"]
+            packages_in_artifact = {item["package"] for item in curr_artifact_checkout}
+
+            # account for adding a single new package to an existing group
+            for pkg_entry in checkout_packages:
+                if pkg_entry["package"] not in packages_in_artifact:
+                    curr_artifact_checkout.append(pkg_entry)
+                    added_count += 1
+                    logger.info(
+                        f"Added package {pkg_entry['package']} to existing CondaArtifact {group_name}"
+                    )
 
     # Add new mgmt plane packages
 
@@ -485,12 +495,9 @@ def determine_service_info(pkg: Dict[str, str], package_to_group: dict) -> Tuple
     :param package_name: The name of the package (e.g., "azure-ai-textanalytics").
     :param package_to_group: Mapping of package names to release group names.
     """
+    # defaults
     package_name = pkg.get(PACKAGE_COL, "")
     service_name = pkg.get(REPO_PATH_COL, "").lower()
-
-    if not service_name:
-        service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
-
     common_root = "azure"
 
     # check for exceptions to the pattern
@@ -502,6 +509,9 @@ def determine_service_info(pkg: Dict[str, str], package_to_group: dict) -> Tuple
             service_name = group_data["service"]
         if group_data.get("common_root"):
             common_root = group_data["common_root"]
+
+    if not service_name:
+        service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
 
     return common_root, service_name
 
@@ -882,6 +892,11 @@ if __name__ == "__main__":
 
     # map package name to csv row for easy lookup
     package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
+
+    # TEST
+    new_data_plane_names = ["test2"]
+    package_dict["test2"] = {"Package": "test2", "VersionGA": "1.0.0", "LatestGADate": "1/1/2026"}
+    package_dict["test1"] = {"Package": "test1", "VersionGA": "3.0.0", "LatestGADate": "1/1/2026"}
 
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
