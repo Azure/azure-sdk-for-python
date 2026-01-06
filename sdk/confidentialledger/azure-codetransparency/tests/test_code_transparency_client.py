@@ -3,7 +3,7 @@
 import hashlib
 import os
 import time
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Any
 from urllib.parse import urlparse
 from azure.core import exceptions
 import pytest
@@ -19,6 +19,7 @@ from devtools_testutils import (
 
 from azure.codetransparency import (
     CodeTransparencyClient,
+    CBORDecoder,
 )
 
 from _shared.constants import (
@@ -87,14 +88,15 @@ class TestConfidentialLedgerClient(CodeTransparencyClientTestBase):
         )
         # Collect the response bytes and check for error message about invalid input
         response_bytes = b"".join(register_result)
-        response_text = response_bytes.decode("utf-8", errors="ignore")
+        # decode cbor and verify the decoded output contains {-1: "InvalidInput", -2: "Failed to parse COSE_Sign1 outer array"}
+        decoder = CBORDecoder(response_bytes)
+        decoded_cbor = decoder.decode()
         assert (
-            "failed to parse cose_sign1"
-            in response_text.lower()
-            in response_text.lower()
-        ), f"Expected error message about invalid CBOR, but got: {response_text}"
-
-        # TODO: decode CBOR using internal cbor decoder implementation
+            decoded_cbor[-1] == "InvalidInput"
+        ), f"Expected error code 'InvalidInput', but got: {decoded_cbor[-1]}"
+        assert (
+            decoded_cbor[-2] == "Failed to parse COSE_Sign1 outer array"
+        ), f"Expected error message 'Failed to parse COSE_Sign1 outer array', but got: {decoded_cbor[-2]}"
 
     def create_valid_cose_sign1(self) -> bytes:
         import base64
@@ -117,9 +119,11 @@ class TestConfidentialLedgerClient(CodeTransparencyClientTestBase):
         )
         # Collect the response bytes and check for error message about invalid input
         response_bytes = b"".join(register_result)
-        response_text = response_bytes.decode("utf-8", errors="ignore")
-        assert (
-            "operationid" in response_text.lower() in response_text.lower()
-        ), f"Expected operationid, but got: {response_text}"
+        # decode cbor and verify decoded output contains {"OperationId": "some transaction num", "Status": "running"}
 
-        # TODO: decode CBOR using internal cbor decoder implementation
+        decoder = CBORDecoder(response_bytes)
+        decoded_cbor = decoder.decode()
+        assert (decoded_cbor["Status"] == "running"), f"Expected status 'running', but got: {decoded_cbor['Status']}"
+        assert (
+            "OperationId" in decoded_cbor
+        ), "Expected 'OperationId' field in response, but it was missing."
