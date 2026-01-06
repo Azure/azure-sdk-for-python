@@ -89,6 +89,7 @@ def nested_item_keyword_data():
     """Fixture for data that already contains an 'item' wrapper column."""
     return pd.read_json(_get_file("nested_item_keyword.jsonl"), lines=True)
 
+
 @pytest.fixture
 def nested_item_sample_keyword_data():
     """Fixture for data that already contains an 'item' wrapper column."""
@@ -419,7 +420,7 @@ class TestGetDataSource:
             "response": "${data.item.response}",
             "test_string": "${data.item.test.test_string}",
             "output_text": "${data.sample.output_text}",
-            "output_items": "${data.sample.output_items}"
+            "output_items": "${data.sample.output_items}",
         }
 
         data_source = _get_data_source(nested_item_keyword_data, column_mapping)
@@ -446,7 +447,7 @@ class TestGetDataSource:
             "response": "${data.item.response}",
             "test_string": "${data.item.test.test_string}",
             "output_text": "${data.sample.output_text}",
-            "output_items": "${data.sample.output_items}"
+            "output_items": "${data.sample.output_items}",
         }
 
         data_source = _get_data_source(nested_item_sample_keyword_data, column_mapping)
@@ -471,7 +472,7 @@ class TestGetDataSource:
         column_mapping = {
             "query": "${data.item.query}",
             "response": "${data.item.response}",
-            "test_string": "${data.item.test.test_string}"
+            "test_string": "${data.item.test.test_string}",
         }
 
         data_source = _get_data_source(flat_sample_output_data, column_mapping)
