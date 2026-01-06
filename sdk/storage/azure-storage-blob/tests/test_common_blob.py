@@ -3671,6 +3671,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         early = self.get_datetime_variable(variables, 'early', datetime.utcnow())
 
+        if self.is_live:
+            self.sleep(10)
+
         blob1_name = self._create_block_blob()
         blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
         blob2_name = self._get_blob_reference() + "2"
