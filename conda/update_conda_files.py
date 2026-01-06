@@ -720,10 +720,12 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
 def update_release_logs(
     packages_to_update: List[Dict[str, str]], release_date: str
 ) -> List[str]:
-    """Add and update release logs for conda packages."""
+    """
+    Add and update release logs for conda packages. Release log includes all version changes and new packages.
+    """
     result = []
 
-    # update mgmt release log separately
+    # TODO update mgmt release log separately
     mgmt_release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
 
     # update data plane release logs
@@ -838,43 +840,43 @@ if __name__ == "__main__":
         outdated_packages, new_data_plane_packages, new_mgmt_plane_packages
     )
 
-    # handle new data plane libraries
-    new_data_plane_results = add_new_data_plane_packages(new_data_plane_packages)
+    # # handle new data plane libraries
+    # new_data_plane_results = add_new_data_plane_packages(new_data_plane_packages)
 
-    # handle new mgmt plane libraries
-    new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
+    # # handle new mgmt plane libraries
+    # new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
-    # add/update release logs
-    release_log_results = update_release_logs(
-        outdated_packages + new_packages, new_version
-    )
+    # # add/update release logs
+    # release_log_results = update_release_logs(
+    #     outdated_packages + new_packages, new_version
+    # )
 
-    print("=== REPORT ===")
+    # print("=== REPORT ===")
 
-    if conda_sdk_client_pkgs_result:
-        print(
-            "The following packages may require manual adjustments in conda-sdk-client.yml:"
-        )
-        for pkg_name in conda_sdk_client_pkgs_result:
-            print(f"- {pkg_name}")
+    # if conda_sdk_client_pkgs_result:
+    #     print(
+    #         "The following packages may require manual adjustments in conda-sdk-client.yml:"
+    #     )
+    #     for pkg_name in conda_sdk_client_pkgs_result:
+    #         print(f"- {pkg_name}")
 
-    if new_data_plane_results:
-        print(
-            "\nThe following new data plane packages may require manual meta.yaml creation or adjustments:"
-        )
-        for pkg_name in new_data_plane_results:
-            print(f"- {pkg_name}")
+    # if new_data_plane_results:
+    #     print(
+    #         "\nThe following new data plane packages may require manual meta.yaml creation or adjustments:"
+    #     )
+    #     for pkg_name in new_data_plane_results:
+    #         print(f"- {pkg_name}")
 
-    if new_mgmt_plane_results:
-        print(
-            "\nThe following new management plane packages may require manual adjustments in azure-mgmt/meta.yaml:"
-        )
-        for pkg_name in new_mgmt_plane_results:
-            print(f"- {pkg_name}")
+    # if new_mgmt_plane_results:
+    #     print(
+    #         "\nThe following new management plane packages may require manual adjustments in azure-mgmt/meta.yaml:"
+    #     )
+    #     for pkg_name in new_mgmt_plane_results:
+    #         print(f"- {pkg_name}")
 
-    if release_log_results:
-        print(
-            "\nThe following packages may require manual adjustments in release logs:"
-        )
-        for pkg_name in release_log_results:
-            print(f"- {pkg_name}")
+    # if release_log_results:
+    #     print(
+    #         "\nThe following packages may require manual adjustments in release logs:"
+    #     )
+    #     for pkg_name in release_log_results:
+    #         print(f"- {pkg_name}")
