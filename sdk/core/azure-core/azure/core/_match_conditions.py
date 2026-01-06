@@ -27,6 +27,7 @@
 from enum import Enum
 
 
+
 class MatchConditions(Enum):
     """An enum to describe match conditions."""
 
