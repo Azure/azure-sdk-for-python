@@ -451,3 +451,36 @@ def test_claims(method, args):
         assert post_mock.call_count == 2
         data, _ = post_mock.call_args
         assert data[0]["claims"] == cae_merged_claims
+
+
+def test_get_cached_access_token_with_claims():
+    """When claims are provided, get_cached_access_token should return None even if a token is cached"""
+
+    client_id = "client-id"
+    scope = "scope"
+    cached_token = "cached-access-token"
+    tenant_id = "tenant"
+    authority = "https://localhost/" + tenant_id
+    claims = '{"access_token": {"nbf": {"essential": true, "value": "1234567890"}}}'
+
+    # Add a valid token to the cache
+    cache = TokenCache()
+    cache.add(
+        {
+            "response": build_aad_response(access_token=cached_token, expires_in=3600),
+            "client_id": client_id,
+            "scope": [scope],
+            "token_endpoint": "/".join((authority, tenant_id, "oauth2/v2.0/token")),
+        }
+    )
+
+    client = AadClient(tenant_id=tenant_id, client_id=client_id, authority=authority, cache=cache)
+
+    # Without claims, the cached token should be returned
+    token = client.get_cached_access_token([scope])
+    assert token is not None
+    assert token.token == cached_token
+
+    # With claims, should return None even though a valid token is cached
+    token_with_claims = client.get_cached_access_token([scope], claims=claims)
+    assert token_with_claims is None
