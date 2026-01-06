@@ -14,6 +14,8 @@ from ci_tools.logging import logger, configure_logging
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from typing import Dict, List, Optional, Tuple
 
+from conda_release_groups import get_package_group_data, get_release_group, get_package_to_group_mapping
+
 # paths
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SDK_DIR = os.path.join(ROOT_DIR, "sdk")
@@ -228,16 +230,18 @@ class IndentDumper(yaml.SafeDumper):
 
 
 def update_conda_sdk_client_yml(
-    packages_to_update: List[Dict[str, str]],
-    new_data_plane_packages: List[Dict[str, str]],
-    new_mgmt_plane_packages: List[Dict[str, str]],
+    package_dict: Dict[str, Dict[str, str]],
+    packages_to_update: List[str],
+    new_data_plane_packages: List[str],
+    new_mgmt_plane_packages: List[str],
 ) -> List[str]:
     """
     Update outdated package versions and add new entries in conda-sdk-client.yml file
 
-    :param packages_to_update: List of package rows from the CSV that need updates.
-    :param new_data_plane_packages: List of new data plane package rows from the CSV.
-    :param new_mgmt_plane_packages: List of new management plane package rows from the CSV.
+    :param package_dict: Dictionary mapping package names to their CSV row data.
+    :param packages_to_update: List of package names that need version updates.
+    :param new_data_plane_packages: List of new data plane package names.
+    :param new_mgmt_plane_packages: List of new management plane package names.
     :return: List of package names that were not updated or added and may require manual action.
     """
     updated_count = 0
@@ -251,15 +255,15 @@ def update_conda_sdk_client_yml(
         0
     ]["steps"][0]["parameters"]["CondaArtifacts"]
 
-    # update outdated package versions
+    # === Update outdated package versions ===
 
     logger.info(
         f"Detected {len(packages_to_update)} outdated package versions to update in conda-sdk-client.yml"
     )
     package_index = build_package_index(conda_artifacts)
 
-    for pkg in packages_to_update:
-        pkg_name = pkg.get(PACKAGE_COL)
+    for pkg_name in packages_to_update:
+        pkg = package_dict.get(pkg_name, {})
         new_version = pkg.get(VERSION_GA_COL)
         if pkg_name in package_index:
             artifact_idx, checkout_idx = package_index[pkg_name]
@@ -314,27 +318,18 @@ def update_conda_sdk_client_yml(
             )
             result.append(pkg_name)
 
-    # Add new data plane packages
+    # === Add new data plane packages ===
 
     logger.info(
         f"Detected {len(new_data_plane_packages)} new data plane packages to add to conda-sdk-client.yml"
     )
 
-    # TODO when do we batch packages together that have the same root repoPath??
-    # e.g. 'core' encompasses azure-core and azure-common:
-    # there's only 1 parameter release_azure_core, and those packages are grouped under the same checkout
-
-    # however, 'ai' packages have multiple params
-    # e.g. azure-ai-agents and azure-ai-projects are separated
-
+    package_to_group = get_package_to_group_mapping()
     parameters = conda_client_data["parameters"]
+    existing_parameter_names = [p.get("name") for p in parameters]
 
-    for pkg in new_data_plane_packages:
-        package_name = pkg.get(PACKAGE_COL)
-
-        if not package_name:
-            logger.warning("Skipping package with missing name")
-            continue
+    for package_name in new_data_plane_packages:
+        pkg = package_dict.get(package_name, {})
 
         # TODO commented out for testing purposes only
         # if package_name in package_index:
@@ -344,27 +339,50 @@ def update_conda_sdk_client_yml(
         #     result.append(package_name)
         #     continue
 
-        # TODO what is the case where we batch multiple subservices under one???
+        # check if package belongs to a release group
+        group_name = get_release_group(package_name, package_to_group)
+        group_data = get_package_group_data(group_name)
 
-        release_name = f"release_{package_name.replace('-', '_')}"
-        new_parameter = {
-            "name": release_name,
-            "displayName": package_name,
-            "type": "boolean",
-            "default": True,
-        }
+        if group_data:
+            logger.info(
+                f"Package {package_name} belongs to release group {group_name}"
+            )
+            release_name = f"release_{group_name.replace('-', '_')}"
+            display_name = group_name
+        else:
+            # package is released individually
+            release_name = f"release_{package_name.replace('-', '_')}"
+            display_name = package_name
+        
+        # add new release parameter if not exists
+        if release_name not in existing_parameter_names:
+            new_parameter = {
+                "name": release_name,
+                "displayName": display_name,
+                "type": "boolean",
+                "default": True,
+            }
+            parameters.append(new_parameter)
 
-        parameters.append(new_parameter)
+        # add to CondaArtifacts
+        common_root, service_name = determine_service_info(pkg, package_to_group)
 
-        # also add to CondaArtifacts
-        common_root, service_name = determine_service_info(package_name)
+        # build checkout packages 
+        if group_data:
+            checkout_packages = []
+            for grouped_pkg in group_data["packages"]:
+                checkout_packages.append(
+                    {"package": grouped_pkg, "version": pkg.get(VERSION_GA_COL)}
+                )
+        else:
+            checkout_packages = [{"package": package_name, "version": pkg.get(VERSION_GA_COL)}]
 
         new_artifact_entry = {
             "name": package_name,
             "common_root": common_root,
             "service": service_name,
             "in_batch": f"${{{{ parameters.{release_name} }}}}",
-            "checkout": [{"package": package_name, "version": pkg.get(VERSION_GA_COL)}],
+            "checkout": checkout_packages,
         }
 
         # append before azure-mgmt entry
@@ -382,12 +400,8 @@ def update_conda_sdk_client_yml(
     # assumes azure-mgmt will always be the last CondaArtifacts entry
     azure_mgmt_artifact_checkout = conda_artifacts[-1]["checkout"]
 
-    for pkg in new_mgmt_plane_packages:
-        package_name = pkg.get(PACKAGE_COL)
-
-        if not package_name:
-            logger.warning("Skipping package with missing name")
-            continue
+    for package_name in new_mgmt_plane_packages:
+        pkg = package_dict.get(package_name, {})
 
         # TODO commented out for testing purposes only
         # if package_name in package_index:
@@ -440,26 +454,30 @@ def get_package_path(package_name: str) -> str:
     return matches[0]
 
 
-def determine_service_info(pkg: Dict[str, str]) -> Tuple[str, str]:
-    # TODO how to actually determine?, this is mostly placeholder
+def determine_service_info(pkg: Dict[str, str], package_to_group: dict) -> Tuple[str, str]:
     """
-    Dynamically determine the common_root and service name based on package name and directory structure.
+    Returns the common root and service name for the given package.
 
     :param package_name: The name of the package (e.g., "azure-ai-textanalytics").
+    :param package_to_group: Mapping of package names to release group names.
     """
     package_name = pkg.get(PACKAGE_COL, "")
-    service_name = pkg.get(REPO_PATH_COL, "")
-
-    # TODO not all existing packages follow this pattern
-    # - some packages in the yml don't have a common_root field at all??
-    # - communication has common root of azure/communication instead of azure
-    # - azure-ai-voicelive's service name is currently projects?
+    service_name = pkg.get(REPO_PATH_COL, "").lower()
 
     if not service_name:
         service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
 
-    # TODO Determine common_root
     common_root = "azure"
+
+    # check for exceptions to the pattern
+    group_name = get_release_group(package_name, package_to_group)
+    group_data = get_package_group_data(group_name)
+
+    if group_data:
+        if group_data.get("service"):
+            service_name = group_data["service"]
+        if group_data.get("common_root"):
+            common_root = group_data["common_root"]
 
     return common_root, service_name
 
@@ -819,8 +837,8 @@ if __name__ == "__main__":
         logger.error("No packages found in CSV data.")
         exit(1)
 
-    # Only ship GA packages
-    packages = [pkg for pkg in packages if pkg.get(VERSION_GA_COL)]
+    # Only ship GA packages that are not deprecated
+    packages = [pkg for pkg in packages if (pkg.get(VERSION_GA_COL) and pkg.get(LATEST_GA_DATE_COL))]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
     outdated_packages = [
@@ -833,11 +851,18 @@ if __name__ == "__main__":
         new_packages
     )
 
+    # Extract package names from the filtered lists
+    outdated_package_names = [pkg.get(PACKAGE_COL, "") for pkg in outdated_packages if pkg.get(PACKAGE_COL)]
+    new_data_plane_names = [pkg.get(PACKAGE_COL, "") for pkg in new_data_plane_packages if pkg.get(PACKAGE_COL)]
+    new_mgmt_plane_names = [pkg.get(PACKAGE_COL, "") for pkg in new_mgmt_plane_packages if pkg.get(PACKAGE_COL)]
+
+    # map package name to csv row for easy lookup
+    package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
+
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
-
     conda_sdk_client_pkgs_result = update_conda_sdk_client_yml(
-        outdated_packages, new_data_plane_packages, new_mgmt_plane_packages
+        package_dict, outdated_package_names, new_data_plane_names, new_mgmt_plane_names
     )
 
     # # handle new data plane libraries
