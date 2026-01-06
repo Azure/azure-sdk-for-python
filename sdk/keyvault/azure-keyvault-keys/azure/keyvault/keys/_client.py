@@ -13,7 +13,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .crypto import CryptographyClient
 from ._enums import KeyCurveName, KeyExportEncryptionAlgorithm, KeyOperation, KeyType
-from ._generated.models import KeyAttributes
+from ._generated.models import ExternalKey, KeyAttributes
 from ._models import JsonWebKey, KeyRotationLifetimeAction
 from ._shared import KeyVaultClientBase
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
@@ -57,6 +57,8 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime],
         expires_on: Optional[datetime],
         exportable: Optional[bool] = None,
+        external_key: Optional[ExternalKey] = None,
+        
     ) -> Optional[KeyAttributes]:
         """Return a KeyAttributes object if non-None attributes are provided, or None otherwise.
 
@@ -68,13 +70,15 @@ class KeyClient(KeyVaultClientBase):
         :type expires_on: ~datetime.datetime or None
         :param exportable: Whether the private key can be exported.
         :type exportable: bool or None
+        :param external_key: The external key information.
+        :type external_key: ~azure.keyvault.keys._generated.models.ExternalKey or None
 
         :returns: An autorest-generated model of the key's attributes.
         :rtype: KeyAttributes
         """
-        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
+        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None or external_key is not None:
             return self._models.KeyAttributes(
-                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
+                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable, external_key=external_key
             )
         return None
 
@@ -107,7 +111,7 @@ class KeyClient(KeyVaultClientBase):
     def create_key(
         self,
         name: str,
-        key_type: Union[str, KeyType],
+        key_type: Optional[Union[str, KeyType]] = None,
         *,
         size: Optional[int] = None,
         curve: Optional[Union[str, KeyCurveName]] = None,
@@ -118,6 +122,7 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires_on: Optional[datetime] = None,
         exportable: Optional[bool] = None,
+        external_key: Optional[ExternalKey] = None,
         release_policy: Optional[KeyReleasePolicy] = None,
         **kwargs: Any,
     ) -> KeyVaultKey:
@@ -149,6 +154,8 @@ class KeyClient(KeyVaultClientBase):
         :paramtype expires_on: ~datetime.datetime or None
         :keyword exportable: Whether the private key can be exported.
         :paramtype exportable: bool or None
+        :keyword external_key: The external key information.
+        :paramtype external_key: ~azure.keyvault.keys._generated.models.ExternalKey or None
         :keyword release_policy: The policy rules under which the key can be exported.
         :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
 
@@ -166,7 +173,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         attributes = self._get_attributes(
-            enabled=enabled, not_before=not_before, expires_on=expires_on, exportable=exportable
+            enabled=enabled, not_before=not_before, expires_on=expires_on, exportable=exportable, external_key=external_key
         )
 
         policy = release_policy

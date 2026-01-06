@@ -283,6 +283,18 @@ class KeyProperties(object):
         return None
 
     @property
+    def external_key(self) -> Optional["_models.ExternalKey"]:
+        """The external key information.
+
+        :returns: The external key information.
+        :rtype: ~azure.keyvault.keys._generated.models.ExternalKey or None
+        """
+        # exportable was added in 
+        if self._attributes:
+            return getattr(self._attributes, "external_key", None)
+        return None
+
+    @property
     def release_policy(self) -> "Optional[KeyReleasePolicy]":
         """The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key can be exported.
 
