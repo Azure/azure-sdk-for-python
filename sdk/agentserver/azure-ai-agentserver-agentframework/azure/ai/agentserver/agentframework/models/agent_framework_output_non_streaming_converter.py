@@ -218,10 +218,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         )
     
     def _append_user_input_request_contents(self, content: UserInputRequestContents, sink: List[dict], author_name: str) -> None:
-        item_id = self._context.id_generator.generate_message_id()
-        if not self._hitl_helper:
-            logger.warning("No HITL helper configured; skipping UserInputRequestContents item.")
-            return
+        item_id = self._context.id_generator.generate_function_call_id()
         content = self._hitl_helper.convert_user_input_request_content(content)
         sink.append(
             {

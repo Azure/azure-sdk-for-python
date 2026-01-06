@@ -74,8 +74,6 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def __init__(self, agent: Union[AgentProtocol, AgentFactory],
                  credentials: "Optional[AsyncTokenCredential]" = None,
-                 *,
-                 hitl_helper: Optional[HumanInTheLoopHelper] = None,
                  **kwargs: Any):
         """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
 
@@ -88,7 +86,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         self._agent_or_factory: Union[AgentProtocol, AgentFactory] = agent
         self._resolved_agent: "Optional[AgentProtocol]" = None
-        self._hitl_helper = hitl_helper
+        self._hitl_helper = HumanInTheLoopHelper()
         # If agent is already instantiated, use it directly
         if isinstance(agent, AgentProtocol):
             self._resolved_agent = agent

@@ -19,7 +19,6 @@ from agent_framework._types import (
 )
 
 from azure.ai.agentserver.core import AgentRunContext
-from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
@@ -49,7 +48,6 @@ from .agent_id_generator import AgentIdGenerator
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .utils.async_iter import chunk_on_change, peek
 
-logger = get_logger()
 
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
@@ -188,7 +186,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
 
         for call_id, content in content_by_call_id.items():
             item_id, output_index = ids_by_call_id[call_id]
-            args = self._serialize_arguments(content.arguments)
+            args = content.arguments if isinstance(content.arguments, str) else json.dumps(content.arguments)
             yield ResponseFunctionCallArgumentsDoneEvent(
                 sequence_number=self._parent.next_sequence(),
                 item_id=item_id,
@@ -256,20 +254,6 @@ class _FunctionCallStreamingState(_BaseStreamingState):
                 item=item,
             )
             self._parent.add_completed_output_item(item)
-    
-
-    def _serialize_arguments(self, arguments: Any) -> str:
-        if isinstance(arguments, str):
-            return arguments
-        if hasattr(arguments, "to_dict"):
-            arguments = arguments.to_dict()
-        if isinstance(arguments, dict):
-            for key, value in arguments.items():
-                logger.info(f"Argument key: {key}, value type: {type(value)}, {value}")
-        try:
-            return json.dumps(arguments)
-        except Exception:  # pragma: no cover - fallback # pylint: disable=broad-exception-caught
-            return str(arguments)
 
 
 class _FunctionCallOutputStreamingState(_BaseStreamingState):
@@ -375,7 +359,7 @@ class AgentFrameworkOutputStreamingConverter:
                 or type(a.content[0]) != type(b.content[0]))  # pylint: disable=unnecessary-lambda-assignment
         )
 
-        async for group in chunk_on_change(updates, is_changed, logger=logger):
+        async for group in chunk_on_change(updates, is_changed):
             has_value, first_tuple, contents_with_author = await peek(self._read_updates(group))
             if not has_value or first_tuple is None:
                 continue
@@ -383,8 +367,6 @@ class AgentFrameworkOutputStreamingConverter:
             first, author_name = first_tuple  # Extract content and author_name from tuple
 
             state = None
-            logger.info(f"First content type in group: {type(first).__name__}")
-            logger.info(f"First content type in group: {first.to_dict()}")
             if isinstance(first, TextContent):
                 state = _TextContentStreamingState(self)
             elif isinstance(first, (FunctionCallContent, UserInputRequestContents)):
@@ -399,7 +381,6 @@ class AgentFrameworkOutputStreamingConverter:
             # Extract just the content from (content, author_name) tuples using async generator
             async def extract_contents():
                 async for content, _ in contents_with_author:
-                    logger.info(f"Processing content: {type(content).__name__}: {content.to_dict()}")
                     yield content
             
             async for content in state.convert_contents(extract_contents(), author_name):
@@ -432,12 +413,11 @@ class AgentFrameworkOutputStreamingConverter:
 
             accepted_types = (TextContent,
                               FunctionCallContent,
-                              FunctionApprovalRequestContent,
+                              UserInputRequestContents,
                               FunctionResultContent,
                               ErrorContent)
             for content in update.contents:
                 if isinstance(content, accepted_types):
-                    logger.info(f"Yield update {type(content)}: {content.to_dict()}")
                     yield (content, author_name)
 
     def _ensure_response_started(self) -> None:

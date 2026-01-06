@@ -5,7 +5,7 @@
 # mypy: disable-error-code="no-redef"
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from agent_framework import ChatMessage, RequestInfoEvent, Role as ChatRole
 from agent_framework._types import TextContent
@@ -39,14 +39,15 @@ class AgentFrameworkInputConverter:
         
         pending_requests = getattr(self._agent, 'pending_requests', {})
         if self._hitl_helper and pending_requests:
-            return self._validate_hitl_response(pending_requests, input)
+            hitl_response = self._validate_hitl_response(pending_requests, input)
+            if hitl_response:
+                return hitl_response
         return self._transform_input_internal(input)
 
     def _transform_input_internal(
         self,
         input: str | List[Dict] | None,
     ) -> str | ChatMessage | list[str] | list[ChatMessage] | None:
-        logger.debug("Transforming input of type: %s", type(input))
         try:
             if isinstance(input, list):
                 messages: list[str | ChatMessage] = []
@@ -132,30 +133,32 @@ class AgentFrameworkInputConverter:
                 return text_content
         return None  # type: ignore
 
-    def _validate_hitl_response(
+    def _validate_and_convert_hitl_response(
         self,
         pending_request: Dict,
         input: List[Dict],
-    ) -> List[ChatMessage]:
+    ) -> Optional[List[ChatMessage]]:
         if not self._hitl_helper:
             logger.warning("HitL helper not provided; cannot validate HitL response.")
-            return []
+            return None
         if isinstance(input, str):
             logger.warning("Expected list input for HitL response validation, got str.")
-            return []
+            return None
         if not isinstance(input, list) or len(input) != 1:
             logger.warning("Expected single-item list input for HitL response validation.")
-            return []
+            return None
+        
         item = input[0]
         if item.get("type") != "function_call_output":
             logger.warning("Expected function_call_output type for HitL response validation.")
-            return []
+            return None
         call_id = item.get("call_id", None)
         if not call_id or call_id not in pending_request:
             logger.warning("Function call output missing valid call_id for HitL response validation.")
-            return []
+            return None
         request_info = pending_request[call_id]
         if not request_info or not isinstance(request_info, RequestInfoEvent):
             logger.warning("No valid pending request info found for call_id: %s", call_id)
-            return []
+            return None
+        
         return self._hitl_helper.convert_response(request_info, item)

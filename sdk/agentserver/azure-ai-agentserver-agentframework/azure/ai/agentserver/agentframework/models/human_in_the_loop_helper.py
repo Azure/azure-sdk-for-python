@@ -4,10 +4,8 @@ import json
 from agent_framework import ChatMessage, FunctionResultContent, RequestInfoEvent
 from agent_framework._types import UserInputRequestContents
 
-from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
 
-logger = get_logger()
 
 class HumanInTheLoopHelper:
 
@@ -29,7 +27,7 @@ class HumanInTheLoopHelper:
                 return data.convert_to_payload()
 
         if not isinstance(arguments, str):
-            if hasattr(arguments, "to_dict"):
+            if hasattr(arguments, "to_dict"):   # agentframework models have to_dict method
                 arguments = arguments.to_dict()
             try:
                 arguments = json.dumps(arguments)
