@@ -14,8 +14,8 @@ pr:
     - sdk/core/
 
 variables:
-  NodeVersion: '18.x'
-  PythonVersion: '3.9'
+  NodeVersion: '24.x'
+  PythonVersion: '3.10'
   auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
   source_path_azure_core: 'sdk/core/azure-core'
   source_path_azure_mgmt_core: 'sdk/core/azure-mgmt-core'
