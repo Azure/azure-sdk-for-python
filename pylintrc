@@ -1,6 +1,6 @@
 [MASTER]
 py-version=3.9
-ignore-patterns=test_*,conftest,setup
+ignore-patterns=conftest,setup
 reports=no
 
 # PYLINT DIRECTORY BLACKLIST.
