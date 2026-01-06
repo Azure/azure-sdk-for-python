@@ -17,6 +17,27 @@ _logger = logging.getLogger(__name__)
 
 
 class EnvironmentVariableLoader(AzureMgmtPreparer):
+    """
+    Preparer to load environment variables during test setup.
+
+    Refer to
+    https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
+    for usage information.
+
+    :param str directory: The service directory prefix for the environment variables; e.g. "keyvault".
+    :param str name_prefix: Not used; present for compatibility with other preparers.
+    :param bool disable_recording: Not used; present for compatibility with other preparers.
+    :param dict client_kwargs: Not used; present for compatibility with other preparers.
+    :param bool random_name_enabled: Not used; present for compatibility with other preparers.
+    :param bool use_cache: Not used; present for compatibility with other preparers.
+    :param list preparers: Not used; present for compatibility with other preparers.
+    :param list hide_secrets: List of environment variable names whose values should be hidden. Instead of being passed
+        to tests as plain strings, these values will be wrapped in an EnvironmentVariable object that hides the value
+        when printed. Use `.secret` to get the actual value (and don't store the value in a local variable).
+    :param kwargs: Keyword arguments representing environment variable names and their fake values for use in
+        recordings. For example, `client_id="fake_client_id"`.
+    """
+
     def __init__(
         self,
         directory,
@@ -26,6 +47,8 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         random_name_enabled=False,
         use_cache=True,
         preparers=None,
+        *,
+        hide_secrets=[],
         **kwargs,
     ):
         super(EnvironmentVariableLoader, self).__init__(
@@ -37,6 +60,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         )
 
         self.directory = directory
+        self.hide_secrets = hide_secrets
         self.fake_values = {}
         self.real_values = {}
         self._set_secrets(**kwargs)
@@ -48,7 +72,9 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         for key in keys:
             if self.directory in key:
                 needed_keys.append(key)
-                self.fake_values[key] = kwargs[key]
+                # Store the fake value, wrapping in EnvironmentVariable if it should be hidden
+                # Even fake values can cause security alerts if they're formatted like real secrets
+                self.fake_values[key] = EnvironmentVariable(kwargs[key]) if key in self.hide_secrets else kwargs[key]
         for key in self.fake_values:
             kwargs.pop(key)
 
@@ -96,6 +122,12 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                 os.environ.pop("AZURE_CLIENT_SECRET", None)
 
     def create_resource(self, name, **kwargs):
+        """
+        Fetches required environment variables if running live; otherwise returns fake values.
+
+        "create_resource" name is misleading, but is left over from when preparers were mostly used to create test
+        resources at runtime.
+        """
         load_dotenv(find_dotenv())
 
         if self.is_live:
@@ -105,7 +137,12 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
                     scrubbed_value = self.fake_values[key]
                     if scrubbed_value:
-                        self.real_values[key.lower()] = os.environ[key.upper()]
+                        # Store the real value, wrapping in EnvironmentVariable if it should be hidden
+                        self.real_values[key.lower()] = (
+                            EnvironmentVariable(os.environ[key.upper()])
+                            if key in self.hide_secrets
+                            else os.environ[key.upper()]
+                        )
 
                         # vcrpy-based tests have a scrubber to register fake values
                         if hasattr(self.test_class_instance, "scrubber"):
@@ -152,3 +189,11 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         pass
+
+
+class EnvironmentVariable:
+    def __init__(self, secret):
+        self.secret = secret
+
+    def __str__(self):
+        return "Secret environment variable value hidden for security."
