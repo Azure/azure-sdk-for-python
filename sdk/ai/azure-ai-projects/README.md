@@ -196,7 +196,9 @@ print("Agent deleted")
 
 ### Using Agent tools
 
-Agents can be enhanced with specialized tools for various capabilities. Tools are organized by their connection requirements:
+Agents can be enhanced with specialized tools for various capabilities. For complete working examples of all tools, see the `\agents\tools` folder under the [Samples][samples] folder.
+
+In the description below, tools are organized by their Foundry connection requirements: "Built-in Tools" (which do not require a Foundry connection) and "Connection-based Tools" (which require a Foundry connection).
 
 #### Built-in Tools
 
@@ -223,7 +225,7 @@ tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id])
 
 *After calling `responses.create()`, check for generated files in response annotations (type `container_file_citation`) and download them using `openai_client.containers.files.content.retrieve()`.*
 
-See the full sample code in [sample_agent_code_interpreter.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_code_interpreter.py).
+See the full sample in file `\agents\tools\sample_agent_code_interpreter.py` in the [Samples][samples] folder.
 
 **File Search**
 
@@ -250,7 +252,7 @@ tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_file_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_file_search.py).
+See the full sample in file `\agents\tools\sample_agent_file_search.py` in the [Samples][samples] folder.
 
 **Image Generation**
 
@@ -284,8 +286,7 @@ if image_data and image_data[0]:
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_image_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_image_generation.py).
-
+See the full sample in file `\agents\tools\sample_agent_image_generation.py` in the [Samples][samples] folder.
 
 **Web Search**
 
@@ -299,7 +300,7 @@ tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_web_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_web_search.py).
+See the full sample in file `\agents\tools\sample_agent_web_search.py` in the [Samples][samples] folder.
 
 **Computer Use**
 
@@ -315,7 +316,7 @@ tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environmen
 
 *After calling `responses.create()`, process the response in an interaction loop. Handle `computer_call` output items and provide screenshots as `computer_call_output` with `computer_screenshot` type to continue the interaction.*
 
-See the full sample code in [sample_agent_computer_use.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_computer_use.py).
+See the full sample in file `\agents\tools\sample_agent_computer_use.py` in the [Samples][samples] folder.
 
 **Model Context Protocol (MCP)**
 
@@ -335,7 +336,7 @@ mcp_tool = MCPTool(
 
 *After calling `responses.create()`, check for `mcp_approval_request` items in the response output. Send back `McpApprovalResponse` with your approval decision to allow the agent to continue its work.*
 
-See the full sample code in [sample_agent_mcp.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_mcp.py).
+See the full sample in file `\agents\tools\sample_agent_mcp.py` in the [Samples][samples] folder.
 
 **OpenAPI**
 
@@ -359,7 +360,7 @@ tool = OpenApiAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_openapi.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_openapi.py).
+See the full sample in file `\agents\tools\sample_agent_openapi.py` in the [Samples][samples] folder.
 
 **Function Tool**
 
@@ -390,7 +391,7 @@ tool = FunctionTool(
 
 *After calling `responses.create()`, process `function_call` items from response output, execute your function logic with the provided arguments, and send back `FunctionCallOutput` with the results.*
 
-See the full sample code in [sample_agent_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_function_tool.py).
+See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the [Samples][samples] folder.
 
 * **Memory Search Tool**
 
@@ -411,9 +412,9 @@ See the full sample code in [sample_agent_function_tool.py](https://github.com/A
   ```
   <!-- END SNIPPET -->
 
-  See the full [sample_agent_memory_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_memory_search.py) showing how to create an Agent with a memory store, and use it in multiple conversations.
+  See the full sample in file `\agents\tools\sample_agent_memory_search.py` in the [Samples][samples] folder showing how to create an Agent with a memory store, and use it in multiple conversations.
 
-  See also samples in the folder [samples\memories](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/memories) showing how to manage memory stores.
+  See also other samples in the folder `\memories` under [Samples][samples] folder, showing how to manage memory stores.
 
 #### Connection-Based Tools
 
@@ -441,7 +442,7 @@ tool = AzureAISearchAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_ai_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_ai_search.py).
+See the full sample in file `\agents\tools\sample_agent_ai_search.py` in the [Samples][samples] folder.
 
 **Bing Grounding**
 
@@ -461,7 +462,7 @@ tool = BingGroundingAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_bing_grounding.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_bing_grounding.py).
+See the full sample in file `\agents\tools\sample_agent_bing_grounding.py` in the [Samples][samples] folder.
 
 **Bing Custom Search**
 
@@ -484,7 +485,7 @@ tool = BingCustomSearchAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_bing_custom_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_bing_custom_search.py).
+See the full sample in file `\agents\tools\sample_agent_bing_custom_search.py` in the [Samples][samples] folder.
 
 **Microsoft Fabric**
 
@@ -504,7 +505,7 @@ tool = MicrosoftFabricAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_fabric.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_fabric.py).
+See the full sample in file `\agents\tools\sample_agent_fabric.py` in the [Samples][samples] folder.
 
 **SharePoint**
 
@@ -524,7 +525,7 @@ tool = SharepointAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_sharepoint.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_sharepoint.py).
+See the full sample in file `\agents\tools\sample_agent_sharepoint.py` in the [Samples][samples] folder.
 
 **Browser Automation**
 
@@ -544,7 +545,7 @@ tool = BrowserAutomationAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_browser_automation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_browser_automation.py).
+See the full sample in file `\agents\tools\sample_agent_browser_automation.py` in the [Samples][samples] folder.
 
 
 **MCP with Project Connection**
@@ -564,7 +565,7 @@ tool = MCPTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_mcp_with_project_connection.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_mcp_with_project_connection.py).
+See the full sample in file `\agents\tools\sample_agent_mcp_with_project_connection.py` in the [Samples][samples] folder.
 
 **Agent-to-Agent (A2A)**
 
@@ -583,7 +584,7 @@ if os.environ.get("A2A_ENDPOINT"):
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_to_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_to_agent.py).
+See the full sample in file `\agents\tools\sample_agent_to_agent.py` in the [Samples][samples] folder.
 
 **OpenAPI with Project Connection**
 
@@ -611,9 +612,7 @@ tool = OpenApiAgentTool(
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_openapi_with_project_connection.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_openapi_with_project_connection.py).
-
-For complete working examples of all tools, see the [sample tools directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools).
+See the full sample in file `\agents\tools\sample_agent_openapi_with_project_connection.py` in the [Samples][samples] folder.
 
 ### Evaluation
 
@@ -993,7 +992,9 @@ with tracer.start_as_current_span(scenario):
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_basic_with_azure_monitor_tracing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/telemetry/sample_agent_basic_with_azure_monitor_tracing.py).
+See the full sample in file `\agents\telemetry\sample_agent_basic_with_azure_monitor_tracing.py` in the [Samples][samples] folder.
+
+**Note:** In order to view the traces in the Microsoft Foundry portal, the agent ID should be passed in as part of the response generation request.
 
 In addition, you might find it helpful to see the tracing logs in the console. You can achieve this with the following code:
 
@@ -1014,7 +1015,7 @@ AIProjectInstrumentor().instrument()
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_basic_with_console_tracing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/telemetry/sample_agent_basic_with_console_tracing.py).
+See the full sample in file `\agents\telemetry\sample_agent_basic_with_console_tracing.py` in the [Samples][samples] folder.
 
 ### Enabling content recording
 
@@ -1092,7 +1093,7 @@ provider.add_span_processor(CustomAttributeSpanProcessor())
 
 <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_basic_with_console_tracing_custom_attributes.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/telemetry/sample_agent_basic_with_console_tracing_custom_attributes.py).
+See the full sample in file `\agents\telemetry\sample_agent_basic_with_console_tracing_custom_attributes.py` in the [Samples][samples] folder.
 
 ### Additional resources
 
@@ -1173,7 +1174,7 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
+Have a look at the [Samples][samples] folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
 ## Contributing
 
