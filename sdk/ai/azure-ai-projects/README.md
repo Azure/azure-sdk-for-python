@@ -994,6 +994,8 @@ with tracer.start_as_current_span(scenario):
 
 See the full sample in file `\agents\telemetry\sample_agent_basic_with_azure_monitor_tracing.py` in the [Samples][samples] folder.
 
+**Note:** In order to view the traces in the Microsoft Foundry portal, the agent ID should be passed in as part of the response generation request.
+
 In addition, you might find it helpful to see the tracing logs in the console. You can achieve this with the following code:
 
 <!-- SNIPPET:sample_agent_basic_with_console_tracing.setup_console_tracing -->
