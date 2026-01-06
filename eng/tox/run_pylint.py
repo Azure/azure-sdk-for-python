@@ -63,7 +63,7 @@ if __name__ == "__main__":
         
         # Add tests directory if it exists
         tests_dir = os.path.join(args.target_package, "tests")
-        if os.path.exists(tests_dir):
+        if os.path.exists(tests_dir) and args.next:
             pylint_targets.append(tests_dir)
             
         check_call(
