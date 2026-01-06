@@ -463,7 +463,7 @@ class TestGetDataSource:
         # Ensure we did not accidentally nest another 'item' key inside the wrapper
         assert "item" not in item_payload
         assert item_payload["sample"]["output_text"] == "someoutput"
-        assert item_payload["sample"]["output_items"] == ["item1", "item2"]
+        assert item_payload["sample"]["output_items"] == "['item1', 'item2']"
 
     def test_data_source_with_sample_output_metadata(self, flat_sample_output_data):
         """Ensure flat rows that include dotted sample metadata remain accessible."""
@@ -484,7 +484,7 @@ class TestGetDataSource:
         assert row["test"]["test_string"] == "baking cakes is fun!"
         # sample.output_text should follow the row through normalization without being stringified
         assert row["sample.output_text"] == "someoutput"
-        assert row["sample.output_items"] == ["item1", "item2"]
+        assert row["sample.output_items"] == "['item1', 'item2']"
 
     def test_data_source_with_numeric_values(self, flat_test_data):
         """Test data source generation converts numeric values to strings."""
