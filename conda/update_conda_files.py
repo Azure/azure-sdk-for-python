@@ -52,7 +52,7 @@ def quoted_presenter(dumper, data):
 
 def update_conda_version() -> (
     Tuple[datetime, str]
-):  # TODO do i need the new date anywhere else? i think i may
+):
     """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the old and new versions."""
 
     with open(CONDA_ENV_PATH, "r") as file:
@@ -624,8 +624,7 @@ def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
             logger.error(f"Failed to create meta.yaml for {package_name}: {e}")
             result.append(package_name)
 
-        # TODO AKA link stuff needs to happen, either do it or return packages that need action
-        return result
+    return result
 
 
 def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]:
@@ -661,12 +660,11 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
             logger.warning("Skipping package with missing name")
             continue
 
-        # TODO there are some existing packages that have hyphens instead lf . which must be wrong
-        # ^ should manually edit these before running this script coz it messes with sort
+        # TODO there are some existing packages that have hyphens instead of . which seems wrong?
+        # ^ should manually edit these before running this script coz it messes with alphabetical sort
 
         module_name = package_name.replace("-", ".")
 
-        # Standard import patterns for mgmt packages
         imports = [
             f"- {module_name}",
             f"- {module_name}.aio",
@@ -705,6 +703,79 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
     logger.info(f"Added {len(new_packages)} new management plane packages to meta.yaml")
     return result
 
+def update_release_logs(packages_to_update: List[Dict[str, str]], release_date: str) -> List[str]:
+    """Add and update release logs for conda packages."""
+    result = []
+
+    # update mgmt release log separately
+    mgmt_release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
+
+    # update data plane release logs
+    for pkg in packages_to_update:
+        package_name = pkg.get(PACKAGE_COL)
+        version = pkg.get(VERSION_GA_COL)
+        
+        if not package_name:
+            logger.warning("Skipping package with missing name")
+            continue
+        
+        if not version:
+            logger.warning(f"Skipping {package_name} with missing version")
+            result.append(package_name)
+            continue
+
+        release_log_path = os.path.join(
+            CONDA_RELEASE_LOGS_DIR, f"{package_name}.md"
+        )
+
+        if not os.path.exists(release_log_path):
+            # Add new release log
+            logger.info(f"Creating new release log for: {package_name}")
+            
+            try:
+                title_parts = package_name.replace("azure-", "").split("-")
+                title = " ".join(word.title() for word in title_parts)
+                
+                content = f"# Azure {title} client library for Python (conda)\n\n"
+                content += f"## {release_date}\n\n"
+                content += "### Packages included\n\n"
+
+                # TODO what about when there's multiple packages...e.g. azure-schemaregistry
+                content += f"- {package_name}-{version}\n"
+                
+                with open(release_log_path, "w") as f:
+                    f.write(content)
+                logger.info(f"Created new release log for {package_name}")
+            except Exception as e:
+                logger.error(f"Failed to create release log for {package_name}: {e}")
+                result.append(package_name)
+
+        else:
+            # Update existing release log
+            try:
+                with open(release_log_path, "r") as f:
+                    existing_content = f.read()
+                
+                lines = existing_content.split("\n")
+                
+                new_release = f"\n## {release_date}\n\n"
+                new_release += "### Packages included\n\n"
+                new_release += f"- {package_name}-{version}\n"
+                
+                lines.insert(1, new_release)
+                updated_content = "\n".join(lines)
+                
+                with open(release_log_path, "w") as f:
+                    f.write(updated_content)
+                    
+                logger.info(f"Updated release log for {package_name}")
+            except Exception as e:
+                logger.error(f"Failed to update release log for {package_name}: {e}")
+                result.append(package_name)
+
+    # TODO AKA link pointing to new release logs needs to happen 
+    
+    return result
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -755,6 +826,7 @@ if __name__ == "__main__":
     new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
     # add/update release logs
+    release_log_results = update_release_logs(outdated_packages + new_packages, new_version)
 
     print("=== REPORT ===")
 
@@ -777,4 +849,11 @@ if __name__ == "__main__":
             "\nThe following new management plane packages may require manual adjustments in azure-mgmt/meta.yaml:"
         )
         for pkg_name in new_mgmt_plane_results:
+            print(f"- {pkg_name}")
+
+    if release_log_results:
+        print(
+            "\nThe following packages may require manual adjustments in release logs:"
+        )
+        for pkg_name in release_log_results:
             print(f"- {pkg_name}")
