@@ -90,3 +90,17 @@ model Element {
 model BackcompatModel {
   keys: Record<string>;
 }
+
+@alternateType(
+  {
+    identity: "geojson.Feature",
+    package: "geojson",
+    minVersion: "3.2.0",
+  },
+  "python"
+)
+model Feature {
+  type: "Feature";
+  properties: Record<unknown>;
+  id?: string | numeric;
+}

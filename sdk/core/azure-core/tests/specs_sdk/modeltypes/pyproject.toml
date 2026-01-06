@@ -34,6 +34,7 @@ dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.36.0",
     "typing-extensions>=4.6.0",
+    "geojson>=3.2.0",
 ]
 dynamic = [
 "version", "readme"
