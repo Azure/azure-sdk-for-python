@@ -58,6 +58,14 @@ if __name__ == "__main__":
             exit(0)
 
     try:
+        # Lint main package module
+        pylint_targets = [os.path.join(args.target_package, top_level_module)]
+        
+        # Add tests directory if it exists
+        tests_dir = os.path.join(args.target_package, "tests")
+        if os.path.exists(tests_dir):
+            pylint_targets.append(tests_dir)
+            
         check_call(
             [
                 sys.executable,
@@ -65,8 +73,7 @@ if __name__ == "__main__":
                 "pylint",
                 "--rcfile={}".format(rcFileLocation),
                 "--output-format=parseable",
-                os.path.join(args.target_package, top_level_module),
-            ]
+            ] + pylint_targets
         )
     except CalledProcessError as e:
         logging.error(
