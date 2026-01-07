@@ -473,7 +473,7 @@ class QueryResultDocumentSubscores(_Model):
 
     :ivar text: The BM25 or Classic score for the text portion of the query.
     :vartype text: ~azure.search.documents.models.TextResult
-    :ivar vectors: The vector similarity and @search.score values for each vector query.
+    :ivar vectors: The vector similarity and.
     :vartype vectors: list[dict[str, ~azure.search.documents.models.SingleVectorFieldResult]]
     :ivar document_boost: The BM25 or Classic score for the text portion of the query.
     :vartype document_boost: float
@@ -482,7 +482,7 @@ class QueryResultDocumentSubscores(_Model):
     text: Optional["_models.TextResult"] = rest_field(visibility=["read"])
     """The BM25 or Classic score for the text portion of the query."""
     vectors: Optional[list[dict[str, "_models.SingleVectorFieldResult"]]] = rest_field(visibility=["read"])
-    """The vector similarity and @search.score values for each vector query."""
+    """The vector similarity and."""
     document_boost: Optional[float] = rest_field(name="documentBoost", visibility=["read"])
     """The BM25 or Classic score for the text portion of the query."""
 
@@ -539,8 +539,7 @@ class SearchDocumentsResult(_Model):
     :ivar debug_info: Debug information that applies to the search results as a whole.
     :vartype debug_info: ~azure.search.documents.models.DebugInfo
     :ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
-     the requested results in a single response. You can use this JSON along with @odata.nextLink to
-     formulate another POST Search request to get the next part of the search response.
+     the requested results in a single response. You can use this JSON along with.
     :vartype next_page_parameters: ~azure.search.documents.models.SearchRequest
     :ivar results: The sequence of results returned by the query. Required.
     :vartype results: list[~azure.search.documents.models.SearchResult]
@@ -584,8 +583,7 @@ class SearchDocumentsResult(_Model):
         name="@search.nextPageParameters", visibility=["read"]
     )
     """Continuation JSON payload returned when the query can't return all the requested results in a
-     single response. You can use this JSON along with @odata.nextLink to formulate another POST
-     Search request to get the next part of the search response."""
+     single response. You can use this JSON along with."""
     results: list["_models.SearchResult"] = rest_field(name="value", visibility=["read"])
     """The sequence of results returned by the query. Required."""
     next_link: Optional[str] = rest_field(name="@odata.nextLink", visibility=["read"])
@@ -1057,13 +1055,9 @@ class VectorThreshold(_Model):
 
 
 class SearchScoreThreshold(VectorThreshold, discriminator="searchScore"):
-    """The results of the vector query will filter based on the '@search.score' value. Note this is
-    the @search.score returned as part of the search response. The threshold direction will be
-    chosen for higher @search.score.
+    """The results of the vector query will filter based on the '.
 
-    :ivar value: The threshold will filter based on the '@search.score' value. Note this is the
-     @search.score returned as part of the search response. The threshold direction will be chosen
-     for higher @search.score. Required.
+    :ivar value: The threshold will filter based on the '. Required.
     :vartype value: float
     :ivar kind: The kind of threshold used to filter vector queries. Required. The results of the
      vector query will filter based on the '@search.score' value. Note this is the @search.score
@@ -1073,9 +1067,7 @@ class SearchScoreThreshold(VectorThreshold, discriminator="searchScore"):
     """
 
     value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The threshold will filter based on the '@search.score' value. Note this is the @search.score
-     returned as part of the search response. The threshold direction will be chosen for higher
-     @search.score. Required."""
+    """The threshold will filter based on the '. Required."""
     kind: Literal[VectorThresholdKind.SEARCH_SCORE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of threshold used to filter vector queries. Required. The results of the vector query
      will filter based on the '@search.score' value. Note this is the @search.score returned as part
@@ -1138,11 +1130,9 @@ class SemanticDebugInfo(_Model):
 
 
 class SingleVectorFieldResult(_Model):
-    """A single vector field result. Both @search.score and vector similarity values are returned.
-    Vector similarity is related to @search.score by an equation.
+    """A single vector field result. Both.
 
-    :ivar search_score: The @search.score value that is calculated from the vector similarity
-     score. This is the score that's visible in a pure single-field single-vector query.
+    :ivar search_score: The.
     :vartype search_score: float
     :ivar vector_similarity: The vector similarity score for this document. Note this is the
      canonical definition of similarity metric, not the 'distance' version. For example, cosine
@@ -1151,8 +1141,7 @@ class SingleVectorFieldResult(_Model):
     """
 
     search_score: Optional[float] = rest_field(name="searchScore", visibility=["read"])
-    """The @search.score value that is calculated from the vector similarity score. This is the score
-     that's visible in a pure single-field single-vector query."""
+    """The."""
     vector_similarity: Optional[float] = rest_field(name="vectorSimilarity", visibility=["read"])
     """The vector similarity score for this document. Note this is the canonical definition of
      similarity metric, not the 'distance' version. For example, cosine similarity instead of cosine

@@ -1155,14 +1155,11 @@ class OcrLineEnding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SPACE = "space"
     """Lines are separated by a single space character."""
     CARRIAGE_RETURN = "carriageReturn"
-    """Lines are separated by a carriage return ('
-    ') character."""
+    """Lines are separated by a carriage return ('\\r') character."""
     LINE_FEED = "lineFeed"
-    """Lines are separated by a single line feed ('
-    ') character."""
+    """Lines are separated by a single line feed ('\\n') character."""
     CARRIAGE_RETURN_LINE_FEED = "carriageReturnLineFeed"
-    """Lines are separated by a carriage return and a line feed ('
-    ') character."""
+    """Lines are separated by a carriage return and a line feed ('\\r\\n') character."""
 
 
 class OcrSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):

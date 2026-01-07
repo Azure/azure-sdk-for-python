@@ -7085,7 +7085,7 @@ class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
 class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceCharFilter"):
     """A character filter that replaces characters in the input string. It uses a regular expression
     to identify character sequences to preserve and a replacement pattern to identify characters to
-    replace. For example, given the input text "aa bb aa bb", pattern "(aa)\\s+(bb)", and
+    replace. For example, given the input text "aa bb aa bb", pattern "(aa)\\\\s+(bb)", and
     replacement "$1#$2", the result would be "aa#bb aa#bb". This character filter is implemented
     using Apache Lucene.
 
@@ -7134,7 +7134,7 @@ class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Searc
 class PatternReplaceTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceTokenFilter"):
     """A character filter that replaces characters in the input string. It uses a regular expression
     to identify character sequences to preserve and a replacement pattern to identify characters to
-    replace. For example, given the input text "aa bb aa bb", pattern "(aa)\\s+(bb)", and
+    replace. For example, given the input text "aa bb aa bb", pattern "(aa)\\\\s+(bb)", and
     replacement "$1#$2", the result would be "aa#bb aa#bb". This token filter is implemented using
     Apache Lucene.
 

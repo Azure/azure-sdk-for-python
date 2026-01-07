@@ -647,7 +647,9 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         )
 
     @distributed_trace
-    def get_skillsets(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[_models.SearchIndexerSkillset]:
+    def get_skillsets(
+        self, *, select: Optional[List[str]] = None, **kwargs: Any
+    ) -> List[_models.SearchIndexerSkillset]:
         """Lists all skillsets available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
