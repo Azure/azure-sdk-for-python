@@ -14,8 +14,8 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from ..models import (
     MemoryStoreOperationUsage,
-    MemoryStoreOperationUsageInputTokensDetails,
-    MemoryStoreOperationUsageOutputTokensDetails,
+    ResponseUsageInputTokensDetails,
+    ResponseUsageOutputTokensDetails,
     MemoryStoreUpdateCompletedResult,
     UpdateMemoriesLROPoller,
     UpdateMemoriesLROPollingMethod,
@@ -34,7 +34,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.Item]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -119,7 +119,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.Item]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -193,9 +193,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
                 usage = MemoryStoreOperationUsage(
                     embedding_tokens=0,
                     input_tokens=0,
-                    input_tokens_details=MemoryStoreOperationUsageInputTokensDetails(cached_tokens=0),
+                    input_tokens_details=ResponseUsageInputTokensDetails(cached_tokens=0),
                     output_tokens=0,
-                    output_tokens_details=MemoryStoreOperationUsageOutputTokensDetails(reasoning_tokens=0),
+                    output_tokens_details=ResponseUsageOutputTokensDetails(reasoning_tokens=0),
                     total_tokens=0,
                 )
                 deserialized = MemoryStoreUpdateCompletedResult(memory_operations=[], usage=usage)

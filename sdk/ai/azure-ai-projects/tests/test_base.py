@@ -24,13 +24,13 @@ from azure.ai.projects.models import (
     DeploymentType,
     Index,
     IndexType,
-    ItemContentType,
+    InputContentType,
     ItemResource,
     ItemType,
     ModelDeployment,
-    ResponsesMessageRole,
 )
 from openai.types.responses import Response
+from openai.types.conversations import ConversationItem
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
@@ -539,17 +539,17 @@ class TestBase(AzureRecordedTestCase):
 
     def _validate_conversation_item(
         self,
-        item: ItemResource,
+        item: ConversationItem,
         *,
         expected_type: Optional[ItemType] = None,
         expected_id: Optional[str] = None,
-        expected_role: Optional[ResponsesMessageRole] = None,
-        expected_content_type: Optional[ItemContentType] = None,
+        expected_role: Optional[str] = None,
+        expected_content_type: Optional[InputContentType] = None,
         expected_content_text: Optional[str] = None,
     ) -> None:
         assert item
 
-        # From ItemResource:
+        # From ConversationItem:
         if expected_type:
             assert item.type == expected_type
         else:

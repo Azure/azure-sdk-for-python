@@ -12,9 +12,9 @@ from azure.ai.projects.models import (
     #    ResponsesSystemMessageItemParam,
     #   ItemContentInputText,
     ItemType,
-    ResponsesMessageRole,
-    ItemContentType,
+    InputContentType,
 )
+from openai.types.conversations import ConversationItem
 
 
 class TestConversationItemsCrud(TestBase):
@@ -70,15 +70,15 @@ class TestConversationItemsCrud(TestBase):
                 self._validate_conversation_item(
                     item_list[0],
                     expected_type=ItemType.MESSAGE,
-                    expected_role=ResponsesMessageRole.USER,
-                    expected_content_type=ItemContentType.INPUT_TEXT,
+                    expected_role="user",
+                    expected_content_type=InputContentType.INPUT_TEXT,
                     expected_content_text="first message",
                 )
                 self._validate_conversation_item(
                     item_list[1],
                     expected_type=ItemType.MESSAGE,
-                    expected_role=ResponsesMessageRole.USER,
-                    expected_content_type=ItemContentType.INPUT_TEXT,
+                    expected_role="user",
+                    expected_content_type=InputContentType.INPUT_TEXT,
                     expected_content_text="second message",
                 )
                 item1_id = item_list[0].id
@@ -99,15 +99,15 @@ class TestConversationItemsCrud(TestBase):
                 # self._validate_conversation_item(
                 #     item_list[0],
                 #     expected_type=ItemType.MESSAGE,
-                #     expected_role=ResponsesMessageRole.SYSTEM,
-                #     expected_content_type=ItemContentType.INPUT_TEXT,
+                #     expected_role="system",
+                #     expected_content_type=InputContentType.INPUT_TEXT,
                 #     expected_content_text="third message",
                 # )
                 # self._validate_conversation_item(
                 #     item_list[1],
                 #     expected_type=ItemType.MESSAGE,
-                #     expected_role=ResponsesMessageRole.USER,
-                #     expected_content_type=ItemContentType.INPUT_TEXT,
+                #     expected_role="user",
+                #     expected_content_type=InputContentType.INPUT_TEXT,
                 #     expected_content_text="fourth message",
                 # )
                 # item3_id = item_list[0].id
@@ -119,8 +119,8 @@ class TestConversationItemsCrud(TestBase):
                     item,
                     expected_type=ItemType.MESSAGE,
                     expected_id=item1_id,
-                    expected_role=ResponsesMessageRole.USER,
-                    expected_content_type=ItemContentType.INPUT_TEXT,
+                    expected_role="user",
+                    expected_content_type=InputContentType.INPUT_TEXT,
                     expected_content_text="first message",
                 )
 

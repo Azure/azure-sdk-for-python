@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseTextFormatConfigurationJsonSchema,
+    TextResponseFormatJsonSchema,
     PromptAgentDefinitionText,
 )
 
@@ -176,7 +176,7 @@ class TestAgentResponsesCrud(TestBase):
             definition=PromptAgentDefinition(
                 model=model,
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="CalendarEvent", schema=CalendarEvent.model_json_schema()
                     )
                 ),
