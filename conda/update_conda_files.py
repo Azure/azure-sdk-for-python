@@ -924,10 +924,14 @@ if __name__ == "__main__":
     # TODO clean this part up
 
     # Only ship GA packages that are not deprecated
+    # uamqp is an exception as it has VersionGA but no LatestGADate or FirstGADate
     packages = [
         pkg
         for pkg in packages
-        if (pkg.get(VERSION_GA_COL) and pkg.get(LATEST_GA_DATE_COL))
+        if (
+            (pkg.get(PACKAGE_COL) == "uamqp")
+            or (pkg.get(VERSION_GA_COL) and pkg.get(LATEST_GA_DATE_COL))
+        )
     ]
     logger.info(f"Filtered to {len(packages)} GA packages")
 

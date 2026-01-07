@@ -1,7 +1,8 @@
 """
 Helper functions for updating conda files.
 """
-import os 
+
+import os
 import glob
 from typing import Dict, List, Optional, Tuple
 import csv
@@ -100,6 +101,9 @@ def package_needs_update(
     )
 
     if not compare_date:
+        if package_row.get(PACKAGE_COL) == "uamqp":
+            return True  # uamqp is an exception
+
         logger.debug(
             f"Package {package_row.get(PACKAGE_COL)} is skipped due to missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
         )
@@ -163,6 +167,7 @@ def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int
                 if package_name:
                     package_index[package_name] = (artifact_idx, checkout_idx)
     return package_index
+
 
 def get_package_path(package_name: str) -> str:
     """Get the filesystem path of an SDK package given its name."""
