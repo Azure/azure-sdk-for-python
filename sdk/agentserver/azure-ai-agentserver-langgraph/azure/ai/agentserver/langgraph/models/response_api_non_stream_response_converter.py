@@ -3,40 +3,76 @@
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation,broad-exception-caught,logging-not-lazy
 # mypy: disable-error-code="valid-type,call-overload,attr-defined"
+from abc import ABC, abstractmethod
 import copy
-from typing import List
+import json
+from typing import Any, Collection, List
 
 from langchain_core import messages
 from langchain_core.messages import AnyMessage
+from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
+from .human_in_the_loop_helper import (
+    HumanInTheLoopHelper,
+    INTERRUPT_NODE_NAME,
+)
 from .utils import extract_function_call
 
 logger = get_logger()
 
 
-class LangGraphResponseConverter:
-    def __init__(self, context: AgentRunContext, output):
-        self.context = context
-        self.output = output
+class ResponseAPINonStreamResponseConverter(ABC):
+    """
+    Abstract base class for converting Langgraph output to items in Response format.
+    One converter instance handles one response.
+    """
+    @abstractmethod
+    def convert(self, output: dict[str, Any]) -> list[project_models.ItemResource]:
+        """
+        Convert the Langgraph output to a list of ItemResource objects.
 
-    def convert(self) -> list[project_models.ItemResource]:
+        :param output: The Langgraph output to be converted.
+        :type output: dict[str, Any]
+
+        :return: A list of ItemResource objects representing the converted output.
+        :rtype: list[project_models.ItemResource]
+        """
+        pass
+
+
+class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponseConverter):
+    """
+    Convert Langgraph MessageState output to ItemResource objects.
+    """
+    def __init__(self,
+            context: AgentRunContext,
+            hitl_helper: HumanInTheLoopHelper):
+        self.context = context
+        self.hitl_helper = hitl_helper
+
+    def convert(self, output: dict[str, Any]) -> list[project_models.ItemResource]:
         res = []
-        for step in self.output:
+        for step in output:
             for node_name, node_output in step.items():
-                message_arr = node_output.get("messages")
-                if not message_arr:
-                    logger.warning(f"No messages found in node {node_name} output: {node_output}")
-                    continue
-                for message in message_arr:
-                    try:
-                        converted = self.convert_output_message(message)
-                        res.append(converted)
-                    except Exception as e:
-                        logger.error(f"Error converting message {message}: {e}")
+                if node_name == INTERRUPT_NODE_NAME:
+                    interrupt_messages = self.hitl_helper.convert_interrupts(node_output)
+                    res.extend(interrupt_messages)
+                else:
+                    message_arr = node_output.get("messages")
+                    if not message_arr or not isinstance(message_arr, Collection):
+                        logger.warning(f"No messages found in node {node_name} output: {node_output}")
+                        continue
+                    for message in message_arr:
+                        try:
+                            converted = self.convert_output_message(message)
+                            if converted:
+                                res.append(converted)
+                        except Exception as e:
+                            logger.error(f"Error converting message {message}: {e}")
         return res
 
     def convert_output_message(self, output_message: AnyMessage):  # pylint: disable=inconsistent-return-statements
@@ -87,6 +123,7 @@ class LangGraphResponseConverter:
                 output=output_message.content,
                 id=self.context.id_generator.generate_function_output_id(),
             )
+        logger.warning(f"Unsupported message type: {type(output_message)}, {output_message}")
 
     def convert_MessageContent(
         self, content, role: project_models.ResponsesMessageRole
@@ -134,3 +171,4 @@ class LangGraphResponseConverter:
             content_dict["annotations"] = []  # annotation is required for output_text
 
         return project_models.ItemContent(content_dict)
+    

@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation
 # mypy: ignore-errors
+from abc import ABC, abstractmethod
 import json
 from typing import Dict, List
 
@@ -37,7 +38,22 @@ item_content_type_mapping = {
 }
 
 
-class LangGraphRequestConverter:
+class ResponseAPIRequestConverter(ABC):
+    """
+    Convert CreateResponse to LangGraph request format.
+    """
+    @abstractmethod
+    def convert(self) -> dict:
+        """
+        Convert the CreateResponse to a LangGraph request format.
+
+        :return: The converted LangGraph request.
+        :rtype: dict
+        """
+        pass
+
+
+class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
     def __init__(self, data: CreateResponse):
         self.data: CreateResponse = data
 
