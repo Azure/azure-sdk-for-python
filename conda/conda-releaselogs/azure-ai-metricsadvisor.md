@@ -6,6 +6,12 @@
 
 - azure-ai-metricsadvisor-1.0.1
 
+## 2025.12.01
+
+### Packages included
+
+- azure-ai-metricsadvisor-1.0.1
+
 ## 2024.12.01
 
 ### Packages included

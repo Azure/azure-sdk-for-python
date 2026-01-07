@@ -6,6 +6,12 @@
 
 - azure-ai-formrecognizer-3.3.3
 
+## 2025.12.01
+
+### Packages included
+
+- azure-ai-formrecognizer-3.3.3
+
 ## 2024.12.01
 
 ### Packages included

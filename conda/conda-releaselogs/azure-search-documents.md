@@ -6,6 +6,12 @@
 
 - azure-search-documents-11.6.0
 
+## 2025.12.01
+
+### Packages included
+
+- azure-search-documents-11.6.0
+
 ## 2025.09.01
 
 ### Packages included

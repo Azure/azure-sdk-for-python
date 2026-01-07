@@ -6,6 +6,12 @@
 
 - azure-confidentialledger-1.1.1
 
+## 2025.12.01
+
+### Packages included
+
+- azure-confidentialledger-1.1.1
+
 ## 2025.09.01
 
 ### Packages included

@@ -5,7 +5,7 @@ package:
   version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: {{ environ.get('AGENTS_SOURCE_DISTRIBUTION', '') }}
+  url: {{ environ.get('VOICELIVE_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -14,22 +14,24 @@ build:
 
 requirements:
   host:
-    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - typing-extensions>=4.6.0
+    - python
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - isodate>=0.6.1
     - pip
-    - python
     - requests-oauthlib >=0.5.0
     - aiohttp
-    - isodate
   run:
-    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
+    - typing-extensions>=4.6.0
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
+    - isodate>=0.6.1
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - requests-oauthlib >=0.5.0
     - aiohttp
-    - isodate
 
 test:
   imports:
@@ -40,10 +42,10 @@ about:
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Azure AI VoiceLive client library for Python"
+  summary: "Microsoft Azure Ai Voicelive Client Library for Python"
   description: |
-    This is the Microsoft Azure AI VoiceLive Client Library.
-    Please see https://aka.ms/azsdk/conda/releases/projects for version details.
+    This is the Microsoft Azure Ai Voicelive Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/ai for version details.
   doc_url: 
   dev_url: 
 

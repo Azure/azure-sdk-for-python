@@ -6,6 +6,12 @@
 
 - azure-digitaltwins-core-1.3.0
 
+## 2025.12.01
+
+### Packages included
+
+- azure-digitaltwins-core-1.3.0
+
 ## 2025.09.01
 
 ### Packages included

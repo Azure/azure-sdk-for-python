@@ -7,6 +7,13 @@
 - azure-schemaregistry-1.3.0
 - azure-schemaregistry-avroencoder-1.0.0
 
+## 2025.12.01
+
+### Packages included
+
+- azure-schemaregistry-1.3.0
+- azure-schemaregistry-avroencoder-1.0.0
+
 ## 2025.09.01
 
 ### Packages included

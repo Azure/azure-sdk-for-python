@@ -4,6 +4,12 @@
 
 ### Packages included
 
+- azure-cosmos-4.14.3
+
+## 2025.12.01
+
+### Packages included
+
 - azure-cosmos-4.14.1
 
 ## 2025.09.01

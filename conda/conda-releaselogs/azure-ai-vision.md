@@ -6,6 +6,12 @@
 
 - azure-ai-vision-imageanalysis-1.0.0
 
+## 2025.12.01
+
+### Packages included
+
+- azure-ai-vision-imageanalysis-1.0.0
+
 ## 2025.09.01
 
 ### Packages included
