@@ -50,7 +50,8 @@ class AzureAppConfigurationClient:
     :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
-
+    :keyword audience: The audience for authentication. Defaults to the public Azure App Configuration audience.
+    :paramtype audience: str
     """
 
     # pylint:disable=protected-access
