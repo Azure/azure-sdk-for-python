@@ -23,7 +23,7 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AGENT_NAME - The name of an existing Agent in your Microsoft Foundry project.
+    2) AZURE_AI_AGENT_NAME - The name of an existing Agent in your Microsoft Foundry project.
     3) CONVERSATION_ID - The ID of an existing Conversation associated with the Agent
 """
 
@@ -36,7 +36,7 @@ from azure.ai.projects.aio import AIProjectClient
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-agent_name = os.environ["AGENT_NAME"]
+agent_name = os.environ["AZURE_AI_AGENT_NAME"]
 conversation_id = os.environ["CONVERSATION_ID"]
 
 
