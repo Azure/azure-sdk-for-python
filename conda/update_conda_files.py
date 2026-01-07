@@ -850,33 +850,38 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
 # Helpers for updating release logs
 # =====================================
 
-
 def update_release_logs(
-    packages_to_update: List[Dict[str, str]], release_date: str
+    package_dict: Dict, new_data_plane_names: List[str], new_mgmt_plane_names: List[str], release_date: str
 ) -> List[str]:
     """
-    Add and update release logs for conda packages. Release log includes all version changes and new packages.
+    Add and update release logs for conda packages. Release log includes versions of all packages for the release
     """
     result = []
 
     # TODO update mgmt release log separately
     mgmt_release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
 
-    # update data plane release logs
-    for pkg in packages_to_update:
-        package_name = pkg.get(PACKAGE_COL)
-        version = pkg.get(VERSION_GA_COL)
+    # TODO update all existing data plane release logs
 
-        if not package_name:
-            logger.warning("Skipping package with missing name")
-            continue
+    # TODO update release logs for new packages
+    for package_name in new_data_plane_names:
+        pkg = package_dict.get(package_name, {})
+        version = pkg.get(VERSION_GA_COL)
 
         if not version:
             logger.warning(f"Skipping {package_name} with missing version")
             result.append(package_name)
             continue
 
-        release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{package_name}.md")
+        # check for group
+        group_name = get_release_group(package_name, get_package_to_group_mapping())
+        group_data = get_package_group_data(group_name)
+        if group_data:
+            release_log_path = os.path.join(
+                CONDA_RELEASE_LOGS_DIR, f"{group_name}.md"
+            )
+        else:
+            release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{package_name}.md")
 
         if not os.path.exists(release_log_path):
             # Add new release log
@@ -1004,7 +1009,7 @@ if __name__ == "__main__":
 
     # add/update release logs
     release_log_results = update_release_logs(
-        outdated_packages + new_packages, new_version
+        package_dict, new_data_plane_names, new_mgmt_plane_names, new_version
     )
 
     print("=== REPORT ===")
