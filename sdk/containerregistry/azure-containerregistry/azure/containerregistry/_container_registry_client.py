@@ -219,9 +219,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            list_of_elem = _deserialize(
-                list[str], pipeline_response.http_response.internal_response.json().get("repositories", [])
-            ) or []
+            list_of_elem = (
+                _deserialize(
+                    list[str], pipeline_response.http_response.internal_response.json().get("repositories", [])
+                )
+                or []
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -575,9 +578,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            list_of_elem = _deserialize(
-                list[TagAttributesBase], pipeline_response.http_response.internal_response.json().get("tags", [])
-            ) or []
+            list_of_elem = (
+                _deserialize(
+                    list[TagAttributesBase], pipeline_response.http_response.internal_response.json().get("tags", [])
+                )
+                or []
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None

@@ -654,6 +654,8 @@ def build_container_registry_blob_get_chunk_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))
+    accept = _headers.pop("Accept", "application/octet-stream")
+
     # Construct URL
     _url = "/v2/{name}/blobs/{digest}"
     path_format_arguments = {
@@ -668,6 +670,7 @@ def build_container_registry_blob_get_chunk_request(  # pylint: disable=name-too
 
     # Construct headers
     _headers["range"] = _SERIALIZER.header("range", range, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2676,9 +2679,7 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def get_chunk(  # pylint: disable=inconsistent-return-statements
-        self, name: str, digest: str, *, range: str, **kwargs: Any
-    ) -> None:
+    def get_chunk(self, name: str, digest: str, *, range: str, **kwargs: Any) -> Iterator[bytes]:
         """Retrieve the blob from the registry identified by ``digest``. This endpoint may
         also support RFC7233 compliant range requests. Support can be detected by
         issuing a HEAD request. If the header ``Accept-Range: bytes`` is returned, range
@@ -2691,8 +2692,8 @@ class ContainerRegistryBlobOperations:
         :keyword range: Format : bytes=<start>-<end>,  HTTP Range header specifying blob chunk.
          Required.
         :paramtype range: str
-        :return: None
-        :rtype: None
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2706,7 +2707,7 @@ class ContainerRegistryBlobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_container_registry_blob_get_chunk_request(
             name=name,
@@ -2721,7 +2722,7 @@ class ContainerRegistryBlobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2729,6 +2730,11 @@ class ContainerRegistryBlobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [206]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2736,8 +2742,12 @@ class ContainerRegistryBlobOperations:
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
         response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def check_chunk_exists(self, name: str, digest: str, *, range: str, **kwargs: Any) -> bool:
