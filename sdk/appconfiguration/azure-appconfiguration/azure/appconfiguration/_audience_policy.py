@@ -61,7 +61,7 @@ class AudienceErrorHandlingPolicy(SansIOHTTPPolicy):
         :type ex: ClientAuthenticationError
         """
         if ex.message and AAD_AUDIENCE_ERROR_CODE in ex.message:
-            message = INCORRECT_AUDIENCE_ERROR_MESSAGE if self.has_audience else NO_AUDIENCE_ERROR_MESSAGE 
+            message = INCORRECT_AUDIENCE_ERROR_MESSAGE if self.has_audience else NO_AUDIENCE_ERROR_MESSAGE
             err = ClientAuthenticationError(message, ex.response)
             err.message = message
             raise err
