@@ -127,6 +127,9 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		:return: List of tool descriptors from MCP server.
 		:rtype: ListFoundryHostedMcpToolsResponse
 		"""
+		if not allowed_tools:
+			return []
+
 		request = self.build_list_tools_request()
 		response = await self.send_request(request)
 		async with response:

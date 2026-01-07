@@ -1,7 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from ._models import ResolvedFoundryTool
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._models import ResolvedFoundryTool
 
 
 class ToolInvocationError(RuntimeError):
@@ -41,3 +44,7 @@ class OAuthConsentRequiredError(RuntimeError):
         self.message = message
         self.consent_url = consent_url
         self.project_connection_id = project_connection_id
+
+
+class MissingUserInfoError(RuntimeError):
+    """Raised when required user information is missing for connected tool listing/invocation."""

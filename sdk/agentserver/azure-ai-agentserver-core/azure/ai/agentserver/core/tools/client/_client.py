@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from asyncio import gather
 from collections import defaultdict
-from typing import Any, AsyncContextManager, DefaultDict, Dict, List
+from typing import Any, AsyncContextManager, DefaultDict, Dict, List, Optional
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
@@ -11,7 +11,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._models import FoundryTool, FoundryToolSource, ResolvedFoundryTool, UserInfo
 from ._configuration import FoundryToolClientConfiguration
-from ._exceptions import ToolInvocationError
+from ._exceptions import MissingUserInfoError, ToolInvocationError
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
 from ...utils._credential import AsyncTokenCredentialAdapter
@@ -44,18 +44,24 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         config = FoundryToolClientConfiguration(AsyncTokenCredentialAdapter(credential))
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=endpoint, config=config)
 
-        self._mcp_tools = FoundryMcpToolsOperations(self._client)
+        self._hosted_mcp_tools = FoundryMcpToolsOperations(self._client)
         self._connected_tools = FoundryConnectedToolsOperations(self._client)
 
     @distributed_trace_async
     async def list_tools(self,
                          tools: List[FoundryTool],
-                         user: UserInfo,
+                         user: Optional[UserInfo] = None,
                          agent_name: str="$default") -> List[ResolvedFoundryTool]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
         returning them as ResolvedFoundryTool instances ready for invocation.
+        :param tools: List of FoundryTool instances to resolve.
+        :type tools: List[~FoundryTool]
+        :param user: Information about the user requesting the tools.
+        :type user: Optional[UserInfo]
+        :param agent_name: Name of the agent requesting the tools. Defaults to "$default".
+        :type agent_name: str, optional
         :return: List of available tools from all configured sources.
         :rtype: List[~FoundryTool]
         :raises ~azure.ai.agentserver.core.tools._exceptions.ToolInvocationError:
@@ -68,12 +74,13 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
             tools_by_source[t.source].append(t)
 
         tasks = []
-        if FoundryToolSource.CONNECTED in tools_by_source:
-            # noinspection PyTypeChecker
-            tasks.append(self._mcp_tools.list_tools(tools_by_source[FoundryToolSource.CONNECTED]))
         if FoundryToolSource.HOSTED_MCP in tools_by_source:
             # noinspection PyTypeChecker
-            tasks.append(self._connected_tools.list_tools(tools_by_source[FoundryToolSource.HOSTED_MCP],
+            tasks.append(self._hosted_mcp_tools.list_tools(tools_by_source[FoundryToolSource.HOSTED_MCP]))
+        if FoundryToolSource.CONNECTED in tools_by_source:
+            user = self._ensure_user_info(user)
+            # noinspection PyTypeChecker
+            tasks.append(self._connected_tools.list_tools(tools_by_source[FoundryToolSource.CONNECTED],
                                                           user,
                                                           agent_name))
 
@@ -89,7 +96,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
     async def invoke_tool(self,
                           tool: ResolvedFoundryTool,
                           arguments: Dict[str, Any],
-                          user: UserInfo,
+                          user: Optional[UserInfo] = None,
                           agent_name: str="$default") -> Any:
         """Invoke a tool by instance, name, or descriptor.
 
@@ -99,7 +106,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :param arguments: Arguments to pass to the tool.
         :type arguments: Dict[str, Any]
         :param user: Information about the user invoking the tool.
-        :type user: UserInfo
+        :type user: Optional[UserInfo]
         :param agent_name: Name of the agent invoking the tool. Defaults to "$default".
         :type agent_name: str, optional
         :return: The result of invoking the tool.
@@ -112,10 +119,17 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
             Raised when the tool invocation fails or source is not supported.
         """
         if tool.source is FoundryToolSource.HOSTED_MCP:
-            return await self._mcp_tools.invoke_tool(tool, arguments)
+            return await self._hosted_mcp_tools.invoke_tool(tool, arguments)
         if tool.source is FoundryToolSource.CONNECTED:
+            user = self._ensure_user_info(user)
             return await self._connected_tools.invoke_tool(agent_name, tool, arguments, user)
         raise ToolInvocationError(f"Unsupported tool source: {tool.source}", tool=tool)
+
+    @staticmethod
+    def _ensure_user_info(user: Optional[UserInfo]) -> UserInfo:
+        if not user:
+            raise MissingUserInfoError("UserInfo is required for listing/invoking connected tools.")
+        return user
 
     async def close(self) -> None:
         """Close the underlying HTTP pipeline."""
