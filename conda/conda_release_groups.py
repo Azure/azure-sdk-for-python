@@ -106,7 +106,7 @@ def get_release_group(package_name: str, package_to_group: dict) -> str:
     Get the release group name for a given package.
 
     :param package_name: The package name (e.g., "azure-core", "azure-communication-chat")
-    :return: The release group name (e.g., "azure-core", "azure-communication")
+    :return: The release group name (e.g., "azure-core", "azure-communication"), or package name itself if not grouped
     """
     return package_to_group.get(package_name, package_name)
 

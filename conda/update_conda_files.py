@@ -19,6 +19,7 @@ from conda_helper_functions import (
     package_needs_update,
     get_package_data_from_pypi,
     build_package_index,
+    get_package_path
 )
 
 from conda_release_groups import (
@@ -366,14 +367,6 @@ def update_conda_sdk_client_yml(
 # Helpers for creating conda-recipes/<service>/meta.yaml files
 # =====================================
 
-
-def get_package_path(package_name: str) -> str:
-    """Get the filesystem path of an SDK package given its name."""
-    pattern = os.path.join(SDK_DIR, "**", package_name)
-    matches = glob.glob(pattern, recursive=True)
-    return matches[0]
-
-
 def determine_service_info(
     pkg: Dict[str, str], package_to_group: dict
 ) -> Tuple[str, str]:
@@ -585,6 +578,7 @@ def add_new_data_plane_packages(
     logger.info(f"Adding {len(new_data_plane_names)} new data plane packages")
     result = []
 
+    # grouped packages are processed once when encountering the first package in that group
     group_names_processed = set()
     for package_name in new_data_plane_names:
         logger.info(f"Adding new data plane meta.yaml for: {package_name}")
@@ -722,13 +716,35 @@ def update_release_logs(
     Add and update release logs for conda packages. Release log includes versions of all packages for the release
     """
     result = []
-
-    # TODO update mgmt release log separately
-    mgmt_release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
+    package_to_group = get_package_to_group_mapping()
 
     # TODO update all existing data plane release logs
+    existing_release_logs = glob.glob(os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-*.md"))
+    for release_log_path in existing_release_logs:
+        curr_service_name = os.path.basename(release_log_path).replace(".md", "")
+        try:
+            with open(release_log_path, "r") as f:
+                existing_content = f.read()
 
-    # TODO update release logs for new packages
+            lines = existing_content.split("\n")
+
+            new_release = f"\n## {release_date}\n\n"
+            new_release += "### Packages included\n\n"
+
+            group_name = get_release_group(curr_service_name, package_to_group)
+            group_data = get_package_group_data(group_name)
+
+            # with open(release_log_path, "w") as f:
+            #     f.write(updated_content)
+
+            logger.info(f"Updated release log for {os.path.basename(release_log_path)}")
+        except Exception as e:
+            logger.error(
+                f"Failed to update release log {os.path.basename(release_log_path)}: {e}"
+            )
+            result.append(curr_service_name)
+
+    # TODO release logs for new packages
     for package_name in new_data_plane_names:
         pkg = package_dict.get(package_name, {})
         version = pkg.get(VERSION_GA_COL)
@@ -750,24 +766,24 @@ def update_release_logs(
 
         if not os.path.exists(release_log_path):
             # Add new release log
-            logger.info(f"Creating new release log for: {package_name}")
+            logger.info(f"Creating new release log for: {group_name}")
 
             try:
-                title_parts = package_name.replace("azure-", "").split("-")
+                title_parts = group_name.replace("azure-", "").split("-")
                 title = " ".join(word.title() for word in title_parts)
 
                 content = f"# Azure {title} client library for Python (conda)\n\n"
                 content += f"## {release_date}\n\n"
                 content += "### Packages included\n\n"
 
-                content += f"- {package_name}-{version}\n"
+                content += f"- {group_name}-{version}\n"
 
                 with open(release_log_path, "w") as f:
                     f.write(content)
-                logger.info(f"Created new release log for {package_name}")
+                logger.info(f"Created new release log for {group_name}")
             except Exception as e:
-                logger.error(f"Failed to create release log for {package_name}: {e}")
-                result.append(package_name)
+                logger.error(f"Failed to create release log for {group_name}: {e}")
+                result.append(group_name)
 
         else:
             # Update existing release log
@@ -792,6 +808,9 @@ def update_release_logs(
                 logger.error(f"Failed to update release log for {package_name}: {e}")
                 result.append(package_name)
 
+    # TODO update mgmt release log separately
+    mgmt_release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
+
     # TODO AKA link pointing to new release logs needs to happen
 
     return result
@@ -815,9 +834,7 @@ if __name__ == "__main__":
     # convert to mm/dd/yyyy format for comparison with CSV dates
     old_version = old_date.strftime("%m/%d/%Y")
 
-    # Parse CSV data
     packages = parse_csv()
-
     if not packages:
         logger.error("No packages found in CSV data.")
         exit(1)
@@ -840,6 +857,9 @@ if __name__ == "__main__":
         new_packages
     )
 
+    # map package name to csv row for easy lookup
+    package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
+
     # Extract package names from the filtered lists
     outdated_package_names = [
         pkg.get(PACKAGE_COL, "") for pkg in outdated_packages if pkg.get(PACKAGE_COL)
@@ -854,9 +874,6 @@ if __name__ == "__main__":
         for pkg in new_mgmt_plane_packages
         if pkg.get(PACKAGE_COL)
     ]
-
-    # map package name to csv row for easy lookup
-    package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
 
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...

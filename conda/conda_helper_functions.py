@@ -1,7 +1,8 @@
 """
 Helper functions for updating conda files.
 """
-
+import os 
+import glob
 from typing import Dict, List, Optional, Tuple
 import csv
 import json
@@ -9,6 +10,9 @@ from ci_tools.logging import logger
 import urllib.request
 from datetime import datetime
 
+# TODO move the constants into a third file
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SDK_DIR = os.path.join(ROOT_DIR, "sdk")
 AZURE_SDK_CSV_URL = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 PACKAGE_COL = "Package"
 LATEST_GA_DATE_COL = "LatestGADate"
@@ -159,3 +163,9 @@ def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int
                 if package_name:
                     package_index[package_name] = (artifact_idx, checkout_idx)
     return package_index
+
+def get_package_path(package_name: str) -> str:
+    """Get the filesystem path of an SDK package given its name."""
+    pattern = os.path.join(SDK_DIR, "**", package_name)
+    matches = glob.glob(pattern, recursive=True)
+    return matches[0]
