@@ -11,6 +11,8 @@ template:
   name: HuggingFace-Agent
   kind: hosted
   environment_variables:
+    - name: AZURE_AI_PROJECT_ENDPOINT
+      value: ${AZURE_AI_PROJECT_ENDPOINT}
     - name: AZURE_OPENAI_ENDPOINT
       value: ${AZURE_OPENAI_ENDPOINT}
     - name: OPENAI_API_VERSION
