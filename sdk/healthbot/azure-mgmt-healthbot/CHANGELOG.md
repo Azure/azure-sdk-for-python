@@ -20,26 +20,6 @@
 
   - Deleted model `AvailableOperations`/`BotResponseList`/`ValidationResult` which actually were not used by SDK users
 
-## 1.0.0 (2025-12-30)
-
-### Features Added
-
-  - Model `HealthBotProperties` added property `access_control_method`
-  - Enum `SkuName` added member `C1`
-  - Enum `SkuName` added member `PES`
-  - Added enum `CreatedByType`
-  - Model `BotsOperations` added method `begin_update`
-
-### Breaking Changes
-
-  - Deleted or renamed client `HealthBotMgmtClient`
-  - Deleted or renamed enum value `SkuName.S1`
-  - Deleted or renamed model `AvailableOperations`
-  - Deleted or renamed model `BotResponseList`
-  - Deleted or renamed model `IdentityType`
-  - Deleted or renamed model `ValidationResult`
-  - Deleted or renamed method `BotsOperations.update`
-
 ## 1.0.0b2 (2022-10-28)
 
 ### Features Added
