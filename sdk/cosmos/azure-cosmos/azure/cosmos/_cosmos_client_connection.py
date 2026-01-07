@@ -3353,11 +3353,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 self.last_response_headers = last_response_headers
                 self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
-                if results:
-                    # add up all the query results from all over lapping ranges
-                    results["Documents"].extend(partial_result["Documents"])
-                else:
-                    results = partial_result
+                # Introducing a temporary complex function into a critical path to handle aggregated queries
+                # during splits, as a precaution falling back to the original logic if anything goes wrong
+                try:
+                    results = base._merge_query_results(results, partial_result, query)
+                except Exception: # pylint: disable=broad-exception-caught
+                    # If the new merge logic fails, fall back to the original logic.
+                    if results:
+                        results["Documents"].extend(partial_result["Documents"])
+                    else:
+                        results = partial_result
                 if response_hook:
                     response_hook(last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
@@ -3390,15 +3395,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.HybridSearch + "," +
                                     documents._QueryFeature.CountIf + "," +
                                     documents._QueryFeature.WeightedRankFusion)
-        if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
-                          Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
-            supported_query_features = (documents._QueryFeature.Aggregate + "," +
-                                        documents._QueryFeature.CompositeAggregate + "," +
-                                        documents._QueryFeature.Distinct + "," +
-                                        documents._QueryFeature.MultipleOrderBy + "," +
-                                        documents._QueryFeature.OffsetAndLimit + "," +
-                                        documents._QueryFeature.OrderBy + "," +
-                                        documents._QueryFeature.Top)
 
         options = {
             "contentType": runtime_constants.MediaTypes.Json,

@@ -1,8 +1,20 @@
 # Release History
 
-## 1.31.0 (unreleased)
+## 1.32.0 (unreleased)
 
 ### Features Added
+
+### Bugs Fixed
+
+### Other Changes
+
+
+## 1.31.0 (2025-12-18)
+
+### Features Added
+
+- Added support for `default_deployment_template` property in Model entity, allowing models to specify a default deployment template for online deployments.
+- Online deployments now display informational messages when deploying models with configured default deployment templates.
 
 ### Bugs Fixed
 
@@ -11,6 +23,7 @@
 - Ensuring that azureml-dataprep-rslex is only installed for PyPy below 3.10 and CPython below 3.13.
 - Adding support for Python 3.14.
 - Dropping support for Python 3.7 and 3.8.
+- Update the deployment template parameter `allowed_instance_type` -> `allowed_instance_types`
 
 ## 1.30.0 (2025-10-29)
 
@@ -37,10 +50,12 @@
   - `ml_client.deployment_templates.restore()`
 
 ### Bugs Fixed
+
 - Fix for registry resource group passed to OnlineEndpointOperations when model is in registry in different resource group compared to workspace.
 - Set defaults for min_instances, max_instances, idle_time_before_scale_down in AmlCompute
 
 ### Other Changes
+
 - v2 component types are now case insensitive
 
 ## 1.28.1 (2025-07-08)

@@ -1,6 +1,19 @@
 # Release History
 
-## 12.28.0b1 (2025-12-03)
+## 12.29.0b1 (Unreleased)
+
+### Features Added
+
+## 12.28.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.28.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
+## 12.28.0b1 (2025-12-04)
 
 ### Features Added
 - Added support for service version 2026-02-06.

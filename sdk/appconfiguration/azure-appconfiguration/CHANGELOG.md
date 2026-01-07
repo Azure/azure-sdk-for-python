@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `match_conditions` parameter to `by_page()` method in `list_configuration_settings()` to efficiently monitor configuration changes using etags without fetching unchanged data.
+- Added support for custom authentication audiences via the `audience` keyword argument in `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
 
 ### Breaking Changes
 
@@ -13,6 +14,7 @@
 ### Other Changes
 
 - Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
+- Improved authentication scope handling to automatically detect and use correct audience URLs for Azure Public Cloud, Azure US Government, and Azure China cloud environments.
 
 ## 1.7.2 (2025-10-20)
 
