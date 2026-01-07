@@ -101,7 +101,7 @@ def package_needs_update(
     )
 
     if not compare_date:
-        if package_row.get(PACKAGE_COL) == "uamqp":
+        if not is_new and package_row.get(PACKAGE_COL) == "uamqp":
             return True  # uamqp is an exception
 
         logger.debug(
