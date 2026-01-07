@@ -104,6 +104,18 @@ class pylint(Check):
             )
 
             try:
+
+                pylint_targets = [os.path.join(package_dir, top_level_module)]
+        
+                # Add tests + samples directory if it exists and next pylint is being used
+                tests_dir = os.path.join(package_dir, "tests")
+                samples_dir = os.path.join(package_dir, "samples")
+                if os.path.exists(tests_dir) and args.next:
+                    pylint_targets.append(tests_dir)
+                if os.path.exists(samples_dir) and args.next:
+                    pylint_targets.append(samples_dir)
+
+
                 logger.info(
                     [
                         executable,
@@ -111,8 +123,7 @@ class pylint(Check):
                         "pylint",
                         "--rcfile={}".format(rcFileLocation),
                         "--output-format=parseable",
-                        os.path.join(package_dir, top_level_module),
-                    ]
+                    ] + pylint_targets
                 )
 
                 results.append(
@@ -123,8 +134,7 @@ class pylint(Check):
                             "pylint",
                             "--rcfile={}".format(rcFileLocation),
                             "--output-format=parseable",
-                            os.path.join(package_dir, top_level_module),
-                        ]
+                        ] + pylint_targets
                     )
                 )
             except CalledProcessError as e:

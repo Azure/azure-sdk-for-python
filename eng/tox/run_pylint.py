@@ -58,6 +58,17 @@ if __name__ == "__main__":
             exit(0)
 
     try:
+        pylint_targets = [os.path.join(args.target_package, top_level_module)]
+        
+        # Add tests + samples directory if it exists and next pylint is being used
+        tests_dir = os.path.join(args.target_package, "tests")
+        samples_dir = os.path.join(args.target_package, "samples")
+        if os.path.exists(tests_dir) and args.next:
+            pylint_targets.append(tests_dir)
+        if os.path.exists(samples_dir) and args.next:
+            pylint_targets.append(samples_dir)
+
+            
         check_call(
             [
                 sys.executable,
@@ -65,8 +76,7 @@ if __name__ == "__main__":
                 "pylint",
                 "--rcfile={}".format(rcFileLocation),
                 "--output-format=parseable",
-                os.path.join(args.target_package, top_level_module),
-            ]
+            ] + pylint_targets
         )
     except CalledProcessError as e:
         logging.error(
