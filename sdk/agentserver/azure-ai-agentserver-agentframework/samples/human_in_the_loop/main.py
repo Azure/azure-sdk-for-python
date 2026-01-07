@@ -2,33 +2,22 @@
 
 import asyncio
 import json
-import sys
-from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from agent_framework.azure import AzureOpenAIChatClient
 from azure.identity import AzureCliCredential
-
-# # Ensure local getting_started package can be imported when running as a script.
-# _SAMPLES_ROOT = Path(__file__).resolve().parents[3]
-# if str(_SAMPLES_ROOT) not in sys.path:
-#     sys.path.insert(0, str(_SAMPLES_ROOT))
+from dotenv import load_dotenv
 
 from agent_framework import (  # noqa: E402
-    ChatMessage,
     Executor,
-    FunctionCallContent,
-    FunctionResultContent,
-    Role,
     WorkflowAgent,
     WorkflowBuilder,
     WorkflowContext,
     handler,
     response_handler,
 )
-from agent_framework._types import UserInputRequestContents
 from workflow_as_agent_reflection_pattern import (  # noqa: E402
     ReviewRequest,
     ReviewResponse,
@@ -36,26 +25,8 @@ from workflow_as_agent_reflection_pattern import (  # noqa: E402
 )
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-from azure.ai.agentserver.agentframework.models.human_in_the_loop_helper import HumanInTheLoopHelper
 
-"""
-Sample: Workflow Agent with Human-in-the-Loop
-
-Purpose:
-This sample demonstrates how to build a workflow agent that escalates uncertain
-decisions to a human manager. A Worker generates results, while a Reviewer
-evaluates them. When the Reviewer is not confident, it escalates the decision
-to a human, receives the human response, and then forwards that response back
-to the Worker. The workflow completes when idle.
-
-Prerequisites:
-- OpenAI account configured and accessible for OpenAIChatClient.
-- Familiarity with WorkflowBuilder, Executor, and WorkflowContext from agent_framework.
-- Understanding of request-response message handling in executors.
-- (Optional) Review of reflection and escalation patterns, such as those in
-  workflow_as_agent_reflection.py.
-"""
-
+load_dotenv()
 
 @dataclass
 class HumanReviewRequest:
@@ -64,20 +35,17 @@ class HumanReviewRequest:
     agent_request: ReviewRequest | None = None
 
     def convert_to_payload(self) -> str:
-        """Convert the HumanReviewRequest to a JSON payload string."""
-        user_messages = [msg.to_dict() for msg in self.agent_request.user_messages
-        ] if self.agent_request else []
-        agent_messages = [msg.to_dict() for msg in self.agent_request.agent_messages
-        ] if self.agent_request else []
-        payload = {
-            "agent_request": {
-                "request_id": self.agent_request.request_id,
-                "user_messages": user_messages,
-                "agent_messages": agent_messages,
+        """Convert the HumanReviewRequest to a payload string."""
+        request = self.agent_request
+        payload: dict[str, Any] = {"agent_request": None}
+
+        if request:
+            payload["agent_request"] = {
+                "request_id": request.request_id,
+                "user_messages": [msg.to_dict() for msg in request.user_messages],
+                "agent_messages": [msg.to_dict() for msg in request.agent_messages],
             }
-            if self.agent_request
-            else None
-        }
+
         return json.dumps(payload, indent=2)
 
 
@@ -98,7 +66,10 @@ class ReviewerWithHumanInTheLoop(Executor):
         print("Reviewer: Escalating to human manager...")
 
         # Forward the request to a human manager by sending a HumanReviewRequest.
-        await ctx.request_info(request_data=HumanReviewRequest(agent_request=request), response_type=ReviewResponse)
+        await ctx.request_info(
+            request_data=HumanReviewRequest(agent_request=request),
+            response_type=ReviewResponse,
+        )
 
     @response_handler
     async def accept_human_review(
@@ -139,78 +110,11 @@ def build_agent():
     )
     return agent
 
-async def main() -> None:
-    print("Starting Workflow Agent with Human-in-the-Loop Demo")
-    print("=" * 50)
-
-    print("Building workflow with Worker-Reviewer cycle...")
-    agent = build_agent()
-
-    print("Running workflow agent with user query...")
-    print("Query: 'Write code for parallel reading 1 million files on disk and write to a sorted output file.'")
-    print("-" * 50)
-
-    # Run the agent with an initial query.
-    response = await agent.run(
-        "Write code for parallel reading 1 million Files on disk and write to a sorted output file."
-    )
-
-    # Locate the human review function call in the response messages.
-    human_review_function_call: FunctionCallContent | None = None
-    for message in response.messages:
-        print(f"Message {type(message)}: {message.to_json()}")
-        for content in message.contents:
-            print(f"content {type(content)}: {content.to_json()}")
-            if isinstance(content, UserInputRequestContents):
-                print(f"User input requested: {content}")
-            if isinstance(content, FunctionCallContent) and content.name == WorkflowAgent.REQUEST_INFO_FUNCTION_NAME:
-                human_review_function_call = content
-
-    # Handle the human review if required.
-    if human_review_function_call:
-        # Parse the human review request arguments.
-        human_request_args = human_review_function_call.arguments
-        if isinstance(human_request_args, str):
-            request: WorkflowAgent.RequestInfoFunctionArgs = WorkflowAgent.RequestInfoFunctionArgs.from_json(
-                human_request_args
-            )
-        elif isinstance(human_request_args, Mapping):
-            request = WorkflowAgent.RequestInfoFunctionArgs.from_dict(dict(human_request_args))
-        else:
-            raise TypeError("Unexpected argument type for human review function call.")
-
-        request_payload: Any = request.data
-        if not isinstance(request_payload, HumanReviewRequest):
-            raise ValueError("Human review request payload must be a HumanReviewRequest.")
-
-        agent_request = request_payload.agent_request
-        if agent_request is None:
-            raise ValueError("Human review request must include agent_request.")
-
-        request_id = agent_request.request_id
-        # Mock a human response approval for demonstration purposes.
-        human_response = ReviewResponse(request_id=request_id, feedback="Approved", approved=True)
-
-        # Create the function call result object to send back to the agent.
-        human_review_function_result = FunctionResultContent(
-            call_id=human_review_function_call.call_id,
-            result=human_response,
-        )
-        # Send the human review result back to the agent.
-        response = await agent.run(ChatMessage(role=Role.TOOL, contents=[human_review_function_result]))
-        print(f"Agent Response: {response.to_dict()}")
-        print(f"📤 Agent Response: {response.messages[-1].text}")
-
-    print("=" * 50)
-    print("Workflow completed!")
-
 
 async def run_agent() -> None:
+    """Run the workflow inside the agent server adapter."""
     agent = build_agent()
-    hitl_helper = HumanInTheLoopHelper()
-    await from_agent_framework(agent, hitl_helper=hitl_helper).run_async()
+    await from_agent_framework(agent).run_async()
 
 if __name__ == "__main__":
-    print("Initializing Workflow as Agent Sample...")
-    # asyncio.run(main())
     asyncio.run(run_agent())

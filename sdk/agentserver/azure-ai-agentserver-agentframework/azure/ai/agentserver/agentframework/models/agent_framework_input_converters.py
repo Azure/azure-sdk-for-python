@@ -39,7 +39,7 @@ class AgentFrameworkInputConverter:
         
         pending_requests = getattr(self._agent, 'pending_requests', {})
         if self._hitl_helper and pending_requests:
-            hitl_response = self._validate_hitl_response(pending_requests, input)
+            hitl_response = self._validate_and_convert_hitl_response(pending_requests, input)
             if hitl_response:
                 return hitl_response
         return self._transform_input_internal(input)
