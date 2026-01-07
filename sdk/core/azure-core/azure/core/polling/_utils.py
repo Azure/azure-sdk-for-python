@@ -129,7 +129,7 @@ def _encode_continuation_token(data: Any) -> str:
         "data": data,
     }
     try:
-        return base64.b64encode(json.dumps(token, separators=[",", ":"]).encode("utf-8")).decode("ascii")
+        return base64.b64encode(json.dumps(token, separators=(",", ":")).encode("utf-8")).decode("ascii")
     except (TypeError, ValueError) as err:
         raise TypeError(
             "Unable to generate a continuation token for this operation. Payload is not JSON-serializable."

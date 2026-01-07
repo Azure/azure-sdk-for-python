@@ -196,7 +196,7 @@ def continuation_token_xml_initial():
     """Initial LRO response with XML body for continuation token tests."""
     base_url = get_base_url(request)
     return Response(
-        '<root><status>InProgress</status></root>',
+        "<root><status>InProgress</status></root>",
         headers={
             "operation-location": "{}/polling/continuation-token-xml-status".format(base_url),
             "content-type": "application/xml",
