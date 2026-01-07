@@ -50,6 +50,10 @@ PACKAGES_WITH_DOWNLOAD_URI = [
     "msal-extensions",
 ]
 
+# =====================================
+# Helpers for updating conda_env.yml
+# =====================================
+
 
 class quoted(str):
     pass
@@ -83,6 +87,11 @@ def update_conda_version() -> Tuple[datetime, str]:
     logger.info(f"Updated AZURESDK_CONDA_VERSION from {old_version} to {new_version}")
 
     return old_date, new_version
+
+
+# =====================================
+# Utility functions
+# =====================================
 
 
 def parse_csv() -> List[Dict[str, str]]:
@@ -226,6 +235,11 @@ def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int
     return package_index
 
 
+# =====================================
+# Helpers for updating conda-sdk-client.yml
+# =====================================
+
+
 class IndentDumper(yaml.SafeDumper):
     """Used to preserve indentation levels in conda-sdk-client.yml."""
 
@@ -340,13 +354,12 @@ def update_conda_sdk_client_yml(
     for package_name in new_data_plane_packages:
         pkg = package_dict.get(package_name, {})
 
-        # TODO commented out for testing purposes only
-        # if package_name in package_index:
-        #     logger.warning(
-        #         f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
-        #     )
-        #     result.append(package_name)
-        #     continue
+        if package_name in package_index:
+            logger.warning(
+                f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
+            )
+            result.append(package_name)
+            continue
 
         # check if package belongs to a release group
         group_name = get_release_group(package_name, package_to_group)
@@ -433,7 +446,7 @@ def update_conda_sdk_client_yml(
                         f"Added package {pkg_entry['package']} to existing CondaArtifact {group_name}"
                     )
 
-    # Add new mgmt plane packages
+    # === Add new mgmt plane packages ===
 
     logger.info(
         f"Detected {len(new_mgmt_plane_packages)} new management plane packages to add to conda-sdk-client.yml"
@@ -486,6 +499,11 @@ def update_conda_sdk_client_yml(
     else:
         logger.warning("No packages were found in the YAML file to update")
     return result
+
+
+# =====================================
+# Helpers for creating conda-recipes/<service>/meta.yaml files
+# =====================================
 
 
 def get_package_path(package_name: str) -> str:
@@ -585,7 +603,7 @@ def get_package_metadata(package_name: str, package_path: str) -> Tuple[str, str
     else:
         summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
 
-    # TODO definitely need to check if this is actually correct
+    # TODO definitely need to check if this is actually always correct
     conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
     description = (
         f"This is the {summary}.\n    Please see {conda_url} for version details."
@@ -746,6 +764,11 @@ def add_new_data_plane_packages(
     return result
 
 
+# =====================================
+# Helpers for adding new mgmt plane packages to azure-mgmt/meta.yaml
+# =====================================
+
+
 def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]:
     """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
     if len(new_packages) == 0:
@@ -823,6 +846,11 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
     return result
 
 
+# =====================================
+# Helpers for updating release logs
+# =====================================
+
+
 def update_release_logs(
     packages_to_update: List[Dict[str, str]], release_date: str
 ) -> List[str]:
@@ -862,7 +890,6 @@ def update_release_logs(
                 content += f"## {release_date}\n\n"
                 content += "### Packages included\n\n"
 
-                # TODO what about when there's multiple packages...e.g. azure-schemaregistry
                 content += f"- {package_name}-{version}\n"
 
                 with open(release_log_path, "w") as f:
@@ -967,18 +994,18 @@ if __name__ == "__main__":
         package_dict, outdated_package_names, new_data_plane_names, new_mgmt_plane_names
     )
 
-    # # handle new data plane libraries
+    # handle new data plane libraries
     new_data_plane_results = add_new_data_plane_packages(
         package_dict, new_data_plane_names
     )
 
-    # # handle new mgmt plane libraries
-    # new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
+    # handle new mgmt plane libraries
+    new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
-    # # add/update release logs
-    # release_log_results = update_release_logs(
-    #     outdated_packages + new_packages, new_version
-    # )
+    # add/update release logs
+    release_log_results = update_release_logs(
+        outdated_packages + new_packages, new_version
+    )
 
     print("=== REPORT ===")
 
@@ -996,16 +1023,16 @@ if __name__ == "__main__":
         for pkg_name in new_data_plane_results:
             print(f"- {pkg_name}")
 
-    # if new_mgmt_plane_results:
-    #     print(
-    #         "\nThe following new management plane packages may require manual adjustments in azure-mgmt/meta.yaml:"
-    #     )
-    #     for pkg_name in new_mgmt_plane_results:
-    #         print(f"- {pkg_name}")
+    if new_mgmt_plane_results:
+        print(
+            "\nThe following new management plane packages may require manual adjustments in azure-mgmt/meta.yaml:"
+        )
+        for pkg_name in new_mgmt_plane_results:
+            print(f"- {pkg_name}")
 
-    # if release_log_results:
-    #     print(
-    #         "\nThe following packages may require manual adjustments in release logs:"
-    #     )
-    #     for pkg_name in release_log_results:
-    #         print(f"- {pkg_name}")
+    if release_log_results:
+        print(
+            "\nThe following packages may require manual adjustments in release logs:"
+        )
+        for pkg_name in release_log_results:
+            print(f"- {pkg_name}")
