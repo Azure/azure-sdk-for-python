@@ -81,7 +81,14 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         self._backup_preparers = preparers
 
     def _set_secrets(self, **kwargs):
-        keys = kwargs.keys()
+        keys = {key.lower() for key in kwargs.keys()}
+        if self.hide_secrets and not all(name in keys for name in self.hide_secrets):
+            missing = [name for name in self.hide_secrets if name not in keys]
+            raise AzureTestError(
+                f"The following environment variables were specified to be hidden, but no fake values were "
+                f"provided for them: {', '.join(missing)}. Please provide fake values for these variables."
+            )
+
         needed_keys = []
         for key in keys:
             if self.directory in key:
@@ -89,7 +96,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                 # Store the fake value, wrapping in EnvironmentVariable if it should be hidden
                 # Even fake values can cause security alerts if they're formatted like real secrets
                 self.fake_values[key] = (
-                    EnvironmentVariable(key.upper(), kwargs[key]) if key.lower() in self.hide_secrets else kwargs[key]
+                    EnvironmentVariable(key.upper(), kwargs[key]) if key in self.hide_secrets else kwargs[key]
                 )
         for key in self.fake_values:
             kwargs.pop(key)
@@ -156,28 +163,20 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                         # Store the real value, wrapping in EnvironmentVariable if it should be hidden
                         self.real_values[key.lower()] = (
                             EnvironmentVariable(key.upper(), os.environ[key.upper()])
-                            if key.lower() in self.hide_secrets
+                            if key in self.hide_secrets
                             else os.environ[key.upper()]
                         )
 
-                        # vcrpy-based tests have a scrubber to register fake values
-                        if hasattr(self.test_class_instance, "scrubber"):
-                            self.test_class_instance.scrubber.register_name_pair(
-                                self.real_values[key.lower()], scrubbed_value
+                        try:
+                            add_general_string_sanitizer(
+                                value=scrubbed_value,
+                                target=self.real_values[key],
                             )
-                        # test proxy tests have no scrubber, and instead register sanitizers using fake values
-                        else:
-                            try:
-                                add_general_string_sanitizer(
-                                    value=scrubbed_value,
-                                    target=self.real_values[key.lower()],
-                                )
-                            except:
-                                _logger.info(
-                                    "This test class instance has no scrubber and a sanitizer could not be registered "
-                                    "with the test proxy, so the EnvironmentVariableLoader will not scrub the value of "
-                                    f"{key} in recordings."
-                                )
+                        except:
+                            _logger.info(
+                                "A sanitizer could not be registered with the test proxy, so the "
+                                f"EnvironmentVariableLoader will not scrub the value of {key} in recordings."
+                            )
                     else:
                         raise AzureTestError(
                             "To pass a live ID you must provide the scrubbed value for recordings to prevent secrets "
