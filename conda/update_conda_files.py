@@ -722,9 +722,7 @@ def update_data_plane_release_logs(
     # NOTE: for new packages added to an existing release group, this should handle that as well
     # as long as conda_release_groups.py was updated to include the new package in the group
 
-    existing_release_logs = glob.glob(
-        os.path.join(CONDA_RELEASE_LOGS_DIR, "*.md")
-    )
+    existing_release_logs = glob.glob(os.path.join(CONDA_RELEASE_LOGS_DIR, "*.md"))
     for release_log_path in existing_release_logs:
         curr_service_name = os.path.basename(release_log_path).replace(".md", "")
         # skip azure-mgmt here
@@ -735,7 +733,7 @@ def update_data_plane_release_logs(
                 f"Existing release log service {curr_service_name} was not found in CSV data, using same versions as before. Check that it's not deprecated."
             )
             result.append(curr_service_name)
-            #TODO
+            # TODO
             continue
 
         group_name = get_release_group(curr_service_name, package_to_group)
@@ -747,11 +745,23 @@ def update_data_plane_release_logs(
             for pkg_name in pkg_names_in_log:
                 pkg = package_dict.get(pkg_name, {})
                 version = pkg.get(VERSION_GA_COL)
-                pkg_updates.append(f"- {pkg_name}-{version}\n")
+                if version:
+                    pkg_updates.append(f"- {pkg_name}-{version}")
+                else:
+                    logger.warning(
+                        f"Package {pkg_name} in group {group_name} is missing version info, it may be deprecated. Skipping in release log update"
+                    )
+                    result.append(pkg_name)
         else:
             pkg = package_dict.get(curr_service_name, {})
             version = pkg.get(VERSION_GA_COL)
-            pkg_updates.append(f"- {curr_service_name}-{version}\n")
+            if version:
+                pkg_updates.append(f"- {curr_service_name}-{version}")
+            else:
+                logger.warning(
+                    f"Package {curr_service_name} is missing version info, it may be deprecated. Skipping in release log update"
+                )
+                result.append(curr_service_name)
         try:
             with open(release_log_path, "r") as f:
                 existing_content = f.read()
@@ -761,7 +771,7 @@ def update_data_plane_release_logs(
             new_release = f"\n## {release_date}\n\n"
             new_release += "### Packages included\n\n"
 
-            new_release += "".join(pkg_updates)
+            new_release += "\n".join(pkg_updates)
             lines.insert(1, new_release)
             updated_content = "\n".join(lines)
 
@@ -812,12 +822,12 @@ def update_data_plane_release_logs(
                 for pkg_name in pkg_names_in_log:
                     pkg = package_dict.get(pkg_name, {})
                     version = pkg.get(VERSION_GA_COL)
-                    pkg_updates.append(f"- {pkg_name}-{version}\n")
+                    pkg_updates.append(f"- {pkg_name}-{version}")
             else:
                 pkg = package_dict.get(package_name, {})
                 version = pkg.get(VERSION_GA_COL)
-                pkg_updates.append(f"- {package_name}-{version}\n")
-            content += "".join(pkg_updates)
+                pkg_updates.append(f"- {package_name}-{version}")
+            content += "\n".join(pkg_updates)
 
             try:
                 with open(release_log_path, "w") as f:
@@ -834,7 +844,8 @@ def update_data_plane_release_logs(
 
     return result
 
-def update_mgmt_plane_release_log(    
+
+def update_mgmt_plane_release_log(
     package_dict: Dict,
     new_mgmt_plane_names: List[str],
     release_date: str,
@@ -846,9 +857,8 @@ def update_mgmt_plane_release_log(
         logger.error("Management plane release log azure-mgmt.md does not exist.")
         return new_mgmt_plane_names  # all new packages need attention
 
-
-
     return result
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
