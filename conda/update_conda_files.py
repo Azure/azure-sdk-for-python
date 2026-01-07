@@ -416,7 +416,7 @@ def update_conda_sdk_client_yml(
             curr_artifact_checkout = conda_artifacts[existing_artifact_names[group_name]]["checkout"]
             packages_in_artifact = {item["package"] for item in curr_artifact_checkout}
 
-            # account for adding a single new package to an existing group
+            # account for adding new packages to an existing group
             for pkg_entry in checkout_packages:
                 if pkg_entry["package"] not in packages_in_artifact:
                     curr_artifact_checkout.append(pkg_entry)
@@ -437,13 +437,12 @@ def update_conda_sdk_client_yml(
     for package_name in new_mgmt_plane_packages:
         pkg = package_dict.get(package_name, {})
 
-        # TODO commented out for testing purposes only
-        # if package_name in package_index:
-        #     logger.warning(
-        #         f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
-        #     )
-        #     result.append(package_name)
-        #     continue
+        if package_name in package_index:
+            logger.warning(
+                f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
+            )
+            result.append(package_name)
+            continue
 
         new_mgmt_entry = {
             "package": package_name,
@@ -562,55 +561,71 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
 
     return list(host_requirements), list(run_requirements)
 
-
-def get_package_metadata(package_name: str, package_path: str) -> Dict[str, str]:
-    """Extract metadata for the about section from package."""
-    metadata = extract_package_metadata(package_path)
+def get_package_metadata(package_name: str, package_path: str) -> Tuple[str, str, str]:
+    """Extract package metadata for about section in meta.yaml."""
+    pkg_metadata = extract_package_metadata(package_path)
 
     service_dir = os.path.basename(os.path.dirname(package_path))
-
     home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
-    # TODO check this
-    if metadata and metadata.get("description"):
-        summary = metadata["description"]
+    # TODO check correctness of this
+    if pkg_metadata and pkg_metadata.get("description"):
+            summary = pkg_metadata["description"]
     else:
         summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
-
+    
     # TODO definitely need to check if this is actually correct
     conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
+    description = f"This is the {summary}.\n    Please see {conda_url} for version details."
 
-    return {
-        "home": home_url,
-        "summary": summary,
-        "description": f"This is the {summary}.\n    Please see {conda_url} for version details.",
-    }
-
+    return home_url, summary, description
+    
 
 def generate_data_plane_meta_yaml(
-    package_name: str, download_uri: Optional[str] = None
-) -> str:
-    """Generate the meta.yaml content for a data plane package."""
+    package_dict: Dict[str, Dict[str, str]], package_name: str, group_name: Optional[str], group_data: Optional[dict]) -> str:
+    """
+    Generate the meta.yaml content for a data plane package or release group.
+
+    :param package_dict: Dictionary mapping package names to their CSV row data.
+    :param package_name: The name of the package to generate meta.yaml for.
+    :param group: Whether the meta.yaml is for a single package or group.
+    """
 
     # TODO is it correct that the env var name is arbitrary and replaced in conda_functions.py?
     src_distr_name = package_name.split("-")[-1].upper()
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
-    package_path = get_package_path(package_name)
+    # handle grouped packages 
+    if group_name and group_data:
+        host_reqs = set()
+        run_reqs = set()
+        pkg_imports = []
+        for pkg in group_data["packages"]:
+            package_path = get_package_path(pkg)
+            parsed_setup = ParsedSetup.from_path(package_path)
+            pkg_host_reqs, pkg_run_reqs = get_package_requirements(parsed_setup)
+            host_reqs.update(pkg_host_reqs)
+            run_reqs.update(pkg_run_reqs)
+            pkg_imports.append(pkg.replace("-", "."))
+        host_reqs = list(host_reqs)
+        run_reqs = list(run_reqs)
 
-    parsed_setup = ParsedSetup.from_path(package_path)
-    host_reqs, run_reqs = get_package_requirements(parsed_setup)
+        # TODO verify correctness 
+        home_url, summary, description = get_package_metadata(group_name, get_package_path(group_data["packages"][0]))
+    else:
+        package_path = get_package_path(package_name)
+        parsed_setup = ParsedSetup.from_path(package_path)
 
+        host_reqs, run_reqs = get_package_requirements(parsed_setup)
+        pkg_imports = [package_name.replace("-", ".")]
+
+        # extract metadata for about section
+        home_url, summary, description = get_package_metadata(package_name, package_path)
+    
     # Format requirements with proper YAML indentation
     host_reqs_str = "\n    - ".join(host_reqs)
     run_reqs_str = "\n    - ".join(run_reqs)
-
-    # TODO there can be subdirectory packages..... e.g. azure-ai-ml, may need more import logic
-    pkg_name_normalized = package_name.replace("-", ".")
-
-    # Get package metadata for about section
-    metadata = get_package_metadata(package_name, package_path)
-
+    pkg_imports_str = "\n    - ".join(pkg_imports)
     meta_yaml_content = f"""{{% set name = "{package_name}" %}}
 
 package:
@@ -633,16 +648,16 @@ requirements:
 
 test:
   imports:
-    - {pkg_name_normalized}
+    - {pkg_imports_str}
 
 about:
-  home: "{metadata['home']}"
+  home: "{home_url}"
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "{metadata['summary']}"
+  summary: "{summary}"
   description: |
-    {metadata['description']}
+    {description}
   doc_url: 
   dev_url: 
 
@@ -653,27 +668,30 @@ extra:
     return meta_yaml_content
 
 
-def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]:
+def add_new_data_plane_packages(package_dict: Dict[str, Dict[str, str]], new_data_plane_names: List[str]) -> List[str]:
     """Create meta.yaml files for new data plane packages and add import tests."""
-    if len(new_packages) == 0:
+    if len(new_data_plane_names) == 0:
         return []
 
-    logger.info(f"Adding {len(new_packages)} new data plane packages")
+    logger.info(f"Adding {len(new_data_plane_names)} new data plane packages")
     result = []
-
-    for pkg in new_packages:
-        package_name = pkg.get(PACKAGE_COL)
-        if not package_name:
-            logger.warning("Skipping package with missing name")
-            continue
-
+    
+    group_names_processed = set()
+    for package_name in new_data_plane_names:
         logger.info(f"Adding new data plane meta.yaml for: {package_name}")
 
         pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, package_name, "meta.yaml")
         os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
 
+        group_name = get_release_group(package_name, get_package_to_group_mapping())
+        group_data = get_package_group_data(group_name)
+
+        if group_data and group_name in group_names_processed:
+            logger.info(f"Meta.yaml for group {group_name} already created, skipping {package_name}")
+            continue
+
         try:
-            meta_yml = generate_data_plane_meta_yaml(package_name)
+            meta_yml = generate_data_plane_meta_yaml(package_dict,package_name, group_name, group_data)
         except Exception as e:
             logger.error(
                 f"Failed to generate meta.yaml content for {package_name} and skipping, error: {e}"
@@ -893,11 +911,6 @@ if __name__ == "__main__":
     # map package name to csv row for easy lookup
     package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
 
-    # TEST
-    new_data_plane_names = ["test2"]
-    package_dict["test2"] = {"Package": "test2", "VersionGA": "1.0.0", "LatestGADate": "1/1/2026"}
-    package_dict["test1"] = {"Package": "test1", "VersionGA": "3.0.0", "LatestGADate": "1/1/2026"}
-
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
     conda_sdk_client_pkgs_result = update_conda_sdk_client_yml(
@@ -905,7 +918,7 @@ if __name__ == "__main__":
     )
 
     # # handle new data plane libraries
-    # new_data_plane_results = add_new_data_plane_packages(new_data_plane_packages)
+    new_data_plane_results = add_new_data_plane_packages(package_dict, new_data_plane_names)
 
     # # handle new mgmt plane libraries
     # new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
