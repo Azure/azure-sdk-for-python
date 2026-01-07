@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for custom authentication audiences via the `audience` keyword argument in `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
+
 ### Breaking Changes
 
 ### Bugs Fixed

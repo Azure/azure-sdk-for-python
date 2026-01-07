@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.appconfiguration._credential_scope import get_audience
+from azure.appconfiguration._audience import get_audience
 
 # Expected scope constants
 _EXPECTED_PUBLIC_CLOUD_SCOPE = "https://appconfig.azure.com/"

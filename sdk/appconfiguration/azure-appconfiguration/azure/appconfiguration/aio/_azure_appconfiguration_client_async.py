@@ -35,7 +35,7 @@ from .._models import (
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
-from .._credential_scope import get_audience, DEFAULT_SCOPE_SUFFIX
+from .._audience import get_audience, DEFAULT_SCOPE_SUFFIX
 from .._utils import (
     get_key_filter,
     get_label_filter,
@@ -84,7 +84,9 @@ class AzureAppConfigurationClient:
         elif hasattr(credential, "get_token"):  # AsyncFakeCredential is not an instance of AsyncTokenCredential
             kwargs.update(
                 {
-                    "authentication_policy": AsyncBearerTokenCredentialPolicy(credential, *kwargs["credential_scopes"], **kwargs),
+                    "authentication_policy": AsyncBearerTokenCredentialPolicy(
+                        credential, *kwargs["credential_scopes"], **kwargs
+                    ),
                 }
             )
         else:

@@ -6,9 +6,9 @@
 
 # Azure Configuration audience URLs
 DEFAULT_SCOPE_SUFFIX = ".default"
-_AZURE_PUBLIC_CLOUD_SCOPE = "https://appconfig.azure.com/"
-_AZURE_US_GOVERNMENT_SCOPE = "https://appconfig.azure.us/"
-_AZURE_CHINA_SCOPE = "https://appconfig.azure.cn/"
+_AZURE_PUBLIC_CLOUD_AUDIENCE = "https://appconfig.azure.com/"
+_AZURE_US_GOVERNMENT_AUDIENCE = "https://appconfig.azure.us/"
+_AZURE_CHINA_AUDIENCE = "https://appconfig.azure.cn/"
 
 
 # Endpoint suffixes for cloud detection
@@ -20,11 +20,11 @@ _CHINA_SUFFIX = "appconfig.azure.cn"
 
 def get_audience(endpoint: str) -> str:
     """
-    Gets the default scope for the given endpoint.
+    Gets the default audience for the given endpoint.
 
-    :param endpoint: The endpoint to get the default scope for.
+    :param endpoint: The endpoint to get the default audience for.
     :type endpoint: str
-    :return: The default scope for the given endpoint.
+    :return: The default audience for the given endpoint.
     :rtype: str
     """
     # Normalize endpoint by stripping trailing slashes and converting to lowercase for suffix checks
@@ -32,7 +32,7 @@ def get_audience(endpoint: str) -> str:
     if normalized_endpoint.endswith(_US_GOVERNMENT_SUFFIX_LEGACY) or normalized_endpoint.endswith(
         _US_GOVERNMENT_SUFFIX
     ):
-        return _AZURE_US_GOVERNMENT_SCOPE
+        return _AZURE_US_GOVERNMENT_AUDIENCE
     if normalized_endpoint.endswith(_CHINA_SUFFIX_LEGACY) or normalized_endpoint.endswith(_CHINA_SUFFIX):
-        return _AZURE_CHINA_SCOPE
-    return _AZURE_PUBLIC_CLOUD_SCOPE
+        return _AZURE_CHINA_AUDIENCE
+    return _AZURE_PUBLIC_CLOUD_AUDIENCE

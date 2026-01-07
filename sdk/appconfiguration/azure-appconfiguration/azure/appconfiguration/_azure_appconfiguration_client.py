@@ -32,7 +32,7 @@ from ._models import (
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
-from ._credential_scope import get_audience, DEFAULT_SCOPE_SUFFIX
+from ._audience import get_audience, DEFAULT_SCOPE_SUFFIX
 from ._utils import (
     get_key_filter,
     get_label_filter,
@@ -80,7 +80,9 @@ class AzureAppConfigurationClient:
         elif isinstance(credential, TokenCredential):
             kwargs.update(
                 {
-                    "authentication_policy": BearerTokenCredentialPolicy(credential, *kwargs["credential_scopes"], **kwargs),
+                    "authentication_policy": BearerTokenCredentialPolicy(
+                        credential, *kwargs["credential_scopes"], **kwargs
+                    ),
                 }
             )
         else:
