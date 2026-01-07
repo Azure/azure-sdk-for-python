@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 import os
+from typing import Optional
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -14,6 +15,20 @@ from .sanitizers import add_general_string_sanitizer
 
 
 _logger = logging.getLogger(__name__)
+
+
+class EnvironmentVariableOptions:
+    """
+    Options for the EnvironmentVariableLoader.
+
+    :param hide_secrets: Case insensitive list of environment variable names whose values should be hidden. Instead of
+        being passed to tests as plain strings, these values will be wrapped in an EnvironmentVariable object that hides
+        the value when printed. Use `.secret` to get the actual value (and don't store the value in a local variable).
+    """
+
+    def __init__(self, *, hide_secrets: Optional[list[str]] = None) -> None:
+        # Store all names as lowercase for easier case insensitive comparison in EnvironmentVariableLoader
+        self.hide_secrets: list[str] = [name.lower() for name in hide_secrets] if hide_secrets else []
 
 
 class EnvironmentVariableLoader(AzureMgmtPreparer):
@@ -31,9 +46,8 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
     :param bool random_name_enabled: Not used; present for compatibility with other preparers.
     :param bool use_cache: Not used; present for compatibility with other preparers.
     :param list preparers: Not used; present for compatibility with other preparers.
-    :param list hide_secrets: List of environment variable names whose values should be hidden. Instead of being passed
-        to tests as plain strings, these values will be wrapped in an EnvironmentVariable object that hides the value
-        when printed. Use `.secret` to get the actual value (and don't store the value in a local variable).
+
+    :param options: An EnvironementVariableOptions object containing additional options for the preparer.
     :param kwargs: Keyword arguments representing environment variable names and their fake values for use in
         recordings. For example, `client_id="fake_client_id"`.
     """
@@ -48,7 +62,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         use_cache=True,
         preparers=None,
         *,
-        hide_secrets=[],
+        options: Optional[EnvironmentVariableOptions] = None,
         **kwargs,
     ):
         super(EnvironmentVariableLoader, self).__init__(
@@ -60,7 +74,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         )
 
         self.directory = directory
-        self.hide_secrets = hide_secrets
+        self.hide_secrets = options.hide_secrets if options else []
         self.fake_values = {}
         self.real_values = {}
         self._set_secrets(**kwargs)
@@ -74,7 +88,9 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                 needed_keys.append(key)
                 # Store the fake value, wrapping in EnvironmentVariable if it should be hidden
                 # Even fake values can cause security alerts if they're formatted like real secrets
-                self.fake_values[key] = EnvironmentVariable(kwargs[key]) if key in self.hide_secrets else kwargs[key]
+                self.fake_values[key] = (
+                    EnvironmentVariable(key.upper(), kwargs[key]) if key.lower() in self.hide_secrets else kwargs[key]
+                )
         for key in self.fake_values:
             kwargs.pop(key)
 
@@ -139,8 +155,8 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                     if scrubbed_value:
                         # Store the real value, wrapping in EnvironmentVariable if it should be hidden
                         self.real_values[key.lower()] = (
-                            EnvironmentVariable(os.environ[key.upper()])
-                            if key in self.hide_secrets
+                            EnvironmentVariable(key.upper(), os.environ[key.upper()])
+                            if key.lower() in self.hide_secrets
                             else os.environ[key.upper()]
                         )
 
@@ -192,8 +208,9 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
 
 class EnvironmentVariable:
-    def __init__(self, secret: str) -> None:
+    def __init__(self, name: str, secret: str) -> None:
+        self.name = name
         self.secret = secret
 
     def __str__(self):
-        return "Secret environment variable value hidden for security."
+        return f"Environment variable {self.name}'s value hidden for security."

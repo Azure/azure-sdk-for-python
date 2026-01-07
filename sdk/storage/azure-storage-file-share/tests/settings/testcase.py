@@ -15,7 +15,7 @@ except ImportError:
     import mock
 
 import logging
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import EnvironmentVariableLoader, EnvironmentVariableOptions
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 try:
     from cStringIO import StringIO      # Python 2
@@ -51,14 +51,14 @@ os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
 
 
 FileSharePreparer = functools.partial(
-    PowerShellPreparer, "storage",
+    EnvironmentVariableLoader, "storage",
     storage_account_name="storagename",
     storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
     premium_storage_file_account_name="pyacrstoragestorname",
     premium_storage_file_account_key=STORAGE_ACCOUNT_FAKE_KEY,
     secondary_storage_account_name="pyrmtstoragestorname",
     secondary_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
-    hide_secrets=["storage_account_key", "secondary_storage_account_key", "premium_storage_file_account_key"],
+    options=EnvironmentVariableOptions(hide_secrets=["storage_account_key", "secondary_storage_account_key", "premium_storage_file_account_key"]),
 )
 
 
