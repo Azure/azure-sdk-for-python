@@ -14,7 +14,11 @@ from ci_tools.logging import logger, configure_logging
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from typing import Dict, List, Optional, Tuple
 
-from conda_release_groups import get_package_group_data, get_release_group, get_package_to_group_mapping
+from conda_release_groups import (
+    get_package_group_data,
+    get_release_group,
+    get_package_to_group_mapping,
+)
 
 # paths
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -329,7 +333,9 @@ def update_conda_sdk_client_yml(
 
     # quick look up for handling grouped package releases
     existing_parameter_names = [p.get("name") for p in parameters]
-    existing_artifact_names = {a.get("name"): idx for idx, a in enumerate(conda_artifacts)}
+    existing_artifact_names = {
+        a.get("name"): idx for idx, a in enumerate(conda_artifacts)
+    }
 
     for package_name in new_data_plane_packages:
         pkg = package_dict.get(package_name, {})
@@ -348,16 +354,14 @@ def update_conda_sdk_client_yml(
 
         if group_data:
             # package is part of a release group
-            logger.info(
-                f"Package {package_name} belongs to release group {group_name}"
-            )
+            logger.info(f"Package {package_name} belongs to release group {group_name}")
             release_name = f"release_{group_name.replace('-', '_')}"
             display_name = group_name
         else:
             # package is released individually
             release_name = f"release_{package_name.replace('-', '_')}"
             display_name = package_name
-        
+
         # add new release parameter if not exists
         if release_name not in existing_parameter_names:
             new_parameter = {
@@ -370,8 +374,8 @@ def update_conda_sdk_client_yml(
 
         # add to CondaArtifacts
         common_root, service_name = determine_service_info(pkg, package_to_group)
-        
-        # build checkout packages 
+
+        # build checkout packages
         if group_data:
             checkout_packages = []
             for grouped_pkg_name in group_data["packages"]:
@@ -393,7 +397,9 @@ def update_conda_sdk_client_yml(
                     )
                     result.append(grouped_pkg_name)
         else:
-            checkout_packages = [{"package": package_name, "version": pkg.get(VERSION_GA_COL)}]
+            checkout_packages = [
+                {"package": package_name, "version": pkg.get(VERSION_GA_COL)}
+            ]
 
         if group_name not in existing_artifact_names:
             new_artifact_entry = {
@@ -413,7 +419,9 @@ def update_conda_sdk_client_yml(
             logger.info(
                 f"CondaArtifact for {group_name if group_data else package_name} already exists in conda-sdk-client.yml"
             )
-            curr_artifact_checkout = conda_artifacts[existing_artifact_names[group_name]]["checkout"]
+            curr_artifact_checkout = conda_artifacts[
+                existing_artifact_names[group_name]
+            ]["checkout"]
             packages_in_artifact = {item["package"] for item in curr_artifact_checkout}
 
             # account for adding new packages to an existing group
@@ -487,7 +495,9 @@ def get_package_path(package_name: str) -> str:
     return matches[0]
 
 
-def determine_service_info(pkg: Dict[str, str], package_to_group: dict) -> Tuple[str, str]:
+def determine_service_info(
+    pkg: Dict[str, str], package_to_group: dict
+) -> Tuple[str, str]:
     """
     Returns the common root and service name for the given package.
 
@@ -561,6 +571,7 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
 
     return list(host_requirements), list(run_requirements)
 
+
 def get_package_metadata(package_name: str, package_path: str) -> Tuple[str, str, str]:
     """Extract package metadata for about section in meta.yaml."""
     pkg_metadata = extract_package_metadata(package_path)
@@ -570,19 +581,25 @@ def get_package_metadata(package_name: str, package_path: str) -> Tuple[str, str
 
     # TODO check correctness of this
     if pkg_metadata and pkg_metadata.get("description"):
-            summary = pkg_metadata["description"]
+        summary = pkg_metadata["description"]
     else:
         summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
-    
+
     # TODO definitely need to check if this is actually correct
     conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
-    description = f"This is the {summary}.\n    Please see {conda_url} for version details."
+    description = (
+        f"This is the {summary}.\n    Please see {conda_url} for version details."
+    )
 
     return home_url, summary, description
-    
+
 
 def generate_data_plane_meta_yaml(
-    package_dict: Dict[str, Dict[str, str]], package_name: str, group_name: Optional[str], group_data: Optional[dict]) -> str:
+    package_dict: Dict[str, Dict[str, str]],
+    package_name: str,
+    group_name: Optional[str],
+    group_data: Optional[dict],
+) -> str:
     """
     Generate the meta.yaml content for a data plane package or release group.
 
@@ -595,33 +612,44 @@ def generate_data_plane_meta_yaml(
     src_distr_name = package_name.split("-")[-1].upper()
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
-    # handle grouped packages 
+    # TODO not sure if this is the best way to get these requirements
+    # TODO don't think this covers all possible import tests, e.g. azure.eventgrid, azure.eventgrid.aio <- when would I add that?
     if group_name and group_data:
+        # handle grouped packages
+        logger.info(
+            f"Generating meta.yaml for release group {group_name} including packages: {group_data['packages']}"
+        )
         host_reqs = set()
         run_reqs = set()
         pkg_imports = []
+
         for pkg in group_data["packages"]:
             package_path = get_package_path(pkg)
             parsed_setup = ParsedSetup.from_path(package_path)
+
             pkg_host_reqs, pkg_run_reqs = get_package_requirements(parsed_setup)
             host_reqs.update(pkg_host_reqs)
             run_reqs.update(pkg_run_reqs)
+
             pkg_imports.append(pkg.replace("-", "."))
         host_reqs = list(host_reqs)
         run_reqs = list(run_reqs)
 
-        # TODO verify correctness 
-        home_url, summary, description = get_package_metadata(group_name, get_package_path(group_data["packages"][0]))
+        home_url, summary, description = get_package_metadata(
+            group_name, get_package_path(group_data["packages"][0])
+        )
     else:
+        logger.info(f"Generating meta.yaml for package {package_name}")
         package_path = get_package_path(package_name)
         parsed_setup = ParsedSetup.from_path(package_path)
 
         host_reqs, run_reqs = get_package_requirements(parsed_setup)
         pkg_imports = [package_name.replace("-", ".")]
 
-        # extract metadata for about section
-        home_url, summary, description = get_package_metadata(package_name, package_path)
-    
+        home_url, summary, description = get_package_metadata(
+            package_name, package_path
+        )
+
     # Format requirements with proper YAML indentation
     host_reqs_str = "\n    - ".join(host_reqs)
     run_reqs_str = "\n    - ".join(run_reqs)
@@ -668,14 +696,16 @@ extra:
     return meta_yaml_content
 
 
-def add_new_data_plane_packages(package_dict: Dict[str, Dict[str, str]], new_data_plane_names: List[str]) -> List[str]:
+def add_new_data_plane_packages(
+    package_dict: Dict[str, Dict[str, str]], new_data_plane_names: List[str]
+) -> List[str]:
     """Create meta.yaml files for new data plane packages and add import tests."""
     if len(new_data_plane_names) == 0:
         return []
 
     logger.info(f"Adding {len(new_data_plane_names)} new data plane packages")
     result = []
-    
+
     group_names_processed = set()
     for package_name in new_data_plane_names:
         logger.info(f"Adding new data plane meta.yaml for: {package_name}")
@@ -687,11 +717,17 @@ def add_new_data_plane_packages(package_dict: Dict[str, Dict[str, str]], new_dat
         group_data = get_package_group_data(group_name)
 
         if group_data and group_name in group_names_processed:
-            logger.info(f"Meta.yaml for group {group_name} already created, skipping {package_name}")
+            logger.info(
+                f"Meta.yaml for group {group_name} already created, skipping {package_name}"
+            )
             continue
 
         try:
-            meta_yml = generate_data_plane_meta_yaml(package_dict,package_name, group_name, group_data)
+            meta_yml = generate_data_plane_meta_yaml(
+                package_dict, package_name, group_name, group_data
+            )
+            if group_data:
+                group_names_processed.add(group_name)
         except Exception as e:
             logger.error(
                 f"Failed to generate meta.yaml content for {package_name} and skipping, error: {e}"
@@ -890,7 +926,11 @@ if __name__ == "__main__":
         exit(1)
 
     # Only ship GA packages that are not deprecated
-    packages = [pkg for pkg in packages if (pkg.get(VERSION_GA_COL) and pkg.get(LATEST_GA_DATE_COL))]
+    packages = [
+        pkg
+        for pkg in packages
+        if (pkg.get(VERSION_GA_COL) and pkg.get(LATEST_GA_DATE_COL))
+    ]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
     outdated_packages = [
@@ -904,9 +944,19 @@ if __name__ == "__main__":
     )
 
     # Extract package names from the filtered lists
-    outdated_package_names = [pkg.get(PACKAGE_COL, "") for pkg in outdated_packages if pkg.get(PACKAGE_COL)]
-    new_data_plane_names = [pkg.get(PACKAGE_COL, "") for pkg in new_data_plane_packages if pkg.get(PACKAGE_COL)]
-    new_mgmt_plane_names = [pkg.get(PACKAGE_COL, "") for pkg in new_mgmt_plane_packages if pkg.get(PACKAGE_COL)]
+    outdated_package_names = [
+        pkg.get(PACKAGE_COL, "") for pkg in outdated_packages if pkg.get(PACKAGE_COL)
+    ]
+    new_data_plane_names = [
+        pkg.get(PACKAGE_COL, "")
+        for pkg in new_data_plane_packages
+        if pkg.get(PACKAGE_COL)
+    ]
+    new_mgmt_plane_names = [
+        pkg.get(PACKAGE_COL, "")
+        for pkg in new_mgmt_plane_packages
+        if pkg.get(PACKAGE_COL)
+    ]
 
     # map package name to csv row for easy lookup
     package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
@@ -918,7 +968,9 @@ if __name__ == "__main__":
     )
 
     # # handle new data plane libraries
-    new_data_plane_results = add_new_data_plane_packages(package_dict, new_data_plane_names)
+    new_data_plane_results = add_new_data_plane_packages(
+        package_dict, new_data_plane_names
+    )
 
     # # handle new mgmt plane libraries
     # new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
@@ -928,21 +980,21 @@ if __name__ == "__main__":
     #     outdated_packages + new_packages, new_version
     # )
 
-    # print("=== REPORT ===")
+    print("=== REPORT ===")
 
-    # if conda_sdk_client_pkgs_result:
-    #     print(
-    #         "The following packages may require manual adjustments in conda-sdk-client.yml:"
-    #     )
-    #     for pkg_name in conda_sdk_client_pkgs_result:
-    #         print(f"- {pkg_name}")
+    if conda_sdk_client_pkgs_result:
+        print(
+            "The following packages may require manual adjustments in conda-sdk-client.yml:"
+        )
+        for pkg_name in conda_sdk_client_pkgs_result:
+            print(f"- {pkg_name}")
 
-    # if new_data_plane_results:
-    #     print(
-    #         "\nThe following new data plane packages may require manual meta.yaml creation or adjustments:"
-    #     )
-    #     for pkg_name in new_data_plane_results:
-    #         print(f"- {pkg_name}")
+    if new_data_plane_results:
+        print(
+            "\nThe following new data plane packages may require manual meta.yaml creation or adjustments:"
+        )
+        for pkg_name in new_data_plane_results:
+            print(f"- {pkg_name}")
 
     # if new_mgmt_plane_results:
     #     print(
