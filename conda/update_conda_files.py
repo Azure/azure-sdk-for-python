@@ -719,11 +719,11 @@ def update_data_plane_release_logs(
     package_to_group = get_package_to_group_mapping()
 
     # Update all existing data plane release logs by file
-    # Note, for new packages added to an existing group, this should handle that as well
-    # if conda_release_groups.py was updated to include the new package in the group
+    # NOTE: for new packages added to an existing release group, this should handle that as well
+    # as long as conda_release_groups.py was updated to include the new package in the group
 
     existing_release_logs = glob.glob(
-        os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-*.md")
+        os.path.join(CONDA_RELEASE_LOGS_DIR, "*.md")
     )
     for release_log_path in existing_release_logs:
         curr_service_name = os.path.basename(release_log_path).replace(".md", "")
@@ -732,25 +732,26 @@ def update_data_plane_release_logs(
             continue
         if curr_service_name not in package_dict:
             logger.warning(
-                f"Skipping existing data plane release log update for {curr_service_name} because it was not found in CSV data"
+                f"Existing release log service {curr_service_name} was not found in CSV data, using same versions as before. Check that it's not deprecated."
             )
             result.append(curr_service_name)
+            #TODO
             continue
 
         group_name = get_release_group(curr_service_name, package_to_group)
         group_data = get_package_group_data(group_name)
 
-        pkg_updates = set()
+        pkg_updates = []
         if group_data:
             pkg_names_in_log = group_data["packages"]
             for pkg_name in pkg_names_in_log:
                 pkg = package_dict.get(pkg_name, {})
                 version = pkg.get(VERSION_GA_COL)
-                pkg_updates.update(f"- {pkg_name}-{version}\n")
+                pkg_updates.append(f"- {pkg_name}-{version}\n")
         else:
             pkg = package_dict.get(curr_service_name, {})
             version = pkg.get(VERSION_GA_COL)
-            pkg_updates.update(f"- {curr_service_name}-{version}\n")
+            pkg_updates.append(f"- {curr_service_name}-{version}\n")
         try:
             with open(release_log_path, "r") as f:
                 existing_content = f.read()
@@ -798,16 +799,27 @@ def update_data_plane_release_logs(
             # Add brand new release log file
             logger.info(f"Creating new release log for: {group_name}")
 
+            title_parts = group_name.replace("azure-", "").split("-")
+            title = " ".join(word.title() for word in title_parts)
+
+            content = f"# Azure {title} client library for Python (conda)\n\n"
+            content += f"## {release_date}\n\n"
+            content += "### Packages included\n\n"
+
+            pkg_updates = []
+            if group_data:
+                pkg_names_in_log = group_data["packages"]
+                for pkg_name in pkg_names_in_log:
+                    pkg = package_dict.get(pkg_name, {})
+                    version = pkg.get(VERSION_GA_COL)
+                    pkg_updates.append(f"- {pkg_name}-{version}\n")
+            else:
+                pkg = package_dict.get(package_name, {})
+                version = pkg.get(VERSION_GA_COL)
+                pkg_updates.append(f"- {package_name}-{version}\n")
+            content += "".join(pkg_updates)
+
             try:
-                title_parts = group_name.replace("azure-", "").split("-")
-                title = " ".join(word.title() for word in title_parts)
-
-                content = f"# Azure {title} client library for Python (conda)\n\n"
-                content += f"## {release_date}\n\n"
-                content += "### Packages included\n\n"
-
-                content += f"- {group_name}-{version}\n"
-
                 with open(release_log_path, "w") as f:
                     f.write(content)
                 logger.info(f"Created new release log for {group_name}")
@@ -822,6 +834,21 @@ def update_data_plane_release_logs(
 
     return result
 
+def update_mgmt_plane_release_log(    
+    package_dict: Dict,
+    new_mgmt_plane_names: List[str],
+    release_date: str,
+) -> List[str]:
+    result = []
+
+    mgmt_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
+    if not os.path.exists(mgmt_log_path):
+        logger.error("Management plane release log azure-mgmt.md does not exist.")
+        return new_mgmt_plane_names  # all new packages need attention
+
+
+
+    return result
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

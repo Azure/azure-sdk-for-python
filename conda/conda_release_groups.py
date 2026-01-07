@@ -18,7 +18,7 @@ Packages that are grouped together will:
 RELEASE_GROUPS = {
     # Core
     "azure-core": {
-        "packages": ["azure-core", "azure-mgmt-core", "azure-common"],
+        "packages": ["azure-core", "azure-mgmt-core"],
         "common_root": "azure",
         "service": "core",
     },
