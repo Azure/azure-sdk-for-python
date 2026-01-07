@@ -19,7 +19,7 @@ from conda_helper_functions import (
     package_needs_update,
     get_package_data_from_pypi,
     build_package_index,
-    get_package_path
+    get_package_path,
 )
 
 from conda_release_groups import (
@@ -367,6 +367,7 @@ def update_conda_sdk_client_yml(
 # Helpers for creating conda-recipes/<service>/meta.yaml files
 # =====================================
 
+
 def determine_service_info(
     pkg: Dict[str, str], package_to_group: dict
 ) -> Tuple[str, str]:
@@ -706,22 +707,50 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
 # =====================================
 
 
-def update_release_logs(
+def update_data_plane_release_logs(
     package_dict: Dict,
     new_data_plane_names: List[str],
-    new_mgmt_plane_names: List[str],
     release_date: str,
 ) -> List[str]:
     """
-    Add and update release logs for conda packages. Release log includes versions of all packages for the release
+    Add and update release logs for data plane conda packages. Release log includes versions of all packages for the release
     """
     result = []
     package_to_group = get_package_to_group_mapping()
 
-    # TODO update all existing data plane release logs
-    existing_release_logs = glob.glob(os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-*.md"))
+    # Update all existing data plane release logs by file
+    # Note, for new packages added to an existing group, this should handle that as well
+    # if conda_release_groups.py was updated to include the new package in the group
+
+    existing_release_logs = glob.glob(
+        os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-*.md")
+    )
     for release_log_path in existing_release_logs:
         curr_service_name = os.path.basename(release_log_path).replace(".md", "")
+        # skip azure-mgmt here
+        if curr_service_name == "azure-mgmt":
+            continue
+        if curr_service_name not in package_dict:
+            logger.warning(
+                f"Skipping existing data plane release log update for {curr_service_name} because it was not found in CSV data"
+            )
+            result.append(curr_service_name)
+            continue
+
+        group_name = get_release_group(curr_service_name, package_to_group)
+        group_data = get_package_group_data(group_name)
+
+        pkg_updates = set()
+        if group_data:
+            pkg_names_in_log = group_data["packages"]
+            for pkg_name in pkg_names_in_log:
+                pkg = package_dict.get(pkg_name, {})
+                version = pkg.get(VERSION_GA_COL)
+                pkg_updates.update(f"- {pkg_name}-{version}\n")
+        else:
+            pkg = package_dict.get(curr_service_name, {})
+            version = pkg.get(VERSION_GA_COL)
+            pkg_updates.update(f"- {curr_service_name}-{version}\n")
         try:
             with open(release_log_path, "r") as f:
                 existing_content = f.read()
@@ -731,11 +760,12 @@ def update_release_logs(
             new_release = f"\n## {release_date}\n\n"
             new_release += "### Packages included\n\n"
 
-            group_name = get_release_group(curr_service_name, package_to_group)
-            group_data = get_package_group_data(group_name)
+            new_release += "".join(pkg_updates)
+            lines.insert(1, new_release)
+            updated_content = "\n".join(lines)
 
-            # with open(release_log_path, "w") as f:
-            #     f.write(updated_content)
+            with open(release_log_path, "w") as f:
+                f.write(updated_content)
 
             logger.info(f"Updated release log for {os.path.basename(release_log_path)}")
         except Exception as e:
@@ -744,7 +774,7 @@ def update_release_logs(
             )
             result.append(curr_service_name)
 
-    # TODO release logs for new packages
+    # Handle brand new packages
     for package_name in new_data_plane_names:
         pkg = package_dict.get(package_name, {})
         version = pkg.get(VERSION_GA_COL)
@@ -765,7 +795,7 @@ def update_release_logs(
             )
 
         if not os.path.exists(release_log_path):
-            # Add new release log
+            # Add brand new release log file
             logger.info(f"Creating new release log for: {group_name}")
 
             try:
@@ -786,32 +816,9 @@ def update_release_logs(
                 result.append(group_name)
 
         else:
-            # Update existing release log
-            try:
-                with open(release_log_path, "r") as f:
-                    existing_content = f.read()
-
-                lines = existing_content.split("\n")
-
-                new_release = f"\n## {release_date}\n\n"
-                new_release += "### Packages included\n\n"
-                new_release += f"- {package_name}-{version}\n"
-
-                lines.insert(1, new_release)
-                updated_content = "\n".join(lines)
-
-                with open(release_log_path, "w") as f:
-                    f.write(updated_content)
-
-                logger.info(f"Updated release log for {package_name}")
-            except Exception as e:
-                logger.error(f"Failed to update release log for {package_name}: {e}")
-                result.append(package_name)
-
-    # TODO update mgmt release log separately
-    mgmt_release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
-
-    # TODO AKA link pointing to new release logs needs to happen
+            logger.info(
+                f"Release log for {group_name} already exists, check that new package {package_name} is included"
+            )
 
     return result
 
@@ -890,9 +897,12 @@ if __name__ == "__main__":
     new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
 
     # add/update release logs
-    release_log_results = update_release_logs(
-        package_dict, new_data_plane_names, new_mgmt_plane_names, new_version
+    data_plane_release_log_results = update_data_plane_release_logs(
+        package_dict, new_data_plane_names, new_version
     )
+    # TODO handle mgmt separately
+
+    # TODO AKA link logic
 
     print("=== REPORT ===")
 
@@ -917,9 +927,9 @@ if __name__ == "__main__":
         for pkg_name in new_mgmt_plane_results:
             print(f"- {pkg_name}")
 
-    if release_log_results:
+    if data_plane_release_log_results:
         print(
-            "\nThe following packages may require manual adjustments in release logs:"
+            "\nThe following data plane packages may require manual adjustments in release logs:"
         )
-        for pkg_name in release_log_results:
+        for pkg_name in data_plane_release_log_results:
             print(f"- {pkg_name}")
