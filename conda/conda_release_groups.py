@@ -78,7 +78,8 @@ RELEASE_GROUPS = {
         "common_root": "azure/keyvault",
         "service": "keyvault",
     },
-    # Packages with common root exceptions
+    # Packages with other pattern exceptions, e.g. different common root
+    # or service vs package name mismatch
     "msrest": {"packages": ["msrest"], "common_root": None},
     "msal": {"packages": ["msal"], "common_root": None},
     "msal-extensions": {
@@ -88,6 +89,11 @@ RELEASE_GROUPS = {
     "azure-ai-vision": {
         "packages": ["azure-ai-vision-imageanalysis"],
         "common_root": "azure/vision",
+    },
+    "azure-healthinsights": {
+        "packages": ["azure-healthinsights-patient-insights"],
+        "common_root": "azure",
+        "service": "healthinsights",
     },
 }
 

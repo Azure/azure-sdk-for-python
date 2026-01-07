@@ -728,12 +728,11 @@ def update_data_plane_release_logs(
         # skip azure-mgmt here
         if curr_service_name == "azure-mgmt":
             continue
-        if curr_service_name not in package_dict:
+        if curr_service_name not in package_dict and curr_service_name not in package_to_group.values():
             logger.warning(
-                f"Existing release log service {curr_service_name} was not found in CSV data, using same versions as before. Check that it's not deprecated."
+                f"Existing release log service {curr_service_name} was not found in CSV data, skipping update. It may be deprecated."
             )
             result.append(curr_service_name)
-            # TODO
             continue
 
         group_name = get_release_group(curr_service_name, package_to_group)
