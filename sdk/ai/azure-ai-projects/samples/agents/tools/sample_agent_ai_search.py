@@ -24,6 +24,7 @@ USAGE:
     3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
     4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
+    5) AI_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
@@ -74,7 +75,10 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question (e.g., 'Tell me about mental health services'): \n")
+    # Get user input from environment variable or prompt
+    user_input = os.environ.get("AI_SEARCH_USER_INPUT")
+    if not user_input:
+        user_input = input("Enter your question (e.g., 'Tell me about mental health services'): \n")
 
     stream_response = openai_client.responses.create(
         stream=True,
@@ -104,7 +108,7 @@ with (
                             )
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+            print(f"Agent response: {event.response.output_text}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

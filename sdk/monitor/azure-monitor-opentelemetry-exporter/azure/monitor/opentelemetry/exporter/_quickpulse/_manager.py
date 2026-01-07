@@ -9,7 +9,7 @@ import threading
 
 import psutil
 
-from opentelemetry.sdk._logs import LogData
+from opentelemetry.sdk._logs import ReadableLogRecord
 from opentelemetry.sdk.metrics import MeterProvider, Meter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
@@ -88,7 +88,6 @@ NUM_CPUS = psutil.cpu_count()
 
 # pylint: disable=protected-access,too-many-instance-attributes
 class _QuickpulseManager(metaclass=Singleton):
-
     def __init__(self) -> None:
         """Initialize the QuickpulseManager singleton.
 
@@ -353,7 +352,7 @@ class _QuickpulseManager(metaclass=Singleton):
         except Exception as e:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while recording span: %s", e)  # pylint: disable=C4769
 
-    def _record_log_record(self, log_data: LogData) -> None:
+    def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
         # Only record if in post state and manager is initialized
         if not (_is_post_state() and self.is_initialized()):
             return
@@ -364,9 +363,9 @@ class _QuickpulseManager(metaclass=Singleton):
             return
 
         try:
-            if log_data.log_record:
+            if readable_log_record.log_record:
                 exc_type = None
-                log_record = log_data.log_record
+                log_record = readable_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
@@ -388,18 +387,21 @@ class _QuickpulseManager(metaclass=Singleton):
         :return: True if all required resources are available, False otherwise
         :rtype: bool
         """
-        return all([
-            self._request_rate_counter is not None,
-            self._request_failed_rate_counter is not None,
-            self._request_duration is not None,
-            self._dependency_rate_counter is not None,
-            self._dependency_failure_rate_counter is not None,
-            self._dependency_duration is not None,
-            self._exception_rate_counter is not None,
-        ])
+        return all(
+            [
+                self._request_rate_counter is not None,
+                self._request_failed_rate_counter is not None,
+                self._request_duration is not None,
+                self._dependency_rate_counter is not None,
+                self._dependency_failure_rate_counter is not None,
+                self._dependency_duration is not None,
+                self._exception_rate_counter is not None,
+            ]
+        )
 
 
 # Filtering
+
 
 # Called by record_span/record_log when processing a span/log_record for metrics filtering
 # Derives metrics from projections if applicable to current filters in config
@@ -426,7 +428,9 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
 # Called by record_span/record_log when processing a span/log_record for docs filtering
 # Finds doc stream Ids and their doc filter configurations
 def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: Optional[str] = None):
-    doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = _get_quickpulse_doc_stream_infos()  # pylint: disable=C0301
+    doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = (
+        _get_quickpulse_doc_stream_infos()
+    )  # pylint: disable=C0301
     stream_ids = set()
     doc_config = {}  # type: ignore
     if isinstance(data, _RequestData):
@@ -461,5 +465,6 @@ def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: 
 
         # Add the generated document to be sent to quickpulse
         _append_quickpulse_document(document)
+
 
 # cSpell:enable

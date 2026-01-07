@@ -57,25 +57,27 @@ class TestNetAppManagementCachesOperations(AzureMgmtRecordedTestCase):
                     "cacheState": "str",
                     "cifsChangeNotifications": "str",
                     "encryption": "str",
-                    "exportPolicy": [
-                        {
-                            "allowedClients": "str",
-                            "chownMode": "str",
-                            "cifs": bool,
-                            "hasRootAccess": bool,
-                            "kerberos5ReadOnly": bool,
-                            "kerberos5ReadWrite": bool,
-                            "kerberos5iReadOnly": bool,
-                            "kerberos5iReadWrite": bool,
-                            "kerberos5pReadOnly": bool,
-                            "kerberos5pReadWrite": bool,
-                            "nfsv3": bool,
-                            "nfsv41": bool,
-                            "ruleIndex": 0,
-                            "unixReadOnly": bool,
-                            "unixReadWrite": bool,
-                        }
-                    ],
+                    "exportPolicy": {
+                        "rules": [
+                            {
+                                "allowedClients": "str",
+                                "chownMode": "str",
+                                "cifs": bool,
+                                "hasRootAccess": bool,
+                                "kerberos5ReadOnly": bool,
+                                "kerberos5ReadWrite": bool,
+                                "kerberos5iReadOnly": bool,
+                                "kerberos5iReadWrite": bool,
+                                "kerberos5pReadOnly": bool,
+                                "kerberos5pReadWrite": bool,
+                                "nfsv3": bool,
+                                "nfsv41": bool,
+                                "ruleIndex": 0,
+                                "unixReadOnly": bool,
+                                "unixReadWrite": bool,
+                            }
+                        ]
+                    },
                     "globalFileLocking": "str",
                     "kerberos": "str",
                     "keyVaultPrivateEndpointResourceId": "str",
@@ -125,25 +127,27 @@ class TestNetAppManagementCachesOperations(AzureMgmtRecordedTestCase):
             body={
                 "properties": {
                     "cifsChangeNotifications": "str",
-                    "exportPolicy": [
-                        {
-                            "allowedClients": "str",
-                            "chownMode": "str",
-                            "cifs": bool,
-                            "hasRootAccess": bool,
-                            "kerberos5ReadOnly": bool,
-                            "kerberos5ReadWrite": bool,
-                            "kerberos5iReadOnly": bool,
-                            "kerberos5iReadWrite": bool,
-                            "kerberos5pReadOnly": bool,
-                            "kerberos5pReadWrite": bool,
-                            "nfsv3": bool,
-                            "nfsv41": bool,
-                            "ruleIndex": 0,
-                            "unixReadOnly": bool,
-                            "unixReadWrite": bool,
-                        }
-                    ],
+                    "exportPolicy": {
+                        "rules": [
+                            {
+                                "allowedClients": "str",
+                                "chownMode": "str",
+                                "cifs": bool,
+                                "hasRootAccess": bool,
+                                "kerberos5ReadOnly": bool,
+                                "kerberos5ReadWrite": bool,
+                                "kerberos5iReadOnly": bool,
+                                "kerberos5iReadWrite": bool,
+                                "kerberos5pReadOnly": bool,
+                                "kerberos5pReadWrite": bool,
+                                "nfsv3": bool,
+                                "nfsv41": bool,
+                                "ruleIndex": 0,
+                                "unixReadOnly": bool,
+                                "unixReadWrite": bool,
+                            }
+                        ]
+                    },
                     "keyVaultPrivateEndpointResourceId": "str",
                     "protocolTypes": ["str"],
                     "size": 0,

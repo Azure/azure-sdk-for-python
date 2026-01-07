@@ -1,5 +1,51 @@
 # Release History
 
+## 2.2.0 (2025-12-22)
+
+### Features Added
+
+  - Model `NetworkCloudMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `BareMetalMachine` added property `action_states`
+  - Model `BareMetalMachine` added property `ca_certificate`
+  - Model `BareMetalMachineKeySet` added property `privilege_level_name`
+  - Enum `BareMetalMachineKeySetPrivilegeLevel` added member `OTHER`
+  - Model `BareMetalMachineReplaceParameters` added property `safeguard_mode`
+  - Model `BareMetalMachineReplaceParameters` added property `storage_policy`
+  - Model `CloudServicesNetwork` added property `storage_options`
+  - Model `CloudServicesNetwork` added property `storage_status`
+  - Model `CloudServicesNetworkPatchParameters` added property `storage_options`
+  - Model `Cluster` added property `action_states`
+  - Model `CommandOutputSettings` added property `overrides`
+  - Model `SecretArchiveReference` added property `key_vault_uri`
+  - Model `StorageAppliance` added property `ca_certificate`
+  - Model `VirtualMachine` added property `identity`
+  - Model `VirtualMachine` added property `network_data_content`
+  - Model `VirtualMachine` added property `user_data_content`
+  - Model `VirtualMachinePatchParameters` added property `identity`
+  - Model `Volume` added property `allocated_size_mi_b`
+  - Model `Volume` added property `storage_appliance_id`
+  - Added model `ActionState`
+  - Added enum `ActionStateStatus`
+  - Added enum `BareMetalMachineReplaceSafeguardMode`
+  - Added enum `BareMetalMachineReplaceStoragePolicy`
+  - Added model `CertificateInfo`
+  - Added enum `CloudServicesNetworkStorageMode`
+  - Added model `CloudServicesNetworkStorageOptions`
+  - Added model `CloudServicesNetworkStorageOptionsPatch`
+  - Added model `CloudServicesNetworkStorageStatus`
+  - Added enum `CloudServicesNetworkStorageStatusStatus`
+  - Added model `CommandOutputOverride`
+  - Added enum `CommandOutputType`
+  - Added enum `RelayType`
+  - Added model `StepState`
+  - Added enum `StepStateStatus`
+  - Added model `StorageApplianceCommandSpecification`
+  - Added model `StorageApplianceRunReadCommandsParameters`
+  - Added model `VirtualMachineAssignRelayParameters`
+  - Operation group `BareMetalMachinesOperations` added method `begin_run_data_extracts_restricted`
+  - Operation group `StorageAppliancesOperations` added method `begin_run_read_commands`
+  - Operation group `VirtualMachinesOperations` added method `begin_assign_relay`
+
 ## 2.2.0b1 (2025-11-17)
 
 ### Features Added

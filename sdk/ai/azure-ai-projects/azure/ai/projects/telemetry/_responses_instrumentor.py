@@ -24,6 +24,7 @@ from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.tracing import AbstractSpan
 from ._utils import (
     ERROR_TYPE,
+    GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
     GEN_AI_ASSISTANT_MESSAGE_EVENT,
     GEN_AI_CLIENT_OPERATION_DURATION,
@@ -606,11 +607,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if not item_type:
                         continue  # Skip if no type
 
-                    # Convert function_call_output to "function"
-                    if item_type == "function_call_output":
-                        tool_output["type"] = "function"
-                    else:
-                        tool_output["type"] = item_type
+                    # Use the API type directly
+                    tool_output["type"] = item_type
 
                     # Add call_id as "id" - handle both dict and object
                     if isinstance(output_item, dict):
@@ -987,6 +985,26 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
         span.span_instance.add_event(name=GEN_AI_ASSISTANT_MESSAGE_EVENT, attributes=attributes)
 
+    def _emit_tool_output_event(
+        self,
+        span: "AbstractSpan",
+        tool_output: Dict[str, Any],
+        conversation_id: Optional[str] = None,
+    ) -> None:
+        """Helper to emit a single tool output event."""
+        # Wrap tool output in parts array
+        # Tool outputs are inputs TO the model (from tool execution), so use role "tool"
+        parts = [{"type": "tool_call_output", "content": tool_output}]
+        content_array = [{"role": "tool", "parts": parts}]
+        attributes = self._create_event_attributes(
+            conversation_id=conversation_id,
+            message_role="tool",
+        )
+        # Store as JSON array directly without outer wrapper
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+        # Tool outputs are inputs to the model, so use input.messages event
+        span.span_instance.add_event(name=GEN_AI_USER_MESSAGE_EVENT, attributes=attributes)
+
     def _add_tool_call_events(  # pylint: disable=too-many-branches
         self,
         span: "AbstractSpan",
@@ -1002,9 +1020,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         if not output:
             return
 
+        # Process output items for tool call events
         for output_item in output:
             try:
                 item_type = getattr(output_item, "type", None)
+                # Process item based on type
                 if not item_type:
                     continue
 
@@ -1013,7 +1033,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle function_call type
                 if item_type == "function_call":
                     tool_call = {
-                        "type": "function",
+                        "type": item_type,
                     }
 
                     # Always include id (needed to correlate with function output)
@@ -1035,7 +1055,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle file_search_call type
                 elif item_type == "file_search_call":
                     tool_call = {
-                        "type": "file_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1061,7 +1081,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle code_interpreter_call type
                 elif item_type == "code_interpreter_call":
                     tool_call = {
-                        "type": "code_interpreter",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1090,7 +1110,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle web_search_call type
                 elif item_type == "web_search_call":
                     tool_call = {
-                        "type": "web_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1121,7 +1141,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle azure_ai_search_call type
                 elif item_type == "azure_ai_search_call":
                     tool_call = {
-                        "type": "azure_ai_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1153,7 +1173,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle image_generation_call type
                 elif item_type == "image_generation_call":
                     tool_call = {
-                        "type": "image_generation",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1182,7 +1202,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle mcp_call type (Model Context Protocol)
                 elif item_type == "mcp_call":
                     tool_call = {
-                        "type": "mcp",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1232,7 +1252,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle computer_call type (for computer use)
                 elif item_type == "computer_call":
                     tool_call = {
-                        "type": "computer",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "call_id"):
@@ -1331,7 +1351,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle unknown/future tool call types with best effort
-                elif item_type and "_call" in item_type:
+                # Exclude _output types - those are handled separately as tool outputs, not tool calls
+                elif item_type and "_call" in item_type and not item_type.endswith("_output"):
+                    # Generic handler for tool calls
                     try:
                         tool_call = {
                             "type": item_type,
@@ -1345,8 +1367,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                         # Only include detailed fields if content recording is enabled
                         if _trace_responses_content:
-                            # Try to get the full tool details using as_dict() if available
-                            if hasattr(output_item, "as_dict"):
+                            # Try to get the full tool details using model_dump() for Pydantic models
+                            if hasattr(output_item, "model_dump"):
+                                tool_dict = output_item.model_dump()
+                                # Extract the tool-specific details (exclude common fields already captured)
+                                for key, value in tool_dict.items():
+                                    if (
+                                        key
+                                        not in ["type", "id", "call_id", "role", "content", "status", "partition_key"]
+                                        and value is not None
+                                    ):
+                                        tool_call[key] = value
+                            elif hasattr(output_item, "as_dict"):
                                 tool_dict = output_item.as_dict()
                                 # Extract the tool-specific details (exclude common fields already captured)
                                 for key, value in tool_dict.items():
@@ -1373,6 +1405,64 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         # Log but don't crash if we can't handle an unknown tool type
                         logger.debug(f"Failed to process unknown tool call type '{item_type}': {e}")
 
+                # Handle unknown/future tool output types with best effort
+                # These are the _output types that correspond to the tool calls above
+                elif item_type and item_type.endswith("_output"):
+                    # Generic handler for tool outputs
+                    try:
+                        tool_output = {
+                            "type": item_type,
+                        }
+
+                        # Always try to include common ID fields (safe, needed for correlation)
+                        for id_field in ["id", "call_id"]:
+                            if hasattr(output_item, id_field):
+                                tool_output["id"] = getattr(output_item, id_field)
+                                break  # Use first available ID field
+
+                        # Only include detailed fields if content recording is enabled
+                        if _trace_responses_content:
+                            # Try to get the full tool output using model_dump() for Pydantic models
+                            if hasattr(output_item, "model_dump"):
+                                output_dict = output_item.model_dump()
+                                # Extract the tool-specific output (exclude common fields already captured)
+                                # Include fields even if empty string (but not None) for API consistency
+                                for key, value in output_dict.items():
+                                    if (
+                                        key
+                                        not in ["type", "id", "call_id", "role", "content", "status", "partition_key"]
+                                        and value is not None
+                                    ):
+                                        tool_output[key] = value
+                            elif hasattr(output_item, "as_dict"):
+                                output_dict = output_item.as_dict()
+                                # Extract the tool-specific output (exclude common fields already captured)
+                                for key, value in output_dict.items():
+                                    if (
+                                        key not in ["type", "id", "call_id", "role", "content", "status"]
+                                        and value is not None
+                                    ):
+                                        tool_output[key] = value
+                            else:
+                                # Fallback: try to capture common output fields manually
+                                for field in [
+                                    "output",
+                                    "result",
+                                    "results",
+                                    "data",
+                                    "response",
+                                ]:
+                                    if hasattr(output_item, field):
+                                        value = getattr(output_item, field)
+                                        if value is not None:
+                                            tool_output[field] = value
+
+                        self._emit_tool_output_event(span, tool_output, conversation_id)
+
+                    except Exception as e:
+                        # Log but don't crash if we can't handle an unknown tool output type
+                        logger.debug(f"Failed to process unknown tool output type '{item_type}': {e}")
+
             except Exception as e:
                 # Catch-all to prevent any tool call processing errors from breaking instrumentation
                 logger.debug(f"Error processing tool call events: {e}")
@@ -1383,6 +1473,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         port: Optional[int] = None,
         model: Optional[str] = None,
         assistant_name: Optional[str] = None,
+        agent_id: Optional[str] = None,
         conversation_id: Optional[str] = None,
         input_text: Optional[str] = None,
         input_raw: Optional[Any] = None,
@@ -1418,6 +1509,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Note: model and server_address are already set by start_span, so we don't need to set them again
             self._set_span_attribute_safe(span, GEN_AI_CONVERSATION_ID, conversation_id)
             self._set_span_attribute_safe(span, GEN_AI_AGENT_NAME, assistant_name)
+            self._set_span_attribute_safe(span, GEN_AI_AGENT_ID, agent_id)
 
             # Set tools attribute if tools are provided
             if tools:
@@ -1522,6 +1614,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             agent_info = extra_body.get("agent")
             if agent_info and isinstance(agent_info, dict):
                 return agent_info.get("name")
+        return None
+
+    def _extract_agent_id(self, kwargs: Dict[str, Any]) -> Optional[str]:
+        """Extract agent ID from kwargs."""
+        extra_body = kwargs.get("extra_body")
+        if extra_body and isinstance(extra_body, dict):
+            agent_info = extra_body.get("agent")
+            if agent_info and isinstance(agent_info, dict):
+                return agent_info.get("id")
         return None
 
     def _extract_input_text(self, kwargs: Dict[str, Any]) -> Optional[str]:
@@ -1732,6 +1833,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id = self._extract_conversation_id(kwargs)
         model = self._extract_model(kwargs)
         assistant_name = self._extract_assistant_name(kwargs)
+        agent_id = self._extract_agent_id(kwargs)
         input_text = self._extract_input_text(kwargs)
         input_raw = kwargs.get("input")  # Get the raw input (could be string or list)
         stream = kwargs.get("stream", False)
@@ -1742,6 +1844,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             port=port,
             model=model,
             assistant_name=assistant_name,
+            agent_id=agent_id,
             conversation_id=conversation_id,
             input_text=input_text,
             input_raw=input_raw,
@@ -2241,7 +2344,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.finish_reason = None  # Track finish_reason from streaming chunks
 
                 # Track all output items from streaming events (tool calls, workflow actions, etc.)
-                self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id, action_id, or id
+                # Use (id, type) as key to avoid overwriting when call and output have same ID
+                self.output_items = {}  # Dict[(item_id, item_type), output_item]
                 self.has_output_items = False
 
                 # Expose response attribute for compatibility with ResponseStreamManager
@@ -2302,8 +2406,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             or getattr(item, "id", None)
                         )
                         if item_id:
-                            self.output_items[item_id] = item
+                            # Use (id, type) tuple as key to distinguish call from output
+                            key = (item_id, item_type)
+                            self.output_items[key] = item
                             self.has_output_items = True
+                    # Items without ID or type are skipped
 
                 # Capture response ID from ResponseCreatedEvent or ResponseCompletedEvent
                 if chunk_type == "response.created" and hasattr(chunk, "response"):
@@ -2483,6 +2590,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     self.span_ended = True
 
             def __iter__(self):
+                # Start streaming iteration
                 return self
 
             def __next__(self):
@@ -2713,7 +2821,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.finish_reason = None  # Track finish_reason from streaming chunks
 
                 # Track all output items from streaming events (tool calls, workflow actions, etc.)
-                self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id, action_id, or id
+                # Use (id, type) as key to avoid overwriting when call and output have same ID
+                self.output_items = {}  # Dict[(item_id, item_type), output_item]
                 self.has_output_items = False
 
                 # Expose response attribute for compatibility with AsyncResponseStreamManager
@@ -2776,8 +2885,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             or getattr(item, "id", None)
                         )
                         if item_id:
-                            self.output_items[item_id] = item
+                            # Use (id, type) tuple as key to distinguish call from output
+                            self.output_items[(item_id, item_type)] = item
                             self.has_output_items = True
+                    # Items without ID or type are skipped
 
                 # Capture response ID from ResponseCreatedEvent or ResponseCompletedEvent
                 if chunk_type == "response.created" and hasattr(chunk, "response"):
@@ -3393,7 +3504,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "tool"  # Override role for tool outputs
 
             tool_output: Dict[str, Any] = {
-                "type": "function",
+                "type": item_type,
             }
 
             # Add call_id as "id" - always include for correlation
@@ -3429,7 +3540,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for function calls
 
             tool_call = {
-                "type": "function",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3468,7 +3579,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for file search calls
 
             tool_call = {
-                "type": "file_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3511,7 +3622,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for code interpreter calls
 
             tool_call = {
-                "type": "code_interpreter",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3567,7 +3678,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for web search calls
 
             tool_call = {
-                "type": "web_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3608,7 +3719,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for Azure AI Search calls
 
             tool_call = {
-                "type": "azure_ai_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3654,7 +3765,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for image generation calls
 
             tool_call = {
-                "type": "image_generation",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3692,15 +3803,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
-        elif item_type == "remote_function_call_output":
-            # Remote function call output (like Azure AI Search)
+        elif item_type == "remote_function_call":
+            # Remote function call (like Bing Custom Search call)
             role = "assistant"  # Override role for remote function calls
 
-            # Extract the tool name
-            tool_name = getattr(item, "name", None) if hasattr(item, "name") else None
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
 
             tool_call = {
-                "type": tool_name if tool_name else "remote_function",
+                "type": specific_type if specific_type else item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3718,8 +3832,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Extract data from model_extra if available (Pydantic v2 style)
                 if hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
                     for key, value in item.model_extra.items():
-                        # Skip already captured fields, redundant fields (name, label), and empty/None values
-                        if key not in ["type", "id", "call_id", "name", "label"] and value is not None and value != "":
+                        # Skip already captured fields, redundant fields (name, label), internal fields (partition_key), and empty/None values
+                        if (
+                            key not in ["type", "id", "call_id", "name", "label", "partition_key"]
+                            and value is not None
+                            and value != ""
+                        ):
                             tool_call[key] = value
 
                 # Also try as_dict if available
@@ -3748,8 +3866,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Fallback: try common fields directly (skip if empty and skip redundant name/label)
                 for field in [
                     "input",
-                    "output",
-                    "results",
+                    "arguments",
                     "status",
                     "error",
                     "search_query",
@@ -3767,6 +3884,91 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             # Include role in content for semantic convention compliance
             event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
+
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
+
+        elif item_type == "remote_function_call_output":
+            # Remote function call output (like Bing Custom Search output)
+            role = "tool"  # Tool outputs use role "tool"
+
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call_output")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
+
+            tool_output = {
+                "type": specific_type if specific_type else item_type,
+            }
+
+            # Always include ID (needed for correlation)
+            if hasattr(item, "id"):
+                tool_output["id"] = item.id
+            elif hasattr(item, "call_id"):
+                tool_output["id"] = item.call_id
+            # Check model_extra for call_id
+            elif hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
+                if "call_id" in item.model_extra:
+                    tool_output["id"] = item.model_extra["call_id"]
+
+            # Only include tool details if content recording is enabled
+            if _trace_responses_content:
+                # Extract data from model_extra if available (Pydantic v2 style)
+                if hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
+                    for key, value in item.model_extra.items():
+                        # Skip already captured fields, redundant fields (name, label), internal fields (partition_key), and empty/None values
+                        if (
+                            key not in ["type", "id", "call_id", "name", "label", "partition_key"]
+                            and value is not None
+                            and value != ""
+                        ):
+                            tool_output[key] = value
+
+                # Also try as_dict if available
+                if hasattr(item, "as_dict"):
+                    try:
+                        tool_dict = item.as_dict()
+                        # Extract relevant fields (exclude already captured ones and empty/None values)
+                        for key, value in tool_dict.items():
+                            if key not in [
+                                "type",
+                                "id",
+                                "call_id",
+                                "name",
+                                "label",
+                                "role",
+                                "content",
+                            ]:
+                                # Skip empty strings and None values
+                                if value is not None and value != "":
+                                    # Don't overwrite if already exists
+                                    if key not in tool_output:
+                                        tool_output[key] = value
+                    except Exception as e:
+                        logger.debug(f"Failed to extract data from as_dict: {e}")
+
+                # Fallback: try common fields directly (skip if empty and skip redundant name/label)
+                for field in [
+                    "input",
+                    "output",
+                    "results",
+                    "status",
+                    "error",
+                    "search_query",
+                    "query",
+                ]:
+                    if hasattr(item, field):
+                        try:
+                            value = getattr(item, field)
+                            if value is not None and value != "":
+                                # If not already in tool_output, add it
+                                if field not in tool_output:
+                                    tool_output[field] = value
+                        except Exception:
+                            pass
+
+            # Tool outputs use tool_call_output type in parts
+            event_body = [{"role": role, "parts": [{"type": "tool_call_output", "content": tool_output}]}]
 
             event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 

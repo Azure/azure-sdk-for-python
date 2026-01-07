@@ -9,17 +9,16 @@ import os
 import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 
 class TestAgentFileSearch(TestBase):
 
+    # To only run this test:
+    # pytest tests/agents/tools/test_agent_file_search.py::TestAgentFileSearch::test_agent_file_search -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_file_search(self, **kwargs):
         """
         Test agent with File Search tool for document Q&A.
@@ -46,7 +45,7 @@ class TestAgentFileSearch(TestBase):
         DELETE /vector_stores/{id}                           openai_client.vector_stores.delete()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -63,22 +62,23 @@ class TestAgentFileSearch(TestBase):
             # Create vector store for file search
             vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
             print(f"Vector store created (id: {vector_store.id})")
-            assert vector_store.id is not None
+            assert vector_store.id
 
             # Upload file to vector store
-            with open(asset_file_path, "rb") as f:
+            with self.open_with_lf(asset_file_path, "rb") as f:
                 file = openai_client.vector_stores.files.upload_and_poll(
                     vector_store_id=vector_store.id,
                     file=f,
                 )
 
             print(f"File uploaded (id: {file.id}, status: {file.status})")
-            assert file.id is not None
+            assert file.id
             assert file.status == "completed", f"Expected file status 'completed', got '{file.status}'"
 
             # Create agent with file search tool
+            agent_name = "file-search-agent"
             agent = project_client.agents.create_version(
-                agent_name="file-search-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
@@ -86,10 +86,7 @@ class TestAgentFileSearch(TestBase):
                 ),
                 description="Agent for testing file search capabilities.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "file-search-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Ask a question about the uploaded document
             print("\nAsking agent about the product information...")
@@ -100,7 +97,7 @@ class TestAgentFileSearch(TestBase):
             )
 
             print(f"Response completed (id: {response.id})")
-            assert response.id is not None
+            assert response.id
             assert response.output is not None
             assert len(response.output) > 0
 
@@ -125,10 +122,7 @@ class TestAgentFileSearch(TestBase):
             print("Vector store deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_agent_file_search_unsupported_file_type(self, **kwargs):
         """
         Negative test: Verify that unsupported file types are rejected with clear error messages.
@@ -200,10 +194,7 @@ Widget B,Q2,25000"""
             print("\nVector store deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_file_search_multi_turn_conversation(self, **kwargs):
         """
         Test multi-turn conversation with File Search.
@@ -212,7 +203,7 @@ Widget B,Q2,25000"""
         while using File Search to answer follow-up questions.
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

@@ -28,6 +28,7 @@ logger = getLogger(__name__)
 # Original breaking PR: https://github.com/open-telemetry/opentelemetry-python-contrib/pull/3202
 # Tracking issue: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/3434
 
+
 class DependencyConflict:
     required: str | None = None
     found: str | None = None
@@ -40,7 +41,7 @@ class DependencyConflict:
         required: str | None = None,
         found: str | None = None,
         required_any: list[str] | None = None,
-        found_any: list[str] | None = None
+        found_any: list[str] | None = None,
     ):
         self.required = required
         self.found = found
@@ -49,8 +50,10 @@ class DependencyConflict:
 
     def __str__(self):
         if not self.required and (self.required_any or self.found_any):
-            return (f'DependencyConflict: requested any of the following: "{self.required_any}" '
-                    f'but found: "{self.found_any}"')
+            return (
+                f'DependencyConflict: requested any of the following: "{self.required_any}" '
+                f'but found: "{self.found_any}"'
+            )
         return f'DependencyConflict: requested: "{self.required}" but found: "{self.found}"'
 
 
@@ -80,8 +83,7 @@ def get_dist_dependency_conflicts(
 
 def get_dependency_conflicts(
     deps: Collection[str | Requirement],
-    deps_any: Collection[str | Requirement]
-    | None = None,
+    deps_any: Collection[str | Requirement] | None = None,
 ) -> DependencyConflict | None:
     for dep in deps:
         if isinstance(dep, Requirement):
@@ -108,6 +110,7 @@ def get_dependency_conflicts(
     if deps_any:
         return _get_dependency_conflicts_any(deps_any)
     return None
+
 
 def _get_dependency_conflicts_any(
     deps_any: Collection[str | Requirement],

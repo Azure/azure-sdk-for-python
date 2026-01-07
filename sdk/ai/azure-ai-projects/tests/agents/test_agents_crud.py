@@ -6,7 +6,6 @@
 # cSpell:disable
 import json
 import io
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
@@ -14,8 +13,10 @@ from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentV
 
 class TestAgentCrud(TestBase):
 
+    # To run this test:
+    # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_agents_crud -s
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy()
     def test_agents_crud(self, **kwargs):
         """
         Test CRUD operations for Agents.
@@ -36,7 +37,8 @@ class TestAgentCrud(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         GET    /agents/{agent_name}/versions/{agent_version} project_client.agents.get_version()
         """
-        model = self.test_agents_params["model_deployment_name"]
+        print("\n")
+        model = kwargs.get("azure_ai_model_deployment_name")
         project_client = self.create_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"
