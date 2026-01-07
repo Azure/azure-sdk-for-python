@@ -25,8 +25,10 @@ from opentelemetry.sdk.environment_variables import (
 from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
+from opentelemetry.sdk.trace.sampling import ALWAYS_OFF, ALWAYS_ON, ParentBased, TraceIdRatioBased
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
+    _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._constants import LOGGER_NAME_ENV_ARG, LOGGING_FORMAT_ENV_ARG
 from azure.monitor.opentelemetry._constants import (
@@ -675,6 +677,24 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_arg"], 0.75)
         self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
+    
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
+            OTEL_TRACES_SAMPLER: TRACE_ID_RATIO_SAMPLER,
+            OTEL_TRACES_SAMPLER_ARG: "sampler",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_trace_id_ratio_non_numeric_value(self, resource_create_mock):
+        configurations = _get_configurations()
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(configurations["sampling_arg"], 1.0)
+        self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
 
     @patch.dict(
         "os.environ",
@@ -701,6 +721,7 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
+
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations_env_vars_parentbased_always_off(self, resource_create_mock):
         configurations = _get_configurations()
@@ -709,6 +730,26 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_arg"], 0.0)
         self.assertEqual(configurations["sampler_type"], "parentbased_always_off")
+
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
+            OTEL_TRACES_SAMPLER: PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
+            OTEL_TRACES_SAMPLER_ARG: "0.89",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_parentbased_trace_id_ratio(
+        self, resource_create_mock
+    ):
+        configurations = _get_configurations()
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(configurations["sampling_arg"], 0.89)
+        self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
 
     @patch.dict(
         "os.environ",
@@ -735,17 +776,17 @@ class TestConfigurations(TestCase):
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
             OTEL_TRACES_SAMPLER: PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "0.45",
+            OTEL_TRACES_SAMPLER_ARG: "non-numeric-value",
         },
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio(self, resource_create_mock):
+    def test_get_configurations_env_vars_parentbased_trace_id_ratio_non_numeric_value(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 0.45)
+        self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
 
     @patch.dict(
@@ -779,3 +820,46 @@ class TestConfigurations(TestCase):
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_ratio"], 1.0)
+    
+    
+    # Tests for the _get_sampler_from_name function
+    def test_get_sampler_from_name_always_on_off(self):
+        self.assertIs(_get_sampler_from_name(ALWAYS_ON_SAMPLER, None), ALWAYS_ON)
+        self.assertIs(_get_sampler_from_name(ALWAYS_OFF_SAMPLER, None), ALWAYS_OFF)
+
+    def test_get_sampler_from_name_trace_id_ratio(self):
+        sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER, "0.3")
+        self.assertIsInstance(sampler, TraceIdRatioBased)
+        self.assertEqual(sampler._rate, 0.3)
+
+    def test_get_sampler_from_name_trace_id_ratio_defaults_to_one(self):
+        sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER, None)
+        self.assertIsInstance(sampler, TraceIdRatioBased)
+        self.assertEqual(sampler._rate, 1.0)
+
+    def test_get_sampler_from_name_parent_based_fixed(self):
+        sampler_on = _get_sampler_from_name(PARENT_BASED_ALWAYS_ON_SAMPLER, None)
+        sampler_off = _get_sampler_from_name(PARENT_BASED_ALWAYS_OFF_SAMPLER, None)
+
+        self.assertIsInstance(sampler_on, ParentBased)
+        self.assertIs(sampler_on._root, ALWAYS_ON)
+
+        self.assertIsInstance(sampler_off, ParentBased)
+        self.assertIs(sampler_off._root, ALWAYS_OFF)
+
+    def test_get_sampler_from_name_parent_based_trace_id_ratio(self):
+        sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER, "0.25")
+        self.assertIsInstance(sampler, ParentBased)
+        self.assertIsInstance(sampler._root, TraceIdRatioBased)
+        self.assertEqual(sampler._root._rate, 0.25)
+
+    def test_get_sampler_from_name_parent_based_trace_id_ratio_defaults(self):
+        sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER, None)
+        self.assertIsInstance(sampler._root, TraceIdRatioBased)
+        self.assertEqual(sampler._root._rate, 1.0)
+
+    def test_get_sampler_from_name_invalid_type_defaults_parentbased_always_on(self):
+        sampler = _get_sampler_from_name("not-a-sampler", None)
+        self.assertIsInstance(sampler, ParentBased)
+        self.assertIs(sampler._root, ALWAYS_ON)
+

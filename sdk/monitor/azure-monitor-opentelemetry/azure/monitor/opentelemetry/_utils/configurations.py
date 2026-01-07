@@ -165,7 +165,7 @@ def _default_resource(configurations):
         configurations[RESOURCE_ARG] = Resource.create(configurations[RESOURCE_ARG].attributes)
 
 
-# pylint: disable=too-many-statements, disable=too-many-branches
+# pylint: disable=too-many-statements,too-many-branches
 def _default_sampling_ratio(configurations):
     default_value = 1.0
     sampler_type = environ.get(OTEL_TRACES_SAMPLER)
@@ -175,7 +175,7 @@ def _default_sampling_ratio(configurations):
     if sampler_type == RATE_LIMITED_SAMPLER:
         try:
             sampler_value = float(sampler_arg)
-            if sampler_value < 0:
+            if sampler_value < 0.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
                 sampler_value = default_value
             else:
@@ -194,7 +194,7 @@ def _default_sampling_ratio(configurations):
     elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
         try:
             sampler_value = float(sampler_arg)
-            if sampler_value < 0:
+            if sampler_value < 0.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
                 sampler_value = default_value
             else:
@@ -223,7 +223,7 @@ def _default_sampling_ratio(configurations):
     elif sampler_type == TRACE_ID_RATIO_SAMPLER:
         try:
             sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
-            if sampler_value < 0 or sampler_value > 1:
+            if sampler_value < 0.0 or sampler_value > 1.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1.")
                 sampler_value = default_value
             else:
@@ -236,7 +236,7 @@ def _default_sampling_ratio(configurations):
                 default_value,
                 e,
             )
-            configurations[SAMPLING_ARG] = sampler_value
+            configurations[SAMPLING_ARG] = default_value
         configurations[SAMPLER_TYPE] = TRACE_ID_RATIO_SAMPLER
 
     # Handle parentbased_always_on sampler
@@ -249,11 +249,11 @@ def _default_sampling_ratio(configurations):
         configurations[SAMPLING_ARG] = 0.0
         configurations[SAMPLER_TYPE] = PARENT_BASED_ALWAYS_OFF_SAMPLER
 
-    # Handle parentbased_traceidratio sampler
+    # Handle parentbased_trace_id_ratio sampler
     elif sampler_type == PARENT_BASED_TRACE_ID_RATIO_SAMPLER:
         try:
             sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
-            if sampler_value < 0 or sampler_value > 1:
+            if sampler_value < 0.0 or sampler_value > 1.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1.")
                 sampler_value = default_value
             else:
@@ -266,7 +266,7 @@ def _default_sampling_ratio(configurations):
                 default_value,
                 e,
             )
-            configurations[SAMPLING_ARG] = sampler_value
+            configurations[SAMPLING_ARG] = default_value
         configurations[SAMPLER_TYPE] = PARENT_BASED_TRACE_ID_RATIO_SAMPLER
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
