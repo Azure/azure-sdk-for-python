@@ -677,6 +677,24 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_arg"], 0.75)
         self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
+    
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
+            OTEL_TRACES_SAMPLER: TRACE_ID_RATIO_SAMPLER,
+            OTEL_TRACES_SAMPLER_ARG: "sampler",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_trace_id_ratio_non_numeric_value(self, resource_create_mock):
+        configurations = _get_configurations()
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(configurations["sampling_arg"], 1.0)
+        self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
 
     @patch.dict(
         "os.environ",
@@ -721,6 +739,7 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
+
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations_env_vars_parentbased_always_off(self, resource_create_mock):
         configurations = _get_configurations()
