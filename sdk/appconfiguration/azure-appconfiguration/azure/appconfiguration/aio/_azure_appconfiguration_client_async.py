@@ -52,7 +52,8 @@ class AzureAppConfigurationClient:
     :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword audience: The audience to use for authentication with Microsoft Entra. Defaults to the public Azure App Configuration audience. See the supported audience list at https://aka.ms/appconfig/client-token-audience
+    :keyword audience: The audience to use for authentication with Microsoft Entra. Defaults to the public Azure App
+    Configuration audience. See the supported audience list at https://aka.ms/appconfig/client-token-audience
     :paramtype audience: str
 
     This is the async version of :class:`~azure.appconfiguration.AzureAppConfigurationClient`
