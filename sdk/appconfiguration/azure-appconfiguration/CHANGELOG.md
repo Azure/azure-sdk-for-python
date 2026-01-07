@@ -10,8 +10,6 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where `credential_scopes` passed via kwargs were being ignored. Now ensures all scopes are properly used and normalized to end with `/.default` suffix.
-
 ### Other Changes
 
 - Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
