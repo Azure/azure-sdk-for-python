@@ -103,18 +103,9 @@ class pylint(Check):
                 os.path.join(REPO_ROOT, "eng/pylintrc") if args.next else os.path.join(REPO_ROOT, "pylintrc")
             )
 
+            # Run pylint on main package
             try:
-
-                pylint_targets = [os.path.join(package_dir, top_level_module)]
-        
-                # Add tests + samples directory if it exists and next pylint is being used
-                tests_dir = os.path.join(package_dir, "tests")
-                samples_dir = os.path.join(package_dir, "samples")
-                if os.path.exists(tests_dir) and args.next:
-                    pylint_targets.append(tests_dir)
-                if os.path.exists(samples_dir) and args.next:
-                    pylint_targets.append(samples_dir)
-
+                main_pylint_targets = [os.path.join(package_dir, top_level_module)]
 
                 logger.info(
                     [
@@ -123,7 +114,7 @@ class pylint(Check):
                         "pylint",
                         "--rcfile={}".format(rcFileLocation),
                         "--output-format=parseable",
-                    ] + pylint_targets
+                    ] + main_pylint_targets
                 )
 
                 results.append(
@@ -134,21 +125,92 @@ class pylint(Check):
                             "pylint",
                             "--rcfile={}".format(rcFileLocation),
                             "--output-format=parseable",
-                        ] + pylint_targets
+                        ] + main_pylint_targets
                     )
                 )
             except CalledProcessError as e:
                 logger.error(
-                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                    "{} main package exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
                         package_name, e.returncode
                     )
                 )
-                if args.next and in_ci():
-                    from gh_tools.vnext_issue_creator import create_vnext_issue
-
-                    create_vnext_issue(package_dir, "pylint")
-
                 results.append(e.returncode)
+                
+            # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
+            if args.next:
+                tests_dir = os.path.join(package_dir, "tests")
+                samples_dir = os.path.join(package_dir, "samples")
+                
+                # Run tests with test_pylintrc
+                if os.path.exists(tests_dir):
+                    try:
+                        test_rcfile = os.path.join(REPO_ROOT, "eng/test_pylintrc")
+                        logger.info(
+                            [
+                                executable,
+                                "-m",
+                                "pylint",
+                                "--rcfile={}".format(test_rcfile),
+                                "--output-format=parseable",
+                                tests_dir
+                            ]
+                        )
+                        results.append(
+                            check_call(
+                                [
+                                    executable,
+                                    "-m",
+                                    "pylint",
+                                    "--rcfile={}".format(test_rcfile),
+                                    "--output-format=parseable",
+                                    tests_dir
+                                ]
+                            )
+                        )
+                    except CalledProcessError as e:
+                        logger.error(
+                            "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                                package_name, e.returncode
+                            )
+                        )
+                        results.append(e.returncode)
+                        
+                # Run samples with main pylintrc
+                if os.path.exists(samples_dir):
+                    try:
+                        logger.info(
+                            [
+                                executable,
+                                "-m",
+                                "pylint",
+                                "--rcfile={}".format(rcFileLocation),
+                                "--output-format=parseable",
+                                samples_dir
+                            ]
+                        )
+                        results.append(
+                            check_call(
+                                [
+                                    executable,
+                                    "-m",
+                                    "pylint",
+                                    "--rcfile={}".format(rcFileLocation),
+                                    "--output-format=parseable",
+                                    samples_dir
+                                ]
+                            )
+                        )
+                    except CalledProcessError as e:
+                        logger.error(
+                            "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                                package_name, e.returncode
+                            )
+                        )
+                        results.append(e.returncode)
+
+            if args.next and in_ci() and any(result > 0 for result in results):
+                from gh_tools.vnext_issue_creator import create_vnext_issue
+                create_vnext_issue(package_dir, "pylint")
 
             if args.next and in_ci():
                 from gh_tools.vnext_issue_creator import close_vnext_issue
