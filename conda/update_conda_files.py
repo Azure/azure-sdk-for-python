@@ -13,6 +13,13 @@ from dateutil.relativedelta import relativedelta
 from ci_tools.logging import logger, configure_logging
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from typing import Dict, List, Optional, Tuple
+from conda_helper_functions import (
+    parse_csv,
+    separate_packages_by_type,
+    package_needs_update,
+    get_package_data_from_pypi,
+    build_package_index,
+)
 
 from conda_release_groups import (
     get_package_group_data,
@@ -87,152 +94,6 @@ def update_conda_version() -> Tuple[datetime, str]:
     logger.info(f"Updated AZURESDK_CONDA_VERSION from {old_version} to {new_version}")
 
     return old_date, new_version
-
-
-# =====================================
-# Utility functions
-# =====================================
-
-
-def parse_csv() -> List[Dict[str, str]]:
-    """Download and parse the Azure SDK Python packages CSV file."""
-    try:
-        logger.info(f"Downloading CSV from {AZURE_SDK_CSV_URL}")
-
-        with urllib.request.urlopen(AZURE_SDK_CSV_URL) as response:
-            csv_content = response.read().decode("utf-8")
-
-        # Parse the CSV content
-        csv_reader = csv.DictReader(csv_content.splitlines())
-        packages = list(csv_reader)
-
-        logger.info(f"Successfully parsed {len(packages)} packages from CSV")
-
-        return packages
-
-    except Exception as e:
-        logger.error(f"Failed to download or parse CSV: {e}")
-        return []
-
-
-def is_mgmt_package(pkg: Dict[str, str]) -> bool:
-    pkg_name = pkg.get(PACKAGE_COL, "")
-    _type = pkg.get(TYPE_COL, "")
-    if _type == "mgmt":
-        return True
-    elif _type == "client":
-        return False
-    else:
-        return pkg_name != "azure-mgmt-core" and (
-            "mgmt" in pkg_name or "cognitiveservices" in pkg_name
-        )
-
-
-def separate_packages_by_type(
-    packages: List[Dict[str, str]],
-) -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
-    """Separate packages into data plane and management plane libraries."""
-    data_plane_packages = []
-    mgmt_plane_packages = []
-
-    for pkg in packages:
-        if is_mgmt_package(pkg):
-            mgmt_plane_packages.append(pkg)
-        else:
-            data_plane_packages.append(pkg)
-
-    logger.debug(
-        f"Separated {len(data_plane_packages)} data plane and {len(mgmt_plane_packages)} management plane packages"
-    )
-
-    return (data_plane_packages, mgmt_plane_packages)
-
-
-def package_needs_update(
-    package_row: Dict[str, str], prev_release_date: str, is_new=False
-) -> bool:
-    """
-    Check if the package is new or needs version update (i.e., FirstGADate or LatestGADate is after the last release).
-
-    :param package_row: The parsed CSV row for the package.
-    :param prev_release_date: The date of the previous release in "mm/dd/yyyy" format.
-    :param is_new: Whether to check for new package (FirstGADate) or outdated package (LatestGADate).
-    :return: if the package is new or needs an update.
-    """
-    compare_date = (
-        package_row.get(FIRST_GA_DATE_COL)
-        if is_new
-        else package_row.get(LATEST_GA_DATE_COL)
-    )
-
-    logger.debug(
-        f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compare_date}"
-    )
-
-    if not compare_date:
-        logger.debug(
-            f"Package {package_row.get(PACKAGE_COL)} is skipped due to missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
-        )
-
-        # TODO need to verify that this is the desired behavior / we're not skipping needed packages
-
-        return False
-
-    try:
-        # Convert string dates to datetime objects for proper comparison
-        compare_date = datetime.strptime(compare_date, "%m/%d/%Y")
-        prev_date = datetime.strptime(prev_release_date, "%m/%d/%Y")
-        logger.debug(
-            f"Comparing {package_row.get(PACKAGE_COL)} CompareDate {compare_date} with previous release date {prev_date}"
-        )
-        return compare_date > prev_date
-    except ValueError as e:
-        logger.error(
-            f"Date parsing error for package {package_row.get(PACKAGE_COL)}: {e}"
-        )
-        return False
-
-
-def get_package_data_from_pypi(
-    package_name: str,
-) -> Tuple[Optional[str], Optional[str]]:
-    """Fetch the latest version and download URI for a package from PyPI."""
-    pypi_url = f"https://pypi.org/pypi/{package_name}/json"
-    try:
-        with urllib.request.urlopen(pypi_url, timeout=10) as response:
-            data = json.loads(response.read().decode("utf-8"))
-
-            # Get the latest version
-            latest_version = data["info"]["version"]
-            if latest_version in data["releases"] and data["releases"][latest_version]:
-                # Get the source distribution (sdist) if available
-                files = data["releases"][latest_version]
-                source_dist = next(
-                    (f for f in files if f["packagetype"] == "sdist"), None
-                )
-                if source_dist:
-                    download_url = source_dist["url"]
-                    logger.info(
-                        f"Found download URL for {package_name}=={latest_version}: {download_url}"
-                    )
-                    return latest_version, download_url
-
-    except Exception as e:
-        logger.error(f"Failed to fetch download URI from PyPI for {package_name}: {e}")
-    return None, None
-
-
-def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int]]:
-    """Build an index of package name -> (artifact_idx, checkout_idx) for fast lookups in conda-sdk-client.yml."""
-    package_index = {}
-
-    for artifact_idx, artifact in enumerate(conda_artifacts):
-        if "checkout" in artifact:
-            for checkout_idx, checkout_item in enumerate(artifact["checkout"]):
-                package_name = checkout_item.get("package")
-                if package_name:
-                    package_index[package_name] = (artifact_idx, checkout_idx)
-    return package_index
 
 
 # =====================================
@@ -850,8 +711,12 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
 # Helpers for updating release logs
 # =====================================
 
+
 def update_release_logs(
-    package_dict: Dict, new_data_plane_names: List[str], new_mgmt_plane_names: List[str], release_date: str
+    package_dict: Dict,
+    new_data_plane_names: List[str],
+    new_mgmt_plane_names: List[str],
+    release_date: str,
 ) -> List[str]:
     """
     Add and update release logs for conda packages. Release log includes versions of all packages for the release
@@ -877,11 +742,11 @@ def update_release_logs(
         group_name = get_release_group(package_name, get_package_to_group_mapping())
         group_data = get_package_group_data(group_name)
         if group_data:
-            release_log_path = os.path.join(
-                CONDA_RELEASE_LOGS_DIR, f"{group_name}.md"
-            )
+            release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{group_name}.md")
         else:
-            release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{package_name}.md")
+            release_log_path = os.path.join(
+                CONDA_RELEASE_LOGS_DIR, f"{package_name}.md"
+            )
 
         if not os.path.exists(release_log_path):
             # Add new release log
