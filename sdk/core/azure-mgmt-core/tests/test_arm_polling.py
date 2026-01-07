@@ -528,7 +528,13 @@ class TestArmPolling(object):
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0))
         with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
             poll.result()
-        assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+        # Verify continuation token is set and is a valid JSON-encoded token
+        assert error.value.continuation_token is not None
+        assert isinstance(error.value.continuation_token, str)
+        # Verify the token can be decoded
+        decoded = json.loads(base64.b64decode(error.value.continuation_token).decode("utf-8"))
+        assert "request" in decoded["data"]
+        assert "response" in decoded["data"]
 
         LOCATION_BODY = json.dumps({"name": TEST_NAME})
         POLLING_STATUS = 200
