@@ -173,36 +173,16 @@ class ResolvedFoundryTool:
 		return self.invoke(*args, **kwargs)
 
 
+@dataclass(frozen=True)
 class UserInfo:
 	"""Represents user information.
 
-	:ivar str objectId: User's object identifier.
-	:ivar str tenantId: Tenant identifier.
+	:ivar str object_id: User's object identifier.
+	:ivar str tenant_id: Tenant identifier.
 	"""
 
-	def __init__(self, objectId: str, tenantId: str, **kwargs: Any) -> None:
-		"""Initialize UserInfo with user details.
-
-		:param str objectId: User's object identifier.
-		:param str tenantId: Tenant identifier.
-		:param kwargs: Any additional properties to set on the user.
-		"""
-		self.object_id = objectId
-		self.tenant_id = tenantId
-		# Store all additional properties as attributes
-		for key, value in kwargs.items():
-			setattr(self, key, value)
-
-	def to_dict(self) -> dict:
-		"""Convert to dictionary for JSON serialization.
-
-		:return: Dictionary containing objectId and tenantId.
-		:rtype: dict
-		"""
-		return {
-			"objectId": self.object_id,
-			"tenantId": self.tenant_id
-		}
+	object_id: str
+	tenant_id: str
 
 
 class SchemaType(str, Enum):

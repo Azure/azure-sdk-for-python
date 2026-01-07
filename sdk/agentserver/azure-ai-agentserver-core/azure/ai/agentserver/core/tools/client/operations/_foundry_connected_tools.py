@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List, cast
+from typing import Any, ClassVar, Dict, List, Optional, cast
 
 from azure.core.pipeline.transport import HttpRequest
 
@@ -37,7 +37,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 	def build_list_tools_request(self,
 								 agent_name: str,
 								 tools: List[FoundryConnectedTool],
-								 user: UserInfo) -> HttpRequest:
+								 user: Optional[UserInfo]) -> HttpRequest:
 		"""Build request for listing connected tools.
 
 		:param agent_name: Name of the agent.
@@ -45,22 +45,23 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 		:param tools: List of connected tool definitions.
 		:type tools: List[FoundryConnectedTool]
 		:param user: User information for the request.
-		:type user: UserInfo
+		:type user: Optional[UserInfo]
 		:return: Request for listing connected tools.
 		:rtype: HttpRequest
 		"""
-		payload = {
+		payload: Dict[str, Any] = {
 			"remoteServers": [
 				{
 					"projectConnectionId": tool.project_connection_id,
 					"protocol": tool.protocol,
 				} for tool in tools
 			],
-			"user": {
+		}
+		if user:
+			payload["user"] = {
 				"objectId": user.object_id,
 				"tenantId": user.tenant_id,
 			}
-		}
 		return self.client.post(
 			self._list_tools_path(agent_name),
 			params=self._QUERY_PARAMS,
@@ -108,7 +109,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 								  agent_name: str,
 								  tool: ResolvedFoundryTool,
 								  arguments: Dict[str, Any],
-								  user: UserInfo) -> HttpRequest:
+								  user: Optional[UserInfo]) -> HttpRequest:
 		"""Build request for invoking a connected tool.
 
 		:param agent_name: Name of the agent.
@@ -118,7 +119,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 		:param arguments: Input arguments for the tool.
 		:type arguments: Dict[str, Any]
 		:param user: User information for the request.
-		:type user: UserInfo
+		:type user: Optional[UserInfo]
 		:return: Request for invoking the connected tool.
 		:rtype: HttpRequest
 		"""
@@ -126,18 +127,19 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry connected tool.", tool=tool)
 
 		tool_def = cast(FoundryConnectedTool, tool.definition)
-		payload = {
+		payload: Dict[str, Any] = {
 			"toolName": tool.name,
 			"arguments": arguments,
 			"remoteServer": {
 				"projectConnectionId": tool_def.project_connection_id,
 				"protocol": tool_def.protocol,
 			},
-			"user": {
+		}
+		if user:
+			payload["user"] = {
 				"objectId": user.object_id,
 				"tenantId": user.tenant_id,
 			}
-		}
 		return self.client.post(
 			self._list_tools_path(agent_name),
 			params=self._QUERY_PARAMS,
@@ -174,7 +176,7 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		:type agent_name: str
 		:param tools: List of connected tool definitions.
 		:type tools: List[FoundryConnectedTool]
-		:param user: User information for the request.
+		:param user: User information for the request. Value can be None if running in local.
 		:type user: UserInfo
 		:return: List of resolved connected tools.
 		:rtype: List[ResolvedFoundryTool]
@@ -193,7 +195,7 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		agent_name: str,
 		tool: ResolvedFoundryTool,
 		arguments: Dict[str, Any],
-		user: UserInfo) -> Any:
+		user: Optional[UserInfo]) -> Any:
 		"""Invoke a connected tool.
 
 		:param agent_name: Name of the agent.
@@ -202,8 +204,8 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		:type tool: ResolvedFoundryTool
 		:param arguments: Input arguments for the tool.
 		:type arguments: Mapping[str, Any]
-		:param user: User information for the request.
-		:type user: UserInfo
+		:param user: User information for the request. Value can be None if running in local.
+		:type user: Optional[UserInfo]
 		:return: Result of the tool invocation.
 		:rtype: Any
 		"""

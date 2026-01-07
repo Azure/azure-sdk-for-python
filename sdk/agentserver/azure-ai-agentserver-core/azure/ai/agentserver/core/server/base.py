@@ -108,10 +108,7 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
             logger.error(f"Failed to parse X-User-Info header: {e}", exc_info=True)
         if user_info:
             ctx = request_context.get() or {}
-            for key, value in user_info.to_dict().items():
-                if key == "objectId":
-                    continue  # skip user objectId
-                ctx[f"azure.ai.agentserver.user.{key}"] = str(value)
+            ctx[f"azure.ai.agentserver.user.tenant_id"] = user_info.tenant_id
             request_context.set(ctx)
         return user_info
 

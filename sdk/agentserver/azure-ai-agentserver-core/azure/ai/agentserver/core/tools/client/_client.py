@@ -11,7 +11,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._models import FoundryTool, FoundryToolSource, ResolvedFoundryTool, UserInfo
 from ._configuration import FoundryToolClientConfiguration
-from ._exceptions import MissingUserInfoError, ToolInvocationError
+from ._exceptions import ToolInvocationError
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
 from ...utils._credential import AsyncTokenCredentialAdapter
@@ -78,7 +78,6 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
             # noinspection PyTypeChecker
             tasks.append(self._hosted_mcp_tools.list_tools(tools_by_source[FoundryToolSource.HOSTED_MCP]))
         if FoundryToolSource.CONNECTED in tools_by_source:
-            user = self._ensure_user_info(user)
             # noinspection PyTypeChecker
             tasks.append(self._connected_tools.list_tools(tools_by_source[FoundryToolSource.CONNECTED],
                                                           user,
@@ -121,15 +120,8 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         if tool.source is FoundryToolSource.HOSTED_MCP:
             return await self._hosted_mcp_tools.invoke_tool(tool, arguments)
         if tool.source is FoundryToolSource.CONNECTED:
-            user = self._ensure_user_info(user)
             return await self._connected_tools.invoke_tool(agent_name, tool, arguments, user)
         raise ToolInvocationError(f"Unsupported tool source: {tool.source}", tool=tool)
-
-    @staticmethod
-    def _ensure_user_info(user: Optional[UserInfo]) -> UserInfo:
-        if not user:
-            raise MissingUserInfoError("UserInfo is required for listing/invoking connected tools.")
-        return user
 
     async def close(self) -> None:
         """Close the underlying HTTP pipeline."""

@@ -44,7 +44,3 @@ class OAuthConsentRequiredError(RuntimeError):
         self.message = message
         self.consent_url = consent_url
         self.project_connection_id = project_connection_id
-
-
-class MissingUserInfoError(RuntimeError):
-    """Raised when required user information is missing for connected tool listing/invocation."""
