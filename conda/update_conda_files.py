@@ -728,7 +728,10 @@ def update_data_plane_release_logs(
         # skip azure-mgmt here
         if curr_service_name == "azure-mgmt":
             continue
-        if curr_service_name not in package_dict and curr_service_name not in package_to_group.values():
+        if (
+            curr_service_name not in package_dict
+            and curr_service_name not in package_to_group.values()
+        ):
             logger.warning(
                 f"Existing release log service {curr_service_name} was not found in CSV data, skipping update. It may be deprecated."
             )
@@ -846,15 +849,51 @@ def update_data_plane_release_logs(
 
 def update_mgmt_plane_release_log(
     package_dict: Dict,
-    new_mgmt_plane_names: List[str],
+    all_mgmt_plane_names: List[str],
     release_date: str,
 ) -> List[str]:
+    """
+    Update azure-mgmt release log.
+    """
     result = []
 
     mgmt_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, "azure-mgmt.md")
     if not os.path.exists(mgmt_log_path):
         logger.error("Management plane release log azure-mgmt.md does not exist.")
-        return new_mgmt_plane_names  # all new packages need attention
+        return all_mgmt_plane_names  # all new packages need attention
+
+    pkg_updates = []
+    for package_name in all_mgmt_plane_names:
+        pkg = package_dict.get(package_name, {})
+        version = pkg.get(VERSION_GA_COL)
+
+        if not version:
+            logger.warning(
+                f"Skipping release log update of {package_name} with missing version"
+            )
+            result.append(package_name)
+            continue
+
+        pkg_updates.append(f"- {package_name}-{version}")
+
+    try:
+        with open(mgmt_log_path, "r") as f:
+            existing_content = f.read()
+
+        lines = existing_content.split("\n")
+
+        new_release = f"\n## {release_date}\n\n"
+        new_release += "### Packages included\n\n"
+
+        new_release += "\n".join(pkg_updates)
+        lines.insert(1, new_release)
+        updated_content = "\n".join(lines)
+
+        with open(mgmt_log_path, "w") as f:
+            f.write(updated_content)
+    except Exception as e:
+        logger.error(f"Failed to update azure-mgmt release log: {e}")
+        return all_mgmt_plane_names
 
     return result
 
@@ -882,6 +921,8 @@ if __name__ == "__main__":
         logger.error("No packages found in CSV data.")
         exit(1)
 
+    # TODO clean this part up
+
     # Only ship GA packages that are not deprecated
     packages = [
         pkg
@@ -899,6 +940,12 @@ if __name__ == "__main__":
     new_data_plane_packages, new_mgmt_plane_packages = separate_packages_by_type(
         new_packages
     )
+
+    # need for mgmt release log update
+    _, all_mgmt_packages = separate_packages_by_type(packages)
+    all_mgmt_packages = [
+        pkg.get(PACKAGE_COL, "") for pkg in all_mgmt_packages if pkg.get(PACKAGE_COL)
+    ]
 
     # map package name to csv row for easy lookup
     package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
@@ -936,7 +983,10 @@ if __name__ == "__main__":
     data_plane_release_log_results = update_data_plane_release_logs(
         package_dict, new_data_plane_names, new_version
     )
-    # TODO handle mgmt separately
+
+    mgmt_plane_release_log_results = update_mgmt_plane_release_log(
+        package_dict, all_mgmt_packages, new_version
+    )
 
     # TODO AKA link logic
 
