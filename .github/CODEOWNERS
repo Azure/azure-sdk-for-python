@@ -870,3 +870,6 @@
 
 /pylintrc                                                            @l0lawrence @scbedd @mccoyp
 /sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd
+
+# Add Johnathan Walker as code owner for Event Hubs SDK
+/sdk/eventhub/azure-eventhub/* @j7nw4r
