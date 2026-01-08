@@ -35,7 +35,7 @@ from opentelemetry import trace
 # Set the OTEL_TRACES_SAMPLER environment variable to "microsoft.fixed.percentage"
 # Set the OTEL_TRACES_SAMPLER_ARG environment variable to 0.2, it has to be a number between 0 and 1, else it will throw an error and default to 1.0
 
-# Using trace_based_sampling configuration
+# Using trace_based_sampling configuration # cspell: ignore unsampled
 # Determines whether the logger should drop log records associated with unsampled traces.
 # Passing the enable_trace_based_sampling_for_logs=True argument to configure_azure_monitor ensure that log records associated with unsampled traces are dropped by the `Logger`.
 # A log record is considered associated with an unsampled trace if it has a valid `SpanId` and its `TraceFlags` indicate that the trace is unsampled.
