@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
-from azure.appconfiguration._audience_policy import AudienceErrorHandlingPolicy
+from azure.appconfiguration._audience_error_handling_policy import AudienceErrorHandlingPolicy
 import pytest
 
 NO_AUDIENCE_ERROR_MESSAGE = (
