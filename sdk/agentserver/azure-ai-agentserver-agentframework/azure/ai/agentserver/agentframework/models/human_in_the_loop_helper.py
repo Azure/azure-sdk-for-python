@@ -37,10 +37,11 @@ class HumanInTheLoopHelper:
     
     def convert_response(self, hitl_request: RequestInfoEvent, input: Dict) -> List[ChatMessage]:
         response_type  = hitl_request.response_type
+        response_result = input.get("output", "")
         if response_type and hasattr(response_type, "convert_from_payload"):
             response_result = response_type.convert_from_payload(input.get("output", ""))
-            response_content = FunctionResultContent(
-                call_id=hitl_request.request_id,
-                result=response_result,
-            )
-            return [ChatMessage(role="tool", contents=[response_content])]
+        response_content = FunctionResultContent(
+            call_id=hitl_request.request_id,
+            result=response_result,
+        )
+        return [ChatMessage(role="tool", contents=[response_content])]
