@@ -91,7 +91,7 @@ RELEASE_GROUPS = {
         "common_root": "azure/vision",
     },
     "azure-healthinsights": {
-        "packages": ["azure-healthinsights-radiology-insights"],
+        "packages": ["azure-healthinsights-radiologyinsights"],
         "common_root": "azure",
         "service": "healthinsights",
     },
