@@ -775,14 +775,26 @@ def update_data_plane_release_logs(
             # check if release is already logged
             if new_release in existing_content:
                 logger.info(
-                    f"Release log for {curr_service_name} already contains entry for {release_date}, skipping update"
+                    f"Release log for {curr_service_name} already contains entry for {release_date}, overwriting"
                 )
-                continue
+                # remove existing release section to overwrite
+                release_idx = lines.index(new_release.strip())
+
+                ## find next release heading or end of file
+                next_release_idx = next(
+                    (
+                        i
+                        for i in range(release_idx + 1, len(lines))
+                        if lines[i].startswith("## ")
+                    ),
+                    len(lines),
+                )
+                del lines[release_idx:next_release_idx]
 
             new_release += "### Packages included\n\n"
-
             new_release += "\n".join(pkg_updates)
             lines.insert(1, new_release)
+
             updated_content = "\n".join(lines)
 
             with open(release_log_path, "w") as f:
@@ -895,9 +907,21 @@ def update_mgmt_plane_release_log(
         # check if release is already logged
         if new_release in existing_content:
             logger.info(
-                f"Release log for azure-mgmt already contains entry for {release_date}, skipping update"
+                f"Release log for azure-mgmt already contains entry for {release_date}, overwriting"
             )
-            return result
+            # remove existing release section to overwrite
+            release_idx = lines.index(new_release.strip())
+
+            ## find next release heading or end of file
+            next_release_idx = next(
+                (
+                    i
+                    for i in range(release_idx + 1, len(lines))
+                    if lines[i].startswith("## ")
+                ),
+                len(lines),
+            )
+            del lines[release_idx:next_release_idx]
 
         new_release += "### Packages included\n\n"
 
