@@ -1,8 +1,4 @@
 parameters:
-  - name: release_msrest
-    displayName: 'msrest'
-    type: boolean
-    default: true
   - name: release_msal
     displayName: 'msal'
     type: boolean
@@ -214,11 +210,6 @@ extends:
                           version: 1.6.0
                         - package: azure-common
                           version: 1.1.28
-                    - name: msrest
-                      in_batch: true
-                      checkout:
-                        - package: msrest
-                          download_uri: https://files.pythonhosted.org/packages/68/77/8397c8fb8fc257d8ea0fa66f8068e073278c65f05acb17dcb22a02bfdc42/msrest-0.7.1.zip
                     - name: msal
                       in_batch: true
                       checkout:
