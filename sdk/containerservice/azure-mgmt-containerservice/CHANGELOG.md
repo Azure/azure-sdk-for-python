@@ -1,5 +1,21 @@
 # Release History
 
+## 41.0.0b3 (2025-12-22)
+
+### Features Added
+
+  - Added model `MachineSecurityProfile`
+
+### Breaking Changes
+
+  - Model `AgentPoolUpgradeSettings` deleted or renamed its instance variable `min_surge`
+
+## 40.2.0 (2025-11-24)
+
+### Features Added
+
+  - Enum `OSSKU` added member `UBUNTU2404`
+
 ## 41.0.0b2 (2025-11-17)
 
 ### Features Added

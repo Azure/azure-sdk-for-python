@@ -165,7 +165,7 @@ with open(audio_file_path, "rb") as audio_file:
     options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
     # Create the request content
-    request_content = TranscriptionContent(options=options, audio=audio_file)
+    request_content = TranscriptionContent(definition=options, audio=audio_file)
 
     # Transcribe the audio
     result = client.transcribe(request_content)
@@ -204,7 +204,6 @@ client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(ap
 
 # URL to your audio file (must be publicly accessible)
 audio_url = "https://example.com/path/to/audio.wav"
-
 # Configure transcription options
 options = TranscriptionOptions(locales=["en-US"])
 
@@ -266,7 +265,7 @@ with open(audio_file_path, "rb") as audio_file:
     options = TranscriptionOptions(locales=["en-US"], enhanced_mode=enhanced_mode)
 
     # Create the request content
-    request_content = TranscriptionContent(options=options, audio=audio_file)
+    request_content = TranscriptionContent(definition=options, audio=audio_file)
 
     # Transcribe the audio with enhanced mode
     result = client.transcribe(request_content)
@@ -312,7 +311,7 @@ async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(
         options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
         # Create the request content
-        request_content = TranscriptionContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(definition=options, audio=audio_file)
 
         # Transcribe the audio
         result = await client.transcribe(request_content)
@@ -418,7 +417,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-transcription
 [pypi_package]: https://pypi.org/project/azure-ai-transcription/
-[api_reference]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-transcription/azure/ai/transcription
+[api_reference]: https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription?view=azure-python-preview
 [product_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/
 [azure_sub]: https://azure.microsoft.com/free/
 [speech_resource]: https://learn.microsoft.com/azure/ai-services/speech-service/overview

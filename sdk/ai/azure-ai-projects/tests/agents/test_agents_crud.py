@@ -6,7 +6,6 @@
 # cSpell:disable
 import json
 import io
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
@@ -14,8 +13,10 @@ from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentV
 
 class TestAgentCrud(TestBase):
 
+    # To run this test:
+    # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_agents_crud -s
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy()
     def test_agents_crud(self, **kwargs):
         """
         Test CRUD operations for Agents.
@@ -36,7 +37,8 @@ class TestAgentCrud(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         GET    /agents/{agent_name}/versions/{agent_version} project_client.agents.get_version()
         """
-        model = self.test_agents_params["model_deployment_name"]
+        print("\n")
+        model = kwargs.get("azure_ai_model_deployment_name")
         project_client = self.create_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"
@@ -83,17 +85,17 @@ class TestAgentCrud(TestBase):
         )
 
         # Retrieve specific versions of the first Agent
-        retrieved_agent: AgentVersionDetails = project_client.agents.get_version(
+        retrieved_agent_version: AgentVersionDetails = project_client.agents.get_version(
             agent_name=first_agent_name, agent_version=agent1_version1.version
         )
         self._validate_agent_version(
-            retrieved_agent, expected_name=first_agent_name, expected_version=agent1_version1.version
+            retrieved_agent_version, expected_name=first_agent_name, expected_version=agent1_version1.version
         )
-        retrieved_agent: AgentVersionDetails = project_client.agents.get_version(
+        retrieved_agent_version: AgentVersionDetails = project_client.agents.get_version(
             agent_name=first_agent_name, agent_version=agent1_version2.version
         )
         self._validate_agent_version(
-            retrieved_agent, expected_name=first_agent_name, expected_version=agent1_version2.version
+            retrieved_agent_version, expected_name=first_agent_name, expected_version=agent1_version2.version
         )
 
         # List all versions of the first Agent (three should be at least two, per the above..)

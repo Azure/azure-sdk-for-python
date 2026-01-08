@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects>=2.0.0b1 azure-identity openai python-dotenv aiohttp azure-mgmt-cognitiveservices
+    pip install azure-ai-projects>=2.0.0b1 python-dotenv aiohttp azure-mgmt-cognitiveservices
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -107,9 +107,8 @@ async def deploy_model(openai_client, credential, job_id):
             deployment=deployment_config,
         )
 
-        while deployment.status() not in ["Succeeded", "Failed"]:
-            await asyncio.sleep(30)
-            print(f"Deployment status: {deployment.status()}")
+        print(f"Waiting for deployment to complete...")
+        await deployment.result()
 
     print(f"Model deployment completed: {deployment_name}")
     return deployment_name

@@ -558,7 +558,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._version_operations = _client.environment_versions
             yield
         finally:
-            self._operation_scope.registry_name = registry_
+            self._operation_scope.registry_name = registry_  # type: ignore[assignment]
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_

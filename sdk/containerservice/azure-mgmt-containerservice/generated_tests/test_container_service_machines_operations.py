@@ -25,7 +25,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-09-02-preview",
+            api_version="2025-10-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
             machine_name="str",
-            api_version="2025-09-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -148,7 +148,12 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
                     "priority": "Regular",
                     "provisioningState": "str",
                     "resourceId": "str",
-                    "security": {"enableSecureBoot": bool, "enableVTPM": bool, "sshAccess": "str"},
+                    "security": {
+                        "enableEncryptionAtHost": bool,
+                        "enableSecureBoot": bool,
+                        "enableVTPM": bool,
+                        "sshAccess": "str",
+                    },
                     "status": {
                         "creationTimestamp": "2020-02-20 00:00:00",
                         "driftAction": "str",
@@ -167,7 +172,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-09-02-preview",
+            api_version="2025-10-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

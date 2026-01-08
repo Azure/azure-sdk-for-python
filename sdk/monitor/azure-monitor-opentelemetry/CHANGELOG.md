@@ -1,14 +1,26 @@
 # Release History
 
-## 1.8.3 (Unreleased)
+## 1.8.4 (Unreleased)
 
 ### Features Added
+- Added ability to add additional Log Record Processors and Metric Readers via configure_azure_monitor
+  ([#44367](https://github.com/Azure/azure-sdk-for-python/pull/44367))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.8.3 (2025-12-04)
+
+### Breaking Changes
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
+
+### Bugs Fixed
+- Fix default value overriding user-configured sampling ratio in distro
+  ([#44162](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ## 1.8.2 (2025-11-14)
 

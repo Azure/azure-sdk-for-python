@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv jsonref
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv jsonref
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -36,8 +36,6 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     OpenApiAgentTool,
     OpenApiFunctionDefinition,
-    OpenApiAnonymousAuthDetails,
-    OpenApiManagedAuthDetails,
     OpenApiProjectConnectionAuthDetails,
     OpenApiProjectConnectionSecurityScheme,
 )
@@ -88,7 +86,8 @@ with (
         input="Recommend me 5 top hotels in paris, France",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
-    print(f"Response created: {response.output_text}")
+    # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
+    print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

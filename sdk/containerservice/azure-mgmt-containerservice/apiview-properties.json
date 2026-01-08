@@ -96,6 +96,7 @@
         "azure.mgmt.containerservice.models.MachineOSProfile": null,
         "azure.mgmt.containerservice.models.MachineOSProfileLinuxProfile": null,
         "azure.mgmt.containerservice.models.MachineProperties": null,
+        "azure.mgmt.containerservice.models.MachineSecurityProfile": null,
         "azure.mgmt.containerservice.models.MachineStatus": null,
         "azure.mgmt.containerservice.models.MaintenanceConfiguration": null,
         "azure.mgmt.containerservice.models.MaintenanceConfigurationListResult": null,

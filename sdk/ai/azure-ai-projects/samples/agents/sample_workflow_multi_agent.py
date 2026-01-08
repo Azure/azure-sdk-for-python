@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -24,16 +24,15 @@ USAGE:
 """
 
 import os
-import json
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentReference,
     PromptAgentDefinition,
     ResponseStreamEventType,
     WorkflowAgentDefinition,
+    ItemType,
 )
 
 load_dotenv()
@@ -69,7 +68,6 @@ with (
     print(f"Agent created (id: {student_agent.id}, name: {student_agent.name}, version: {student_agent.version})")
 
     # Create Multi-Agent Workflow
-
     workflow_yaml = f"""
 kind: workflow
 trigger:
@@ -139,7 +137,7 @@ trigger:
 """
 
     workflow = project_client.agents.create_version(
-        agent_name="student-teacherworkflow",
+        agent_name="student-teacher-workflow",
         definition=WorkflowAgentDefinition(workflow=workflow_yaml),
     )
 
@@ -150,28 +148,23 @@ trigger:
 
     stream = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+        extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
         input="1 + 1 = ?",
         stream=True,
         metadata={"x-ms-debug-mode-enabled": "1"},
     )
 
     for event in stream:
-        if event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE:
-            print("\t", event.text)
-        elif (
+        print(f"Event {event.sequence_number} type '{event.type}'", end="")
+        if (
             event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-            and event.item.type == "workflow_action"
-            and (event.item.action_id == "teacher_agent" or event.item.action_id == "student_agent")
-        ):
-            print(f"********************************\nActor - '{event.item.action_id}' :")
-        # feel free to uncomment below to see more events
-        # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED and event.item.type == "workflow_action":
-        #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was : '{event.item.previous_action_id}')")
-        # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE and event.item.type == "workflow_action":
-        #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was: '{event.item.previous_action_id}')")
-        # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA:
-        #     print(event.delta)
+            or event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE
+        ) and event.item.type == ItemType.WORKFLOW_ACTION:
+            print(
+                f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
+                end="",
+            )
+        print("", flush=True)
 
     openai_client.conversations.delete(conversation_id=conversation.id)
     print("Conversation deleted")
@@ -184,4 +177,3 @@ trigger:
 
     project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)
     print("Teacher Agent deleted")
-    # [END create_multi_agent_workflow]

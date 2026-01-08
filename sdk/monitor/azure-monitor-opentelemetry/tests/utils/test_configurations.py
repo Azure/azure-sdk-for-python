@@ -20,10 +20,11 @@ from logging import Formatter
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
     OTEL_TRACES_SAMPLER_ARG,
-    OTEL_TRACES_SAMPLER
+    OTEL_TRACES_SAMPLER,
 )
 from opentelemetry.instrumentation.environment_variables import (
-    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,)
+    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
+)
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
 )
@@ -32,6 +33,7 @@ from azure.monitor.opentelemetry._constants import (
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
+    METRIC_READERS_ARG,
 )
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
@@ -75,6 +77,8 @@ class TestConfigurations(TestCase):
             views=["test_view"],
             logger_name="test_logger",
             span_processors=["test_processor"],
+            log_record_processors=["test_log_record_processor"],
+            metric_readers=["test_metric_reader"],
             enable_trace_based_sampling_for_logs=True,
         )
 
@@ -86,7 +90,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_MERGED_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with(TEST_CUSTOM_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["sampling_ratio"], 0.5)
         self.assertEqual(configurations["credential"], "test_credential")
         self.assertEqual(
             configurations["instrumentation_options"],
@@ -109,6 +113,8 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["views"], ["test_view"])
         self.assertEqual(configurations["logger_name"], "test_logger")
         self.assertEqual(configurations["span_processors"], ["test_processor"])
+        self.assertEqual(configurations["log_record_processors"], ["test_log_record_processor"])
+        self.assertEqual(configurations[METRIC_READERS_ARG], ["test_metric_reader"])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], True)
 
     @patch.dict("os.environ", {}, clear=True)
@@ -143,6 +149,8 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["enable_performance_counters"], True)
         self.assertEqual(configurations["logger_name"], "")
         self.assertEqual(configurations["span_processors"], [])
+        self.assertEqual(configurations["log_record_processors"], [])
+        self.assertEqual(configurations["metric_readers"], [])
         self.assertEqual(configurations["views"], [])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], False)
 
@@ -316,6 +324,7 @@ class TestConfigurations(TestCase):
         self.assertIsInstance(formatter, Formatter)
         # Test that the formatter works correctly with a sample log record
         import logging
+
         record = logging.LogRecord(
             name="test_logger",
             level=logging.INFO,
@@ -360,6 +369,7 @@ class TestConfigurations(TestCase):
     )
     def test_get_configurations_logging_format_param_overrides_env_var(self):
         from logging import Formatter
+
         custom_formatter = Formatter("%(levelname)s: %(message)s")
         configurations = _get_configurations(logging_formatter=custom_formatter)
 
@@ -385,6 +395,7 @@ class TestConfigurations(TestCase):
 
         # Should not have logging_formatter key when no env var is set
         self.assertNotIn("logging_formatter", configurations)
+
     @patch.dict(
         "os.environ",
         {
@@ -423,7 +434,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["traces_per_second"], 0.5)
-    
+
     @patch.dict("os.environ", {}, clear=True)
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):
@@ -488,7 +499,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
-    
+
     @patch.dict(
         "os.environ",
         {
@@ -526,7 +537,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
-    
+
     @patch.dict(
         "os.environ",
         {

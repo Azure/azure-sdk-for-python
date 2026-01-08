@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -154,7 +154,7 @@ with (
     else:
         print("\n✗ Evaluation run failed. Cannot generate cluster insights.")
 
-    project_client.datasets.delete(name=dataset.id, version=dataset.version)
+    project_client.datasets.delete(name=dataset.name, version=dataset.version)
     print("Dataset deleted")
 
     openai_client.evals.delete(eval_id=eval_object.id)

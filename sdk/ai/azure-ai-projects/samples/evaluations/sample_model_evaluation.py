@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -51,16 +51,18 @@ with (
         item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
         include_sample_schema=True,
     )
+    # Notes: for data_mapping:
+    # {{sample.output_text}} is the string output of the provide model target for the given input in {{item.query}}
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
             "name": "violence_detection",
             "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         }
     ]
     eval_object = openai_client.evals.create(
-        name="Agent Evaluation",
+        name="Model Evaluation",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )

@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -99,7 +99,7 @@ async def main():
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
 
-        print(f"Response: {response.output_text}")
+        print(f"Agent response: {response.output_text}")
 
         # Clean up resources by deleting the agent version
         # This prevents accumulation of unused agent versions in your project

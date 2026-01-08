@@ -6,9 +6,9 @@
 # cSpell:disable
 
 from pydantic import BaseModel, Field
-import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     ResponseTextFormatConfigurationJsonSchema,
@@ -19,13 +19,10 @@ from azure.ai.projects.models import (
 class TestAgentResponsesCrudAsync(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_crud_async(self, **kwargs):
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -131,12 +128,9 @@ class TestAgentResponsesCrudAsync(TestBase):
     # To run this test:
     # pytest tests\agents\test_agent_responses_crud_async.py::TestAgentResponsesCrudAsync::test_agent_responses_with_structured_output_async -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_with_structured_output_async(self, **kwargs):
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)

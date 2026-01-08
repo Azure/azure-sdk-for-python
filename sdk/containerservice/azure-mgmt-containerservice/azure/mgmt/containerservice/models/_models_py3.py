@@ -1504,14 +1504,6 @@ class AgentPoolUpgradeSettings(_serialization.Model):
      information, including best practices, see:
      https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster.
     :vartype max_surge: str
-    :ivar min_surge: This can either be set to an integer (e.g. '5') or a percentage (e.g. '50%').
-     If a percentage is specified, it is the percentage of the total agent pool size at the time of
-     the upgrade. For percentages, fractional nodes are rounded up. If node capacity constraints
-     prevent full surging, AKS would attempt a slower upgrade with fewer surge nodes. The upgrade
-     will proceed only if the available surge capacity meets or exceeds minSurge. If minSurge not
-     specified, the default is 50% of the maxSurge, for example, if maxSurge = 10%, the default is
-     5%, if maxSurge = 10, the default is 5.
-    :vartype min_surge: str
     :ivar max_unavailable: The maximum number or percentage of nodes that can be simultaneously
      unavailable during upgrade. This can either be set to an integer (e.g. '1') or a percentage
      (e.g. '5%'). If a percentage is specified, it is the percentage of the total agent pool size at
@@ -1552,7 +1544,6 @@ class AgentPoolUpgradeSettings(_serialization.Model):
 
     _attribute_map = {
         "max_surge": {"key": "maxSurge", "type": "str"},
-        "min_surge": {"key": "minSurge", "type": "str"},
         "max_unavailable": {"key": "maxUnavailable", "type": "str"},
         "max_blocked_nodes": {"key": "maxBlockedNodes", "type": "str"},
         "drain_timeout_in_minutes": {"key": "drainTimeoutInMinutes", "type": "int"},
@@ -1564,7 +1555,6 @@ class AgentPoolUpgradeSettings(_serialization.Model):
         self,
         *,
         max_surge: Optional[str] = None,
-        min_surge: Optional[str] = None,
         max_unavailable: Optional[str] = None,
         max_blocked_nodes: Optional[str] = None,
         drain_timeout_in_minutes: Optional[int] = None,
@@ -1580,14 +1570,6 @@ class AgentPoolUpgradeSettings(_serialization.Model):
          information, including best practices, see:
          https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster.
         :paramtype max_surge: str
-        :keyword min_surge: This can either be set to an integer (e.g. '5') or a percentage (e.g.
-         '50%'). If a percentage is specified, it is the percentage of the total agent pool size at the
-         time of the upgrade. For percentages, fractional nodes are rounded up. If node capacity
-         constraints prevent full surging, AKS would attempt a slower upgrade with fewer surge nodes.
-         The upgrade will proceed only if the available surge capacity meets or exceeds minSurge. If
-         minSurge not specified, the default is 50% of the maxSurge, for example, if maxSurge = 10%, the
-         default is 5%, if maxSurge = 10, the default is 5.
-        :paramtype min_surge: str
         :keyword max_unavailable: The maximum number or percentage of nodes that can be simultaneously
          unavailable during upgrade. This can either be set to an integer (e.g. '1') or a percentage
          (e.g. '5%'). If a percentage is specified, it is the percentage of the total agent pool size at
@@ -1622,7 +1604,6 @@ class AgentPoolUpgradeSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.max_surge = max_surge
-        self.min_surge = min_surge
         self.max_unavailable = max_unavailable
         self.max_blocked_nodes = max_blocked_nodes
         self.drain_timeout_in_minutes = drain_timeout_in_minutes
@@ -4993,7 +4974,7 @@ class MachineProperties(_serialization.Model):
      "Gateway", "ManagedSystem", and "Machines".
     :vartype mode: str or ~azure.mgmt.containerservice.models.AgentPoolMode
     :ivar security: The security settings of the machine.
-    :vartype security: ~azure.mgmt.containerservice.models.AgentPoolSecurityProfile
+    :vartype security: ~azure.mgmt.containerservice.models.MachineSecurityProfile
     :ivar priority: The priority for the machine. If not specified, the default is 'Regular'. Known
      values are: "Spot" and "Regular".
     :vartype priority: str or ~azure.mgmt.containerservice.models.ScaleSetPriority
@@ -5014,7 +4995,6 @@ class MachineProperties(_serialization.Model):
 
     _validation = {
         "resource_id": {"readonly": True},
-        "node_image_version": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "e_tag": {"readonly": True},
         "status": {"readonly": True},
@@ -5027,7 +5007,7 @@ class MachineProperties(_serialization.Model):
         "operating_system": {"key": "operatingSystem", "type": "MachineOSProfile"},
         "kubernetes": {"key": "kubernetes", "type": "MachineKubernetesProfile"},
         "mode": {"key": "mode", "type": "str"},
-        "security": {"key": "security", "type": "AgentPoolSecurityProfile"},
+        "security": {"key": "security", "type": "MachineSecurityProfile"},
         "priority": {"key": "priority", "type": "str"},
         "node_image_version": {"key": "nodeImageVersion", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -5044,8 +5024,9 @@ class MachineProperties(_serialization.Model):
         operating_system: Optional["_models.MachineOSProfile"] = None,
         kubernetes: Optional["_models.MachineKubernetesProfile"] = None,
         mode: Optional[Union[str, "_models.AgentPoolMode"]] = None,
-        security: Optional["_models.AgentPoolSecurityProfile"] = None,
+        security: Optional["_models.MachineSecurityProfile"] = None,
         priority: Union[str, "_models.ScaleSetPriority"] = "Regular",
+        node_image_version: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
@@ -5062,10 +5043,12 @@ class MachineProperties(_serialization.Model):
          "User", "Gateway", "ManagedSystem", and "Machines".
         :paramtype mode: str or ~azure.mgmt.containerservice.models.AgentPoolMode
         :keyword security: The security settings of the machine.
-        :paramtype security: ~azure.mgmt.containerservice.models.AgentPoolSecurityProfile
+        :paramtype security: ~azure.mgmt.containerservice.models.MachineSecurityProfile
         :keyword priority: The priority for the machine. If not specified, the default is 'Regular'.
          Known values are: "Spot" and "Regular".
         :paramtype priority: str or ~azure.mgmt.containerservice.models.ScaleSetPriority
+        :keyword node_image_version: The version of node image.
+        :paramtype node_image_version: str
         :keyword tags: The tags to be persisted on the machine.
         :paramtype tags: dict[str, str]
         """
@@ -5078,11 +5061,71 @@ class MachineProperties(_serialization.Model):
         self.mode = mode
         self.security = security
         self.priority = priority
-        self.node_image_version: Optional[str] = None
+        self.node_image_version = node_image_version
         self.provisioning_state: Optional[str] = None
         self.tags = tags
         self.e_tag: Optional[str] = None
         self.status: Optional["_models.MachineStatus"] = None
+
+
+class MachineSecurityProfile(_serialization.Model):
+    """The security settings of the machine.
+
+    :ivar ssh_access: SSH access method of an agent pool. Known values are: "LocalUser",
+     "Disabled", and "EntraId".
+    :vartype ssh_access: str or ~azure.mgmt.containerservice.models.AgentPoolSSHAccess
+    :ivar enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
+     for keys and measurements held locally on the node. For more details, see
+     aka.ms/aks/trustedlaunch. If not specified, the default is false.
+    :vartype enable_vtpm: bool
+    :ivar enable_secure_boot: Secure Boot is a feature of Trusted Launch which ensures that only
+     signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
+     If not specified, the default is false.
+    :vartype enable_secure_boot: bool
+    :ivar enable_encryption_at_host: Whether to enable host based OS and data drive encryption.
+     This is only supported on certain VM sizes and in certain Azure regions. For more information,
+     see: https://docs.microsoft.com/azure/aks/enable-host-encryption.
+    :vartype enable_encryption_at_host: bool
+    """
+
+    _attribute_map = {
+        "ssh_access": {"key": "sshAccess", "type": "str"},
+        "enable_vtpm": {"key": "enableVTPM", "type": "bool"},
+        "enable_secure_boot": {"key": "enableSecureBoot", "type": "bool"},
+        "enable_encryption_at_host": {"key": "enableEncryptionAtHost", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ssh_access: Optional[Union[str, "_models.AgentPoolSSHAccess"]] = None,
+        enable_vtpm: Optional[bool] = None,
+        enable_secure_boot: Optional[bool] = None,
+        enable_encryption_at_host: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ssh_access: SSH access method of an agent pool. Known values are: "LocalUser",
+         "Disabled", and "EntraId".
+        :paramtype ssh_access: str or ~azure.mgmt.containerservice.models.AgentPoolSSHAccess
+        :keyword enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
+         for keys and measurements held locally on the node. For more details, see
+         aka.ms/aks/trustedlaunch. If not specified, the default is false.
+        :paramtype enable_vtpm: bool
+        :keyword enable_secure_boot: Secure Boot is a feature of Trusted Launch which ensures that only
+         signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
+         If not specified, the default is false.
+        :paramtype enable_secure_boot: bool
+        :keyword enable_encryption_at_host: Whether to enable host based OS and data drive encryption.
+         This is only supported on certain VM sizes and in certain Azure regions. For more information,
+         see: https://docs.microsoft.com/azure/aks/enable-host-encryption.
+        :paramtype enable_encryption_at_host: bool
+        """
+        super().__init__(**kwargs)
+        self.ssh_access = ssh_access
+        self.enable_vtpm = enable_vtpm
+        self.enable_secure_boot = enable_secure_boot
+        self.enable_encryption_at_host = enable_encryption_at_host
 
 
 class MachineStatus(_serialization.Model):
