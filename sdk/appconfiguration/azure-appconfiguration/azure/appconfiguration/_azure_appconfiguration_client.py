@@ -40,7 +40,7 @@ from ._utils import (
 )
 
 from ._sync_token import SyncTokenPolicy
-from ._audience_policy import AudienceErrorHandlingPolicy
+from ._audience_error_handling_policy import AudienceErrorHandlingPolicy
 
 
 class AzureAppConfigurationClient:

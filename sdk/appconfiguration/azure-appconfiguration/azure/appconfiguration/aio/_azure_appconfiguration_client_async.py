@@ -41,7 +41,7 @@ from .._utils import (
     get_label_filter,
     parse_connection_string,
 )
-from .._audience_policy import AudienceErrorHandlingPolicy
+from .._audience_error_handling_policy import AudienceErrorHandlingPolicy
 
 
 class AzureAppConfigurationClient:
