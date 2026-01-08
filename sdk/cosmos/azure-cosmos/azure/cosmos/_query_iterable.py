@@ -22,7 +22,10 @@
 """Iterable query results in the Azure Cosmos database service.
 """
 import time
+from typing import List, Optional
+
 from azure.core.paging import PageIterator  # type: ignore
+from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._constants import _Constants, TimeoutScope
 from azure.cosmos._execution_context import execution_dispatcher
 from azure.cosmos import exceptions
@@ -81,6 +84,10 @@ class QueryIterable(PageIterator):
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function,
             response_hook, raw_response_hook, resource_type)
+
+        # Response headers tracking for query operations
+        self._response_headers: List[CaseInsensitiveDict] = []
+
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
@@ -114,6 +121,45 @@ class QueryIterable(PageIterator):
                 raise exceptions.CosmosClientTimeoutError()
 
         block = self._ex_context.fetch_next_block()
+
+        # Capture response headers after each page fetch
+        self._capture_response_headers()
+
         if not block:
             raise StopIteration
         return block
+
+    def _capture_response_headers(self) -> None:
+        """Capture response headers from the last request."""
+        if self._client.last_response_headers:
+            headers = self._client.last_response_headers.copy()
+            self._response_headers.append(headers)
+
+    def get_response_headers(self) -> List[CaseInsensitiveDict]:
+        """Get all response headers collected during query iteration.
+
+        Each entry in the list corresponds to one page/request made during
+        the query execution. Headers are captured as queries are iterated,
+        so this list grows as you consume more results.
+
+        :return: List of response headers from each page request.
+        :rtype: list[~azure.core.utils.CaseInsensitiveDict]
+
+        Example:
+            >>> items = container.query_items(query="SELECT * FROM c")
+            >>> for item in items:
+            ...     process(item)
+            >>> headers = items.get_response_headers()
+            >>> print(f"Total pages fetched: {len(headers)}")
+        """
+        return [h.copy() for h in self._response_headers]
+
+    def get_last_response_headers(self) -> Optional[CaseInsensitiveDict]:
+        """Get the response headers from the most recent page fetch.
+
+        :return: Response headers from the last page, or None if no pages fetched yet.
+        :rtype: ~azure.core.utils.CaseInsensitiveDict or None
+        """
+        if self._response_headers:
+            return self._response_headers[-1].copy()
+        return None

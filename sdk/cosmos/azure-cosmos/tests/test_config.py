@@ -21,8 +21,8 @@ from azure.cosmos.partition_key import (PartitionKey, _PartitionKeyKind, _Partit
                                         NonePartitionKeyValue)
 from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
                           http_constants)
-from devtools_testutils.azure_recorded_testcase import get_credential
-from devtools_testutils.helpers import is_live
+# from devtools_testutils.azure_recorded_testcase import get_credential
+# from devtools_testutils.helpers import is_live
 from typing import Sequence, Type, Union
 
 try:
@@ -46,9 +46,9 @@ class TestConfig(object):
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
     is_emulator = host == local_host
-    is_live._cache = True if not is_emulator else False
-    credential = masterKey if is_emulator else get_credential()
-    credential_async = masterKey if is_emulator else get_credential(is_async=True)
+    # is_live._cache = True if not is_emulator else False
+    credential = masterKey #if is_emulator else get_credential()
+    credential_async = masterKey #if is_emulator else get_credential(is_async=True)
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
     write_location_host = os.getenv('WRITE_LOCATION_HOST', host)

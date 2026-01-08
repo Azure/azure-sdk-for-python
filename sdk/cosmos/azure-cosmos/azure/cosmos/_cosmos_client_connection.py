@@ -65,7 +65,7 @@ from ._change_feed.change_feed_state import ChangeFeedState
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
-from ._cosmos_responses import CosmosDict, CosmosList
+from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
@@ -1138,7 +1138,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Queries documents in a collection.
 
         :param str database_or_container_link:
@@ -1162,7 +1162,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         if base.IsDatabaseLink(database_or_container_link):
-            return ItemPaged(
+            return CosmosItemPaged(
                 self,
                 query,
                 options,
@@ -1186,7 +1186,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_hook=response_hook,
                     **kwargs)
 
-        return ItemPaged(
+        return CosmosItemPaged(
             self,
             query,
             options,
