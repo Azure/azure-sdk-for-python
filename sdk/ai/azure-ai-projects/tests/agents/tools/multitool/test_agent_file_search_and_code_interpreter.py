@@ -15,7 +15,12 @@ All tests use the same tool combination but different inputs and workflows.
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, CodeInterpreterTool, CodeInterpreterContainerAuto
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    FileSearchTool,
+    CodeInterpreterTool,
+    CodeInterpreterContainerAuto,
+)
 
 
 class TestAgentFileSearchAndCodeInterpreter(TestBase):

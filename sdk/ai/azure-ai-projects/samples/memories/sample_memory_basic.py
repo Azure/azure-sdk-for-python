@@ -39,7 +39,7 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
-    EasyInputMessage
+    EasyInputMessage,
 )
 
 load_dotenv()
@@ -83,8 +83,7 @@ with (
 
     # Add memories to the memory store
     user_message = EasyInputMessage(
-        role="user",
-        content="I prefer dark roast coffee and usually drink it in the morning"
+        role="user", content="I prefer dark roast coffee and usually drink it in the morning"
     )
     update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
@@ -102,10 +101,7 @@ with (
         )
 
     # Retrieve memories from the memory store
-    query_message =  EasyInputMessage(
-        role="user",
-        content="What are my coffee preferences?"
-    )
+    query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
     search_response = project_client.memory_stores.search_memories(
         name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
     )

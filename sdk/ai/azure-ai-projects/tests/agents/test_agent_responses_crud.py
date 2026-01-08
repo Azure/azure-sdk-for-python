@@ -176,9 +176,7 @@ class TestAgentResponsesCrud(TestBase):
             definition=PromptAgentDefinition(
                 model=model,
                 text=PromptAgentDefinitionText(
-                    format=TextResponseFormatJsonSchema(
-                        name="CalendarEvent", schema=CalendarEvent.model_json_schema()
-                    )
+                    format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),
                 instructions="""
                     You are a helpful assistant that extracts calendar event information from the input user messages,

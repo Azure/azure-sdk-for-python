@@ -13,7 +13,7 @@ from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitio
 from azure.ai.projects.models import (
     Reasoning,
     FunctionTool,
-    #ResponseTextFormatConfigurationText,
+    # ResponseTextFormatConfigurationText,
 )
 
 from devtools_testutils.aio import recorded_by_proxy_async

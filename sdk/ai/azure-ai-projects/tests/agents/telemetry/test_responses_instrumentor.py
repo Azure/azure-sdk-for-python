@@ -4253,10 +4253,7 @@ trigger:
             # Consume the stream and track workflow actions
             workflow_action_count = 0
             for event in stream:
-                if (
-                    event.type == "response.output_item.added"
-                    and event.item.type == "workflow_action"
-                ):
+                if event.type == "response.output_item.added" and event.item.type == "workflow_action":
                     workflow_action_count += 1
 
             # Verify we got workflow actions during streaming

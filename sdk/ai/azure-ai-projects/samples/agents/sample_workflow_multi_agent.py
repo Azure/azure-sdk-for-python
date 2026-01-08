@@ -156,8 +156,7 @@ trigger:
     for event in stream:
         print(f"Event {event.sequence_number} type '{event.type}'", end="")
         if (
-            event.type == "response.output_item.added"
-            or event.type == "response.output_item.done"
+            event.type == "response.output_item.added" or event.type == "response.output_item.done"
         ) and event.item.type == ItemType.WORKFLOW_ACTION:
             print(
                 f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",

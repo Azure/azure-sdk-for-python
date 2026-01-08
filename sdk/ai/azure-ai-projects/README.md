@@ -218,7 +218,7 @@ asset_file_path = os.path.abspath(
 
 # Upload the CSV file for the code interpreter
 file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
-tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
+tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))
 ```
 
 <!-- END SNIPPET -->
