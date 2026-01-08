@@ -9,7 +9,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._validate import (
 
 
 class TestValidate(unittest.TestCase):
-
     def test_valid_telemetry_type(self):
         valid_metric_info = mock.Mock(telemetry_type="Request", projection=None, filter_groups=[])
         self.assertTrue(_validate_derived_metric_info(valid_metric_info))

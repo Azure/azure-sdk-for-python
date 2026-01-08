@@ -68,7 +68,6 @@ from azure.monitor.opentelemetry.exporter._utils import (
 
 
 class TestQuickpulseManager(unittest.TestCase):
-
     def setUp(self):
         """Set up test fixtures."""
         # Reset singleton state - only clear QuickpulseManager instances
@@ -100,13 +99,13 @@ class TestQuickpulseManager(unittest.TestCase):
         generator_mock.return_value = "test_trace_id"
         part_a_fields = _populate_part_a_fields(self.resource)
         qpm = _QuickpulseManager()
-        
+
         # Initialize with kwargs
         qpm.initialize(
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.PING_SHORT)
         self.assertTrue(isinstance(qpm._exporter, _QuickpulseExporter))
         self.assertEqual(
@@ -192,42 +191,39 @@ class TestQuickpulseManager(unittest.TestCase):
     def test_initialize_success(self):
         """Test successful initialization."""
         qpm = _QuickpulseManager()
-        
+
         # Initially not initialized
         self.assertFalse(qpm.is_initialized())
-        
+
         # Initialize should succeed
-        result = qpm.initialize(
-            connection_string=self.connection_string,
-            resource=self.resource
-        )
+        result = qpm.initialize(connection_string=self.connection_string, resource=self.resource)
         self.assertTrue(result)
         self.assertTrue(qpm.is_initialized())
-        
+
         # Should have created all necessary components
         self.assertIsNotNone(qpm._exporter)
         self.assertIsNotNone(qpm._reader)
         self.assertIsNotNone(qpm._meter_provider)
         self.assertIsNotNone(qpm._meter)
         self.assertIsNotNone(qpm._base_monitoring_data_point)
-        
+
         # Cleanup
         qpm.shutdown()
 
     def test_initialize_already_initialized(self):
         """Test initialization when already initialized."""
         qpm = _QuickpulseManager()
-        
+
         # First initialization
         result1 = qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(result1)
         self.assertTrue(qpm.is_initialized())
-        
+
         # Second initialization should return True without reinitializing
         result2 = qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(result2)
         self.assertTrue(qpm.is_initialized())
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -235,14 +231,14 @@ class TestQuickpulseManager(unittest.TestCase):
     def test_initialize_failure(self, exporter_mock):
         """Test initialization failure handling."""
         exporter_mock.side_effect = Exception("Exporter creation failed")
-        
+
         qpm = _QuickpulseManager()
-        
+
         # Initialize should fail
         result = qpm.initialize(connection_string=self.connection_string)
         self.assertFalse(result)
         self.assertFalse(qpm.is_initialized())
-        
+
         # Components should be cleaned up
         self.assertIsNone(qpm._exporter)
         self.assertIsNone(qpm._reader)
@@ -252,28 +248,28 @@ class TestQuickpulseManager(unittest.TestCase):
     def test_initialize_with_default_resource(self):
         """Test initialization with default resource when none provided."""
         qpm = _QuickpulseManager()
-        
+
         result = qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(result)
         self.assertTrue(qpm.is_initialized())
         self.assertIsNotNone(qpm._base_monitoring_data_point)
-        
+
         # Cleanup
         qpm.shutdown()
 
     def test_shutdown_success(self):
         """Test successful shutdown."""
         qpm = _QuickpulseManager()
-        
+
         # Initialize first
         qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(qpm.is_initialized())
-        
+
         # Shutdown should succeed
         result = qpm.shutdown()
         self.assertTrue(result)
         self.assertFalse(qpm.is_initialized())
-        
+
         # Components should be cleaned up
         self.assertIsNone(qpm._exporter)
         self.assertIsNone(qpm._reader)
@@ -283,7 +279,7 @@ class TestQuickpulseManager(unittest.TestCase):
     def test_shutdown_not_initialized(self):
         """Test shutdown when not initialized."""
         qpm = _QuickpulseManager()
-        
+
         # Shutdown should return False when not initialized
         result = qpm.shutdown()
         self.assertFalse(result)
@@ -293,13 +289,13 @@ class TestQuickpulseManager(unittest.TestCase):
     def test_shutdown_meter_provider_exception(self, logger_mock):
         """Test shutdown handling meter provider exception."""
         qpm = _QuickpulseManager()
-        
+
         # Initialize first
         qpm.initialize(connection_string=self.connection_string)
-        
+
         # Mock meter provider to raise exception on shutdown
         qpm._meter_provider.shutdown = mock.Mock(side_effect=Exception("Shutdown failed"))
-        
+
         # Shutdown should handle exception and return False
         result = qpm.shutdown()
         self.assertFalse(result)
@@ -331,18 +327,18 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         # Mock the metric instruments
         qpm._request_rate_counter = mock.Mock()
         qpm._request_duration = mock.Mock()
-        
+
         qpm._record_span(span_mock)
         qpm._request_rate_counter.add.assert_called_once_with(1)
         qpm._request_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -372,18 +368,18 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         # Mock the metric instruments
         qpm._request_failed_rate_counter = mock.Mock()
         qpm._request_duration = mock.Mock()
-        
+
         qpm._record_span(span_mock)
         qpm._request_failed_rate_counter.add.assert_called_once_with(1)
         qpm._request_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -415,18 +411,18 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         # Mock the metric instruments
         qpm._dependency_rate_counter = mock.Mock()
         qpm._dependency_duration = mock.Mock()
-        
+
         qpm._record_span(span_mock)
         qpm._dependency_rate_counter.add.assert_called_once_with(1)
         qpm._dependency_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -458,18 +454,18 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         # Mock the metric instruments
         qpm._dependency_failure_rate_counter = mock.Mock()
         qpm._dependency_duration = mock.Mock()
-        
+
         qpm._record_span(span_mock)
         qpm._dependency_failure_rate_counter.add.assert_called_once_with(1)
         qpm._dependency_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -477,9 +473,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_span_derive_filter_metrics(
-        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
-    ):
+    def test_record_span_derive_filter_metrics(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
         post_state_mock.return_value = True
         span_mock = mock.Mock()
         span_mock.end_time = 10
@@ -503,7 +497,7 @@ class TestQuickpulseManager(unittest.TestCase):
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -513,7 +507,12 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
     def test_record_span_span_event_exception(
-        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, exc_data_mock,
+        self,
+        post_state_mock,
+        data_mock,
+        metric_derive_mock,
+        doc_mock,
+        exc_data_mock,
     ):
         post_state_mock.return_value = True
         span_mock = mock.Mock()
@@ -542,10 +541,10 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         # Mock the metric instruments
         qpm._exception_rate_counter = mock.Mock()
-        
+
         qpm._record_span(span_mock)
         qpm._exception_rate_counter.add.assert_called_once_with(1)
         data_mock._from_span.assert_called_once_with(span_mock)
@@ -554,7 +553,7 @@ class TestQuickpulseManager(unittest.TestCase):
         doc_mock.assert_any_call(data)
         metric_derive_mock.assert_any_call(exc_data)
         doc_mock.assert_any_call(exc_data)
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -578,16 +577,16 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         # Mock the metric instruments
         qpm._exception_rate_counter = mock.Mock()
-        
+
         qpm._record_log_record(log_data_mock)
         qpm._exception_rate_counter.add.assert_not_called()
         data_mock._from_log_record.assert_called_once_with(log_record_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data, None)
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -616,16 +615,16 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string=self.connection_string,
             resource=self.resource,
         )
-        
+
         # Mock the metric instruments
         qpm._exception_rate_counter = mock.Mock()
-        
+
         qpm._record_log_record(log_data_mock)
         qpm._exception_rate_counter.add.assert_called_once_with(1)
         data_mock._from_log_record.assert_called_once_with(log_record_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data, "exc_type")
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -633,9 +632,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_log_derive_filter_metrics(
-        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
-    ):
+    def test_record_log_derive_filter_metrics(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
         post_state_mock.return_value = True
         log_record_mock = mock.Mock()
         log_record_mock.attributes = {}
@@ -655,16 +652,14 @@ class TestQuickpulseManager(unittest.TestCase):
         data_mock._from_log_record.assert_called_once_with(log_record_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data, None)
-        
+
         # Cleanup
         qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._create_projections")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_metric_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
-    def test_derive_metrics_from_telemetry_data(
-        self, get_derived_mock, filter_mock, projection_mock
-    ):
+    def test_derive_metrics_from_telemetry_data(self, get_derived_mock, filter_mock, projection_mock):
         metric_infos = [mock.Mock()]
         get_derived_mock.return_value = {
             TelemetryType.DEPENDENCY: metric_infos,
@@ -714,12 +709,14 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
     def test_apply_doc_filters_from_telemetry_data(
-        self, get_doc_stream_mock, filter_mock, get_span_mock, append_mock,
+        self,
+        get_doc_stream_mock,
+        filter_mock,
+        get_span_mock,
+        append_mock,
     ):
         filter_group_mock = mock.Mock()
-        doc_infos_inner = {
-            "streamId": [filter_group_mock]
-        }
+        doc_infos_inner = {"streamId": [filter_group_mock]}
         get_doc_stream_mock.return_value = {
             TelemetryType.DEPENDENCY: doc_infos_inner,
         }
@@ -748,7 +745,11 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
     def test_apply_doc_filters_from_telemetry_data_all_streams(
-        self, get_doc_stream_mock, filter_mock, get_span_mock, append_mock,
+        self,
+        get_doc_stream_mock,
+        filter_mock,
+        get_span_mock,
+        append_mock,
     ):
         get_doc_stream_mock.return_value = {
             TelemetryType.DEPENDENCY: {},
@@ -779,12 +780,14 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
     def test_apply_doc_filters_from_telemetry_data_false_filter(
-        self, get_doc_stream_mock, filter_mock, get_span_mock, append_mock,
+        self,
+        get_doc_stream_mock,
+        filter_mock,
+        get_span_mock,
+        append_mock,
     ):
         filter_group_mock = mock.Mock()
-        doc_infos_inner = {
-            "streamId": [filter_group_mock]
-        }
+        doc_infos_inner = {"streamId": [filter_group_mock]}
         get_doc_stream_mock.return_value = {
             TelemetryType.DEPENDENCY: doc_infos_inner,
         }
@@ -812,14 +815,14 @@ class TestQuickpulseManager(unittest.TestCase):
     def test_validate_recording_resources(self):
         """Test _validate_recording_resources method."""
         qpm = _QuickpulseManager()
-        
+
         # Before initialization - should return False
         self.assertFalse(qpm._validate_recording_resources())
-        
+
         # After initialization - should return True
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
         self.assertTrue(qpm._validate_recording_resources())
-        
+
         # After shutdown - instruments should be preserved
         qpm.shutdown()
         self.assertTrue(qpm._validate_recording_resources())
@@ -830,19 +833,19 @@ class TestQuickpulseManager(unittest.TestCase):
         post_state_mock.return_value = False
         qpm = _QuickpulseManager()
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
-        
+
         span_mock = mock.Mock()
-        
+
         # Mock the metric instruments to verify they're not called
         qpm._request_rate_counter = mock.Mock()
         qpm._request_duration = mock.Mock()
-        
+
         qpm._record_span(span_mock)
-        
+
         # Verify no metrics were recorded
         qpm._request_rate_counter.add.assert_not_called()
         qpm._request_duration.record.assert_not_called()
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -851,12 +854,12 @@ class TestQuickpulseManager(unittest.TestCase):
         """Test _record_span when manager is not initialized."""
         post_state_mock.return_value = True
         qpm = _QuickpulseManager()
-        
+
         span_mock = mock.Mock()
-        
+
         # Should not crash and should not record anything
         qpm._record_span(span_mock)
-        
+
         # Verify manager is still not initialized
         self.assertFalse(qpm.is_initialized())
 
@@ -865,7 +868,9 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_span_exception_handling(self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock):
+    def test_record_span_exception_handling(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock
+    ):
         """Test _record_span exception handling."""
         post_state_mock.return_value = True
         span_mock = mock.Mock()
@@ -874,19 +879,19 @@ class TestQuickpulseManager(unittest.TestCase):
         span_mock.status.is_ok = True
         span_mock.kind = SpanKind.SERVER
         span_mock.events = []
-        
+
         # Make _TelemetryData._from_span raise an exception
         data_mock._from_span.side_effect = Exception("Test exception")
-        
+
         qpm = _QuickpulseManager()
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
-        
+
         # Should not crash when exception occurs
         qpm._record_span(span_mock)
-        
+
         # Verify exception was logged
         logger_mock.exception.assert_called_once()
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -896,17 +901,17 @@ class TestQuickpulseManager(unittest.TestCase):
         post_state_mock.return_value = False
         qpm = _QuickpulseManager()
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
-        
+
         log_data_mock = mock.Mock()
-        
+
         # Mock the metric instruments to verify they're not called
         qpm._exception_rate_counter = mock.Mock()
-        
+
         qpm._record_log_record(log_data_mock)
-        
+
         # Verify no metrics were recorded
         qpm._exception_rate_counter.add.assert_not_called()
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -915,12 +920,12 @@ class TestQuickpulseManager(unittest.TestCase):
         """Test _record_log_record when manager is not initialized."""
         post_state_mock.return_value = True
         qpm = _QuickpulseManager()
-        
+
         log_data_mock = mock.Mock()
-        
+
         # Should not crash and should not record anything
         qpm._record_log_record(log_data_mock)
-        
+
         # Verify manager is still not initialized
         self.assertFalse(qpm.is_initialized())
 
@@ -929,25 +934,27 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_log_record_exception_handling(self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock):
+    def test_record_log_record_exception_handling(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock
+    ):
         """Test _record_log_record exception handling."""
         post_state_mock.return_value = True
         log_record_mock = mock.Mock()
         log_data_mock = mock.Mock()
         log_data_mock.log_record = log_record_mock
-        
+
         # Make _TelemetryData._from_log_record raise an exception
         data_mock._from_log_record.side_effect = Exception("Test exception")
-        
+
         qpm = _QuickpulseManager()
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
-        
+
         # Should not crash when exception occurs
         qpm._record_log_record(log_data_mock)
-        
+
         # Verify exception was logged
         logger_mock.exception.assert_called_once()
-        
+
         # Cleanup
         qpm.shutdown()
 
@@ -963,33 +970,33 @@ class TestQuickpulseManager(unittest.TestCase):
 
         qpm = _QuickpulseManager()
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
-        
+
         # Should not crash and should not process anything
         qpm._record_log_record(log_data_mock)
-        
+
         # Verify no telemetry data processing occurred
         data_mock._from_log_record.assert_not_called()
         metric_derive_mock.assert_not_called()
         doc_mock.assert_not_called()
-        
+
         # Cleanup
         qpm.shutdown()
 
     def test_create_metric_instruments_no_meter(self):
         """Test _create_metric_instruments when meter is None."""
         qpm = _QuickpulseManager()
-        
+
         # Should raise ValueError when meter is not set
         with self.assertRaises(ValueError) as context:
             qpm._create_metric_instruments()
-        
+
         self.assertIn("Meter must be initialized", str(context.exception))
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
     def test_derive_metrics_no_config(self, get_derived_mock):
         """Test _derive_metrics_from_telemetry_data when no filtering is configured."""
         get_derived_mock.return_value = {}
-        
+
         data = _DependencyData(
             duration=0,
             success=True,
@@ -1000,7 +1007,7 @@ class TestQuickpulseManager(unittest.TestCase):
             data="",
             custom_dimensions={},
         )
-        
+
         # Should return early without processing
         _derive_metrics_from_telemetry_data(data)
         get_derived_mock.assert_called_once()
