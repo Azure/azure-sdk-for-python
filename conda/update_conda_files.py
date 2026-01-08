@@ -51,6 +51,7 @@ DISPLAY_NAME_COL = "DisplayName"
 SERVICE_NAME_COL = "ServiceName"
 REPO_PATH_COL = "RepoPath"
 TYPE_COL = "Type"
+SUPPORT_COL = "Support"
 
 # packages that should be shipped but are known to be missing from the csv
 PACKAGES_WITH_DOWNLOAD_URI = [
@@ -967,7 +968,10 @@ if __name__ == "__main__":
     packages = [
         pkg
         for pkg in packages
-        if pkg.get(VERSION_GA_COL) and pkg.get(LATEST_GA_DATE_COL)
+        if (
+            (pkg.get(VERSION_GA_COL) and pkg.get(LATEST_GA_DATE_COL))
+            and not pkg.get(SUPPORT_COL) == "deprecated"
+        )
     ]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
