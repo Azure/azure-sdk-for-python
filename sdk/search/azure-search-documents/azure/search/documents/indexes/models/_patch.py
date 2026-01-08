@@ -9,11 +9,52 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, Dict, List, Optional, Union
-from ._models import SearchField
+from ._models import SearchField as _SearchField
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
 )
+
+
+class SearchField(_SearchField):
+    """Represents a field in an index definition, which describes the name, data type, and search
+    behavior of a field.
+
+    This class adds backward compatibility support for the 'hidden' property, which is the inverse
+    of 'retrievable'.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # Handle 'hidden' kwarg for backward compatibility
+        hidden = kwargs.pop("hidden", None)
+        super().__init__(*args, **kwargs)
+        # If hidden was explicitly provided, set retrievable to its inverse
+        if hidden is not None:
+            self.retrievable = not hidden
+
+    @property
+    def hidden(self) -> Optional[bool]:
+        """A value indicating whether the field will be returned in a search result.
+        This is the inverse of 'retrievable'. Kept for backward compatibility.
+
+        :return: True if the field is hidden (not retrievable), False otherwise.
+        :rtype: bool or None
+        """
+        if self.retrievable is None:
+            return None
+        return not self.retrievable
+
+    @hidden.setter
+    def hidden(self, value: Optional[bool]) -> None:
+        """Set whether the field should be hidden (not retrievable).
+
+        :param value: True to hide the field, False to make it retrievable.
+        :type value: bool or None
+        """
+        if value is None:
+            self.retrievable = None
+        else:
+            self.retrievable = not value
 
 # Re-export SearchFieldDataType and add Collection helper
 SearchFieldDataType = _SearchFieldDataType
@@ -57,7 +98,7 @@ def SimpleField(
     name: str,
     type: str,
     key: bool = False,
-    retrievable: bool = True,
+    hidden: bool = False,
     filterable: bool = False,
     sortable: bool = False,
     facetable: bool = False,
@@ -78,14 +119,12 @@ def SimpleField(
         type SearchFieldDataType.String. Key fields can be used to look up documents directly and
         update or delete specific documents. Default is False
     :paramtype key: bool
-    :keyword retrievable: A value indicating whether the field can be returned in a search result.
-        You can disable this option if you want to use a field (for example, margin) as a filter,
-        sorting, or scoring mechanism but do not want the field to be visible to the end user. This
-        property must be true for key fields, and it must be null for complex fields. This property can be
-        changed on existing fields. Enabling this property does not cause any increase in index storage
-        requirements. Default is true for simple fields, false for vector fields, and null for complex
-        fields.
-    :paramtype retrievable: bool
+    :keyword hidden: A value indicating whether the field will be returned in a search result.
+        Setting this to True is equivalent to setting retrievable to False. You can enable this option
+        if you want to use a field (for example, margin) as a filter, sorting, or scoring mechanism
+        but do not want the field to be visible to the end user. This property must be False for key
+        fields. Default is False.
+    :paramtype hidden: bool
     :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
         queries. filterable differs from searchable in how strings are handled. Fields of type
         SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
@@ -119,7 +158,7 @@ def SimpleField(
         "filterable": filterable,
         "facetable": facetable,
         "sortable": sortable,
-        "retrievable": retrievable,
+        "hidden": hidden,
     }
     return SearchField(**result)
 
@@ -129,7 +168,7 @@ def SearchableField(
     name: str,
     collection: bool = False,
     key: bool = False,
-    retrievable: bool = True,
+    hidden: bool = False,
     searchable: bool = True,
     filterable: bool = False,
     sortable: bool = False,
@@ -152,14 +191,12 @@ def SearchableField(
         type SearchFieldDataType.String. Key fields can be used to look up documents directly and update or delete
         specific documents. Default is False
     :paramtype key: bool
-    :keyword retrievable: A value indicating whether the field can be returned in a search result.
-        You can disable this option if you want to use a field (for example, margin) as a filter,
-        sorting, or scoring mechanism but do not want the field to be visible to the end user. This
-        property must be true for key fields, and it must be null for complex fields. This property can be
-        changed on existing fields. Enabling this property does not cause any increase in index storage
-        requirements. Default is true for simple fields, false for vector fields, and null for complex
-        fields.
-    :paramtype retrievable: bool
+    :keyword hidden: A value indicating whether the field will be returned in a search result.
+        Setting this to True is equivalent to setting retrievable to False. You can enable this option
+        if you want to use a field (for example, margin) as a filter, sorting, or scoring mechanism
+        but do not want the field to be visible to the end user. This property must be False for key
+        fields. Default is False.
+    :paramtype hidden: bool
     :keyword searchable: A value indicating whether the field is full-text searchable. This means it
         will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
         value like "sunny day", internally it will be split into the individual tokens "sunny" and
@@ -267,7 +304,7 @@ def SearchableField(
         "filterable": filterable,
         "facetable": facetable,
         "sortable": sortable,
-        "retrievable": retrievable,
+        "hidden": hidden,
     }
     if analyzer_name:
         result["analyzer_name"] = analyzer_name
