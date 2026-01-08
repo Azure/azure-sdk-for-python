@@ -771,6 +771,14 @@ def update_data_plane_release_logs(
             lines = existing_content.split("\n")
 
             new_release = f"\n## {release_date}\n\n"
+
+            # check if release is already logged
+            if new_release in existing_content:
+                logger.info(
+                    f"Release log for {curr_service_name} already contains entry for {release_date}, skipping update"
+                )
+                continue
+
             new_release += "### Packages included\n\n"
 
             new_release += "\n".join(pkg_updates)
@@ -883,6 +891,14 @@ def update_mgmt_plane_release_log(
         lines = existing_content.split("\n")
 
         new_release = f"\n## {release_date}\n\n"
+
+        # check if release is already logged
+        if new_release in existing_content:
+            logger.info(
+                f"Release log for azure-mgmt already contains entry for {release_date}, skipping update"
+            )
+            return result
+
         new_release += "### Packages included\n\n"
 
         new_release += "\n".join(pkg_updates)
