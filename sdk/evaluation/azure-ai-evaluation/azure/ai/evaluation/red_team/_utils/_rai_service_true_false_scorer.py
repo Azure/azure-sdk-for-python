@@ -5,7 +5,7 @@
 import logging
 from typing import List, Optional
 
-from pyrit.models import Score, PromptRequestPiece, UnvalidatedScore
+from pyrit.models import Score, MessagePiece, UnvalidatedScore
 from pyrit.score.scorer import Scorer
 
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
@@ -66,7 +66,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
 
     async def score_async(
         self,
-        request_response: PromptRequestPiece,
+        request_response: MessagePiece,
         *,
         task: Optional[str] = None,
     ) -> List[Score]:

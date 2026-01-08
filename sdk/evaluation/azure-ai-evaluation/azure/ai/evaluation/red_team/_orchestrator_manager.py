@@ -16,11 +16,22 @@ from datetime import datetime
 from typing import Dict, List, Optional, Union, Callable
 from tqdm import tqdm
 
-# PyRIT imports
-from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
-from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
-from pyrit.orchestrator import Orchestrator
+# PyRIT imports - orchestrator module deprecated, use Foundry scenario instead
+# These imports are kept for backward compatibility but may not be available in newer PyRIT versions
+try:
+    from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
+    from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
+    from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+    from pyrit.orchestrator import Orchestrator
+    _ORCHESTRATOR_AVAILABLE = True
+except ImportError:
+    # Newer PyRIT versions use scenario-based approach instead of orchestrators
+    PromptSendingOrchestrator = None
+    RedTeamingOrchestrator = None
+    CrescendoOrchestrator = None
+    Orchestrator = None
+    _ORCHESTRATOR_AVAILABLE = False
+
 from pyrit.prompt_converter import PromptConverter
 from pyrit.prompt_target import PromptChatTarget
 
