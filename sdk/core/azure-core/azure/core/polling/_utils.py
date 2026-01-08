@@ -98,7 +98,7 @@ def _decode_continuation_token(continuation_token: str) -> Dict[str, Any]:
         token = json.loads(decoded_bytes.decode("utf-8"))
     except binascii.Error:
         # Invalid base64 input
-        raise ValueError("This doesn't look like a continuation token we created.") from None
+        raise ValueError("This doesn't look like a continuation token the sdk created.") from None
     except (json.JSONDecodeError, UnicodeDecodeError):
         # Check if the data appears to be from an older version
         if _is_pickle_format(decoded_bytes):
