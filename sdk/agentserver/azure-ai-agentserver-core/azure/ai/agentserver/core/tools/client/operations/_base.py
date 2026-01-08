@@ -23,7 +23,7 @@ class BaseOperations(ABC):
     }
 
     def __init__(self, client: AsyncPipelineClient, error_map: ErrorMapping | None = None) -> None:
-        self.client = client
+        self._client = client
         self._error_map = self._prepare_error_map(error_map)
 
     @classmethod
@@ -39,7 +39,7 @@ class BaseOperations(ABC):
             error_map.update(custom_error_map)
         return error_map
 
-    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> AsyncHttpResponse:
+    async def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> AsyncHttpResponse:
         """Send an HTTP request.
 
         :param request: HTTP request
@@ -48,11 +48,11 @@ class BaseOperations(ABC):
 
         :return: Response object
         """
-        response: AsyncHttpResponse = await self.client.send_request(request, stream=stream, **kwargs)
-        self.handle_response_error(response)
+        response: AsyncHttpResponse = await self._client.send_request(request, stream=stream, **kwargs)
+        self._handle_response_error(response)
         return response
 
-    def handle_response_error(self, response: AsyncHttpResponse) -> None:
+    def _handle_response_error(self, response: AsyncHttpResponse) -> None:
         """Handle HTTP response errors.
 
         :param response: HTTP response to check

@@ -3,13 +3,13 @@
 # ---------------------------------------------------------
 from asyncio import gather
 from collections import defaultdict
-from typing import Any, AsyncContextManager, DefaultDict, Dict, List, Optional
+from typing import Any, AsyncContextManager, DefaultDict, Dict, List, Mapping, Optional
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._models import FoundryTool, FoundryToolSource, ResolvedFoundryTool, UserInfo
+from ._models import FoundryTool, FoundryToolDetails, FoundryToolSource, ResolvedFoundryTool, UserInfo
 from ._configuration import FoundryToolClientConfiguration
 from ._exceptions import ToolInvocationError
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
@@ -51,7 +51,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
     async def list_tools(self,
                          tools: List[FoundryTool],
                          user: Optional[UserInfo] = None,
-                         agent_name: str="$default") -> List[ResolvedFoundryTool]:
+                         agent_name: str="$default") -> Mapping[FoundryTool, FoundryToolDetails]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
@@ -83,11 +83,11 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
                                                           user,
                                                           agent_name))
 
-        resolved_tools: List[ResolvedFoundryTool] = []
+        resolved_tools: Dict[FoundryTool, FoundryToolDetails] = {}
         if tasks:
             results = await gather(*tasks)
             for result in results:
-                resolved_tools.extend(result)
+                resolved_tools.update(result)
 
         return resolved_tools
 
@@ -120,7 +120,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         if tool.source is FoundryToolSource.HOSTED_MCP:
             return await self._hosted_mcp_tools.invoke_tool(tool, arguments)
         if tool.source is FoundryToolSource.CONNECTED:
-            return await self._connected_tools.invoke_tool(agent_name, tool, arguments, user)
+            return await self._connected_tools.invoke_tool(tool, arguments, user, agent_name)
         raise ToolInvocationError(f"Unsupported tool source: {tool.source}", tool=tool)
 
     async def close(self) -> None:

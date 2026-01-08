@@ -3,15 +3,14 @@
 # ---------------------------------------------------------
 import asyncio
 import inspect
-import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Annotated, Any, Awaitable, Callable, ClassVar, List, Literal, Mapping, Optional, Type, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 from pydantic import AliasChoices, AliasPath, BaseModel, Discriminator, Field, ModelWrapValidatorHandler, Tag, \
-    TypeAdapter, model_validator
+	TypeAdapter, model_validator
 
 from ._exceptions import OAuthConsentRequiredError
 
@@ -37,49 +36,38 @@ class FoundryToolProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 @dataclass(frozen=True, kw_only=True)
 class FoundryTool(ABC):
 	"""Definition of a foundry tool including its parameters."""
-
-	@property
-	@abstractmethod
-	def source(self) -> FoundryToolSource:
-		"""Origin of the tool."""
-		raise NotImplementedError
-
-	def __str__(self) -> str:
-		"""Return a human-readable string representation.
-
-		:return: JSON string representation of the ToolDefinition.
-		:rtype: str
-		"""
-		return json.dumps(self.__dict__, default=str)
+	source: FoundryToolSource = field(init=False)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class FoundryHostedMcpTool(FoundryTool):
 	"""Foundry MCP tool definition.
 
 	:ivar str name: Name of MCP tool.
 	:ivar Mapping[str, Any] configuration: Tools configuration.
 	"""
+	source: Literal[FoundryToolSource.HOSTED_MCP] = field(init=False, default=FoundryToolSource.HOSTED_MCP)
 	name: str
 	configuration: Optional[Mapping[str, Any]] = None
 
-	@property
-	def source(self) -> Literal[FoundryToolSource.HOSTED_MCP]:
-		return FoundryToolSource.HOSTED_MCP
 
-
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class FoundryConnectedTool(FoundryTool):
 	"""Foundry connected tool definition.
 
 	:ivar str project_connection_id: connection name of foundry tool.
 	"""
+	source: Literal[FoundryToolSource.CONNECTED] = field(init=False, default=FoundryToolSource.CONNECTED)
 	protocol: str
 	project_connection_id: str
 
-	@property
-	def source(self) -> Literal[FoundryToolSource.CONNECTED]:
-		return FoundryToolSource.CONNECTED
+
+@dataclass(frozen=True)
+class FoundryToolDetails:
+	name: str
+	description: str
+	input_schema: "SchemaDefinition"
+	metadata: Optional["SchemaDefinition"] = None
 
 
 @dataclass(frozen=True)
@@ -89,29 +77,40 @@ class ResolvedFoundryTool:
 	Represents metadata and configuration for a single tool, including its
 	name, description, input schema, and source information.
 
-	:ivar str key: Unique identifier for this tool.
-	:ivar str name: Display name of the tool.
-	:ivar str description: Human-readable description of what the tool does.
-	:ivar ~ToolSource source:
-		Origin of the tool (MCP_TOOLS or REMOTE_TOOLS).
-	:ivar dict metadata: Raw metadata from the API response.
-	:ivar dict input_schema:
-		JSON schema describing the tool's input parameters, or None.
-	:ivar ToolDefinition tool_definition:
+	:ivar ToolDefinition definition:
 		Optional tool definition object, or None.
+	:ivar FoundryToolDetails details:
+		Details about the tool, including name, description, and input schema.
 	"""
 
-	name: str
-	description: str
 	definition: FoundryTool
-	input_schema: "SchemaDefinition"
-	metadata: Optional["SchemaDefinition"] = None
+	details: FoundryToolDetails
 	invoker: Optional[Callable[..., Awaitable[Any]]] = None  # TODO: deprecated
 
 	@property
 	def source(self) -> FoundryToolSource:
 		"""Origin of the tool."""
 		return self.definition.source
+
+	@property
+	def name(self) -> str:
+		"""Name of the tool."""
+		return self.details.name
+
+	@property
+	def description(self) -> str:
+		"""Description of the tool."""
+		return self.details.description
+
+	@property
+	def input_schema(self) -> "SchemaDefinition":
+		"""Input schema of the tool."""
+		return self.details.input_schema
+
+	@property
+	def metadata(self) -> Optional["SchemaDefinition"]:
+		"""Metadata schema of the tool, if any."""
+		return self.details.metadata
 
 	def invoke(self, *args: Any, **kwargs: Any) -> Any:
 		"""Invoke the tool synchronously.

@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List, cast
+from typing import Any, ClassVar, Dict, List, Mapping, cast
 
 from azure.core.rest import HttpRequest
 
 from azure.ai.agentserver.core.tools import FoundryHostedMcpTool, FoundryToolSource, ResolvedFoundryTool, \
     ToolInvocationError
 from azure.ai.agentserver.core.tools._to_be_deleted import MetadataMapper
-from azure.ai.agentserver.core.tools.client._models import ListFoundryHostedMcpToolsResponse
+from azure.ai.agentserver.core.tools.client._models import FoundryToolDetails, ListFoundryHostedMcpToolsResponse
 from azure.ai.agentserver.core.tools.client.operations._base import BaseOperations
 
 
@@ -53,45 +53,37 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 		# Add more tool-specific mappings as needed
 	}
 
-	def build_list_tools_request(self) -> HttpRequest:
+	def _build_list_tools_request(self) -> HttpRequest:
 		"""Build request for listing MCP tools.
 
 		:return: Request for listing MCP tools.
 		"""
-		return self.client.post(self._PATH,
+		return self._client.post(self._PATH,
 								params=self._QUERY_PARAMS,
 								headers=self._HEADERS,
 								content=self._LIST_TOOLS_REQUEST_BODY)
 
 	@staticmethod
-	def convert_listed_tools(response: ListFoundryHostedMcpToolsResponse,
-							 allowed_tools: List[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
-		"""Convert listed tools response to ResolvedFoundryTool list.
+	def _convert_listed_tools(
+			response: ListFoundryHostedMcpToolsResponse,
+			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, FoundryToolDetails]:
 
-		:param response: Response from listing MCP tools.
-		:type response: ListFoundryHostedMcpToolsResponse
-		:param allowed_tools: List of allowed MCP tools to filter.
-		:type allowed_tools: List[FoundryHostedMcpTool]
-		:return: List of resolved MCP tools.
-		:rtype: List[ResolvedFoundryTool]
-		"""
 		allowlist = {tool.name: tool for tool in allowed_tools}
-		result = []
+		result = {}
 		for tool in response.result.tools:
 			definition = allowlist.get(tool.name)
 			if not definition:
 				continue
-			resolved = ResolvedFoundryTool(
+			details = FoundryToolDetails(
 				name=tool.name,
 				description=tool.description,
-				definition=definition,
-				metadata=tool.metadata,
+				metadata=tool.meta,
 				input_schema=tool.input_schema)
-			result.append(resolved)
+			result[definition] = details
 
 		return result
 
-	def build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
+	def _build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
 		if tool.definition.source != FoundryToolSource.FOUNDRY_HOSTED_MCP:
 			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry-hosted MCP tool.", tool=tool)
 
@@ -110,7 +102,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 			)
 			payload["_meta"] = meta_config
 
-		return self.client.post(self._PATH,
+		return self._client.post(self._PATH,
 								params=self._QUERY_PARAMS,
 								headers=self._HEADERS,
 								content=payload)
@@ -119,22 +111,24 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 	"""Operations for Foundry-hosted MCP tools."""
 
-	async def list_tools(self, allowed_tools: List[FoundryHostedMcpTool]) -> List[ResolvedFoundryTool]:
+	async def list_tools(
+			self,
+			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, FoundryToolDetails]:
 		"""List MCP tools.
 
 		:param allowed_tools: List of allowed MCP tools to filter.
 		:type allowed_tools: List[FoundryHostedMcpTool]
-		:return: List of tool descriptors from MCP server.
-		:rtype: ListFoundryHostedMcpToolsResponse
+		:return: Details of MCP tools.
+		:rtype: Mapping[FoundryHostedMcpTool, FoundryToolDetails]
 		"""
 		if not allowed_tools:
-			return []
+			return {}
 
-		request = self.build_list_tools_request()
-		response = await self.send_request(request)
+		request = self._build_list_tools_request()
+		response = await self._send_request(request)
 		async with response:
 			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(response.json())
-		return self.convert_listed_tools(tools_response, allowed_tools)
+		return self._convert_listed_tools(tools_response, allowed_tools)
 
 	async def invoke_tool(
 		self,
@@ -150,7 +144,7 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		:return: Result of the tool invocation.
 		:rtype: Any
 		"""
-		request = self.build_invoke_tool_request(tool, arguments)
-		response = await self.send_request(request)
+		request = self._build_invoke_tool_request(tool, arguments)
+		response = await self._send_request(request)
 		async with response:
 			return response.json().get("result")
