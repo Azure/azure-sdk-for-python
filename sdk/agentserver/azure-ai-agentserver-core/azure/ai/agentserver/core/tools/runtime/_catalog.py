@@ -82,14 +82,18 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
         await asyncio.gather(*resolving_tasks.values())
 
-        resolved_tools = [
-            ResolvedFoundryTool(
-                definition=tool,
-                details=await task
-            )
-            for tool, task in resolving_tasks.items()
-            if await task is not None # filter out unresolved tools in _as_resolving_task()
-        ]
+        resolved_tools = []
+        for tool, task in resolving_tasks.items():
+            # this acts like a lock - every task of the same tool waits for the same underlying fetch
+            details = await task
+            if details is not None:
+                # filter out unresolved tools in _as_resolving_task()
+                resolved_tools.append(
+                    ResolvedFoundryTool(
+                        definition=tool,
+                        details=details
+                    )
+                )
 
         return resolved_tools
 
