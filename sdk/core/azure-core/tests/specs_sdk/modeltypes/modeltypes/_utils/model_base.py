@@ -340,9 +340,7 @@ def get_deserializer(annotation: typing.Any, rf: typing.Optional["_RestField"] =
         return functools.partial(_deserialize_array_encoded, _ARRAY_ENCODE_MAPPING[rf._format])
     if rf and rf._format:
         return _DESERIALIZE_MAPPING_WITHFORMAT.get(rf._format)
-    if _DESERIALIZE_MAPPING.get(annotation):  # pyright: ignore
-        return _DESERIALIZE_MAPPING.get(annotation)  # pyright: ignore
-    return TYPE_HANDLER_REGISTRY.get_deserializer(annotation)  # pyright: ignore
+    return _DESERIALIZE_MAPPING.get(annotation)  # pyright: ignore
 
 
 def _get_type_alias_type(module_name: str, alias_name: str):
@@ -978,6 +976,10 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
 
     if get_deserializer(annotation, rf):
         return functools.partial(_deserialize_default, get_deserializer(annotation, rf))
+
+    deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(annotation)
+    if deserializer:
+        return deserializer
 
     return functools.partial(_deserialize_default, annotation)
 
