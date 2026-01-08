@@ -528,7 +528,7 @@ async def test_long_running_negative():
     with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
         await poll
     # Verify continuation token is set
-    assert error.value.continuation_token == polling_method.continuation_token()
+    assert error.value.continuation_token == polling_method.get_continuation_token()
 
     LOCATION_BODY = json.dumps({"name": TEST_NAME})
     POLLING_STATUS = 200
