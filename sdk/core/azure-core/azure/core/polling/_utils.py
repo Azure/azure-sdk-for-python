@@ -26,6 +26,7 @@
 """Shared utilities for polling continuation token serialization."""
 
 import base64
+import binascii
 import json
 from typing import Any, Dict, Mapping
 
@@ -95,11 +96,14 @@ def _decode_continuation_token(continuation_token: str) -> Dict[str, Any]:
     try:
         decoded_bytes = base64.b64decode(continuation_token)
         token = json.loads(decoded_bytes.decode("utf-8"))
-    except (json.JSONDecodeError, UnicodeDecodeError) as err:
+    except binascii.Error:
+        # Invalid base64 input
+        raise ValueError("This doesn't look like a continuation token we created.") from None
+    except (json.JSONDecodeError, UnicodeDecodeError):
         # Check if the data appears to be from an older version
         if _is_pickle_format(decoded_bytes):
             raise ValueError(_INCOMPATIBLE_TOKEN_ERROR_MESSAGE) from None
-        raise ValueError("Invalid continuation token format.") from err
+        raise ValueError("Invalid continuation token format.") from None
 
     # Validate token schema - must be a dict with a version field
     if not isinstance(token, dict) or "version" not in token:
