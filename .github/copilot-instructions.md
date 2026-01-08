@@ -115,7 +115,7 @@ This library is failing two release blocking checks - Mypy and Tests - CI. The l
 ## Local SDK Generation and Package Lifecycle (TypeSpec)
 
 ### AUTHORITATIVE REFERENCE
-For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release preparation), follow #file:../eng/common/instructions/azsdk-tools/local-sdk-workflow.instructions.md
+For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:../eng/common/instructions/azsdk-tools/local-sdk-workflow.instructions.md
 
 ### DEFAULT BEHAVIORS
 - **Repository:** Use the current workspace as the local SDK repository unless the user specifies a different path.
