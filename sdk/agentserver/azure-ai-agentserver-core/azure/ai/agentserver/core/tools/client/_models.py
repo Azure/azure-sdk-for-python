@@ -72,10 +72,7 @@ class FoundryToolDetails:
 
 @dataclass(frozen=True)
 class ResolvedFoundryTool:
-	"""Lightweight description of a tool that can be invoked.
-
-	Represents metadata and configuration for a single tool, including its
-	name, description, input schema, and source information.
+	"""Resolved Foundry tool with definition and details.
 
 	:ivar ToolDefinition definition:
 		Optional tool definition object, or None.
