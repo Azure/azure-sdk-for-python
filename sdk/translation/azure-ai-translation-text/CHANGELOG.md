@@ -12,8 +12,7 @@
 - Dictionary, sentence boundaries and text alignments features have been removed, and relevant models and properties have been removed.
 - Added `models` property to `GetSupportedLanguagesResult` to include the list of LLM models available for translations.
 - Renamed property `confidence` to `score` in `DetectedLanguage`.
-- Renamed property `targetLanguage` to `language` in `TranslationText`.
-- Removed property `sourceText` in `TranslatedTextItem`.
+- Removed property `source_text` in `TranslatedTextItem`.
 
 ## 1.0.1 (2024-06-24)
 
