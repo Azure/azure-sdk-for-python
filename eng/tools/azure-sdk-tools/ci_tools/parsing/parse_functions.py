@@ -357,6 +357,15 @@ class ParsedSetup:
     def is_reporting_suppressed(self, setting: str) -> bool:
         return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_skip_warnings", []))
 
+    def is_stable_release(self) -> bool:
+        """
+        Check if this package is a stable release version.
+
+        :rtype: bool
+        :return: True if this is a stable release, False if beta
+        """
+        return classify_release_type(self.version) == "stable"
+
     def __str__(self):
         lines = [f"ParsedSetup from {self.folder}"]
         for attr in [
@@ -841,3 +850,23 @@ def compare_string_to_glob_array(string: str, glob_array: List[str]) -> bool:
     This function is used to easily compare a string to a set of glob strings, if it matches any of them, returns True.
     """
     return any([fnmatch.fnmatch(string, glob) for glob in glob_array])
+
+
+def classify_release_type(version: str) -> str:
+    """
+    Classify a package version as 'beta' or 'stable' based on version string patterns.
+
+    :param str version: The version string to classify (e.g., "1.0.0", "2.1.0b1", "1.5.0a2")
+    :rtype: str
+    :return: Either "beta" or "stable"
+
+    Examples:
+        "1.0.0" -> "stable"
+        "2.1.0b1" -> "beta"
+        "1.5.0a2" -> "beta"
+        "3.0.0rc1" -> "beta"
+        "1.0.0.dev20241201" -> "beta"
+    """
+    if "b" in version.lower():
+        return "beta"
+    return "stable"
