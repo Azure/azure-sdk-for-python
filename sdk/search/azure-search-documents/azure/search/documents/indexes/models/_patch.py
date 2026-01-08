@@ -56,6 +56,7 @@ class SearchField(_SearchField):
         else:
             self.retrievable = not value
 
+
 # Re-export SearchFieldDataType and add Collection helper
 SearchFieldDataType = _SearchFieldDataType
 
