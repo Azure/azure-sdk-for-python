@@ -588,11 +588,9 @@ trigger:
         assert event_content[1]["type"] == "response_schema"
         schema_str = event_content[1]["content"]
         schema_obj = json.loads(schema_str)
-        print("******************************************************************")
-        print(schema_obj)
-        #assert schema_obj["type"] == "object"
-        # assert "name" in schema_obj["properties"]
-        # assert "age" in schema_obj["properties"]
+        assert schema_obj["type"] == "object"
+        assert "name" in schema_obj["properties"]
+        assert "age" in schema_obj["properties"]
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
