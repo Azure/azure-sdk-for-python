@@ -21,6 +21,6 @@ __all__ = [
 ]
 
 from .client._client import FoundryToolClient
-from .client._exceptions import OAuthConsentRequiredError, ToolInvocationError
+from ._exceptions import OAuthConsentRequiredError, ToolInvocationError
 from .client._models import FoundryConnectedTool, FoundryHostedMcpTool, FoundryTool, FoundryToolProtocol, \
     FoundryToolSource, ResolvedFoundryTool, SchemaDefinition, SchemaProperty, SchemaType, UserInfo

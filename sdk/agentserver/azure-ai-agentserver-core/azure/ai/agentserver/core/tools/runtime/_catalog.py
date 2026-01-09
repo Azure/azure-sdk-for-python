@@ -7,6 +7,7 @@ from typing import Any, Awaitable, Dict, List, Mapping, MutableMapping, Optional
 
 from cachetools import TTLCache
 
+from ._facade import FoundryToolLike, ensure_foundry_tool
 from ._user import UserProvider
 from ..client._client import FoundryToolClient
 from ..client._models import FoundryTool, FoundryToolDetails, FoundryToolSource, ResolvedFoundryTool, UserInfo
@@ -17,11 +18,11 @@ class FoundryToolCatalog(ABC):
     def __init__(self, user_provider: UserProvider):
         self._user_provider = user_provider
 
-    async def get(self, tool: FoundryTool) -> Optional[ResolvedFoundryTool]:
+    async def get(self, tool: FoundryToolLike) -> Optional[ResolvedFoundryTool]:
         """Gets a Foundry tool by its definition.
 
         :param tool: The Foundry tool to resolve.
-        :type tool: FoundryTool
+        :type tool: FoundryToolLike
         :return: The resolved Foundry tool.
         :rtype: Optional[ResolvedFoundryTool]
         """
@@ -29,11 +30,11 @@ class FoundryToolCatalog(ABC):
         return tools[0] if tools else None
 
     @abstractmethod
-    async def list(self, tools: List[FoundryTool]) -> List[ResolvedFoundryTool]:
+    async def list(self, tools: List[FoundryToolLike]) -> List[ResolvedFoundryTool]:
         """Lists all available Foundry tools.
 
         :param tools: The list of Foundry tools to resolve.
-        :type tools: List[FoundryTool]
+        :type tools: List[FoundryToolLike]
         :return: A list of resolved Foundry tools.
         :rtype: List[ResolvedFoundryTool]
         """
@@ -41,6 +42,7 @@ class FoundryToolCatalog(ABC):
 
 
 class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
+    """Cached implementation of FoundryToolCatalog with concurrency-safe caching."""
 
     def __init__(self, user_provider: UserProvider):
         super().__init__(user_provider)
@@ -54,15 +56,16 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
             return tool
         return user, tool
 
-    async def list(self, tools: List[FoundryTool]) -> List[ResolvedFoundryTool]:
+    async def list(self, tools: List[FoundryToolLike]) -> List[ResolvedFoundryTool]:
         """Lists all available Foundry tools with concurrency-safe caching.
 
         :param tools: The list of Foundry tools to resolve.
-        :type tools: List[FoundryTool]
+        :type tools: List[FoundryToolLike]
         :return: A list of resolved Foundry tools.
         :rtype: List[ResolvedFoundryTool]
         """
         user = await self._user_provider.get_user()
+        tools: List[FoundryTool] = [ensure_foundry_tool(tool) for tool in tools]  # type: ignore
 
         # for tools that are not being listed, create a batch task, convert to per-tool resolving tasks, and cache them
         tools_to_fetch = [tool for tool in tools if self._get_key(user, tool) not in self._cache]
@@ -112,6 +115,8 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
 
 class DefaultFoundryToolCatalog(CachedFoundryToolCatalog):
+    """Default implementation of FoundryToolCatalog."""
+
     def __init__(self, client: FoundryToolClient, user_provider: UserProvider, agent_name: str):
         super().__init__(user_provider)
         self._client = client
@@ -120,4 +125,4 @@ class DefaultFoundryToolCatalog(CachedFoundryToolCatalog):
     async def _fetch_tools(self,
                            tools: List[FoundryTool],
                            user: Optional[UserInfo]) -> Mapping[FoundryTool, FoundryToolDetails]:
-        return await self._client.list_tools(tools, user, self._agent_name)
+        return await self._client.list_tools(tools, self._agent_name, user)

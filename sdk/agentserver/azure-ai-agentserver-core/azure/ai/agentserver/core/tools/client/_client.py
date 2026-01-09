@@ -11,7 +11,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._models import FoundryTool, FoundryToolDetails, FoundryToolSource, ResolvedFoundryTool, UserInfo
 from ._configuration import FoundryToolClientConfiguration
-from ._exceptions import ToolInvocationError
+from .._exceptions import ToolInvocationError
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
 from ...utils._credential import AsyncTokenCredentialAdapter
@@ -30,13 +30,13 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         Credential for authenticating requests to the service.
         Use credentials from azure-identity like DefaultAzureCredential.
     :type credential: ~azure.core.credentials.TokenCredential
-
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential"):
         """Initialize the asynchronous Azure AI Tool Client.
 
-        :param str endpoint: The service endpoint URL.
+        :param endpoint: The service endpoint URL.
+        :type endpoint: str
         :param credential: Credentials for authenticating requests.
         :type credential: ~azure.core.credentials.TokenCredential
         """
@@ -50,8 +50,8 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
     @distributed_trace_async
     async def list_tools(self,
                          tools: List[FoundryTool],
-                         user: Optional[UserInfo] = None,
-                         agent_name: str="$default") -> Mapping[FoundryTool, FoundryToolDetails]:
+                         agent_name,
+                         user: Optional[UserInfo] = None) -> Mapping[FoundryTool, FoundryToolDetails]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
@@ -60,8 +60,8 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :type tools: List[~FoundryTool]
         :param user: Information about the user requesting the tools.
         :type user: Optional[UserInfo]
-        :param agent_name: Name of the agent requesting the tools. Defaults to "$default".
-        :type agent_name: str, optional
+        :param agent_name: Name of the agent requesting the tools.
+        :type agent_name: str
         :return: List of available tools from all configured sources.
         :rtype: List[~FoundryTool]
         :raises ~azure.ai.agentserver.core.tools._exceptions.ToolInvocationError:
@@ -95,8 +95,8 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
     async def invoke_tool(self,
                           tool: ResolvedFoundryTool,
                           arguments: Dict[str, Any],
-                          user: Optional[UserInfo] = None,
-                          agent_name: str="$default") -> Any:
+                          agent_name: str,
+                          user: Optional[UserInfo] = None) -> Any:
         """Invoke a tool by instance, name, or descriptor.
 
         :param tool: Tool to invoke, specified as an AzureAITool instance,
@@ -106,8 +106,8 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :type arguments: Dict[str, Any]
         :param user: Information about the user invoking the tool.
         :type user: Optional[UserInfo]
-        :param agent_name: Name of the agent invoking the tool. Defaults to "$default".
-        :type agent_name: str, optional
+        :param agent_name: Name of the agent invoking the tool.
+        :type agent_name: str
         :return: The result of invoking the tool.
         :rtype: Any
         :raises ~Tool_Client.exceptions.OAuthConsentRequiredError:

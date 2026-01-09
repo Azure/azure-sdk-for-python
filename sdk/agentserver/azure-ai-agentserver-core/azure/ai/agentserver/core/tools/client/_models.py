@@ -12,7 +12,7 @@ from azure.core import CaseInsensitiveEnumMeta
 from pydantic import AliasChoices, AliasPath, BaseModel, Discriminator, Field, ModelWrapValidatorHandler, Tag, \
 	TypeAdapter, model_validator
 
-from ._exceptions import OAuthConsentRequiredError
+from .._exceptions import OAuthConsentRequiredError
 
 
 class FoundryToolSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -50,6 +50,9 @@ class FoundryHostedMcpTool(FoundryTool):
 	name: str
 	configuration: Optional[Mapping[str, Any]] = None
 
+	def __str__(self):
+		return f"{self.source}:{self.name}"
+
 
 @dataclass(frozen=True, kw_only=True)
 class FoundryConnectedTool(FoundryTool):
@@ -61,9 +64,19 @@ class FoundryConnectedTool(FoundryTool):
 	protocol: str
 	project_connection_id: str
 
+	def __str__(self):
+		return f"{self.source}:{self.protocol}:{self.project_connection_id}"
+
 
 @dataclass(frozen=True)
 class FoundryToolDetails:
+	"""Details about a Foundry tool.
+
+	:ivar str name: Name of the tool.
+	:ivar str description: Description of the tool.
+	:ivar SchemaDefinition input_schema: Input schema for the tool parameters.
+	:ivar Optional[SchemaDefinition] metadata: Optional metadata schema for the tool.
+	"""
 	name: str
 	description: str
 	input_schema: "SchemaDefinition"

@@ -8,7 +8,7 @@ from azure.core.pipeline.transport import HttpRequest
 
 from .._models import FoundryConnectedTool, FoundryToolDetails, FoundryToolSource, InvokeFoundryConnectedToolsResponse, \
 	ListFoundryConnectedToolsResponse, ResolvedFoundryTool, UserInfo
-from .._exceptions import ToolInvocationError
+from ..._exceptions import ToolInvocationError
 from ._base import BaseOperations
 
 

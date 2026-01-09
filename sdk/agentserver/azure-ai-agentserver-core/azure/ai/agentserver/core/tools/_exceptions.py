@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._models import ResolvedFoundryTool
+    from .client._models import FoundryTool, ResolvedFoundryTool
 
 
 class ToolInvocationError(RuntimeError):
@@ -44,3 +44,31 @@ class OAuthConsentRequiredError(RuntimeError):
         self.message = message
         self.consent_url = consent_url
         self.project_connection_id = project_connection_id
+
+
+class UnableToResolveToolInvocationError(RuntimeError):
+    """Raised when a tool cannot be resolved.
+
+    :ivar str message: Human-readable message describing the error.
+    :ivar FoundryTool tool: The tool that could not be resolved.
+
+    :param str message: Human-readable message describing the error.
+    :param FoundryTool tool: The tool that could not be resolved.
+
+    This exception is raised when a tool cannot be found or resolved
+    from the available tool sources.
+    """
+
+    def __init__(self, message: str, tool: FoundryTool):
+        super().__init__(message)
+        self.tool = tool
+
+
+class InvalidToolFacadeError(RuntimeError):
+    """Raised when a tool facade is invalid.
+
+    This exception is raised when a tool facade does not conform
+    to the expected structure or contains invalid data.
+    """
+    pass
+
