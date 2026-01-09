@@ -10,6 +10,7 @@ import inspect
 
 from agent_framework import AgentProtocol, AIFunction, InMemoryCheckpointStorage
 from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
+from agent_framework._workflows import get_checkpoint_summary
 from opentelemetry import trace
 
 from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
@@ -239,6 +240,11 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 checkpoints = await self._checkpoint_storage.list_checkpoints()
                 last_checkpoint = checkpoints[-1] if len(checkpoints) > 0 else None
                 logger.info(f"Last checkpoint data: {last_checkpoint.to_dict() if last_checkpoint else 'None'}")
+                if last_checkpoint:
+                    summary = get_checkpoint_summary(last_checkpoint)
+                    logger.info(f"Last checkpoint summary status: {summary.status}")
+                    if summary.status == "completed":
+                        last_checkpoint = None  # Do not resume from completed checkpoints
 
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
