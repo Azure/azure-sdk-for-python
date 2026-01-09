@@ -38,18 +38,18 @@ def verify_packages(package_file_path):
     for p in get_installed_packages():
         if "==" in p:
             [package, version] = p.split("==")
-            installed[package.upper().replace("_","-")] = version
+            installed[package.lower().replace("_","-")] = version
     expected = {}
     for p in packages:
         [package, version] = p.split("==")
-        expected[package.upper().replace("_","-")] = version
+        expected[package.lower().replace("_","-")] = version
 
     missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]
 
     if missing_packages:
         logging.error("Version is incorrect for following package[s]")
         for package in missing_packages:
-            logging.error("%s, Expected[%s], Installed[%s]", package, expected[package], installed[package])
+            logging.error("%s, Expected[%s], Installed[%s]", package, expected[package], installed.get(package, "NOT FOUND"))
         sys.exit(1)
     else:
         logging.info("Verified package version")
