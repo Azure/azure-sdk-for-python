@@ -275,9 +275,6 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                             self._agent_thread_in_memory[context.conversation_id] = agent_thread
                         logger.info("Streaming completed with %d updates", update_count)
                     finally:
-                        if hasattr(agent, "pending_requests"):
-                            logger.info("Clearing agent pending requests after streaming completed")
-                            agent.pending_requests.clear()
                         # Close tool_client if it was created for this request
                         if tool_client is not None:
                             try:
@@ -320,6 +317,4 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                     logger.debug("Closed tool_client after request processing")
                 except Exception as ex:  # pylint: disable=broad-exception-caught
                     logger.warning(f"Error closing tool_client: {ex}")
-            if not context.stream and hasattr(agent, "pending_requests"):
-                logger.info("Clearing agent pending requests after streaming completed")
-                # agent.pending_requests.clear()            
+           
