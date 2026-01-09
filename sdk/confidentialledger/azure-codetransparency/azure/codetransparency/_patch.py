@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import os
-from typing import Any, List, Union
+from typing import Any, Iterator, List, Union
 
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
@@ -58,7 +58,7 @@ class CodeTransparencyClient(GeneratedClient):
         **kwargs: Any,
     ) -> None:
 
-        if os.path.isfile(ledger_certificate_path) is False:
+        if not os.path.isfile(ledger_certificate_path):
             # We'll need to fetch the TLS certificate.
 
             identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
@@ -103,6 +103,25 @@ class CBORDecoder:
     def __init__(self, data: bytes):
         self.data = data
         self.pos = 0
+
+    @staticmethod
+    def from_response(response: Iterator[bytes]) -> "CBORDecoder":
+        """Create a CBORDecoder instance from an iterator of bytes.
+
+        This is useful for decoding API responses directly.
+
+        :param response: An iterator yielding bytes chunks (e.g., from an API response).
+        :type response: Iterator[bytes]
+        :return: A CBORDecoder instance initialized with the concatenated bytes.
+        :rtype: CBORDecoder
+
+        Example usage::
+
+            resp = client.get_entry(...)
+            decoded = CBORDecoder.from_response(resp).decode()
+        """
+        data = b"".join(response)
+        return CBORDecoder(data)
 
     def decode(self, allow_break: bool = False) -> Any:
         """Decode the next CBOR item.
