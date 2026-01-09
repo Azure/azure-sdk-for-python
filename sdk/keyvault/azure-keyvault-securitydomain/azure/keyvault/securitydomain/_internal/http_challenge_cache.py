@@ -28,7 +28,7 @@ def get_challenge_for_url(url: str) -> "Optional[HttpChallenge]":
     key = _get_cache_key(url)
 
     with _lock:
-        return _cache.get(key)
+        return _cache.get(key.lower())
 
 
 def _get_cache_key(url: str) -> str:
@@ -77,7 +77,7 @@ def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
         raise ValueError("Challenge cannot be empty")
 
     src_url = parse.urlparse(url)
-    if src_url.netloc != challenge.source_authority:
+    if src_url.netloc.lower() != challenge.source_authority.lower():
         raise ValueError("Source URL and Challenge URL do not match")
 
     key = _get_cache_key(url)
