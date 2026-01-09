@@ -1,6 +1,6 @@
 # PyRIT Foundry Integration - Technical Specification
 
-**Status: IMPLEMENTED** (Core integration complete, Context-to-File enhancement pending)
+**Status: IMPLEMENTED** (Core integration complete, enhancements pending)
 
 ---
 
@@ -29,6 +29,7 @@ This specification documents the integration of PyRIT's **Foundry** into Azure A
 | StrategyMapper | ✅ Implemented | `_foundry/_strategy_mapping.py` |
 | FoundryExecutionManager | ✅ Implemented | `_foundry/_execution_manager.py` |
 | Context-to-File Delivery | 🔄 Pending | See enhancement section |
+| CallbackChatTarget Migration | 🔄 Pending | See enhancement section |
 
 ---
 
@@ -604,6 +605,120 @@ class RedTeam:
 - [ ] End-to-end integration tests
 - [ ] Update sample scripts
 - [ ] Verify file attachments received correctly by targets
+
+---
+
+## CallbackChatTarget Migration (Enhancement)
+
+This section describes moving `_CallbackChatTarget` from Azure SDK to PyRIT as a first-class `PromptChatTarget`, improving tool output handling and enabling broader ecosystem usage.
+
+### Benefits
+
+1. **Reduced Maintenance Burden**: PyRIT team maintains core implementation; Azure SDK reduces to thin wrapper
+2. **Broader PyRIT Ecosystem**: Other teams can use `CallbackChatTarget` directly without Azure SDK dependency
+3. **Better PyRIT Integration**: Tool outputs stored as `MessagePiece` with `data_type="tool_call"` instead of labels workaround
+4. **Cleaner Architecture**: Replace tuple `(response, tool_output)` pattern with structured `CallbackResponse` type
+5. **Foundry Alignment**: All attack execution uses PyRIT-native components
+
+### Current Problem
+
+The current implementation stores tool outputs in `request.labels["tool_calls"]`:
+
+```python
+# Current Azure SDK pattern - problematic
+if type(response) == tuple:
+    response, tool_output = response
+    request.labels["tool_calls"] = tool_output  # Stored in labels as workaround
+```
+
+**Issues:**
+- Modifies the request object (side effect)
+- Labels are meant for metadata, not structured data
+- Doesn't leverage PyRIT's `tool_call` PromptDataType
+- Difficult to track in conversation history
+
+### Proposed Solution
+
+#### 1. New CallbackResponse Class (PyRIT)
+
+```python
+@dataclass
+class CallbackResponse:
+    """Structured response from callback function."""
+    messages: List[Dict[str, Any]]
+    tool_outputs: Optional[List[Dict[str, Any]]] = None
+    token_usage: Optional[Dict[str, Any]] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+```
+
+#### 2. Tool Outputs as MessagePiece
+
+Store tool outputs as additional `MessagePiece` objects with `data_type="tool_call"`:
+
+```python
+# Tool outputs stored properly in response Message
+for tool_output in callback_response.tool_outputs:
+    piece = MessagePiece(
+        value=json.dumps(tool_output),
+        data_type="tool_call",
+        conversation_id=request.conversation_id,
+    )
+    response_message.add_piece(piece)
+```
+
+#### 3. Backward Compatible Callback Signature
+
+```python
+async def callback(
+    messages: List[Dict],
+    stream: bool,
+    session_state: Optional[str],
+    context: Optional[Dict[str, Any]]
+) -> Union[Dict, CallbackResponse, tuple]  # All three supported
+```
+
+### Team Responsibilities
+
+| Team | Responsibility |
+|------|----------------|
+| **PyRIT Team** | Implement `CallbackChatTarget` and `CallbackResponse` in PyRIT repo |
+| **SDK Team** | Create thin wrapper, update result processing, maintain backward compat |
+| **Joint** | Design review, API decisions, testing coordination |
+
+### Implementation Phases
+
+#### Phase 1: PyRIT Implementation
+**Owner:** PyRIT Team
+- [ ] Create `CallbackResponse` dataclass in `pyrit.models`
+- [ ] Create `CallbackChatTarget` class in `pyrit.prompt_target`
+- [ ] Handle all three response formats (dict, CallbackResponse, legacy tuple)
+- [ ] Create MessagePiece with `data_type="tool_call"` for tool outputs
+- [ ] Add deprecation warning for tuple pattern
+- [ ] Add unit tests
+
+#### Phase 2: Azure SDK Thin Wrapper
+**Owner:** SDK Team
+- [ ] Replace 116-line `_CallbackChatTarget` with ~20 line wrapper
+- [ ] Re-export `CallbackResponse` for user convenience
+- [ ] Update imports in `_red_team.py`
+
+#### Phase 3: Update Result Processing
+**Owner:** SDK Team
+- [ ] Add `extract_tool_calls_from_message()` helper to `_result_processor.py`
+- [ ] Update `_utils/formatting_utils.py` to handle tool_call pieces
+- [ ] Ensure JSONL output maintains backward compatibility
+
+#### Phase 4: Testing and Documentation
+**Owner:** Joint
+- [ ] End-to-end agent callback tests
+- [ ] Verify backward compatibility with existing code
+- [ ] Update samples to use `CallbackResponse`
+- [ ] Document deprecation timeline for tuple pattern
+
+### Open Design Decisions
+
+1. **CallbackResponse location**: `pyrit.models` (recommended) or `pyrit.prompt_target`?
+2. **Deprecation timeline**: Immediate warning for tuple pattern, removal in 6 months?
 
 ---
 
