@@ -48,9 +48,11 @@ def get_bundle_name(package_name: str) -> Optional[str]:
         logger.error(f"Failed to parse setup for package {package_name}")
         return None
 
-    # don't expect beta releases to have conda config, TODO raise something
+    # don't expect beta releases to have conda config, TODO raise something, as we shouldn't be calling this on betas
     if not parsed.is_stable_release():
         return None
+    
+    # TODO raise something if conda_config is missing
     
     conda_config = parsed.get_conda_config()
     if conda_config and "bundle_name" in conda_config:

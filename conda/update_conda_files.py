@@ -20,6 +20,7 @@ from conda_helper_functions import (
     get_package_data_from_pypi,
     build_package_index,
     get_package_path,
+    get_bundle_name,
 )
 
 from conda_release_groups import (
@@ -205,7 +206,6 @@ def update_conda_sdk_client_yml(
         f"Detected {len(new_data_plane_packages)} new data plane packages to add to conda-sdk-client.yml"
     )
 
-    package_to_group = get_package_to_group_mapping()
     parameters = conda_client_data["parameters"]
 
     # quick look up for handling grouped package releases
@@ -224,15 +224,16 @@ def update_conda_sdk_client_yml(
             result.append(package_name)
             continue
 
-        # check if package belongs to a release group
-        group_name = get_release_group(package_name, package_to_group)
-        group_data = get_package_group_data(group_name)
+        # bundle info is based on pyproject.toml
+        bundle_name = get_bundle_name(package_name)
 
-        if group_data:
-            # package is part of a release group
-            logger.info(f"Package {package_name} belongs to release group {group_name}")
-            release_name = f"release_{group_name.replace('-', '_')}"
-            display_name = group_name
+        if bundle_name:
+            # package is part of a bundle
+            logger.info(
+                f"Package {package_name} belongs to release bundle {bundle_name}"
+            )
+            release_name = f"release_{bundle_name.replace('-', '_')}"
+            display_name = bundle_name
         else:
             # package is released individually
             release_name = f"release_{package_name.replace('-', '_')}"
@@ -240,6 +241,7 @@ def update_conda_sdk_client_yml(
 
         # add new release parameter if not exists
         if release_name not in existing_parameter_names:
+            logger.info(f"Adding new release parameter: {release_name}")
             new_parameter = {
                 "name": release_name,
                 "displayName": display_name,
@@ -247,67 +249,56 @@ def update_conda_sdk_client_yml(
                 "default": True,
             }
             parameters.append(new_parameter)
+            existing_parameter_names.append(release_name)
 
         # add to CondaArtifacts
-        common_root, service_name = determine_service_info(pkg, package_to_group)
+        common_root, service_name = determine_service_info(pkg, bundle_name)
 
-        # build checkout packages
-        if group_data:
-            checkout_packages = []
-            for grouped_pkg_name in group_data["packages"]:
-                curr_pkg = package_dict.get(grouped_pkg_name, {})
-                if not curr_pkg:
-                    logger.error(
-                        f"Package {grouped_pkg_name} listed in group {group_name} not found in CSV data, skipping"
-                    )
-                    result.append(grouped_pkg_name)
-                    continue
-                curr_version = curr_pkg.get(VERSION_GA_COL)
-                if curr_version:
-                    checkout_packages.append(
-                        {"package": grouped_pkg_name, "version": curr_version}
-                    )
-                else:
-                    logger.error(
-                        f"Package {grouped_pkg_name} in group {group_name} is missing version info, skipping"
-                    )
-                    result.append(grouped_pkg_name)
+        curr_version = pkg.get(VERSION_GA_COL)
+
+        if not curr_version:
+            logger.error(
+                f"Package {package_name} is missing version info, skipping addition"
+            )
+            result.append(package_name)
+            continue
+
+        checkout_package = {"package": package_name, "version": curr_version}
+
+        if package_name in existing_artifact_names:
+            # individual released package already exists
+            logger.warning(
+                f"New package {package_name} already exists in conda-sdk-client.yml, skipping addition"
+            )
+            result.append(package_name)
+            continue
+
+        if bundle_name and bundle_name in existing_artifact_names:
+            # bundle already exists, will append packages to it
+            logger.info(
+                f"Release bundle {bundle_name} already exists in conda-sdk-client.yml, will append package {package_name} to it"
+            )
+            conda_artifacts[existing_artifact_names[bundle_name]]["checkout"].append(
+                checkout_package
+            )
         else:
-            checkout_packages = [
-                {"package": package_name, "version": pkg.get(VERSION_GA_COL)}
-            ]
-
-        if group_name not in existing_artifact_names:
+            # no existing artifact, whether bundle or not -> create
             new_artifact_entry = {
-                "name": group_name if group_data else package_name,
+                "name": bundle_name if bundle_name else package_name,
                 "common_root": common_root,
                 "service": service_name,
                 "in_batch": f"${{{{ parameters.{release_name} }}}}",
-                "checkout": checkout_packages,
+                "checkout": [checkout_package],
             }
-
             # append before azure-mgmt entry
             conda_artifacts.insert(len(conda_artifacts) - 1, new_artifact_entry)
 
             added_count += 1
             logger.info(f"Added new data plane package: {package_name}")
-        else:
-            logger.info(
-                f"CondaArtifact for {group_name if group_data else package_name} already exists in conda-sdk-client.yml"
-            )
-            curr_artifact_checkout = conda_artifacts[
-                existing_artifact_names[group_name]
-            ]["checkout"]
-            packages_in_artifact = {item["package"] for item in curr_artifact_checkout}
 
-            # account for adding new packages to an existing group
-            for pkg_entry in checkout_packages:
-                if pkg_entry["package"] not in packages_in_artifact:
-                    curr_artifact_checkout.append(pkg_entry)
-                    added_count += 1
-                    logger.info(
-                        f"Added package {pkg_entry['package']} to existing CondaArtifact {group_name}"
-                    )
+            existing_artifact_names[bundle_name if bundle_name else package_name] = (
+                len(conda_artifacts) - 2
+            )  # new index
 
     # === Add new mgmt plane packages ===
 
@@ -370,28 +361,24 @@ def update_conda_sdk_client_yml(
 
 
 def determine_service_info(
-    pkg: Dict[str, str], package_to_group: dict
+    pkg: Dict[str, str], bundle_name: Optional[str]
 ) -> Tuple[str, str]:
     """
     Returns the common root and service name for the given package.
 
     :param package_name: The name of the package (e.g., "azure-ai-textanalytics").
-    :param package_to_group: Mapping of package names to release group names.
+    :param bundle_name: The name of the bundle/release group the package belongs to, if any.
     """
     # defaults
     package_name = pkg.get(PACKAGE_COL, "")
     service_name = pkg.get(REPO_PATH_COL, "").lower()
-    common_root = "azure"
 
-    # check for exceptions to the pattern
-    group_name = get_release_group(package_name, package_to_group)
-    group_data = get_package_group_data(group_name)
+    if bundle_name:
+        common_root = f"azure/{bundle_name.split('-')[1]}"
+    else:
+        common_root = "azure"
 
-    if group_data:
-        if group_data.get("service"):
-            service_name = group_data["service"]
-        if group_data.get("common_root"):
-            common_root = group_data["common_root"]
+    # TODO handle exceptions msrest,msal.msal-extensions,azure-ai-vision,azure-healthinsights
 
     if not service_name:
         service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
@@ -1014,6 +1001,7 @@ if __name__ == "__main__":
     conda_sdk_client_pkgs_result = update_conda_sdk_client_yml(
         package_dict, outdated_package_names, new_data_plane_names, new_mgmt_plane_names
     )
+    exit()
 
     # handle new data plane libraries
     new_data_plane_results = add_new_data_plane_packages(
