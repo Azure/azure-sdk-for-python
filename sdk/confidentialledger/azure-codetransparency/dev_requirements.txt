@@ -3,3 +3,4 @@
 -e ../../identity/azure-identity
 ../azure-confidentialledger-certificate
 aiohttp
+responses

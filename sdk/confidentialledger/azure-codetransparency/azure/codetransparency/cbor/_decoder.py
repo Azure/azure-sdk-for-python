@@ -54,6 +54,9 @@ class CBORDecoder:
         :return: The decoded value.
         :raises ValueError: If the data is not well-formed CBOR.
         """
+        if len(self.data) == 0:
+            raise ValueError("No CBOR data to decode")
+
         if self.pos >= len(self.data):
             raise ValueError("Unexpected end of CBOR data")
 

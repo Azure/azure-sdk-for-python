@@ -590,7 +590,7 @@ class TestCBORDecoderEdgeCases(CodeTransparencyClientTestBase):
     def test_empty_data(self):
         """Decoding empty data should raise ValueError."""
         decoder = CBORDecoder(b"")
-        with pytest.raises(ValueError, match="Unexpected end of CBOR data"):
+        with pytest.raises(ValueError, match="No CBOR data to decode"):
             decoder.decode()
 
     def test_truncated_uint8(self):
