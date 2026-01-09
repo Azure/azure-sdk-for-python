@@ -457,16 +457,12 @@ def get_package_metadata(package_name: str, package_path: Optional[str]) -> Tupl
 
 def generate_data_plane_meta_yaml(
     package_dict: Dict[str, Dict[str, str]],
+    bundle_map: Dict[str, List[str]],
     package_name: str,
-    group_name: Optional[str],
-    group_data: Optional[dict],
+    bundle_name: Optional[str],
 ) -> str:
     """
     Generate the meta.yaml content for a data plane package or release group.
-
-    :param package_dict: Dictionary mapping package names to their CSV row data.
-    :param package_name: The name of the package to generate meta.yaml for.
-    :param group: Whether the meta.yaml is for a single package or group.
     """
 
     # TODO is it correct that the env var name is arbitrary and replaced in conda_functions.py?
@@ -475,16 +471,16 @@ def generate_data_plane_meta_yaml(
 
     # TODO not sure if this is the best way to get these requirements
     # TODO don't think this covers all possible import tests, e.g. azure.eventgrid, azure.eventgrid.aio <- when would I add that?
-    if group_name and group_data:
+    if bundle_name:
         # handle grouped packages
         logger.info(
-            f"Generating meta.yaml for release group {group_name} including packages: {group_data['packages']}"
+            f"Generating meta.yaml for release group {bundle_name} including packages: {bundle_map[bundle_name]}"
         )
         host_reqs = set()
         run_reqs = set()
         pkg_imports = []
 
-        for pkg in group_data["packages"]:
+        for pkg in bundle_map[bundle_name]:
             package_path = get_package_path(pkg)
             parsed_setup = ParsedSetup.from_path(package_path)
 
@@ -496,9 +492,9 @@ def generate_data_plane_meta_yaml(
         host_reqs = list(host_reqs)
         run_reqs = list(run_reqs)
 
-        package_path = get_package_path(group_data["packages"][0])
+        package_path = get_package_path(bundle_map[bundle_name][0])
         home_url, summary, description = get_package_metadata(
-            group_name, package_path
+            bundle_name, package_path
         )
     else:
         logger.info(f"Generating meta.yaml for package {package_name}")
@@ -559,7 +555,7 @@ extra:
 
 
 def add_new_data_plane_packages(
-    package_dict: Dict[str, Dict[str, str]], new_data_plane_names: List[str]
+    package_dict: Dict[str, Dict[str, str]], bundle_map: Dict[str, List[str]], new_data_plane_names: List[str]
 ) -> List[str]:
     """Create meta.yaml files for new data plane packages and add import tests."""
     if len(new_data_plane_names) == 0:
@@ -568,29 +564,28 @@ def add_new_data_plane_packages(
     logger.info(f"Adding {len(new_data_plane_names)} new data plane packages")
     result = []
 
-    # grouped packages are processed once when encountering the first package in that group
-    group_names_processed = set()
+    # bundles are processed once when encountering the first package in that group
+    bundles_processed = set()
     for package_name in new_data_plane_names:
         logger.info(f"Adding new data plane meta.yaml for: {package_name}")
 
         pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, package_name, "meta.yaml")
         os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
 
-        group_name = get_release_group(package_name, get_package_to_group_mapping())
-        group_data = get_package_group_data(group_name)
+        bundle_name = get_bundle_name(package_name)
 
-        if group_data and group_name in group_names_processed:
+        if bundle_name and bundle_name in bundles_processed:
             logger.info(
-                f"Meta.yaml for group {group_name} already created, skipping {package_name}"
+                f"Meta.yaml for bundle {bundle_name} already created, skipping {package_name}"
             )
             continue
 
         try:
             meta_yml = generate_data_plane_meta_yaml(
-                package_dict, package_name, group_name, group_data
+                package_dict, bundle_map, package_name, bundle_name
             )
-            if group_data:
-                group_names_processed.add(group_name)
+            if bundle_name:
+                bundles_processed.add(bundle_name)
         except Exception as e:
             logger.error(
                 f"Failed to generate meta.yaml content for {package_name} and skipping, error: {e}"
@@ -1000,11 +995,12 @@ if __name__ == "__main__":
     # pre-process bundled packages to minimize file writes for new data plane packages,
     # and release logs
     bundle_map = map_bundle_to_packages(list(package_dict.keys()))
+    # TODO testing
     print(bundle_map)
 
     # handle new data plane libraries
     new_data_plane_results = add_new_data_plane_packages(
-        package_dict, new_data_plane_names
+        package_dict, bundle_map, new_data_plane_names
     )
     exit()
 
