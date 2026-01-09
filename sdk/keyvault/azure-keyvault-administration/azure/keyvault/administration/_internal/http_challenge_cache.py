@@ -59,10 +59,9 @@ def remove_challenge_for_url(url: str) -> None:
     if not url:
         raise ValueError("URL cannot be empty")
 
-    parsed = parse.urlparse(url)
-
+    key = _get_cache_key(url)
     with _lock:
-        del _cache[parsed.netloc.lower()]
+        del _cache[key.lower()]
 
 
 def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
@@ -82,8 +81,9 @@ def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
     if src_url.netloc.lower() != challenge.source_authority.lower():
         raise ValueError("Source URL and Challenge URL do not match")
 
+    key = _get_cache_key(url)
     with _lock:
-        _cache[src_url.netloc.lower()] = challenge
+        _cache[key.lower()] = challenge
 
 
 def clear() -> None:
