@@ -20,12 +20,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) (Optional) COMPUTER_USE_MODEL_DEPLOYMENT_NAME - The deployment name of the computer-use-preview model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -33,7 +33,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ComputerUsePreviewTool
+from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
 
 # Import shared helper functions
 from computer_use_util import (
@@ -45,32 +45,32 @@ from computer_use_util import (
 
 load_dotenv()
 
-"""Main function to demonstrate Computer Use Agent functionality."""
-# Initialize state machine
-current_state = SearchState.INITIAL
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# Load screenshot assets
-try:
-    screenshots = load_screenshot_assets()
-    print("Successfully loaded screenshot assets")
-except FileNotFoundError:
-    print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
-    exit(1)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # Initialize state machine
+    current_state = SearchState.INITIAL
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+    # Load screenshot assets
+    try:
+        screenshots = load_screenshot_assets()
+        print("Successfully loaded screenshot assets")
+    except FileNotFoundError:
+        print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
+        exit(1)
 
-# [START tool_declaration]
-tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
-# [END tool_declaration]
+    # [START tool_declaration]
+    tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+    # [END tool_declaration]
 
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="ComputerUseAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
             instructions="""
             You are a computer automation assistant. 
             
@@ -81,8 +81,6 @@ with project_client:
         description="Computer automation agent with screen interaction capabilities.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
-    openai_client = project_client.get_openai_client()
 
     # Initial request with screenshot - start with Bing search page
     print("Starting computer automation session (initial screenshot: cua_browser_search.png)...")
@@ -103,7 +101,7 @@ with project_client:
                 ],
             }
         ],
-        extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         truncation="auto",
     )
 
@@ -153,7 +151,7 @@ with project_client:
                     },
                 }
             ],
-            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 

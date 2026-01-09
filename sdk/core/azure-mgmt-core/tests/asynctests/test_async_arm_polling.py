@@ -523,10 +523,12 @@ async def test_long_running_negative():
     LOCATION_BODY = "{"
     POLLING_STATUS = 203
     response = TestArmPolling.mock_send("POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
+    polling_method = AsyncARMPolling(0)
+    poll = async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)
     with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
         await poll
-    assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+    # Verify continuation token is set
+    assert error.value.continuation_token == polling_method.get_continuation_token()
 
     LOCATION_BODY = json.dumps({"name": TEST_NAME})
     POLLING_STATUS = 200

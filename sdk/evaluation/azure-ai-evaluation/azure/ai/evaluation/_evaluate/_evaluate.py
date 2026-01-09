@@ -235,6 +235,10 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
 
 
 def _process_rows(row, detail_defect_rates):
+    # Ignore the failed rows (NaN, None, etc.), which is not a expected dict
+    if _is_none_or_nan(row):
+        return detail_defect_rates
+
     for key, value in row.items():
         if key not in detail_defect_rates:
             detail_defect_rates[key] = []
@@ -2318,6 +2322,9 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     elif metric_key == "xpia_information_gathering":
         metric = "xpia_information_gathering"
         return metric
+    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
+        metric = "f1_score"
+        return metric
     for expected_metric in metric_list:
         if metric_key.startswith(expected_metric):
             metric = expected_metric
@@ -2456,6 +2463,8 @@ def _calculate_aoai_evaluation_summary(
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
                 usage_data = sample_data["usage"]
+                if usage_data is None or not isinstance(usage_data, dict):
+                    continue
                 model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
                 if _is_none_or_nan(model_name):
                     continue

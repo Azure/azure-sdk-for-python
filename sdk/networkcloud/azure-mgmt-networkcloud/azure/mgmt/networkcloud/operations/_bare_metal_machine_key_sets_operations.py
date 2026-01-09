@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,19 +36,26 @@ from .._configuration import NetworkCloudMgmtClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_list_by_cluster_request(
-    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    cluster_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,6 +77,10 @@ def build_list_by_cluster_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -87,7 +98,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -135,7 +146,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -190,7 +201,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -242,7 +253,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -296,7 +307,7 @@ class BareMetalMachineKeySetsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -305,8 +316,13 @@ class BareMetalMachineKeySetsOperations:
 
     @distributed_trace
     def list_by_cluster(
-        self, resource_group_name: str, cluster_name: str, **kwargs: Any
-    ) -> Iterable["_models.BareMetalMachineKeySet"]:
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.BareMetalMachineKeySet"]:
         """List bare metal machine key sets of the cluster.
 
         Get a list of bare metal machine key sets for the provided cluster.
@@ -316,6 +332,13 @@ class BareMetalMachineKeySetsOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
+        :param top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :type top: int
+        :param skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :type skip_token: str
         :return: An iterator like instance of either BareMetalMachineKeySet or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.networkcloud.models.BareMetalMachineKeySet]
@@ -342,6 +365,8 @@ class BareMetalMachineKeySetsOperations:
                     resource_group_name=resource_group_name,
                     cluster_name=cluster_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -383,7 +408,10 @@ class BareMetalMachineKeySetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -443,7 +471,10 @@ class BareMetalMachineKeySetsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BareMetalMachineKeySet", pipeline_response.http_response)
@@ -516,7 +547,10 @@ class BareMetalMachineKeySetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -760,7 +794,10 @@ class BareMetalMachineKeySetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -882,9 +919,10 @@ class BareMetalMachineKeySetsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if bare_metal_machine_key_set_update_parameters else None
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if bare_metal_machine_key_set_update_parameters else None
         _json = None
         _content = None
         if isinstance(bare_metal_machine_key_set_update_parameters, (IOBase, bytes)):
@@ -927,7 +965,10 @@ class BareMetalMachineKeySetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1080,6 +1121,7 @@ class BareMetalMachineKeySetsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if bare_metal_machine_key_set_update_parameters else None
         cls: ClsType[_models.BareMetalMachineKeySet] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

@@ -2205,7 +2205,10 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_download_sparse_page_blob(self, storage_account_name, storage_account_key):
+    async def test_download_sparse_page_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, max_page_size=4 * 1024)
         await self._setup(bsc)

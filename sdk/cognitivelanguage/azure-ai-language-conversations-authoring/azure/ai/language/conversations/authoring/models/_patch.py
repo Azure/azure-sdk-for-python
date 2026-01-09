@@ -5,11 +5,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 """Customize generated code here.
-
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping, Awaitable # pylint:disable=import-error
-from typing import Any, Callable, Optional, Tuple, TypeVar, cast
+from collections.abc import MutableMapping, Awaitable  # pylint:disable=import-error
+from typing import Any, Callable, Tuple, TypeVar, cast, Mapping, Optional, List
 
 import base64
 import functools
@@ -27,17 +26,15 @@ from azure.core.rest import HttpRequest
 
 from ._enums import ExportedProjectFormat
 from ._models import (
-    AssignDeploymentResourcesDetails,
+    AssignedProjectResource,
     CopyProjectDetails,
     CopyProjectState,
     ConversationExportedEntity,
     ConversationExportedIntent,
     ConversationExportedProjectAsset,
     ConversationExportedUtterance,
-    CreateDeploymentDetails,
-    DeleteDeploymentDetails,
+    CreateDeploymentDetails as _GeneratedCreateDeploymentDetails,
     DeploymentDeleteFromResourcesState,
-    DeploymentResourcesState,
     DeploymentState,
     EvaluationJobResult,
     EvaluationState,
@@ -53,12 +50,10 @@ from ._models import (
     SwapDeploymentsDetails,
     SwapDeploymentsState,
     TrainingJobDetails,
-    UnassignDeploymentResourcesDetails,
 )
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-
 
 
 class _JobsStrategy(LongRunningOperation):
@@ -113,7 +108,7 @@ class _JobsPollingMethod(PollingMethod):
         self._deserialization_callback: Optional[Callable] = None
         self._resource: Optional[PipelineResponse] = None
         self._status: str = "NotStarted"
-        self._operation: Any = None                 # or a concrete type if available
+        self._operation: Any = None  # or a concrete type if available
         self._command: Optional[Callable[[], PipelineResponse]] = None
 
     # ---- LRO lifecycle ----
@@ -197,7 +192,8 @@ class _JobsPollingMethod(PollingMethod):
         # Legacy pipeline fallback
         request = self._client.get(url)
         return cast(
-            PipelineResponse, self._client._pipeline.run(request, stream=False, **self._kwargs) # pylint: disable=protected-access
+            PipelineResponse,
+            self._client._pipeline.run(request, stream=False, **self._kwargs),  # pylint: disable=protected-access
         )
 
     # ---- Continuation token support (doc pattern) ----
@@ -242,8 +238,8 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
-        self._resource = None          # no type annotation here
-        self._status = "InProgress"    # no type annotation here
+        self._resource = None  # no type annotation here
+        self._status = "InProgress"  # no type annotation here
 
         # Operation-Location (case-insensitive)
         headers = initial_response.http_response.headers
@@ -284,6 +280,7 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
             return
         # Fallback for non-Azure transports (allowed per rule text)
         import asyncio  # pylint: disable=import-outside-toplevel, do-not-import-asyncio
+
         await asyncio.sleep(seconds)
 
     def finished(self) -> bool:
@@ -345,10 +342,54 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, deserialization_callback
 
+class CreateDeploymentDetails(_GeneratedCreateDeploymentDetails):
+    """Represents the options for creating or updating a project deployment.
+
+    :ivar trained_model_label: Represents the trained model label.
+    :vartype trained_model_label: str
+    :ivar azure_resource_ids: Language or AIService resource IDs associated with this deployment.
+     For service version 2025-11-15-preview, this is represented as a list of
+     class:`AssignedProjectResource`. For service version 2025-11-01, it may be
+     constructed from a list of resource ID strings.
+    :vartype azure_resource_ids:
+     list[~azure.ai.language.conversations.authoring.models.AssignedProjectResource] or list[str]
+    """
+
+    _azure_resource_ids_strings: Optional[List[str]]
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # Case 1: mapping initializer → let generated code handle it
+        if args and isinstance(args[0], Mapping):
+            super().__init__(*args, **kwargs)
+            self._azure_resource_ids_strings = None
+            return
+
+        azure_ids = kwargs.pop("azure_resource_ids", None)
+        self._azure_resource_ids_strings = None
+
+        if azure_ids is None:
+            # nothing special, just call base
+            super().__init__(*args, azure_resource_ids=None, **kwargs)
+            return
+
+        # If user passed AssignedProjectResource list → original behavior
+        if all(isinstance(x, AssignedProjectResource) for x in azure_ids):
+            super().__init__(*args, azure_resource_ids=azure_ids, **kwargs)
+            return
+
+        # If user passed plain strings → GA style, remember them and *don't*
+        # try to turn them into AssignedProjectResource here.
+        if all(isinstance(x, str) for x in azure_ids):
+            self._azure_resource_ids_strings = list(azure_ids)
+            super().__init__(*args, azure_resource_ids=None, **kwargs)
+            return
+
+        raise TypeError(
+            "azure_resource_ids must be a list of str or a list of AssignedProjectResource."
+        )
 
 def patch_sdk():
     """Do not remove from this file.
-
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -356,22 +397,16 @@ def patch_sdk():
 
 
 __all__ = [
-    "AssignDeploymentResourcesDetails",
-    "UnassignDeploymentResourcesDetails",
     "SwapDeploymentsDetails",
-    "DeploymentResourcesState",
     "CopyProjectState",
     "ExportProjectState",
     "SwapDeploymentsState",
-    "DeploymentResourcesState",
-    "DeleteDeploymentDetails",
     "CreateDeploymentDetails",
     "DeploymentDeleteFromResourcesState",
     "DeploymentState",
     "ExportedModelDetails",
     "ExportedModelState",
     "LoadSnapshotState",
-    "DeploymentResourcesState",
     "ProjectDeletionState",
     "ExportedProjectFormat",
     "ExportedProject",

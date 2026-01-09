@@ -1,16 +1,33 @@
 # Release History
 
-## 1.13.5 (Unreleased)
+## 1.14.0 (2026-01-05)
 
-### Features Added
+### Bugs Fixed
 
-### Breaking Changes
+- Updated CodeVulnerability and UngroundedAttributes evaluators for RedTeam to use the binary true/false scoring pattern so their results align with service responses.
+- Fixed `GroundednessEvaluator` with `query` not honoring `is_reasoning_model` (and `credential`) when reloading the query prompty, which could cause `max_tokens` to be sent to reasoning models. [#44385](https://github.com/Azure/azure-sdk-for-python/issues/44385)
+
+## 1.13.7 (2025-11-14)
+
+### Bugs Fixed
+
+- Fixed NoneType error when generating usage summary in evaluation results.
+- Fixed results for f1_score.
+
+## 1.13.6 (2025-11-12)
+
+### Bugs Fixed
+
+- Added detection and retry handling for network errors wrapped in generic exceptions with "Error sending prompt with conversation ID" message
+- Fix results for ungrounded_attributes
+- score_mode grader improvements
+- fix for Red Team to ensure hate/unfairness evaluation rows populate when OneDP sync evaluators report results under the hate_unfairness metric name.
+
+## 1.13.5 (2025-11-10)
 
 ### Bugs Fixed
 
 - **TaskAdherenceEvaluator:** treat tool definitions as optional so evaluations with only query/response inputs no longer raise “Either 'conversation' or individual inputs must be provided.”
-
-### Other Changes
 
 ## 1.13.4 (2025-11-10)
 

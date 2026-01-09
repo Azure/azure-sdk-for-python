@@ -23,7 +23,7 @@ class TestNetworkManagementNetworkSecurityPerimeterServiceTagsOperations(AzureMg
     def test_network_security_perimeter_service_tags_list(self, resource_group):
         response = self.client.network_security_perimeter_service_tags.list(
             location="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
