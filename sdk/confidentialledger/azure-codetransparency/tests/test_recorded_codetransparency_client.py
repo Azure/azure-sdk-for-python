@@ -19,6 +19,8 @@ from devtools_testutils import (
 
 from azure.codetransparency import (
     CodeTransparencyClient,
+)
+from azure.codetransparency.cbor import (
     CBORDecoder,
 )
 

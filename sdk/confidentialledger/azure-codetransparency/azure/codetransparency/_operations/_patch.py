@@ -20,7 +20,7 @@ from azure.codetransparency._operations._operations import (
 from azure.codetransparency._operations._operations import ClsType
 import azure.codetransparency.models as _models
 
-from azure.codetransparency import (
+from azure.codetransparency.cbor import (
     CBORDecoder,
 )
 
