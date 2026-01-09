@@ -881,13 +881,6 @@ def classify_release_type(version: str) -> str:
     :param str version: The version string to classify (e.g., "1.0.0", "2.1.0b1", "1.5.0a2")
     :rtype: str
     :return: Either "beta" or "stable"
-
-    Examples:
-        "1.0.0" -> "stable"
-        "2.1.0b1" -> "beta"
-        "1.5.0a2" -> "beta"
-        "3.0.0rc1" -> "beta"
-        "1.0.0.dev20241201" -> "beta"
     """
     if "b" in version.lower():
         return "beta"
