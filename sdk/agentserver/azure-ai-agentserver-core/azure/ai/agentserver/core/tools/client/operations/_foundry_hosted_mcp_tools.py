@@ -7,8 +7,7 @@ from typing import Any, ClassVar, Dict, List, Mapping, cast
 from azure.core.rest import HttpRequest
 
 from azure.ai.agentserver.core.tools import FoundryHostedMcpTool, FoundryToolSource, ResolvedFoundryTool, \
-    ToolInvocationError
-from azure.ai.agentserver.core.tools._to_be_deleted import MetadataMapper
+	ToolInvocationError
 from azure.ai.agentserver.core.tools.client._models import FoundryToolDetails, ListFoundryHostedMcpToolsResponse
 from azure.ai.agentserver.core.tools.client.operations._base import BaseOperations
 
@@ -46,9 +45,14 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 
 	# Tool-specific property key overrides
 	# Format: {"tool_name": {"tool_def_key": "meta_schema_key"}}
-	_TOOL_PROPERTY_OVERRIDES: ClassVar[Dict[str, Dict[str, str]]] = {
+	_TOOL_PROPERTY_ALIAS: ClassVar[Dict[str, Dict[str, List[str]]]] = {
+		"_default": {
+			"imagegen_model_deployment_name": ["model_deployment_name"],
+			"model_deployment_name": ["model"],
+			"deployment_name": ["model"],
+		},
 		"image_generation": {
-			"model": "imagegen_model_deployment_name"
+			"imagegen_model_deployment_name": ["model"]
 		},
 		# Add more tool-specific mappings as needed
 	}
@@ -93,19 +97,30 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 			"arguments": arguments
 		}
 		if tool.metadata:
-			key_overrides = self._TOOL_PROPERTY_OVERRIDES.get(tool.name, {})
-			# TODO: refactor MetadataMapper to avoid model_dump call
-			meta_config = MetadataMapper.extract_metadata_config(
-				tool.metadata.model_dump(),
+			property_alias = self._resolve_property_alias(tool.name)
+			meta_config = tool.metadata.extract_from(
 				cast(FoundryHostedMcpTool, tool.definition).configuration,
-				key_overrides
-			)
+				property_alias)
 			payload["_meta"] = meta_config
 
 		return self._client.post(self._PATH,
 								params=self._QUERY_PARAMS,
 								headers=self._HEADERS,
 								content=payload)
+
+	@classmethod
+	def _resolve_property_alias(cls, tool_name: str) -> Dict[str, List[str]]:
+		"""Get property key overrides for a specific tool.
+
+		:param tool_name: Name of the tool.
+		:type tool_name: str
+		:return: Property key overrides.
+		:rtype: Dict[str, List[str]]
+		"""
+		overrides = dict(cls._TOOL_PROPERTY_ALIAS.get("_default", {}))
+		tool_specific = cls._TOOL_PROPERTY_ALIAS.get(tool_name, {})
+		overrides.update(tool_specific)
+		return overrides
 
 
 class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):

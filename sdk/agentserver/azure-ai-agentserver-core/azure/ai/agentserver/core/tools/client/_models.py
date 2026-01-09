@@ -6,7 +6,7 @@ import inspect
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Annotated, Any, Awaitable, Callable, ClassVar, List, Literal, Mapping, Optional, Type, Union
+from typing import Annotated, Any, Awaitable, Callable, ClassVar, Dict, Iterable, List, Literal, Mapping, Optional, Set, Type, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 from pydantic import AliasChoices, AliasPath, BaseModel, Discriminator, Field, ModelWrapValidatorHandler, Tag, \
@@ -266,7 +266,7 @@ class SchemaProperty(BaseModel):
 	    :attr:`type` is :data:`~SchemaType.OBJECT`. Keys are property names, values
 	    are their respective schemas.
 	:ivar default: Optional default value for the property.
-	:ivar required: For an ``object`` schema node, the list of required property
+	:ivar required: For an ``object`` schema node, the set of required property
 	    names within :attr:`properties`. (This mirrors JSON Schema’s ``required``
 	    keyword; it is *not* “this property is required in a parent object”.)
 	"""
@@ -276,7 +276,7 @@ class SchemaProperty(BaseModel):
 	items: Optional["SchemaProperty"] = None
 	properties: Optional[Mapping[str, "SchemaProperty"]] = None
 	default: Any = None
-	required: Optional[List[str]] = None
+	required: Optional[Set[str]] = None
 
 	def has_default(self) -> bool:
 		"""
@@ -294,13 +294,82 @@ class SchemaDefinition(BaseModel):
 
 	:ivar type: The schema type of the root. Typically :data:`~SchemaType.OBJECT`.
 	:ivar properties: Mapping of top-level property names to their schemas.
-	:ivar required: List of required top-level property names within
+	:ivar required: Set of required top-level property names within
 	    :attr:`properties`.
 	"""
 
 	type: SchemaType = SchemaType.OBJECT
 	properties: Mapping[str, SchemaProperty]
-	required: Optional[List[str]] = None
+	required: Optional[Set[str]] = None
+
+	def extract_from(self,
+					 datasource: Mapping[str, Any],
+					 property_alias: Optional[Dict[str, List[str]]] = None) -> Dict[str, Any]:
+		return self._extract(datasource, self.properties, self.required, property_alias)
+
+	@classmethod
+	def _extract(cls,
+				 datasource: Mapping[str, Any],
+				 properties: Mapping[str, SchemaProperty],
+				 required: Optional[Set[str]] = None,
+				 property_alias: Optional[Dict[str, List[str]]] = None) -> Dict[str, Any]:
+		result: Dict[str, Any] = {}
+
+		for property_name, schema in properties.items():
+			# Determine the keys to look for in the datasource
+			keys_to_check = [property_name]
+			if property_alias and property_name in property_alias:
+				keys_to_check.extend(property_alias[property_name])
+
+			# Find the first matching key in the datasource
+			value_found = False
+			for key in keys_to_check:
+				if key in datasource:
+					value = datasource[key]
+					value_found = True
+					break
+
+			if not value_found and schema.has_default():
+				value = schema.default
+				value_found = True
+
+			if not value_found:
+				# If the property is required but not found, raise an error
+				if required and property_name in required:
+					raise KeyError(f"Required property '{property_name}' not found in datasource.")
+				# If not found and not required, skip to next property
+				continue
+
+			# Process the value based on its schema type
+			if schema.type == SchemaType.OBJECT and schema.properties:
+				if isinstance(value, Mapping):
+					nested_value = cls._extract(
+						value,
+						schema.properties,
+						schema.required,
+						property_alias
+					)
+					result[property_name] = nested_value
+			elif schema.type == SchemaType.ARRAY and schema.items:
+				if isinstance(value, Iterable):
+					nested_list = []
+					for item in value:
+						if schema.items.type == SchemaType.OBJECT and schema.items.properties:
+							if isinstance(item, dict):
+								nested_item = SchemaDefinition._extract(
+									item,
+									schema.items.properties,
+									schema.items.required,
+									property_alias
+								)
+								nested_list.append(nested_item)
+						else:
+							nested_list.append(item)
+					result[property_name] = nested_list
+			else:
+				result[property_name] = value
+
+		return result
 
 
 class RawFoundryHostedMcpTool(BaseModel):
