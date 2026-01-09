@@ -2,13 +2,10 @@
 
 import os
 import argparse
-import json
-import csv
 import yaml
-import urllib.request
 import re
 import glob
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from ci_tools.logging import logger, configure_logging
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
@@ -21,6 +18,7 @@ from conda_helper_functions import (
     build_package_index,
     get_package_path,
     get_bundle_name,
+    map_bundle_to_packages
 )
 
 from conda_release_groups import (
@@ -378,9 +376,9 @@ def determine_service_info(
         common_root = "azure"
 
     # TODO handle exceptions msrest,msal.msal-extensions,azure-ai-vision,azure-healthinsights
-
-    if not service_name:
-        service_name = os.path.basename(os.path.dirname(get_package_path(package_name)))
+    package_path = get_package_path(package_name)
+    if not service_name and package_path:
+        service_name = os.path.basename(os.path.dirname(package_path))
 
     return common_root, service_name
 
@@ -432,11 +430,14 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
     return list(host_requirements), list(run_requirements)
 
 
-def get_package_metadata(package_name: str, package_path: str) -> Tuple[str, str, str]:
+def get_package_metadata(package_name: str, package_path: Optional[str]) -> Tuple[str, str, str]:
     """Extract package metadata for about section in meta.yaml."""
     pkg_metadata = extract_package_metadata(package_path)
-
-    service_dir = os.path.basename(os.path.dirname(package_path))
+    if package_path:
+        service_dir = os.path.basename(os.path.dirname(package_path))
+    else:
+        # TODO
+        service_dir = package_name.replace("azure-", "")
     home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
     # TODO check correctness of this
@@ -495,8 +496,9 @@ def generate_data_plane_meta_yaml(
         host_reqs = list(host_reqs)
         run_reqs = list(run_reqs)
 
+        package_path = get_package_path(group_data["packages"][0])
         home_url, summary, description = get_package_metadata(
-            group_name, get_package_path(group_data["packages"][0])
+            group_name, package_path
         )
     else:
         logger.info(f"Generating meta.yaml for package {package_name}")
@@ -997,6 +999,8 @@ if __name__ == "__main__":
 
     # pre-process bundled packages to minimize file writes for new data plane packages,
     # and release logs
+    bundle_map = map_bundle_to_packages(list(package_dict.keys()))
+    print(bundle_map)
 
     # handle new data plane libraries
     new_data_plane_results = add_new_data_plane_packages(

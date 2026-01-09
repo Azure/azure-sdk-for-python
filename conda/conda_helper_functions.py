@@ -29,10 +29,13 @@ TYPE_COL = "Type"
 # Helpers for handling bundled releases
 # =====================================
 
-def get_package_path(package_name: str) -> str:
+def get_package_path(package_name: str) -> Optional[str]:
     """Get the filesystem path of an SDK package given its name."""
     pattern = os.path.join(SDK_DIR, "**", package_name)
     matches = glob.glob(pattern, recursive=True)
+    if not matches:
+        logger.error(f"Package path not found for package: {package_name}")
+        return None
     return matches[0]
 
 def get_bundle_name(package_name: str) -> Optional[str]:
@@ -42,6 +45,9 @@ def get_bundle_name(package_name: str) -> Optional[str]:
     If bundled, return the bundle name; otherwise, return None.
     """
     package_path = get_package_path(package_name)
+    if not package_path:
+        logger.warning(f"Cannot determine package path for {package_name}")
+        return None
     parsed = ParsedSetup.from_path(package_path)
     if not parsed:
         # TODO raise something 
@@ -59,6 +65,20 @@ def get_bundle_name(package_name: str) -> Optional[str]:
         return conda_config["bundle_name"]
     
     return None
+
+def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
+    """Create a mapping of bundle names to their constituent package names."""
+    bundle_map = {}
+    
+    for package_name in package_names:
+        logger.debug(f"Processing package for bundle mapping: {package_name}")
+        bundle_name = get_bundle_name(package_name)
+        if bundle_name:
+            if bundle_name not in bundle_map:
+                bundle_map[bundle_name] = []
+            bundle_map[bundle_name].append(package_name)
+
+    return bundle_map
 
 # =====================================
 # Utility functions for parsing data
