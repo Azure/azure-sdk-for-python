@@ -23,11 +23,11 @@
   - Added model `MccCacheNodeTlsCertificateHistory`
   - Added model `MccCacheNodeTlsCertificateProperties`
   - Added model `MccIssue`
-  - Model `EnterpriseMccCacheNodesOperationsOperations` added method `get_cache_node_auto_update_history`
-  - Model `EnterpriseMccCacheNodesOperationsOperations` added method `get_cache_node_mcc_issue_details_history`
-  - Model `EnterpriseMccCacheNodesOperationsOperations` added method `get_cache_node_tls_certificate_history`
-  - Model `IspCacheNodesOperationsOperations` added method `get_cache_node_auto_update_history`
-  - Model `IspCacheNodesOperationsOperations` added method `get_cache_node_mcc_issue_details_history`
+  - Operation group `EnterpriseMccCacheNodesOperationsOperations` added method `get_cache_node_auto_update_history`
+  - Operation group `EnterpriseMccCacheNodesOperationsOperations` added method `get_cache_node_mcc_issue_details_history`
+  - Operation group `EnterpriseMccCacheNodesOperationsOperations` added method `get_cache_node_tls_certificate_history`
+  - Operation group `IspCacheNodesOperationsOperations` added method `get_cache_node_auto_update_history`
+  - Operation group `IspCacheNodesOperationsOperations` added method `get_cache_node_mcc_issue_details_history`
 
 ### Breaking Changes
 
@@ -40,8 +40,8 @@
   - Deleted or renamed model `CacheNodePreviewResource`
   - Deleted or renamed model `CycleType`
   - Deleted or renamed model `EnterprisePreviewResource`
-  - Deleted or renamed model `CacheNodesOperationsOperations`
-  - Deleted or renamed model `EnterpriseCustomerOperationsOperations`
+  - Deleted or renamed operation group `CacheNodesOperationsOperations`
+  - Deleted or renamed operation group `EnterpriseCustomerOperationsOperations`
 
 ## 1.0.0b1 (2024-11-21)
 
