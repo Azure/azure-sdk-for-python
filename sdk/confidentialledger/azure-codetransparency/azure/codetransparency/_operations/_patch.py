@@ -9,9 +9,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import time
-from typing import Any, Callable, IO, Iterator, List, Optional, Union, cast
+from typing import Any, Callable, IO, Iterator, List, Optional, Union, cast, Tuple
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 from azure.codetransparency._operations._operations import (
@@ -19,6 +19,10 @@ from azure.codetransparency._operations._operations import (
 )
 from azure.codetransparency._operations._operations import ClsType
 import azure.codetransparency.models as _models
+
+from azure.codetransparency import (
+    CBORDecoder,
+)
 
 __all__: List[str] = [
     "_CodeTransparencyClientOperationsMixin"
@@ -34,21 +38,16 @@ def patch_sdk():
     """
 
 
-class BaseStatePollingMethod:
-    """Base polling method for methods returning responses containing a 'state' field; the polling
-    completes when 'state' becomes a desired value.
-    """
+class OperationPollingMethod(PollingMethod):
+    """Polling method for operations responses"""
 
     def __init__(
         self,
-        operation: Callable[[], Any],
-        desired_state: str,
+        operation: Callable[[], Optional[Iterator[bytes]]],
         polling_interval_s: float,
     ):
         self._operation = operation
-        self._desired_state = desired_state
         self._polling_interval_s = polling_interval_s
-
         self._deserialization_callback = None
         self._status = "constructed"
         self._latest_response: Optional[Iterator[bytes]] = None
@@ -59,13 +58,30 @@ class BaseStatePollingMethod:
         self._evaluate_response(initial_response)
         self._deserialization_callback = deserialization_callback
 
+    def run(self) -> None:
+        try:
+            while not self.finished():
+                response = self._operation()
+                self._evaluate_response(response)
+                if not self.finished():
+                    time.sleep(self._polling_interval_s)
+        except Exception:
+            self._status = "failed"
+            raise
+
     def _evaluate_response(self, response: Optional[Iterator[bytes]]) -> None:
-        # FIXME: decode CBOR
-        self._status = (
-            "finished"
-            if response.get("state", None) == self._desired_state
-            else "polling"
-        )
+        if response is None:
+            return
+        # {"OperationId": "some transaction num", "Status": "running"}
+        # Status can be running, failed, succeeded
+        decoded = CBORDecoder.from_response(response).decode()
+        status = decoded.get("Status", None)
+        if status == "succeeded":
+            self._status = "finished"
+        elif status == "failed":
+            self._status = "failed"
+        else:
+            self._status = "polling"
         self._latest_response = response
 
     def status(self) -> str:
@@ -80,18 +96,25 @@ class BaseStatePollingMethod:
         return self._latest_response
 
 
-class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
-    """Polling method for methods returning responses containing a 'state' field; the polling
-    completes when 'state' becomes a desired value.
-    """
+class Error503PollingMethod(PollingMethod):
+    """Polling method for retriable 503 responses"""
 
     def __init__(
         self,
-        operation: Callable[[], Iterator[bytes]],
-        desired_state: str,
+        operation: Callable[[], Tuple[int, Optional[Any]]],
         polling_interval_s: float,
     ):
-        super().__init__(operation, desired_state, polling_interval_s)
+        self._operation = operation
+        self._polling_interval_s = polling_interval_s
+        self._deserialization_callback = None
+        self._status = "constructed"
+        self._latest_response: Optional[Any] = None
+
+    def initialize(
+        self, client, initial_response, deserialization_callback
+    ):  # pylint: disable=unused-argument
+        self._evaluate_response(initial_response)
+        self._deserialization_callback = deserialization_callback
 
     def run(self) -> None:
         try:
@@ -103,6 +126,27 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
         except Exception:
             self._status = "failed"
             raise
+
+    def _evaluate_response(self, response: Tuple[int, Optional[Any]]) -> None:
+        status_code = response[0]
+        if status_code >= 200 and status_code < 300:
+            self._status = "finished"
+        elif status_code == 503:
+            self._status = "polling"
+        else:
+            self._status = "failed"
+        self._latest_response = response[1]
+
+    def status(self) -> str:
+        return self._status
+
+    def finished(self) -> bool:
+        return self.status() in {"finished", "failed"}
+
+    def resource(self):
+        if self._deserialization_callback:
+            return self._deserialization_callback(self._latest_response)
+        return self._latest_response
 
 
 class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
@@ -122,59 +166,67 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
          :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.LedgerQueryResult]
          :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        # FIXME MST returns 503 if the entry is not ready yet
-        def operation() -> Iterator[bytes]:
-            return super(_CodeTransparencyClientOperationsMixin, self).get_entry(
+        def operation() -> Tuple[int, Optional[Iterator[bytes]]]:
+            kwargs["cls"] = lambda pipeline, body, headers: [
+                pipeline.http_response.status_code,
+                body,
+            ]
+            val = super(_CodeTransparencyClientOperationsMixin, self).get_entry(
                 entry_id, **kwargs
             )
+            return val  # type: ignore
 
-        #
         initial_response = operation()
 
-        if polling is True:
-            polling_method = cast(
-                PollingMethod, StatePollingMethod(operation, "Ready", lro_delay, False)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        return LROPoller(self._client, initial_response, lambda x: x, polling_method)
+        polling_method = cast(
+            PollingMethod, Error503PollingMethod(operation, lro_delay)
+        )
 
-    def begin_get_receipt(
+        return LROPoller(
+            client=self,
+            initial_response=initial_response,
+            deserialization_callback=lambda x: x,  # returning the result as-is
+            polling_method=polling_method,
+        )
+
+    def begin_get_entry_statement(
         self, transaction_id: str, **kwargs: Any
-    ) -> LROPoller[_models.TransactionReceipt]:
+    ) -> LROPoller[Iterator[bytes]]:
         """Returns a poller for getting a receipt certifying ledger contents at a particular
         transaction id.
 
         :param transaction_id: Identifies a write transaction. Required.
         :type transaction_id: str
         :return: An instance of LROPoller that returns a TransactionReceipt object for the receipt.
-        :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.TransactionReceipt]
+        :rtype: ~azure.core.polling.LROPoller[Iterator[bytes]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
-        def operation() -> JSON:
-            return super(_CodeTransparencyClientOperationsMixin, self).get_receipt(
-                transaction_id=transaction_id, **kwargs
-            )
+        def operation() -> Tuple[int, Optional[Iterator[bytes]]]:
+            kwargs["cls"] = lambda pipeline, body, headers: [
+                pipeline.http_response.status_code,
+                body,
+            ]
+            val = super(
+                _CodeTransparencyClientOperationsMixin, self
+            ).get_entry_statement(transaction_id=transaction_id, **kwargs)
+            return val  # type: ignore
 
         initial_response = operation()
 
-        if polling is True:
-            polling_method = cast(
-                PollingMethod, StatePollingMethod(operation, "Ready", lro_delay, False)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        return LROPoller(self._client, initial_response, lambda x: x, polling_method)
+        polling_method = cast(
+            PollingMethod, Error503PollingMethod(operation, lro_delay)
+        )
+
+        return LROPoller(
+            client=self,
+            initial_response=initial_response,
+            deserialization_callback=lambda x: x,  # returning the result as-is
+            polling_method=polling_method,
+        )
 
     def begin_create_entry(
         self,
@@ -208,27 +260,21 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
 
         post_pipeline_response, post_result, post_headers = self.create_entry(
             entry, **kwargs
-        )\
-
+        )
         # Delete the cls because it should only apply to the create_ledger_entry response, not the
         # wait_for_commit call.
         del kwargs["cls"]
 
         # FIXME: check if this is an error response, e.g. 5xx or 4xx, decode CBOR error message and raise
-        # FIXME: decode CBOR response to extract operationId from map {"OperationId": "some transaction num", "Status": "running"}
+        decoded = CBORDecoder(post_result).decode()
+        if decoded.get("Status", None) == "failed":
+            raise HttpResponseError(response=post_pipeline_response)
 
         operation_id = post_result["OperationId"]  # type: ignore
 
         kwargs["polling"] = polling
         kwargs["polling_interval"] = lro_delay
-
-        # if cls was provided, use it now
-        if cls:
-            kwargs["_create_ledger_entry_response"] = cls(
-                post_pipeline_response, post_result, post_headers  # type: ignore
-            )
-        else:
-            kwargs["_create_ledger_entry_response"] = post_result
+        kwargs["_create_entry_response"] = post_result
         return self.begin_wait_for_operation(operation_id, **kwargs)
 
     def begin_wait_for_operation(
@@ -236,8 +282,8 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         operation_id,  # type: str
         **kwargs,  # type: Any
     ) -> LROPoller[Iterator[bytes]]:
-        """Creates a poller that queries the state of the specified transaction until it is
-        Committed, a state that indicates the transaction is durably stored in the Confidential
+        """Creates a poller that queries the state of the specified operation until it is
+        complete, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
 
         :param operation_id: Identifies async operation. Required.
@@ -246,31 +292,25 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
-
-        # If this poller was called from begin_create_ledger_entry, we should return the
-        # create_ledger_entry response, not the transaction status.
-
-        post_result = kwargs.pop("_create_ledger_entry_response", None)
-
-        def deserialization_callback(x):
-            return x if post_result is None else post_result
 
         def operation() -> Optional[Iterator[bytes]]:
             return super(_CodeTransparencyClientOperationsMixin, self).get_operation(
                 operation_id=operation_id, **kwargs
             )
 
-        if polling is True:
-            polling_method = cast(
-                PollingMethod,
-                StatePollingMethod(operation, "Committed", lro_delay, True),
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
+        post_result = kwargs.pop("_create_entry_response", None)
+
+        initial_response = operation() if post_result is None else post_result
+
+        polling_method = cast(
+            PollingMethod,
+            OperationPollingMethod(operation, lro_delay),
+        )
+
         return LROPoller(
-            self._client, operation(), deserialization_callback, polling_method
+            client=self,
+            initial_response=initial_response,
+            deserialization_callback=lambda x: x,  # returning the result as-is
+            polling_method=polling_method,
         )
