@@ -26,10 +26,5 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Add additional pylint disables to the model_base.py file
 powershell -Command "(Get-Content azure\ai\projects\_utils\model_base.py) -replace '# pylint: disable=protected-access, broad-except', '# pylint: disable=protected-access, broad-except, import-error, no-value-for-parameter' | Set-Content azure\ai\projects\_utils\model_base.py"
 
-REM Remove ResponseFormatJsonSchemaSchema from __init__.py, as it is no longer used (since we patched TextResponseFormatJsonSchema). I tried
-REM to do this via decorators in TypeSpec cleint.tsp, but that did not work.
-powershell -Command "(Get-Content azure\ai\projects\models\__init__.py) -replace '    ResponseFormatJsonSchemaSchema,\r?\n', '' | Set-Content azure\ai\projects\models\__init__.py"
-powershell -Command "(Get-Content azure\ai\projects\models\__init__.py) -replace '    \"ResponseFormatJsonSchemaSchema\",\r?\n', '' | Set-Content azure\ai\projects\models\__init__.py"
-
 echo Now do these additional changes manually, if you want the "Generate docs" job to succeed in PR pipeline
 REM Remove `generate_summary` from class `Reasoning`. It's deprecated but causes two types of errors. Consider removing it from TypeSpec.
