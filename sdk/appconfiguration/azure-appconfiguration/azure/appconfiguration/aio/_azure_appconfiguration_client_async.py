@@ -19,6 +19,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from .._query_param_policy import QueryParamPolicy
 from .._generated.aio import AzureAppConfigurationClient as AzureAppConfigurationClientGenerated
 from .._generated.models import (
     SnapshotStatus,
@@ -74,10 +75,11 @@ class AzureAppConfigurationClient:
             raise ValueError("Missing credential")
 
         self._sync_token_policy = AsyncSyncTokenPolicy()
+        self._query_param_policy = QueryParamPolicy()
 
         audience_policy = AudienceErrorHandlingPolicy(bool(kwargs.get("audience", None)))
 
-        per_call_policies = [self._sync_token_policy, audience_policy]
+        per_call_policies = [self._sync_token_policy, audience_policy, self._query_param_policy]
         audience = kwargs.pop("audience", get_audience(base_url))
         # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
         kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
@@ -103,8 +105,7 @@ class AzureAppConfigurationClient:
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfigurationClientGenerated(
-            base_url, credential, per_call_policies=per_call_policies, **kwargs  # type: ignore[arg-type]
-        )
+            base_url, credential, per_call_policies=per_call_policies, **kwargs  # type: ignore[arg-type]        )
 
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":

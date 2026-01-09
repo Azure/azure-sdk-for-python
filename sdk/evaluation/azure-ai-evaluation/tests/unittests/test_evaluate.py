@@ -1120,6 +1120,7 @@ class TestEvaluate:
         parent = pathlib.Path(__file__).parent.resolve()
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
         test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_util_convert_eval_meta_data.json")
+        test_input_eval_config_path = os.path.join(parent, "data", "evaluation_util_convert_eval_config.json")
         test_input_eval_error_summary_path = os.path.join(parent, "data", "evaluation_util_convert_error_summary.json")
         test_expected_output_path = os.path.join(parent, "data", "evaluation_util_convert_expected_output.json")
 
@@ -1159,6 +1160,9 @@ class TestEvaluate:
         test_eval_input_metadata = {}
         with open(test_input_eval_metadata_path, "r") as f:
             test_eval_input_metadata = json.load(f)
+        test_eval_input_config = {}
+        with open(test_input_eval_config_path, "r") as f:
+            test_eval_input_config = json.load(f)
         test_eval_error_summary = {}
         with open(test_input_eval_error_summary_path, "r") as f:
             test_eval_error_summary = json.load(f)
@@ -1178,6 +1182,7 @@ class TestEvaluate:
                 evaluators=evaluators,
                 eval_run_summary=test_eval_error_summary,
                 eval_meta_data=test_eval_input_metadata,
+                evaluator_config=test_eval_input_config,
             )
 
         # Run the async function
