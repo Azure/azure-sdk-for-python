@@ -208,7 +208,7 @@ def update_conda_sdk_client_yml(
 
     parameters = conda_client_data["parameters"]
 
-    # quick look up for handling grouped package releases
+    # quick look up for handling bundled package releases
     existing_parameter_names = [p.get("name") for p in parameters]
     existing_artifact_names = {
         a.get("name"): idx for idx, a in enumerate(conda_artifacts)
@@ -252,8 +252,6 @@ def update_conda_sdk_client_yml(
             existing_parameter_names.append(release_name)
 
         # add to CondaArtifacts
-        common_root, service_name = determine_service_info(pkg, bundle_name)
-
         curr_version = pkg.get(VERSION_GA_COL)
 
         if not curr_version:
@@ -264,6 +262,7 @@ def update_conda_sdk_client_yml(
             continue
 
         checkout_package = {"package": package_name, "version": curr_version}
+        common_root, service_name = determine_service_info(pkg, bundle_name)
 
         if package_name in existing_artifact_names:
             # individual released package already exists
@@ -962,20 +961,22 @@ if __name__ == "__main__":
     ]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
-    outdated_packages = [
-        pkg for pkg in packages if package_needs_update(pkg, old_version, is_new=False)
+    data_pkgs, mgmt_pkgs = separate_packages_by_type(packages)
+    outdated_data_pkgs = [
+        pkg for pkg in data_pkgs if package_needs_update(pkg, old_version, is_new=False)
     ]
-    new_packages = [
-        pkg for pkg in packages if package_needs_update(pkg, old_version, is_new=True)
+    new_data_plane_names = [
+        pkg.get(PACKAGE_COL, "")
+        for pkg in data_pkgs
+        if package_needs_update(pkg, old_version, is_new=True)
     ]
-    new_data_plane_packages, new_mgmt_plane_packages = separate_packages_by_type(
-        new_packages
-    )
-
-    # need for mgmt release log update
-    _, all_mgmt_packages = separate_packages_by_type(packages)
-    all_mgmt_packages = [
-        pkg.get(PACKAGE_COL, "") for pkg in all_mgmt_packages if pkg.get(PACKAGE_COL)
+    outdated_mgmt_pkgs = [
+        pkg for pkg in mgmt_pkgs if package_needs_update(pkg, old_version, is_new=False)
+    ]
+    new_mgmt_plane_names = [
+        pkg.get(PACKAGE_COL, "")
+        for pkg in mgmt_pkgs
+        if package_needs_update(pkg, old_version, is_new=True)
     ]
 
     # map package name to csv row for easy lookup
@@ -983,16 +984,8 @@ if __name__ == "__main__":
 
     # Extract package names from the filtered lists
     outdated_package_names = [
-        pkg.get(PACKAGE_COL, "") for pkg in outdated_packages if pkg.get(PACKAGE_COL)
-    ]
-    new_data_plane_names = [
         pkg.get(PACKAGE_COL, "")
-        for pkg in new_data_plane_packages
-        if pkg.get(PACKAGE_COL)
-    ]
-    new_mgmt_plane_names = [
-        pkg.get(PACKAGE_COL, "")
-        for pkg in new_mgmt_plane_packages
+        for pkg in (outdated_data_pkgs + outdated_mgmt_pkgs)
         if pkg.get(PACKAGE_COL)
     ]
 
@@ -1001,12 +994,15 @@ if __name__ == "__main__":
     conda_sdk_client_pkgs_result = update_conda_sdk_client_yml(
         package_dict, outdated_package_names, new_data_plane_names, new_mgmt_plane_names
     )
-    exit()
+
+    # pre-process bundled packages to minimize file writes for new data plane packages,
+    # and release logs
 
     # handle new data plane libraries
     new_data_plane_results = add_new_data_plane_packages(
         package_dict, new_data_plane_names
     )
+    exit()
 
     # handle new mgmt plane libraries
     new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
