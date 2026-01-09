@@ -28,7 +28,7 @@ from _shared.constants import (
 from _shared.testcase import CodeTransparencyPreparer, CodeTransparencyClientTestBase
 
 
-class TestConfidentialLedgerClient(CodeTransparencyClientTestBase):
+class TestCodetransparencyClient(CodeTransparencyClientTestBase):
     def create_confidentialledger_client(
         self, endpoint, ledger_id
     ) -> CodeTransparencyClient:
