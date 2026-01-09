@@ -1,1 +1,2 @@
 {"query": "\"test\"", "response":"test","ground_truth":"\"test\""}
+{"query": "\"test\"", "response":"\"test\"","ground_truth":"\"test\""}

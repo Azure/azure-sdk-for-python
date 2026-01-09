@@ -754,11 +754,26 @@ class TestEvaluate:
         result = evaluate(
                 data=quotation_fix_test_data,
                 evaluators={
-                    "test_evaluator": QuotationFixEval,
+                    "test_evaluator": QuotationFixEval(),
                 }
             )
+        
         print(result)
         assert result is not None
+        assert result["rows"] is not None
+        assert result["rows"][0] is not None
+        assert result["rows"][0]["inputs.query"] == "\"test\""
+        assert result["rows"][0]["inputs.response"] == "test"
+        assert result["rows"][0]["inputs.ground_truth"] == "\"test\""
+        assert result["rows"][0]["outputs.test_evaluator.score"] == 2
+        assert result["rows"][0]["outputs.test_evaluator.reason"] == "ne"
+        
+        assert result["rows"][1] is not None
+        assert result["rows"][1]["inputs.query"] == "\"test\""
+        assert result["rows"][1]["inputs.response"] == "\"test\""
+        assert result["rows"][1]["inputs.ground_truth"] == "\"test\""
+        assert result["rows"][1]["outputs.test_evaluator.score"] == 1
+        assert result["rows"][1]["outputs.test_evaluator.reason"] == "eq"
         
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file):
         from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
