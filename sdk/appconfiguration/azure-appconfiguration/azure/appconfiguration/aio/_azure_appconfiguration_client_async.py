@@ -35,6 +35,7 @@ from .._models import (
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
+from .._audience import get_audience, DEFAULT_SCOPE_SUFFIX
 from .._utils import (
     get_key_filter,
     get_label_filter,
@@ -51,6 +52,10 @@ class AzureAppConfigurationClient:
     :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword audience: The audience to use for authentication with Microsoft Entra. Defaults to the public Azure App
+        Configuration audience. See the supported audience list at https://aka.ms/appconfig/client-token-audience
+    :paramtype audience: str
+
 
     This is the async version of :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -69,11 +74,9 @@ class AzureAppConfigurationClient:
 
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
-        credential_scopes = kwargs.pop("credential_scopes", [f"{base_url.strip('/')}/.default"])
-        # Ensure all scopes end with /.default
-        kwargs["credential_scopes"] = [
-            scope if scope.endswith("/.default") else f"{scope}/.default" for scope in credential_scopes
-        ]
+        audience = kwargs.pop("audience", get_audience(base_url))
+        # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
+        kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
 
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")
@@ -85,7 +88,9 @@ class AzureAppConfigurationClient:
         elif hasattr(credential, "get_token"):  # AsyncFakeCredential is not an instance of AsyncTokenCredential
             kwargs.update(
                 {
-                    "authentication_policy": AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                    "authentication_policy": AsyncBearerTokenCredentialPolicy(
+                        credential, *kwargs["credential_scopes"], **kwargs
+                    ),
                 }
             )
         else:
