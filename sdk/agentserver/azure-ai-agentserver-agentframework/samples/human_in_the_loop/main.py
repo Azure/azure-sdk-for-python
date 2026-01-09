@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 
 from agent_framework import (  # noqa: E402
     Executor,
+    InMemoryCheckpointStorage,
     WorkflowAgent,
     WorkflowBuilder,
     WorkflowContext,
@@ -114,6 +115,7 @@ def build_agent():
 async def run_agent() -> None:
     """Run the workflow inside the agent server adapter."""
     agent = build_agent()
+    checkpoint_storage = InMemoryCheckpointStorage()
     await from_agent_framework(agent).run_async()
 
 if __name__ == "__main__":
