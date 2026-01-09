@@ -9,15 +9,55 @@ Client at runtime.
 
 import asyncio
 import os
-from typing import List
+from typing import List, AsyncGenerator
 from dotenv import load_dotenv
-from agent_framework import AIFunction
+from agent_framework import AIFunction, AgentProtocol
 from agent_framework.azure import AzureOpenAIChatClient
 
 from azure.ai.agentserver.agentframework import from_agent_framework
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 
 load_dotenv()
+
+# Keep-alive interval is 15 seconds, so we need delays > 15s to trigger keep-alive
+KEEP_ALIVE_INTERVAL = 15.0
+TEST_DELAY_SECONDS = 60.0  # Delay between events to test keep-alive
+
+
+class DelayedAgentWrapper(AgentProtocol):
+    """Wrapper around an agent to add delays for keep-alive testing.
+    
+    This wrapper adds delays between streaming events to test the keep-alive
+    mechanism. If no event is received within 15 seconds, the server will
+    send a keep-alive signal.
+    """
+    
+    def __init__(self, agent: AgentProtocol, delay_seconds: float = TEST_DELAY_SECONDS):
+        self._agent = agent
+        self._delay_seconds = delay_seconds
+    
+    async def run(self, message):
+        """Run the agent in non-streaming mode."""
+        return await self._agent.run(message)
+    
+    async def run_stream(self, message) -> AsyncGenerator:
+        """Run the agent in streaming mode with delays for keep-alive testing."""
+        print(f"Starting delayed streaming with {self._delay_seconds}s delay between events...")
+        print(f"Keep-alive interval is {KEEP_ALIVE_INTERVAL}s, delay is {self._delay_seconds}s")
+        
+        event_count = 0
+        async for event in self._agent.run_stream(message):
+            event_count += 1
+            print(f"Received event #{event_count}, yielding it...")
+            yield event
+            
+            # Add delay AFTER yielding event to test keep-alive
+            # This will trigger keep-alive if delay > 15 seconds
+            # Only delay for first few events to avoid too long total time
+            if event_count < 5:  # Only delay for first 5 events
+                print(f"Waiting {self._delay_seconds}s before next event (to test keep-alive)...")
+                await asyncio.sleep(self._delay_seconds)
+        print(f"Streaming completed with {event_count} events")
 
 
 def create_agent_factory():
@@ -28,7 +68,7 @@ def create_agent_factory():
     allowing it to access the latest tool configuration dynamically.
     """
 
-    async def agent_factory(tools: List[AIFunction]) -> AzureOpenAIChatClient:
+    async def agent_factory(tools: List[AIFunction]) -> AgentProtocol:
         """Factory function that creates an agent using the provided tools.
 
         :param tools: The list of AIFunction tools available to the agent.
@@ -51,13 +91,18 @@ def create_agent_factory():
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
         # Create the Agent Framework agent with the tools
         print("\nCreating Agent Framework agent with tools from factory...")
-        agent = AzureOpenAIChatClient(ad_token_provider=token_provider).create_agent(
+        base_agent = AzureOpenAIChatClient(ad_token_provider=token_provider).create_agent(
             name="ToolClientAgent",
             instructions="You are a helpful assistant with access to various tools.",
             tools=tools,
         )
 
-        print("Agent created successfully!")
+        # Wrap the agent with delay wrapper for keep-alive testing
+        # This will add delays between streaming events to test keep-alive mechanism
+        print(f"Wrapping agent with delay wrapper (delay: {TEST_DELAY_SECONDS}s > keep-alive interval: {KEEP_ALIVE_INTERVAL}s)")
+        agent = DelayedAgentWrapper(base_agent, delay_seconds=TEST_DELAY_SECONDS)
+
+        print("Agent created and wrapped successfully!")
         return agent
 
     return agent_factory
