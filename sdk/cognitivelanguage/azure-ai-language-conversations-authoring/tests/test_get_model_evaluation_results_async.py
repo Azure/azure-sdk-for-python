@@ -28,8 +28,8 @@ class TestConversationsGetModelEvaluationResultsAsync(TestConversationsAsync):
     async def test_get_model_evaluation_results_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
         try:
-            project_name = "Aurora-CLU-Prod"
-            trained_model_label = "m1"
+            project_name = "EmailApp"
+            trained_model_label = "Model1"
 
             # Get trained-model scoped client and fetch the paged evaluation results
             project_client = client.get_project_client(project_name)

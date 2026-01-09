@@ -21,7 +21,7 @@ class TestConversationsAsync(AzureRecordedTestCase):
     async def create_client(self, endpoint: str, key: str) -> ConversationAuthoringClient:
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
-
+@pytest.mark.playback_test_only
 class TestConversationsDeleteDeploymentAsync(TestConversationsAsync):
     @ConversationsPreparer()
     @recorded_by_proxy_async
@@ -30,7 +30,7 @@ class TestConversationsDeleteDeploymentAsync(TestConversationsAsync):
         client = await self.create_client(authoring_endpoint, authoring_key)
         async with client:
             project_name = "Test-data-labels"
-            deployment_name = "deployment2"
+            deployment_name = "deployment1"
 
             project_client = client.get_project_client(project_name)
 

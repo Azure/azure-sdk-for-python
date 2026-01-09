@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
@@ -19,7 +20,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
-
+@pytest.mark.playback_test_only
 class TestConversationsDeleteDeploymentSync(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
@@ -27,7 +28,7 @@ class TestConversationsDeleteDeploymentSync(TestConversations):
         client = self.create_client(authoring_endpoint, authoring_key)
 
         project_name = "Test-data-labels"
-        deployment_name = "deployment2"
+        deployment_name = "deployment1"
 
         project_client = client.get_project_client(project_name)
 
