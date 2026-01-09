@@ -8,7 +8,7 @@ import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
 import inspect
 
-from agent_framework import AgentProtocol, AIFunction
+from agent_framework import AgentProtocol, AIFunction, InMemoryCheckpointStorage
 from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
@@ -87,6 +87,8 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         self._agent_or_factory: Union[AgentProtocol, AgentFactory] = agent
         self._resolved_agent: "Optional[AgentProtocol]" = None
         self._hitl_helper = HumanInTheLoopHelper()
+        self._checkpoint_storage = InMemoryCheckpointStorage()
+        self._agent_thread_in_memory = {}
         # If agent is already instantiated, use it directly
         if isinstance(agent, AgentProtocol):
             self._resolved_agent = agent
@@ -189,9 +191,13 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         self.tracer = trace.get_tracer(__name__)
 
     def setup_tracing_with_azure_ai_client(self, project_endpoint: str):
+        logger.info("Setting up tracing with AzureAIClient")
+        logger.info(f"Project endpoint for tracing credential: {self.credentials}")
         async def setup_async():
             async with AzureAIClient(
-                project_endpoint=project_endpoint, async_credential=self.credentials
+                project_endpoint=project_endpoint,
+                async_credential=self.credentials,
+                credential=self.credentials,
                 ) as agent_client:
                 await agent_client.setup_azure_ai_observability()
 
@@ -225,9 +231,20 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
+            # TODO: load agent thread from storage and deserialize
+            agent_thread = self._agent_thread_in_memory.get(context.conversation_id, agent.get_new_thread())
 
-            input_converter = AgentFrameworkInputConverter(agent=agent, hitl_helper=self._hitl_helper)
-            message = input_converter.transform_input(request_input)
+            last_checkpoint = None
+            if self._checkpoint_storage:
+                checkpoints = await self._checkpoint_storage.list_checkpoints()
+                last_checkpoint = checkpoints[-1] if len(checkpoints) > 0 else None
+                logger.info(f"Last checkpoint data: {last_checkpoint.to_dict() if last_checkpoint else 'None'}")
+
+            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
+            message = await input_converter.transform_input(
+                request_input,
+                agent_thread=agent_thread,
+                checkpoint=last_checkpoint)
             logger.debug(f"Transformed input message type: {type(message)}")
 
             # Use split converters
@@ -238,13 +255,23 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 async def stream_updates():
                     try:
                         update_count = 0
-                        updates = agent.run_stream(message)
+                        updates = agent.run_stream(
+                            message,
+                            thread=agent_thread,
+                            checkpoint_storage=self._checkpoint_storage,
+                            checkpoint_id=last_checkpoint.checkpoint_id if last_checkpoint else None,
+                        )
                         async for event in streaming_converter.convert(updates):
                             update_count += 1
                             yield event
-
+                        
+                        if agent_thread:
+                            self._agent_thread_in_memory[context.conversation_id] = agent_thread
                         logger.info("Streaming completed with %d updates", update_count)
                     finally:
+                        if hasattr(agent, "pending_requests"):
+                            logger.info("Clearing agent pending requests after streaming completed")
+                            agent.pending_requests.clear()
                         # Close tool_client if it was created for this request
                         if tool_client is not None:
                             try:
@@ -258,8 +285,14 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
             non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
-            result = await agent.run(message)
-            logger.debug(f"Agent run completed, result type: {type(result)}")
+            result = await agent.run(message,
+                        thread=agent_thread,
+                        checkpoint_storage=self._checkpoint_storage,
+                        checkpoint_id=last_checkpoint.checkpoint_id if last_checkpoint else None,
+                        )
+            logger.info(f"Agent run completed, result type: {type(result)}")
+            if agent_thread:
+                self._agent_thread_in_memory[context.conversation_id] = agent_thread
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
             return transformed_result
@@ -281,3 +314,6 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                     logger.debug("Closed tool_client after request processing")
                 except Exception as ex:  # pylint: disable=broad-exception-caught
                     logger.warning(f"Error closing tool_client: {ex}")
+            if not context.stream and hasattr(agent, "pending_requests"):
+                logger.info("Clearing agent pending requests after streaming completed")
+                # agent.pending_requests.clear()            
