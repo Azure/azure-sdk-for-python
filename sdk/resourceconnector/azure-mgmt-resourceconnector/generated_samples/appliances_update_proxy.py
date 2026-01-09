@@ -15,7 +15,7 @@ from azure.mgmt.resourceconnector import ResourceConnectorMgmtClient
     pip install azure-identity
     pip install azure-mgmt-resourceconnector
 # USAGE
-    python appliances_create_update.py
+    python appliances_update_proxy.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,12 +35,17 @@ def main():
         resource_name="appliance01",
         parameters={
             "location": "West US",
-            "properties": {"distro": "AKSEdge", "infrastructureConfig": {"provider": "VMWare"}},
+            "properties": {
+                "distro": "AKSEdge",
+                "infrastructureConfig": {"provider": "VMWare"},
+                "networkProfile": {"proxyConfiguration": {"version": "latest"}},
+                "publicKey": "xxxxxxxx",
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/AppliancesCreate_Update.json
+# x-ms-original-file: 2025-03-01-preview/AppliancesUpdateProxy.json
 if __name__ == "__main__":
     main()

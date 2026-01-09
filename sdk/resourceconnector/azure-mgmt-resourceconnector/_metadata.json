@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-03-01-preview",
+  "commit": "c2d959beecc6e4fe6337792990c762988478aa97",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/resourceconnector/resource-manager/Microsoft.ResourceConnector/ResourceConnector",
+  "emitterVersion": "0.56.1"
+}
