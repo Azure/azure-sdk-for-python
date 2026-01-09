@@ -9,6 +9,7 @@ import argparse
 import os
 import sys
 import logging
+import re
 from os import path
 
 # import common_task module
@@ -16,6 +17,19 @@ root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
 common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
 from common_tasks import get_installed_packages
+
+
+def normalize_package_name(package_name: str) -> str:
+    """Apply PEP 503 normalization rules to package names
+
+    .. see-also::
+
+        https://peps.python.org/pep-0503/#normalized-names
+        https://packaging.python.org/en/latest/specifications/name-normalization/#name-normalization
+    """
+
+    return re.sub(r"[-_.]+", "-", package_name).lower()
+
 
 def verify_packages(package_file_path):
     # this method verifies packages installed on machine is matching the expected package version
@@ -38,18 +52,18 @@ def verify_packages(package_file_path):
     for p in get_installed_packages():
         if "==" in p:
             [package, version] = p.split("==")
-            installed[package.lower().replace("_","-")] = version
+            installed[normalize_package_name(package)] = version
     expected = {}
     for p in packages:
         [package, version] = p.split("==")
-        expected[package.lower().replace("_","-")] = version
+        expected[normalize_package_name(package)] = version
 
     missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]
 
     if missing_packages:
         logging.error("Version is incorrect for following package[s]")
         for package in missing_packages:
-            logging.error("%s, Expected[%s], Installed[%s]", package, expected[package], installed.get(package, "NOT FOUND"))
+            logging.error("%s, Expected[%s], Installed[%s]", package, expected[package], installed[package])
         sys.exit(1)
     else:
         logging.info("Verified package version")
