@@ -22,6 +22,7 @@ from .managed_virtual_env import ManagedVirtualEnv
 
 from ci_tools.logging import logger
 
+
 def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
     Empties the venv_directory directory and creates a virtual environment within. Returns the path to the new python executable.
@@ -116,7 +117,7 @@ def create_package_and_install(
                     download_command = [
                         sys.executable,
                         "-m",
-                        "pip", # uv pip doesn't have a download command, so we use the system pip
+                        "pip",  # uv pip doesn't have a download command, so we use the system pip
                         "download",
                         "-d",
                         tmp_dl_folder,
@@ -340,10 +341,13 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
         if prebuilt_whl:
             whl_path = os.path.join(wheel_dir, prebuilt_whl)
         else:
-            # Create temp path if it doesn't exist
-            temp_dir = os.path.join(package_path, ".tmp_whl_dir")
-            if not os.path.exists(temp_dir):
-                os.mkdir(temp_dir)
+            if wheel_dir:
+                temp_dir = wheel_dir
+            else:
+                # Create temp path if it doesn't exist
+                temp_dir = os.path.join(package_path, ".tmp_whl_dir")
+                if not os.path.exists(temp_dir):
+                    os.mkdir(temp_dir)
 
             logging.info("Building wheel for package {}".format(parsed.name))
             create_package(req_pkg_path, temp_dir, enable_sdist=False)

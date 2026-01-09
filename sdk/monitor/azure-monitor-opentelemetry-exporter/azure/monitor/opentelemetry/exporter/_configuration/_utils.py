@@ -4,6 +4,7 @@
 from typing import Dict, Optional, Any
 import json
 import logging
+
 # mypy: disable-error-code="import-untyped"
 import requests
 
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 class _ConfigurationProfile:
     """Profile for the current running SDK."""
+
     os: str = ""
     rp: str = ""
     attach: str = ""
@@ -28,25 +30,25 @@ class _ConfigurationProfile:
     @classmethod
     def fill(cls, **kwargs) -> None:
         """Update only the class variables that are provided in kwargs and haven't been updated yet."""
-        if 'os' in kwargs and cls.os == "":
-            cls.os = kwargs['os']
-        if 'version' in kwargs and cls.version == "":
-            cls.version = kwargs['version']
-        if 'component' in kwargs and cls.component == "":
-            cls.component = kwargs['component']
-        if 'rp' in kwargs and cls.rp == "":
-            cls.rp = kwargs['rp']
-        if 'attach' in kwargs and cls.attach == "":
-            cls.attach = kwargs['attach']
-        if 'region' in kwargs and cls.region == "":
-            cls.region = kwargs['region']
+        if "os" in kwargs and cls.os == "":
+            cls.os = kwargs["os"]
+        if "version" in kwargs and cls.version == "":
+            cls.version = kwargs["version"]
+        if "component" in kwargs and cls.component == "":
+            cls.component = kwargs["component"]
+        if "rp" in kwargs and cls.rp == "":
+            cls.rp = kwargs["rp"]
+        if "attach" in kwargs and cls.attach == "":
+            cls.attach = kwargs["attach"]
+        if "region" in kwargs and cls.region == "":
+            cls.region = kwargs["region"]
 
 
 class OneSettingsResponse:
     """Response object containing OneSettings API response data.
 
     This class encapsulates the parsed response from a OneSettings API call,
-    including configuration settings, version information, and metadata.
+    including configuration settings, version information, error indicators and metadata.
 
     Attributes:
         etag (Optional[str]): ETag header value for caching and conditional requests
@@ -54,6 +56,7 @@ class OneSettingsResponse:
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
         version (Optional[int]): Configuration version number for change tracking
         status_code (int): HTTP status code from the response
+        has_exception (bool): True if the request resulted in a transient error (network error, timeout, etc.)
     """
 
     def __init__(
@@ -62,7 +65,8 @@ class OneSettingsResponse:
         refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         settings: Optional[Dict[str, str]] = None,
         version: Optional[int] = None,
-        status_code: int = 200
+        status_code: int = 200,
+        has_exception: bool = False,
     ):
         """Initialize OneSettingsResponse with configuration data.
 
@@ -74,21 +78,24 @@ class OneSettingsResponse:
                 Defaults to empty dict if None.
             version (Optional[int], optional): Configuration version number. Defaults to None.
             status_code (int, optional): HTTP status code. Defaults to 200.
+            has_exception (bool, optional): Indicates if request failed with a transient error. Defaults to False.
         """
         self.etag = etag
         self.refresh_interval = refresh_interval
         self.settings = settings or {}
         self.version = version
         self.status_code = status_code
+        self.has_exception = has_exception
 
 
-def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None,
-                           headers: Optional[Dict[str, str]] = None) -> OneSettingsResponse:
+def make_onesettings_request(
+    url: str, query_dict: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None
+) -> OneSettingsResponse:
     """Make an HTTP request to the OneSettings API and parse the response.
 
     This function handles the complete OneSettings request lifecycle including:
     - Making the HTTP GET request with optional query parameters and headers
-    - Error handling for network, HTTP, and JSON parsing errors
+    - Error handling for network, HTTP, timeout, and JSON parsing errors
     - Parsing the response into a structured OneSettingsResponse object
 
     :param url: The OneSettings API endpoint URL to request
@@ -100,13 +107,13 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
     Common headers include 'If-None-Match' for ETag caching. Defaults to None.
     :type headers: Optional[Dict[str, str]]
 
-    :return: Parsed response containing configuration data and metadata.
-            Returns a default response object if the request fails.
+    :return: Parsed response containing configuration data and metadata, including
+            error indicators for exceptions and timeouts.
     :rtype: OneSettingsResponse
 
     Raises:
         Does not raise exceptions - all errors are caught and logged, returning a
-        default OneSettingsResponse object.
+        OneSettingsResponse object with appropriate error indicators set.
     """
     query_dict = query_dict or {}
     headers = headers or {}
@@ -116,15 +123,18 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
         result.raise_for_status()  # Raises an exception for 4XX/5XX responses
 
         return _parse_onesettings_response(result)
+    except requests.exceptions.Timeout as ex:
+        logger.warning("OneSettings request timed out: %s", str(ex))
+        return OneSettingsResponse(has_exception=True)
     except requests.exceptions.RequestException as ex:
         logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
-        return OneSettingsResponse()
+        return OneSettingsResponse(has_exception=True)
     except json.JSONDecodeError as ex:
         logger.warning("Failed to parse OneSettings response: %s", str(ex))
-        return OneSettingsResponse()
+        return OneSettingsResponse(has_exception=True)
     except Exception as ex:  # pylint: disable=broad-exception-caught
         logger.warning("Unexpected error while fetching configuration: %s", str(ex))
-        return OneSettingsResponse()
+        return OneSettingsResponse(has_exception=True)
 
 
 def _parse_onesettings_response(response: requests.Response) -> OneSettingsResponse:
@@ -319,6 +329,7 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
     # All conditions in this rule matched
     return True
 
+
 # pylint:disable=too-many-return-statements
 def _matches_condition(condition_key: str, condition_value: Any) -> bool:
     """Check if a specific condition matches the current configuration profile.
@@ -451,14 +462,15 @@ def _parse_version_with_beta(version: str) -> tuple:
     :rtype: tuple
     """
     # Check if version contains beta suffix
-    if 'b' in version:
+    if "b" in version:
         # Split on 'b' to separate base version and beta number
-        base_version, beta_part = version.split('b', 1)
-        base_parts = [int(x) for x in base_version.split('.')]
+        base_version, beta_part = version.split("b", 1)
+        base_parts = [int(x) for x in base_version.split(".")]
         beta_number = int(beta_part) if beta_part.isdigit() else 0
         return tuple(base_parts + [beta_number])
     # Release version - use infinity for beta part so it sorts after beta versions
-    base_parts = [int(x) for x in version.split('.')]
-    return tuple(base_parts + [float('inf')])
+    base_parts = [int(x) for x in version.split(".")]
+    return tuple(base_parts + [float("inf")])
+
 
 # cSpell:enable

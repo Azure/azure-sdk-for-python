@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import CloudExadataInfrastructuresOperations  # type: ignore
-from ._operations import ListActionsOperations  # type: ignore
 from ._operations import DbServersOperations  # type: ignore
 from ._operations import CloudVmClustersOperations  # type: ignore
 from ._operations import VirtualNetworkAddressesOperations  # type: ignore
@@ -35,6 +34,10 @@ from ._operations import AutonomousDatabaseVersionsOperations  # type: ignore
 from ._operations import ExadbVmClustersOperations  # type: ignore
 from ._operations import ExascaleDbNodesOperations  # type: ignore
 from ._operations import ExascaleDbStorageVaultsOperations  # type: ignore
+from ._operations import NetworkAnchorsOperations  # type: ignore
+from ._operations import ResourceAnchorsOperations  # type: ignore
+from ._operations import DbSystemsOperations  # type: ignore
+from ._operations import DbVersionsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -43,7 +46,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "CloudExadataInfrastructuresOperations",
-    "ListActionsOperations",
     "DbServersOperations",
     "CloudVmClustersOperations",
     "VirtualNetworkAddressesOperations",
@@ -64,6 +66,10 @@ __all__ = [
     "ExadbVmClustersOperations",
     "ExascaleDbNodesOperations",
     "ExascaleDbStorageVaultsOperations",
+    "NetworkAnchorsOperations",
+    "ResourceAnchorsOperations",
+    "DbSystemsOperations",
+    "DbVersionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

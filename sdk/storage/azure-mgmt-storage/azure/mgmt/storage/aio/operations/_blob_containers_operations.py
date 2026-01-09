@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -53,7 +53,8 @@ from ...operations._blob_containers_operations import (
 from .._configuration import StorageManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class BlobContainersOperations:
@@ -1075,9 +1076,10 @@ class BlobContainersOperations:
         immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -1494,9 +1496,10 @@ class BlobContainersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -1659,9 +1662,10 @@ class BlobContainersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.LeaseContainerResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):

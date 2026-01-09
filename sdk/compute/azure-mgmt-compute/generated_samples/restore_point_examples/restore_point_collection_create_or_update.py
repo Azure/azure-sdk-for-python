@@ -37,9 +37,10 @@ def main():
         parameters={
             "location": "norwayeast",
             "properties": {
+                "instantAccess": True,
                 "source": {
                     "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
-                }
+                },
             },
             "tags": {"myTag1": "tagValue1"},
         },

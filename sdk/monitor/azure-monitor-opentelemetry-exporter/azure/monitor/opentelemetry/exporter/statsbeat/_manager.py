@@ -28,14 +28,16 @@ logger = logging.getLogger(__name__)
 class StatsbeatConfig:
     """Configuration class for Statsbeat metrics collection."""
 
-    def __init__(self,
-                 endpoint: str,
-                 region: str,
-                 instrumentation_key: str,
-                 disable_offline_storage: bool = False,
-                 credential: Optional[Any] = None,
-                 distro_version: Optional[str] = None,
-                 connection_string: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        region: str,
+        instrumentation_key: str,
+        disable_offline_storage: bool = False,
+        credential: Optional[Any] = None,
+        distro_version: Optional[str] = None,
+        connection_string: Optional[str] = None,
+    ) -> None:
         # Customer specific information
         self.endpoint = endpoint
         self.region = region
@@ -60,30 +62,31 @@ class StatsbeatConfig:
             self.connection_string = _get_stats_connection_string(endpoint)
 
     @classmethod
-    def from_exporter(cls, exporter: Any) -> Optional['StatsbeatConfig']:
+    # pylint: disable=protected-access
+    def from_exporter(cls, exporter: Any) -> Optional["StatsbeatConfig"]:
         # Create configuration from an exporter instance
         # Validate required fields from exporter
-        if not hasattr(exporter, '_instrumentation_key') or not exporter._instrumentation_key:  # pylint: disable=protected-access
+        if not hasattr(exporter, "_instrumentation_key") or not exporter._instrumentation_key:
             logger.warning("Exporter is missing a valid instrumentation key.")
             return None
-        if not hasattr(exporter, '_endpoint') or not exporter._endpoint:  # pylint: disable=protected-access
+        if not hasattr(exporter, "_endpoint") or not exporter._endpoint:
             logger.warning("Exporter is missing a valid endpoint.")
             return None
-        if not hasattr(exporter, '_region') or not exporter._region:  # pylint: disable=protected-access
+        if not hasattr(exporter, "_region") or not exporter._region:
             logger.warning("Exporter is missing a valid region.")
             return None
 
         return cls(
-            endpoint=exporter._endpoint,  # pylint: disable=protected-access
-            region=exporter._region,  # pylint: disable=protected-access
-            instrumentation_key=exporter._instrumentation_key,  # pylint: disable=protected-access
-            disable_offline_storage=exporter._disable_offline_storage,  # pylint: disable=protected-access
-            credential=exporter._credential,  # pylint: disable=protected-access
-            distro_version=exporter._distro_version,  # pylint: disable=protected-access
+            endpoint=exporter._endpoint,
+            region=exporter._region,
+            instrumentation_key=exporter._instrumentation_key,
+            disable_offline_storage=exporter._disable_offline_storage,
+            credential=exporter._credential,
+            distro_version=exporter._distro_version,
         )
 
     @classmethod
-    def from_config(cls, base_config: 'StatsbeatConfig', config_dict: Dict[str, str]) -> Optional['StatsbeatConfig']:
+    def from_config(cls, base_config: "StatsbeatConfig", config_dict: Dict[str, str]) -> Optional["StatsbeatConfig"]:
         """Update configuration from a dictionary. Used in conjunction with OneSettings control plane.
 
         Creates a new StatsbeatConfig instance with the same base configuration but updated
@@ -114,17 +117,18 @@ class StatsbeatConfig:
 
         # TODO: Add support for disable_offline_storage from config_dict once supported in control plane
         disable_offline_storage = config_dict.get("disable_offline_storage")
-        disable_offline_storage_config = isinstance(disable_offline_storage, str) \
-            and disable_offline_storage.lower() == "true"
+        disable_offline_storage_config = (
+            isinstance(disable_offline_storage, str) and disable_offline_storage.lower() == "true"
+        )
 
         return cls(
             endpoint=base_config.endpoint,
             region=base_config.region,
             instrumentation_key=base_config.instrumentation_key,
-            disable_offline_storage=disable_offline_storage_config, # TODO: Use config value once supported
+            disable_offline_storage=disable_offline_storage_config,  # TODO: Use config value once supported
             credential=base_config.credential,
             distro_version=base_config.distro_version,
-            connection_string=connection_string
+            connection_string=connection_string,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -132,8 +136,8 @@ class StatsbeatConfig:
         if not isinstance(other, StatsbeatConfig):
             return False
         return (
-            str(self.connection_string) == str(other.connection_string) and
-            self.disable_offline_storage == other.disable_offline_storage
+            str(self.connection_string) == str(other.connection_string)
+            and self.disable_offline_storage == other.disable_offline_storage
         )
 
     def __hash__(self) -> int:
@@ -150,10 +154,12 @@ class StatsbeatManager(metaclass=Singleton):
         self._initialized: bool = False  # type: ignore
         self._metrics: Optional[_StatsbeatMetrics] = None  # type: ignore
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
+
+        # Set during first initialization, preserved in shutdown for potential re-initialization
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
 
     @staticmethod
-    def _validate_config(config: StatsbeatConfig) -> bool:
+    def _validate_config(config: Optional[StatsbeatConfig]) -> bool:
         """Validate that a configuration has all required fields.
 
         :param config: Configuration to validate
@@ -161,7 +167,7 @@ class StatsbeatManager(metaclass=Singleton):
         :return: True if config is valid, False otherwise
         :rtype: bool
         """
-        if not config:
+        if config is None:
             return False
         if not config.instrumentation_key:
             return False
@@ -178,8 +184,8 @@ class StatsbeatManager(metaclass=Singleton):
         if not is_statsbeat_enabled():
             return False
 
+        # Validate config before proceeding
         if not self._validate_config(config):
-            logger.error("Cannot initialize statsbeat: configuration is invalid or missing required fields")
             return False
 
         with self._lock:
@@ -208,7 +214,7 @@ class StatsbeatManager(metaclass=Singleton):
             # Create metric reader
             reader = PeriodicExportingMetricReader(
                 statsbeat_exporter,
-                export_interval_millis=_get_stats_short_export_interval() * 1000, # 15m by default
+                export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
 
             # Create meter provider
@@ -257,9 +263,9 @@ class StatsbeatManager(metaclass=Singleton):
                 self._meter_provider.shutdown()
             except Exception:  # pylint: disable=broad-except
                 pass
+        # We leave config intact for potential re-initialization
         self._meter_provider = None
         self._metrics = None
-        self._config = None
         self._initialized = False
 
     def shutdown(self) -> bool:
@@ -280,9 +286,6 @@ class StatsbeatManager(metaclass=Singleton):
 
             if shutdown_success:
                 set_statsbeat_shutdown(True)  # Use the proper setter function
-                # Clear the singleton instance from the metaclass
-                if self.__class__ in StatsbeatManager._instances:  # pylint: disable=protected-access
-                    del StatsbeatManager._instances[self.__class__]  # pylint: disable=protected-access
 
             return shutdown_success
 
@@ -304,7 +307,6 @@ class StatsbeatManager(metaclass=Singleton):
         # Reset state but keep initialized=True
         self._meter_provider = None
         self._metrics = None
-        self._config = None
 
         # Initialize with new config
         success: bool = self._do_initialize(new_config)
@@ -335,5 +337,14 @@ class StatsbeatManager(metaclass=Singleton):
                 disable_offline_storage=self._config.disable_offline_storage,
                 credential=self._config.credential,
                 distro_version=self._config.distro_version,
-                connection_string=self._config.connection_string
+                connection_string=self._config.connection_string,
             )
+
+    def is_initialized(self) -> bool:
+        """Check if the StatsbeatManager is currently initialized.
+
+        :return: True if initialized, False otherwise
+        :rtype: bool
+        """
+        with self._lock:
+            return self._initialized

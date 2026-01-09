@@ -17,7 +17,7 @@ authors = [
 description = "Microsoft Corporation Azure Ai Voicelive Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -64,7 +64,9 @@ readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",
+    "generated_tests*",
     "samples*",
+    "generated_samples*",
     "doc*",
     "azure",
     "azure.ai",
@@ -72,3 +74,6 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+asyncio_mode = "auto"

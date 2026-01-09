@@ -50,6 +50,7 @@ def main():
                         "file": {"enabled": True, "keyType": "Account"},
                     },
                 },
+                "geoPriorityReplicationStatus": {"isBlobEnabled": True},
                 "isHnsEnabled": True,
                 "isSftpEnabled": True,
                 "keyPolicy": {"keyExpirationPeriodInDays": 20},
@@ -68,6 +69,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/examples/StorageAccountCreate.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2025-06-01/examples/StorageAccountCreate.json
 if __name__ == "__main__":
     main()

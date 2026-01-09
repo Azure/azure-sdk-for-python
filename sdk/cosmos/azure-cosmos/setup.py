@@ -62,7 +62,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -72,7 +71,7 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0"

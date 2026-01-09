@@ -104,9 +104,9 @@ async def sample_text_custom_entities_async():
                     print(f"\nAction Name: {op_result.task_name}")
                     print(f"Action Status: {op_result.status}")
                     print(f"Kind: {op_result.kind}")
-                    for doc in (op_result.results.documents or []):
+                    for doc in op_result.results.documents or []:
                         print(f"Document ID: {doc.id}")
-                        for entity in (doc.entities or []):
+                        for entity in doc.entities or []:
                             print(f"  Text: {entity.text}")
                             print(f"  Category: {entity.category}")
                             print(f"  Offset: {entity.offset}, Length: {entity.length}")
@@ -119,6 +119,8 @@ async def sample_text_custom_entities_async():
                         )
                     except Exception:
                         print("\n[Other action present]")
+
+
 # [END text_custom_entities_async]
 
 

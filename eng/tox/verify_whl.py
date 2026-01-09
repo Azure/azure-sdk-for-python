@@ -90,7 +90,6 @@ def should_verify_package(package_name):
     return (
         package_name not in EXCLUDED_PACKAGES
         and "nspkg" not in package_name
-        and "-mgmt" not in package_name
     )
 
 
@@ -125,26 +124,47 @@ def verify_prior_version_metadata(package_name: str, prior_version: str, current
                 f"{package_name}=={prior_version}", "--dest", tmp_dir
             ], check=True, capture_output=True)
             zip_files = glob.glob(os.path.join(tmp_dir, package_type))
-            if not zip_files:
+            # If no match and we're not constrained to wheel-only, attempt legacy sdist (zip) once.
+            if not zip_files and package_type != "*.whl":
+                zip_files = glob.glob(os.path.join(tmp_dir, "*.zip"))
+            if not zip_files:  # Still nothing -> treat as no prior artifact to compare.
                 return True
 
             prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
             is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
-            if not is_compatible:
-                missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
-                logging.error(f"Metadata compatibility failed for {package_name}. Missing keys: {missing_keys}")
             return is_compatible
         except Exception:
             return True
 
 
 def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metadata: Dict[str, Any]) -> bool:
-    """Verify that all keys from prior version metadata are present in current version."""
-    if not prior_metadata:
-        return True
+    """Verify that all keys from prior version metadata are present in current version.
+
+    Special handling: homepage/repository keys are exempt from prior compatibility check,
+    but current version must have at least one of them.
+    """
     if not current_metadata:
         return False
-    return set(prior_metadata.keys()).issubset(set(current_metadata.keys()))
+    # Check that current version has at least one homepage or repository URL
+    repo_urls = ['homepage', 'repository']
+    current_keys_lower = {k.lower() for k in current_metadata.keys()}
+    if not any(key in current_keys_lower for key in repo_urls):
+        logging.error(f"Current metadata must contain at least one of: {repo_urls}")
+        return False
+
+    if not prior_metadata:
+        return True
+
+    # For backward compatibility check, exclude homepage/repository from prior requirements
+    prior_keys_filtered = {k for k in prior_metadata.keys() if k.lower() not in repo_urls}
+    current_keys = set(current_metadata.keys())
+
+    is_compatible = prior_keys_filtered.issubset(current_keys)
+    if not is_compatible:
+        missing_keys = prior_keys_filtered - current_keys
+        logging.error("Metadata compatibility failed. Missing keys: %s", missing_keys)
+    return is_compatible
+
 
 def get_path_to_zip(dist_dir: str, version: str, package_type: str = "*.whl") -> str:
     return glob.glob(os.path.join(dist_dir, "**", "*{}{}".format(version, package_type)), recursive=True)[0]

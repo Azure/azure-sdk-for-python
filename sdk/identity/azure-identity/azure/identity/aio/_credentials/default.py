@@ -68,9 +68,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
     4. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.aio.SharedTokenCacheCredential` for more details.
-    5. The identity currently logged in to the Azure CLI.
-    6. The identity currently logged in to Azure PowerShell.
-    7. The identity currently logged in to the Azure Developer CLI.
+    5. The identity logged in to Visual Studio Code with the Azure Resources extension.
+    6. The identity currently logged in to the Azure CLI.
+    7. The identity currently logged in to Azure PowerShell.
+    8. The identity currently logged in to the Azure Developer CLI.
+    9. Brokered authentication. On Windows and WSL only, this uses the default account logged in via
+       Web Account Manager (WAM) if the `azure-identity-broker` package is installed.
 
     This default behavior is configurable with keyword arguments.
 
@@ -86,7 +89,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
     :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
-        Defaults to **True**.
+        Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
@@ -144,7 +147,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         process_timeout = kwargs.pop("process_timeout", 10)
         require_envvar = kwargs.pop("require_envvar", False)
-        if require_envvar and not os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS):
+        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
+        if require_envvar and not token_credentials_env:
             raise ValueError(
                 "AZURE_TOKEN_CREDENTIALS environment variable is required but is not set or is empty. "
                 "Set it to 'dev', 'prod', or a specific credential name."
@@ -235,6 +239,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
+                    _enable_imds_probe=token_credentials_env != "managedidentitycredential",
                     **kwargs,
                 )
             )

@@ -6,6 +6,7 @@
 
 import json
 from typing import Any, List, Optional
+
 # pylint: disable=non-abstract-transport-import
 # pylint: disable=no-name-in-module
 
@@ -21,7 +22,7 @@ from . import token_utils
 
 class TokenExchangeClient:
     """Represents a client that exchanges an Entra token for an Azure Communication Services (ACS) token.
-    
+
     :param resource_endpoint: The endpoint URL of the resource to authenticate against.
     :param credential: The credential to use for token exchange.
     :param scopes: The scopes to request during the token exchange.
@@ -31,11 +32,8 @@ class TokenExchangeClient:
     # pylint: disable=C4748
     # pylint: disable=client-method-missing-type-annotations
     def __init__(
-            self,
-            resource_endpoint: str,
-            credential: TokenCredential,
-            scopes: Optional[List[str]] = None,
-            **kwargs: Any):
+        self, resource_endpoint: str, credential: TokenCredential, scopes: Optional[List[str]] = None, **kwargs: Any
+    ):
 
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
@@ -76,6 +74,5 @@ class TokenExchangeClient:
                 raise ValueError("Failed to parse access token from response") from ex
         else:
             raise HttpResponseError(
-                message="Failed to exchange Entra token for ACS token",
-                response=response.http_response
+                message="Failed to exchange Entra token for ACS token", response=response.http_response
             )

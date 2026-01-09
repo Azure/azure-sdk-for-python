@@ -64,6 +64,12 @@
             "TestSamples": "false",
             "Run.ToxCustomEnvs": "depends,whl_no_aio"
         },
+        "Emulator Tests Python 3.14 Special": {
+            "PythonVersion": "3.14",
+            "CoverageArg": "--disablecov",
+            "TestSamples": "false",
+            "Run.ToxCustomEnvs": "depends,whl_no_aio"
+        },
 
         "Emulator Tests Python 3.9 Dependency Checks": {
             "PythonVersion": "3.9",
@@ -85,6 +91,12 @@
         },
         "Emulator Tests Python 3.13 Dependency Checks": {
             "PythonVersion": "3.13",
+            "CoverageArg": "--disablecov",
+            "TestSamples": "false",
+            "Run.ToxCustomEnvs": "latestdependency,mindependency"
+        },
+        "Emulator Tests Python 3.14 Dependency Checks": {
+            "PythonVersion": "3.14",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "Run.ToxCustomEnvs": "latestdependency,mindependency"

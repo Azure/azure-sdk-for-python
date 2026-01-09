@@ -55,6 +55,8 @@ content-type = "text/markdown"
 exclude = [
     "tests*",
     "samples*",
+    "generated_tests*",
+    "generated_samples*",
     "doc*",
     "azure",
     "azure.mgmt",

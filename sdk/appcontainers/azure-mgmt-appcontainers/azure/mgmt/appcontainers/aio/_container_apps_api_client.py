@@ -21,34 +21,21 @@ from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContainerAppsAPIClientConfiguration
 from .operations import (
-    AppResiliencyOperations,
     AvailableWorkloadProfilesOperations,
     BillingMetersOperations,
-    BuildAuthTokenOperations,
-    BuildersOperations,
-    BuildsByBuilderResourceOperations,
-    BuildsOperations,
     CertificatesOperations,
     ConnectedEnvironmentsCertificatesOperations,
     ConnectedEnvironmentsDaprComponentsOperations,
     ConnectedEnvironmentsOperations,
     ConnectedEnvironmentsStoragesOperations,
     ContainerAppsAuthConfigsOperations,
-    ContainerAppsBuildsByContainerAppOperations,
-    ContainerAppsBuildsOperations,
     ContainerAppsDiagnosticsOperations,
-    ContainerAppsLabelHistoryOperations,
     ContainerAppsOperations,
-    ContainerAppsPatchesOperations,
     ContainerAppsRevisionReplicasOperations,
     ContainerAppsRevisionsOperations,
     ContainerAppsSessionPoolsOperations,
     ContainerAppsSourceControlsOperations,
-    DaprComponentResiliencyPoliciesOperations,
     DaprComponentsOperations,
-    DaprSubscriptionsOperations,
-    DotNetComponentsOperations,
-    FunctionsExtensionOperations,
     HttpRouteConfigOperations,
     JavaComponentsOperations,
     JobsExecutionsOperations,
@@ -70,16 +57,14 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
-    """Functions is an extension resource to revisions and the api listed is used to proxy the call
-    from Web RP to the function app's host process, this api is not exposed to users and only Web
-    RP is allowed to invoke functions extension resource.
+    """Logic app is an extension resource on container app and the extension resource enables logic
+    specific operations on the container app through the APIs listed.
 
-    :ivar app_resiliency: AppResiliencyOperations operations
-    :vartype app_resiliency: azure.mgmt.appcontainers.aio.operations.AppResiliencyOperations
     :ivar container_apps_auth_configs: ContainerAppsAuthConfigsOperations operations
     :vartype container_apps_auth_configs:
      azure.mgmt.appcontainers.aio.operations.ContainerAppsAuthConfigsOperations
@@ -88,15 +73,6 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
      azure.mgmt.appcontainers.aio.operations.AvailableWorkloadProfilesOperations
     :ivar billing_meters: BillingMetersOperations operations
     :vartype billing_meters: azure.mgmt.appcontainers.aio.operations.BillingMetersOperations
-    :ivar builders: BuildersOperations operations
-    :vartype builders: azure.mgmt.appcontainers.aio.operations.BuildersOperations
-    :ivar builds_by_builder_resource: BuildsByBuilderResourceOperations operations
-    :vartype builds_by_builder_resource:
-     azure.mgmt.appcontainers.aio.operations.BuildsByBuilderResourceOperations
-    :ivar builds: BuildsOperations operations
-    :vartype builds: azure.mgmt.appcontainers.aio.operations.BuildsOperations
-    :ivar build_auth_token: BuildAuthTokenOperations operations
-    :vartype build_auth_token: azure.mgmt.appcontainers.aio.operations.BuildAuthTokenOperations
     :ivar connected_environments: ConnectedEnvironmentsOperations operations
     :vartype connected_environments:
      azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsOperations
@@ -113,19 +89,6 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
      azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsStoragesOperations
     :ivar container_apps: ContainerAppsOperations operations
     :vartype container_apps: azure.mgmt.appcontainers.aio.operations.ContainerAppsOperations
-    :ivar container_apps_builds_by_container_app: ContainerAppsBuildsByContainerAppOperations
-     operations
-    :vartype container_apps_builds_by_container_app:
-     azure.mgmt.appcontainers.aio.operations.ContainerAppsBuildsByContainerAppOperations
-    :ivar container_apps_builds: ContainerAppsBuildsOperations operations
-    :vartype container_apps_builds:
-     azure.mgmt.appcontainers.aio.operations.ContainerAppsBuildsOperations
-    :ivar container_apps_label_history: ContainerAppsLabelHistoryOperations operations
-    :vartype container_apps_label_history:
-     azure.mgmt.appcontainers.aio.operations.ContainerAppsLabelHistoryOperations
-    :ivar container_apps_patches: ContainerAppsPatchesOperations operations
-    :vartype container_apps_patches:
-     azure.mgmt.appcontainers.aio.operations.ContainerAppsPatchesOperations
     :ivar container_apps_revisions: ContainerAppsRevisionsOperations operations
     :vartype container_apps_revisions:
      azure.mgmt.appcontainers.aio.operations.ContainerAppsRevisionsOperations
@@ -143,19 +106,12 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentsDiagnosticsOperations
     :ivar jobs: JobsOperations operations
     :vartype jobs: azure.mgmt.appcontainers.aio.operations.JobsOperations
-    :ivar dot_net_components: DotNetComponentsOperations operations
-    :vartype dot_net_components: azure.mgmt.appcontainers.aio.operations.DotNetComponentsOperations
-    :ivar functions_extension: FunctionsExtensionOperations operations
-    :vartype functions_extension:
-     azure.mgmt.appcontainers.aio.operations.FunctionsExtensionOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.appcontainers.aio.operations.Operations
     :ivar java_components: JavaComponentsOperations operations
     :vartype java_components: azure.mgmt.appcontainers.aio.operations.JavaComponentsOperations
     :ivar jobs_executions: JobsExecutionsOperations operations
     :vartype jobs_executions: azure.mgmt.appcontainers.aio.operations.JobsExecutionsOperations
-    :ivar logic_apps: LogicAppsOperations operations
-    :vartype logic_apps: azure.mgmt.appcontainers.aio.operations.LogicAppsOperations
     :ivar managed_environments: ManagedEnvironmentsOperations operations
     :vartype managed_environments:
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentsOperations
@@ -174,14 +130,8 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
      ManagedEnvironmentPrivateLinkResourcesOperations operations
     :vartype managed_environment_private_link_resources:
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentPrivateLinkResourcesOperations
-    :ivar dapr_component_resiliency_policies: DaprComponentResiliencyPoliciesOperations operations
-    :vartype dapr_component_resiliency_policies:
-     azure.mgmt.appcontainers.aio.operations.DaprComponentResiliencyPoliciesOperations
     :ivar dapr_components: DaprComponentsOperations operations
     :vartype dapr_components: azure.mgmt.appcontainers.aio.operations.DaprComponentsOperations
-    :ivar dapr_subscriptions: DaprSubscriptionsOperations operations
-    :vartype dapr_subscriptions:
-     azure.mgmt.appcontainers.aio.operations.DaprSubscriptionsOperations
     :ivar http_route_config: HttpRouteConfigOperations operations
     :vartype http_route_config: azure.mgmt.appcontainers.aio.operations.HttpRouteConfigOperations
     :ivar maintenance_configurations: MaintenanceConfigurationsOperations operations
@@ -201,29 +151,44 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
     :ivar managed_environment_usages: ManagedEnvironmentUsagesOperations operations
     :vartype managed_environment_usages:
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentUsagesOperations
+    :ivar logic_apps: LogicAppsOperations operations
+    :vartype logic_apps: azure.mgmt.appcontainers.aio.operations.LogicAppsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-02-02-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-07-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ContainerAppsAPIClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -252,7 +217,6 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.app_resiliency = AppResiliencyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.container_apps_auth_configs = ContainerAppsAuthConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -260,12 +224,6 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.billing_meters = BillingMetersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.builders = BuildersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.builds_by_builder_resource = BuildsByBuilderResourceOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.builds = BuildsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.build_auth_token = BuildAuthTokenOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connected_environments = ConnectedEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -279,18 +237,6 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.container_apps = ContainerAppsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.container_apps_builds_by_container_app = ContainerAppsBuildsByContainerAppOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.container_apps_builds = ContainerAppsBuildsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.container_apps_label_history = ContainerAppsLabelHistoryOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.container_apps_patches = ContainerAppsPatchesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.container_apps_revisions = ContainerAppsRevisionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -307,16 +253,9 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dot_net_components = DotNetComponentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.functions_extension = FunctionsExtensionOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.java_components = JavaComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.jobs_executions = JobsExecutionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.logic_apps = LogicAppsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_environments = ManagedEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -331,13 +270,7 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
         self.managed_environment_private_link_resources = ManagedEnvironmentPrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.dapr_component_resiliency_policies = DaprComponentResiliencyPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.dapr_components = DaprComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dapr_subscriptions = DaprSubscriptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.http_route_config = HttpRouteConfigOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -357,6 +290,7 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
         self.managed_environment_usages = ManagedEnvironmentUsagesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.logic_apps = LogicAppsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

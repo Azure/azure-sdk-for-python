@@ -23,7 +23,6 @@ class TestHDInsightManagementClustersOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-08-01-preview",
         )
         result = [r for r in response]
         assert result == []

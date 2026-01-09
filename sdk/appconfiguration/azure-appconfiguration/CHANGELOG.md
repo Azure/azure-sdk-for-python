@@ -1,14 +1,24 @@
 # Release History
 
-## 1.7.2 (Unreleased)
+## 1.7.3 (Unreleased)
 
 ### Features Added
+
+- Added support for custom authentication audiences via the `audience` keyword argument in `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
+- Improved authentication scope handling to automatically detect and use correct audience URLs for Azure Public Cloud, Azure US Government, and Azure China cloud environments.
+
+## 1.7.2 (2025-10-20)
+
+### Bugs Fixed
+- Fixed a bug where non-HTTPS endpoints would not function correctly.
 
 ## 1.7.1 (2024-08-22)
 

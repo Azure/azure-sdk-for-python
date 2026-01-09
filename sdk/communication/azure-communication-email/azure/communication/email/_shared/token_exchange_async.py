@@ -6,6 +6,7 @@
 
 import json
 from typing import Any, Optional, List
+
 # pylint: disable=non-abstract-transport-import
 # pylint: disable=no-name-in-module
 
@@ -35,7 +36,8 @@ class TokenExchangeClient:
         resource_endpoint: str,
         credential: AsyncTokenCredential,
         scopes: Optional[List[str]] = None,
-        **kwargs: Any):
+        **kwargs: Any
+    ):
 
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
@@ -76,6 +78,5 @@ class TokenExchangeClient:
                 raise ValueError("Failed to parse access token from response") from ex
         else:
             raise HttpResponseError(
-                message="Failed to exchange Entra token for ACS token",
-                response=response.http_response
+                message="Failed to exchange Entra token for ACS token", response=response.http_response
             )

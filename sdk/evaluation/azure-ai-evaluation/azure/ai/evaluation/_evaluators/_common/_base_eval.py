@@ -3,13 +3,17 @@
 # ---------------------------------------------------------
 
 import inspect
+import logging
 from abc import ABC, abstractmethod
+import json
+import copy
 from typing import (
     Any,
     Callable,
     Dict,
     Generic,
     List,
+    Tuple,
     TypedDict,
     TypeVar,
     Union,
@@ -37,9 +41,13 @@ from azure.ai.evaluation._common._experimental import experimental
 
 from ._conversation_aggregators import GetAggregator, GetAggregatorType
 
+import copy
+
 P = ParamSpec("P")
 T = TypeVar("T")
 T_EvalValue = TypeVar("T_EvalValue")
+
+logger = logging.getLogger(__name__)
 
 
 class DerivedEvalInput(TypedDict, total=False):
@@ -109,6 +117,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     _NOT_APPLICABLE_RESULT = "not applicable"
     _PASS_RESULT = "pass"
     _FAIL_RESULT = "fail"
+    _type = "azure_ai_evaluator"
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
@@ -486,13 +495,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         """
         tool_calls = []
         tool_results_map = {}
-        if isinstance(response, list):
-            for message in response:
+
+        # Work on a deep copy to avoid modifying the original object
+        response_copy = copy.deepcopy(response)
+
+        if isinstance(response_copy, list):
+            for message in response_copy:
                 # Extract tool calls from assistant messages
                 if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
                         if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
-                            tool_calls.append(content_item)
+                            tool_calls.append(copy.deepcopy(content_item))
 
                 # Extract tool results from tool messages
                 elif message.get("role") == "tool" and message.get("tool_call_id"):
@@ -510,15 +523,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return tool_calls
 
-    def _extract_tool_names_from_response(self, response) -> List[str]:
-        """Extract tool names from the response.
+    def _extract_tool_names_and_params_from_response(self, response) -> List[Tuple[str, Dict[str, str]]]:
+        """Extract tool names and parameters from the response.
+
         :param response: The response to parse.
         :type response: Union[str, List[dict]]
-        :return: List of tool names extracted from the response.
-        :rtype: List[str]
+        :return: List of tuples containing (tool_name, parameters_dict) extracted from the response.
+        :rtype: List[Tuple[str, Dict[str, str]]]
         """
         tool_calls = self._parse_tools_from_response(response)
-        tool_names = []
+        tool_name_param_pairs = []
         for tool_call in tool_calls:
             if not isinstance(tool_call, dict):
                 raise EvaluationException(
@@ -534,16 +548,41 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.INVALID_VALUE,
                 )
-            if "name" in tool_call:
-                tool_names.append(tool_call["name"])
-            else:
+
+            if "name" not in tool_call:
                 raise EvaluationException(
                     "Tool call missing 'name' field.",
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.MISSING_FIELD,
                 )
-        return tool_names
+
+            tool_name = str(tool_call["name"]).strip()
+
+            # Extract parameters/arguments
+            parameters = {}
+            if "arguments" in tool_call:
+                args = tool_call["arguments"]
+                if isinstance(args, dict):
+                    # Convert all values to strings for consistent comparison
+                    parameters = {str(k): str(v) for k, v in args.items()}
+                elif isinstance(args, str):
+                    # If arguments is a string, try to parse it as JSON
+                    try:
+                        parsed_args = json.loads(args)
+                        if isinstance(parsed_args, dict):
+                            parameters = {str(k): str(v) for k, v in parsed_args.items()}
+                    except json.JSONDecodeError:
+                        raise EvaluationException(
+                            "Failed to parse tool call arguments as JSON.",
+                            internal_message=str(tool_call),
+                            target=ErrorTarget.EVALUATE,
+                            category=ErrorCategory.INVALID_VALUE,
+                        )
+
+            tool_name_param_pairs.append((tool_name, parameters))
+
+        return tool_name_param_pairs
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
@@ -554,7 +593,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         # Convert inputs into list of evaluable inputs.
-        eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        try:
+            eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        except Exception as e:
+            logger.error(f"Error converting kwargs to eval_input_list: {e}")
+            raise e
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:
@@ -590,7 +633,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
-                print(f"Error calculating binary result: {e}")
+                logger.warning(f"Error calculating binary result: {e}")
             per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 

@@ -40,7 +40,6 @@ jobs:
       inputs:
         versionSpec: 22.x
     - bash: |
-        python scripts/dev_setup.py -p azure-core
         cd ..
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "$(USR_NAME)"
@@ -52,6 +51,7 @@ jobs:
       parameters:
         rootFolder: ../azure-sdk-for-python
     - bash: |
+        root_path=$(pwd)
         script_path=$(pwd)/scripts/auto_release
         cd ..
 
@@ -78,10 +78,6 @@ jobs:
           export DEBUG_REST_BRANCH=$(DEBUG_REST_BRANCH)
         fi
 
-        # create virtual env
-        python -m venv venv-sdk
-        source venv-sdk/bin/activate
-        python -m pip install -r $script_path/requirement.txt
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=$(AZURE_TEST_RUN_LIVE)
@@ -99,10 +95,16 @@ jobs:
         export TEST_FOLDER=$(TEST_FOLDER)
         export ISSUE_OWNER=$(ISSUE_OWNER)
 
+        # install azure-sdk-tools
+        python -m pip install $root_path/eng/tools/azure-sdk-tools[build,ghtools,sdkgenerator]
+
+        # install requirements
+        python -m pip install -r $script_path/requirement.txt
+
         # install tsp-client
         cd azure-sdk-for-python/eng/common/tsp-client
         npm ci
         cd ../../..
-        
+
         # run
         python $script_path/main.py

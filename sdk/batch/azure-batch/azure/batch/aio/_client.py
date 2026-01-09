@@ -14,15 +14,15 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import BatchClientConfiguration
-from ._operations import BatchClientOperationsMixin
+from ._operations import _BatchClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class BatchClient(BatchClientOperationsMixin):
+class BatchClient(_BatchClientOperationsMixin):
     """BatchClient.
 
     :param endpoint: Batch account endpoint (for example:
@@ -31,14 +31,15 @@ class BatchClient(BatchClientOperationsMixin):
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-01.20.0". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2025-06-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = BatchClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         kwargs["request_id_header_name"] = "client-request-id"
         _policies = kwargs.pop("policies", None)
         if _policies is None:

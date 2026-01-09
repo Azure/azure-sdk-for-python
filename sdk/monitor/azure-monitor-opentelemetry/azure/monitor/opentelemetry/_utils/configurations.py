@@ -19,7 +19,7 @@ from opentelemetry.instrumentation.environment_variables import (
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
     OTEL_TRACES_SAMPLER_ARG,
-    OTEL_TRACES_SAMPLER
+    OTEL_TRACES_SAMPLER,
 )
 from opentelemetry.sdk.resources import Resource
 
@@ -33,6 +33,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_TRACING_ARG,
     DISTRO_VERSION_ARG,
     ENABLE_LIVE_METRICS_ARG,
+    ENABLE_PERFORMANCE_COUNTERS_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
     LOGGER_NAME_ENV_ARG,
@@ -42,9 +43,12 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
     SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
+    LOG_RECORD_PROCESSORS_ARG,
+    METRIC_READERS_ARG,
     VIEWS_ARG,
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
+    ENABLE_TRACE_BASED_SAMPLING_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
@@ -58,6 +62,7 @@ _SUPPORTED_RESOURCE_DETECTORS = (
 )
 
 _logger = getLogger(__name__)
+
 
 def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     configurations = {}
@@ -75,8 +80,12 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_sampling_ratio(configurations)
     _default_instrumentation_options(configurations)
     _default_span_processors(configurations)
+    _default_log_record_processors(configurations)
+    _default_metric_readers(configurations)
     _default_enable_live_metrics(configurations)
+    _default_enable_performance_counters(configurations)
     _default_views(configurations)
+    _default_enable_trace_based_sampling(configurations)
 
     return configurations
 
@@ -113,6 +122,7 @@ def _default_logger_name(configurations):
     else:
         configurations.setdefault(LOGGER_NAME_ARG, "")
 
+
 def _default_logging_formatter(configurations):
     formatter = configurations.get(LOGGING_FORMATTER_ARG)
     if formatter:
@@ -129,6 +139,7 @@ def _default_logging_formatter(configurations):
                 ex,
             )
             configurations[LOGGING_FORMATTER_ARG] = None
+
 
 def _default_resource(configurations):
     environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS))
@@ -183,16 +194,18 @@ def _default_sampling_ratio(configurations):
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        configurations[SAMPLING_RATIO_ARG] = default_value
+        if configurations.get(SAMPLING_RATIO_ARG) is None:
+            configurations[SAMPLING_RATIO_ARG] = default_value
         if sampler_type is not None:
             _logger.error(  # pylint: disable=C
                 "Invalid argument for the sampler to be used for tracing. "
                 "Supported values are %s and %s. Defaulting to %s: %s",
                 RATE_LIMITED_SAMPLER,
                 FIXED_PERCENTAGE_SAMPLER,
-                OTEL_TRACES_SAMPLER,
-                OTEL_TRACES_SAMPLER_ARG,
+                FIXED_PERCENTAGE_SAMPLER,
+                configurations[SAMPLING_RATIO_ARG],
             )
+
 
 def _default_instrumentation_options(configurations):
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
@@ -216,8 +229,20 @@ def _default_span_processors(configurations):
     configurations.setdefault(SPAN_PROCESSORS_ARG, [])
 
 
+def _default_log_record_processors(configurations):
+    configurations.setdefault(LOG_RECORD_PROCESSORS_ARG, [])
+
+
+def _default_metric_readers(configurations):
+    configurations.setdefault(METRIC_READERS_ARG, [])
+
+
 def _default_enable_live_metrics(configurations):
     configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
+
+
+def _default_enable_performance_counters(configurations):
+    configurations.setdefault(ENABLE_PERFORMANCE_COUNTERS_ARG, True)
 
 
 def _default_views(configurations):
@@ -242,3 +267,7 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if "enabled" not in library_options:
         return False
     return library_options["enabled"] is True
+
+
+def _default_enable_trace_based_sampling(configurations):
+    configurations.setdefault(ENABLE_TRACE_BASED_SAMPLING_ARG, False)

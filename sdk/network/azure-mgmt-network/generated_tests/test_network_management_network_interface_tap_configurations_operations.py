@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -213,6 +213,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
+                                                "recordTypes": "str",
                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                 "storageId": "str",
                                                 "tags": {"str": "str"},
@@ -396,6 +397,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -439,6 +441,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "type": "str",
                                                 },
                                                 "privateLinkService": {
+                                                    "accessMode": "str",
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
                                                     "destinationIPAddress": "str",
@@ -501,6 +504,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -650,6 +654,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -884,6 +889,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -953,6 +959,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -1341,6 +1348,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                         "location": "str",
                                         "name": "str",
                                         "provisioningState": "str",
+                                        "recordTypes": "str",
                                         "retentionPolicy": {"days": 0, "enabled": False},
                                         "storageId": "str",
                                         "tags": {"str": "str"},
@@ -1579,6 +1587,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -1622,6 +1631,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "type": "str",
                                         },
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -1682,6 +1692,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "ipVersionType": "IPv4",
                                                         "location": "str",
                                                         "manualPrivateLinkServiceConnections": [
                                                             {
@@ -1831,6 +1842,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "type": "str",
                                         }
                                     ],
+                                    "ipVersionType": "IPv4",
                                     "location": "str",
                                     "manualPrivateLinkServiceConnections": [
                                         {
@@ -2122,6 +2134,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -2191,6 +2204,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -2599,6 +2613,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
+                                                "recordTypes": "str",
                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                 "storageId": "str",
                                                 "tags": {"str": "str"},
@@ -2667,6 +2682,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -2710,6 +2726,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "type": "str",
                                                 },
                                                 "privateLinkService": {
+                                                    "accessMode": "str",
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
                                                     "destinationIPAddress": "str",
@@ -2792,6 +2809,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -2941,6 +2959,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -3060,6 +3079,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -3129,6 +3149,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -3536,6 +3557,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                         "location": "str",
                                         "name": "str",
                                         "provisioningState": "str",
+                                        "recordTypes": "str",
                                         "retentionPolicy": {"days": 0, "enabled": False},
                                         "storageId": "str",
                                         "tags": {"str": "str"},
@@ -3604,6 +3626,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -3647,6 +3670,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "type": "str",
                                         },
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -3788,6 +3812,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "ipVersionType": "IPv4",
                                                         "location": "str",
                                                         "manualPrivateLinkServiceConnections": [
                                                             {
@@ -3937,6 +3962,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "type": "str",
                                         }
                                     ],
+                                    "ipVersionType": "IPv4",
                                     "location": "str",
                                     "manualPrivateLinkServiceConnections": [
                                         {
@@ -4056,6 +4082,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -4125,6 +4152,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -4393,7 +4421,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                     "type": "str",
                 },
             },
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4405,7 +4433,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

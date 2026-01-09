@@ -12,6 +12,11 @@ This file contains tests that verify the test suite itself and run integration s
 import pytest
 import importlib
 
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+)
+
 # Import the modules we want to test
 import azure.ai.voicelive.models as models
 import azure.ai.voicelive.aio as aio_module
@@ -52,7 +57,7 @@ class TestSuiteValidation:
         key_enums = [
             "AzureVoiceType",
             "MessageRole",
-            "OAIVoice",
+            "OpenAIVoiceName",
             "ClientEventType",
             "ContentPartType",
             "InputAudioFormat",
@@ -196,13 +201,13 @@ class TestRecentChangesIntegration:
         # API version changed from "2025-05-01-preview" to "2025-10-01"
         # This shouldn't affect the Python SDK functionality directly
 
-        from azure.ai.voicelive.models import RequestSession, OpenAIVoice, OAIVoice
+        from azure.ai.voicelive.models import RequestSession, OpenAIVoice, OpenAIVoiceName
 
         # Test that session creation still works
-        session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OAIVoice.ALLOY))
+        session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
 
         assert session.model == "gpt-4o-realtime-preview"
-        assert session.voice.name == OAIVoice.ALLOY
+        assert session.voice.name == OpenAIVoiceName.ALLOY
 
 
 class TestErrorHandlingIntegration:
@@ -230,14 +235,14 @@ class TestSerializationIntegration:
     def test_enum_serialization_fix(self):
         """Test that the enum serialization fix works correctly."""
         from azure.ai.voicelive._utils.serialization import Serializer
-        from azure.ai.voicelive.models import AzureVoiceType, MessageRole, OAIVoice
+        from azure.ai.voicelive.models import AzureVoiceType, MessageRole, OpenAIVoiceName
 
         serializer = Serializer()
 
         # Test that enums serialize correctly (this tests the cast(type, data.__class__) fix)
         voice_type_result = serializer.serialize_data(AzureVoiceType.AZURE_CUSTOM, "str")
         role_result = serializer.serialize_data(MessageRole.ASSISTANT, "str")
-        oai_voice_result = serializer.serialize_data(OAIVoice.ALLOY, "str")
+        oai_voice_result = serializer.serialize_data(OpenAIVoiceName.ALLOY, "str")
 
         assert voice_type_result == "azure-custom"
         assert role_result == "assistant"
@@ -346,13 +351,13 @@ class TestRealWorldScenarios:
             OpenAIVoice,
             AzureStandardVoice,
             AzurePersonalVoice,
-            OAIVoice,
+            OpenAIVoiceName,
             PersonalVoiceModels,
             RequestSession,
         )
 
         # Start with OpenAI voice
-        openai_voice = OpenAIVoice(name=OAIVoice.ALLOY)
+        openai_voice = OpenAIVoice(name=OpenAIVoiceName.ALLOY)
         session1 = RequestSession(model="gpt-4o-realtime-preview", voice=openai_voice)
 
         # Switch to Azure standard voice
@@ -380,13 +385,13 @@ class TestBackwardsCompatibility:
 
     def test_enum_string_compatibility(self):
         """Test that enums maintain string compatibility."""
-        from azure.ai.voicelive.models import MessageRole, AzureVoiceType, OAIVoice
+        from azure.ai.voicelive.models import MessageRole, AzureVoiceType, OpenAIVoiceName
         from enum import Enum
 
         # Test that enums can still be compared to strings
         assert MessageRole.USER == "user"
         assert AzureVoiceType.AZURE_CUSTOM == "azure-custom"
-        assert OAIVoice.ALLOY == "alloy"
+        assert OpenAIVoiceName.ALLOY == "alloy"
 
         # Test case insensitive behavior
         assert MessageRole["USER"] == MessageRole.USER

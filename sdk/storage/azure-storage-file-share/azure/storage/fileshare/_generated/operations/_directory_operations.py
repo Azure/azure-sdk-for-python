@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -28,7 +28,7 @@ from .._configuration import AzureFileStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -38,7 +38,7 @@ def build_create_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
@@ -49,6 +49,7 @@ def build_create_request(
     owner: Optional[str] = None,
     group: Optional[str] = None,
     file_mode: Optional[str] = None,
+    file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -57,7 +58,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -103,6 +104,10 @@ def build_create_request(
         _headers["x-ms-group"] = _SERIALIZER.header("group", group, "str")
     if file_mode is not None:
         _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
+    if file_property_semantics is not None:
+        _headers["x-ms-file-property-semantics"] = _SERIALIZER.header(
+            "file_property_semantics", file_property_semantics, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -121,7 +126,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -162,7 +167,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -212,7 +217,7 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -266,7 +271,7 @@ def build_set_metadata_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -276,7 +281,7 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -314,7 +319,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
     timeout: Optional[int] = None,
-    include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
+    include: Optional[list[Union[str, _models.ListFilesIncludeType]]] = None,
     include_extended_info: Optional[bool] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -325,7 +330,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -381,7 +386,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -432,7 +437,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -482,7 +487,7 @@ def build_rename_request(
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -493,7 +498,7 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -577,7 +582,7 @@ class DirectoryOperations:
     def create(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -588,6 +593,7 @@ class DirectoryOperations:
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new directory under the specified share or parent directory.
@@ -638,6 +644,11 @@ class DirectoryOperations:
         :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
          None.
         :type file_mode: str
+        :param file_property_semantics: SMB only, default value is New.  New will forcefully add the
+         ARCHIVE attribute flag and alter the permissions specified in x-ms-file-permission to inherit
+         missing permissions from the parent.  Restore will apply changes without further modification.
+         Known values are: "New" and "Restore". Default value is None.
+        :type file_property_semantics: str or ~azure.storage.fileshare.models.FilePropertySemantics
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -670,6 +681,7 @@ class DirectoryOperations:
             owner=owner,
             group=group,
             file_mode=file_mode,
+            file_property_semantics=file_property_semantics,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -688,7 +700,10 @@ class DirectoryOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -781,7 +796,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -870,7 +888,10 @@ class DirectoryOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -993,7 +1014,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1031,7 +1055,7 @@ class DirectoryOperations:
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
-        self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, timeout: Optional[int] = None, metadata: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """Updates user defined metadata for the specified directory.
 
@@ -1085,7 +1109,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1108,7 +1135,7 @@ class DirectoryOperations:
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
+        include: Optional[list[Union[str, _models.ListFilesIncludeType]]] = None,
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListFilesAndDirectoriesSegmentResponse:
@@ -1187,7 +1214,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1278,7 +1308,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1368,7 +1401,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1396,7 +1432,7 @@ class DirectoryOperations:
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
         destination_lease_access_conditions: Optional[_models.DestinationLeaseAccessConditions] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
@@ -1523,7 +1559,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

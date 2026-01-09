@@ -27,7 +27,9 @@
 # cSpell:ignore ests
 import pytest
 import os
+import sys
 from devtools_testutils import (
+    set_custom_default_matcher,
     test_proxy,
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
@@ -42,6 +44,13 @@ from azure.communication.identity._shared.utils import parse_connection_str
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     set_default_session_settings()
+
+    # On python 3.14, azure-core sends an additional 'Accept-Encoding' header value that causes playback issues.
+    # By ignoring it, we can avoid really wonky mismatch errors, while still validating the other headers
+    if sys.version_info >= (3, 14):
+        headers_to_ignore = "Accept-Encoding"
+        set_custom_default_matcher(ignored_headers=headers_to_ignore)
+
     add_oauth_response_sanitizer()
 
     connection_str = os.environ.get("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")

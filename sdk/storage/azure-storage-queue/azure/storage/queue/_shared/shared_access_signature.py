@@ -210,6 +210,9 @@ class _SharedAccessHelper(object):
     def add_id(self, policy_id):
         self._add_query(QueryStringConstants.SIGNED_IDENTIFIER, policy_id)
 
+    def add_user_delegation_oid(self, user_delegation_oid):
+        self._add_query(QueryStringConstants.SIGNED_DELEGATED_USER_OID, user_delegation_oid)
+
     def add_account(self, services, resource_types):
         self._add_query(QueryStringConstants.SIGNED_SERVICES, services)
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)

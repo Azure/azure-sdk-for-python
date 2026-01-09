@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 import logging
 import os
 from typing import TYPE_CHECKING, Optional
@@ -17,6 +18,16 @@ try:
 except:
     pass
 
+try:
+    import httpx
+
+    HTTPXTransport = httpx.HTTPTransport
+    AsyncHTTPXTransport = httpx.AsyncHTTPTransport
+except ImportError:
+    httpx = None
+    HTTPXTransport = None
+    AsyncHTTPXTransport = None
+
 from .config import PROXY_URL
 from .helpers import (
     get_http_client,
@@ -27,7 +38,6 @@ from .helpers import (
     trim_kwargs_from_test_function,  # to clean up incoming arguments to the test function we are wrapping
 )
 from .proxy_startup import discovered_roots
-from urllib3.exceptions import HTTPError
 import json
 
 if TYPE_CHECKING:
@@ -40,6 +50,13 @@ RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
+
+
+class RecordedTransport(str, Enum):
+    """Enum for specifying which transports to record in the test proxy."""
+
+    AZURE_CORE = "azure_core"
+    HTTPX = "httpx"
 
 
 def get_recording_assets(test_id: str) -> Optional[str]:
@@ -114,32 +131,31 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
 
 
 def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Dict[str, str]") -> None:
-    try:
-        http_client = get_http_client()
-        if is_live():
-            http_client.request(
-                method="POST",
-                url=RECORDING_STOP_URL,
-                headers={
-                    "x-recording-file": test_id,
-                    "x-recording-id": recording_id,
-                    "x-recording-save": "true",
-                    "Content-Type": "application/json",
-                },
-                # tests don't record successfully unless test_variables is a dictionary
-                body=json.dumps(test_variables).encode("utf-8") if test_variables else "{}",
-            )
-        else:
-            http_client.request(
-                method="POST",
-                url=PLAYBACK_STOP_URL,
-                headers={"x-recording-id": recording_id},
-            )
-    except HTTPError as e:
+    http_client = get_http_client()
+    if is_live():
+        response = http_client.request(
+            method="POST",
+            url=RECORDING_STOP_URL,
+            headers={
+                "x-recording-file": test_id,
+                "x-recording-id": recording_id,
+                "x-recording-save": "true",
+                "Content-Type": "application/json",
+            },
+            # tests don't record successfully unless test_variables is a dictionary
+            body=json.dumps(test_variables or {}).encode("utf-8"),
+        )
+    else:
+        response = http_client.request(
+            method="POST",
+            url=PLAYBACK_STOP_URL,
+            headers={"x-recording-id": recording_id},
+        )
+    if response.status >= 400:
         raise HttpResponseError(
             "The test proxy ran into an error while ending the session. Make sure any test variables you record have "
-            "string values."
-        ) from e
+            f"string values. Full error details: {response.data}"
+        )
 
 
 def get_proxy_netloc() -> "Dict[str, str]":
@@ -160,91 +176,211 @@ def transform_request(request: "HttpRequest", recording_id: str) -> None:
     request.url = updated_target
 
 
-def recorded_by_proxy(test_func: "Callable") -> None:
-    """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
+def transform_httpx_request(request, recording_id: str) -> None:
+    """Transform an httpx.Request to route through the test proxy."""
+    parsed_result = url_parse.urlparse(str(request.url))
 
-    For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
+    # Store original upstream URI
+    if "x-recording-upstream-base-uri" not in request.headers:
+        request.headers["x-recording-upstream-base-uri"] = f"{parsed_result.scheme}://{parsed_result.netloc}"
+
+    # Set recording headers
+    request.headers["x-recording-id"] = recording_id
+    request.headers["x-recording-mode"] = "record" if is_live() else "playback"
+
+    # Rewrite URL to proxy
+    updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
+    request.url = httpx.URL(updated_target)
+
+
+def restore_httpx_response_url(response) -> None:
+    """Restore the response's request URL to the original upstream target."""
+    try:
+        parsed_resp = url_parse.urlparse(str(response.request.url))
+        upstream_uri_str = response.request.headers.get("x-recording-upstream-base-uri", "")
+        if upstream_uri_str:
+            upstream_uri = url_parse.urlparse(upstream_uri_str)
+            original_target = parsed_resp._replace(
+                scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
+            ).geturl()
+            response.request.url = httpx.URL(original_target)
+    except Exception:
+        # Best-effort restore; don't fail the call if something goes wrong
+        pass
+
+
+def _transform_args(recording_id: str, *call_args, **call_kwargs):
+    """Transform azure.core transport call arguments to route through the test proxy.
+
+    Used by both sync and async decorators.
+    """
+    copied_positional_args = list(call_args)
+    request = copied_positional_args[1]
+    transform_request(request, recording_id)
+    return tuple(copied_positional_args), call_kwargs
+
+
+def _transform_httpx_args(recording_id: str, *call_args, **call_kwargs):
+    """Transform httpx transport call arguments to route through the test proxy.
+
+    Used by both sync and async decorators.
+    """
+    copied_positional_args = list(call_args)
+    request = copied_positional_args[1]
+    transform_httpx_request(request, recording_id)
+    return tuple(copied_positional_args), call_kwargs
+
+
+def recorded_by_proxy(*transports):
+    """
+    Decorator for recording and playing back test proxy sessions.
+
+    Args:
+        *transports: Which transport(s) to record. Pass one or more comma separated RecordedTransport enum values.
+            - No args (default): Record RequestsTransport.send calls (azure.core).
+            - RecordedTransport.AZURE_CORE: Record RequestsTransport.send calls. Same as the default above.
+            - RecordedTransport.HTTPX: Record HTTPXTransport.handle_request calls.
+            - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX: Record both transports.
+
+    Usages:
+      from devtools_testutils import recorded_by_proxy, RecordedTransport
+
+      # If your test uses azure.core only network calls (default)
+      @recorded_by_proxy
+      def test(...): ...
+
+      # Explicitly enable azure.core recordings only (equivalent to the above)
+      @recorded_by_proxy(RecordedTransport.AZURE_CORE)
+      def test(...): ...
+
+      # If your test uses httpx only for network calls
+      @recorded_by_proxy(RecordedTransport.HTTPX)
+      def test(...): ...
+
+      # If your test uses both azure.core and httpx for network calls
+      @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+      def test(...): ...
     """
 
-    def record_wrap(*args, **kwargs):
-        def transform_args(*args, **kwargs):
-            copied_positional_args = list(args)
-            request = copied_positional_args[1]
+    # Bare decorator usage: @recorded_by_proxy
+    if len(transports) == 1 and callable(transports[0]):
+        test_func = transports[0]
+        transport_list = [(RequestsTransport, "send")]
+        return _make_proxy_decorator(transport_list)(test_func)
 
-            transform_request(request, recording_id)
+    # Parameterized decorator usage: @recorded_by_proxy(...)
+    # Determine which transports to use
+    transport_list = []
 
-            return tuple(copied_positional_args), kwargs
+    # If no transports specified, default to azure.core
+    transport_set = set(transports) if transports else {RecordedTransport.AZURE_CORE}
 
-        trimmed_kwargs = {k: v for k, v in kwargs.items()}
-        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+    # Add transports based on what's in the set
+    for transport in transport_set:
+        if transport == RecordedTransport.AZURE_CORE or (
+            isinstance(transport, str) and transport == RecordedTransport.AZURE_CORE.value
+        ):
+            transport_list.append((RequestsTransport, "send"))
+        elif transport == RecordedTransport.HTTPX or (
+            isinstance(transport, str) and transport == RecordedTransport.HTTPX.value
+        ):
+            if HTTPXTransport is not None:
+                transport_list.append((HTTPXTransport, "handle_request"))
 
-        if is_live_and_not_recording():
-            return test_func(*args, **trimmed_kwargs)
+    # If still no transports, fall back to azure.core
+    if not transport_list:
+        transport_list = [(RequestsTransport, "send")]
 
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
-        original_transport_func = RequestsTransport.send
+    # Return a decorator function that will be applied to the test function
+    return lambda test_func: _make_proxy_decorator(transport_list)(test_func)
 
-        def combined_call(*args, **kwargs):
-            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
 
-            # make the x-recording-upstream-base-uri the URL of the request
-            # this makes the request look like it was made to the original endpoint instead of to the proxy
-            # without this, things like LROPollers can get broken by polling the wrong endpoint
-            parsed_result = url_parse.urlparse(result.request.url)
-            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
-            upstream_uri_dict = {
-                "scheme": upstream_uri.scheme,
-                "netloc": upstream_uri.netloc,
-            }
-            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+def _make_proxy_decorator(transports):
+    def _decorator(test_func: "Callable"):
+        def record_wrap(*args, **kwargs):
+            # ---- your existing trimming/early-exit logic ----
+            trimmed_kwargs = {k: v for k, v in kwargs.items()}
+            trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
-            result.request.url = original_target
-            return result
+            if is_live_and_not_recording():
+                return test_func(*args, **trimmed_kwargs)
 
-        RequestsTransport.send = combined_call
+            test_id = get_test_id()
+            recording_id, variables = start_record_or_playback(test_id)
 
-        # call the modified function
-        # we define test_variables before invoking the test so the variable is defined in case of an exception
-        test_variables = None
-        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
-        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
-        test_run = False
-        try:
+            # Build a wrapper factory so each patched method closes over its own original
+            def make_combined_call(original_transport_func, is_httpx=False):
+                def combined_call(*call_args, **call_kwargs):
+                    if is_httpx:
+                        adjusted_args, adjusted_kwargs = _transform_httpx_args(recording_id, *call_args, **call_kwargs)
+                        result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+                        restore_httpx_response_url(result)
+                    else:
+                        adjusted_args, adjusted_kwargs = _transform_args(recording_id, *call_args, **call_kwargs)
+                        result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+                        # rewrite request.url to the original upstream for LROs, etc.
+                        parsed_result = url_parse.urlparse(result.request.url)
+                        upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+                        upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+                        original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+                        result.request.url = original_target
+                    return result
+
+                return combined_call
+
+            # Patch multiple transports and ensure restoration
+            test_variables = None
+            test_run = False
+            originals = []
+            # monkeypatch all requested transports
+            for owner, name in transports:
+                original = getattr(owner, name)
+                # Check if this is an httpx transport by comparing with httpx transport classes
+                is_httpx_transport = (
+                    (HTTPXTransport is not None and owner is HTTPXTransport)
+                    or (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport)
+                    or (httpx is not None and owner.__module__.startswith("httpx"))
+                )
+                setattr(owner, name, make_combined_call(original, is_httpx=is_httpx_transport))
+                originals.append((owner, name, original))
+
             try:
-                test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
-                test_run = True
-            except TypeError as error:
-                if "unexpected keyword argument" in str(error) and "variables" in str(error):
-                    logger = logging.getLogger()
-                    logger.info(
-                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-                        "`variables` parameter to make use of recorded test variables."
-                    )
-                else:
-                    raise error
-            # if the test couldn't accept `variables`, run the test without passing them
-            if not test_run:
-                test_variables = test_func(*args, **trimmed_kwargs)
+                try:
+                    test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+                    test_run = True
+                except TypeError as error:
+                    if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                        logger = logging.getLogger()
+                        logger.info(
+                            "This test can't accept variables as input. "
+                            "Accept `**kwargs` and/or a `variables` parameter to use recorded variables."
+                        )
+                    else:
+                        raise
 
-        except ResourceNotFoundError as error:
-            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-            troubleshoot = (
-                "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
-            )
-            message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(
-                message=f"{troubleshoot} Error details:\n{message}",
-                response=error.response,
-            )
-            raise error_with_message from error
+                if not test_run:
+                    test_variables = test_func(*args, **trimmed_kwargs)
 
-        finally:
-            RequestsTransport.send = original_transport_func
-            stop_record_or_playback(test_id, recording_id, test_variables)
+            except ResourceNotFoundError as error:
+                error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+                troubleshoot = (
+                    "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
+                )
+                message = error_body.get("message") or error_body.get("Message")
+                error_with_message = ResourceNotFoundError(
+                    message=f"{troubleshoot} Error details:\n{message}",
+                    response=error.response,
+                )
+                raise error_with_message from error
 
-        return test_variables
+            finally:
+                # restore in reverse order
+                for owner, name, original in reversed(originals):
+                    setattr(owner, name, original)
+                stop_record_or_playback(test_id, recording_id, test_variables)
 
-    return record_wrap
+            return test_variables
+
+        return record_wrap
+
+    return _decorator

@@ -20,12 +20,12 @@ class TestLogAnalyticsManagementIntelligencePacksOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_disable(self, resource_group):
+    def test_intelligence_packs_disable(self, resource_group):
         response = self.client.intelligence_packs.disable(
             resource_group_name=resource_group.name,
             workspace_name="str",
             intelligence_pack_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestLogAnalyticsManagementIntelligencePacksOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_enable(self, resource_group):
+    def test_intelligence_packs_enable(self, resource_group):
         response = self.client.intelligence_packs.enable(
             resource_group_name=resource_group.name,
             workspace_name="str",
             intelligence_pack_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -46,11 +46,11 @@ class TestLogAnalyticsManagementIntelligencePacksOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_intelligence_packs_list(self, resource_group):
         response = self.client.intelligence_packs.list(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

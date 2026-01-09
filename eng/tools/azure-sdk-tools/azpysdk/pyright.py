@@ -18,16 +18,17 @@ from ci_tools.logging import logger
 PYRIGHT_VERSION = "1.1.391"
 REPO_ROOT = discover_repo_root()
 
+
 def get_pyright_config_path(package_dir: str, staging_dir: str) -> str:
     if os.path.exists(os.path.join(package_dir, "pyrightconfig.json")):
-        config_path = os.path.join(package_dir, "pyrightconfig.json") 
+        config_path = os.path.join(package_dir, "pyrightconfig.json")
     else:
         config_path = os.path.join(REPO_ROOT, "pyrightconfig.json")
 
     # read the config and adjust relative paths
     with open(config_path, "r") as f:
         config_text = f.read()
-        config_text = config_text.replace("\"**", "\"../../../../**")
+        config_text = config_text.replace('"**', '"../../../../**')
         config = json.loads(config_text)
 
     # add or update the execution environment
@@ -41,15 +42,16 @@ def get_pyright_config_path(package_dir: str, staging_dir: str) -> str:
     with open(pyright_config_path, "w+") as f:
         f.write(json.dumps(config, indent=4))
     return pyright_config_path
-    
+
 
 class pyright(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the pyright check. The pyright check installs pyright and runs pyright against the target package.
-        """
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
+        """Register the pyright check. The pyright check installs pyright and runs pyright against the target package."""
         parents = parent_parsers or []
         p = subparsers.add_parser("pyright", parents=parents, help="Run the pyright check")
         p.set_defaults(func=self.run)
@@ -58,7 +60,7 @@ class pyright(Check):
             "--next",
             default=False,
             help="Next version of pyright is being tested.",
-            required=False,      
+            required=False,
         )
 
     def run(self, args: argparse.Namespace) -> int:
@@ -86,7 +88,7 @@ class pyright(Check):
             except CalledProcessError as e:
                 logger.error("Failed to install pyright:", e)
                 return e.returncode
-            
+
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
@@ -101,7 +103,7 @@ class pyright(Check):
 
             self.install_dev_reqs(executable, args, package_dir)
 
-            top_level_module = parsed.namespace.split(".")[0] 
+            top_level_module = parsed.namespace.split(".")[0]
             paths = [
                 os.path.join(package_dir, top_level_module),
             ]
@@ -116,9 +118,7 @@ class pyright(Check):
                 samples = os.path.exists(os.path.join(package_dir, "samples"))
                 generated_samples = os.path.exists(os.path.join(package_dir, "generated_samples"))
                 if not samples and not generated_samples:
-                    logger.info(
-                        f"Package {package_name} does not have a samples directory."
-                    )
+                    logger.info(f"Package {package_name} does not have a samples directory.")
                 else:
                     paths.append(os.path.join(package_dir, "samples" if samples else "generated_samples"))
 
@@ -131,20 +131,30 @@ class pyright(Check):
                 "--project",
                 config_path,
             ]
-            commands.extend(paths) 
+            commands.extend(paths)
 
             try:
-                check_call(commands)
+                self.run_venv_command(executable, commands[1:], package_dir, check=True)
+                logger.info(f"Pyright check passed for {package_name}.")
             except CalledProcessError as error:
-                if args.next and in_ci() and is_check_enabled(args.target_package, "pyright") and not is_typing_ignored(package_name):
+                logger.error("Pyright reported issues:")
+                logger.error(error.stdout)
+                if (
+                    args.next
+                    and in_ci()
+                    and is_check_enabled(args.target_package, "pyright")
+                    and not is_typing_ignored(package_name)
+                ):
                     from gh_tools.vnext_issue_creator import create_vnext_issue
+
                     create_vnext_issue(package_dir, "pyright")
 
                 print("See https://aka.ms/python/typing-guide for information.\n\n")
-                results.append(1)       
+                results.append(1)
 
             if args.next and in_ci() and not is_typing_ignored(package_name):
                 from gh_tools.vnext_issue_creator import close_vnext_issue
+
                 close_vnext_issue(package_name, "pyright")
 
         return max(results) if results else 0

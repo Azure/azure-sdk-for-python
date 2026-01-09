@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import json
 import logging
-from typing import Optional, Sequence, Any, Union
+from typing import Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.semconv.attributes.exception_attributes import (
@@ -11,13 +11,14 @@ from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
-from opentelemetry.sdk._logs import LogData
-from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
+from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportResult
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
     _EXCEPTION_ENVELOPE_NAME,
     _MESSAGE_ENVELOPE_NAME,
+    _DEFAULT_LOG_MESSAGE,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import (
     ContextTagKeys,
@@ -52,18 +53,19 @@ _DEFAULT_TRACE_ID = 0
 __all__ = ["AzureMonitorLogExporter"]
 
 
-class AzureMonitorLogExporter(BaseExporter, LogExporter):
+class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(self, batch: Sequence[LogData], **kwargs: Any) -> LogExportResult:  # pylint: disable=unused-argument
+    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:
+        # pylint: disable=unused-argument
         """Export log data.
 
-        :param batch: OpenTelemetry LogData(s) to export.
-        :type batch: ~typing.Sequence[~opentelemetry._logs.LogData]
+        :param batch: OpenTelemetry ReadableLogRecord(s) to export.
+        :type batch: ~typing.Sequence[~opentelemetry._logs.ReadableLogRecord]
         :return: The result of the export.
-        :rtype: ~opentelemetry.sdk._logs.export.LogData
+        :rtype: ~opentelemetry.sdk._logs.export.ReadableLogRecord
         """
-        envelopes = [envelope for log in batch if (envelope := self._log_to_envelope(log)) is not None]
+        envelopes = [self._log_to_envelope(log) for log in batch]
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
@@ -80,10 +82,8 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         if self.storage:
             self.storage.close()
 
-    def _log_to_envelope(self, log_data: LogData) -> Union[TelemetryItem, None]:
-        envelope = _convert_log_to_envelope(log_data)
-        if envelope is None:
-            return None
+    def _log_to_envelope(self, readable_log_record: ReadableLogRecord) -> TelemetryItem:
+        envelope = _convert_log_to_envelope(readable_log_record)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -107,27 +107,37 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         return cls(connection_string=conn_str, **kwargs)
 
 
-def _log_data_is_event(log_data: LogData) -> bool:
-    log_record = log_data.log_record
+def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
+    log_record = readable_log_record.log_record
     is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or \
-            log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE)  # type: ignore
+        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or log_record.attributes.get(
+            _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE
+        )  # type: ignore
     return is_event is not None
 
 
 # pylint: disable=protected-access
-def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
-    log_record = log_data.log_record
+# pylint: disable=too-many-statements
+def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> TelemetryItem:
+    log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
-    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))  # type: ignore
+    envelope.tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
     envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
+    if (
+        log_record.attributes
+        and ContextTagKeys.AI_OPERATION_NAME in log_record.attributes
+        and log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] is not None
+    ):
+        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
+            ContextTagKeys.AI_OPERATION_NAME
+        )
     if _utils._is_any_synthetic_source(log_record.attributes):
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
@@ -169,7 +179,7 @@ def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
             exceptions=[exc_details],
         )
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
-    elif _log_data_is_event(log_data):  # Event telemetry
+    elif _log_data_is_event(readable_log_record):  # Event telemetry
         _set_statsbeat_custom_events_feature()
         envelope.name = "Microsoft.ApplicationInsights.Event"
         event_name = ""
@@ -191,18 +201,18 @@ def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
             severity_level=severity_level,  # type: ignore
             properties=properties,
         )
+        data.message = data.message.strip()
         if len(data.message) == 0:
-            _logger.warning("Log record body cannot be empty. Skipping export for this log record.")
-            return None
+            data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
     return envelope
 
 
-def _get_log_export_result(result: ExportResult) -> LogExportResult:
+def _get_log_export_result(result: ExportResult) -> LogRecordExportResult:
     if result == ExportResult.SUCCESS:
-        return LogExportResult.SUCCESS
-    return LogExportResult.FAILURE
+        return LogRecordExportResult.SUCCESS
+    return LogRecordExportResult.FAILURE
 
 
 # pylint: disable=line-too-long
