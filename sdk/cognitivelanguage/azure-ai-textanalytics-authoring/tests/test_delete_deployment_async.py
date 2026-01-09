@@ -21,7 +21,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))  # type: ignore[arg-type]
 
-
+@pytest.mark.playback_test_only
 class TestConversationsDeleteDeploymentAsync(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async

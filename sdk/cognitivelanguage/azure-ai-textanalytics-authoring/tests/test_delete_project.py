@@ -1,5 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+import pytest
+
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -17,7 +19,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAuthoringClient:
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy

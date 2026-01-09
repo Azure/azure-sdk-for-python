@@ -15,7 +15,7 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCancelTrainingAsync(AzureRecordedTestCase):
     @ConversationsPreparer()
     @recorded_by_proxy_async
