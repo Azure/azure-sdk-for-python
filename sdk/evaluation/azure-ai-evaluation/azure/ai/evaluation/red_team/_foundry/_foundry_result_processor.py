@@ -8,8 +8,8 @@ import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from pyrit.models.attack_result import AttackOutcome, AttackResult
-from pyrit.scenario.core.dataset_configuration import DatasetConfiguration
+from pyrit.models import AttackOutcome, AttackResult
+from pyrit.scenario import DatasetConfiguration
 
 
 class FoundryResultProcessor:

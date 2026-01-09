@@ -7,9 +7,8 @@ import logging
 import json
 from typing import Any, Dict, List, Optional
 
-from pyrit.models import Score, UnvalidatedScore
-from pyrit.models.message_piece import MessagePiece
-from pyrit.score.scorer import Scorer, ScorerPromptValidator
+from pyrit.models import Score, UnvalidatedScore, MessagePiece
+from pyrit.score import Scorer, ScorerPromptValidator
 
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from .._attack_objective_generator import RiskCategory
@@ -174,7 +173,7 @@ class RAIServiceScorer(Scorer):
                 },
                 scorer_class_identifier=self.get_identifier(),
                 message_piece_id=request_response.id,
-                task=task or "",
+                objective=task or "",
             )
 
             return [score]
@@ -194,7 +193,7 @@ class RAIServiceScorer(Scorer):
                 },
                 scorer_class_identifier=self.get_identifier(),
                 message_piece_id=request_response.id,
-                task=task or "",
+                objective=task or "",
             )
             return [score]
 

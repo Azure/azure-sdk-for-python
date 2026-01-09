@@ -6,9 +6,8 @@
 import uuid
 from typing import Any, Dict, List, Optional
 
-from pyrit.models.literals import PromptDataType
-from pyrit.models.seeds import SeedGroup, SeedObjective, SeedPrompt
-from pyrit.scenario.core.dataset_configuration import DatasetConfiguration
+from pyrit.models import PromptDataType, SeedGroup, SeedObjective, SeedPrompt
+from pyrit.scenario import DatasetConfiguration
 
 from .._utils.formatting_utils import format_content_by_modality
 

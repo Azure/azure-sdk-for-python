@@ -7,8 +7,8 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from pyrit.prompt_target import PromptChatTarget
-from pyrit.scenario.scenarios.foundry import Foundry, FoundryStrategy
-from pyrit.scenario.core.dataset_configuration import DatasetConfiguration
+from pyrit.scenario import DatasetConfiguration
+from pyrit.scenario.foundry import Foundry, FoundryStrategy
 
 from ._rai_scorer import RAIServiceScorer
 
@@ -113,7 +113,7 @@ class ScenarioOrchestrator:
         :rtype: Any
         """
         # Import here to avoid circular imports
-        from pyrit.score import AttackScoringConfig
+        from pyrit.executor.attack import AttackScoringConfig
 
         return AttackScoringConfig(
             scorer=self.rai_scorer,
@@ -151,7 +151,7 @@ class ScenarioOrchestrator:
         :return: Attack success rate as a float between 0 and 1
         :rtype: float
         """
-        from pyrit.models.attack_result import AttackOutcome
+        from pyrit.models import AttackOutcome
 
         results = self.get_attack_results()
         if not results:
@@ -166,7 +166,7 @@ class ScenarioOrchestrator:
         :return: Dictionary mapping strategy name to ASR
         :rtype: Dict[str, float]
         """
-        from pyrit.models.attack_result import AttackOutcome
+        from pyrit.models import AttackOutcome
 
         results = self.get_attack_results()
         if not results:

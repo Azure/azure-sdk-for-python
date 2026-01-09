@@ -5,7 +5,7 @@
 
 from typing import Dict, List, Optional, Union
 
-from pyrit.scenario.scenarios.foundry import FoundryStrategy
+from pyrit.scenario.foundry import FoundryStrategy
 
 from .._attack_strategy import AttackStrategy
 

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from pyrit.prompt_target import PromptChatTarget
-from pyrit.scenario.scenarios.foundry import FoundryStrategy
+from pyrit.scenario.foundry import FoundryStrategy
 
 from .._attack_objective_generator import RiskCategory
 from .._attack_strategy import AttackStrategy

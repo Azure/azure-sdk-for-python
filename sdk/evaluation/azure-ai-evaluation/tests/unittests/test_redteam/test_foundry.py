@@ -795,7 +795,7 @@ class TestScenarioOrchestrator:
             logger=mock_logger,
         )
 
-        with patch("azure.ai.evaluation.red_team._foundry._scenario_orchestrator.AttackScoringConfig") as mock_config:
+        with patch("pyrit.executor.attack.AttackScoringConfig") as mock_config:
             mock_config.return_value = MagicMock()
 
             config = orchestrator._create_scoring_config()
@@ -830,7 +830,7 @@ class TestScenarioOrchestrator:
             "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.Foundry",
             return_value=mock_foundry,
         ), patch(
-            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.AttackScoringConfig",
+            "pyrit.executor.attack.AttackScoringConfig",
         ):
             result = await orchestrator.execute(
                 dataset_config=mock_dataset,
@@ -1440,15 +1440,34 @@ class TestFoundryExecutionManager:
 
         mock_target = MagicMock()
 
+        # Create a mock orchestrator instance that's fully configured
+        mock_orchestrator_instance = MagicMock()
+        mock_orchestrator_instance.execute = AsyncMock(return_value=mock_orchestrator_instance)
+        mock_orchestrator_instance.calculate_asr_by_strategy.return_value = {"test": 0.5}
+        mock_orchestrator_instance.get_attack_results.return_value = []
+
+        # Mock result processor
+        mock_result_processor = MagicMock()
+        mock_result_processor.to_jsonl.return_value = None
+        mock_result_processor.get_summary_stats.return_value = {"asr": 0.5, "total": 10, "successful": 5}
+
         # Patch internal methods to avoid full execution
         with patch.object(manager, "_build_dataset_config") as mock_build, \
-             patch.object(ScenarioOrchestrator, "execute", new_callable=AsyncMock) as mock_execute, \
-             patch.object(FoundryResultProcessor, "to_jsonl") as mock_jsonl, \
-             patch.object(FoundryResultProcessor, "get_summary_stats", return_value={"asr": 0.5}):
+             patch(
+                 "azure.ai.evaluation.red_team._foundry._execution_manager.ScenarioOrchestrator",
+                 return_value=mock_orchestrator_instance
+             ), \
+             patch(
+                 "azure.ai.evaluation.red_team._foundry._execution_manager.FoundryResultProcessor",
+                 return_value=mock_result_processor
+             ), \
+             patch(
+                 "azure.ai.evaluation.red_team._foundry._execution_manager.RAIServiceScorer"
+             ):
 
-            mock_build.return_value = MagicMock()
-            mock_build.return_value.get_all_seed_groups.return_value = [MagicMock()]
-            mock_execute.return_value = MagicMock()
+            mock_dataset = MagicMock()
+            mock_dataset.get_all_seed_groups.return_value = [MagicMock()]
+            mock_build.return_value = mock_dataset
 
             # Use multi-turn strategies
             await manager.execute_attacks(
@@ -1844,7 +1863,7 @@ class TestScenarioOrchestratorExtended:
             "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.Foundry",
             return_value=mock_foundry,
         ), patch(
-            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.AttackScoringConfig",
+            "pyrit.executor.attack.AttackScoringConfig",
         ) as mock_config:
             result = await orchestrator.execute(
                 dataset_config=mock_dataset,
@@ -2312,8 +2331,13 @@ class TestRedTeamFoundryIntegration:
         """Create a mock RedTeam instance for testing."""
         from azure.ai.evaluation.red_team import RedTeam
 
+        # Patch all network-related and initialization calls
         with patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), \
-             patch("azure.ai.evaluation.red_team._red_team.SQLiteMemory"):
+             patch("azure.ai.evaluation.red_team._red_team.SQLiteMemory"), \
+             patch("azure.ai.evaluation.red_team._red_team.validate_azure_ai_project"), \
+             patch("azure.ai.evaluation.red_team._red_team.is_onedp_project", return_value=False), \
+             patch("azure.ai.evaluation.red_team._red_team.ManagedIdentityAPITokenManager"), \
+             patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"):
             red_team = RedTeam(
                 azure_ai_project=mock_azure_ai_project,
                 credential=mock_credential,
@@ -2322,6 +2346,7 @@ class TestRedTeamFoundryIntegration:
             red_team.attack_objectives = {}
             red_team.red_team_info = {}
             red_team.risk_categories = [RiskCategory.Violence, RiskCategory.HateUnfairness]
+            red_team.completed_tasks = 0
 
             return red_team
 
