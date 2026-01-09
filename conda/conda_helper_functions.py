@@ -10,6 +10,7 @@ import json
 from ci_tools.logging import logger
 import urllib.request
 from datetime import datetime
+from ci_tools.parsing import ParsedSetup
 
 # TODO move the constants into a third file
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -24,6 +25,42 @@ SERVICE_NAME_COL = "ServiceName"
 REPO_PATH_COL = "RepoPath"
 TYPE_COL = "Type"
 
+# =====================================
+# Helpers for handling bundled releases
+# =====================================
+
+def get_package_path(package_name: str) -> str:
+    """Get the filesystem path of an SDK package given its name."""
+    pattern = os.path.join(SDK_DIR, "**", package_name)
+    matches = glob.glob(pattern, recursive=True)
+    return matches[0]
+
+def get_bundle_name(package_name: str) -> Optional[str]:
+    """
+    Check bundled release config from package's pyproject.toml file.
+
+    If bundled, return the bundle name; otherwise, return None.
+    """
+    package_path = get_package_path(package_name)
+    parsed = ParsedSetup.from_path(package_path)
+    if not parsed:
+        # TODO raise something 
+        logger.error(f"Failed to parse setup for package {package_name}")
+        return None
+
+    # don't expect beta releases to have conda config, TODO raise something
+    if not parsed.is_stable_release():
+        return None
+    
+    conda_config = parsed.get_conda_config()
+    if conda_config and "bundle_name" in conda_config:
+        return conda_config["bundle_name"]
+    
+    return None
+
+# =====================================
+# Utility functions for parsing data
+# =====================================
 
 def parse_csv() -> List[Dict[str, str]]:
     """Download and parse the Azure SDK Python packages CSV file."""
@@ -167,10 +204,3 @@ def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int
                 if package_name:
                     package_index[package_name] = (artifact_idx, checkout_idx)
     return package_index
-
-
-def get_package_path(package_name: str) -> str:
-    """Get the filesystem path of an SDK package given its name."""
-    pattern = os.path.join(SDK_DIR, "**", package_name)
-    matches = glob.glob(pattern, recursive=True)
-    return matches[0]
