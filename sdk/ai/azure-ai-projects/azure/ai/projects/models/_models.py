@@ -3450,48 +3450,21 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
         self.type = EvaluationRuleActionType.CONTINUOUS_EVALUATION  # type: ignore
 
 
-class Conversation(_Model):
-    """The conversation object.
+class ConversationReference(_Model):
+    """Conversation.
 
     :ivar id: The unique ID of the conversation. Required.
     :vartype id: str
-    :ivar object: The object type, which is always ``conversation``. Required. Default value is
-     "conversation".
-    :vartype object: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured         format, and
-     querying for objects via API or the dashboard.
-       Keys are strings with a maximum length of 64 characters. Values are strings         with a
-     maximum length of 512 characters. Required.
-    :vartype metadata: any
-    :ivar created_at: The time at which the conversation was created, measured in seconds since the
-     Unix epoch. Required.
-    :vartype created_at: ~datetime.datetime
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique ID of the conversation. Required."""
-    object: Literal["conversation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, which is always ``conversation``. Required. Default value is \"conversation\"."""
-    metadata: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Set of 16 key-value pairs that can be attached to an object. This can be         useful for
-     storing additional information about the object in a structured         format, and querying
-     for objects via API or the dashboard.
-       Keys are strings with a maximum length of 64 characters. Values are strings         with a
-     maximum length of 512 characters. Required."""
-    created_at: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """The time at which the conversation was created, measured in seconds since the Unix epoch.
-     Required."""
 
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        metadata: Any,
-        created_at: datetime.datetime,
     ) -> None: ...
 
     @overload
@@ -3503,7 +3476,6 @@ class Conversation(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["conversation"] = "conversation"
 
 
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
@@ -13528,7 +13500,7 @@ class Response(_Model):
     :ivar parallel_tool_calls: Whether to allow the model to run tool calls in parallel. Required.
     :vartype parallel_tool_calls: bool
     :ivar conversation:
-    :vartype conversation: ~azure.ai.projects.models.Conversation
+    :vartype conversation: ~azure.ai.projects.models.ConversationReference
     :ivar agent: The agent used for this response.
     :vartype agent: ~azure.ai.projects.models.AgentId
     :ivar structured_inputs: The structured inputs to the response that can participate in prompt
@@ -13623,7 +13595,7 @@ class Response(_Model):
     usage: Optional["_models.ResponseUsage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     parallel_tool_calls: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to allow the model to run tool calls in parallel. Required."""
-    conversation: Optional["_models.Conversation"] = rest_field(
+    conversation: Optional["_models.ConversationReference"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     agent: Optional["_models.AgentId"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -13666,7 +13638,7 @@ class Response(_Model):
         status: Optional[Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]] = None,
         output_text: Optional[str] = None,
         usage: Optional["_models.ResponseUsage"] = None,
-        conversation: Optional["_models.Conversation"] = None,
+        conversation: Optional["_models.ConversationReference"] = None,
         agent: Optional["_models.AgentId"] = None,
         structured_inputs: Optional[dict[str, Any]] = None,
     ) -> None: ...

@@ -84,7 +84,7 @@
         "azure.ai.projects.models.ContainerFileCitationBody": "OpenAI.ContainerFileCitationBody",
         "azure.ai.projects.models.EvaluationRuleAction": "Azure.AI.Projects.EvaluationRuleAction",
         "azure.ai.projects.models.ContinuousEvaluationRuleAction": "Azure.AI.Projects.ContinuousEvaluationRuleAction",
-        "azure.ai.projects.models.Conversation": "OpenAI.Conversation",
+        "azure.ai.projects.models.ConversationReference": "OpenAI.ConversationReference",
         "azure.ai.projects.models.CosmosDBIndex": "Azure.AI.Projects.CosmosDBIndex",
         "azure.ai.projects.models.CreatedBy": "Azure.AI.Projects.CreatedBy",
         "azure.ai.projects.models.Trigger": "Azure.AI.Projects.Trigger",
