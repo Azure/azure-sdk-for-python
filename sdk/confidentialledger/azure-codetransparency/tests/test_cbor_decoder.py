@@ -3,7 +3,7 @@
 import math
 import pytest
 
-from azure.codetransparency import (
+from azure.codetransparency.cbor import (
     CBORDecoder,
 )
 
