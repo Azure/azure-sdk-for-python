@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List, Mapping, cast
+from typing import Any, ClassVar, Dict, List, Mapping, TYPE_CHECKING, cast
 
 from azure.core.rest import HttpRequest
 
@@ -90,18 +90,16 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 	def _build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
 		if tool.definition.source != FoundryToolSource.FOUNDRY_HOSTED_MCP:
 			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry-hosted MCP tool.", tool=tool)
+		definition = cast(FoundryHostedMcpTool, tool.definition) if TYPE_CHECKING else tool.definition
 
 		payload = dict(self._INVOKE_TOOL_REQUEST_BODY_TEMPLATE)
 		payload["params"] = {
 			"name": tool.name,
 			"arguments": arguments
 		}
-		if tool.metadata:
-			property_alias = self._resolve_property_alias(tool.name)
-			meta_config = tool.metadata.extract_from(
-				cast(FoundryHostedMcpTool, tool.definition).configuration,
-				property_alias)
-			payload["_meta"] = meta_config
+		if tool.metadata and definition.configuration:
+			payload["_meta"] = tool.metadata.extract_from(definition.configuration,
+														  self._resolve_property_alias(tool.name))
 
 		return self._client.post(self._PATH,
 								params=self._QUERY_PARAMS,
