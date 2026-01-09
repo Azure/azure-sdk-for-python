@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Dict, Optional, Any, Tuple
+from typing import List, Dict, Optional, Any, Tuple, overload, Mapping, Literal
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -14,8 +14,10 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from ._models import CustomCredential as CustomCredentialGenerated
+from ._enums import TextResponseFormatConfigurationType
+from ._models import TextResponseFormatConfiguration, CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from .._utils.model_base import rest_discriminator, rest_field
 
 
 class CustomCredential(CustomCredentialGenerated):
@@ -259,7 +261,7 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         cls,
         polling_method: AsyncPollingMethod[MemoryStoreUpdateCompletedResult],
         continuation_token: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> "AsyncUpdateMemoriesLROPoller":
         """Create a poller from a continuation token.
 
@@ -280,12 +282,65 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+# Patched in order to set of type of "schema" to dict[str, Any] instead of ResponseFormatJsonSchemaSchema
+class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminator="json_schema"):
+    """JSON schema.
+
+    :ivar type: The type of response format being defined. Always ``json_schema``. Required.
+    :vartype type: str or ~azure.ai.projects.models.JSON_SCHEMA
+    :ivar description: A description of what the response format is for, used by the model to
+       determine how to respond in the format.
+    :vartype description: str
+    :ivar name: The name of the response format. Must be a-z, A-Z, 0-9, or contain
+       underscores and dashes, with a maximum length of 64. Required.
+    :vartype name: str
+    :ivar schema: Required.
+    :vartype schema: ~azure.ai.projects.models.ResponseFormatJsonSchemaSchema
+    :ivar strict:
+    :vartype strict: bool
+    """
+
+    type: Literal[TextResponseFormatConfigurationType.JSON_SCHEMA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of response format being defined. Always ``json_schema``. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of what the response format is for, used by the model to
+       determine how to respond in the format."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the response format. Must be a-z, A-Z, 0-9, or contain
+       underscores and dashes, with a maximum length of 64. Required."""
+    schema: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        schema: dict[str, Any],
+        description: Optional[str] = None,
+        strict: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TextResponseFormatConfigurationType.JSON_SCHEMA  # type: ignore
+
+
 __all__: List[str] = [
     "CustomCredential",
     "UpdateMemoriesLROPollingMethod",
     "AsyncUpdateMemoriesLROPollingMethod",
     "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
+    "TextResponseFormatJsonSchema",
 ]  # Add all objects you want publicly available to users at this package level
 
 
