@@ -1,5 +1,60 @@
 # Release History
 
+## 15.1.0b2 (2025-11-20)
+
+### Features Added
+
+- **Job level FIFO**
+  - Added `BatchJobDefaultOrder` types.
+  - Extended `BatchTaskSchedulingPolicy` with a new `jobDefaultOrder` property to support job-level FIFO scheduling.
+
+- **CMK support on Pools**
+  - Added `DiskCustomerManagedKey` and `DiskEncryptionSetParameters` for customer-managed key (CMK) support on pools.
+  - Extended `DiskEncryptionConfiguration` with a new `customerManagedKey` property.
+  - Extended `ManagedDisk` with a new `diskEncryptionSet` property.
+  - Added `BatchPoolIdentityReference` for referencing managed identities in disk encryption scenarios.
+
+- **IPv6 support on Pools**
+  - Added `ipv6Address` to `BatchNode`.
+  - Added `ipv6RemoteLoginIPAddress` and `ipv6RemoteLoginPort` to `BatchNodeRemoteLoginSettings`.
+
+- **Metadata Security Protocol Support on Pools**
+  - Added `HostEndpointSettings` and `HostEndpointSettingsModeTypes`.
+  - Added `ProxyAgentSettings`.
+  - Extended `SecurityProfile` with a new `proxyAgentSettings` property for metadata security protocol support.
+
+- **IP Tag Support**
+  - Added `IPFamily` and `IPTag` types.
+  - Extended `BatchPublicIpAddressConfiguration` with new `ipFamilies` and `ipTags` properties for IP tag support.
+
+### Breaking Changes
+
+- Removed all Certifcate API's
+  - Removed `create_certificate`
+  - Removed `get_certificate`
+  - Removed `list_certificates`
+  - Removed `cancel_certificate_deletion`
+  - Removed `begin_delete_certificate`
+
+- Removed Models:
+  - Removed `BatchCertificate`
+  - Removed `BatchCertificateDeleteError`
+  - Removed `BatchCertificateFormat`
+  - Removed `BatchCertificateReference`
+  - Removed `BatchCertificateState`
+  - Removed `BatchCertificateStoreLocation`
+  - Removed `BatchCertificateVisibility`
+  - Removed `BatchNodeCommunicationMode`
+
+- Removed Properties:
+  - Removed `CertificateReferences` from `BatchNode`
+  - Removed `ResourceTags` and `CertificateReferences` from `BatchPool`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `BatchPoolCreateOptions`
+  - Removed `CertificateReferences` and `TargetNodeCommunicationMode` from `BatchPoolReplaceOptions`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `BatchPoolSpecifications`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `BatchPoolUpdateOptions`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `ComputeBatchModelFactory`
+
 ## 15.1.0b1 (2025-10-01)
 
 ### Features Added
