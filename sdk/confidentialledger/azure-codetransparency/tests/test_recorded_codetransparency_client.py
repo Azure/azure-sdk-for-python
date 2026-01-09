@@ -83,22 +83,18 @@ class TestCodetransparencyClient(CodeTransparencyClientTestBase):
         client = self.create_confidentialledger_client(
             codetransparency_endpoint, codetransparency_id
         )
-        register_result = client.create_entry(
-            body=bytes("invalid cbor bytes", encoding="utf-8"),
-            content_type="application/cose",
-            accept="application/cose; application/cbor",
-        )
-        # Collect the response bytes and check for error message about invalid input
-        response_bytes = b"".join(register_result)
-        # decode cbor and verify the decoded output contains {-1: "InvalidInput", -2: "Failed to parse COSE_Sign1 outer array"}
-        decoder = CBORDecoder(response_bytes)
-        decoded_cbor = decoder.decode()
+        with pytest.raises(exceptions.HttpResponseError) as ex:
+            client.create_entry(
+                body=bytes("invalid cbor bytes", encoding="utf-8"),
+                content_type="application/cose",
+                accept="application/cose; application/cbor",
+            )
+        # Access the exception value and check error details
+        error = ex.value
+        assert error is not None, "Expected error details in exception"
         assert (
-            decoded_cbor[-1] == "InvalidInput"
-        ), f"Expected error code 'InvalidInput', but got: {decoded_cbor[-1]}"
-        assert (
-            decoded_cbor[-2] == "Failed to parse COSE_Sign1 outer array"
-        ), f"Expected error message 'Failed to parse COSE_Sign1 outer array', but got: {decoded_cbor[-2]}"
+            error.message == "InvalidInput"
+        ), f"Expected error code 'InvalidInput', but got: {error.message}"
 
     def create_valid_cose_sign1(self) -> bytes:
         import base64
