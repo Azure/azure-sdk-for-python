@@ -10,16 +10,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import json
 import time
-from typing import Any, Callable, IO, Iterator, List, Optional, Union, cast, Tuple
+from typing import Any, Callable, Iterator, List, Optional, cast
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling import PollingMethod, LROPoller, NoPolling
+from azure.core.polling import PollingMethod, LROPoller
 
 from azure.codetransparency._operations._operations import (
     _CodeTransparencyClientOperationsMixin as GeneratedOperationsMixin,
 )
-from azure.codetransparency._operations._operations import ClsType
-import azure.codetransparency.models as _models
 
 from azure.codetransparency.cbor import (
     CBORDecoder,
@@ -44,14 +42,14 @@ class OperationPollingMethod(PollingMethod):
 
     def __init__(
         self,
-        operation: Callable[[], Optional[Iterator[bytes]]],
+        operation: Callable[[], Optional[bytes]],
         polling_interval_s: float,
     ):
         self._operation = operation
         self._polling_interval_s = polling_interval_s
         self._deserialization_callback = None
         self._status = "constructed"
-        self._latest_response: Optional[Iterator[bytes]] = None
+        self._latest_response: Optional[bytes] = None
 
     def initialize(
         self, client, initial_response, deserialization_callback
@@ -70,12 +68,12 @@ class OperationPollingMethod(PollingMethod):
             self._status = "failed"
             raise
 
-    def _evaluate_response(self, response: Optional[Iterator[bytes]]) -> None:
+    def _evaluate_response(self, response: Optional[bytes]) -> None:
         if response is None:
             return
         # {"OperationId": "some transaction num", "Status": "running"}
         # Status can be running, failed, succeeded
-        decoded = CBORDecoder.from_response(response).decode()
+        decoded = CBORDecoder(response).decode()
         status = decoded.get("Status", None)
         if status == "succeeded":
             self._status = "finished"
@@ -234,55 +232,45 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         self,
         entry: bytes,
         **kwargs: Any,
-    ) -> LROPoller[Iterator[bytes]]:
+    ) -> LROPoller[Optional[bytes]]:
         """Writes an entry and returns a poller to wait for it to be durably committed. The
         poller returns the result for the initial call to create the entry.
 
         :param entry: Entry in the form of CoseSign1 message. Required.
         :type entry: bytes
         :return: Operation in CBOR format.
-        :rtype: ~azure.core.polling.LROPoller[Iterator[bytes]]
+        :rtype: ~azure.core.polling.LROPoller[Optional[bytes]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         # Pop arguments that are unexpected in the pipeline.
+        polling = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", 0.8)
 
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop("polling_interval", 0.5)
-
-        # Pop the custom deserializer, if any, so we know the format of the response and can
-        # retrieve the transactionId. Serialize the response later.
-
-        cls = kwargs.pop("cls", None)
-        kwargs["cls"] = lambda pipeline_response, cbor_response, headers: (
-            pipeline_response,
-            cbor_response,
-            headers,
-        )
-
-        post_pipeline_response, post_result, post_headers = self.create_entry(
+        operation_body = self.create_entry(
             entry, **kwargs
         )
-        # Delete the cls because it should only apply to the create_ledger_entry response, not the
-        # wait_for_commit call.
-        del kwargs["cls"]
 
-        decoded = CBORDecoder(post_result).decode()
+        operation_body_bytes = b"".join(operation_body)
+
+        decoded = CBORDecoder(operation_body_bytes).decode()
         if decoded.get("Status", None) == "failed":
-            raise HttpResponseError(response=post_pipeline_response)
+            raise ValueError("Create entry operation failed.")
 
-        operation_id = post_result["OperationId"]  # type: ignore
+        operation_id = decoded.get("OperationId", None)
+        if operation_id is None:
+            raise ValueError("Create entry operation ID missing.")
 
         kwargs["polling"] = polling
         kwargs["polling_interval"] = lro_delay
-        kwargs["_create_entry_response"] = post_result
+        kwargs["_create_entry_response"] = operation_body_bytes
         return self.begin_wait_for_operation(operation_id, **kwargs)
 
     def begin_wait_for_operation(
         self,
         operation_id,  # type: str
         **kwargs,  # type: Any
-    ) -> LROPoller[Iterator[bytes]]:
+    ) -> LROPoller[Optional[bytes]]:
         """Creates a poller that queries the state of the specified operation until it is
         complete, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
@@ -293,12 +281,15 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        lro_delay = kwargs.pop("polling_interval", 0.5)
+        polling = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", 0.8)
 
-        def operation() -> Optional[Iterator[bytes]]:
-            return self.get_operation(operation_id=operation_id, **kwargs)
+        def operation() -> Optional[bytes]:
+            op = self.get_operation(operation_id=operation_id, **kwargs)
+            op_bytes = b"".join(op)
+            return op_bytes
 
-        post_result = kwargs.pop("_create_entry_response", None)
+        post_result: Optional[bytes] = kwargs.pop("_create_entry_response", None)
 
         initial_response = operation() if post_result is None else post_result
 

@@ -321,3 +321,124 @@ def test_get_entry_statement(mock_ledger_identity, tmp_path, status_code, should
         response = client.get_entry_statement("entry123")
         result = b"".join(response)
         assert len(result) > 0
+
+
+@responses.activate
+def test_begin_create_entry_with_polling(mock_ledger_identity, tmp_path):
+    """Test that begin_create_entry polls until operation succeeds."""
+    # CBOR encoded: {"OperationId": "22.34", "Status": "running"}
+    running_operation_hex = (
+        "A26B4F7065726174696F6E49646532322E3334665374617475736772756E6E696E67"
+    )
+    running_operation_cbor = bytes.fromhex(running_operation_hex)
+    # CBOR encoded: {"OperationId": "22.34", "Status": "succeeded"}
+    operation_succeeded_hex = (
+        "A26B4F7065726174696F6E49646532322E33346653746174757369737563636565646564"
+    )
+    operation_succeeded_cbor = bytes.fromhex(operation_succeeded_hex)
+
+    # Mock the create_entry POST request
+    responses.add(
+        responses.POST,
+        "https://test.confidential-ledger.azure.com/entries",
+        body=running_operation_cbor,
+        status=202,
+        content_type="application/cbor",
+    )
+
+    # Mock the get_operation GET request (polling)
+    responses.add(
+        responses.GET,
+        "https://test.confidential-ledger.azure.com/operations/22.34",
+        body=running_operation_cbor,
+        status=200,
+        content_type="application/cbor",
+    )
+
+    responses.add(
+        responses.GET,
+        "https://test.confidential-ledger.azure.com/operations/22.34",
+        body=operation_succeeded_cbor,
+        status=200,
+        content_type="application/cbor",
+    )
+
+    cert_path = os.path.join(tmp_path, "ledger_cert.pem")
+
+    client = CodeTransparencyClient(
+        endpoint="https://test.confidential-ledger.azure.com",
+        credential=AzureKeyCredential("fakeCredential=="),
+        ledger_certificate_path=cert_path,
+        policies=[RetryPolicy.no_retries()],
+    )
+
+    # Sample COSE_Sign1 entry (minimal valid structure)
+    entry_body = b"\xd2\x84\x43\xa1\x01\x26\xa0\x44test\x40"
+
+    poller = client.begin_create_entry(entry_body, polling_interval=0.1)
+    poller.wait(5.0)
+    result = poller.result()
+    assert poller.status() == "finished"
+    operation = CBORDecoder(result).decode()
+    assert operation.get("Status") == "succeeded"
+    # Verify polling happened: 1 identity + 1 POST + 2 GET operations
+    assert len(responses.calls) == 4
+
+
+@responses.activate
+def test_begin_wait_for_operation_with_polling(mock_ledger_identity, tmp_path):
+    """Test that begin_wait_for_operation polls until operation succeeds."""
+    # CBOR encoded: {"OperationId": "22.34", "Status": "running"}
+    running_operation_hex = (
+        "A26B4F7065726174696F6E49646532322E3334665374617475736772756E6E696E67"
+    )
+    running_operation_cbor = bytes.fromhex(running_operation_hex)
+    # CBOR encoded: {"OperationId": "22.34", "Status": "succeeded"}
+    operation_succeeded_hex = (
+        "A26B4F7065726174696F6E49646532322E33346653746174757369737563636565646564"
+    )
+    operation_succeeded_cbor = bytes.fromhex(operation_succeeded_hex)
+
+    # First poll returns running
+    responses.add(
+        responses.GET,
+        "https://test.confidential-ledger.azure.com/operations/22.34",
+        body=running_operation_cbor,
+        status=200,
+        content_type="application/cbor",
+    )
+
+    # Second poll returns running
+    responses.add(
+        responses.GET,
+        "https://test.confidential-ledger.azure.com/operations/22.34",
+        body=running_operation_cbor,
+        status=200,
+        content_type="application/cbor",
+    )
+
+    # Third poll returns succeeded
+    responses.add(
+        responses.GET,
+        "https://test.confidential-ledger.azure.com/operations/22.34",
+        body=operation_succeeded_cbor,
+        status=200,
+        content_type="application/cbor",
+    )
+
+    cert_path = os.path.join(tmp_path, "ledger_cert.pem")
+
+    client = CodeTransparencyClient(
+        endpoint="https://test.confidential-ledger.azure.com",
+        credential=AzureKeyCredential("fakeCredential=="),
+        ledger_certificate_path=cert_path,
+        policies=[RetryPolicy.no_retries()],
+    )
+
+    poller = client.begin_wait_for_operation("22.34", polling_interval=0.1)
+    poller.wait(5.0)
+    result = poller.result()
+    assert poller.status() == "finished"
+    assert poller.done()
+    # Verify polling happened: 1 identity + 3 GET operations
+    assert len(responses.calls) == 4
