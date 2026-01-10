@@ -53,14 +53,16 @@ def get_bundle_name(package_name: str) -> Optional[str]:
         # TODO raise something 
         logger.error(f"Failed to parse setup for package {package_name}")
         return None
-
-    # don't expect beta releases to have conda config, TODO raise something, as we shouldn't be calling this on betas
-    if not parsed.is_stable_release():
-        return None
-    
-    # TODO raise something if conda_config is missing
-    
+        
     conda_config = parsed.get_conda_config()
+
+    if not conda_config:
+        logger.warning(f"No conda config found for package {package_name}")
+        if parsed.is_stable_release():
+            # TODO raise something
+            logger.error(f"Stable release package {package_name} needs a conda config")
+        return None
+
     if conda_config and "bundle_name" in conda_config:
         return conda_config["bundle_name"]
     
@@ -73,6 +75,7 @@ def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
     for package_name in package_names:
         logger.debug(f"Processing package for bundle mapping: {package_name}")
         bundle_name = get_bundle_name(package_name)
+        logger.debug(f"Bundle name for package {package_name}: {bundle_name}")
         if bundle_name:
             if bundle_name not in bundle_map:
                 bundle_map[bundle_name] = []
