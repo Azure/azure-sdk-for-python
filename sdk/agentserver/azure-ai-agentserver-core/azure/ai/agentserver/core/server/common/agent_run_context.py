@@ -66,12 +66,14 @@ class AgentRunContext:
 
     def get_tools(self) -> list:
         # request tools take precedence over agent tools
+        # TODO: remove this method
         request_tools = self.request.get("tools", [])
         if not request_tools:
             return self._agent_tools
         return request_tools
 
     def get_user_info(self) -> UserInfo:
+        # TODO: remove this method
         return self._user_info
 
 

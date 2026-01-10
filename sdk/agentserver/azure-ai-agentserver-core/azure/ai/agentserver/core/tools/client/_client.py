@@ -14,7 +14,6 @@ from ._configuration import FoundryToolClientConfiguration
 from .._exceptions import ToolInvocationError
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
-from ...utils._credential import AsyncTokenCredentialAdapter
 
 
 class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
@@ -41,7 +40,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :type credential: ~azure.core.credentials.TokenCredential
         """
         # noinspection PyTypeChecker
-        config = FoundryToolClientConfiguration(AsyncTokenCredentialAdapter(credential))
+        config = FoundryToolClientConfiguration(credential)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=endpoint, config=config)
 
         self._hosted_mcp_tools = FoundryMcpToolsOperations(self._client)

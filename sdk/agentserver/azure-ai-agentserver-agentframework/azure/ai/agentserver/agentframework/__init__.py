@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Optional, Any
 from azure.ai.agentserver.agentframework.agent_framework import AgentFrameworkCBAgent
 from azure.ai.agentserver.agentframework.tool_client import ToolClient
 from azure.ai.agentserver.agentframework._version import VERSION
-from azure.ai.agentserver.core.context._package_metadata import PackageMetadata, set_current_app
+from azure.ai.agentserver.core.application._package_metadata import PackageMetadata, set_current_app
 
 if TYPE_CHECKING:  # pragma: no cover
     from azure.core.credentials_async import AsyncTokenCredential
