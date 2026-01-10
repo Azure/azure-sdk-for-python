@@ -98,6 +98,11 @@ def questions_file():
 
 
 @pytest.fixture
+def quotation_fix_test_data():
+    return _get_file("quotation_fix_test_data.jsonl")
+
+
+@pytest.fixture
 def questions_wrong_file():
     return _get_file("questions_wrong.jsonl")
 
@@ -746,7 +751,33 @@ class TestEvaluate:
         assert defect_rates["evaluator.protected_material_details.detail1_defect_rate"] == 0.5
         assert defect_rates["evaluator.protected_material_details.detail2_defect_rate"] == 0.5
 
-    @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
+    def test_quotation_fix_test_data(self, quotation_fix_test_data):
+        from test_evaluators.test_inputs_evaluators import QuotationFixEval
+
+        result = evaluate(
+            data=quotation_fix_test_data,
+            evaluators={
+                "test_evaluator": QuotationFixEval(),
+            },
+        )
+
+        print(result)
+        assert result is not None
+        assert result["rows"] is not None
+        assert result["rows"][0] is not None
+        assert result["rows"][0]["inputs.query"] == '"test"'
+        assert result["rows"][0]["inputs.response"] == "test"
+        assert result["rows"][0]["inputs.ground_truth"] == '"test"'
+        assert result["rows"][0]["outputs.test_evaluator.score"] == 2
+        assert result["rows"][0]["outputs.test_evaluator.reason"] == "ne"
+
+        assert result["rows"][1] is not None
+        assert result["rows"][1]["inputs.query"] == '"test"'
+        assert result["rows"][1]["inputs.response"] == '"test"'
+        assert result["rows"][1]["inputs.ground_truth"] == '"test"'
+        assert result["rows"][1]["outputs.test_evaluator.score"] == 1
+        assert result["rows"][1]["outputs.test_evaluator.reason"] == "eq"
+
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file):
         from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
