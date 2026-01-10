@@ -110,7 +110,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         with pytest.raises(ValueError):
             await bsc.set_service_properties()
 
@@ -120,7 +120,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         # Act
         resp = await bsc.set_service_properties(
@@ -144,7 +144,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         # Act
         await bsc.set_service_properties(target_version='2014-02-14')
@@ -159,7 +159,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         delete_retention_policy = RetentionPolicy(enabled=True, days=2)
 
         # Act
@@ -176,7 +176,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Should work with minimum settings
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         delete_retention_policy = RetentionPolicy(enabled=True, days=1)
         await bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
@@ -219,7 +219,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         delete_retention_policy = RetentionPolicy(enabled=False)
 
         # Act
@@ -235,7 +235,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         static_website = StaticWebsite(
             enabled=True,
             index_document="index.html",
@@ -254,7 +254,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         static_website = StaticWebsite(
             enabled=True,
             error_document404_path="errors/error/404error.html",
@@ -274,7 +274,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Case1: Arrange both missing
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         static_website = StaticWebsite(enabled=True)
 
@@ -311,7 +311,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         static_website = StaticWebsite(enabled=False, index_document="index.html",
                                        error_document404_path="errors/error/404error.html")
 
@@ -328,7 +328,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -352,7 +352,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         received_props = await bsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         static_website = StaticWebsite(enabled=True, index_document="index.html",
                                        error_document404_path="errors/error/404error.html")
 
@@ -370,7 +370,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -386,7 +386,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -402,7 +402,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -419,7 +419,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -482,7 +482,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
@@ -497,7 +497,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 

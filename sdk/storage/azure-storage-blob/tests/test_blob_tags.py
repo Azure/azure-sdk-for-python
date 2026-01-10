@@ -34,7 +34,7 @@ TEST_BLOB_PREFIX = 'blob'
 class TestStorageBlobTags(StorageRecordedTestCase):
 
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.container_name = self.get_resource_name("container")
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -332,7 +332,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             source_blob.blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -374,7 +374,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             source_blob.blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -454,7 +454,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         token = generate_account_sas(
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(service=True, container=True, object=True),
             AccountSasPermissions(write=True, list=True, read=True, delete_previous_version=True, tag=True,
                                   filter_by_tags=True),
@@ -488,7 +488,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         token = generate_account_sas(
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(service=True, container=True, object=True),
             AccountSasPermissions(write=True, list=True, read=True, delete_previous_version=True, tag=True,
                                   filter_by_tags=True),
@@ -502,7 +502,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             blob_client.blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(delete_previous_version=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

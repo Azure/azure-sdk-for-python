@@ -73,7 +73,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, retry_total=0)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, retry_total=0)
         container_name = self._get_container_reference()
 
         # Act
@@ -89,7 +89,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
 
         # Act
@@ -108,7 +108,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
 
         # Act
@@ -125,7 +125,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
 
         # Act
@@ -150,7 +150,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
         metadata = {'hello': 'world', 'number': '42'}
 
@@ -170,7 +170,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
@@ -187,7 +187,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
         old_name2 = self._get_container_reference(prefix="oldcontainer2")
         new_name = self._get_container_reference(prefix="newcontainer")
@@ -213,7 +213,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=38,
                                 max_chunk_get_size=38)
         container = await self._create_container(bsc, prefix="cont1")
@@ -235,7 +235,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     @BlobPreparer()
     async def test_rename_container_with_container_client(
             self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
         old_name2 = self._get_container_reference(prefix="oldcontainer2")
         new_name = self._get_container_reference(prefix="newcontainer")
@@ -264,7 +264,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         old_name = self._get_container_reference(prefix="old")
         new_name = self._get_container_reference(prefix="new")
         container = bsc.get_container_client(old_name)
@@ -284,7 +284,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = u'啊齄丂狛狜'
 
         container = bsc.get_container_client(container_name)
@@ -301,7 +301,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -325,7 +325,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         # Act
         containers = []
@@ -344,7 +344,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -365,7 +365,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         resp = await container.set_container_metadata(metadata)
@@ -392,7 +392,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
@@ -422,7 +422,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         prefix = 'listcontainerasync'
         container_names = []
         for i in range(0, 4):
@@ -459,7 +459,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         sas_token = self.generate_sas(
@@ -490,7 +490,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '43'}
         container = await self._create_container(bsc)
 
@@ -507,7 +507,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '43'}
         container = await self._create_container(bsc)
         lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -526,7 +526,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
         container = bsc.get_container_client(container_name)
 
@@ -542,7 +542,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -560,7 +560,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -580,7 +580,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(
-            storage_account_name, "blob"), storage_account_key)
+            storage_account_name, "blob"), storage_account_key.secret)
 
         container1 = await self._create_container(bsc, prefix="container1")
         container2_name = self._get_container_reference(prefix="container2")
@@ -596,7 +596,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key)
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -617,7 +617,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
@@ -640,7 +640,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -657,7 +657,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
@@ -675,7 +675,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop('variables', {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -705,7 +705,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -731,7 +731,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
@@ -759,7 +759,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -784,7 +784,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -803,7 +803,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -829,7 +829,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         identifiers = {i: None for i in range(0, 3)}
 
@@ -851,7 +851,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
@@ -880,7 +880,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = await self._create_container(bsc)
 
         # Act
@@ -899,7 +899,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -914,7 +914,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         self.sleep(10)
@@ -937,7 +937,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -955,7 +955,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         await lease.release()
@@ -972,7 +972,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -990,7 +990,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -1006,7 +1006,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -1022,7 +1022,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -1045,7 +1045,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
@@ -1060,7 +1060,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
         container = bsc.get_container_client(container_name)
 
@@ -1078,7 +1078,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
@@ -1098,7 +1098,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_client = await self._create_container(bsc)
 
         # Act
@@ -1127,7 +1127,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1148,7 +1148,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1167,7 +1167,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1185,7 +1185,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         cr0 = container.get_blob_client('blob1')
@@ -1215,7 +1215,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = bsc.get_container_client('orp-source')
         data = b'hello world'
         b_c = container.get_blob_client('blob3')
@@ -1241,7 +1241,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1268,7 +1268,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         c0 = container.get_blob_client('blob_a1')
@@ -1295,7 +1295,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         c0 = container.get_blob_client('blob_a1')
@@ -1325,7 +1325,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1353,7 +1353,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1382,7 +1382,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         content_settings = ContentSettings(
@@ -1425,7 +1425,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1452,7 +1452,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         await (container.get_blob_client('blob1')).upload_blob(data, metadata={'status': 'original'})
@@ -1494,7 +1494,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1525,7 +1525,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc, 'testfind')
 
         data = b'hello world'
@@ -1576,7 +1576,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1605,7 +1605,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -1637,7 +1637,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference("testcont")
         sas_token = self.generate_sas(
             generate_container_sas,
@@ -1679,7 +1679,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         blob_storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -1729,7 +1729,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
@@ -1784,7 +1784,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1815,7 +1815,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1856,7 +1856,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -1892,7 +1892,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -1932,7 +1932,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
@@ -1981,7 +1981,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         blob_storage_account_name = kwargs.pop("storage_account_name")
         blob_storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key.secret)
         container = await self._create_container(bsc)
         tier = StandardBlobTier.Cool
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -2044,7 +2044,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
@@ -2100,7 +2100,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, transport=AiohttpTestTransport())
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -2156,7 +2156,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -2190,7 +2190,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -2219,7 +2219,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
 
@@ -2239,7 +2239,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -2276,7 +2276,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         blob_name  = 'blob1'
         data = b'hello world'
@@ -2307,7 +2307,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         web_container = "web"
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         # create the web container in case it does not exist yet
         container = bsc.get_container_client(web_container)
@@ -2343,7 +2343,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         blob_name = self.get_resource_name("blob")
@@ -2362,7 +2362,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -2390,7 +2390,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=1024,
                                 max_chunk_get_size=512)
         container = await self._create_container(bsc)
@@ -2419,7 +2419,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=1024,
                                 max_chunk_get_size=666)
         container = await self._create_container(bsc)
@@ -2448,7 +2448,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=215,
                                 max_chunk_get_size=512)
         container = await self._create_container(bsc)
@@ -2477,7 +2477,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
         data = b'hello world'
 
@@ -2508,7 +2508,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
         data = b'hello world'
 
@@ -2538,7 +2538,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -2579,7 +2579,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key)
+        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key.secret)
         await cc.exists()
 
         # Act
@@ -2628,7 +2628,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         await (container.get_blob_client('blob1')).upload_blob(data)
@@ -2651,7 +2651,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
         data = b'hello world'
         await (container.get_blob_client('a/blob1')).upload_blob(data)

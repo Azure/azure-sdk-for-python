@@ -70,7 +70,7 @@ TEST_BLOB_PREFIX = 'blob'
 class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     async def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         self.byte_data = self.get_random_bytes(1024)
@@ -100,7 +100,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         return "Bearer " + access_token.token
 
     async def _setup_remote(self, storage_account_name, key):
-        self.bsc2 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc2 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.remote_container_name = 'rmt'
 
     def _teardown(self, file_path):
@@ -191,7 +191,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Set up destination blob without data
         blob_service_client = BlobServiceClient(
             account_url=self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         destination_blob_client = blob_service_client.get_blob_client(
             container=self.source_container_name,
@@ -1096,7 +1096,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         self.byte_data = self.get_random_bytes(1024)
@@ -1342,7 +1342,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             blob_client.container_name,
             blob_client.blob_name,
             version_id=version_id,
-            account_key=versioned_storage_account_key,
+            account_key=versioned_storage_account_key.secret,
             permission=BlobSasPermissions(delete=True, delete_previous_version=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -2328,7 +2328,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(container=True, object=True, service=True),
             AccountSasPermissions(read=True, list=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -2344,7 +2344,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key.secret)
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), named_key)
         container_name = self._get_container_reference()
 
@@ -2604,7 +2604,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         account_token = self.generate_sas(
             generate_account_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -2614,7 +2614,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             generate_container_sas,
             account_name=storage_account_name,
             container_name=self.container_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -2624,7 +2624,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             account_name=storage_account_name,
             container_name=self.container_name,
             blob_name=self._get_blob_reference(),
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -2791,7 +2791,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            await download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            await download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key.secret)
             temp_file.seek(0)
             actual = temp_file.read()
             assert data == actual
@@ -2808,7 +2808,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            await download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            await download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key.secret)
             temp_file.seek(0)
             # Assert
             actual = temp_file.read()
@@ -2826,7 +2826,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            await download_blob_from_url(source_blob.url, temp_file.name, credential=storage_account_key, overwrite=True)
+            await download_blob_from_url(source_blob.url, temp_file.name, credential=storage_account_key.secret, overwrite=True)
 
             with pytest.raises(ValueError):
                 await download_blob_from_url(source_blob.url, temp_file.name)
@@ -2853,13 +2853,13 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         await download_blob_from_url(
             source_blob.url, file_path,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         data2 = b'ABC' * 1024
         source_blob = await self._create_blob(data=data2)
         await download_blob_from_url(
             source_blob.url, file_path, overwrite=True,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         # Assert
         with open(file_path, 'rb') as stream:
@@ -2913,7 +2913,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         uploaded = await upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key.secret)
 
         # Assert
         assert uploaded is not None
@@ -2936,7 +2936,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceExistsError):
             await upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+                blob.url, data, credential=storage_account_key.secret)
 
         # Assert
         content = await (await blob.download_blob()).readall()
@@ -2959,7 +2959,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         uploaded = await upload_blob_to_url(
             blob.url, data,
             overwrite=True,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         # Assert
         assert uploaded is not None
@@ -2980,7 +2980,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         uploaded = await upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key.secret)
 
         # Assert
         assert uploaded is not None
@@ -3004,7 +3004,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            uploaded = await upload_blob_to_url(blob.url, data, credential=storage_account_key)
+            uploaded = await upload_blob_to_url(blob.url, data, credential=storage_account_key.secret)
 
             # Assert
             assert uploaded is not None
@@ -3019,7 +3019,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name('utcontainerasync')
         transport = AioHttpTransport()
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, transport=transport)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, transport=transport)
         blob_name = self._get_blob_reference()
         async with bsc:
             await bsc.get_service_properties()
@@ -3392,7 +3392,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(blob_data, overwrite=True)
         v1_props = await blob_client.get_blob_properties()
         v1_blob = BlobClient(self.bsc.url, container_name=self.container_name, blob_name=blob_name,
-                             version_id=v1_props['version_id'], credential=versioned_storage_account_key)
+                             version_id=v1_props['version_id'], credential=versioned_storage_account_key.secret)
         await blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = await blob_client.get_blob_properties()
         v2_blob = container.get_blob_client(v2_props, version_id=v2_props['version_id'])
@@ -3630,7 +3630,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             account_url=self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name=blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_chunk_get_size=4,
             max_single_get_size=4,
         )
