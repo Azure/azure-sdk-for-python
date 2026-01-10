@@ -1,0 +1,27 @@
+{
+    "CrossLanguagePackageId": "AzureMonitorExporter",
+    "CrossLanguageDefinitionId": {
+        "exporter.models.MonitorDomain": "AzureMonitorExporter.Domain",
+        "exporter.models.MessageData": "AzureMonitorExporter.MessageData",
+        "exporter.models.MetricDataPoint": "AzureMonitorExporter.DataPoint",
+        "exporter.models.MetricsData": "AzureMonitorExporter.MetricsData",
+        "exporter.models.MonitorBase": "AzureMonitorExporter.Base",
+        "exporter.models.PageViewData": "AzureMonitorExporter.PageViewData",
+        "exporter.models.PageViewPerfData": "AzureMonitorExporter.PageViewPerfData",
+        "exporter.models.RemoteDependencyData": "AzureMonitorExporter.RemoteDependencyData",
+        "exporter.models.RequestData": "AzureMonitorExporter.RequestData",
+        "exporter.models.StackFrame": "AzureMonitorExporter.StackFrame",
+        "exporter.models.TelemetryErrorDetails": "AzureMonitorExporter.ErrorDetails",
+        "exporter.models.TelemetryEventData": "AzureMonitorExporter.EventData",
+        "exporter.models.TelemetryExceptionData": "AzureMonitorExporter.ExceptionData",
+        "exporter.models.TelemetryExceptionDetails": "AzureMonitorExporter.ExceptionDetails",
+        "exporter.models.TelemetryItem": "AzureMonitorExporter.TelemetryEnvelope",
+        "exporter.models.TrackResponse": "AzureMonitorExporter.TrackResponse",
+        "exporter.models.Versions": "AzureMonitorExporter.Versions",
+        "exporter.models.DataPointType": "AzureMonitorExporter.DataPointType",
+        "exporter.models.SeverityLevel": "AzureMonitorExporter.SeverityLevel",
+        "exporter.models.ContextTagKeys": "AzureMonitorExporter.ContextTagKeys",
+        "exporter.AzureMonitorExporterClient.track": "AzureMonitorExporter.track",
+        "exporter.aio.AzureMonitorExporterClient.track": "AzureMonitorExporter.track"
+    }
+}

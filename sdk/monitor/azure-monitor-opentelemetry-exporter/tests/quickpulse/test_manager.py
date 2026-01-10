@@ -20,7 +20,7 @@ from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _DEPENDENCY_DURATION_NAME,
     _DEPENDENCY_FAILURE_RATE_NAME,

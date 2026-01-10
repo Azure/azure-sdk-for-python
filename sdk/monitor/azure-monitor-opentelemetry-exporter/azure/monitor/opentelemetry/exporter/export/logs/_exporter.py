@@ -17,12 +17,14 @@ from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportRes
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
     _EXCEPTION_ENVELOPE_NAME,
+    _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _MESSAGE_ENVELOPE_NAME,
     _DEFAULT_LOG_MESSAGE,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MessageData,
+    MonitorDomain,
     MonitorBase,
     TelemetryEventData,
     TelemetryExceptionData,
@@ -173,8 +175,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
-        data = TelemetryExceptionData(  # type: ignore
-            severity_level=severity_level,  # type: ignore
+        data: MonitorDomain = TelemetryExceptionData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
+            severity_level=severity_level,
             properties=properties,
             exceptions=[exc_details],
         )
@@ -187,7 +190,8 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             event_name = str(log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME))  # type: ignore
         else:
             event_name = _map_body_to_message(log_record.body)
-        data = TelemetryEventData(  # type: ignore
+        data = TelemetryEventData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             name=event_name,
             properties=properties,
         )
@@ -196,9 +200,10 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
-        data = MessageData(  # type: ignore
+        data = MessageData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             message=_map_body_to_message(log_record.body),
-            severity_level=severity_level,  # type: ignore
+            severity_level=severity_level,
             properties=properties,
         )
         data.message = data.message.strip()

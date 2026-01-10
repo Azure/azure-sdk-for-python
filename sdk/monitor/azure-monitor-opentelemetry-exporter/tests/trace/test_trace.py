@@ -6,6 +6,7 @@ import os
 import platform
 import shutil
 import unittest
+from datetime import datetime
 from unittest import mock
 
 # pylint: disable=import-error
@@ -45,7 +46,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_OPENTELEMETRY_NAME,
     _AZURE_AI_SDK_NAME,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
@@ -372,7 +373,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -575,7 +576,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -694,7 +695,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -740,7 +741,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -784,7 +785,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -874,7 +875,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -919,7 +920,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -975,7 +976,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
@@ -1545,7 +1546,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id)
         )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
         self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
@@ -1603,7 +1604,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id)
         )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
         self.assertEqual(envelope.data.base_data.message, "test event")
@@ -1663,7 +1664,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id)
         )
-        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
         self.assertEqual(envelope.data.base_data.message, "test event")
@@ -1732,7 +1733,15 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(monitor_base.base_type, "MetricData")
         metrics_data = monitor_base.base_data
         resource_attributes = metrics_data.properties
-        self.assertEqual(resource_attributes, test_resource.attributes)
+        # Properties are converted to strings in the envelope
+        expected_attributes = {
+            "string_test_key": "string_value",
+            "int_test_key": "-1",
+            "bool_test_key": "False",
+            "float_test_key": "0.5",
+            "sequence_test_key": "('a', 'b')",
+        }
+        self.assertEqual(resource_attributes, expected_attributes)
         metrics = metrics_data.metrics
         self.assertEqual(len(metrics), 1)
         self.assertEqual(metrics[0].name, "_OTELRESOURCE_")

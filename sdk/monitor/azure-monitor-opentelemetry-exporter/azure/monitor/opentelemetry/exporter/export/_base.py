@@ -20,9 +20,11 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
 )
 from azure.identity import ManagedIdentityCredential
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorExporterClient
+from azure.monitor.opentelemetry.exporter._generated.exporter._configuration import (
+    AzureMonitorExporterClientConfiguration,
+)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     MessageData,
     MetricsData,
     MonitorDomain,
@@ -150,7 +152,7 @@ class BaseExporter:
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
-        config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
+        config = AzureMonitorExporterClientConfiguration(self._endpoint, **kwargs)
         policies = [
             RequestIdPolicy(**kwargs),
             config.headers_policy,
@@ -168,7 +170,7 @@ class BaseExporter:
             config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
 
-        self.client: AzureMonitorClient = AzureMonitorClient(
+        self.client: AzureMonitorExporterClient = AzureMonitorExporterClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
         # TODO: Uncomment configuration changes once testing is completed
@@ -218,7 +220,7 @@ class BaseExporter:
             if blob.lease(self._timeout + 5):
                 blob_data = blob.get()
                 if blob_data is not None:
-                    envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob_data]
+                    envelopes = [_format_storage_telemetry_item(TelemetryItem(x)) for x in blob_data]
                     result = self._transmit(envelopes)
                     if result == ExportResult.FAILED_RETRYABLE:
                         blob.lease(1)
@@ -254,7 +256,7 @@ class BaseExporter:
         Returns an ExportResult, this function should never
         throw an exception.
         :param envelopes: The list of telemetry items to transmit.
-        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem
+        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.exporter.models.TelemetryItem
         :return: The result of the export.
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
@@ -578,20 +580,15 @@ _MONITOR_DOMAIN_MAPPING = {
 }
 
 
-# from_dict() deserializes incorrectly, format TelemetryItem correctly after it
-# is called
+# Set base_data to correct type if deserialized from storage
 def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
-    # After TelemetryItem.from_dict, all base_data fields are stored in
-    # additional_properties as a dict instead of in item.data.base_data itself
-    # item.data.base_data is also of type MonitorDomain instead of a child class
+    # item.data.base_data is of type MonitorDomain instead of a child class
     if hasattr(item, "data") and item.data is not None:
         if hasattr(item.data, "base_data") and isinstance(item.data.base_data, MonitorDomain):
             if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
                 base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
-                # Apply deserialization of additional_properties and store that as base_data
                 if base_type:
-                    item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)  # type: ignore
-                    item.data.base_data.additional_properties = None  # type: ignore
+                    item.data.base_data = base_type(item.data.base_data.as_dict())
     return item
 
 

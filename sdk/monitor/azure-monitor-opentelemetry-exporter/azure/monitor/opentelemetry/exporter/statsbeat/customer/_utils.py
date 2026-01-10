@@ -20,7 +20,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
 from ._state import (
     get_local_storage_setup_state_exception,
     get_customer_stats_manager,

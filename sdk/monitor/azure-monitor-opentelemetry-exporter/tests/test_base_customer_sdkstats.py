@@ -13,8 +13,8 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorExporterClient
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
     TrackResponse,
     TelemetryErrorDetails,
@@ -51,6 +51,19 @@ class MockResponse:
         self.raw.enforce_content_length = True
         self.reason = "Mock Reason"  # Add the reason attribute
         self.url = "http://mock-url.com"  # Add the url attribute
+        self._content_consumed = False
+
+    def iter_content(self, chunk_size=1):
+        content_bytes = self.content.encode() if isinstance(self.content, str) else self.content
+        for i in range(0, len(content_bytes), chunk_size):
+            yield content_bytes[i : i + chunk_size]
+        self._content_consumed = True
+
+    def iter_bytes(self, chunk_size=None):
+        return self.iter_content(chunk_size or 1)
+
+    def close(self):
+        pass
 
 
 class TestBaseExporterCustomerSdkStats(unittest.TestCase):
@@ -59,7 +72,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up class-level resources including a single customer stats manager"""
-        from azure.monitor.opentelemetry.exporter._generated.models import TelemetryEventData, MonitorBase
+        from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryEventData, MonitorBase
 
         os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", None)
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"] = "true"
@@ -117,7 +130,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
 
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             track_response = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -133,7 +146,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_206_customer_sdkstats_track_retry_items(self, track_retry_mock):
         """Test that _track_retry_items is called on 206 partial success with retryable errors"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             track_mock.return_value = TrackResponse(
                 items_received=2,
                 items_accepted=1,
@@ -151,7 +164,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_206_customer_sdkstats_track_dropped_items(self, track_dropped_mock):
         """Test that _track_dropped_items is called on 206 partial success with non-retryable errors"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             track_mock.return_value = TrackResponse(
                 items_received=2,
                 items_accepted=1,
@@ -184,7 +197,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertTrue(exporter._should_collect_customer_sdkstats())
 
         # Simulate a throttle HTTP error using HttpResponseError
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             error_response = mock.Mock()
             error_response.status_code = 402  # Use actual throttle code
             track_mock.side_effect = HttpResponseError("Throttling error", response=error_response)
@@ -211,7 +224,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_service_request_error_customer_sdkstats_track_retry_items(self, track_retry_mock):
         """Test that _track_retry_items is called on ServiceRequestError"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch.object(AzureMonitorClient, "track", side_effect=ServiceRequestError("Connection error")):
+        with mock.patch.object(
+            AzureMonitorExporterClient, "track", side_effect=ServiceRequestError("Connection error")
+        ):
             result = exporter._transmit(self._envelopes_to_export)
 
         track_retry_mock.assert_called_once()
@@ -222,7 +237,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         """Test that _track_dropped_items is called on general exceptions"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch.object(
-            AzureMonitorClient, "track", side_effect=Exception(_exception_categories.CLIENT_EXCEPTION.value)
+            AzureMonitorExporterClient, "track", side_effect=Exception(_exception_categories.CLIENT_EXCEPTION.value)
         ):
             result = exporter._transmit(self._envelopes_to_export)
 
@@ -235,7 +250,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_storage_disabled_customer_sdkstats_track_dropped_items(self, track_dropped_mock):
         """Test that _track_dropped_items is called when offline storage is disabled and items would be retried"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             track_mock.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=0,
@@ -273,7 +288,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         track_dropped_items_mock.return_value = None
 
         # Simulate a scenario where storage operations would happen
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             track_mock.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=0,
@@ -300,7 +315,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
         # Simulate a redirect HTTP error using HttpResponseError without proper headers
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             error_response = mock.Mock()
             error_response.status_code = 307  # Redirect status code
             error_response.headers = None  # No headers to cause parsing error
@@ -319,7 +334,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         exporter._consecutive_redirects = 10  # Set to a high value to simulate circular redirects
 
         # Simulate redirect responses that would cause circular redirects
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             error_response = mock.Mock()
             error_response.status_code = 307  # Redirect status code
             error_response.headers = {"location": "https://example.com/redirect"}
@@ -335,7 +350,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
         # Simulate a 403 Forbidden HTTP error using HttpResponseError
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             error_response = mock.Mock()
             error_response.status_code = 403  # Forbidden code
             track_mock.side_effect = HttpResponseError("Forbidden error", response=error_response)
@@ -350,7 +365,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
         # Simulate a 401 Unauthorized HTTP error using HttpResponseError
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             error_response = mock.Mock()
             error_response.status_code = 401  # Unauthorized code
             track_mock.side_effect = HttpResponseError("Unauthorized error", response=error_response)
@@ -365,7 +380,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
         # Simulate a redirect HTTP error with invalid location header
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             error_response = mock.Mock()
             error_response.status_code = 307  # Redirect status code
             error_response.headers = {"location": "invalid-url"}  # Invalid URL format
@@ -381,7 +396,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         exporter = self._create_exporter_with_customer_sdkstats_enabled(disable_offline_storage=False)
 
         # Mock storage operations to simulate a successful initial transmit that triggers storage operations
-        with mock.patch.object(AzureMonitorClient, "track") as track_mock:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as track_mock:
             track_response = TrackResponse(
                 items_received=1,
                 items_accepted=1,

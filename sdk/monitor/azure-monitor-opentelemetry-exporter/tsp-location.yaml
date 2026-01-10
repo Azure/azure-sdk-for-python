@@ -1,0 +1,2 @@
+batch:
+  - azure/monitor/opentelemetry/exporter/_generated

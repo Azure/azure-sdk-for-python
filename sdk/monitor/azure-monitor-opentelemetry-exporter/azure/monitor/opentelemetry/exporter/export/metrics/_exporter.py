@@ -39,11 +39,12 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _METRIC_ENVELOPE_NAME,
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MetricDataPoint,
     MetricsData,
@@ -268,6 +269,7 @@ def _convert_point_to_envelope(
     )
 
     data = MetricsData(
+        version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
         properties=properties,
         metrics=[data_point],
     )
