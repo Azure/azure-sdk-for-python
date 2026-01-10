@@ -265,7 +265,7 @@ The samples demonstrate:
 
 See the [samples directory][python_cu_samples] for complete examples.
 
-### Extract Markdown Content from Documents
+### Extract markdown content from documents
 
 Use the `prebuilt-documentSearch` to extract markdown content from documents:
 
@@ -297,13 +297,13 @@ async def analyze_document():
         
         # Extract markdown content
         content: MediaContent = result.contents[0]
-        print("📄 Markdown Content:")
+        print("Markdown Content:")
         print(content.markdown)
         
         # Access document-specific properties
         if content.kind == MediaContentKind.DOCUMENT:
             document_content: DocumentContent = content  # type: ignore
-            print(f"📚 Pages: {document_content.start_page_number} - {document_content.end_page_number}")
+            print(f"Pages: {document_content.start_page_number} - {document_content.end_page_number}")
 
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
@@ -312,7 +312,7 @@ async def analyze_document():
 asyncio.run(analyze_document())
 ```
 
-### Extract Structured Fields from Invoices
+### Extract structured fields from invoices
 
 Use the `prebuilt-invoice` analyzer to extract structured invoice fields:
 
@@ -362,7 +362,7 @@ async def analyze_invoice():
         # Extract invoice items (array field)
         items = get_field_value(content.fields, "Items")
         if items:
-            print("\n🛒 Invoice Items:")
+            print("\nInvoice Items:")
             for i, item in enumerate(items):
                 if hasattr(item, 'value_object') and item.value_object:
                     item_obj = item.value_object
@@ -427,7 +427,7 @@ For more information about logging, see the [Azure SDK Python logging documentat
 * Explore the [samples directory][python_cu_samples] for complete code examples
 * Read the [Azure AI Content Understanding documentation][python_cu_product_docs] for detailed service information
 
-## Running the Update Defaults Sample
+## Running the update defaults sample
 
 To run the `update_defaults` code example shown above, you need to set environment variables with your credentials and model deployment names.
 
@@ -483,7 +483,7 @@ python async_samples/sample_update_defaults_async.py
 
 For comprehensive documentation on all available samples, see the [samples README][sample_readme].
 
-## Running Tests
+## Running tests
 
 To run the tests for this package, you need to set up a `.env` file at the repository root with your test credentials.
 
@@ -580,3 +580,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [opencode_email]: mailto:opencode@microsoft.com
+[aiohttp]: https://pypi.org/project/aiohttp/
