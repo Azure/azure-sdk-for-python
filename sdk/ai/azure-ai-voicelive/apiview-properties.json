@@ -57,6 +57,7 @@
         "azure.ai.voicelive.models.MCPApprovalResponseRequestItem": "VoiceLive.MCPApprovalResponseRequestItem",
         "azure.ai.voicelive.models.MCPServer": "VoiceLive.MCPServer",
         "azure.ai.voicelive.models.MCPTool": "VoiceLive.MCPTool",
+        "azure.ai.voicelive.models.NoTurnDetection": "VoiceLive.NoTurnDetection",
         "azure.ai.voicelive.models.OpenAIVoice": "VoiceLive.OpenAIVoice",
         "azure.ai.voicelive.models.OutputTextContentPart": "VoiceLive.OutputTextContentPart",
         "azure.ai.voicelive.models.OutputTokenDetails": "VoiceLive.OutputTokenDetails",

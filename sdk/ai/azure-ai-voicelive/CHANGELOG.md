@@ -1,34 +1,25 @@
 # Release History
 
-## 1.2.0 (2025-12-10)
+## 1.2.0b3 (Unreleased)
 
 ### Features Added
 
-- **MCP (Model Context Protocol) Support**: Added comprehensive support for Model Context Protocol integration:
-  - `MCPServer` tool type for defining MCP server configurations with authorization, headers, and approval requirements
-  - `MCPTool` model for representing MCP tool definitions with input schemas and annotations
-  - `MCPApprovalType` enum for controlling approval workflows (`never`, `always`, or tool-specific)
-  - New item types: `MCPApprovalResponseRequestItem`, `ResponseMCPApprovalRequestItem`, `ResponseMCPApprovalResponseItem`, `ResponseMCPCallItem`, and `ResponseMCPListToolItem`
-  - New server events: `ServerEventMcpListToolsInProgress`, `ServerEventMcpListToolsCompleted`, `ServerEventMcpListToolsFailed`, `ServerEventResponseMcpCallArgumentsDelta`, `ServerEventResponseMcpCallArgumentsDone`, `ServerEventResponseMcpCallInProgress`, `ServerEventResponseMcpCallCompleted`, and `ServerEventResponseMcpCallFailed`
-  - Client event `MCP_APPROVAL_RESPONSE` for responding to approval requests
-  - Enhanced `ItemType` enum with MCP-related types: `mcp_list_tools`, `mcp_call`, `mcp_approval_request`, and `mcp_approval_response`
-- **Enhanced Avatar Configuration**: Expanded avatar functionality with new configuration options:
-  - Added `AvatarConfigTypes` enum with support for `video-avatar` and `photo-avatar` types
-  - Added `PhotoAvatarBaseModes` enum for photo avatar base models (e.g., `vasa-1`)
-  - Added `AvatarOutputProtocol` enum for avatar streaming protocols (`webrtc`, `websocket`)
-  - Enhanced `AvatarConfig` model with new properties: `type`, `model`, and `output_protocol`
-- **Image Content Support**: Added support for image inputs in conversations:
-  - New `RequestImageContentPart` model for including images in requests
-  - New `RequestImageContentPartDetail` enum for controlling image detail levels (`auto`, `low`, `high`)
-  - Added `INPUT_IMAGE` to `ContentPartType` enum
-  - Enhanced token details models (`InputTokenDetails`, `CachedTokenDetails`) with `image_tokens` tracking
-- **Enhanced OpenAI Voices**: Added new OpenAI voice options:
-  - Added `marin` and `cedar` voices to `OpenAIVoiceName` enum
-- **Extended Azure Personal Voice Configuration**: Enhanced `AzurePersonalVoice` with additional customization options:
-  - Added support for custom lexicon via `custom_lexicon_url`
-  - Added `prefer_locales` for locale preferences
-  - Added `locale`, `style`, `pitch`, `rate`, and `volume` properties for fine-tuned voice control
-- **Pre-generated Assistant Messages**: Added support for pre-generated assistant messages in `ResponseCreateParams` via the `pre_generated_assistant_message` property
+- **Manual Turn Taking Control**: Added `NoTurnDetection` class to allow manual control of turn taking
+  - `TurnDetectionType.NONE` enum value for explicitly disabling automatic turn detection
+  - Enables client-managed conversation flow without server-side voice activity detection
+- **Array Encoding Support**: Enhanced model serialization to support delimited string arrays
+  - Support for pipe-delimited, space-delimited, comma-delimited, and newline-delimited array formats
+  - Automatic encoding/decoding of string arrays to delimited strings in model properties
+
+### Other Changes
+
+- **Security Enhancement**: Replaced `eval()` usage in serialization code with explicit type checking
+- **Dependency Update**: Updated `azure-core` minimum version requirement from `1.35.0` to `1.36.0`
+- **Development Status**: Reverted package development status to Beta (was incorrectly set to Production/Stable)
+
+### Bug Fixes
+
+- Fixed deserialization handling for mutable types (dict, list, set) to properly track changes in model objects
 
 ## 1.2.0b2 (2025-11-20)
 

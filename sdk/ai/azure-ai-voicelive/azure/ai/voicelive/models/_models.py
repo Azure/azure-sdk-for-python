@@ -777,17 +777,17 @@ class TurnDetection(_Model):
     """Top-level union for turn detection configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureSemanticVad, AzureSemanticVadEn, AzureSemanticVadMultilingual, ServerVad
+    AzureSemanticVad, AzureSemanticVadEn, AzureSemanticVadMultilingual, NoTurnDetection, ServerVad
 
-    :ivar type: Required. Known values are: "server_vad", "azure_semantic_vad",
+    :ivar type: Required. Known values are: "none", "server_vad", "azure_semantic_vad",
      "azure_semantic_vad_en", and "azure_semantic_vad_multilingual".
     :vartype type: str or ~azure.ai.voicelive.models.TurnDetectionType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"server_vad\", \"azure_semantic_vad\", \"azure_semantic_vad_en\",
-     and \"azure_semantic_vad_multilingual\"."""
+    """Required. Known values are: \"none\", \"server_vad\", \"azure_semantic_vad\",
+     \"azure_semantic_vad_en\", and \"azure_semantic_vad_multilingual\"."""
 
     @overload
     def __init__(
@@ -2489,6 +2489,33 @@ class MCPTool(_Model):
         super().__init__(*args, **kwargs)
 
 
+class NoTurnDetection(TurnDetection, discriminator="none"):
+    """No turn detection - client manages turn taking.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.NONE
+    """
+
+    type: Literal[TurnDetectionType.NONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TurnDetectionType.NONE  # type: ignore
+
+
 class OpenAIVoice(_Model):
     """OpenAI voice configuration with explicit type field.
 
@@ -2681,8 +2708,6 @@ class RequestSession(_Model):
     :vartype instructions: str
     :ivar input_audio_sampling_rate: Input audio sampling rate in Hz. Available values:
 
-
-
      * For pcm16: 8000, 16000, 24000
 
      * For g711_alaw/g711_ulaw: 8000.
@@ -2736,8 +2761,6 @@ class RequestSession(_Model):
     """Optional instructions to guide the model's behavior throughout the session."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Input audio sampling rate in Hz. Available values:
- 
- 
  
       * For pcm16: 8000, 16000, 24000
  
@@ -3733,8 +3756,6 @@ class ResponseSession(_Model):
     :vartype instructions: str
     :ivar input_audio_sampling_rate: Input audio sampling rate in Hz. Available values:
 
-
-
      * For pcm16: 8000, 16000, 24000
 
      * For g711_alaw/g711_ulaw: 8000.
@@ -3792,8 +3813,6 @@ class ResponseSession(_Model):
     """Optional instructions to guide the model's behavior throughout the session."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Input audio sampling rate in Hz. Available values:
- 
- 
  
       * For pcm16: 8000, 16000, 24000
  

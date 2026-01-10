@@ -363,7 +363,6 @@ class AsyncMCPCallClient:
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready: bool = False
 
-
     async def run(self):
         """Run the async MCP call client with audio input."""
         try:
@@ -422,17 +421,14 @@ class AsyncMCPCallClient:
             MCPServer(
                 server_label="deepwiki",
                 server_url="https://mcp.deepwiki.com/mcp",
-                allowed_tools= [
-                    "read_wiki_structure",
-                    "ask_question"
-                ],
+                allowed_tools=["read_wiki_structure", "ask_question"],
                 require_approval="never",
             ),
             MCPServer(
                 server_label="azure_doc",
                 server_url="https://learn.microsoft.com/api/mcp",
                 require_approval="always",
-            )
+            ),
         ]
 
         # Create session configuration with MCP tools
@@ -557,7 +553,9 @@ class AsyncMCPCallClient:
             logger.error("MCP approval item missing ID")
             return
 
-        logger.info(f"MCP Approval Request received: id={approval_id}, server_label={server_label}, function_name={function_name}, arguments={arguments}")
+        logger.info(
+            f"MCP Approval Request received: id={approval_id}, server_label={server_label}, function_name={function_name}, arguments={arguments}"
+        )
 
         # wait for user input to approve or deny
         approval_response = False
@@ -574,8 +572,7 @@ class AsyncMCPCallClient:
 
         # Send approval response
         approval_response_item = MCPApprovalResponseRequestItem(
-            approval_request_id=approval_id,
-            approve=approval_response
+            approval_request_id=approval_id, approve=approval_response
         )
         await connection.conversation.item.create(item=approval_response_item)
 
@@ -642,6 +639,7 @@ class AsyncMCPCallClient:
             logger.error(f"Error waiting for MCP call arguments done: {e}")
             return
 
+
 async def main():
     """Main async function."""
     # Get credentials from environment variables
@@ -668,7 +666,7 @@ async def main():
         credential=credential,
         model="gpt-4o-realtime-preview",
         voice="en-US-AvaNeural",
-        instructions="You are a helpful AI assistant with access to some mcp server. "
+        instructions="You are a helpful AI assistant with access to some mcp server. ",
     )
 
     # Setup signal handlers for graceful shutdown
