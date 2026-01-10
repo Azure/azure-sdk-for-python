@@ -1,6 +1,6 @@
 # Azure AI Content Understanding client library for Python
 
-Azure AI Content Understanding is a multimodal AI service that extracts semantic content from documents, audio, and video files. It transforms unstructured content into structured, machine-readable data optimized for retrieval-augmented generation (RAG) and automated workflows.
+Azure AI Content Understanding is a multimodal AI service that extracts semantic content from documents, video, audio, and image files. It transforms unstructured content into structured, machine-readable data optimized for retrieval-augmented generation (RAG) and automated workflows.
 
 Use the client library for Azure AI Content Understanding to:
 
@@ -17,11 +17,15 @@ Use the client library for Azure AI Content Understanding to:
 
 ### Install the package
 
+Python 3.9 or later is required to use this package.
+
 Install the client library for Python with [pip][pip]:
 
 ```bash
 python -m pip install azure-ai-contentunderstanding
 ```
+
+**If running async APIs:** The async transport is designed to be opt-in. The [aiohttp](https://pypi.org/project/aiohttp/) framework is one of the supported implementations of async transport. It's not installed by default. You need to install it separately as follows: `pip install aiohttp`
 
 This table shows the relationship between SDK versions and supported API service versions:
 
@@ -31,22 +35,14 @@ This table shows the relationship between SDK versions and supported API service
 
 ### Prerequisites
 
-- Python 3.9 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- Once you have your Azure subscription, create a [Microsoft Foundry resource][cu_quickstart] in the Azure portal. Be sure to create it in a [supported region][cu_region_support].
-- **If running async APIs:** The async transport is designed to be opt-in. The [aiohttp](https://pypi.org/project/aiohttp/) framework is one of the supported implementations of async transport. It's not installed by default. You need to install it separately as follows: `pip install aiohttp`
+* An [Azure subscription][azure_sub].
+* A **Microsoft Foundry resource** to use this package.
 
-### Configure your Microsoft Foundry resource and required model deployments
+### Configuring Microsoft Foundry resource
 
-Before running most samples (especially those that use prebuilt analyzers) you need to:
+Before using the Content Understanding SDK, you need to set up a Microsoft Foundry resource and deploy the required large language models. Content Understanding currently uses OpenAI GPT models (such as gpt-4.1, gpt-4.1-mini, and text-embedding-3-large).
 
-1. Create (or reuse) an Microsoft Foundry resource
-2. Assign the correct role so you can configure default model deployments
-3. Deploy the required foundation models (GPT and Embeddings) in that resource
-4. Map those deployments to standard model names using the SDK's `update_defaults` API (one-time per resource)
-5. Provide environment variables (via a `.env` file at the repository root for tests, or your shell/session for ad‑hoc runs)
-
-#### Step 1: Create the Microsoft Foundry resource
+#### Step 1: Create Microsoft Foundry resource
 
 > **Important:** You must create your Microsoft Foundry resource in a region that supports Content Understanding. For a list of available regions, see [Azure Content Understanding region and language support][cu_region_support].
 
@@ -57,17 +53,9 @@ Before running most samples (especially those that use prebuilt analyzers) you n
    - Go to **Resource Management** > **Keys and Endpoint**
    - Copy the **Endpoint** URL (typically `https://<your-resource-name>.services.ai.azure.com/`)
 
-The Content Understanding service is hosted within this resource. After creation, locate the endpoint under: Resource Management > Keys and Endpoint. It typically looks like:
-
-```
-https://<your-resource-name>.services.ai.azure.com/
-```
-
-Set this as `AZURE_CONTENT_UNDERSTANDING_ENDPOINT`.
-
 **Important: Grant Required Permissions**
 
-After creating your Microsoft Foundry resource, you must grant yourself the **Cognitive Services User** role to enable API calls for setting default GPT deployments:
+After creating your Microsoft Foundry resource, you must grant yourself the **Cognitive Services User** role to enable API calls for setting default model deployments:
 
 1. Go to [Azure Portal][azure_portal]
 2. Navigate to your Microsoft Foundry resource
@@ -76,53 +64,36 @@ After creating your Microsoft Foundry resource, you must grant yourself the **Co
 5. Select the **Cognitive Services User** role
 6. Assign it to yourself (or the user/service principal that will run the application)
 
-> **Note:** This role assignment is required even if you are the owner of the resource. Without this role, you will not be able to call the Content Understanding API to configure model deployments for prebuilt analyzers.
+> **Note:** This role assignment is required even if you are the owner of the resource. Without this role, you will not be able to call the Content Understanding API to configure model deployments for prebuilt analyzers and custom analyzers.
 
 #### Step 2: Deploy required models
 
-**Important:** The prebuilt analyzers require model deployments. You must deploy these models before using prebuilt analyzers:
-- `prebuilt-documentSearch`, `prebuilt-audioSearch`, `prebuilt-videoSearch` require **GPT-4.1-mini** and **text-embedding-3-large**
-- Other prebuilt analyzers like `prebuilt-invoice`, `prebuilt-receipt` require **GPT-4.1** and **text-embedding-3-large**
+**Important:** The prebuilt and custom analyzers require large language model deployments. You must deploy at least the following models before using prebuilt analyzers and custom analyzers:
+- `prebuilt-documentSearch`, `prebuilt-imageSearch`, `prebuilt-audioSearch`, `prebuilt-videoSearch` require **gpt-4.1-mini** and **text-embedding-3-large**
+- Other prebuilt analyzers like `prebuilt-invoice`, `prebuilt-receipt` require **gpt-4.1** and **text-embedding-3-large**
 
-1. **Deploy GPT-4.1:**
-   - In Microsoft Foundry, go to **Deployments** > **Deploy model** > **Deploy base model**
-   - Search for and select **gpt-4.1**
-   - Complete the deployment with your preferred settings
-   - Note the deployment name (by convention, use `gpt-4.1`)
+To deploy a model:
 
-2. **Deploy GPT-4.1-mini:**
-   - In Microsoft Foundry, go to **Deployments** > **Deploy model** > **Deploy base model**
-   - Search for and select **gpt-4.1-mini**
-   - Complete the deployment with your preferred settings
-   - Note the deployment name (by convention, use `gpt-4.1-mini`)
+1. In Microsoft Foundry, go to **Deployments** > **Deploy model** > **Deploy base model**
+2. Search for and select the model you want to deploy. Currently, prebuilt analyzers require models such as `gpt-4.1`, `gpt-4.1-mini`, and `text-embedding-3-large`
+3. Complete the deployment with your preferred settings
+4. Note the deployment name you chose (by convention, use the model name as the deployment name, e.g., `gpt-4.1` for the `gpt-4.1` model). You can use any deployment name you prefer, but you'll need to note it for use in Step 3 when configuring model deployments.
 
-3. **Deploy text-embedding-3-large:**
-   - In Microsoft Foundry, go to **Deployments** > **Deploy model** > **Deploy base model**
-   - Search for and select **text-embedding-3-large**
-   - Complete the deployment with your preferred settings
-   - Note the deployment name (by convention, use `text-embedding-3-large`)
+Repeat this process for each model required by your prebuilt analyzers.
 
 For more information on deploying models, see [Create model deployments in Microsoft Foundry portal][deploy_models_docs].
 
-In Microsoft Foundry: Deployments > Deploy model > Deploy base model. Deploy each of:
+#### Step 3: Configure model deployments (required for prebuilt analyzers)
 
-- GPT-4.1 (suggested deployment name: `gpt-4.1`)
-- GPT-4.1-mini (suggested deployment name: `gpt-4.1-mini`)
-- text-embedding-3-large (suggested deployment name: `text-embedding-3-large`)
+> **IMPORTANT:**  This is a **one-time setup per Microsoft Foundry resource** that maps your deployed models to those required by the prebuilt analyzers and custom models. If you have multiple Microsoft Foundry resources, you need to configure each one separately.
 
-If you choose different deployment names, record them—you will use them in environment variables and when calling `update_defaults`.
+You need to configure the default model mappings in your Microsoft Foundry resource. This can be done programmatically using the SDK. The configuration maps your deployed models (currently gpt-4.1, gpt-4.1-mini, and text-embedding-3-large) to the large language models required by prebuilt analyzers.
 
-#### Step 3: Configure model deployments (Required for Prebuilt Analyzers)
+To configure model deployments using code, see [`sample_update_defaults.py`][sample_update_defaults] for a complete example. The sample shows how to:
+- Map your deployed models to the models required by prebuilt analyzers
+- Retrieve the current default model deployment configuration
 
-> **IMPORTANT:** Before using prebuilt analyzers, you must configure the model deployments. This is a **one-time setup per Microsoft Foundry resource** that maps your deployed models to the prebuilt analyzers.
-
-You need to configure the default model mappings in your Microsoft Foundry resource. This can be done programmatically using the SDK or through the Azure Portal. The configuration maps your deployed models (GPT-4.1, GPT-4.1-mini, and text-embedding-3-large) to the prebuilt analyzers that require them.
-
-> **Note:** The configuration is persisted in your Microsoft Foundry resource, so you only need to run this once per resource (or whenever you change your deployment names). If you have multiple Microsoft Foundry resources, you need to configure each one separately.
-
-#### 4. Configure environment variables
-
-For local development and tests this repository uses a root-level `.env` file. A template is provided in the package directory as `env.sample`.
+Before running the sample, set up environment variables. For local development and tests this repository uses a root-level `.env` file. A template is provided in the package directory as `env.sample`.
 
 Copy it to the repository root:
 
@@ -132,9 +103,11 @@ cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
 
 Then edit `.env` and set at minimum:
 
+The environment variables define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
+
 ```
 AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
-# Optionally provide a key; if omitted DefaultAzureCredential is used.
+# Optionally provide a key; if omitted, DefaultAzureCredential is used.
 AZURE_CONTENT_UNDERSTANDING_KEY=<optional-api-key>
 GPT_4_1_DEPLOYMENT=gpt-4.1
 GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
@@ -146,57 +119,12 @@ Notes:
 - Keep the `.env` file out of version control—do not commit secrets.
 - The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
 
-Content Understanding expects a mapping from standard model names to your deployment names. Run the sample `update_defaults.py` (located in the samples directory) after the environment variables are set and roles assigned.
+**This is a critical step:** After setting up the environment variables, you must run the sample to configure the default model deployments. This one-time configuration maps your deployed models to the standard model names that prebuilt analyzers require. Without running this configuration, prebuilt analyzers will not work because they won't know which of your deployed models to use.
 
-**Example using async client:**
+Run the sample:
 
-```python
-import os, asyncio
-from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.core.credentials import AzureKeyCredential
-from azure.identity.aio import DefaultAzureCredential
-
-async def configure():
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
-        await client.update_defaults(
-            model_deployments={
-                "gpt-4.1": os.environ["GPT_4_1_DEPLOYMENT"],
-                "gpt-4.1-mini": os.environ["GPT_4_1_MINI_DEPLOYMENT"],
-                "text-embedding-3-large": os.environ["TEXT_EMBEDDING_3_LARGE_DEPLOYMENT"],
-            }
-        )
-    if isinstance(credential, DefaultAzureCredential):
-        await credential.close()
-
-asyncio.run(configure())
-```
-
-**Example using sync client:**
-
-```python
-import os
-from azure.ai.contentunderstanding import ContentUnderstandingClient
-from azure.core.credentials import AzureKeyCredential
-from azure.identity import DefaultAzureCredential
-
-def configure():
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
-    
-    with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
-        client.update_defaults(
-            model_deployments={
-                "gpt-4.1": os.environ["GPT_4_1_DEPLOYMENT"],
-                "gpt-4.1-mini": os.environ["GPT_4_1_MINI_DEPLOYMENT"],
-                "text-embedding-3-large": os.environ["TEXT_EMBEDDING_3_LARGE_DEPLOYMENT"],
-            }
-        )
-
-configure()
+```bash
+python samples/sample_update_defaults.py
 ```
 
 After a successful run you can immediately use prebuilt analyzers such as `prebuilt-invoice` or `prebuilt-documentSearch`. If you encounter errors:
@@ -207,7 +135,7 @@ After a successful run you can immediately use prebuilt analyzers such as `prebu
 
 ### Authenticate the client
 
-To authenticate the client, you need your Microsoft Foundry resource endpoint and credentials. You can use either an API key or Azure Active Directory (Azure AD) authentication.
+In order to interact with the Content Understanding service, you'll need to create an instance of the `ContentUnderstandingClient` class. To authenticate the client, you need your Microsoft Foundry resource endpoint and credentials. You can use either an API key or Microsoft Entra ID authentication.
 
 #### Using DefaultAzureCredential
 
@@ -249,6 +177,8 @@ api_key = os.environ["AZURE_CONTENT_UNDERSTANDING_KEY"]
 client = ContentUnderstandingClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 ```
 
+> **⚠️ Security Warning**: API key authentication is less secure and is only recommended for testing purposes with test resources. For production, use `DefaultAzureCredential` or other secure authentication methods.
+
 To get your API key:
 1. Go to [Azure Portal][azure_portal]
 2. Navigate to your Microsoft Foundry resource
@@ -277,6 +207,12 @@ Prebuilt analyzers are organized into several categories:
 
 For a complete list of available prebuilt analyzers and their capabilities, see the [Prebuilt analyzers documentation][cu_prebuilt_analyzers].
 
+>
+
+### Custom analyzers
+
+You can create custom analyzers with specific field schemas for multi-modal content processing (documents, images, audio, video). Custom analyzers allow you to extract domain-specific information tailored to your use case across all four modalities (documents, video, audio, and images).
+
 ### Content types
 
 The API returns different content types based on the input. Both `DocumentContent` and `AudioVisualContent` classes derive from `MediaContent` class, which provides basic information and markdown representation. Each derived class provides additional properties to access detailed information:
@@ -284,7 +220,7 @@ The API returns different content types based on the input. Both `DocumentConten
 * **`DocumentContent`** - For document files (PDF, HTML, images, Office documents such as Word, Excel, PowerPoint, and more). Provides basic information such as page count and MIME type. Retrieve detailed information including pages, tables, figures, paragraphs, and many others.
 * **`AudioVisualContent`** - For audio and video files. Provides basic information such as timing information (start/end times) and frame dimensions (for video). Retrieve detailed information including transcript phrases, timing information, and for video, key frame references and more.
 
-### Asynchronous Operations
+### Asynchronous operations
 
 Content Understanding operations are asynchronous long-running operations. The workflow is:
 
@@ -294,11 +230,10 @@ Content Understanding operations are asynchronous long-running operations. The w
 
 The SDK provides `LROPoller` types that handle polling automatically when using `.result()`. For analysis operations, the SDK returns a poller that provides access to the operation ID via the `operation_id` property. This operation ID can be used with `get_result_file*` and `delete_result*` methods.
 
-### Main Classes
+### Main classes
 
 * **`ContentUnderstandingClient`** - The main client for analyzing content, as well as creating, managing, and configuring analyzers
 * **`AnalyzeResult`** - Contains the structured results of an analysis operation, including content elements, markdown, and metadata
-* **`LROPoller`** - A long-running operation wrapper for analysis results that provides access to the operation ID
 
 ### Thread safety
 
@@ -309,7 +244,10 @@ We guarantee that all client instance methods are thread-safe and independent of
 [Client options][client_options] |
 [Accessing the response][accessing_response] |
 [Long-running operations][long_running_operations] |
-[Handling failures][handling_failures]
+[Handling failures][handling_failures] |
+[Diagnostics][diagnostics] |
+[Mocking][mocking] |
+[Client lifetime][client_lifetime]
 
 ## Examples
 
@@ -324,7 +262,7 @@ The samples demonstrate:
 * **Advanced Document Features** - Extract charts, hyperlinks, formulas, and annotations from documents
 * **Custom Analyzers** - Create custom analyzers with field schemas for specialized extraction needs
 * **Document Classification** - Create and use classifiers to categorize documents
-* **Analyzer Management** - Get, list, update, and delete analyzers
+* **Analyzer Management** - Get, list, update, copy, and delete analyzers
 * **Result Management** - Retrieve result files from video analysis and delete analysis results
 
 See the [samples directory][python_cu_samples] for complete examples.
@@ -445,39 +383,26 @@ asyncio.run(analyze_invoice())
 
 ## Troubleshooting
 
-### Common Issues
+### Common issues
 
 **Error: "Access denied due to invalid subscription key or wrong API endpoint"**
-- Verify your endpoint URL is correct and includes the trailing slash
-- Ensure your API key is valid or that your Azure AD credentials have the correct permissions
+- Verify your `endpoint URL` is correct
+- Ensure your `API key` is valid or that your Microsoft Entra ID credentials have the correct permissions
 - Make sure you have the **Cognitive Services User** role assigned to your account
 
 **Error: "Model deployment not found" or "Default model deployment not configured"**
-- Ensure you have deployed the required models (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) in Microsoft Foundry
+- Ensure you have deployed the required models (gpt-4.1, gpt-4.1-mini, text-embedding-3-large) in Microsoft Foundry
 - Verify you have configured the default model deployments (see [Configure Model Deployments](#step-3-configure-model-deployments-required-for-prebuilt-analyzers))
 - Check that your deployment names match what you configured in the defaults
 
 **Error: "Operation failed" or timeout**
 - Content Understanding operations are asynchronous and may take time to complete
-- Ensure you are properly polling for results using `.result()` on the poller object
+- Ensure you are properly polling for results using `.result()` or manual polling
 - Check the operation status for more details about the failure
 
-### Microsoft Foundry Resource and Regional Support
+### Enable logging
 
-Azure AI Content Understanding requires a [Microsoft Foundry resource][cu_quickstart] and is only available in certain [supported regions][cu_region_support]. Make sure to:
-
-- Create a Microsoft Foundry resource in the Azure portal under **AI Foundry** > **AI Foundry**
-- Select a supported region when creating the resource
-
-For detailed setup instructions and current supported regions, see: **[Azure AI Content Understanding Quickstart Guide][cu_quickstart]**
-
-### Enable Logging
-
-This library uses the standard [logging][python_logging] library for logging.
-
-Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
-
-Detailed `DEBUG` level logging, including request/response bodies and **unredacted** headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
+To enable logging for debugging, configure logging in your application:
 
 ```python
 import logging
@@ -495,13 +420,13 @@ client = ContentUnderstandingClient(
 )
 ```
 
-See full SDK logging documentation with examples [here][sdk_logging_docs].
+For more information, see [Diagnostics samples][diagnostics].
 
 ## Next steps
 
-* [`sample_update_defaults.py`][sample00] – One-time setup to configure model deployments for prebuilt and custom analyzers
-* [`sample_analyze_binary.py`][sample01] – Analyze PDF files from disk using `prebuilt-documentSearch`
-* Explore the [`samples` directory][python_cu_samples] for more code examples
+* [`sample_update_defaults.py`][sample_update_defaults] - Required one-time setup to configure model deployments for prebuilt and custom analyzers
+* [`sample_analyze_binary.py`][sample_analyze_binary] - Analyze PDF files from disk using `prebuilt-documentSearch`
+* Explore the [samples directory][python_cu_samples] for complete code examples
 * Read the [Azure AI Content Understanding documentation][python_cu_product_docs] for detailed service information
 
 ## Running the Update Defaults Sample
@@ -529,7 +454,7 @@ $env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
 ```
 
 **On Windows (Command Prompt):**
-```batch
+```cmd
 set AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
 set AZURE_CONTENT_UNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
 set GPT_4_1_DEPLOYMENT=gpt-4.1
@@ -644,9 +569,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [accessing_response]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#accessing-http-response-details-using-responset
 [long_running_operations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#consuming-long-running-operations-using-operationt
 [handling_failures]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#reporting-errors-requestfailedexception
+[diagnostics]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/Diagnostics.md
+[mocking]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-mock-helpers
+[client_lifetime]: https://devblogs.microsoft.com/azure-sdk/lifetime-management-and-thread-safety-guarantees-of-azure-sdk-python-clients/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
+[sample_update_defaults]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_update_defaults.py
+[sample_analyze_binary]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary.py
 [tests_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/tests/README.md
 [azure_sdk_testing_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [pip]: https://pypi.org/project/pip/
@@ -654,5 +584,3 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [opencode_email]: mailto:opencode@microsoft.com
-[sample00]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_update_defaults.py
-[sample01]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary.py
