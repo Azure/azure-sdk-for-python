@@ -168,30 +168,85 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def init_tracing(self):
         try:
-            exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
+            otel_exporter_endpoint = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
             app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
             project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
-            if exporter or app_insights_conn_str:
-                from agent_framework.observability import setup_observability
+            exporters = []
+            if otel_exporter_endpoint:
+                otel_exporter = self._create_otlp_exporter(otel_exporter_endpoint)
+                if otel_exporter:
+                    exporters.append(otel_exporter)
+            if app_insights_conn_str:
+                appinsight_exporter = self._create_application_insights_exporter(app_insights_conn_str)
+                if appinsight_exporter:
+                    exporters.append(appinsight_exporter)
 
-                setup_observability(
-                    enable_sensitive_data=True,
-                    otlp_endpoint=exporter,
-                    applicationinsights_connection_string=app_insights_conn_str,
-                )
+            if exporters and self._setup_observability(exporters):
+                logger.info("Observability setup completed with provided exporters.")
             elif project_endpoint:
-                self.setup_tracing_with_azure_ai_client(project_endpoint)
+                self._setup_tracing_with_azure_ai_client(project_endpoint)
         except Exception as e:
             logger.warning(f"Failed to initialize tracing: {e}", exc_info=True)
         self.tracer = trace.get_tracer(__name__)
 
-    def setup_tracing_with_azure_ai_client(self, project_endpoint: str):
+    def _create_application_insights_exporter(self, connection_string):
+        try:
+            from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
+            return AzureMonitorTraceExporter.from_connection_string(connection_string)
+        except Exception as e:
+            logger.error(f"Failed to create Application Insights exporter: {e}", exc_info=True)
+            return None
+
+    def _create_otlp_exporter(self, endpoint):
+        try:
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+
+            return OTLPSpanExporter(endpoint=endpoint)
+        except Exception as e:
+            logger.error(f"Failed to create OTLP exporter: {e}", exc_info=True)
+            return None
+
+    def _setup_observability(self, exporters) -> bool:
+        setup_function = self._try_import_configure_otel_providers()
+        if not setup_function: # fallback to early version with setup_observability
+            setup_function = self._try_import_setup_observability()
+        if setup_function:
+            setup_function(
+                enable_sensitive_data=True,
+                exporters=exporters,
+            )
+            return True
+        return False
+        
+    def _try_import_setup_observability(self):
+        try:
+            from agent_framework.observability import setup_observability
+            return setup_observability
+        except ImportError as e:
+            logger.warning(f"Failed to import setup_observability: {e}")
+            return None
+    
+    def _try_import_configure_otel_providers(self):
+        try:
+            from agent_framework.observability import configure_otel_providers
+            return configure_otel_providers
+        except ImportError as e:
+            logger.warning(f"Failed to import configure_otel_providers: {e}")
+            return None
+        
+    def _setup_tracing_with_azure_ai_client(self, project_endpoint: str):
         async def setup_async():
             async with AzureAIClient(
-                project_endpoint=project_endpoint, async_credential=self.credentials
+                project_endpoint=project_endpoint,
+                async_credential=self.credentials, 
+                credential=self.credentials, # Af breaking change, keep both for compatibility
                 ) as agent_client:
-                await agent_client.setup_azure_ai_observability()
+                try:
+                    await agent_client.configure_azure_monitor()
+                except AttributeError:
+                    await agent_client.setup_azure_ai_observability()
 
         import asyncio
 
