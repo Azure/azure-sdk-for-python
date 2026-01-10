@@ -245,9 +245,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 [Accessing the response][accessing_response] |
 [Long-running operations][long_running_operations] |
 [Handling failures][handling_failures] |
-[Diagnostics][diagnostics] |
-[Mocking][mocking] |
-[Client lifetime][client_lifetime]
+[Diagnostics][diagnostics]
 
 ## Examples
 
@@ -420,7 +418,7 @@ client = ContentUnderstandingClient(
 )
 ```
 
-For more information, see [Diagnostics samples][diagnostics].
+For more information about logging, see the [Azure SDK Python logging documentation][sdk_logging_docs].
 
 ## Next steps
 
@@ -454,7 +452,7 @@ $env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
 ```
 
 **On Windows (Command Prompt):**
-```cmd
+```bat
 set AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
 set AZURE_CONTENT_UNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
 set GPT_4_1_DEPLOYMENT=gpt-4.1
@@ -569,9 +567,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [accessing_response]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#accessing-http-response-details-using-responset
 [long_running_operations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#consuming-long-running-operations-using-operationt
 [handling_failures]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#reporting-errors-requestfailedexception
-[diagnostics]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/Diagnostics.md
-[mocking]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-mock-helpers
-[client_lifetime]: https://devblogs.microsoft.com/azure-sdk/lifetime-management-and-thread-safety-guarantees-of-azure-sdk-python-clients/
+[diagnostics]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#logging
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
