@@ -18,13 +18,13 @@ TOKEN_SCOPE = "https://storage.azure.com/.default"
 class DownloadBasicTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
+        self.chunk_size = self.args.max_block_size or 4 * 1024 * 1024
 
-    async def global_setup(self):
-        await super().global_setup()
+    async def setup(self):
+        await super().setup()
         data = RandomStream(self.args.size)
         await self.async_blob_client.upload_blob(data, max_concurrency=10)
 
-        self.chunk_size = self.args.max_block_size or 4 * 1024 * 1024
         if self.async_token_credential:
             token = await self.async_token_credential.get_token(TOKEN_SCOPE)
             self.auth_header = "Bearer " + token.token

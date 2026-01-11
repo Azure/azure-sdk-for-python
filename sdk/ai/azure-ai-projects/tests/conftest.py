@@ -13,7 +13,7 @@ mimetypes.add_type("text/markdown", ".md")
 
 import os
 import pytest
-from dotenv import load_dotenv, find_dotenv
+from dotenv import find_dotenv, load_dotenv
 from devtools_testutils import (
     remove_batch_sanitizers,
     add_general_regex_sanitizer,
@@ -24,7 +24,6 @@ from devtools_testutils import (
 
 if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
-
 
 def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
@@ -111,6 +110,9 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize fine-tuning job IDs in URLs and response bodies
     add_general_regex_sanitizer(regex=r"ftjob-[a-f0-9]+", value="sanitized-ftjob-id")
 
+    # Sanitize deployment names that are derived from job IDs (e.g., test-6158cfe2)
+    add_general_regex_sanitizer(regex=r"test-[a-f0-9]{8}", value="test-ftjob-id")
+
     # Sanitize file IDs in URLs and response bodies
     add_general_regex_sanitizer(regex=r"file-[a-f0-9]+", value="sanitized-file-id")
 
@@ -160,3 +162,11 @@ def add_sanitizers(test_proxy, sanitized_values):
     #  - AZSDK3430: $..id
     remove_batch_sanitizers(["AZSDK3493"])
     remove_batch_sanitizers(["AZSDK3430"])
+
+    # Sanitize ARM operation headers that contain certificates and identifiers
+    add_general_regex_sanitizer(regex=r"[?&]t=[0-9]+", value="&t=sanitized-timestamp")
+    add_general_regex_sanitizer(regex=r"[?&]c=[^&\"]+", value="&c=sanitized-certificate")
+    add_general_regex_sanitizer(regex=r"[?&]s=[^&\"]+", value="&s=sanitized-signature")
+    add_general_regex_sanitizer(regex=r"[?&]h=[^&\"]+", value="&h=sanitized-hash")
+    add_general_regex_sanitizer(regex=r"operationResults/[a-f0-9\-]+", value="operationResults/sanitized-operation-id")
+    add_general_regex_sanitizer(regex=r"https://management\.azure\.com/", value="https://sanitized.azure.com/")

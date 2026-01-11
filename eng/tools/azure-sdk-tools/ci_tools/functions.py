@@ -519,7 +519,7 @@ def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
-    # we do not use get_pip_command here because uv pip doesn't have an uninstall command
+    # use uninstall_from_venv() for uv venvs
     exe = python_executable or sys.executable
     command = [exe, "-m", "pip", "uninstall", "-y"]
 
@@ -565,7 +565,27 @@ def install_into_venv(venv_path_or_executable: str, requirements: List[str], wor
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
+
     # todo: clean this up so that we're using run_logged from #42862
+    subprocess.check_call(cmd, cwd=working_directory)
+
+
+def uninstall_from_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
+    """
+    Uninstalls the requirements from an existing venv (venv_path) without activating it.
+    """
+    py = get_venv_python(venv_path_or_executable)
+    pip_cmd = get_pip_command(py)
+
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["uninstall"]
+    if pip_cmd[0] != "uv":
+        cmd += ["-y"]
+    cmd.extend(install_targets)
+
+    if pip_cmd[0] == "uv":
+        cmd += ["--python", py]
+
     subprocess.check_call(cmd, cwd=working_directory)
 
 

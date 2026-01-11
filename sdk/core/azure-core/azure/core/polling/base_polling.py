@@ -33,6 +33,7 @@ from typing import (
     Tuple,
     Callable,
     Dict,
+    Mapping,
     Sequence,
     Generic,
     TypeVar,
@@ -46,7 +47,9 @@ from ..pipeline.policies._utils import get_retry_after
 from ..pipeline._tools import is_rest
 from .._enum_meta import CaseInsensitiveEnumMeta
 from .. import PipelineClient
-from ..pipeline import PipelineResponse
+from ..pipeline import PipelineResponse, PipelineContext
+from ..rest._helpers import decode_to_text, get_charset_encoding
+from ..utils._utils import case_insensitive_dict
 from ..pipeline.transport import (
     HttpTransport,
     HttpRequest as LegacyHttpRequest,
@@ -54,6 +57,11 @@ from ..pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
+from ._utils import (
+    _encode_continuation_token,
+    _decode_continuation_token,
+    _filter_sensitive_headers,
+)
 
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
@@ -78,6 +86,56 @@ HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
+
+
+class _ContinuationTokenHttpResponse:
+    """A minimal HTTP response class for reconstructing responses from continuation tokens.
+
+    This class provides just enough interface to be used with LRO polling operations
+    when restoring from a continuation token.
+
+    :param request: The HTTP request (optional, may be None if not available in the continuation token)
+    :type request: ~azure.core.rest.HttpRequest or None
+    :param status_code: The HTTP status code
+    :type status_code: int
+    :param headers: The response headers
+    :type headers: dict
+    :param content: The response content
+    :type content: bytes
+    """
+
+    def __init__(
+        self,
+        request: Optional[HttpRequest],
+        status_code: int,
+        headers: Dict[str, str],
+        content: bytes,
+    ):
+        self.request = request
+        self.status_code = status_code
+        self.headers = case_insensitive_dict(headers)
+        self._content = content
+
+    @property
+    def content(self) -> bytes:
+        """Return the response content.
+
+        :return: The response content
+        :rtype: bytes
+        """
+        return self._content
+
+    def text(self) -> str:
+        """Return the response content as text.
+
+        Uses the charset from Content-Type header if available, otherwise falls back
+        to UTF-8 with replacement for invalid characters.
+
+        :return: The response content as text
+        :rtype: str
+        """
+        encoding = get_charset_encoding(self)
+        return decode_to_text(encoding, self._content)
 
 
 def _get_content(response: AllHttpResponseType) -> bytes:
@@ -645,18 +703,82 @@ class _SansIOLROBasePolling(
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err) from err
 
+    def _filter_headers_for_continuation_token(self, headers: Mapping[str, str]) -> Dict[str, str]:
+        """Filter headers to include in the continuation token.
+
+        Subclasses can override this method to include additional headers needed
+        for their specific LRO implementation.
+
+        :param headers: The response headers to filter.
+        :type headers: Mapping[str, str]
+        :return: A filtered dictionary of headers to include in the continuation token.
+        :rtype: dict[str, str]
+        """
+        return _filter_sensitive_headers(headers)
+
     def get_continuation_token(self) -> str:
         """Get a continuation token that can be used to recreate this poller.
-        The continuation token is a base64 encoded string that contains the initial response
-        serialized with pickle.
 
         :rtype: str
-        :return: The continuation token.
+        :return: An opaque continuation token.
         :raises ValueError: If the initial response is not set.
         """
-        import pickle
-
-        return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
+        response = self._initial_response.http_response
+        request = response.request
+        # Serialize the essential parts of the PipelineResponse to JSON.
+        if request:
+            request_headers = {}
+            # Preserve x-ms-client-request-id for request correlation
+            if "x-ms-client-request-id" in request.headers:
+                request_headers["x-ms-client-request-id"] = request.headers["x-ms-client-request-id"]
+            request_state = {
+                "method": request.method,
+                "url": request.url,
+                "headers": request_headers,
+            }
+        else:
+            request_state = None
+        # Get response content, handling the case where it might not be read yet
+        try:
+            content = _get_content(response) or b""
+        except Exception:  # pylint: disable=broad-except
+            content = b""
+        # Get deserialized data from context if available (optimization).
+        # If context doesn't have it, fall back to parsing the response body directly.
+        # Note: deserialized_data is only included if it's JSON-serializable.
+        # Non-JSON-serializable types (e.g., XML ElementTree) are skipped and set to None.
+        # In such cases, the data can still be re-parsed from the raw content bytes.
+        deserialized_data = None
+        raw_deserialized = None
+        if self._initial_response.context is not None:
+            raw_deserialized = self._initial_response.context.get("deserialized_data")
+        # Fallback: try to get deserialized data from the response body if context didn't have it
+        if raw_deserialized is None and content:
+            try:
+                raw_deserialized = json.loads(content)
+            except (json.JSONDecodeError, ValueError, TypeError):
+                # Response body is not valid JSON, leave as None
+                pass
+        if raw_deserialized is not None:
+            try:
+                # Test if the data is JSON-serializable
+                json.dumps(raw_deserialized)
+                deserialized_data = raw_deserialized
+            except (TypeError, ValueError):
+                # Skip non-JSON-serializable data (e.g., XML ElementTree objects)
+                deserialized_data = None
+        state = {
+            "request": request_state,
+            "response": {
+                "status_code": response.status_code,
+                "headers": self._filter_headers_for_continuation_token(response.headers),
+                "content": base64.b64encode(content).decode("ascii"),
+            },
+            "context": {
+                "deserialized_data": deserialized_data,
+            },
+        }
+        return _encode_continuation_token(state)
 
     @classmethod
     def from_continuation_token(
@@ -681,11 +803,34 @@ class _SansIOLROBasePolling(
         except KeyError:
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from None
 
-        import pickle
-
-        initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
-        # Restore the transport in the context
-        initial_response.context.transport = client._pipeline._transport  # pylint: disable=protected-access
+        state = _decode_continuation_token(continuation_token)
+        # Reconstruct HttpRequest if present
+        request_state = state.get("request")
+        http_request = None
+        if request_state is not None:
+            http_request = HttpRequest(
+                method=request_state["method"],
+                url=request_state["url"],
+                headers=request_state.get("headers", {}),
+            )
+        # Reconstruct HttpResponse using the minimal response class
+        response_state = state["response"]
+        http_response = _ContinuationTokenHttpResponse(
+            request=http_request,
+            status_code=response_state["status_code"],
+            headers=response_state["headers"],
+            content=base64.b64decode(response_state["content"]),
+        )
+        # Reconstruct PipelineResponse
+        context = PipelineContext(client._pipeline._transport)  # pylint: disable=protected-access
+        context_state = state.get("context", {})
+        if context_state.get("deserialized_data") is not None:
+            context["deserialized_data"] = context_state["deserialized_data"]
+        initial_response = PipelineResponse(
+            http_request=http_request,
+            http_response=http_response,
+            context=context,
+        )
         return client, initial_response, deserialization_callback
 
     def status(self) -> str:
