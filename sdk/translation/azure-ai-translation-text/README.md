@@ -75,7 +75,7 @@ A `TextTranslationClient` is the primary interface for developers using the Text
 
 ### Input
 
-A **text element** (`string`), is a single unit of input to be processed by the translation models in the Translator service. Operations on `TextTranslationClient` may take a single text element or a collection of text elements.
+A **TranslateInputItem** is a single unit of input to be processed by the translation models in the Translator service. Each `TranslateInputItem` defines both the input string to translate and the output specifications for the translation.
 For text element length limits, maximum requests size, and supported text encoding see [here][translator_limits].
 
 ## Examples
