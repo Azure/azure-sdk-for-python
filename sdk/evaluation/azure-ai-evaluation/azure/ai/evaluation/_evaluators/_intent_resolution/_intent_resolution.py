@@ -145,7 +145,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Validate input before processing
         self._validator.validate_eval_input(kwargs)
-        
+
         return await super()._real_call(**kwargs)
 
     @override

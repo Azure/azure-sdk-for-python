@@ -158,7 +158,7 @@ class ConversationValidator(ValidatorInterface):
         
         if not isinstance(content, list):
             return EvaluationException(
-                message=f"The 'content' field must be a list of dictionaries messages for role '{MessageRole.TOOL.value}'.",
+                message=f"The 'content' field must be a list of message dictionaries for role '{MessageRole.TOOL.value}'.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
@@ -209,7 +209,7 @@ class ConversationValidator(ValidatorInterface):
             isinstance(content, list) and all(item and isinstance(item, dict) for item in content))
         if not content_is_string_or_list_of_dicts:
             return EvaluationException(
-                message=f"The 'content' field must be a string or a list of dictionaries messages.",
+                message="The 'content' field must be a string or a list of message dictionaries.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,

@@ -173,7 +173,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         """
         # Validate input before processing
         self._validator.validate_eval_input(kwargs)
-        
+
         return await super()._real_call(**kwargs)
 
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
