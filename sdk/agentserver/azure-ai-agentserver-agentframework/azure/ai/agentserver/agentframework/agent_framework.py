@@ -28,6 +28,7 @@ from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
+from .models.agent_thread_repository import AgentThreadRepository
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
 from .models.constants import Constants
 from .tool_client import ToolClient
@@ -75,7 +76,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def __init__(self, agent: Union[AgentProtocol, AgentFactory],
                  credentials: "Optional[AsyncTokenCredential]" = None,
-                 **kwargs: Any):
+                 *,
+                 thread_repository: AgentThreadRepository = None,
+                 **kwargs: Any,
+                ):
         """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
 
         :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient
@@ -83,13 +87,16 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         :type agent: Union[AgentProtocol, AgentFactory]
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
+        :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
+        :type thread_repository: Optional[AgentThreadRepository]
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         self._agent_or_factory: Union[AgentProtocol, AgentFactory] = agent
         self._resolved_agent: "Optional[AgentProtocol]" = None
         self._hitl_helper = HumanInTheLoopHelper()
         self._checkpoint_storage = InMemoryCheckpointStorage()
-        self._agent_thread_in_memory = {}
+        self._thread_repository = thread_repository
+
         # If agent is already instantiated, use it directly
         if isinstance(agent, AgentProtocol):
             self._resolved_agent = agent
@@ -233,7 +240,13 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
             # TODO: load agent thread from storage and deserialize
-            agent_thread = self._agent_thread_in_memory.get(context.conversation_id, agent.get_new_thread())
+            agent_thread = None
+            if self._thread_repository:
+                agent_thread = await self._thread_repository.get(agent, context.conversation_id)
+                if agent_thread:
+                    logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
+                else:
+                    agent_thread = agent.get_new_thread()
 
             last_checkpoint = None
             if self._checkpoint_storage:
@@ -271,8 +284,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                             update_count += 1
                             yield event
                         
-                        if agent_thread:
-                            self._agent_thread_in_memory[context.conversation_id] = agent_thread
+                        if agent_thread and self._thread_repository:
+                            await self._thread_repository.set(context.conversation_id, agent_thread)
+                            logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+                            
                         logger.info("Streaming completed with %d updates", update_count)
                     finally:
                         # Close tool_client if it was created for this request
@@ -293,9 +308,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                         checkpoint_storage=self._checkpoint_storage,
                         checkpoint_id=last_checkpoint.checkpoint_id if last_checkpoint else None,
                         )
-            logger.info(f"Agent run completed, result type: {type(result)}")
-            if agent_thread:
-                self._agent_thread_in_memory[context.conversation_id] = agent_thread
+
+            if agent_thread and self._thread_repository:
+                await self._thread_repository.set(context.conversation_id, agent_thread)
+                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
             return transformed_result
