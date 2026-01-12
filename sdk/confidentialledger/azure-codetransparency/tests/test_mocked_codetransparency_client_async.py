@@ -79,7 +79,7 @@ def cert_file(tmp_path):
     # Write a dummy certificate - the content doesn't matter for mocked tests
     with open(cert_path, "w") as f:
         f.write(
-            "-----BEGIN CERTIFICATE-----\nMIIB...IDAQAB\n-----END CERTIFICATE-----\n"
+            "-----BEGIN CERTIFICATE-----\nMIIB...IDAQAB\n-----END CERTIFICATE-----\n"  # cSpell:disable-line
         )  # cSpell:disable-line
     return cert_path
 
