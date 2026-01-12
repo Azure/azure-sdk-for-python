@@ -52,6 +52,29 @@ def test_error_reporting():
         transport.send.reset_mock()
 
 
+def test_none_content_handling():
+    """Test that _process_response handles None content without raising TypeError"""
+    http_response = mock_response(status_code=200)
+    http_response.text = Mock(return_value="")
+
+    # Create a mock PipelineResponse with empty context
+    mock_pipeline_response = Mock()
+    mock_pipeline_response.context = {}
+    mock_pipeline_response.http_response = http_response
+    mock_pipeline_response.http_request = Mock()
+    mock_pipeline_response.http_request.body = {}
+
+    with patch("azure.identity._internal.aad_client_base.ContentDecodePolicy") as mock_policy:
+        mock_policy.CONTEXT_NAME = "content_decode_policy"
+        mock_policy.deserialize_from_http_generics = Mock(return_value=None)
+
+        transport = Mock()
+        client = AadClient("tenant id", "client id", transport=transport)
+
+        with pytest.raises(ClientAuthenticationError):
+            client._process_response(mock_pipeline_response, int(1234567890))
+
+
 @pytest.mark.skip(reason="Adding body to HttpResponseError str. Not an issue bc we don't automatically log errors")
 def test_exceptions_do_not_expose_secrets():
     secret = "secret"
