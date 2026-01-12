@@ -56,22 +56,24 @@ class CodeTransparencyClient(GeneratedClient):
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
     ) -> None:
-        # Remove some kwargs first so that there aren't unexpected kwargs passed to
-        # get_ledger_identity.
-
-        if os.path.isfile(ledger_certificate_path) is False:
+        if not os.path.isfile(ledger_certificate_path):
             # We'll need to fetch the TLS certificate.
-
             identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
-
             # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
-
             ledger_id = endpoint.replace("https://", "").split(".")[0]
 
-            # We use the sync client here because async __init__ is not allowed.
-
+            # Some client specific kwargs will not be supported by the identity request
+            # this is to ensure users have full control of the underlying client config
+            # Otherwise the client will break because get_ledger_identity request will fail
+            # with unsupported optiions that are meant for the Client
+            valid_identity_kwargs = {
+                key: value
+                for key, value in kwargs.items()
+                if key
+                in ["error_map", "headers", "params", "cls", "stream", "transport"]
+            }
             ledger_cert = identity_service_client.get_ledger_identity(
-                ledger_id, **kwargs
+                ledger_id, **valid_identity_kwargs
             )
 
             with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
@@ -82,5 +84,12 @@ class CodeTransparencyClient(GeneratedClient):
         kwargs["connection_verify"] = kwargs.get(
             "connection_verify", ledger_certificate_path
         )
+
+        # Increase default retry attempts and backoff factor to better handle transient failures
+        # see defaults in azure.core.pipeline.policies.RetryPolicyBase
+        kwargs["retry_status"] = kwargs.pop("retry_status", 5) # some 503 responses may take a while to recover
+        kwargs["retry_backoff_factor"] = kwargs.pop("retry_backoff_factor", 0.9)
+
+        
 
         super().__init__(endpoint, credential, **kwargs)
