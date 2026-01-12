@@ -66,7 +66,7 @@ def add_sanitizers(test_proxy):
         add_general_string_sanitizer(target=contentunderstanding_client_secret, value="fake-secret")
 
     # Sanitize API keys
-    contentunderstanding_key = os.environ.get("AZURE_CONTENT_UNDERSTANDING_KEY", "")
+    contentunderstanding_key = os.environ.get("CONTENTUNDERSTANDING_KEY", "")
     if contentunderstanding_key:
         add_general_string_sanitizer(target=contentunderstanding_key, value="fake-api-key")
 

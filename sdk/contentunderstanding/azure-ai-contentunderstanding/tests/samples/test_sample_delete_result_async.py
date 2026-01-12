@@ -29,7 +29,7 @@ class TestSampleDeleteResultAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_delete_result_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_delete_result_async(self, contentunderstanding_endpoint: str) -> None:
         """Test deleting an analysis result (async version).
 
         This test validates:
@@ -39,7 +39,7 @@ class TestSampleDeleteResultAsync(ContentUnderstandingClientTestBaseAsync):
 
         Equivalent to: Sample13_DeleteResult.DeleteResultAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # First, analyze a document to create a result
         current_dir = os.path.dirname(os.path.abspath(__file__))

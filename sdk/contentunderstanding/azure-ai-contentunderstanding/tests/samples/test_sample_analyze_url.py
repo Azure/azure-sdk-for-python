@@ -32,7 +32,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_document_from_url(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_analyze_document_from_url(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document from URL.
 
         This test validates:
@@ -43,7 +43,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         02_AnalyzeUrl.AnalyzeDocumentUrlAsync()
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Use a publicly accessible URL for testing
         # In production, this would be a real URL to a document
@@ -104,7 +104,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_video_from_url(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_analyze_video_from_url(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a video from URL.
 
         This test validates:
@@ -115,7 +115,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         02_AnalyzeUrl.AnalyzeVideoUrlAsync()
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # For testing purposes, use binary data
         tests_dir = os.path.dirname(os.path.dirname(__file__))
@@ -153,7 +153,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_audio_from_url(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_analyze_audio_from_url(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing audio from URL.
 
         This test validates:
@@ -164,7 +164,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         02_AnalyzeUrl.AnalyzeAudioUrlAsync()
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # For testing purposes, use binary data
         tests_dir = os.path.dirname(os.path.dirname(__file__))
@@ -202,7 +202,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_image_from_url(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_analyze_image_from_url(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing an image from URL.
 
         This test validates:
@@ -212,7 +212,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         02_AnalyzeUrl.AnalyzeImageUrlAsync()
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # For testing purposes, use binary data
         tests_dir = os.path.dirname(os.path.dirname(__file__))

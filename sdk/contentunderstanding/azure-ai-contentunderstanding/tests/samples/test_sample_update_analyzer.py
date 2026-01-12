@@ -35,7 +35,7 @@ class TestSampleUpdateAnalyzer(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_update_analyzer(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_update_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """Test updating an analyzer's properties.
 
         This test validates:
@@ -48,7 +48,7 @@ class TestSampleUpdateAnalyzer(ContentUnderstandingClientTestBase):
         """
         # Skip this test if API is not available
         try:
-            client = self.create_client(endpoint=azure_content_understanding_endpoint)
+            client = self.create_client(endpoint=contentunderstanding_endpoint)
 
             # Generate unique analyzer ID for this test
             analyzer_id = f"test_analyzer_{uuid.uuid4().hex}"

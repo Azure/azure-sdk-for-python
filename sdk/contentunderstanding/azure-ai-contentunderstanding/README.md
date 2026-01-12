@@ -115,7 +115,7 @@ TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
 ```
 
 Notes:
-- If `AZURE_CONTENT_UNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
+- If `CONTENTUNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
 - Keep the `.env` file out of version control—do not commit secrets.
 - The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
 
@@ -146,7 +146,7 @@ import os
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
+endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 ```
@@ -158,7 +158,7 @@ import os
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.identity.aio import DefaultAzureCredential
 
-endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
+endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 ```
@@ -172,8 +172,8 @@ import os
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
 
-endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-api_key = os.environ["AZURE_CONTENT_UNDERSTANDING_KEY"]
+endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+api_key = os.environ["CONTENTUNDERSTANDING_KEY"]
 client = ContentUnderstandingClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 ```
 
@@ -281,8 +281,8 @@ from azure.identity.aio import DefaultAzureCredential
 load_dotenv()
 
 async def analyze_document():
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
@@ -333,8 +333,8 @@ def get_field_value(fields, field_name):
     return field.value if field else None
 
 async def analyze_invoice():
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
@@ -435,8 +435,8 @@ To run the `update_defaults` code example shown above, you need to set environme
 
 **On Linux/macOS (bash):**
 ```bash
-export AZURE_CONTENT_UNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
-export AZURE_CONTENT_UNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
+export CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
+export CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
 export GPT_4_1_DEPLOYMENT="gpt-4.1"
 export GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
 export TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
@@ -444,8 +444,8 @@ export TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
 
 **On Windows (PowerShell):**
 ```powershell
-$env:AZURE_CONTENT_UNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
-$env:AZURE_CONTENT_UNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
+$env:CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
+$env:CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
 $env:GPT_4_1_DEPLOYMENT="gpt-4.1"
 $env:GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
 $env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
@@ -453,8 +453,8 @@ $env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
 
 **On Windows (Command Prompt):**
 ```bat
-set AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
-set AZURE_CONTENT_UNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
+set CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+set CONTENTUNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
 set GPT_4_1_DEPLOYMENT=gpt-4.1
 set GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
 set TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
@@ -506,8 +506,8 @@ To run the tests for this package, you need to set up a `.env` file at the repos
    ```
 
 4. Edit the `.env` file at the repo root and fill in your actual values:
-   - `AZURE_CONTENT_UNDERSTANDING_ENDPOINT`: Your Microsoft Foundry resource endpoint
-   - `AZURE_CONTENT_UNDERSTANDING_KEY`: Your API key (optional if using DefaultAzureCredential)
+   - `CONTENTUNDERSTANDING_ENDPOINT`: Your Microsoft Foundry resource endpoint
+   - `CONTENTUNDERSTANDING_KEY`: Your API key (optional if using DefaultAzureCredential)
    - `AZURE_TEST_RUN_LIVE`: Set to `true` to run tests against real Azure resources
    - `AZURE_SKIP_LIVE_RECORDING`: Set to `true` to skip recording when running live tests
 

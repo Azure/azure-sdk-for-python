@@ -63,14 +63,14 @@ USAGE:
     python sample_grant_copy_auth_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the source endpoint to your Content Understanding resource.
-    2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
-    3) AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID - Full Azure Resource Manager resource ID of source.
-    4) AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION - Azure region of source resource.
-    5) AZURE_CONTENT_UNDERSTANDING_TARGET_ENDPOINT - Target endpoint for cross-subscription copy.
-    6) AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID - Full Azure Resource Manager resource ID of target.
-    7) AZURE_CONTENT_UNDERSTANDING_TARGET_REGION - Azure region of target resource.
-    8) AZURE_CONTENT_UNDERSTANDING_TARGET_KEY - Target API key (optional if using DefaultAzureCredential).
+    1) CONTENTUNDERSTANDING_ENDPOINT - the source endpoint to your Content Understanding resource.
+    2) CONTENTUNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
+    3) CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID - Full Azure Resource Manager resource ID of source.
+    4) CONTENTUNDERSTANDING_SOURCE_REGION - Azure region of source resource.
+    5) CONTENTUNDERSTANDING_TARGET_ENDPOINT - Target endpoint for cross-subscription copy.
+    6) CONTENTUNDERSTANDING_TARGET_RESOURCE_ID - Full Azure Resource Manager resource ID of target.
+    7) CONTENTUNDERSTANDING_TARGET_REGION - Azure region of target resource.
+    8) CONTENTUNDERSTANDING_TARGET_KEY - Target API key (optional if using DefaultAzureCredential).
 
     Example resource ID format:
     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}
@@ -102,12 +102,12 @@ load_dotenv()
 async def main() -> None:
     # Check for required environment variables
     required_vars = [
-        "AZURE_CONTENT_UNDERSTANDING_ENDPOINT",
-        "AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID",
-        "AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION",
-        "AZURE_CONTENT_UNDERSTANDING_TARGET_ENDPOINT",
-        "AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID",
-        "AZURE_CONTENT_UNDERSTANDING_TARGET_REGION",
+        "CONTENTUNDERSTANDING_ENDPOINT",
+        "CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID",
+        "CONTENTUNDERSTANDING_SOURCE_REGION",
+        "CONTENTUNDERSTANDING_TARGET_ENDPOINT",
+        "CONTENTUNDERSTANDING_TARGET_RESOURCE_ID",
+        "CONTENTUNDERSTANDING_TARGET_REGION",
     ]
 
     missing_vars = [var for var in required_vars if not os.getenv(var)]
@@ -124,20 +124,20 @@ async def main() -> None:
 
     # [START grant_copy_auth]
     # Get source configuration
-    source_endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    source_key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    source_endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    source_key = os.getenv("CONTENTUNDERSTANDING_KEY")
     source_credential = AzureKeyCredential(source_key) if source_key else DefaultAzureCredential()
 
-    source_resource_id = os.environ["AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID"]
-    source_region = os.environ["AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION"]
+    source_resource_id = os.environ["CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID"]
+    source_region = os.environ["CONTENTUNDERSTANDING_SOURCE_REGION"]
 
     # Get target configuration
-    target_endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_TARGET_ENDPOINT"]
-    target_key = os.getenv("AZURE_CONTENT_UNDERSTANDING_TARGET_KEY")
+    target_endpoint = os.environ["CONTENTUNDERSTANDING_TARGET_ENDPOINT"]
+    target_key = os.getenv("CONTENTUNDERSTANDING_TARGET_KEY")
     target_credential = AzureKeyCredential(target_key) if target_key else DefaultAzureCredential()
 
-    target_resource_id = os.environ["AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID"]
-    target_region = os.environ["AZURE_CONTENT_UNDERSTANDING_TARGET_REGION"]
+    target_resource_id = os.environ["CONTENTUNDERSTANDING_TARGET_RESOURCE_ID"]
+    target_region = os.environ["CONTENTUNDERSTANDING_TARGET_REGION"]
 
     # Create source and target clients using DefaultAzureCredential
     source_client = ContentUnderstandingClient(endpoint=source_endpoint, credential=source_credential)

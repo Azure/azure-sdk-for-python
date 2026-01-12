@@ -33,7 +33,7 @@ class TestSampleAnalyzeReturnRawJsonAsync(ContentUnderstandingClientTestBaseAsyn
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_return_raw_json_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_return_raw_json_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document and getting raw JSON response (async version).
 
         This test validates:
@@ -43,7 +43,7 @@ class TestSampleAnalyzeReturnRawJsonAsync(ContentUnderstandingClientTestBaseAsyn
 
         11_AnalyzeReturnRawJson.AnalyzeReturnRawJsonAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Read the sample file
         tests_dir = os.path.dirname(os.path.dirname(__file__))

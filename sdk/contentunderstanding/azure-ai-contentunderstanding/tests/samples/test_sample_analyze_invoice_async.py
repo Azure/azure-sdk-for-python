@@ -29,7 +29,7 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_invoice_async(self, azure_content_understanding_endpoint: str, **kwargs) -> None:
+    async def test_sample_analyze_invoice_async(self, contentunderstanding_endpoint: str, **kwargs) -> None:
         """Test analyzing an invoice document with prebuilt-invoice analyzer (async version).
 
         This test validates:
@@ -37,7 +37,7 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
         2. Extracting invoice-specific fields (CustomerName, InvoiceDate, TotalAmount, LineItems)
         3. Field confidence scores and source locations
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Get the invoice file path (use sample_invoice.pdf from test_data)
         current_dir = os.path.dirname(os.path.abspath(__file__))

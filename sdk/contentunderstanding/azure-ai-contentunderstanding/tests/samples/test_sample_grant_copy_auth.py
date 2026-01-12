@@ -42,7 +42,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_grant_copy_auth(self, azure_content_understanding_endpoint: str, **kwargs) -> None:
+    def test_sample_grant_copy_auth(self, contentunderstanding_endpoint: str, **kwargs) -> None:
         """Test granting copy authorization for cross-resource analyzer copying.
 
         This test validates:
@@ -61,33 +61,33 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             # Get source and target resource information from environment
             # For testing, we may use the same endpoint for both source and target
             # In production, these would be different resources
-            source_resource_id = os.environ.get("AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID")
-            source_region = os.environ.get("AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION")
+            source_resource_id = os.environ.get("CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID")
+            source_region = os.environ.get("CONTENTUNDERSTANDING_SOURCE_REGION")
             target_endpoint = os.environ.get(
-                "AZURE_CONTENT_UNDERSTANDING_TARGET_ENDPOINT", azure_content_understanding_endpoint
+                "CONTENTUNDERSTANDING_TARGET_ENDPOINT", contentunderstanding_endpoint
             )
-            target_resource_id = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID")
-            target_region = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_REGION")
-            target_key = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_KEY")
+            target_resource_id = os.environ.get("CONTENTUNDERSTANDING_TARGET_RESOURCE_ID")
+            target_region = os.environ.get("CONTENTUNDERSTANDING_TARGET_REGION")
+            target_key = os.environ.get("CONTENTUNDERSTANDING_TARGET_KEY")
 
             # Only require environment variables in live mode
             # In playback mode, the test proxy will replay recorded interactions
             if is_live():
                 if not source_resource_id:
                     raise ValueError(
-                        "AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID is required for cross-resource copy test in live mode"
+                        "CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID is required for cross-resource copy test in live mode"
                     )
                 if not source_region:
                     raise ValueError(
-                        "AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION is required for cross-resource copy test in live mode"
+                        "CONTENTUNDERSTANDING_SOURCE_REGION is required for cross-resource copy test in live mode"
                     )
                 if not target_resource_id:
                     raise ValueError(
-                        "AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID is required for cross-resource copy test in live mode"
+                        "CONTENTUNDERSTANDING_TARGET_RESOURCE_ID is required for cross-resource copy test in live mode"
                     )
                 if not target_region:
                     raise ValueError(
-                        "AZURE_CONTENT_UNDERSTANDING_TARGET_REGION is required for cross-resource copy test in live mode"
+                        "CONTENTUNDERSTANDING_TARGET_REGION is required for cross-resource copy test in live mode"
                     )
             else:
                 # In playback mode, use placeholder values - test proxy will use recorded values
@@ -97,13 +97,13 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
                 target_region = target_region or "placeholder-target-region"
 
             # Create clients
-            source_client = self.create_client(endpoint=azure_content_understanding_endpoint)
+            source_client = self.create_client(endpoint=contentunderstanding_endpoint)
 
             # Create target client (may use different endpoint and credential)
             from azure.core.credentials import AzureKeyCredential
             from azure.identity import DefaultAzureCredential
 
-            if target_endpoint != azure_content_understanding_endpoint or target_key:
+            if target_endpoint != contentunderstanding_endpoint or target_key:
                 # Create target client with different endpoint/credential
                 if target_key:
                     target_credential = AzureKeyCredential(target_key)

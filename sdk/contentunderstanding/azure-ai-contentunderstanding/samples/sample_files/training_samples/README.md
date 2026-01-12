@@ -44,8 +44,8 @@ This directory contains 2 labeled IRS 1040 forms with 5 fields:
 ## Usage
 
 1. Upload all files to Azure Blob Storage
-2. Set the `CONTENT_UNDERSTANDING_STORAGE_CONTAINER_SAS_URL` environment variable
-3. Set the `CONTENT_UNDERSTANDING_STORAGE_PREFIX` to point to your training files
+2. Set the `CONTENTUNDERSTANDING_STORAGE_CONTAINER_SAS_URL` environment variable
+3. Set the `CONTENTUNDERSTANDING_STORAGE_PREFIX` to point to your training files
 4. Run `python create_analyzer_with_labels.py`
 
 See `../../env.sample` for configuration details.

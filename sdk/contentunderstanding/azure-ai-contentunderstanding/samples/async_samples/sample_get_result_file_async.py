@@ -26,8 +26,8 @@ USAGE:
     python sample_get_result_file_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
-    2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
+    1) CONTENTUNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
+    2) CONTENTUNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
     Before using prebuilt analyzers, you MUST configure model deployments for your Microsoft Foundry
     resource. See sample_update_defaults.py for setup instructions.
@@ -51,8 +51,8 @@ load_dotenv()
 
 
 async def main() -> None:
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:

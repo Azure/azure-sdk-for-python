@@ -218,12 +218,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_update_defaults_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_update_defaults_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests updating default model deployments for the Content Understanding service.
         Verifies that model deployments (gpt-4.1, gpt-4.1-mini, text-embedding-3-large) can be updated and are correctly persisted.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Check if model deployments are configured in test environment
         gpt41_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_DEPLOYMENT")
@@ -273,12 +273,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_get_defaults_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_get_defaults_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests retrieving default model deployments from the Content Understanding service.
         Verifies that the returned defaults contain the expected model deployment configurations.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Load expected model values from test environment
         gpt41_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_DEPLOYMENT")
@@ -329,12 +329,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_create_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_create_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests creating a custom analyzer using ContentAnalyzer object.
         Verifies analyzer creation, poller properties, and proper cleanup.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "create_content_analyzer", is_async=True)
         created_analyzer = False
 
@@ -353,12 +353,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_create_analyzer_with_json_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_create_analyzer_with_json_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests creating a custom analyzer using JSON dictionary representation.
         Verifies analyzer creation, poller properties, and proper cleanup.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "create_json", is_async=True)
         created_analyzer = False
 
@@ -406,12 +406,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_update_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_update_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests updating an analyzer's properties (description and tags).
         Verifies that updates are correctly applied and persisted.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "update", is_async=True)
         created_analyzer = False
 
@@ -486,12 +486,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_get_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_get_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests retrieving an analyzer by ID.
         Verifies that the prebuilt-documentSearch analyzer can be retrieved with all properties.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await client.get_analyzer(
             analyzer_id="prebuilt-documentSearch",
         )
@@ -506,12 +506,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_delete_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_delete_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests deleting an analyzer.
         Verifies that an analyzer can be successfully deleted.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "delete", is_async=True)
         created_analyzer = False
 
@@ -554,12 +554,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @pytest.mark.skip(reason="TEMPORARILY SKIPPED: List operation is too long - too many analyzers")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_list_analyzers_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_list_analyzers_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests listing all available analyzers.
         Verifies that prebuilt analyzers are included and have required properties.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = client.list_analyzers()
         result = [r async for r in response]
         assert len(result) > 0, "Should have at least one analyzer in the list"
@@ -581,12 +581,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_url_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_analyze_url_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests analyzing a document from a URL.
         Verifies that analysis completes successfully and returns expected field results.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "analyze_url", is_async=True)
         created_analyzer = False
 
@@ -633,12 +633,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_binary_basic_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_analyze_binary_basic_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests analyzing a document from binary data (PDF file).
         Verifies that binary analysis completes successfully and returns expected field results.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "analyze_binary", is_async=True)
         created_analyzer = False
 
@@ -686,7 +686,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_get_result_file_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_get_result_file_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests retrieving result files from a video analysis operation.
         Verifies that image files generated from video analysis can be retrieved and saved.
@@ -696,7 +696,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 "This test requires live mode to run, as it involves large video files that are too big for test proxy to record"
             )
             return  # Skip this test in playback mode as it requires large video files is too big for test proxy to record
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "get_result_file", is_async=True)
         created_analyzer = False
 
@@ -760,12 +760,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_validate_document_properties_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_validate_document_properties_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests document property validation from analysis results.
         Verifies that analyzed documents contain expected properties like page count, content structure, and layout information.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "validate_props", is_async=True)
         created_analyzer = False
 
@@ -836,13 +836,13 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_invoice_with_fields_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_analyze_invoice_with_fields_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests invoice analysis with comprehensive field extraction.
         Verifies that invoice-specific fields (invoice_number, dates, amounts, vendor/customer info) are correctly extracted.
         This test demonstrates structured data extraction from invoices using field schema.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "invoice_fields", is_async=True)
         created_analyzer = False
 
@@ -943,13 +943,13 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_binary_extract_markdown_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_analyze_binary_extract_markdown_async(self, contentunderstanding_endpoint: str) -> None:
         """Test extracting markdown content from analyzed binary documents.
 
         This test corresponds to .NET AnalyzeBinaryAsync_ExtractMarkdown.
         Verifies that markdown is successfully extracted and is non-empty.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         print("\n=== Test: Extract Markdown from Binary Document ===")
 
@@ -1003,14 +1003,14 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_create_classifier_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_create_classifier_async(self, contentunderstanding_endpoint: str) -> None:
         """Test creating a classifier with content categories and document segmentation.
 
         This test corresponds to .NET CreateClassifierAsync.
         Verifies that the classifier is created successfully with the specified categories
         and configuration, and can segment documents into different categories.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         created_analyzer = False
         analyzer_id = generate_analyzer_id(client, "test_classifier", is_async=True)
 
@@ -1077,13 +1077,13 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_configs_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_analyze_configs_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document with specific configurations enabled.
 
         This test corresponds to .NET AnalyzeConfigsAsync.
         Verifies that document features can be extracted with formulas, layout, and OCR enabled.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         print("\n=== Test: Analyze with Specific Configurations ===")
 
@@ -1140,13 +1140,13 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_return_raw_json_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_analyze_return_raw_json_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document and returning raw JSON response.
 
         This test corresponds to .NET AnalyzeReturnRawJsonAsync.
         Verifies that the raw JSON response can be retrieved and parsed.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         print("\n=== Test: Analyze and Return Raw JSON ===")
 
@@ -1196,13 +1196,13 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_delete_result_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_delete_result_async(self, contentunderstanding_endpoint: str) -> None:
         """Test deleting an analysis result.
 
         This test corresponds to .NET DeleteResultAsync.
         Verifies that an analysis result can be deleted using its operation ID.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         print("\n=== Test: Delete Analysis Result ===")
 

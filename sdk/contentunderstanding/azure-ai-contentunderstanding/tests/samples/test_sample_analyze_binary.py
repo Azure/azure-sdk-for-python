@@ -41,7 +41,7 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_binary(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_analyze_binary(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document from binary data.
 
         This test validates:
@@ -51,7 +51,7 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         4. Document properties (MIME type, pages, tables)
 
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Read the sample file
         # Use test_data directory from parent tests folder

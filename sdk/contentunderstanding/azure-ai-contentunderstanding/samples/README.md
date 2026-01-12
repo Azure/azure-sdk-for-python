@@ -103,8 +103,8 @@ cp ../env.sample .env
 ```
 
 Set the following in `.env`:
-* `AZURE_CONTENT_UNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
-* `AZURE_CONTENT_UNDERSTANDING_KEY` (optional) - Your API key. If not set, `DefaultAzureCredential` will be used.
+* `CONTENTUNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
+* `CONTENTUNDERSTANDING_KEY` (optional) - Your API key. If not set, `DefaultAzureCredential` will be used.
 * `GPT_4_1_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1 deployment name in Microsoft Foundry
 * `GPT_4_1_MINI_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1-mini deployment name in Microsoft Foundry
 * `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for sample_update_defaults.py) - Your text-embedding-3-large deployment name in Microsoft Foundry
@@ -113,8 +113,8 @@ Set the following in `.env`:
 
 **Example `.env` file:**
 ```bash
-AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://mmi-sample-foundry.services.ai.azure.com/
-AZURE_CONTENT_UNDERSTANDING_KEY=your-api-key-here  # Optional
+CONTENTUNDERSTANDING_ENDPOINT=https://mmi-sample-foundry.services.ai.azure.com/
+CONTENTUNDERSTANDING_KEY=your-api-key-here  # Optional
 GPT_4_1_DEPLOYMENT=gpt-4.1
 GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
 TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
@@ -449,13 +449,13 @@ source .venv/bin/activate
 pip install -r dev_requirements.txt
 ```
 
-### "KeyError: 'AZURE_CONTENT_UNDERSTANDING_ENDPOINT'"
+### "KeyError: 'CONTENTUNDERSTANDING_ENDPOINT'"
 
 **Solution:** Create a `.env` file with your credentials (see [Setup step 3](#3-configure-environment-variables)).
 
 ### "Could not load credentials from the environment"
 
-**Solution:** Either set `AZURE_CONTENT_UNDERSTANDING_KEY` in `.env` or run `az login`.
+**Solution:** Either set `CONTENTUNDERSTANDING_KEY` in `.env` or run `az login`.
 
 ### Import errors or type checking issues
 

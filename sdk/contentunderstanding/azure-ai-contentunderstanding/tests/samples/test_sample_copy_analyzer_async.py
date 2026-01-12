@@ -37,7 +37,7 @@ class TestSampleCopyAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_copy_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_copy_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """Test copying an analyzer (within same resource or across resources) (async version).
 
         This test validates:
@@ -52,7 +52,7 @@ class TestSampleCopyAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
         """
         # Skip this test if API is not available
         try:
-            client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+            client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
             # Generate unique analyzer IDs for this test
             source_analyzer_id = f"test_analyzer_source_{uuid.uuid4().hex}"
