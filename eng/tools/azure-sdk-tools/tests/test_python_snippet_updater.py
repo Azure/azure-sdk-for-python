@@ -12,6 +12,7 @@ from ci_tools.snippet_update.python_snippet_updater import (
 
 scenario = os.path.join(os.path.dirname(__file__), "integration", "scenarios", "snippet-updater")
 
+
 def create_temp_directory_from_template(input_directory: str) -> str:
     """
     Create a temporary directory from a template directory.

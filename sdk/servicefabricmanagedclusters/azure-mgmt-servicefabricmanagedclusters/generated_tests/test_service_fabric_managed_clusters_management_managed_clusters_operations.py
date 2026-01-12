@@ -77,6 +77,7 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
                     "enableAutoOSUpgrade": bool,
                     "enableHttpGatewayExclusiveAuthMode": bool,
                     "enableIpv6": bool,
+                    "enableOutboundOnlyNodeTypes": bool,
                     "enableServicePublicIP": bool,
                     "fabricSettings": [{"name": "str", "parameters": [{"name": "str", "value": "str"}]}],
                     "fqdn": "str",
@@ -117,7 +118,7 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
                     "provisioningState": "str",
                     "publicIPPrefixId": "str",
                     "publicIPv6PrefixId": "str",
-                    "serviceEndpoints": [{"service": "str", "locations": ["str"]}],
+                    "serviceEndpoints": [{"service": "str", "locations": ["str"], "networkIdentifier": "str"}],
                     "subnetId": "str",
                     "upgradeDescription": {
                         "deltaHealthPolicy": {
@@ -128,11 +129,11 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
                         "forceRestart": bool,
                         "healthPolicy": {"maxPercentUnhealthyApplications": 0, "maxPercentUnhealthyNodes": 0},
                         "monitoringPolicy": {
-                            "healthCheckRetryTimeout": "str",
+                            "healthCheckRetryTimeout": "1 day, 0:00:00",
                             "healthCheckStableDuration": "1 day, 0:00:00",
                             "healthCheckWaitDuration": "1 day, 0:00:00",
-                            "upgradeDomainTimeout": "str",
-                            "upgradeTimeout": "str",
+                            "upgradeDomainTimeout": "1 day, 0:00:00",
+                            "upgradeTimeout": "1 day, 0:00:00",
                         },
                         "upgradeReplicaSetCheckTimeout": "str",
                     },
@@ -158,12 +159,12 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_managed_clusters_update(self, resource_group):
-        response = self.client.managed_clusters.update(
+    def test_managed_clusters_begin_update(self, resource_group):
+        response = self.client.managed_clusters.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             parameters={"tags": {"str": "str"}},
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

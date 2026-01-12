@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.managed_clusters.update(
+    response = client.managed_clusters.begin_update(
         resource_group_name="resRg",
         cluster_name="myCluster",
         parameters={"tags": {"a": "b"}},
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ManagedClusterPatchOperation_example.json
+# x-ms-original-file: 2025-10-01-preview/ManagedClusterPatchOperation_example.json
 if __name__ == "__main__":
     main()

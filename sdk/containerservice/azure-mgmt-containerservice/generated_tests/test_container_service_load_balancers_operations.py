@@ -20,11 +20,11 @@ class TestContainerServiceLoadBalancersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_managed_cluster(self, resource_group):
+    def test_load_balancers_list_by_managed_cluster(self, resource_group):
         response = self.client.load_balancers.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-03-02-preview",
+            api_version="2025-10-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestContainerServiceLoadBalancersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_load_balancers_get(self, resource_group):
         response = self.client.load_balancers.get(
             resource_group_name=resource_group.name,
             resource_name="str",
             load_balancer_name="str",
-            api_version="2024-03-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,12 +45,40 @@ class TestContainerServiceLoadBalancersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_load_balancers_create_or_update(self, resource_group):
         response = self.client.load_balancers.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
             load_balancer_name="str",
-            api_version="2024-03-02-preview",
+            parameters={
+                "allowServicePlacement": bool,
+                "id": "str",
+                "name": "str",
+                "nodeSelector": {
+                    "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
+                    "matchLabels": ["str"],
+                },
+                "primaryAgentPoolName": "str",
+                "provisioningState": "str",
+                "serviceLabelSelector": {
+                    "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
+                    "matchLabels": ["str"],
+                },
+                "serviceNamespaceSelector": {
+                    "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
+                    "matchLabels": ["str"],
+                },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,12 +86,12 @@ class TestContainerServiceLoadBalancersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_load_balancers_begin_delete(self, resource_group):
         response = self.client.load_balancers.begin_delete(
             resource_group_name=resource_group.name,
             resource_name="str",
             load_balancer_name="str",
-            api_version="2024-03-02-preview",
+            api_version="2025-10-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

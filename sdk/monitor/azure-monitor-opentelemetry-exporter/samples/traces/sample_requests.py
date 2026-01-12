@@ -8,6 +8,7 @@ See more info on the requests instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-requests
 """
 # mypy: disable-error-code="attr-defined"
+# mypy: disable-error-code="import-untyped"
 import os
 import requests
 from opentelemetry import trace
@@ -25,7 +26,7 @@ tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(
     AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
-trace.get_tracer_provider().add_span_processor(span_processor)
+trace.get_tracer_provider().add_span_processor(span_processor)  # type: ignore
 
 with tracer.start_as_current_span("parent"):
     response = requests.get("https://azure.microsoft.com/", timeout=5)

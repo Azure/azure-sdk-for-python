@@ -1,5 +1,68 @@
 # Release History
 
+## 2.0.1 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
+## 2.0.0 (2025-09-22)
+
+### Features Added
+
+  - Model `DataProtectionMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DataProtectionMgmtClient` added method `send_request`
+  - Model `DppBaseResource` added property `system_data`
+  - Model `ItemPathBasedRestoreCriteria` added property `rename_to`
+  - Model `KubernetesClusterBackupDatasourceParameters` added property `included_volume_types`
+  - Added enum `AKSVolumeTypes`
+  - Added enum `ActionType`
+  - Added model `AdlsBlobBackupDatasourceParameters`
+  - Added model `CloudError`
+  - Added model `Operation`
+  - Added model `OperationDisplay`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `TrackedResource`
+  - Added model `ValidateForModifyBackupRequest`
+  - Model `BackupInstancesOperations` added method `begin_validate_for_modify_backup`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Deleted or renamed model `AzureBackupFindRestorableTimeRangesRequestResource`
+  - Deleted or renamed model `AzureBackupJobResourceList`
+  - Deleted or renamed model `AzureBackupRecoveryPointResourceList`
+  - Deleted or renamed model `BackupInstanceResourceList`
+  - Deleted or renamed model `BackupVaultResourceList`
+  - Deleted or renamed model `BaseBackupPolicyResourceList`
+  - Deleted or renamed model `ClientDiscoveryDisplay`
+  - Deleted or renamed model `ClientDiscoveryForLogSpecification`
+  - Deleted or renamed model `ClientDiscoveryForProperties`
+  - Deleted or renamed model `ClientDiscoveryForServiceSpecification`
+  - Deleted or renamed model `ClientDiscoveryResponse`
+  - Deleted or renamed model `ClientDiscoveryValueForSingleApi`
+  - Deleted or renamed model `DeletedBackupInstanceResourceList`
+  - Deleted or renamed model `DppBaseResourceList`
+  - Deleted or renamed model `DppBaseTrackedResource`
+  - Deleted or renamed model `DppProxyResource`
+  - Deleted or renamed model `DppTrackedResource`
+  - Deleted or renamed model `DppWorkerRequest`
+  - Deleted or renamed model `RecoveryPointsFilters`
+  - Deleted or renamed model `ResourceGuardProxyBaseResourceList`
+  - Deleted or renamed model `ResourceGuardResourceList`
+  - Method `BackupInstancesOperations.begin_create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupInstancesOperations.begin_delete` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupInstancesOperations.begin_stop_protection` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupInstancesOperations.begin_suspend_backups` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupInstancesOperations.begin_trigger_restore` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupVaultsOperations.begin_create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupVaultsOperations.begin_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `DppResourceGuardProxyOperations.unlock_delete` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `FetchSecondaryRecoveryPointsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RecoveryPointsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+
 ## 1.4.0 (2024-07-22)
 
 ### Features Added

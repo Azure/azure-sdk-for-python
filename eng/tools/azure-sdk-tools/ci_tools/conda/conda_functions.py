@@ -294,7 +294,7 @@ def create_combined_sdist(
             [
                 os.path.join(config_assembled_folder, a)
                 for a in os.listdir(config_assembled_folder)
-                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
+                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name.replace("-", "_") in a
             ]
         )
     )
@@ -652,7 +652,7 @@ def invoke_conda_build(
         conda_output_dir,
         "-c",
         conda_output_dir,
-        "--no-test"
+        "--no-test",
     ]
     for channel in channels:
         command.extend(["-c", channel])

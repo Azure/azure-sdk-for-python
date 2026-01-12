@@ -107,9 +107,11 @@ def get_type_annotation(model_cls: object, attribute: str) -> List[str]:
     type_list = getattr(attr_type, "__args__", [attr_type])
     return sorted(
         [
-            item.__forward_arg__.replace("_models.", "")
-            if isinstance(item, ForwardRef)
-            else getattr(item, "__name__", str(item))
+            (
+                item.__forward_arg__.replace("_models.", "")
+                if isinstance(item, ForwardRef)
+                else getattr(item, "__name__", str(item))
+            )
             for item in type_list
         ]
     )
@@ -189,7 +191,10 @@ def resolve_package_directory(package_name):
     for install_file in ["setup.py", "pyproject.toml"]:
         packages = [
             os.path.dirname(p)
-            for p in (glob.glob("{}/{}".format(package_name, install_file)) + glob.glob("sdk/*/{}/{}".format(package_name, install_file)))
+            for p in (
+                glob.glob("{}/{}".format(package_name, install_file))
+                + glob.glob("sdk/*/{}/{}".format(package_name, install_file))
+            )
         ]
         if packages:
             break

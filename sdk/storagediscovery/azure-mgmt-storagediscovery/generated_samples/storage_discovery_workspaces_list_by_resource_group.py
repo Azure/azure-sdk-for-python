@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-06-01-preview/StorageDiscoveryWorkspaces_ListByResourceGroup.json
+# x-ms-original-file: 2025-09-01/StorageDiscoveryWorkspaces_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

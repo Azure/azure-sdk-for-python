@@ -12,7 +12,7 @@ from opentelemetry.instrumentation.instrumentor import (  # type: ignore
 )
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, MetricReader
 from opentelemetry.sdk.metrics.view import View
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -31,17 +31,30 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     ENABLE_LIVE_METRICS_ARG,
+    ENABLE_PERFORMANCE_COUNTERS_ARG,
     LOGGER_NAME_ARG,
     LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
+    LOG_RECORD_PROCESSORS_ARG,
+    METRIC_READERS_ARG,
     VIEWS_ARG,
+    ENABLE_TRACE_BASED_SAMPLING_ARG,
+    SAMPLING_ARG,
+    SAMPLER_TYPE,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
     enable_live_metrics,
+)
+from azure.monitor.opentelemetry.exporter._performance_counters import (  # pylint: disable=import-error,no-name-in-module
+    enable_performance_counters,
+)
+from azure.monitor.opentelemetry.exporter._performance_counters._processor import (  # pylint: disable=import-error,no-name-in-module
+    _PerformanceCountersLogRecordProcessor,
+    _PerformanceCountersSpanProcessor,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
@@ -64,6 +77,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
+    _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
@@ -93,12 +107,20 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Attributes take priority over default attributes and those from Resource Detectors.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_record_processors: List of `LogRecordProcessor`
+     objects to process every log record prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of MetricReader objects to read and
+     export metrics. Each reader can have its own exporter and collection interval.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
      Defaults to `False`.
+    :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
+     Defaults to `True`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
      metric output.
+    :keyword bool enable_trace_based_sampling_for_logs: Boolean value to determine whether to enable trace based
+     sampling for logs. Defaults to `False`
     :rtype: None
     """
 
@@ -135,13 +157,16 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
-    if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
+    enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
+    if SAMPLING_ARG in configurations:
+        sampler_arg = configurations[SAMPLING_ARG]
+        sampler_type = configurations[SAMPLER_TYPE]
+        sampler = _get_sampler_from_name(sampler_type, sampler_arg)
+        tracer_provider = TracerProvider(sampler=sampler, resource=resource)
+    elif SAMPLING_TRACES_PER_SECOND_ARG in configurations:
         traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(
-                target_spans_per_second_limit=cast(float, traces_per_second)
-            ),
-            resource=resource
+            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
         )
     else:
         sampling_ratio = configurations[SAMPLING_RATIO_ARG]
@@ -149,12 +174,14 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
         )
 
-
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qsp = _QuickpulseSpanProcessor()
         tracer_provider.add_span_processor(qsp)
+    if enable_performance_counters_config:
+        pcsp = _PerformanceCountersSpanProcessor()
+        tracer_provider.add_span_processor(pcsp)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
     bsp = BatchSpanProcessor(
         trace_exporter,
@@ -172,7 +199,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             # This could possibly be due to breaking change in upstream OpenTelemetry
             # Advise user to upgrade to latest OpenTelemetry version
             _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occurred when importing Azure SDK Tracing." \
+                "Exception occurred when importing Azure SDK Tracing."
                 "Please upgrade to the latest OpenTelemetry version: %s.",
                 ex,
             )
@@ -189,20 +216,28 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     try:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+        from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
-            AzureMonitorLogExporter
+            AzureMonitorLogExporter,
         )
 
         resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
+        enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
+        enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        for custom_log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
+            logger_provider.add_log_record_processor(custom_log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
+        if enable_performance_counters_config:
+            pclp = _PerformanceCountersLogRecordProcessor()
+            logger_provider.add_log_record_processor(pclp)
         log_exporter = AzureMonitorLogExporter(**configurations)
-        log_record_processor = BatchLogRecordProcessor(
+        log_record_processor = _AzureBatchLogRecordProcessor(
             log_exporter,
+            {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
         )
         logger_provider.add_log_record_processor(log_record_processor)
         set_logger_provider(logger_provider)
@@ -251,13 +286,17 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     views: List[View] = configurations[VIEWS_ARG]  # type: ignore
+    readers: list[MetricReader] = configurations[METRIC_READERS_ARG]  # type: ignore
+    enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     metric_exporter = AzureMonitorMetricExporter(**configurations)
-    reader = PeriodicExportingMetricReader(metric_exporter)
+    readers.append(PeriodicExportingMetricReader(metric_exporter))
     meter_provider = MeterProvider(
-        metric_readers=[reader],
+        metric_readers=readers,
         resource=resource,
         views=views,
     )
+    if enable_performance_counters_config:
+        enable_performance_counters(meter_provider=meter_provider)
     set_meter_provider(meter_provider)
 
 
@@ -336,6 +375,7 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
     instrumentors = [
         ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
         ("azure.ai.agents.telemetry", "AIAgentsInstrumentor"),
+        ("azure.ai.projects.telemetry", "AIProjectInstrumentor"),
     ]
 
     for module_path, class_name in instrumentors:

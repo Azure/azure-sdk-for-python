@@ -1,8 +1,46 @@
 # Release History
 
-## 12.28.0b1 (Unreleased)
+## 12.29.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.28.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.28.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
+## 12.28.0b1 (2025-12-04)
+
+### Features Added
+- Added support for service version 2026-02-06.
+- Added support for the keywords `if_modified_since`, `if_unmodified_since`, `etag`, and `match_condition` to 
+conditionally perform `BlobClient`'s `set_blob_tags` and `get_blob_tags` operations.
+- Added support for the keyword `start_from` in `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs`
+APIs, which specifies the full path to start listing paths from.
+- Added support for the keyword `user_delegation_oid` to `generate_blob_sas` and `generate_container_sas`, which
+specifies the Entra ID of the user that is authorized to use the generated SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
+- Added the ability to skip auto decompression on `BlobClient.download_blob` via the `decompress` keyword.
+
+## 12.27.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `BlobClient`.
+
+## 12.27.0 (2025-10-15)
+
+### Features Added
+- Stable release of features from 12.27.0b1
+
+### Other Changes
+- Migrated any previously documented `kwarg` arguments to be named keywords. 
+Some public types may have been adjusted if they were previously erroneous or incomplete.
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
 
 ## 12.26.0 (2025-07-16)
 

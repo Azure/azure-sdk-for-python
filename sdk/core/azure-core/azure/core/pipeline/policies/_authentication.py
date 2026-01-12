@@ -170,6 +170,14 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
                 try:
                     request_authorized = self.on_challenge(request, response)
                 except Exception as ex:
+                    # If the response is streamed, read it so the error message is immediately available to the user.
+                    # Otherwise, a generic error message will be given and the user will have to read the response
+                    # body to see the actual error.
+                    if response.context.options.get("stream"):
+                        try:
+                            response.http_response.read()  # type: ignore
+                        except Exception:  # pylint:disable=broad-except
+                            pass
                     # Raise the exception from the token request with the original 401 response
                     raise ex from HttpResponseError(response=response.http_response)
 

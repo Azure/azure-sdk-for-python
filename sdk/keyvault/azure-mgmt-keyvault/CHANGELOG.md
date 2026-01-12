@@ -1,5 +1,56 @@
 # Release History
 
+## 13.0.0 (2025-12-11)
+
+### Features Added
+
+  - Client `KeyVaultManagementClient` added method `send_request`
+  - Model `DeletedManagedHsm` added property `system_data`
+  - Model `DeletedVault` added property `system_data`
+  - Model `Key` added property `properties`
+  - Model `Key` added property `system_data`
+  - Model `MHSMPrivateEndpointConnectionItem` added property `properties`
+  - Model `ManagedHsmKey` added property `properties`
+  - Model `ManagedHsmKey` added property `system_data`
+  - Model `Operation` added property `operation_properties`
+  - Model `Permissions` added property `keys_property`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateEndpointConnectionItem` added property `properties`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `Secret` added property `system_data`
+  - Model `VaultCheckNameAvailabilityParameters` added property `type`
+  - Added model `CloudError`
+  - Added model `OperationProperties`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Key` moved instance variable `attributes`, `kty`, `key_ops`, `key_size`, `curve_name`, `key_uri`, `key_uri_with_version`, `rotation_policy` and `release_policy` under property `properties`
+  - Model `MHSMPrivateEndpointConnectionItem` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties`
+  - Model `ManagedHsmKey` moved instance variable `attributes`, `kty`, `key_ops`, `key_size`, `curve_name`, `key_uri`, `key_uri_with_version`, `rotation_policy` and `release_policy` under property `properties`
+  - Model `Operation` moved instance variable `service_specification` under property `operation_properties`
+  - Model `PrivateEndpointConnectionItem` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties`
+  - Model `Permissions` renamed its instance variable `keys` to `keys_property`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Renamed model `ProxyResourceWithoutSystemData` to `ProxyResource`
+
+## 12.1.1 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
+## 12.1.0 (2025-09-22)
+
+### Features Added
+
+  - Model `KeyVaultManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `MHSMNetworkRuleSet` added property `service_tags`
+  - Added model `MHSMServiceTagRule`
+
 ## 12.0.0 (2025-07-07)
 
 ### Breaking Changes

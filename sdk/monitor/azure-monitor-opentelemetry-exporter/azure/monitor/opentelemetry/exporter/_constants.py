@@ -9,8 +9,6 @@ from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
-# pylint:disable=no-name-in-module
-from fixedint import Int32
 from azure.core import CaseInsensitiveEnumMeta
 
 
@@ -79,7 +77,9 @@ _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # ONE SETTINGS
+_APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"
 _ONE_SETTINGS_PYTHON_KEY = "python"
+_ONE_SETTINGS_PYTHON_TARGETING = {"namespaces": _ONE_SETTINGS_PYTHON_KEY}
 _ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
@@ -87,6 +87,15 @@ _ONE_SETTINGS_CHANGE_PATH = "/AzMonSDKDynamicConfigurationChanges"
 _ONE_SETTINGS_CONFIG_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_PATH
 _ONE_SETTINGS_CHANGE_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_CHANGE_PATH
 _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 3600  # 60 minutes
+
+## ONE SETTINGS CONFIGS
+_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY = "DEFAULT_STATS_CONNECTION_STRING"
+_ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY = "SUPPORTED_DATA_BOUNDARIES"
+_ONE_SETTINGS_FEATURE_LOCAL_STORAGE = "FEATURE_LOCAL_STORAGE"
+_ONE_SETTINGS_FEATURE_LIVE_METRICS = "FEATURE_LIVE_METRICS"
+_ONE_SETTINGS_FEATURE_SDK_STATS = "FEATURE_SDK_STATS"
+# Maximum refresh interval cap (24 hours in seconds)
+_ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS = 24 * 60 * 60  # 86,400 seconds
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
@@ -148,9 +157,11 @@ _TRACE = "TRACE"
 _UNKNOWN = "UNKNOWN"
 
 # Customer Facing SDKStats
+
 _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
+
 
 class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_READONLY = "CLIENT_READONLY"
@@ -159,41 +170,38 @@ class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_STORAGE_DISABLED = "CLIENT_STORAGE_DISABLED"
     UNKNOWN = "UNKNOWN"
 
+
 DropCodeType = Union[DropCode, int]
+
 
 class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
     CLIENT_TIMEOUT = "CLIENT_TIMEOUT"
     UNKNOWN = "UNKNOWN"
 
+
 RetryCodeType = Union[RetryCode, int]
+
 
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_SUCCESS_COUNT = "preview.item.success.count"
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
 
-class CustomerSdkStatsProperties:
-    language: str
-    version: str
-    compute_type: str
-    def __init__(self, language: str, version: str, compute_type: str):
-        self.language = language
-        self.version = version
-        self.compute_type = compute_type
 
 ## Map from Azure Monitor envelope base_types to TelemetryType
 _TYPE_MAP = {
-                "EventData": _CUSTOM_EVENT,
-                "MetricData": _CUSTOM_METRIC,
-                "RemoteDependencyData": _DEPENDENCY,
-                "ExceptionData": _EXCEPTION,
-                "PageViewData": _PAGE_VIEW,
-                "MessageData": _TRACE,
-                "RequestData": _REQUEST,
-                "PerformanceCounterData": _PERFORMANCE_COUNTER,
-                "AvailabilityData": _AVAILABILITY,
-            }
+    "EventData": _CUSTOM_EVENT,
+    "MetricData": _CUSTOM_METRIC,
+    "RemoteDependencyData": _DEPENDENCY,
+    "ExceptionData": _EXCEPTION,
+    "PageViewData": _PAGE_VIEW,
+    "MessageData": _TRACE,
+    "RequestData": _REQUEST,
+    "PerformanceCounterData": _PERFORMANCE_COUNTER,
+    "AvailabilityData": _AVAILABILITY,
+}
+
 
 # Exception categories
 class _exception_categories(Enum):
@@ -202,6 +210,7 @@ class _exception_categories(Enum):
     NETWORK_EXCEPTION = "Network exception"
     TIMEOUT_EXCEPTION = "Timeout exception"
 
+
 # Map RP names
 class _RP_Names(Enum):
     APP_SERVICE = "appsvc"
@@ -209,6 +218,7 @@ class _RP_Names(Enum):
     AKS = "aks"
     VM = "vm"
     UNKNOWN = "unknown"
+
 
 # Instrumentations
 
@@ -275,7 +285,7 @@ _INSTRUMENTATIONS_LIST = [
     "openai_v2",
     "vertexai",
     # Instrumentations below this line have not been added to statsbeat report yet
-    _AZURE_AI_SDK_NAME
+    _AZURE_AI_SDK_NAME,
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -316,11 +326,14 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
 _SAMPLING_HASH = 5381
-_INTEGER_MAX: int = Int32.maxval
-_INTEGER_MIN: int = Int32.minval
+_INT32_MAX: int = 2**31 - 1  # 2147483647
+_INT32_MIN: int = -(2**31)  # -2147483648
 
 # AAD Auth
 
 _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
+
+# Default message for messages(MessageData) with empty body
+_DEFAULT_LOG_MESSAGE = "n/a"
 
 # cSpell:disable

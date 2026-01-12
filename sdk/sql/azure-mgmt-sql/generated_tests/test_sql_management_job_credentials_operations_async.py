@@ -26,7 +26,7 @@ class TestSqlManagementJobCredentialsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementJobCredentialsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             credential_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestSqlManagementJobCredentialsOperationsAsync(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             credential_name="str",
             parameters={"id": "str", "name": "str", "password": "str", "type": "str", "username": "str"},
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestSqlManagementJobCredentialsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             credential_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

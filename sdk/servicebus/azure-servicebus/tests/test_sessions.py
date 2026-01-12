@@ -1676,3 +1676,37 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                     pass
 
             assert time.time() - start_time2 > 65  # Default service operation timeout is 65 seconds
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", requires_session=True, enable_partitioning=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_session_partition_batch(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
+
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        messages = [
+            ServiceBusMessage("Message 1", session_id="mySessionId", message_id=uuid.uuid4(), partition_key="mySessionId"),
+            ServiceBusMessage("Message 2", session_id="mySessionId", message_id=uuid.uuid4(), partition_key="mySessionId")
+        ]
+        with ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            logging_enable=False,
+            uamqp_transport=uamqp_transport,
+        ) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(messages)
+            
+            received_messages = []
+            with sb_client.get_queue_receiver(servicebus_queue.name, session_id="mySessionId", max_wait_time=10) as receiver:
+                for message in receiver:
+                    received_messages.append(message)
+                
+            assert len(received_messages) == 2
+            assert all(msg.session_id == "mySessionId" for msg in received_messages)
+            assert all(msg.partition_key == "mySessionId" for msg in received_messages)

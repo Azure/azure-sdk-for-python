@@ -26,7 +26,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -58,6 +58,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                                         "time": "2020-02-20 00:00:00",
                                     },
                                 },
+                                "snapshotAccessState": "str",
                             }
                         ],
                         "statuses": [
@@ -70,6 +71,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                             }
                         ],
                     },
+                    "instantAccessDurationMinutes": 0,
                     "name": "str",
                     "provisioningState": "str",
                     "sourceMetadata": {
@@ -137,6 +139,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                             "encryptionAtHost": bool,
                             "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                             "proxyAgentSettings": {
+                                "addProxyAgentExtension": bool,
                                 "enabled": bool,
                                 "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                 "keyIncarnationId": 0,
@@ -213,7 +216,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                     "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -228,7 +231,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 restore_point_collection_name="str",
                 restore_point_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -24,7 +24,7 @@ class TestSqlManagementServerUsagesOperations(AzureMgmtRecordedTestCase):
         response = self.client.server_usages.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2014-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

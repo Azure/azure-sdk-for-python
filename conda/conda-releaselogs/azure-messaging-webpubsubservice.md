@@ -1,5 +1,17 @@
 # Azure Web PubSub service client library for Python (conda)
 
+## 2025.12.01
+
+### Packages included
+
+- azure-messaging-webpubsubservice-1.3.0
+
+## 2025.09.01
+
+### Packages included
+
+- azure-messaging-webpubsubservice-1.3.0
+
 ## 2025.06.01
 
 ### Packages included

@@ -26,7 +26,7 @@ class TestStorageManagementManagementPoliciesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             account_name="str",
             management_policy_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -140,7 +140,7 @@ class TestStorageManagementManagementPoliciesOperationsAsync(AzureMgmtRecordedTe
                 },
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -153,7 +153,7 @@ class TestStorageManagementManagementPoliciesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             account_name="str",
             management_policy_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself

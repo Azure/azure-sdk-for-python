@@ -27,6 +27,8 @@ parameters:
 steps:
   - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
     parameters:
+      ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+        TokenToUseForAuth: $(azuresdk-github-pat)
       Paths:
         - '**'
 

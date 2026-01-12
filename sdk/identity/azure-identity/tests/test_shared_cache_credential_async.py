@@ -17,11 +17,19 @@ from azure.identity._internal.shared_token_cache import (
     NO_ACCOUNTS,
     NO_MATCHING_ACCOUNTS,
 )
+from azure.identity._internal import within_dac
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 
-from helpers import build_aad_response, id_token_claims, mock_response, Request, GET_TOKEN_METHODS
+from helpers import (
+    build_aad_response,
+    id_token_claims,
+    mock_response,
+    get_discovery_response,
+    Request,
+    GET_TOKEN_METHODS,
+)
 from helpers_async import async_validating_transport, AsyncMockTransport
 from test_shared_cache_credential import get_account_event, populated_cache
 
@@ -388,6 +396,38 @@ async def test_no_refresh_token(get_token_method):
     credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username="not@cache")
     with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         await getattr(credential, get_token_method)("scope")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_within_dac_refresh_token_error(get_token_method):
+    """When within DAC context and refresh token fails, should raise CredentialUnavailableError"""
+
+    upn = "test@example.com"
+    refresh_token = "invalid-refresh-token"
+    scope = "scope"
+    account = get_account_event(uid="uid_a", utid="utid", username=upn, refresh_token=refresh_token)
+    cache = populated_cache(account)
+
+    async def send(request, **kwargs):
+        # Mock a token request that fails with invalid_grant (401/400 error)
+        if "refresh_token" in (request.data or {}):
+            return mock_response(
+                status_code=400, json_payload={"error": "invalid_grant", "error_description": "Refresh token expired"}
+            )
+        return get_discovery_response("https://localhost/tenant")
+
+    transport = AsyncMockTransport(send=send)
+    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username=upn)
+
+    # Set within_dac context to True
+    within_dac.set(True)
+    try:
+        # When within DAC context, should raise CredentialUnavailableError instead of ClientAuthenticationError
+        with pytest.raises(CredentialUnavailableError):
+            await getattr(credential, get_token_method)(scope)
+    finally:
+        within_dac.set(False)
 
 
 @pytest.mark.asyncio

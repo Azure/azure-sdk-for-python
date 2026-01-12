@@ -24,7 +24,7 @@ class TestSqlManagementDistributedAvailabilityGroupsOperations(AzureMgmtRecorded
         response = self.client.distributed_availability_groups.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2023-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementDistributedAvailabilityGroupsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             distributed_availability_group_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2023-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestSqlManagementDistributedAvailabilityGroupsOperations(AzureMgmtRecorded
                 "seedingMode": "str",
                 "type": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2023-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -103,7 +103,7 @@ class TestSqlManagementDistributedAvailabilityGroupsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             distributed_availability_group_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2023-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -156,7 +156,7 @@ class TestSqlManagementDistributedAvailabilityGroupsOperations(AzureMgmtRecorded
                 "seedingMode": "str",
                 "type": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2023-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -170,7 +170,7 @@ class TestSqlManagementDistributedAvailabilityGroupsOperations(AzureMgmtRecorded
             managed_instance_name="str",
             distributed_availability_group_name="str",
             parameters={"failoverType": "str"},
-            api_version="2024-11-01-preview",
+            api_version="2023-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -184,7 +184,7 @@ class TestSqlManagementDistributedAvailabilityGroupsOperations(AzureMgmtRecorded
             managed_instance_name="str",
             distributed_availability_group_name="str",
             parameters={"instanceRole": "str", "roleChangeType": "str"},
-            api_version="2024-11-01-preview",
+            api_version="2023-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

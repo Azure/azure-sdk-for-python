@@ -22,15 +22,15 @@
 """Internal methods for executing functions in the Azure Cosmos database service.
 """
 import json
-import time
 import logging
+import time
 from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _database_account_retry_policy
+from . import _container_recreate_retry_policy, _health_check_retry_policy, _service_unavailable_retry_policy
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -39,13 +39,18 @@ from . import _service_request_retry_policy, _service_response_retry_policy
 from . import _session_retry_policy
 from . import _timeout_failover_retry_policy
 from . import exceptions
+from ._constants import _Constants
+from ._cosmos_http_logging_policy import _log_diagnostics_error
+from ._global_partition_endpoint_manager_per_partition_automatic_failover import \
+    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover
+from ._request_object import RequestObject
+from ._routing.routing_range import PartitionKeyRangeWrapper
 from .documents import _OperationType
 from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
-from ._cosmos_http_logging_policy import _log_diagnostics_error
-
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
+# cspell:ignore PPAF,ppaf,ppcb
 
 # args [0] is the request object
 # args [1] is the connection policy
@@ -64,15 +69,23 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     :returns: the result of running the passed in function as a (result, headers) tuple
     :rtype: tuple of (dict, dict)
     """
+    # Capture the client timeout and start time at the beginning
+    timeout = kwargs.get('timeout')
+    operation_start_time = kwargs.get(_Constants.OperationStartTime, time.time())
+
+    # Track the last error for chaining
+    last_error = None
+
     pk_range_wrapper = None
-    if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
+    if args and (global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]) or
+                 global_endpoint_manager.is_circuit_breaker_applicable(args[0])):
         pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0])
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
-        client.connection_policy, global_endpoint_manager, *args
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
     )
-    database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
-        client.connection_policy
+    health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
+        client.connection_policy, *args
     )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
         client.connection_policy.RetryOptions.MaxRetryAttemptCount,
@@ -96,8 +109,11 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args,
     )
+    service_unavailable_retry_policy = _service_unavailable_retry_policy._ServiceUnavailableRetryPolicy(
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args)
     # Get logger
     logger = kwargs.get("logger", logging.getLogger("azure.cosmos._retry_utility"))
+
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
     if args and len(args) > 3:
@@ -110,14 +126,25 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             client, client._container_properties_cache, None, *args)
 
     while True:
-        client_timeout = kwargs.get('timeout')
         start_time = time.time()
+        # Check timeout before executing function
+        if timeout:
+            elapsed = time.time() - operation_start_time
+            if elapsed >= timeout:
+                raise exceptions.CosmosClientTimeoutError(error=last_error)
+
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
-                global_endpoint_manager.record_success(args[0])
+                _record_success_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
+            # Check timeout after successful execution
+            if timeout:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(error=last_error)
+
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -137,8 +164,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     not result[0]['Offers'] and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
-                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
-                                                        headers={HttpHeaders.SubStatus:
+                response = exceptions._InternalCosmosException(status_code=StatusCodes.NOT_FOUND,
+                                                               headers={HttpHeaders.SubStatus:
                                                                      SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
@@ -158,11 +185,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
             return result
         except exceptions.CosmosHttpResponseError as e:
+            last_error = e
             if request:
                 # update session token for relevant operations
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
-                retry_policy = database_account_retry_policy
+                retry_policy = health_check_retry_policy
             # Re-assign retry policy based on error code
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
@@ -202,10 +230,16 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-            elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
+            elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 if args:
                     # record the failure for circuit breaker tracking
-                    global_endpoint_manager.record_failure(args[0])
+                    _record_ppcb_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
+                retry_policy = service_unavailable_retry_policy
+            elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
+                if args:
+                    # record the failure for ppaf/circuit breaker tracking
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
+
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
@@ -226,30 +260,52 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     client.session.clear_session_token(client.last_response_headers)
                 raise
 
+            # Now check timeout before retrying
+            if timeout:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(error=last_error)
             # Wait for retry_after_in_milliseconds time before the next retry
             time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
-            if client_timeout:
-                kwargs['timeout'] = client_timeout - (time.time() - start_time)
-                if kwargs['timeout'] <= 0:
-                    raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0])
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0])
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+
+def _record_success_if_request_not_cancelled(
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+        pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
+    if not request_params.should_cancel_request():
+        global_endpoint_manager.record_success(request_params, pk_range_wrapper)
+
+def _record_failure_if_request_not_cancelled(
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+        pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
+    if not request_params.should_cancel_request():
+        global_endpoint_manager.record_failure(request_params, pk_range_wrapper)
+
+def _record_ppcb_failure_if_request_not_cancelled(
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+        pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
+    if not request_params.should_cancel_request():
+        global_endpoint_manager.record_ppcb_failure(request_params, pk_range_wrapper)
 
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
@@ -259,6 +315,7 @@ def ExecuteFunction(function, *args, **kwargs):
     :rtype: tuple(dict, dict)
     """
     return function(*args, **kwargs)
+
 
 def _has_read_retryable_headers(request_headers):
     if _OperationType.IsReadOnlyOperation(request_headers.get(HttpHeaders.ThinClientProxyOperationType)):
@@ -285,7 +342,8 @@ def _handle_service_request_retries(
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if request and (_has_read_retryable_headers(request.headers) or (args and is_write_retryable(args[0], client))):
+    if request and (_has_read_retryable_headers(request.headers) or (args and (is_write_retryable(args[0], client) or
+                            client._global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0])))):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
@@ -297,9 +355,9 @@ def _handle_service_response_retries(request, client, response_retry_policy, exc
         raise exception
 
 def is_write_retryable(request_params, client):
-    return (request_params.retry_write or
-            client.connection_policy.RetryNonIdempotentWrites and
-            not request_params.operation_type == _OperationType.Patch)
+    return (request_params.retry_write > 0 or
+            (client.connection_policy.RetryNonIdempotentWrites > 0 and
+            not request_params.operation_type == _OperationType.Patch))
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:
@@ -334,6 +392,7 @@ class ConnectionRetryPolicy(RetryPolicy):
         :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: Specified timeout exceeded.
         :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
         """
+
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
         request_params = request.context.options.pop('request_params', None)
@@ -381,11 +440,12 @@ class ConnectionRetryPolicy(RetryPolicy):
                 if retry_settings['read'] > 0:
                     # record the failure for circuit breaker tracking for retries in connection retry policy
                     # retries in the execute function will mark those failures
-                    global_endpoint_manager.record_failure(request_params)
+                    _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager, None)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         continue
+
                 raise err
             except CosmosHttpResponseError as err:
                 raise err
@@ -395,7 +455,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                         request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
-                    global_endpoint_manager.record_failure(request_params)
+                    _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager, None)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)

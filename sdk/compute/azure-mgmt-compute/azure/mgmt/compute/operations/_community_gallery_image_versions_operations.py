@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,37 +30,32 @@ from .._configuration import ComputeManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_request(
-    location: str,
-    public_gallery_name: str,
-    gallery_image_name: str,
-    gallery_image_version_name: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_list_request(
+    location: str, public_gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/communityGalleries/{publicGalleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/communityGalleries/{publicGalleryName}/images/{galleryImageName}/versions",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "location": _SERIALIZER.url("location", location, "str"),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
         "publicGalleryName": _SERIALIZER.url("public_gallery_name", public_gallery_name, "str"),
         "galleryImageName": _SERIALIZER.url("gallery_image_name", gallery_image_name, "str"),
-        "galleryImageVersionName": _SERIALIZER.url("gallery_image_version_name", gallery_image_version_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -74,25 +69,31 @@ def build_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_request(
-    location: str, public_gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
+def build_get_request(
+    location: str,
+    public_gallery_name: str,
+    gallery_image_name: str,
+    gallery_image_version_name: str,
+    subscription_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/communityGalleries/{publicGalleryName}/images/{galleryImageName}/versions",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/communityGalleries/{publicGalleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "location": _SERIALIZER.url("location", location, "str"),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
         "publicGalleryName": _SERIALIZER.url("public_gallery_name", public_gallery_name, "str"),
         "galleryImageName": _SERIALIZER.url("gallery_image_name", gallery_image_name, "str"),
+        "galleryImageVersionName": _SERIALIZER.url("gallery_image_version_name", gallery_image_version_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -126,82 +127,12 @@ class CommunityGalleryImageVersionsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self,
-        location: str,
-        public_gallery_name: str,
-        gallery_image_name: str,
-        gallery_image_version_name: str,
-        **kwargs: Any
-    ) -> _models.CommunityGalleryImageVersion:
-        """Get a community gallery image version.
-
-        :param location: Resource location. Required.
-        :type location: str
-        :param public_gallery_name: The public name of the community gallery. Required.
-        :type public_gallery_name: str
-        :param gallery_image_name: The name of the community gallery image definition. Required.
-        :type gallery_image_name: str
-        :param gallery_image_version_name: The name of the community gallery image version. Needs to
-         follow semantic version name pattern: The allowed characters are digit and period. Digits must
-         be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
-         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
-        :type gallery_image_version_name: str
-        :return: CommunityGalleryImageVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.models.CommunityGalleryImageVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
-        cls: ClsType[_models.CommunityGalleryImageVersion] = kwargs.pop("cls", None)
-
-        _request = build_get_request(
-            location=location,
-            public_gallery_name=public_gallery_name,
-            gallery_image_name=gallery_image_name,
-            gallery_image_version_name=gallery_image_version_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("CommunityGalleryImageVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
     def list(
         self, location: str, public_gallery_name: str, gallery_image_name: str, **kwargs: Any
     ) -> ItemPaged["_models.CommunityGalleryImageVersion"]:
         """List community gallery image versions inside an image.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param public_gallery_name: The public name of the community gallery. Required.
         :type public_gallery_name: str
@@ -215,7 +146,7 @@ class CommunityGalleryImageVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
         cls: ClsType[_models.CommunityGalleryImageVersionList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -269,3 +200,73 @@ class CommunityGalleryImageVersionsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get(
+        self,
+        location: str,
+        public_gallery_name: str,
+        gallery_image_name: str,
+        gallery_image_version_name: str,
+        **kwargs: Any
+    ) -> _models.CommunityGalleryImageVersion:
+        """Get a community gallery image version.
+
+        :param location: The name of Azure region. Required.
+        :type location: str
+        :param public_gallery_name: The public name of the community gallery. Required.
+        :type public_gallery_name: str
+        :param gallery_image_name: The name of the community gallery image definition. Required.
+        :type gallery_image_name: str
+        :param gallery_image_version_name: The name of the community gallery image version. Needs to
+         follow semantic version name pattern: The allowed characters are digit and period. Digits must
+         be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
+         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
+        :type gallery_image_version_name: str
+        :return: CommunityGalleryImageVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.compute.models.CommunityGalleryImageVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        cls: ClsType[_models.CommunityGalleryImageVersion] = kwargs.pop("cls", None)
+
+        _request = build_get_request(
+            location=location,
+            public_gallery_name=public_gallery_name,
+            gallery_image_name=gallery_image_name,
+            gallery_image_version_name=gallery_image_version_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("CommunityGalleryImageVersion", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

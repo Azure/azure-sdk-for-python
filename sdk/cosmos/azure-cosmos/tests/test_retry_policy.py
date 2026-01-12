@@ -14,8 +14,8 @@ from azure.cosmos import _retry_utility, PartitionKey, documents
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, ResourceType
 from _fault_injection_transport import FaultInjectionTransport
 import os
-from azure.core.exceptions import ServiceResponseError
-from azure.cosmos._database_account_retry_policy import DatabaseAccountRetryPolicy
+from azure.core.exceptions import ServiceResponseError, ServiceRequestError
+from azure.cosmos._health_check_retry_policy import HealthCheckRetryPolicy
 from azure.cosmos._constants import _Constants
 
 
@@ -488,45 +488,45 @@ class TestRetryPolicy(unittest.TestCase):
         assert connection_retry_policy.counter == 0
 
 
-    def test_database_account_read_retry_policy(self):
+    def test_health_check_retry_policy(self):
         os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'] = '5'
-        os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'] = '100'
+        os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'] = '2'
         max_retries = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'])
         retry_after_ms = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'])
         self.original_execute_function = _retry_utility.ExecuteFunction
-        mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
+        mock_execute = self.MockExecuteFunctionHealthCheck(self.original_execute_function)
         _retry_utility.ExecuteFunction = mock_execute
 
         try:
+
             with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
                 cosmos_client.CosmosClient(self.host, self.masterKey)
                 # Client initialization triggers database account read
 
             self.assertEqual(context.exception.status_code, 503)
             self.assertEqual(mock_execute.counter, max_retries + 1)
-            policy = DatabaseAccountRetryPolicy(self.connectionPolicy)
+            policy = HealthCheckRetryPolicy(self.connectionPolicy)
             self.assertEqual(policy.retry_after_in_milliseconds, retry_after_ms)
         finally:
             del os.environ["AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES"]
             del os.environ["AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS"]
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-    def test_database_account_read_retry_policy_defaults(self):
+    def test_health_check_retry_policy_defaults(self):
         self.original_execute_function = _retry_utility.ExecuteFunction
-        mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
+        mock_execute = self.MockExecuteFunctionHealthCheck(self.original_execute_function)
         _retry_utility.ExecuteFunction = mock_execute
 
         try:
             with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
                 cosmos_client.CosmosClient(self.host, self.masterKey)
-                # Triggers database account read
 
             self.assertEqual(context.exception.status_code, 503)
             self.assertEqual(
                 mock_execute.counter,
                 _Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT + 1
             )
-            policy = DatabaseAccountRetryPolicy(self.connectionPolicy)
+            policy = HealthCheckRetryPolicy(self.connectionPolicy)
             self.assertEqual(
                 policy.retry_after_in_milliseconds,
                 _Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT
@@ -534,9 +534,9 @@ class TestRetryPolicy(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-    def test_database_account_read_retry_with_service_response_error(self):
+    def test_health_check_retry_with_service_response_error(self):
         self.original_execute_function = _retry_utility.ExecuteFunction
-        mock_execute = self.MockExecuteFunctionDBAServiceRequestError(self.original_execute_function)
+        mock_execute = self.MockExecuteFunctionHealthCheckServiceResponseError(self.original_execute_function)
         _retry_utility.ExecuteFunction = mock_execute
 
         try:
@@ -549,7 +549,7 @@ class TestRetryPolicy(unittest.TestCase):
                 mock_execute.counter,
                 _Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT + 1
             )
-            policy = DatabaseAccountRetryPolicy(self.connectionPolicy)
+            policy = HealthCheckRetryPolicy(self.connectionPolicy)
             self.assertEqual(
                 policy.retry_after_in_milliseconds,
                 _Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT
@@ -557,7 +557,20 @@ class TestRetryPolicy(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-    class MockExecuteFunctionDBAServiceRequestError(object):
+    class MockExecuteFunctionDBA(object):
+        def __init__(self, org_func):
+            self.org_func = org_func
+            self.counter = 0
+
+        def __call__(self, func, *args, **kwargs):
+            # The second argument to the internal _request function is the RequestObject.
+            request_object = args[1]
+            if (request_object.operation_type == documents._OperationType.Read and
+                    request_object.resource_type == ResourceType.DatabaseAccount):
+                self.counter += 1
+            return self.org_func(func, *args, **kwargs)
+
+    class MockExecuteFunctionHealthCheckServiceResponseError(object):
         def __init__(self, org_func):
             self.org_func = org_func
             self.counter = 0
@@ -569,6 +582,21 @@ class TestRetryPolicy(unittest.TestCase):
                     request_object.resource_type == ResourceType.DatabaseAccount):
                 self.counter += 1
                 raise ServiceResponseError("mocked service response error")
+            return self.org_func(func, *args, **kwargs)
+
+    class MockExecuteFunctionDBAError(object):
+        def __init__(self, org_func, error):
+            self.org_func = org_func
+            self.counter = 0
+            self.error = error
+
+        def __call__(self, func, *args, **kwargs):
+            # The second argument to the internal _request function is the RequestObject.
+            request_object = args[1]
+            if (request_object.operation_type == documents._OperationType.Read and
+                    request_object.resource_type == ResourceType.DatabaseAccount):
+                self.counter += 1
+                raise self.error
             return self.org_func(func, *args, **kwargs)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
@@ -604,7 +632,7 @@ class TestRetryPolicy(unittest.TestCase):
                     message="Connection was reset",
                     response=test_config.FakeResponse({}))
 
-    class MockExecuteFunctionDBA(object):
+    class MockExecuteFunctionHealthCheck(object):
         def __init__(self, org_func):
             self.org_func = org_func
             self.counter = 0

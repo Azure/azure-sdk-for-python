@@ -37,9 +37,10 @@ def main():
         parameters={
             "location": "norwayeast",
             "properties": {
+                "instantAccess": True,
                 "source": {
                     "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
-                }
+                },
             },
             "tags": {"myTag1": "tagValue1"},
         },
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-11-01/examples/restorePointExamples/RestorePointCollection_CreateOrUpdate.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2025-04-01/examples/restorePointExamples/RestorePointCollection_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

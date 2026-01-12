@@ -25,7 +25,8 @@ from tenacity import retry
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.utils import is_onedp_project, get_default_threshold_for_evaluator
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -53,6 +54,7 @@ class EvaluationProcessor:
         retry_config,
         scan_session_id=None,
         scan_output_dir=None,
+        taxonomy_risk_categories=None,
     ):
         """Initialize the evaluation processor.
 
@@ -63,6 +65,7 @@ class EvaluationProcessor:
         :param retry_config: Retry configuration for network errors
         :param scan_session_id: Session ID for the current scan
         :param scan_output_dir: Directory for scan outputs
+        :param taxonomy_risk_categories: Dictionary mapping risk categories to taxonomy values
         """
         self.logger = logger
         self.azure_ai_project = azure_ai_project
@@ -71,6 +74,7 @@ class EvaluationProcessor:
         self.retry_config = retry_config
         self.scan_session_id = scan_session_id
         self.scan_output_dir = scan_output_dir
+        self.taxonomy_risk_categories = taxonomy_risk_categories or {}
 
     async def evaluate_conversation(
         self,
@@ -79,6 +83,7 @@ class EvaluationProcessor:
         strategy_name: str,
         risk_category: RiskCategory,
         idx: int,
+        risk_sub_type: Optional[str] = None,
     ) -> Dict:
         """Evaluate a single conversation using the specified metric and risk category.
 
@@ -92,42 +97,83 @@ class EvaluationProcessor:
         :type risk_category: RiskCategory
         :param idx: Index of the conversation for tracking purposes
         :type idx: int
+        :param risk_sub_type: Optional risk sub type for the evaluation
+        :type risk_sub_type: Optional[str]
         :return: Dictionary containing evaluation results
         :rtype: Dict
         """
         annotation_task = get_annotation_task_from_risk_category(risk_category)
+
         messages = conversation["conversation"]["messages"]
 
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
         context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+        tool_calls = [
+            msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")
+        ]
 
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
             query_response = {
                 "query": "query",
                 "response": " ".join(assistant_messages),
+                "scenario": "redteam",
             }
 
             # Add context to query_response if found
-            if context[0] is not None:
-                query_response["context"] = context[0]
+            if context and context[0] is not None:
+                # If context is a string, wrap it in the expected format for the RAI service
+                context_value = context[0]
+                if isinstance(context_value, str):
+                    query_response["context"] = {"contexts": [{"content": context_value}]}
+                else:
+                    query_response["context"] = context_value
+
+            if tool_calls and any(tool_calls):
+                query_response["tool_calls"] = [call for sublist in tool_calls for call in sublist if call]
+
+            # Add risk_sub_type to query_response if it exists
+            if risk_sub_type:
+                query_response["risk_sub_type"] = risk_sub_type
+
+            # Add taxonomy to query_response if it exists for this risk category
+            if self.taxonomy_risk_categories and risk_category.value in self.taxonomy_risk_categories:
+                taxonomy_value = self.taxonomy_risk_categories[risk_category.value]
+                # Convert taxonomy to string if it's not already a string
+                if taxonomy_value is not None:
+                    query_response["taxonomy"] = str(taxonomy_value)
 
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
+                use_sync_endpoint = is_onedp_project(self.azure_ai_project)
+                effective_metric_name = (
+                    "hate_unfairness" if use_sync_endpoint and metric_name == "hate_fairness" else metric_name
+                )
+
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        return await evaluate_with_rai_service(
-                            data=query_response,
-                            metric_name=metric_name,
-                            project_scope=self.azure_ai_project,
-                            credential=self.credential,
-                            annotation_task=annotation_task,
-                            scan_session_id=self.scan_session_id,
-                        )
+                        if use_sync_endpoint:
+                            return await evaluate_with_rai_service_sync(
+                                data=query_response,
+                                metric_name=effective_metric_name,
+                                project_scope=self.azure_ai_project,
+                                credential=self.credential,
+                                annotation_task=annotation_task,
+                                scan_session_id=self.scan_session_id,
+                            )
+                        else:
+                            return await evaluate_with_rai_service(
+                                data=query_response,
+                                metric_name=metric_name,
+                                project_scope=self.azure_ai_project,
+                                credential=self.credential,
+                                annotation_task=annotation_task,
+                                scan_session_id=self.scan_session_id,
+                            )
                     except (
                         httpx.ConnectTimeout,
                         httpx.ReadTimeout,
@@ -153,9 +199,87 @@ class EvaluationProcessor:
                 # Create a row with the format expected by result processing
                 row = {"inputs.conversation": {"messages": messages}}
 
-                # Add the evaluation results in the expected format
+                # Check if we got an EvalRunOutputItem (from sync_evals) or legacy dict format
                 risk_cat_value = risk_category.value
-                if evaluate_output:
+
+                # Handle EvalRunOutputItem format (from sync_evals for OneDP)
+                if hasattr(evaluate_output, "results") or (
+                    isinstance(evaluate_output, dict) and "results" in evaluate_output
+                ):
+                    # Extract results from EvalRunOutputItem
+                    results = (
+                        evaluate_output.results
+                        if hasattr(evaluate_output, "results")
+                        else evaluate_output.get("results", [])
+                    )
+
+                    # Find the result matching our metric/risk category
+                    eval_result = None
+                    lookup_names = {metric_name, risk_cat_value, effective_metric_name}
+                    for result_item in results:
+                        result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+                        result_name = str(result_dict.get("name") or "")
+                        metric_field = str(result_dict.get("metric") or "")
+                        if result_name in lookup_names or metric_field in lookup_names:
+                            eval_result = result_dict
+                            break
+
+                    if eval_result:
+                        # Extract values from EvalRunOutputItem result format
+                        score = eval_result.get("score", 0)
+                        reason = eval_result.get("reason", "")
+
+                        # Convert score to severity label if needed
+                        severity_label = eval_result.get("label")
+                        if severity_label is None:
+                            # Calculate severity from score
+                            from azure.ai.evaluation._common.utils import get_harm_severity_level
+
+                            severity_label = get_harm_severity_level(score)
+
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = severity_label
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = reason
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_score"] = score
+
+                        # Store the EvalRunOutputItem as dict for new format processing
+                        # Use model's serialization method or JSON round-trip
+                        if hasattr(evaluate_output, "as_dict"):
+                            row["_eval_run_output_item"] = evaluate_output.as_dict()
+                        elif hasattr(evaluate_output, "model_dump"):
+                            row["_eval_run_output_item"] = evaluate_output.model_dump()
+                        else:
+                            # Fallback: JSON serialize and parse back
+                            row["_eval_run_output_item"] = json.loads(
+                                json.dumps(evaluate_output, default=lambda o: o.__dict__)
+                            )
+
+                        # Add result field based on score and threshold comparison
+                        # Get pattern-specific default threshold for this evaluator
+                        default_threshold = get_default_threshold_for_evaluator(risk_cat_value)
+
+                        # Content safety evaluators use "lower is better" scoring by default
+                        # If attack success thresholds are configured for this category, use them
+                        if risk_cat_value in self.attack_success_thresholds:
+                            attack_threshold = self.attack_success_thresholds[risk_cat_value]
+                            row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = attack_threshold
+                            result = int(score) <= int(attack_threshold)
+                            self.logger.debug(f"Using attack success threshold {attack_threshold} for {risk_cat_value}")
+                            self.logger.debug(f"Score: {score}, Attack Threshold: {attack_threshold}, Pass: {result}")
+                        else:
+                            # Store the default threshold in the results for transparency
+                            row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = default_threshold
+                            result = int(score) <= int(default_threshold)
+                            self.logger.debug(f"Using default threshold {default_threshold} for {risk_cat_value}")
+                            self.logger.debug(f"Score: {score}, Default Threshold: {default_threshold}, Pass: {result}")
+
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = EVALUATION_PASS_FAIL_MAPPING[result]
+                        self.logger.debug(
+                            f"Successfully evaluated conversation {idx+1} for {risk_category.value}/{strategy_name}"
+                        )
+                        return row
+
+                # Handle legacy dict format (from evaluate_with_rai_service)
+                if evaluate_output and isinstance(evaluate_output, dict):
                     if risk_cat_value in evaluate_output:
                         row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = evaluate_output.get(risk_cat_value)
                         row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = evaluate_output.get(
@@ -167,7 +291,10 @@ class EvaluationProcessor:
 
                         # Add result field based on score and threshold comparison
                         score = evaluate_output.get(f"{risk_cat_value}_score", 0)
-                        default_threshold = evaluate_output.get(f"{risk_cat_value}_threshold", 3)
+                        # Get pattern-specific default threshold for this evaluator
+                        default_threshold = evaluate_output.get(
+                            f"{risk_cat_value}_threshold", get_default_threshold_for_evaluator(risk_cat_value)
+                        )
 
                         # Content safety evaluators use "lower is better" scoring by default
                         # If attack success thresholds are configured for this category, use them
@@ -207,10 +334,16 @@ class EvaluationProcessor:
                         )
                         return row
             except Exception as e:
+                error_msg = str(e)
                 self.logger.error(
-                    f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {str(e)}"
+                    f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {error_msg}"
                 )
-                return {}
+                # Return a row with error information AND conversation data so it can be matched
+                # The error field will be picked up by result processing to populate sample.error
+                return {
+                    "inputs.conversation": {"messages": messages},
+                    "error": error_msg,
+                }
 
         return {}
 
@@ -306,6 +439,7 @@ class EvaluationProcessor:
                     strategy_name=strategy_name,
                     risk_category=risk_category,
                     idx=idx,
+                    risk_sub_type=conversation.get("risk_sub_type"),
                 )
                 for idx, conversation in enumerate(conversations)
             ]

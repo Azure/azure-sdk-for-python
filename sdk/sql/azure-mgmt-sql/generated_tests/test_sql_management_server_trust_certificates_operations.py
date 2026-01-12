@@ -24,7 +24,7 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
         response = self.client.server_trust_certificates.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             certificate_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
                 "thumbprint": "str",
                 "type": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             certificate_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

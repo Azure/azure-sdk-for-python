@@ -12,9 +12,7 @@ from unittest_helpers import mock_response
 from azure.core.credentials import AzureKeyCredential
 from azure.core.async_paging import AsyncItemPaged
 
-from azure.communication.callautomation.aio import (
-    CallAutomationClient
-)
+from azure.communication.callautomation.aio import CallAutomationClient
 from azure.communication.callautomation import (
     ServerCallLocator,
     GroupCallLocator,
@@ -22,6 +20,7 @@ from azure.communication.callautomation import (
     CommunicationUserIdentifier,
 )
 from azure.communication.callautomation._utils import serialize_identifier
+
 
 class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
     recording_id = "123"
@@ -36,7 +35,9 @@ class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
             return mock_response(status_code=200, json_payload={"recording_id": "1", "recording_state": "2"})
 
         callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=AsyncMock(side_effect=mock_send))
+            "https://endpoint",
+            AzureKeyCredential("fakeCredential=="),
+            transport=Mock(send=AsyncMock(side_effect=mock_send)),
         )
         call_locator = ServerCallLocator(server_call_id="locatorId")
         target_participant = CommunicationUserIdentifier("testId")
@@ -54,7 +55,6 @@ class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
         with pytest.raises(ValueError):
             await callautomation_client.start_recording(group_call_id="foo", server_call_id="bar")
 
-
     async def test_stop_recording(self):
         async def mock_send(_, **kwargs):
             kwargs.pop("stream", None)
@@ -63,7 +63,9 @@ class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
             return mock_response(status_code=204)
 
         callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=AsyncMock(side_effect=mock_send))
+            "https://endpoint",
+            AzureKeyCredential("fakeCredential=="),
+            transport=Mock(send=AsyncMock(side_effect=mock_send)),
         )
         await callautomation_client.stop_recording(recording_id=self.recording_id)
 
@@ -75,7 +77,9 @@ class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
             return mock_response(status_code=202)
 
         callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=AsyncMock(side_effect=mock_send))
+            "https://endpoint",
+            AzureKeyCredential("fakeCredential=="),
+            transport=Mock(send=AsyncMock(side_effect=mock_send)),
         )
         await callautomation_client.resume_recording(recording_id=self.recording_id)
 
@@ -87,7 +91,9 @@ class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
             return mock_response(status_code=202)
 
         callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=AsyncMock(side_effect=mock_send))
+            "https://endpoint",
+            AzureKeyCredential("fakeCredential=="),
+            transport=Mock(send=AsyncMock(side_effect=mock_send)),
         )
         await callautomation_client.pause_recording(recording_id=self.recording_id)
 
@@ -99,7 +105,8 @@ class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
             return mock_response(status_code=200, json_payload={"recording_id": "1", "recording_state": "2"})
 
         callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=AsyncMock(side_effect=mock_send))
+            "https://endpoint",
+            AzureKeyCredential("fakeCredential=="),
+            transport=Mock(send=AsyncMock(side_effect=mock_send)),
         )
         await callautomation_client.get_recording_properties(recording_id=self.recording_id)
-    

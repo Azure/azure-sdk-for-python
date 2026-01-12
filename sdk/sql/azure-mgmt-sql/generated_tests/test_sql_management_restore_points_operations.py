@@ -25,7 +25,7 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             parameters={"restorePointLabel": "str"},
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             restore_point_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestSqlManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             restore_point_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

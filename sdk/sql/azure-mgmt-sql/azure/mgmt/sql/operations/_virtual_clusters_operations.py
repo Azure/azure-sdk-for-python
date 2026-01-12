@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,8 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
-import urllib.parse
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -36,7 +35,8 @@ from .._configuration import SqlManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -46,7 +46,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -125,49 +125,12 @@ def build_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_request(
-    resource_group_name: str, virtual_cluster_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/virtualClusters/{virtualClusterName}",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "virtualClusterName": _SERIALIZER.url("virtual_cluster_name", virtual_cluster_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_delete_request(
     resource_group_name: str, virtual_cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -184,10 +147,7 @@ def build_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_update_request(
@@ -196,7 +156,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -230,7 +190,7 @@ def build_update_dns_servers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -285,7 +245,7 @@ class VirtualClustersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[_models.VirtualClusterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -308,18 +268,7 @@ class VirtualClustersOperations:
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -342,8 +291,7 @@ class VirtualClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -363,7 +311,7 @@ class VirtualClustersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[_models.VirtualClusterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -387,18 +335,7 @@ class VirtualClustersOperations:
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -421,8 +358,7 @@ class VirtualClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -452,7 +388,7 @@ class VirtualClustersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[_models.VirtualCluster] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -474,8 +410,7 @@ class VirtualClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VirtualCluster", pipeline_response.http_response)
 
@@ -483,203 +418,6 @@ class VirtualClustersOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        virtual_cluster_name: str,
-        parameters: Union[_models.VirtualCluster, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "VirtualCluster")
-
-        _request = build_create_or_update_request(
-            resource_group_name=resource_group_name,
-            virtual_cluster_name=virtual_cluster_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        virtual_cluster_name: str,
-        parameters: _models.VirtualCluster,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.VirtualCluster]:
-        """Creates virtual cluster.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal. Required.
-        :type resource_group_name: str
-        :param virtual_cluster_name: The name of the virtual cluster. Required.
-        :type virtual_cluster_name: str
-        :param parameters: The requested virtual cluster resource state. Required.
-        :type parameters: ~azure.mgmt.sql.models.VirtualCluster
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either VirtualCluster or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.VirtualCluster]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        virtual_cluster_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.VirtualCluster]:
-        """Creates virtual cluster.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal. Required.
-        :type resource_group_name: str
-        :param virtual_cluster_name: The name of the virtual cluster. Required.
-        :type virtual_cluster_name: str
-        :param parameters: The requested virtual cluster resource state. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either VirtualCluster or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.VirtualCluster]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        virtual_cluster_name: str,
-        parameters: Union[_models.VirtualCluster, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.VirtualCluster]:
-        """Creates virtual cluster.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal. Required.
-        :type resource_group_name: str
-        :param virtual_cluster_name: The name of the virtual cluster. Required.
-        :type virtual_cluster_name: str
-        :param parameters: The requested virtual cluster resource state. Is either a VirtualCluster
-         type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.sql.models.VirtualCluster or IO[bytes]
-        :return: An instance of LROPoller that returns either VirtualCluster or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.VirtualCluster]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualCluster] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                virtual_cluster_name=virtual_cluster_name,
-                parameters=parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualCluster", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.VirtualCluster].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.VirtualCluster](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
 
     def _delete_initial(self, resource_group_name: str, virtual_cluster_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -693,7 +431,7 @@ class VirtualClustersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -720,17 +458,12 @@ class VirtualClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -750,7 +483,7 @@ class VirtualClustersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -805,7 +538,7 @@ class VirtualClustersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -844,17 +577,12 @@ class VirtualClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -940,7 +668,7 @@ class VirtualClustersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualCluster] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -998,7 +726,7 @@ class VirtualClustersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_update_dns_servers_request(
@@ -1025,17 +753,12 @@ class VirtualClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1060,7 +783,7 @@ class VirtualClustersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[_models.UpdateVirtualClusterDnsServersOperation] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

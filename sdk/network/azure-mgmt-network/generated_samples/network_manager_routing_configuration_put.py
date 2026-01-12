@@ -35,11 +35,11 @@ def main():
         resource_group_name="rg1",
         network_manager_name="testNetworkManager",
         configuration_name="myTestRoutingConfig",
-        routing_configuration={"properties": {"description": "A sample policy"}},
+        routing_configuration={"properties": {"description": "A sample policy", "routeTableUsageMode": "ManagedOnly"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/NetworkManagerRoutingConfigurationPut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/NetworkManagerRoutingConfigurationPut.json
 if __name__ == "__main__":
     main()

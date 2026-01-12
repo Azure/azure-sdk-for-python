@@ -25,7 +25,7 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Any, Optional
+from typing import Union, Any, Optional
 
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.partition_key import _Undefined, _Empty
@@ -38,7 +38,7 @@ class FeedRangeInternal(ABC):
         pass
 
     @abstractmethod
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         pass
 
     def _to_base64_encoded_string(self) -> str:
@@ -54,7 +54,7 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
 
     def __init__(
             self,
-            pk_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined],
+            pk_value: Union[str, int, float, bool, list[Union[str, int, float, bool]], _Empty, _Undefined],
             feed_range: Range) -> None:  # pylint: disable=line-too-long
 
         if pk_value is None:
@@ -68,7 +68,7 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
     def get_normalized_range(self) -> Range:
         return self._feed_range.to_normalized_range()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         if isinstance(self._pk_value, _Undefined):
             return { self.type_property_name: [{}] }
         if isinstance(self._pk_value, _Empty):
@@ -79,7 +79,7 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
         return { self.type_property_name: self._pk_value }
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
+    def from_json(cls, data: dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
         if data.get(cls.type_property_name):
             pk_value = data.get(cls.type_property_name)
             if not pk_value:
@@ -107,13 +107,13 @@ class FeedRangeInternalEpk(FeedRangeInternal):
     def get_normalized_range(self) -> Range:
         return self._range.to_normalized_range()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             self.type_property_name: self._range.to_dict()
         }
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeInternalEpk':
+    def from_json(cls, data: dict[str, Any]) -> 'FeedRangeInternalEpk':
         if data.get(cls.type_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
             return cls(feed_range)

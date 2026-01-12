@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -34,7 +34,8 @@ from ...operations._gallery_sharing_profile_operations import build_update_reque
 from .._configuration import ComputeManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class GallerySharingProfileOperations:
@@ -74,7 +75,7 @@ class GallerySharingProfileOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -115,10 +116,15 @@ class GallerySharingProfileOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -134,7 +140,8 @@ class GallerySharingProfileOperations:
     ) -> AsyncLROPoller[_models.SharingUpdate]:
         """Update sharing profile of a gallery.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
@@ -161,7 +168,8 @@ class GallerySharingProfileOperations:
     ) -> AsyncLROPoller[_models.SharingUpdate]:
         """Update sharing profile of a gallery.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
@@ -186,7 +194,8 @@ class GallerySharingProfileOperations:
     ) -> AsyncLROPoller[_models.SharingUpdate]:
         """Update sharing profile of a gallery.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
@@ -201,7 +210,7 @@ class GallerySharingProfileOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SharingUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -229,7 +238,9 @@ class GallerySharingProfileOperations:
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:

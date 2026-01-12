@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperationsAsync(Az
             network_security_perimeter_name="str",
             profile_name="str",
             access_rule_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperationsAsync(Az
                 },
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperationsAsync(Az
             network_security_perimeter_name="str",
             profile_name="str",
             access_rule_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperationsAsync(Az
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             profile_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperationsAsync(Az
             profile_name="str",
             access_rule_name="str",
             parameters={},
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

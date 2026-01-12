@@ -55,6 +55,7 @@ _StatsbeatMetrics_NETWORK_ATTRS = dict(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
 _StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
 _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
 
+
 # pylint: disable=protected-access
 class TestStatsbeatMetrics(unittest.TestCase):
     @classmethod
@@ -85,7 +86,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
             _STATSBEAT_STATE["SHUTDOWN"] = False
             _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
             _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
-        
+            _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
+
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(_StatsbeatMetrics_COMMON_ATTRS)
         _StatsbeatMetrics._NETWORK_ATTRIBUTES = dict(_StatsbeatMetrics_NETWORK_ATTRS)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics_FEATURE_ATTRIBUTES)
@@ -636,6 +638,60 @@ class TestStatsbeatMetrics(unittest.TestCase):
         _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_customer_sdkstats_feature_set"
+    )
+    def test_get_feature_metric_customer_sdkstats(self, feature_mock):
+        feature_mock.return_value = True
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 32)
+        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+        observations = metric._get_feature_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_customer_sdkstats_runtime(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        self.assertTrue((metric._feature >> 5) & 1 == 0)
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 0)
+        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+        _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = True
+        observations = metric._get_feature_metric(options=None)
+        attributes["feature"] = _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"]
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 5) & 1 == 1)
+        _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
+
+    # pylint: disable=protected-access
     def test_get_feature_metric_distro(self):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
@@ -894,5 +950,6 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_shorten_host(url), "fakehost")
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
+
 
 # cSpell:enable

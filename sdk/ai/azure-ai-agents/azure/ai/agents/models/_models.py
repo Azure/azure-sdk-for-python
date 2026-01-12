@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from .._utils.utils import FileType
@@ -78,11 +77,11 @@ class ActivityFunctionParameters(_Model):
 
     type: Literal["object"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameter type, it is always object. Required. Default value is \"object\"."""
-    properties: Dict[str, "_models.FunctionArgument"] = rest_field(
+    properties: dict[str, "_models.FunctionArgument"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The dictionary of function arguments. Required."""
-    required: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    required: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of the required parameters. Required."""
     additional_properties: Optional[bool] = rest_field(
         name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
@@ -93,8 +92,8 @@ class ActivityFunctionParameters(_Model):
     def __init__(
         self,
         *,
-        properties: Dict[str, "_models.FunctionArgument"],
-        required: List[str],
+        properties: dict[str, "_models.FunctionArgument"],
+        required: list[str],
         additional_properties: Optional[bool] = None,
     ) -> None: ...
 
@@ -174,7 +173,7 @@ class Agent(_Model):
     """The ID of the model to use. Required."""
     instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The system instructions for the agent to use. Required."""
-    tools: List["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: list["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The collection of tools enabled for the agent. Required."""
     tool_resources: "_models.ToolResources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of resources that are used by the agent's tools. The resources are specific to the type
@@ -197,7 +196,7 @@ class Agent(_Model):
     """The response format of the tool calls used by this agent. Is one of the following types: str,
      Union[str, \"_models.AgentsResponseFormatMode\"], AgentsResponseFormat,
      ResponseFormatJsonSchemaType"""
-    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -212,11 +211,11 @@ class Agent(_Model):
         description: str,
         model: str,
         instructions: str,
-        tools: List["_models.ToolDefinition"],
+        tools: list["_models.ToolDefinition"],
         tool_resources: "_models.ToolResources",
         temperature: float,
         top_p: float,
-        metadata: Dict[str, str],
+        metadata: dict[str, str],
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
     ) -> None: ...
 
@@ -425,7 +424,7 @@ class AgentThread(_Model):
      of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires a list
      of vector store IDs. Required."""
-    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -437,7 +436,7 @@ class AgentThread(_Model):
         id: str,  # pylint: disable=redefined-builtin
         created_at: datetime.datetime,
         tool_resources: "_models.ToolResources",
-        metadata: Dict[str, str],
+        metadata: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -469,7 +468,7 @@ class AgentThreadCreationOptions(_Model):
     :vartype metadata: dict[str, str]
     """
 
-    messages: Optional[List["_models.ThreadMessageOptions"]] = rest_field(
+    messages: Optional[list["_models.ThreadMessageOptions"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The initial messages to associate with the new thread."""
@@ -481,7 +480,7 @@ class AgentThreadCreationOptions(_Model):
      type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires
      a list of vector store IDs."""
-    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length."""
@@ -490,9 +489,9 @@ class AgentThreadCreationOptions(_Model):
     def __init__(
         self,
         *,
-        messages: Optional[List["_models.ThreadMessageOptions"]] = None,
+        messages: Optional[list["_models.ThreadMessageOptions"]] = None,
         tool_resources: Optional["_models.ToolResources"] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -605,7 +604,7 @@ class ToolDefinition(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
@@ -652,7 +651,8 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="azure_ai_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "azure_ai_search"  # type: ignore
 
 
 class AzureAISearchToolResource(_Model):
@@ -663,7 +663,7 @@ class AzureAISearchToolResource(_Model):
     :vartype index_list: list[~azure.ai.agents.models.AISearchIndexResource]
     """
 
-    index_list: Optional[List["_models.AISearchIndexResource"]] = rest_field(
+    index_list: Optional[list["_models.AISearchIndexResource"]] = rest_field(
         name="indexes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The indices attached to this agent. There can be a maximum of 1 index
@@ -673,7 +673,7 @@ class AzureAISearchToolResource(_Model):
     def __init__(
         self,
         *,
-        index_list: Optional[List["_models.AISearchIndexResource"]] = None,
+        index_list: Optional[list["_models.AISearchIndexResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -880,7 +880,8 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="azure_function", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "azure_function"  # type: ignore
 
 
 class BingCustomSearchConfiguration(_Model):
@@ -890,15 +891,53 @@ class BingCustomSearchConfiguration(_Model):
     :vartype connection_id: str
     :ivar instance_name: Name of the custom configuration instance given to config. Required.
     :vartype instance_name: str
-    :ivar market: The market where the results come from.
+    :ivar market: The market where the results come from. Typically, market is the country where
+     the user is making the request from. However, it could be a different country if the user is
+     not located in a country where Bing delivers results. The market must be in the form:
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, ``en-US``. The string is case insensitive. For a list of possible market values, see
+     `Market codes
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes>`_. If
+     known, you are encouraged to always specify the market. Specifying the market helps Bing route
+     the request and return an appropriate and optimal response. If you specify a market that is not
+     listed in Market codes, Bing uses a best fit market code based on an internal mapping that is
+     subject to change.
     :vartype market: str
-    :ivar set_lang: The language to use for user interface strings when calling Bing API.
+    :ivar set_lang: The language to use for user interface strings. You may specify the language
+     using either a 2-letter or 4-letter code. Using 4-letter codes is preferred.
+     For a list of supported language codes, see `Bing supported languages
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
+     Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
+     code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
+     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
+     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
+     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
+     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
+     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
+     country/region (specific culture) code. For example, use ``en-US`` for United States English.
+     Although optional, you should always specify the language. Typically, you set this parameter to
+     the same language specified by the market value unless the user wants the user interface
+     strings displayed in a different language.
     :vartype set_lang: str
-    :ivar count: The number of search results to return in the bing api response.
+    :ivar count: The number of search results to return in the response. The default is 5 and the
+     maximum value is 50. The actual number delivered may be less than requested.
+
+     * It is possible for multiple pages to include some overlap in results.
+     * This parameter affects only web page results. It's possible that AI model might not use all
+       search results returned by Bing.
+
     :vartype count: int
-    :ivar freshness: Filter search results by a specific time range. Accepted values:
-     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
-     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_.
+    :ivar freshness: Filter search results by the following case-insensitive age values:
+
+     * Day: Return webpages that Bing discovered within the last 24 hours.
+     * Week: Return webpages that Bing discovered within the last 7 days.
+     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+       discovered by Bing during a specific timeframe, specify a date range in the form:
+       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
+
     :vartype freshness: str
     """
 
@@ -907,15 +946,53 @@ class BingCustomSearchConfiguration(_Model):
     instance_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the custom configuration instance given to config. Required."""
     market: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The market where the results come from."""
+    """The market where the results come from. Typically, market is the country where the user is
+     making the request from. However, it could be a different country if the user is not located in
+     a country where Bing delivers results. The market must be in the form:
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, ``en-US``. The string is case insensitive. For a list of possible market values, see
+     `Market codes
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes>`_. If
+     known, you are encouraged to always specify the market. Specifying the market helps Bing route
+     the request and return an appropriate and optimal response. If you specify a market that is not
+     listed in Market codes, Bing uses a best fit market code based on an internal mapping that is
+     subject to change."""
     set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The language to use for user interface strings when calling Bing API."""
+    """The language to use for user interface strings. You may specify the language using either a
+     2-letter or 4-letter code. Using 4-letter codes is preferred.
+     For a list of supported language codes, see `Bing supported languages
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
+     Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
+     code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
+     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
+     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
+     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
+     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
+     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
+     country/region (specific culture) code. For example, use ``en-US`` for United States English.
+     Although optional, you should always specify the language. Typically, you set this parameter to
+     the same language specified by the market value unless the user wants the user interface
+     strings displayed in a different language."""
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of search results to return in the bing api response."""
+    """The number of search results to return in the response. The default is 5 and the maximum value
+     is 50. The actual number delivered may be less than requested.
+     
+     * It is possible for multiple pages to include some overlap in results.
+     * This parameter affects only web page results. It's possible that AI model might not use all
+       search results returned by Bing.
+    """
     freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Filter search results by a specific time range. Accepted values:
-     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
-     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_."""
+    """Filter search results by the following case-insensitive age values:
+     
+     * Day: Return webpages that Bing discovered within the last 24 hours.
+     * Week: Return webpages that Bing discovered within the last 7 days.
+     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+       discovered by Bing during a specific timeframe, specify a date range in the form:
+       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
+    """
 
     @overload
     def __init__(
@@ -973,7 +1050,8 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_custom_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "bing_custom_search"  # type: ignore
 
 
 class BingCustomSearchToolParameters(_Model):
@@ -985,7 +1063,7 @@ class BingCustomSearchToolParameters(_Model):
     :vartype search_configurations: list[~azure.ai.agents.models.BingCustomSearchConfiguration]
     """
 
-    search_configurations: List["_models.BingCustomSearchConfiguration"] = rest_field(
+    search_configurations: list["_models.BingCustomSearchConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The connections attached to this tool. There can be a maximum of 1 connection
@@ -995,7 +1073,7 @@ class BingCustomSearchToolParameters(_Model):
     def __init__(
         self,
         *,
-        search_configurations: List["_models.BingCustomSearchConfiguration"],
+        search_configurations: list["_models.BingCustomSearchConfiguration"],
     ) -> None: ...
 
     @overload
@@ -1014,30 +1092,106 @@ class BingGroundingSearchConfiguration(_Model):
 
     :ivar connection_id: Connection id for grounding with bing search. Required.
     :vartype connection_id: str
-    :ivar market: The market where the results come from.
+    :ivar market: The market where the results come from. Typically, market is the country where
+     the user is making the request from. However, it could be a different country if the user is
+     not located in a country where Bing delivers results. The market must be in the form:
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, ``en-US``. The string is case insensitive. For a list of possible market values, see
+     `Market codes
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes>`_. If
+     known, you are encouraged to always specify the market. Specifying the market helps Bing route
+     the request and return an appropriate and optimal response. If you specify a market that is not
+     listed in Market codes, Bing uses a best fit market code based on an internal mapping that is
+     subject to change.
     :vartype market: str
-    :ivar set_lang: The language to use for user interface strings when calling Bing API.
+    :ivar set_lang: The language to use for user interface strings. You may specify the language
+     using either a 2-letter or 4-letter code. Using 4-letter codes is preferred.
+     For a list of supported language codes, see `Bing supported languages
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
+     Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
+     code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
+     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
+     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
+     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
+     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
+     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
+     country/region (specific culture) code. For example, use ``en-US`` for United States English.
+     Although optional, you should always specify the language. Typically, you set this parameter to
+     the same language specified by the market value unless the user wants the user interface
+     strings displayed in a different language.
     :vartype set_lang: str
-    :ivar count: The number of search results to return in the bing api response.
+    :ivar count: The number of search results to return in the response. The default is 5 and the
+     maximum value is 50. The actual number delivered may be less than requested.
+
+     * It is possible for multiple pages to include some overlap in results.
+     * This parameter affects only web page results. It's possible that AI model might not use all
+       search results returned by Bing.
+
     :vartype count: int
-    :ivar freshness: Filter search results by a specific time range. Accepted values:
-     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
-     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_.
+    :ivar freshness: Filter search results by the following case-insensitive age values:
+
+     * Day: Return webpages that Bing discovered within the last 24 hours.
+     * Week: Return webpages that Bing discovered within the last 7 days.
+     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+       discovered by Bing during a specific timeframe, specify a date range in the form:
+       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
+
     :vartype freshness: str
     """
 
     connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Connection id for grounding with bing search. Required."""
     market: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The market where the results come from."""
+    """The market where the results come from. Typically, market is the country where the user is
+     making the request from. However, it could be a different country if the user is not located in
+     a country where Bing delivers results. The market must be in the form:
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, ``en-US``. The string is case insensitive. For a list of possible market values, see
+     `Market codes
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes>`_. If
+     known, you are encouraged to always specify the market. Specifying the market helps Bing route
+     the request and return an appropriate and optimal response. If you specify a market that is not
+     listed in Market codes, Bing uses a best fit market code based on an internal mapping that is
+     subject to change."""
     set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The language to use for user interface strings when calling Bing API."""
+    """The language to use for user interface strings. You may specify the language using either a
+     2-letter or 4-letter code. Using 4-letter codes is preferred.
+     For a list of supported language codes, see `Bing supported languages
+     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
+     Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
+     code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
+     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
+     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
+     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
+     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
+     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
+     country/region (specific culture) code. For example, use ``en-US`` for United States English.
+     Although optional, you should always specify the language. Typically, you set this parameter to
+     the same language specified by the market value unless the user wants the user interface
+     strings displayed in a different language."""
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of search results to return in the bing api response."""
+    """The number of search results to return in the response. The default is 5 and the maximum value
+     is 50. The actual number delivered may be less than requested.
+     
+     * It is possible for multiple pages to include some overlap in results.
+     * This parameter affects only web page results. It's possible that AI model might not use all
+       search results returned by Bing.
+    """
     freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Filter search results by a specific time range. Accepted values:
-     `https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters
-     <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_."""
+    """Filter search results by the following case-insensitive age values:
+     
+     * Day: Return webpages that Bing discovered within the last 24 hours.
+     * Week: Return webpages that Bing discovered within the last 7 days.
+     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+       discovered by Bing during a specific timeframe, specify a date range in the form:
+       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
+    """
 
     @overload
     def __init__(
@@ -1070,7 +1224,7 @@ class BingGroundingSearchToolParameters(_Model):
     :vartype search_configurations: list[~azure.ai.agents.models.BingGroundingSearchConfiguration]
     """
 
-    search_configurations: List["_models.BingGroundingSearchConfiguration"] = rest_field(
+    search_configurations: list["_models.BingGroundingSearchConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The search configurations attached to this tool. There can be a maximum of 1
@@ -1080,7 +1234,7 @@ class BingGroundingSearchToolParameters(_Model):
     def __init__(
         self,
         *,
-        search_configurations: List["_models.BingGroundingSearchConfiguration"],
+        search_configurations: list["_models.BingGroundingSearchConfiguration"],
     ) -> None: ...
 
     @overload
@@ -1128,7 +1282,8 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_grounding", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "bing_grounding"  # type: ignore
 
 
 class BrowserAutomationToolCallDetails(_Model):
@@ -1146,7 +1301,7 @@ class BrowserAutomationToolCallDetails(_Model):
     """The input provided to the Browser Automation tool. Required."""
     output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The output returned by the Browser Automation tool. Required."""
-    steps: List["_models.BrowserAutomationToolCallStep"] = rest_field(
+    steps: list["_models.BrowserAutomationToolCallStep"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The steps the Browser Automation tool executed. Required."""
@@ -1157,7 +1312,7 @@ class BrowserAutomationToolCallDetails(_Model):
         *,
         input: str,
         output: str,
-        steps: List["_models.BrowserAutomationToolCallStep"],
+        steps: list["_models.BrowserAutomationToolCallStep"],
     ) -> None: ...
 
     @overload
@@ -1270,7 +1425,8 @@ class BrowserAutomationToolDefinition(ToolDefinition, discriminator="browser_aut
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="browser_automation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "browser_automation"  # type: ignore
 
 
 class BrowserAutomationToolParameters(_Model):
@@ -1315,7 +1471,7 @@ class ComputerUseAction(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of computer use action. Required. Default value is None."""
 
@@ -1380,7 +1536,8 @@ class ClickAction(ComputerUseAction, discriminator="click"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="click", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "click"  # type: ignore
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
@@ -1408,7 +1565,8 @@ class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpre
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="code_interpreter", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "code_interpreter"  # type: ignore
 
 
 class CodeInterpreterToolResource(_Model):
@@ -1423,11 +1581,11 @@ class CodeInterpreterToolResource(_Model):
     :vartype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
     """
 
-    file_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    file_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
      20 files
      associated with the tool."""
-    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field(
+    data_sources: Optional[list["_models.VectorStoreDataSource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The data sources to be used. This option is mutually exclusive with the ``fileIds`` property."""
@@ -1436,8 +1594,8 @@ class CodeInterpreterToolResource(_Model):
     def __init__(
         self,
         *,
-        file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
+        file_ids: Optional[list[str]] = None,
+        data_sources: Optional[list["_models.VectorStoreDataSource"]] = None,
     ) -> None: ...
 
     @overload
@@ -1491,33 +1649,35 @@ class ComputerScreenshot(_Model):
         self.type: Literal["computer_screenshot"] = "computer_screenshot"
 
 
-class ToolOutput(_Model):
+class StructuredToolOutput(_Model):
     """The data provided during a tool outputs submission to resolve pending tool calls and allow the
     model to continue.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ComputerToolOutput, FunctionToolOutput
+    ComputerToolOutput, ToolOutput
 
-    :ivar type: The object type for the tool output. Required. Default value is None.
+    :ivar type: The object type for the tool output. Defaults to ``function_call_output`` if not
+     provided. Required. Default value is None.
     :vartype type: str
     :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
-     required action from a run. Required.
+     required action from a run.
     :vartype tool_call_id: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The object type for the tool output. Required. Default value is None."""
-    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type for the tool output. Defaults to ``function_call_output`` if not provided.
+     Required. Default value is None."""
+    tool_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call being resolved, as provided in the tool calls of a required action from
-     a run. Required."""
+     a run."""
 
     @overload
     def __init__(
         self,
         *,
         type: str,
-        tool_call_id: str,
+        tool_call_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1531,11 +1691,11 @@ class ToolOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputerToolOutput(ToolOutput, discriminator="computer_call_output"):
+class ComputerToolOutput(StructuredToolOutput, discriminator="computer_call_output"):
     """The output from a computer use tool to be submitted.
 
     :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
-     required action from a run. Required.
+     required action from a run.
     :vartype tool_call_id: str
     :ivar type: The object type, which is always 'computer_call_output'. Required. Default value is
      "computer_call_output".
@@ -1551,7 +1711,7 @@ class ComputerToolOutput(ToolOutput, discriminator="computer_call_output"):
      \"computer_call_output\"."""
     output: "_models.ComputerScreenshot" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The output from the computer use tool. Required."""
-    acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = rest_field(
+    acknowledged_safety_checks: Optional[list["_models.SafetyCheck"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Safety checks that have been acknowledged by the developer."""
@@ -1560,9 +1720,9 @@ class ComputerToolOutput(ToolOutput, discriminator="computer_call_output"):
     def __init__(
         self,
         *,
-        tool_call_id: str,
         output: "_models.ComputerScreenshot",
-        acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = None,
+        tool_call_id: Optional[str] = None,
+        acknowledged_safety_checks: Optional[list["_models.SafetyCheck"]] = None,
     ) -> None: ...
 
     @overload
@@ -1573,7 +1733,8 @@ class ComputerToolOutput(ToolOutput, discriminator="computer_call_output"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="computer_call_output", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "computer_call_output"  # type: ignore
 
 
 class ComputerUseToolDefinition(ToolDefinition, discriminator="computer_use_preview"):
@@ -1609,7 +1770,8 @@ class ComputerUseToolDefinition(ToolDefinition, discriminator="computer_use_prev
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="computer_use_preview", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "computer_use_preview"  # type: ignore
 
 
 class ComputerUseToolParameters(_Model):
@@ -1728,7 +1890,8 @@ class ConnectedAgentToolDefinition(ToolDefinition, discriminator="connected_agen
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="connected_agent", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "connected_agent"  # type: ignore
 
 
 class CoordinatePoint(_Model):
@@ -1805,7 +1968,7 @@ class DeepResearchDetails(_Model):
 
     model: str = rest_field(name="deep_research_model", visibility=["read", "create", "update", "delete", "query"])
     """The deep research model deployment name. Required."""
-    bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"] = rest_field(
+    bing_grounding_connections: list["_models.DeepResearchBingGroundingConnection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The array containing Bing grounding connection IDs to enhance deep research capabilities.
@@ -1816,7 +1979,7 @@ class DeepResearchDetails(_Model):
         self,
         *,
         model: str,
-        bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"],
+        bing_grounding_connections: list["_models.DeepResearchBingGroundingConnection"],
     ) -> None: ...
 
     @overload
@@ -1862,7 +2025,8 @@ class DeepResearchToolDefinition(ToolDefinition, discriminator="deep_research"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="deep_research", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "deep_research"  # type: ignore
 
 
 class DoubleClickAction(ComputerUseAction, discriminator="double_click"):
@@ -1901,7 +2065,8 @@ class DoubleClickAction(ComputerUseAction, discriminator="double_click"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="double_click", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "double_click"  # type: ignore
 
 
 class DragAction(ComputerUseAction, discriminator="drag"):
@@ -1917,14 +2082,14 @@ class DragAction(ComputerUseAction, discriminator="drag"):
     type: Literal["drag"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Specifies the event type. For a drag action, this property is always set to drag. Required.
      Default value is \"drag\"."""
-    path: List["_models.CoordinatePoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    path: list["_models.CoordinatePoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of coordinates representing the path of the drag action. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        path: List["_models.CoordinatePoint"],
+        path: list["_models.CoordinatePoint"],
     ) -> None: ...
 
     @overload
@@ -1935,7 +2100,8 @@ class DragAction(ComputerUseAction, discriminator="drag"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="drag", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "drag"  # type: ignore
 
 
 class FabricDataAgentToolParameters(_Model):
@@ -1947,7 +2113,7 @@ class FabricDataAgentToolParameters(_Model):
     :vartype connection_list: list[~azure.ai.agents.models.ToolConnection]
     """
 
-    connection_list: Optional[List["_models.ToolConnection"]] = rest_field(
+    connection_list: Optional[list["_models.ToolConnection"]] = rest_field(
         name="connections", visibility=["read", "create", "update", "delete", "query"]
     )
     """The connections attached to this tool. There can be a maximum of 1 connection
@@ -1957,7 +2123,7 @@ class FabricDataAgentToolParameters(_Model):
     def __init__(
         self,
         *,
-        connection_list: Optional[List["_models.ToolConnection"]] = None,
+        connection_list: Optional[list["_models.ToolConnection"]] = None,
     ) -> None: ...
 
     @overload
@@ -2095,14 +2261,14 @@ class FileListResponse(_Model):
 
     object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'list'. Required. Default value is \"list\"."""
-    data: List["_models.FileInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: list["_models.FileInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The files returned for the request. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        data: List["_models.FileInfo"],
+        data: list["_models.FileInfo"],
     ) -> None: ...
 
     @overload
@@ -2215,7 +2381,8 @@ class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="file_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "file_search"  # type: ignore
 
 
 class FileSearchToolDefinitionDetails(_Model):
@@ -2275,10 +2442,10 @@ class FileSearchToolResource(_Model):
     :vartype vector_stores: list[~azure.ai.agents.models.VectorStoreConfigurations]
     """
 
-    vector_store_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    vector_store_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
-    vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field(
+    vector_stores: Optional[list["_models.VectorStoreConfigurations"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of vector store configuration objects from Azure.
@@ -2289,8 +2456,8 @@ class FileSearchToolResource(_Model):
     def __init__(
         self,
         *,
-        vector_store_ids: Optional[List[str]] = None,
-        vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = None,
+        vector_store_ids: Optional[list[str]] = None,
+        vector_stores: Optional[list["_models.VectorStoreConfigurations"]] = None,
     ) -> None: ...
 
     @overload
@@ -2436,45 +2603,8 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="function", **kwargs)
-
-
-class FunctionToolOutput(ToolOutput, discriminator="function_call_output"):
-    """The output from a function tool to be submitted.
-
-    :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
-     required action from a run. Required.
-    :vartype tool_call_id: str
-    :ivar type: The object type, which is always 'function_call_output'. Required. Default value is
-     "function_call_output".
-    :vartype type: str
-    :ivar output: The output from the function tool to be submitted. Required.
-    :vartype output: str
-    """
-
-    type: Literal["function_call_output"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'function_call_output'. Required. Default value is
-     \"function_call_output\"."""
-    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output from the function tool to be submitted. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tool_call_id: str,
-        output: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="function_call_output", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "function"  # type: ignore
 
 
 class IncompleteRunDetails(_Model):
@@ -2525,7 +2655,7 @@ class KeyPressAction(ComputerUseAction, discriminator="keypress"):
     type: Literal["keypress"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Specifies the event type. For a keypress action, this property is always set to keypress.
      Required. Default value is \"keypress\"."""
-    keys_property: List[str] = rest_field(name="keys", visibility=["read", "create", "update", "delete", "query"])
+    keys_property: list[str] = rest_field(name="keys", visibility=["read", "create", "update", "delete", "query"])
     """The combination of keys the model is requesting to be pressed. This is an array of strings,
      each representing a key. Required."""
 
@@ -2533,7 +2663,7 @@ class KeyPressAction(ComputerUseAction, discriminator="keypress"):
     def __init__(
         self,
         *,
-        keys_property: List[str],
+        keys_property: list[str],
     ) -> None: ...
 
     @overload
@@ -2544,7 +2674,8 @@ class KeyPressAction(ComputerUseAction, discriminator="keypress"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="keypress", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "keypress"  # type: ignore
 
 
 class MCPApprovalPerTool(_Model):
@@ -2599,7 +2730,7 @@ class MCPToolDefinition(ToolDefinition, discriminator="mcp"):
     """The label for the MCP server. Required."""
     server_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The endpoint for the MCP server. Required."""
-    allowed_tools: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    allowed_tools: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of allowed tools for MCP server."""
 
     @overload
@@ -2608,7 +2739,7 @@ class MCPToolDefinition(ToolDefinition, discriminator="mcp"):
         *,
         server_label: str,
         server_url: str,
-        allowed_tools: Optional[List[str]] = None,
+        allowed_tools: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2619,7 +2750,8 @@ class MCPToolDefinition(ToolDefinition, discriminator="mcp"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="mcp", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "mcp"  # type: ignore
 
 
 class MCPToolList(_Model):
@@ -2629,14 +2761,14 @@ class MCPToolList(_Model):
     :vartype tool_names: list[str]
     """
 
-    tool_names: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tool_names: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of tools for approval. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        tool_names: List[str],
+        tool_names: list[str],
     ) -> None: ...
 
     @overload
@@ -2664,7 +2796,7 @@ class MCPToolResource(_Model):
 
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The label for the MCP server. Required."""
-    headers: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    headers: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The headers for the MCP server updates. Required."""
     require_approval: Optional["_types.MCPRequiredApproval"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2677,7 +2809,7 @@ class MCPToolResource(_Model):
         self,
         *,
         server_label: str,
-        headers: Dict[str, str],
+        headers: dict[str, str],
         require_approval: Optional["_types.MCPRequiredApproval"] = None,
     ) -> None: ...
 
@@ -2710,7 +2842,7 @@ class MessageAttachment(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure asset ID."""
-    tools: List["_types.MessageAttachmentToolDefinition"] = rest_field(
+    tools: list["_types.MessageAttachmentToolDefinition"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The tools to add to this file. Required."""
@@ -2719,7 +2851,7 @@ class MessageAttachment(_Model):
     def __init__(
         self,
         *,
-        tools: List["_types.MessageAttachmentToolDefinition"],
+        tools: list["_types.MessageAttachmentToolDefinition"],
         file_id: Optional[str] = None,
         data_source: Optional["_models.VectorStoreDataSource"] = None,
     ) -> None: ...
@@ -2745,7 +2877,7 @@ class MessageContent(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
@@ -2819,7 +2951,7 @@ class MessageDelta(_Model):
 
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The entity that produced the message. Required. Known values are: \"user\" and \"assistant\"."""
-    content: List["_models.MessageDeltaContent"] = rest_field(
+    content: list["_models.MessageDeltaContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The content of the message as an array of text and/or images. Required."""
@@ -2829,7 +2961,7 @@ class MessageDelta(_Model):
         self,
         *,
         role: Union[str, "_models.MessageRole"],
-        content: List["_models.MessageDeltaContent"],
+        content: list["_models.MessageDeltaContent"],
     ) -> None: ...
 
     @overload
@@ -2895,7 +3027,7 @@ class MessageDeltaContent(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the content part of the message. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
@@ -2956,7 +3088,8 @@ class MessageDeltaImageFileContent(MessageDeltaContent, discriminator="image_fil
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="image_file", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "image_file"  # type: ignore
 
 
 class MessageDeltaImageFileContentObject(_Model):
@@ -3000,7 +3133,7 @@ class MessageDeltaTextAnnotation(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the annotation within a text content part. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
@@ -3061,7 +3194,8 @@ class MessageDeltaTextContent(MessageDeltaContent, discriminator="text"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="text", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "text"  # type: ignore
 
 
 class MessageDeltaTextContentObject(_Model):
@@ -3075,7 +3209,7 @@ class MessageDeltaTextContentObject(_Model):
 
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The data that makes up the text."""
-    annotations: Optional[List["_models.MessageDeltaTextAnnotation"]] = rest_field(
+    annotations: Optional[list["_models.MessageDeltaTextAnnotation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Annotations for the text."""
@@ -3085,7 +3219,7 @@ class MessageDeltaTextContentObject(_Model):
         self,
         *,
         value: Optional[str] = None,
-        annotations: Optional[List["_models.MessageDeltaTextAnnotation"]] = None,
+        annotations: Optional[list["_models.MessageDeltaTextAnnotation"]] = None,
     ) -> None: ...
 
     @overload
@@ -3150,7 +3284,8 @@ class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discrim
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="file_citation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "file_citation"  # type: ignore
 
 
 class MessageDeltaTextFileCitationAnnotationObject(_Model):  # pylint: disable=name-too-long
@@ -3237,7 +3372,8 @@ class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="file_path", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "file_path"  # type: ignore
 
 
 class MessageDeltaTextFilePathAnnotationObject(_Model):
@@ -3315,7 +3451,8 @@ class MessageDeltaTextUrlCitationAnnotation(MessageDeltaTextAnnotation, discrimi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="url_citation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "url_citation"  # type: ignore
 
 
 class MessageDeltaTextUrlCitationDetails(_Model):
@@ -3383,7 +3520,8 @@ class MessageImageFileContent(MessageContent, discriminator="image_file"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="image_file", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "image_file"  # type: ignore
 
 
 class MessageImageFileDetails(_Model):
@@ -3534,7 +3672,7 @@ class MessageInputContentBlock(_Model):
     :vartype type: str or ~azure.ai.agents.models.MessageBlockType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Specifies which kind of content block this is (text, image_file, image_url, etc.). Required.
      Known values are: \"text\", \"image_file\", and \"image_url\"."""
@@ -3590,7 +3728,8 @@ class MessageInputImageFileBlock(MessageInputContentBlock, discriminator="image_
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=MessageBlockType.IMAGE_FILE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = MessageBlockType.IMAGE_FILE  # type: ignore
 
 
 class MessageInputImageUrlBlock(MessageInputContentBlock, discriminator="image_url"):
@@ -3626,7 +3765,8 @@ class MessageInputImageUrlBlock(MessageInputContentBlock, discriminator="image_u
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=MessageBlockType.IMAGE_URL, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = MessageBlockType.IMAGE_URL  # type: ignore
 
 
 class MessageInputTextBlock(MessageInputContentBlock, discriminator="text"):
@@ -3659,7 +3799,8 @@ class MessageInputTextBlock(MessageInputContentBlock, discriminator="text"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=MessageBlockType.TEXT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = MessageBlockType.TEXT  # type: ignore
 
 
 class MessageTextAnnotation(_Model):
@@ -3675,7 +3816,7 @@ class MessageTextAnnotation(_Model):
     :vartype text: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3729,7 +3870,8 @@ class MessageTextContent(MessageContent, discriminator="text"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="text", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "text"  # type: ignore
 
 
 class MessageTextDetails(_Model):
@@ -3743,7 +3885,7 @@ class MessageTextDetails(_Model):
 
     value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text data. Required."""
-    annotations: List["_models.MessageTextAnnotation"] = rest_field(
+    annotations: list["_models.MessageTextAnnotation"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of annotations associated with this text. Required."""
@@ -3753,7 +3895,7 @@ class MessageTextDetails(_Model):
         self,
         *,
         value: str,
-        annotations: List["_models.MessageTextAnnotation"],
+        annotations: list["_models.MessageTextAnnotation"],
     ) -> None: ...
 
     @overload
@@ -3817,7 +3959,8 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="file_citation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "file_citation"  # type: ignore
 
 
 class MessageTextFileCitationDetails(_Model):
@@ -3901,7 +4044,8 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="file_path", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "file_path"  # type: ignore
 
 
 class MessageTextFilePathDetails(_Model):
@@ -3978,7 +4122,8 @@ class MessageTextUrlCitationAnnotation(MessageTextAnnotation, discriminator="url
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="url_citation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "url_citation"  # type: ignore
 
 
 class MessageTextUrlCitationDetails(_Model):
@@ -4047,7 +4192,8 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataag
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_dataagent", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "fabric_dataagent"  # type: ignore
 
 
 class MoveAction(ComputerUseAction, discriminator="move"):
@@ -4086,7 +4232,8 @@ class MoveAction(ComputerUseAction, discriminator="move"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="move", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "move"  # type: ignore
 
 
 class OpenApiAuthDetails(_Model):
@@ -4100,7 +4247,7 @@ class OpenApiAuthDetails(_Model):
     :vartype type: str or ~azure.ai.agents.models.OpenApiAuthType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of authentication, must be anonymous/connection/managed_identity. Required. Known
      values are: \"anonymous\", \"connection\", and \"managed_identity\"."""
@@ -4146,7 +4293,8 @@ class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=OpenApiAuthType.ANONYMOUS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = OpenApiAuthType.ANONYMOUS  # type: ignore
 
 
 class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection"):
@@ -4180,7 +4328,8 @@ class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=OpenApiAuthType.CONNECTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = OpenApiAuthType.CONNECTION  # type: ignore
 
 
 class OpenApiConnectionSecurityScheme(_Model):
@@ -4238,9 +4387,9 @@ class OpenApiFunctionDefinition(_Model):
     """The openapi function shape, described as a JSON Schema object. Required."""
     auth: "_models.OpenApiAuthDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Open API authentication details. Required."""
-    default_params: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    default_params: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of OpenAPI spec parameters that will use user-provided defaults."""
-    functions: Optional[List["_models.FunctionDefinition"]] = rest_field(visibility=["read"])
+    functions: Optional[list["_models.FunctionDefinition"]] = rest_field(visibility=["read"])
     """List of function definitions used by OpenApi tool."""
 
     @overload
@@ -4251,7 +4400,7 @@ class OpenApiFunctionDefinition(_Model):
         spec: Any,
         auth: "_models.OpenApiAuthDetails",
         description: Optional[str] = None,
-        default_params: Optional[List[str]] = None,
+        default_params: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -4296,7 +4445,8 @@ class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_ident
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=OpenApiAuthType.MANAGED_IDENTITY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = OpenApiAuthType.MANAGED_IDENTITY  # type: ignore
 
 
 class OpenApiManagedSecurityScheme(_Model):
@@ -4358,7 +4508,8 @@ class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="openapi", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "openapi"  # type: ignore
 
 
 class RequiredAction(_Model):
@@ -4371,7 +4522,7 @@ class RequiredAction(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
@@ -4406,7 +4557,7 @@ class RequiredToolCall(_Model):
     :vartype id: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type for the required tool call. Required. Default value is None."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4470,7 +4621,8 @@ class RequiredComputerUseToolCall(RequiredToolCall, discriminator="computer_use_
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="computer_use_preview", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "computer_use_preview"  # type: ignore
 
 
 class RequiredComputerUseToolCallDetails(_Model):
@@ -4481,27 +4633,21 @@ class RequiredComputerUseToolCallDetails(_Model):
     :ivar pending_safety_checks: Safety checks that are pending acknowledgment by the developer.
      Required.
     :vartype pending_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
-    :ivar type: The type of the computer call. Always 'computer_call'. Required. Default value is
-     "computer_call".
-    :vartype type: str
     """
 
     action: "_models.ComputerUseAction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The action to be performed by the computer use tool. Required."""
-    pending_safety_checks: List["_models.SafetyCheck"] = rest_field(
+    pending_safety_checks: list["_models.SafetyCheck"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Safety checks that are pending acknowledgment by the developer. Required."""
-    type: Literal["computer_call"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of the computer call. Always 'computer_call'. Required. Default value is
-     \"computer_call\"."""
 
     @overload
     def __init__(
         self,
         *,
         action: "_models.ComputerUseAction",
-        pending_safety_checks: List["_models.SafetyCheck"],
+        pending_safety_checks: list["_models.SafetyCheck"],
     ) -> None: ...
 
     @overload
@@ -4513,7 +4659,6 @@ class RequiredComputerUseToolCallDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["computer_call"] = "computer_call"
 
 
 class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
@@ -4556,7 +4701,8 @@ class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="function", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "function"  # type: ignore
 
 
 class RequiredFunctionToolCallDetails(_Model):
@@ -4645,7 +4791,8 @@ class RequiredMcpToolCall(RequiredToolCall, discriminator="mcp"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="mcp", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "mcp"  # type: ignore
 
 
 class ResponseFormatJsonSchema(_Model):
@@ -4889,7 +5036,7 @@ class RunStep(_Model):
     )
     """Usage statistics related to the run step. This value will be ``null`` while the run step's
      status is ``in_progress``."""
-    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -4911,7 +5058,7 @@ class RunStep(_Model):
         completed_at: datetime.datetime,
         cancelled_at: datetime.datetime,
         failed_at: datetime.datetime,
-        metadata: Dict[str, str],
+        metadata: dict[str, str],
         usage: Optional["_models.RunStepCompletionUsage"] = None,
     ) -> None: ...
 
@@ -4938,7 +5085,7 @@ class RunStepDetails(_Model):
     :vartype type: str or ~azure.ai.agents.models.RunStepType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Known values are: \"message_creation\", \"tool_calls\", and
      \"activities\"."""
@@ -4974,7 +5121,7 @@ class RunStepActivityDetails(RunStepDetails, discriminator="activities"):
     type: Literal[RunStepType.ACTIVITIES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'activities'. Required. Represents a run step with activities
      information."""
-    activities: List["_models.RunStepDetailsActivity"] = rest_field(
+    activities: list["_models.RunStepDetailsActivity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of activities for this run step. Required."""
@@ -4983,7 +5130,7 @@ class RunStepActivityDetails(RunStepDetails, discriminator="activities"):
     def __init__(
         self,
         *,
-        activities: List["_models.RunStepDetailsActivity"],
+        activities: list["_models.RunStepDetailsActivity"],
     ) -> None: ...
 
     @overload
@@ -4994,7 +5141,8 @@ class RunStepActivityDetails(RunStepDetails, discriminator="activities"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=RunStepType.ACTIVITIES, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = RunStepType.ACTIVITIES  # type: ignore
 
 
 class RunStepToolCall(_Model):
@@ -5003,10 +5151,10 @@ class RunStepToolCall(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepAzureAISearchToolCall, RunStepAzureFunctionToolCall, RunStepBingCustomSearchToolCall,
-    RunStepBingGroundingToolCall, RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall, RunStepComputerUseToolCall,
-    RunStepConnectedAgentToolCall, RunStepDeepResearchToolCall, RunStepMicrosoftFabricToolCall,
-    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMcpToolCall, RunStepOpenAPIToolCall,
-    RunStepSharepointToolCall
+    RunStepBingGroundingToolCall, RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall,
+    RunStepComputerUseToolCall, RunStepConnectedAgentToolCall, RunStepDeepResearchToolCall,
+    RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
+    RunStepMcpToolCall, RunStepOpenAPIToolCall, RunStepSharepointToolCall
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -5015,7 +5163,7 @@ class RunStepToolCall(_Model):
     :vartype id: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5058,7 +5206,7 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
     type: Literal["azure_ai_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'azure_ai_search'. Required. Default value is
      \"azure_ai_search\"."""
-    azure_ai_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    azure_ai_search: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reserved for future use. Required."""
 
     @overload
@@ -5066,7 +5214,7 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        azure_ai_search: Dict[str, str],
+        azure_ai_search: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -5077,7 +5225,8 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="azure_ai_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "azure_ai_search"  # type: ignore
 
 
 class RunStepAzureFunctionToolCall(RunStepToolCall, discriminator="azure_function"):
@@ -5117,7 +5266,8 @@ class RunStepAzureFunctionToolCall(RunStepToolCall, discriminator="azure_functio
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="azure_function", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "azure_function"  # type: ignore
 
 
 class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
@@ -5139,7 +5289,7 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
     type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
-    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bing_custom_search: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The dictionary with request and response from Bing Custom Search tool. Required."""
 
     @overload
@@ -5147,7 +5297,7 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        bing_custom_search: Dict[str, str],
+        bing_custom_search: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -5158,7 +5308,8 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_custom_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "bing_custom_search"  # type: ignore
 
 
 class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_grounding"):
@@ -5180,7 +5331,7 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bing_grounding: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
@@ -5188,7 +5339,7 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        bing_grounding: Dict[str, str],
+        bing_grounding: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -5199,7 +5350,8 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_grounding", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "bing_grounding"  # type: ignore
 
 
 class RunStepBrowserAutomationToolCall(RunStepToolCall, discriminator="browser_automation"):
@@ -5239,7 +5391,8 @@ class RunStepBrowserAutomationToolCall(RunStepToolCall, discriminator="browser_a
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="browser_automation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "browser_automation"  # type: ignore
 
 
 class RunStepCodeInterpreterToolCallOutput(_Model):
@@ -5252,7 +5405,7 @@ class RunStepCodeInterpreterToolCallOutput(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
@@ -5306,7 +5459,8 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="image", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "image"  # type: ignore
 
 
 class RunStepCodeInterpreterImageReference(_Model):
@@ -5367,7 +5521,8 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="logs", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "logs"  # type: ignore
 
 
 class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interpreter"):
@@ -5409,7 +5564,8 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="code_interpreter", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "code_interpreter"  # type: ignore
 
 
 class RunStepCodeInterpreterToolCallDetails(_Model):
@@ -5424,7 +5580,7 @@ class RunStepCodeInterpreterToolCallDetails(_Model):
 
     input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The input provided by the model to the code interpreter tool. Required."""
-    outputs: List["_models.RunStepCodeInterpreterToolCallOutput"] = rest_field(
+    outputs: list["_models.RunStepCodeInterpreterToolCallOutput"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The outputs produced by the code interpreter tool back to the model in response to the tool
@@ -5435,7 +5591,7 @@ class RunStepCodeInterpreterToolCallDetails(_Model):
         self,
         *,
         input: str,
-        outputs: List["_models.RunStepCodeInterpreterToolCallOutput"],
+        outputs: list["_models.RunStepCodeInterpreterToolCallOutput"],
     ) -> None: ...
 
     @overload
@@ -5502,10 +5658,6 @@ class RunStepComputerUseToolCall(RunStepToolCall, discriminator="computer_use_pr
     :ivar computer_use_preview: The detailed information about the computer use tool call.
      Required.
     :vartype computer_use_preview: ~azure.ai.agents.models.RunStepComputerUseToolCallDetails
-    :ivar output: The output from the computer use tool. Required.
-    :vartype output: ~azure.ai.agents.models.ComputerScreenshot
-    :ivar acknowledged_safety_checks: Safety checks that have been acknowledged by the developer.
-    :vartype acknowledged_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
     """
 
     type: Literal["computer_use_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5515,12 +5667,6 @@ class RunStepComputerUseToolCall(RunStepToolCall, discriminator="computer_use_pr
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The detailed information about the computer use tool call. Required."""
-    output: "_models.ComputerScreenshot" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output from the computer use tool. Required."""
-    acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Safety checks that have been acknowledged by the developer."""
 
     @overload
     def __init__(
@@ -5528,50 +5674,6 @@ class RunStepComputerUseToolCall(RunStepToolCall, discriminator="computer_use_pr
         *,
         id: str,  # pylint: disable=redefined-builtin
         computer_use_preview: "_models.RunStepComputerUseToolCallDetails",
-        output: "_models.ComputerScreenshot",
-        acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="computer_use_preview", **kwargs)
-
-
-class RunStepComputerUseToolCallDetails(_Model):
-    """The detailed information about a computer use tool call.
-
-    :ivar action: The action to be performed by the computer use tool. Required.
-    :vartype action: ~azure.ai.agents.models.ComputerUseAction
-    :ivar pending_safety_checks: Safety checks that are pending acknowledgment by the developer.
-     Required.
-    :vartype pending_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
-    :ivar type: The type of the computer call. Always 'computer_call'. Required. Default value is
-     "computer_call".
-    :vartype type: str
-    """
-
-    action: "_models.ComputerUseAction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The action to be performed by the computer use tool. Required."""
-    pending_safety_checks: List["_models.SafetyCheck"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Safety checks that are pending acknowledgment by the developer. Required."""
-    type: Literal["computer_call"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of the computer call. Always 'computer_call'. Required. Default value is
-     \"computer_call\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        action: "_models.ComputerUseAction",
-        pending_safety_checks: List["_models.SafetyCheck"],
     ) -> None: ...
 
     @overload
@@ -5583,7 +5685,55 @@ class RunStepComputerUseToolCallDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["computer_call"] = "computer_call"
+        self.type = "computer_use_preview"  # type: ignore
+
+
+class RunStepComputerUseToolCallDetails(_Model):
+    """The detailed information about a computer use tool call.
+
+    :ivar action: The action to be performed by the computer use tool. Required.
+    :vartype action: ~azure.ai.agents.models.ComputerUseAction
+    :ivar pending_safety_checks: Safety checks that are pending acknowledgment by the developer.
+     Required.
+    :vartype pending_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    :ivar output: The output from the computer use tool. Required.
+    :vartype output: ~azure.ai.agents.models.ComputerScreenshot
+    :ivar acknowledged_safety_checks: Safety checks that have been acknowledged by the developer.
+    :vartype acknowledged_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    """
+
+    action: "_models.ComputerUseAction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action to be performed by the computer use tool. Required."""
+    pending_safety_checks: list["_models.SafetyCheck"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that are pending acknowledgment by the developer. Required."""
+    output: "_models.ComputerScreenshot" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The output from the computer use tool. Required."""
+    acknowledged_safety_checks: Optional[list["_models.SafetyCheck"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that have been acknowledged by the developer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action: "_models.ComputerUseAction",
+        pending_safety_checks: list["_models.SafetyCheck"],
+        output: "_models.ComputerScreenshot",
+        acknowledged_safety_checks: Optional[list["_models.SafetyCheck"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RunStepConnectedAgent(_Model):
@@ -5678,7 +5828,8 @@ class RunStepConnectedAgentToolCall(RunStepToolCall, discriminator="connected_ag
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="connected_agent", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "connected_agent"  # type: ignore
 
 
 class RunStepDeepResearchToolCall(RunStepToolCall, discriminator="deep_research"):
@@ -5720,7 +5871,8 @@ class RunStepDeepResearchToolCall(RunStepToolCall, discriminator="deep_research"
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="deep_research", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "deep_research"  # type: ignore
 
 
 class RunStepDeepResearchToolCallDetails(_Model):
@@ -5793,10 +5945,11 @@ class RunStepDeltaToolCall(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepDeltaAzureAISearchToolCall, RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaCustomBingGroundingToolCall, RunStepDeltaBingGroundingToolCall,
-    RunStepDeltaCodeInterpreterToolCall, RunStepDeltaConnectedAgentToolCall,
-    RunStepDeltaDeepResearchToolCall, RunStepDeltaMicrosoftFabricToolCall,
-    RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall,
-    RunStepDeltaOpenAPIToolCall, RunStepDeltaSharepointToolCall
+    RunStepDeltaCodeInterpreterToolCall, RunStepDeltaComputerUseToolCall,
+    RunStepDeltaConnectedAgentToolCall, RunStepDeltaDeepResearchToolCall,
+    RunStepDeltaMicrosoftFabricToolCall, RunStepDeltaFileSearchToolCall,
+    RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall, RunStepDeltaOpenAPIToolCall,
+    RunStepDeltaSharepointToolCall
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -5807,7 +5960,7 @@ class RunStepDeltaToolCall(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the tool call detail in the run step's tool_calls array. Required."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5853,7 +6006,7 @@ class RunStepDeltaAzureAISearchToolCall(RunStepDeltaToolCall, discriminator="azu
     type: Literal["azure_ai_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"azure_ai_search\". Required. Default value is
      \"azure_ai_search\"."""
-    azure_ai_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    azure_ai_search: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reserved for future use. Required."""
 
     @overload
@@ -5862,7 +6015,7 @@ class RunStepDeltaAzureAISearchToolCall(RunStepDeltaToolCall, discriminator="azu
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        azure_ai_search: Dict[str, str],
+        azure_ai_search: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -5873,7 +6026,8 @@ class RunStepDeltaAzureAISearchToolCall(RunStepDeltaToolCall, discriminator="azu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="azure_ai_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "azure_ai_search"  # type: ignore
 
 
 class RunStepDeltaAzureFunctionToolCall(RunStepDeltaToolCall, discriminator="azure_function"):
@@ -5915,7 +6069,8 @@ class RunStepDeltaAzureFunctionToolCall(RunStepDeltaToolCall, discriminator="azu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="azure_function", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "azure_function"  # type: ignore
 
 
 class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_grounding"):
@@ -5936,7 +6091,7 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
     type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"bing_grounding\". Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bing_grounding: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
@@ -5945,7 +6100,7 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        bing_grounding: Dict[str, str],
+        bing_grounding: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -5956,7 +6111,8 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_grounding", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "bing_grounding"  # type: ignore
 
 
 class RunStepDeltaChunk(_Model):
@@ -6013,7 +6169,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_Model):  # pylint: disable=na
 
     input: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The input into the Code Interpreter tool call."""
-    outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field(
+    outputs: Optional[list["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
@@ -6025,7 +6181,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_Model):  # pylint: disable=na
         self,
         *,
         input: Optional[str] = None,
-        outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = None,
+        outputs: Optional[list["_models.RunStepDeltaCodeInterpreterOutput"]] = None,
     ) -> None: ...
 
     @overload
@@ -6054,7 +6210,7 @@ class RunStepDeltaCodeInterpreterOutput(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the output in the streaming run step tool call's Code Interpreter outputs array.
      Required."""
@@ -6117,7 +6273,8 @@ class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, 
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="image", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "image"  # type: ignore
 
 
 class RunStepDeltaCodeInterpreterImageOutputObject(_Model):  # pylint: disable=name-too-long
@@ -6182,7 +6339,8 @@ class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, di
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="logs", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "logs"  # type: ignore
 
 
 class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="code_interpreter"):
@@ -6224,7 +6382,105 @@ class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="c
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="code_interpreter", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "code_interpreter"  # type: ignore
+
+
+class RunStepDeltaComputerUseDetails(_Model):
+    """Represents the Computer Use tool call details in a streaming run step.
+
+    :ivar action: The action to be performed by the computer use tool.
+    :vartype action: ~azure.ai.agents.models.ComputerUseAction
+    :ivar pending_safety_checks: Safety checks that are pending acknowledgment by the developer.
+    :vartype pending_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    :ivar output: The output from the computer use tool, null if outputs have not yet been
+     submitted.
+    :vartype output: ~azure.ai.agents.models.ComputerScreenshot
+    :ivar acknowledged_safety_checks: Safety checks that have been acknowledged by the developer,
+     null if outputs have not yet been submitted.
+    :vartype acknowledged_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    """
+
+    action: Optional["_models.ComputerUseAction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action to be performed by the computer use tool."""
+    pending_safety_checks: Optional[list["_models.SafetyCheck"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that are pending acknowledgment by the developer."""
+    output: Optional["_models.ComputerScreenshot"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The output from the computer use tool, null if outputs have not yet been submitted."""
+    acknowledged_safety_checks: Optional[list["_models.SafetyCheck"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that have been acknowledged by the developer, null if outputs have not yet been
+     submitted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action: Optional["_models.ComputerUseAction"] = None,
+        pending_safety_checks: Optional[list["_models.SafetyCheck"]] = None,
+        output: Optional["_models.ComputerScreenshot"] = None,
+        acknowledged_safety_checks: Optional[list["_models.SafetyCheck"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepDeltaComputerUseToolCall(RunStepDeltaToolCall, discriminator="computer_use_preview"):
+    """Represents the Computer Use tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always "computer_use_preview". Required. Default value is
+     "computer_use_preview".
+    :vartype type: str
+    :ivar computer_use_preview: The computer use data for the tool call.
+    :vartype computer_use_preview: ~azure.ai.agents.models.RunStepDeltaComputerUseDetails
+    """
+
+    type: Literal["computer_use_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"computer_use_preview\". Required. Default value is
+     \"computer_use_preview\"."""
+    computer_use_preview: Optional["_models.RunStepDeltaComputerUseDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The computer use data for the tool call."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        computer_use_preview: Optional["_models.RunStepDeltaComputerUseDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "computer_use_preview"  # type: ignore
 
 
 class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="connected_agent"):
@@ -6266,7 +6522,8 @@ class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="co
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="connected_agent", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "connected_agent"  # type: ignore
 
 
 class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_custom_search"):
@@ -6287,7 +6544,7 @@ class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminato
     type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
-    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bing_custom_search: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The dictionary with request and response from Bing Custom Search tool. Required."""
 
     @overload
@@ -6296,7 +6553,7 @@ class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminato
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        bing_custom_search: Dict[str, str],
+        bing_custom_search: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -6307,7 +6564,8 @@ class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminato
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="bing_custom_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "bing_custom_search"  # type: ignore
 
 
 class RunStepDeltaDeepResearchToolCall(RunStepDeltaToolCall, discriminator="deep_research"):
@@ -6349,7 +6607,8 @@ class RunStepDeltaDeepResearchToolCall(RunStepDeltaToolCall, discriminator="deep
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="deep_research", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "deep_research"  # type: ignore
 
 
 class RunStepDeltaDetail(_Model):
@@ -6363,7 +6622,7 @@ class RunStepDeltaDetail(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type for the run step detail object. Required. Default value is None."""
 
@@ -6423,7 +6682,8 @@ class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator="file_s
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="file_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "file_search"  # type: ignore
 
 
 class RunStepDeltaFunction(_Model):
@@ -6502,7 +6762,8 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="function", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "function"  # type: ignore
 
 
 class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
@@ -6516,7 +6777,7 @@ class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
 
     type: Literal["mcp"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"mcp\". Required. Default value is \"mcp\"."""
-    tool_calls: Optional[List["_models.RunStepDeltaMcpToolCall"]] = rest_field(
+    tool_calls: Optional[list["_models.RunStepDeltaMcpToolCall"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of tool calls for the tool call detail item."""
@@ -6525,7 +6786,7 @@ class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
     def __init__(
         self,
         *,
-        tool_calls: Optional[List["_models.RunStepDeltaMcpToolCall"]] = None,
+        tool_calls: Optional[list["_models.RunStepDeltaMcpToolCall"]] = None,
     ) -> None: ...
 
     @overload
@@ -6536,7 +6797,8 @@ class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="mcp", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "mcp"  # type: ignore
 
 
 class RunStepDeltaMcpToolCall(RunStepDeltaToolCall, discriminator="mcp"):
@@ -6574,7 +6836,8 @@ class RunStepDeltaMcpToolCall(RunStepDeltaToolCall, discriminator="mcp"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="mcp", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "mcp"  # type: ignore
 
 
 class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_creation"):
@@ -6610,7 +6873,8 @@ class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_cre
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="message_creation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "message_creation"  # type: ignore
 
 
 class RunStepDeltaMessageCreationObject(_Model):
@@ -6658,7 +6922,7 @@ class RunStepDeltaMicrosoftFabricToolCall(RunStepDeltaToolCall, discriminator="f
     type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'fabric_dataagent'. Required. Default value is
      \"fabric_dataagent\"."""
-    microsoft_fabric: Dict[str, str] = rest_field(
+    microsoft_fabric: dict[str, str] = rest_field(
         name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
     """Fabric input and output. Required."""
@@ -6669,7 +6933,7 @@ class RunStepDeltaMicrosoftFabricToolCall(RunStepDeltaToolCall, discriminator="f
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        microsoft_fabric: Dict[str, str],
+        microsoft_fabric: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -6680,7 +6944,8 @@ class RunStepDeltaMicrosoftFabricToolCall(RunStepDeltaToolCall, discriminator="f
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_dataagent", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "fabric_dataagent"  # type: ignore
 
 
 class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
@@ -6694,7 +6959,7 @@ class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
 
     type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"openapi\". Required. Default value is \"openapi\"."""
-    tool_calls: Optional[List["_models.RunStepDeltaOpenAPIToolCall"]] = rest_field(
+    tool_calls: Optional[list["_models.RunStepDeltaOpenAPIToolCall"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of tool calls for the tool call detail item."""
@@ -6703,7 +6968,7 @@ class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
     def __init__(
         self,
         *,
-        tool_calls: Optional[List["_models.RunStepDeltaOpenAPIToolCall"]] = None,
+        tool_calls: Optional[list["_models.RunStepDeltaOpenAPIToolCall"]] = None,
     ) -> None: ...
 
     @overload
@@ -6714,7 +6979,8 @@ class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="openapi", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "openapi"  # type: ignore
 
 
 class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi"):
@@ -6732,7 +6998,7 @@ class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi")
 
     type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"openapi\". Required. Default value is \"openapi\"."""
-    open_api: Dict[str, str] = rest_field(name="openapi", visibility=["read", "create", "update", "delete", "query"])
+    open_api: dict[str, str] = rest_field(name="openapi", visibility=["read", "create", "update", "delete", "query"])
     """Reserved for future use. Required."""
 
     @overload
@@ -6741,7 +7007,7 @@ class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi")
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        open_api: Dict[str, str],
+        open_api: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -6752,7 +7018,8 @@ class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="openapi", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "openapi"  # type: ignore
 
 
 class RunStepDeltaSharepointToolCall(RunStepDeltaToolCall, discriminator="sharepoint_grounding"):
@@ -6772,7 +7039,7 @@ class RunStepDeltaSharepointToolCall(RunStepDeltaToolCall, discriminator="sharep
     type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'sharepoint_grounding'. Required. Default value is
      \"sharepoint_grounding\"."""
-    sharepoint_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sharepoint_grounding: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SharePoint tool input and output. Required."""
 
     @overload
@@ -6781,7 +7048,7 @@ class RunStepDeltaSharepointToolCall(RunStepDeltaToolCall, discriminator="sharep
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        sharepoint_grounding: Dict[str, str],
+        sharepoint_grounding: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -6792,7 +7059,8 @@ class RunStepDeltaSharepointToolCall(RunStepDeltaToolCall, discriminator="sharep
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint_grounding", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "sharepoint_grounding"  # type: ignore
 
 
 class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
@@ -6807,7 +7075,7 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
 
     type: Literal["tool_calls"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"tool_calls.\". Required. Default value is \"tool_calls\"."""
-    tool_calls: Optional[List["_models.RunStepDeltaToolCall"]] = rest_field(
+    tool_calls: Optional[list["_models.RunStepDeltaToolCall"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of tool calls for the tool call detail item."""
@@ -6816,7 +7084,7 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
     def __init__(
         self,
         *,
-        tool_calls: Optional[List["_models.RunStepDeltaToolCall"]] = None,
+        tool_calls: Optional[list["_models.RunStepDeltaToolCall"]] = None,
     ) -> None: ...
 
     @overload
@@ -6827,7 +7095,8 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="tool_calls", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "tool_calls"  # type: ignore
 
 
 class RunStepDetailsActivity(_Model):
@@ -6851,7 +7120,7 @@ class RunStepDetailsActivity(_Model):
     """The activity ID. Required."""
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Server label. Required."""
-    tools: Dict[str, "_models.ActivityFunctionDefinition"] = rest_field(
+    tools: dict[str, "_models.ActivityFunctionDefinition"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The supported function list. Required."""
@@ -6862,7 +7131,7 @@ class RunStepDetailsActivity(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         server_label: str,
-        tools: Dict[str, "_models.ActivityFunctionDefinition"],
+        tools: dict[str, "_models.ActivityFunctionDefinition"],
     ) -> None: ...
 
     @overload
@@ -6952,7 +7221,8 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="file_search", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "file_search"  # type: ignore
 
 
 class RunStepFileSearchToolCallResult(_Model):
@@ -6976,7 +7246,7 @@ class RunStepFileSearchToolCallResult(_Model):
     """The name of the file that result was found in. Required."""
     score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The score of the result. All values must be a floating point number between 0 and 1. Required."""
-    content: Optional[List["_models.FileSearchToolCallContent"]] = rest_field(
+    content: Optional[list["_models.FileSearchToolCallContent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The content of the result that was found. The content is only included if requested via the
@@ -6989,7 +7259,7 @@ class RunStepFileSearchToolCallResult(_Model):
         file_id: str,
         file_name: str,
         score: float,
-        content: Optional[List["_models.FileSearchToolCallContent"]] = None,
+        content: Optional[list["_models.FileSearchToolCallContent"]] = None,
     ) -> None: ...
 
     @overload
@@ -7016,7 +7286,7 @@ class RunStepFileSearchToolCallResults(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for file search."""
-    results: List["_models.RunStepFileSearchToolCallResult"] = rest_field(
+    results: list["_models.RunStepFileSearchToolCallResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The array of a file search results. Required."""
@@ -7025,7 +7295,7 @@ class RunStepFileSearchToolCallResults(_Model):
     def __init__(
         self,
         *,
-        results: List["_models.RunStepFileSearchToolCallResult"],
+        results: list["_models.RunStepFileSearchToolCallResult"],
         ranking_options: Optional["_models.FileSearchRankingOptions"] = None,
     ) -> None: ...
 
@@ -7077,7 +7347,8 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="function", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "function"  # type: ignore
 
 
 class RunStepFunctionToolCallDetails(_Model):
@@ -7166,7 +7437,8 @@ class RunStepMcpToolCall(RunStepToolCall, discriminator="mcp"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="mcp", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "mcp"  # type: ignore
 
 
 class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creation"):
@@ -7203,7 +7475,8 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=RunStepType.MESSAGE_CREATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = RunStepType.MESSAGE_CREATION  # type: ignore
 
 
 class RunStepMessageCreationReference(_Model):
@@ -7252,7 +7525,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
     type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'fabric_dataagent'. Required. Default value is
      \"fabric_dataagent\"."""
-    microsoft_fabric: Dict[str, str] = rest_field(
+    microsoft_fabric: dict[str, str] = rest_field(
         name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
     """Fabric input and output. Required."""
@@ -7262,7 +7535,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        microsoft_fabric: Dict[str, str],
+        microsoft_fabric: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -7273,7 +7546,8 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_dataagent", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "fabric_dataagent"  # type: ignore
 
 
 class RunStepOpenAPIToolCall(RunStepToolCall, discriminator="openapi"):
@@ -7292,7 +7566,7 @@ class RunStepOpenAPIToolCall(RunStepToolCall, discriminator="openapi"):
 
     type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'openapi'. Required. Default value is \"openapi\"."""
-    open_api: Dict[str, str] = rest_field(name="openapi", visibility=["read", "create", "update", "delete", "query"])
+    open_api: dict[str, str] = rest_field(name="openapi", visibility=["read", "create", "update", "delete", "query"])
     """Reserved for future use. Required."""
 
     @overload
@@ -7300,7 +7574,7 @@ class RunStepOpenAPIToolCall(RunStepToolCall, discriminator="openapi"):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        open_api: Dict[str, str],
+        open_api: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -7311,7 +7585,8 @@ class RunStepOpenAPIToolCall(RunStepToolCall, discriminator="openapi"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="openapi", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "openapi"  # type: ignore
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
@@ -7332,7 +7607,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'sharepoint_grounding'. Required. Default value is
      \"sharepoint_grounding\"."""
-    share_point: Dict[str, str] = rest_field(
+    share_point: dict[str, str] = rest_field(
         name="sharepoint_grounding", visibility=["read", "create", "update", "delete", "query"]
     )
     """SharePoint tool input and output. Required."""
@@ -7342,7 +7617,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        share_point: Dict[str, str],
+        share_point: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -7353,7 +7628,8 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint_grounding", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "sharepoint_grounding"  # type: ignore
 
 
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
@@ -7369,14 +7645,14 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
     type: Literal[RunStepType.TOOL_CALLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'tool_calls'. Required. Represents a run step that calls
      tools."""
-    tool_calls: List["_models.RunStepToolCall"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tool_calls: list["_models.RunStepToolCall"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool call details for this run step. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        tool_calls: List["_models.RunStepToolCall"],
+        tool_calls: list["_models.RunStepToolCall"],
     ) -> None: ...
 
     @overload
@@ -7387,7 +7663,8 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = RunStepType.TOOL_CALLS  # type: ignore
 
 
 class SafetyCheck(_Model):
@@ -7453,7 +7730,8 @@ class ScreenshotAction(ComputerUseAction, discriminator="screenshot"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="screenshot", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "screenshot"  # type: ignore
 
 
 class ScrollAction(ComputerUseAction, discriminator="scroll"):
@@ -7502,7 +7780,8 @@ class ScrollAction(ComputerUseAction, discriminator="scroll"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="scroll", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "scroll"  # type: ignore
 
 
 class SharepointGroundingToolParameters(_Model):
@@ -7514,7 +7793,7 @@ class SharepointGroundingToolParameters(_Model):
     :vartype connection_list: list[~azure.ai.agents.models.ToolConnection]
     """
 
-    connection_list: Optional[List["_models.ToolConnection"]] = rest_field(
+    connection_list: Optional[list["_models.ToolConnection"]] = rest_field(
         name="connections", visibility=["read", "create", "update", "delete", "query"]
     )
     """The connections attached to this tool. There can be a maximum of 1 connection
@@ -7524,7 +7803,7 @@ class SharepointGroundingToolParameters(_Model):
     def __init__(
         self,
         *,
-        connection_list: Optional[List["_models.ToolConnection"]] = None,
+        connection_list: Optional[list["_models.ToolConnection"]] = None,
     ) -> None: ...
 
     @overload
@@ -7571,7 +7850,8 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_groundi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint_grounding", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "sharepoint_grounding"  # type: ignore
 
 
 class SubmitToolApprovalAction(RequiredAction, discriminator="submit_tool_approval"):
@@ -7609,7 +7889,8 @@ class SubmitToolApprovalAction(RequiredAction, discriminator="submit_tool_approv
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="submit_tool_approval", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "submit_tool_approval"  # type: ignore
 
 
 class SubmitToolApprovalDetails(_Model):
@@ -7620,7 +7901,7 @@ class SubmitToolApprovalDetails(_Model):
     :vartype tool_calls: list[~azure.ai.agents.models.RequiredToolCall]
     """
 
-    tool_calls: List["_models.RequiredToolCall"] = rest_field(
+    tool_calls: list["_models.RequiredToolCall"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of tool calls that must be approved for the agent thread run to continue. Required."""
@@ -7629,7 +7910,7 @@ class SubmitToolApprovalDetails(_Model):
     def __init__(
         self,
         *,
-        tool_calls: List["_models.RequiredToolCall"],
+        tool_calls: list["_models.RequiredToolCall"],
     ) -> None: ...
 
     @overload
@@ -7677,7 +7958,8 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="submit_tool_outputs", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "submit_tool_outputs"  # type: ignore
 
 
 class SubmitToolOutputsDetails(_Model):
@@ -7688,7 +7970,7 @@ class SubmitToolOutputsDetails(_Model):
     :vartype tool_calls: list[~azure.ai.agents.models.RequiredToolCall]
     """
 
-    tool_calls: List["_models.RequiredToolCall"] = rest_field(
+    tool_calls: list["_models.RequiredToolCall"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of tool calls that must be resolved for the agent thread run to continue. Required."""
@@ -7697,7 +7979,7 @@ class SubmitToolOutputsDetails(_Model):
     def __init__(
         self,
         *,
-        tool_calls: List["_models.RequiredToolCall"],
+        tool_calls: list["_models.RequiredToolCall"],
     ) -> None: ...
 
     @overload
@@ -7824,17 +8106,17 @@ class ThreadMessage(_Model):
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The role associated with the agent thread message. Required. Known values are: \"user\" and
      \"assistant\"."""
-    content: List["_models.MessageContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: list["_models.MessageContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of content items associated with the agent thread message. Required."""
     agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """If applicable, the ID of the agent that authored this message. Required."""
     run_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If applicable, the ID of the run associated with the authoring of this message. Required."""
-    attachments: List["_models.MessageAttachment"] = rest_field(
+    attachments: list["_models.MessageAttachment"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files attached to the message, and the tools they were added to. Required."""
-    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -7851,11 +8133,11 @@ class ThreadMessage(_Model):
         completed_at: datetime.datetime,
         incomplete_at: datetime.datetime,
         role: Union[str, "_models.MessageRole"],
-        content: List["_models.MessageContent"],
+        content: list["_models.MessageContent"],
         agent_id: str,
         run_id: str,
-        attachments: List["_models.MessageAttachment"],
-        metadata: Dict[str, str],
+        attachments: list["_models.MessageAttachment"],
+        metadata: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -7905,11 +8187,11 @@ class ThreadMessageOptions(_Model):
     """The content of the initial message. This may be a basic string (if you only
      need text) or an array of typed content blocks (for example, text, image_file,
      image_url, and so on). Required. Is either a str type or a [MessageInputContentBlock] type."""
-    attachments: Optional[List["_models.MessageAttachment"]] = rest_field(
+    attachments: Optional[list["_models.MessageAttachment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files attached to the message, and the tools they should be added to."""
-    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length."""
@@ -7920,8 +8202,8 @@ class ThreadMessageOptions(_Model):
         *,
         role: Union[str, "_models.MessageRole"],
         content: "_types.MessageInputContent",
-        attachments: Optional[List["_models.MessageAttachment"]] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        attachments: Optional[list["_models.MessageAttachment"]] = None,
+        metadata: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -8042,7 +8324,7 @@ class ThreadRun(_Model):
     """The ID of the model to use. Required."""
     instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The overridden system instructions used for this agent thread run. Required."""
-    tools: List["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: list["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The overridden enabled tools used for this agent thread run. Required."""
     created_at: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
@@ -8100,7 +8382,7 @@ class ThreadRun(_Model):
     """The response format of the tool calls used in this run. Required. Is one of the following
      types: str, Union[str, \"_models.AgentsResponseFormatMode\"], AgentsResponseFormat,
      ResponseFormatJsonSchemaType"""
-    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -8123,7 +8405,7 @@ class ThreadRun(_Model):
         last_error: "_models.RunError",
         model: str,
         instructions: str,
-        tools: List["_models.ToolDefinition"],
+        tools: list["_models.ToolDefinition"],
         created_at: datetime.datetime,
         expires_at: datetime.datetime,
         started_at: datetime.datetime,
@@ -8137,7 +8419,7 @@ class ThreadRun(_Model):
         truncation_strategy: "_models.TruncationObject",
         tool_choice: "_types.AgentsToolChoiceOption",
         response_format: "_types.AgentsResponseFormatOption",
-        metadata: Dict[str, str],
+        metadata: dict[str, str],
         parallel_tool_calls: bool,
         required_action: Optional["_models.RequiredAction"] = None,
         temperature: Optional[float] = None,
@@ -8175,7 +8457,7 @@ class ToolApproval(_Model):
      a run. Required."""
     approve: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The approval boolean value to be submitted. Required."""
-    headers: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Headers to be attached to the approval."""
 
     @overload
@@ -8184,7 +8466,7 @@ class ToolApproval(_Model):
         *,
         tool_call_id: str,
         approve: bool,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -8226,6 +8508,45 @@ class ToolConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ToolOutput(StructuredToolOutput, discriminator="function_call_output"):
+    """The output from a function tool to be submitted.
+
+    :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
+     required action from a run.
+    :vartype tool_call_id: str
+    :ivar type: The object type, which is always 'function_call_output'. Required. Default value is
+     "function_call_output".
+    :vartype type: str
+    :ivar output: The output from the function tool to be submitted.
+    :vartype output: str
+    """
+
+    type: Literal["function_call_output"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'function_call_output'. Required. Default value is
+     \"function_call_output\"."""
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The output from the function tool to be submitted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_call_id: Optional[str] = None,
+        output: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "function_call_output"  # type: ignore
+
+
 class ToolResources(_Model):
     """A set of resources that are used by the agent's tools. The resources are specific to the type
     of
@@ -8258,7 +8579,7 @@ class ToolResources(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Resources to be used by the ``azure_ai_search`` tool consisting of index IDs and names."""
-    mcp: Optional[List["_models.MCPToolResource"]] = rest_field(
+    mcp: Optional[list["_models.MCPToolResource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Resources to be used by the ``mcp`` tool consisting of a server label and headers."""
@@ -8270,7 +8591,7 @@ class ToolResources(_Model):
         code_interpreter: Optional["_models.CodeInterpreterToolResource"] = None,
         file_search: Optional["_models.FileSearchToolResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchToolResource"] = None,
-        mcp: Optional[List["_models.MCPToolResource"]] = None,
+        mcp: Optional[list["_models.MCPToolResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -8362,7 +8683,8 @@ class TypeAction(ComputerUseAction, discriminator="type"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="type", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "type"  # type: ignore
 
 
 class UploadFileRequest(_Model):
@@ -8477,7 +8799,7 @@ class VectorStore(_Model):
         visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
     """The Unix timestamp (in seconds) for when the vector store was last active. Required."""
-    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -8493,7 +8815,7 @@ class VectorStore(_Model):
         file_counts: "_models.VectorStoreFileCount",
         status: Union[str, "_models.VectorStoreStatus"],
         last_active_at: datetime.datetime,
-        metadata: Dict[str, str],
+        metadata: dict[str, str],
         expires_after: Optional["_models.VectorStoreExpirationPolicy"] = None,
         expires_at: Optional[datetime.datetime] = None,
     ) -> None: ...
@@ -8520,7 +8842,7 @@ class VectorStoreChunkingStrategyRequest(_Model):
     :vartype type: str or ~azure.ai.agents.models.VectorStoreChunkingStrategyRequestType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Known values are: \"auto\" and \"static\"."""
 
@@ -8566,7 +8888,8 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=VectorStoreChunkingStrategyRequestType.AUTO, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = VectorStoreChunkingStrategyRequestType.AUTO  # type: ignore
 
 
 class VectorStoreChunkingStrategyResponse(_Model):
@@ -8579,7 +8902,7 @@ class VectorStoreChunkingStrategyResponse(_Model):
     :vartype type: str or ~azure.ai.agents.models.VectorStoreChunkingStrategyResponseType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Known values are: \"other\" and \"static\"."""
 
@@ -8625,7 +8948,8 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.OTHER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = VectorStoreChunkingStrategyResponseType.OTHER  # type: ignore
 
 
 class VectorStoreConfiguration(_Model):
@@ -8636,7 +8960,7 @@ class VectorStoreConfiguration(_Model):
     :vartype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
     """
 
-    data_sources: List["_models.VectorStoreDataSource"] = rest_field(
+    data_sources: list["_models.VectorStoreDataSource"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Data sources. Required."""
@@ -8645,7 +8969,7 @@ class VectorStoreConfiguration(_Model):
     def __init__(
         self,
         *,
-        data_sources: List["_models.VectorStoreDataSource"],
+        data_sources: list["_models.VectorStoreDataSource"],
     ) -> None: ...
 
     @overload
@@ -9153,7 +9477,8 @@ class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyReques
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=VectorStoreChunkingStrategyRequestType.STATIC, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = VectorStoreChunkingStrategyRequestType.STATIC  # type: ignore
 
 
 class VectorStoreStaticChunkingStrategyResponse(
@@ -9189,7 +9514,8 @@ class VectorStoreStaticChunkingStrategyResponse(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.STATIC, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = VectorStoreChunkingStrategyResponseType.STATIC  # type: ignore
 
 
 class WaitAction(ComputerUseAction, discriminator="wait"):
@@ -9217,4 +9543,5 @@ class WaitAction(ComputerUseAction, discriminator="wait"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="wait", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "wait"  # type: ignore

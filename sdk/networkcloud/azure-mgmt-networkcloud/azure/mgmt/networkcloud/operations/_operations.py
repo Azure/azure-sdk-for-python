@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -30,7 +30,8 @@ from .._configuration import NetworkCloudMgmtClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -40,7 +41,7 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,7 +68,7 @@ class Operations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -75,7 +76,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List resource provider operations.
 
         Get a list of all available resource provider operations. It contains a URL link to get the
@@ -144,7 +145,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

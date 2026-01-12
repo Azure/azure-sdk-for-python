@@ -65,7 +65,7 @@ def main():
                         },
                     ]
                 },
-                "safetyProfile": {"allowDeletionOfReplicatedLocations": False},
+                "safetyProfile": {"allowDeletionOfReplicatedLocations": False, "blockDeletionBeforeEndOfLife": False},
                 "storageProfile": {
                     "dataDiskImages": [
                         {
@@ -91,6 +91,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/GalleryRP/stable/2023-07-03/examples/galleryExamples/GalleryImageVersion_Create_WithVHD.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/GalleryRP/stable/2024-03-03/examples/galleryExamples/GalleryImageVersion_Create_WithVHD.json
 if __name__ == "__main__":
     main()

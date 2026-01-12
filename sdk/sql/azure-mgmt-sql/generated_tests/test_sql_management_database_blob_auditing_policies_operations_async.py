@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseBlobAuditingPoliciesOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementDatabaseBlobAuditingPoliciesOperationsAsync(AzureMgmtReco
             server_name="str",
             database_name="str",
             blob_auditing_policy_name="default",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestSqlManagementDatabaseBlobAuditingPoliciesOperationsAsync(AzureMgmtReco
                 "type": "str",
             },
             blob_auditing_policy_name="default",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself

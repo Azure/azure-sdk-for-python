@@ -21,6 +21,31 @@ class TestComputeManagementGalleryImagesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_gallery_images_list_by_gallery(self, resource_group):
+        response = self.client.gallery_images.list_by_gallery(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            api_version="2024-03-03",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_gallery_images_get(self, resource_group):
+        response = await self.client.gallery_images.get(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            gallery_image_name="str",
+            api_version="2024-03-03",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_gallery_images_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.gallery_images.begin_create_or_update(
@@ -29,12 +54,13 @@ class TestComputeManagementGalleryImagesOperationsAsync(AzureMgmtRecordedTestCas
                 gallery_image_name="str",
                 gallery_image={
                     "location": "str",
+                    "allowUpdateImage": bool,
                     "architecture": "str",
                     "description": "str",
                     "disallowed": {"diskTypes": ["str"]},
                     "endOfLifeDate": "2020-02-20 00:00:00",
                     "eula": "str",
-                    "features": [{"name": "str", "value": "str"}],
+                    "features": [{"name": "str", "startsAtVersion": "str", "value": "str"}],
                     "hyperVGeneration": "str",
                     "id": "str",
                     "identifier": {"offer": "str", "publisher": "str", "sku": "str"},
@@ -46,10 +72,18 @@ class TestComputeManagementGalleryImagesOperationsAsync(AzureMgmtRecordedTestCas
                     "purchasePlan": {"name": "str", "product": "str", "publisher": "str"},
                     "recommended": {"memory": {"max": 0, "min": 0}, "vCPUs": {"max": 0, "min": 0}},
                     "releaseNoteUri": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2023-07-03",
+                api_version="2024-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -65,12 +99,13 @@ class TestComputeManagementGalleryImagesOperationsAsync(AzureMgmtRecordedTestCas
                 gallery_name="str",
                 gallery_image_name="str",
                 gallery_image={
+                    "allowUpdateImage": bool,
                     "architecture": "str",
                     "description": "str",
                     "disallowed": {"diskTypes": ["str"]},
                     "endOfLifeDate": "2020-02-20 00:00:00",
                     "eula": "str",
-                    "features": [{"name": "str", "value": "str"}],
+                    "features": [{"name": "str", "startsAtVersion": "str", "value": "str"}],
                     "hyperVGeneration": "str",
                     "id": "str",
                     "identifier": {"offer": "str", "publisher": "str", "sku": "str"},
@@ -85,22 +120,9 @@ class TestComputeManagementGalleryImagesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2023-07-03",
+                api_version="2024-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_gallery_images_get(self, resource_group):
-        response = await self.client.gallery_images.get(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            gallery_image_name="str",
-            api_version="2023-07-03",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -113,21 +135,9 @@ class TestComputeManagementGalleryImagesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 gallery_image_name="str",
-                api_version="2023-07-03",
+                api_version="2024-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_gallery_images_list_by_gallery(self, resource_group):
-        response = self.client.gallery_images.list_by_gallery(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            api_version="2023-07-03",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

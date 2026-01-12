@@ -40,7 +40,9 @@ class TestCallRecordingClient(unittest.TestCase):
         callautomation_client.start_recording(call_locator, channel_affinity=[channel_affinity])
         callautomation_client.start_recording(group_call_id="locatorId", channel_affinity=[channel_affinity])
         callautomation_client.start_recording(server_call_id="locatorId", channel_affinity=[channel_affinity])
-        callautomation_client.start_recording(call_connection_id=self.call_connection_id, channel_affinity=[channel_affinity])
+        callautomation_client.start_recording(
+            call_connection_id=self.call_connection_id, channel_affinity=[channel_affinity]
+        )
 
         with pytest.raises(ValueError):
             call_locator = ServerCallLocator(server_call_id="locatorId")

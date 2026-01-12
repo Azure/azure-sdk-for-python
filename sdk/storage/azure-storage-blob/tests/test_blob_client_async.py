@@ -15,6 +15,7 @@ from azure.storage.blob import (
     ResourceTypes,
     VERSION,
 )
+from azure.storage.blob._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.blob.aio import (
     BlobClient,
     ContainerClient,
@@ -88,6 +89,24 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], storage_account_name, storage_account_key)
             assert service.scheme == 'https'
+
+    @BlobPreparer()
+    def test_create_service_use_development_storage(self):
+        for service_type in SERVICES.items():
+            # Act
+            service = service_type[0].from_connection_string(
+                "UseDevelopmentStorage=true;",
+                container_name="test",
+                blob_name="test"
+            )
+
+            # Assert
+            assert service is not None
+            assert service.scheme == "http"
+            assert service.account_name == DEVSTORE_ACCOUNT_NAME
+            assert service.credential.account_name == DEVSTORE_ACCOUNT_NAME
+            assert service.credential.account_key == DEVSTORE_ACCOUNT_KEY
+            assert f"127.0.0.1:10000/{DEVSTORE_ACCOUNT_NAME}" in service.url
 
     @BlobPreparer()
     def test_create_service_with_sas(self, **kwargs):
@@ -344,19 +363,6 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.secondary_endpoint.startswith(
                     'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account_name, service_type[1]))
             assert service.scheme == 'http'
-
-    @BlobPreparer()
-    def test_create_service_with_connection_string_emulated(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(storage_account_name, storage_account_key)
-
-            # Act
-            with pytest.raises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
     @BlobPreparer()
     def test_create_service_with_connection_string_anonymous(self):
