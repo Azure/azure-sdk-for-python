@@ -140,7 +140,9 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
 
         Each entry in the list corresponds to one page/request made during
         the query execution. Headers are captured as queries are iterated,
-        so this list grows as you consume more results.
+        so this list grows as you consume more results. This method is typically accessed via the
+        :class:`~azure.cosmos.CosmosItemPaged` object returned from
+        :meth:`~azure.cosmos.ContainerProxy.query_items`.
 
         :return: List of response headers from each page request.
         :rtype: list[~azure.core.utils.CaseInsensitiveDict]
