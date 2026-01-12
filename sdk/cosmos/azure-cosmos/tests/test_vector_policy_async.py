@@ -58,12 +58,14 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                         "dimensions": 256,
                         "distanceFunction": "euclidean"
                     }]}
+            container_id = 'vector_container_' + data_type
             created_container = await self.test_db.create_container(
-                id='vector_container_' + data_type,
+                id=container_id,
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
             properties = await created_container.read()
             assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+            await self.test_db.delete_container(container_id)
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
