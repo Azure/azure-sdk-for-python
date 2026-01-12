@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -44,7 +44,8 @@ from ...operations._l3_networks_operations import (
 from .._configuration import NetworkCloudMgmtClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class L3NetworksOperations:
@@ -67,11 +68,20 @@ class L3NetworksOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.L3Network"]:
+    def list_by_subscription(
+        self, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.L3Network"]:
         """List layer 3 (L3) networks in the subscription.
 
         Get a list of layer 3 (L3) networks in the provided subscription.
 
+        :param top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :type top: int
+        :param skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :type skip_token: str
         :return: An iterator like instance of either L3Network or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.L3Network]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -95,6 +105,8 @@ class L3NetworksOperations:
 
                 _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -136,7 +148,10 @@ class L3NetworksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -144,7 +159,9 @@ class L3NetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.L3Network"]:
+    def list_by_resource_group(
+        self, resource_group_name: str, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.L3Network"]:
         """List layer 3 (L3) networks in the resource group.
 
         Get a list of layer 3 (L3) networks in the provided resource group.
@@ -152,6 +169,13 @@ class L3NetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :param top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :type top: int
+        :param skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :type skip_token: str
         :return: An iterator like instance of either L3Network or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.L3Network]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -176,6 +200,8 @@ class L3NetworksOperations:
                 _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -217,7 +243,10 @@ class L3NetworksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -272,7 +301,10 @@ class L3NetworksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("L3Network", pipeline_response.http_response)
@@ -343,7 +375,10 @@ class L3NetworksOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -574,7 +609,10 @@ class L3NetworksOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -794,9 +832,10 @@ class L3NetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if l3_network_update_parameters else None
         cls: ClsType[_models.L3Network] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if l3_network_update_parameters else None
         _json = None
         _content = None
         if isinstance(l3_network_update_parameters, (IOBase, bytes)):
@@ -831,7 +870,10 @@ class L3NetworksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("L3Network", pipeline_response.http_response)

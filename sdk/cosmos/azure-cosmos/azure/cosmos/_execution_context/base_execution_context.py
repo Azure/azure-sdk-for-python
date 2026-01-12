@@ -25,7 +25,8 @@ database service.
 
 from collections import deque
 import copy
-from .. import _retry_utility, http_constants
+from .. import _retry_utility, http_constants, exceptions
+
 
 # pylint: disable=protected-access
 
@@ -129,11 +130,36 @@ class _QueryExecutionContextBase(object):
         return fetched_items
 
     def _fetch_items_helper_with_retries(self, fetch_function):
-        def callback():
-            return self._fetch_items_helper_no_retries(fetch_function)
+        # TODO: Properly propagate kwargs from retry utility to fetch function
+        # the callback keep the **kwargs parameter to maintain compatibility with the retry utility's execution pattern.
+        # Execute passes retry context parameters (timeout, operation start time, logger, etc.)
+        # The callback need to accept these parameters even if unused
+        # Removing **kwargs results in a TypeError when Execute tries to pass these parameters
+        def execute_fetch():
+            def callback(**kwargs):  # pylint: disable=unused-argument
+                return self._fetch_items_helper_no_retries(fetch_function)
 
-        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
+            return _retry_utility.Execute(
+                self._client, self._client._global_endpoint_manager, callback, **self._options
+            )
 
+        max_retries = 3
+        attempt = 0
+
+        while attempt <= max_retries:
+            try:
+                return execute_fetch()
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    attempt += 1
+                    if attempt > max_retries:
+                        raise  # Exhausted retries, propagate error
+
+                    # Refresh routing map to get new partition key ranges
+                    self._client.refresh_routing_map_provider()
+                    # Retry immediately (no backoff needed for partition splits)
+                    continue
+                raise  # Not a partition split error, propagate immediately
     next = __next__  # Python 2 compatibility.
 
 

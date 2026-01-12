@@ -23,10 +23,34 @@ from urllib.parse import urlparse
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.tracing import AbstractSpan
 from ._utils import (
+    ERROR_TYPE,
+    GEN_AI_AGENT_ID,
+    GEN_AI_AGENT_NAME,
+    GEN_AI_ASSISTANT_MESSAGE_EVENT,
+    GEN_AI_CLIENT_OPERATION_DURATION,
+    GEN_AI_CLIENT_TOKEN_USAGE,
+    GEN_AI_CONVERSATION_ID,
+    GEN_AI_CONVERSATION_ITEM_EVENT,
+    GEN_AI_CONVERSATION_ITEM_ID,
     GEN_AI_EVENT_CONTENT,
-    GEN_AI_PROVIDER_NAME,
+    GEN_AI_OPENAI_RESPONSE_SERVICE_TIER,
+    GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT,
     GEN_AI_OPERATION_NAME,
+    GEN_AI_PROVIDER_NAME,
+    GEN_AI_REQUEST_MODEL,
+    GEN_AI_REQUEST_TOOLS,
+    GEN_AI_RESPONSE_FINISH_REASONS,
+    GEN_AI_RESPONSE_ID,
+    GEN_AI_RESPONSE_MODEL,
+    GEN_AI_TOKEN_TYPE,
+    GEN_AI_TOOL_MESSAGE_EVENT,
+    GEN_AI_USAGE_INPUT_TOKENS,
+    GEN_AI_USAGE_OUTPUT_TOKENS,
+    GEN_AI_USER_MESSAGE_EVENT,
+    GEN_AI_WORKFLOW_ACTION_EVENT,
     OperationName,
+    SERVER_ADDRESS,
+    SERVER_PORT,
     start_span,
 )
 
@@ -178,12 +202,16 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             # Operation duration histogram
             _operation_duration_histogram = meter.create_histogram(
-                name="gen_ai.client.operation.duration", description="Duration of GenAI operations", unit="s"
+                name=GEN_AI_CLIENT_OPERATION_DURATION,
+                description="Duration of GenAI operations",
+                unit="s",
             )
 
             # Token usage histogram
             _token_usage_histogram = meter.create_histogram(
-                name="gen_ai.client.token.usage", description="Token usage for GenAI operations", unit="token"
+                name=GEN_AI_CLIENT_TOKEN_USAGE,
+                description="Token usage for GenAI operations",
+                unit="token",
             )
 
         except Exception as e:  # pylint: disable=broad-exception-caught
@@ -205,18 +233,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             return
 
         attributes = {
-            "gen_ai.operation.name": operation_name,
+            GEN_AI_OPERATION_NAME: operation_name,
             GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
         }
 
         if server_address:
-            attributes["server.address"] = server_address
+            attributes[SERVER_ADDRESS] = server_address
         if port:
-            attributes["server.port"] = str(port)
+            attributes[SERVER_PORT] = str(port)
         if model:
-            attributes["gen_ai.request.model"] = model
+            attributes[GEN_AI_REQUEST_MODEL] = model
         if error_type:
-            attributes["error.type"] = error_type
+            attributes[ERROR_TYPE] = error_type
 
         try:
             _operation_duration_histogram.record(duration, attributes)
@@ -238,15 +266,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             return
 
         attributes = {
-            "gen_ai.operation.name": operation_name,
+            GEN_AI_OPERATION_NAME: operation_name,
             GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
-            "gen_ai.token.type": token_type,
+            GEN_AI_TOKEN_TYPE: token_type,
         }
 
         if server_address:
-            attributes["server.address"] = server_address
+            attributes[SERVER_ADDRESS] = server_address
         if model:
-            attributes["gen_ai.request.model"] = model
+            attributes[GEN_AI_REQUEST_MODEL] = model
 
         try:
             _token_usage_histogram.record(token_count, attributes)
@@ -265,10 +293,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             if hasattr(response, "usage"):
                 usage = response.usage
                 if hasattr(usage, "prompt_tokens") and usage.prompt_tokens:
-                    self._record_token_usage(usage.prompt_tokens, "input", operation_name, server_address, model)
+                    self._record_token_usage(
+                        usage.prompt_tokens,
+                        "input",
+                        operation_name,
+                        server_address,
+                        model,
+                    )
                 if hasattr(usage, "completion_tokens") and usage.completion_tokens:
                     self._record_token_usage(
-                        usage.completion_tokens, "completion", operation_name, server_address, model
+                        usage.completion_tokens,
+                        "completion",
+                        operation_name,
+                        server_address,
+                        model,
                     )
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to extract token metrics from response: %s", e)
@@ -307,9 +345,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             request_model = None
 
             if span_attributes:
-                server_address = span_attributes.get("server.address")
-                server_port = span_attributes.get("server.port")
-                request_model = span_attributes.get("gen_ai.request.model")
+                server_address = span_attributes.get(SERVER_ADDRESS)
+                server_port = span_attributes.get(SERVER_PORT)
+                request_model = span_attributes.get(GEN_AI_REQUEST_MODEL)
 
             # Extract response-specific attributes from result if provided
             response_model = None
@@ -488,9 +526,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM}
         # Removed conversation_id from event attributes as requested - it's redundant
         # if conversation_id:
-        #     attrs["gen_ai.conversation.id"] = conversation_id
-        if message_role:
-            attrs["gen_ai.message.role"] = message_role
+        #     attrs[GEN_AI_CONVERSATION_ID] = conversation_id
+        # Commented out - message_role is now included in the event content instead
+        # if message_role:
+        #     attrs[GEN_AI_MESSAGE_ROLE] = message_role
         return attrs
 
     def _add_message_event(
@@ -499,35 +538,62 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         role: str,
         content: Optional[str] = None,
         conversation_id: Optional[str] = None,
+        finish_reason: Optional[str] = None,
     ) -> None:
         """Add a message event to the span."""
-        event_body: Dict[str, Any] = {}
+        content_array: List[Dict[str, Any]] = []
 
-        if _trace_responses_content and content:
-            # Use consistent structured format with content array
-            event_body["content"] = [{"type": "text", "text": content}]
+        # Always include role and finish_reason, only include actual content if tracing is enabled
+        if content:
+            parts = []
+            if _trace_responses_content:
+                # Include actual content when tracing is enabled
+                parts = [{"type": "text", "content": content}]
+            else:
+                # When content recording is off but we know there's content, include type-only structure
+                parts = [{"type": "text"}]
+
+            # Create role object
+            role_obj: Dict[str, Any] = {"role": role}
+
+            # Always add parts to show content structure
+            role_obj["parts"] = parts
+
+            # Add finish_reason for assistant messages if available
+            if role == "assistant" and finish_reason:
+                role_obj["finish_reason"] = finish_reason
+
+            content_array.append(role_obj)
 
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
             message_role=role,
         )
-        # Always use JSON format but only include content when recording is enabled
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+        # Store as JSON array directly without outer wrapper
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
 
-        event_name = f"gen_ai.{role}.message"
+        # Map role to appropriate event name constant
+        if role == "user":
+            event_name = GEN_AI_USER_MESSAGE_EVENT
+        elif role == "assistant":
+            event_name = GEN_AI_ASSISTANT_MESSAGE_EVENT
+        else:
+            # Fallback for any other roles (shouldn't happen in practice)
+            event_name = f"gen_ai.{role}.message"
+
         span.span_instance.add_event(name=event_name, attributes=attributes)
 
-    def _add_tool_message_events(
+    def _add_tool_message_events(  # pylint: disable=too-many-branches
         self,
         span: "AbstractSpan",
         tool_outputs: List[Any],
         conversation_id: Optional[str] = None,
     ) -> None:
         """Add tool message events (tool call outputs) to the span."""
-        event_body: Dict[str, Any] = {}
+        parts: List[Dict[str, Any]] = []
 
-        if _trace_responses_content and tool_outputs:
-            content_items = []
+        # Always iterate through tool_outputs to build type and id metadata
+        if tool_outputs:
             for output_item in tool_outputs:
                 try:
                     tool_output: Dict[str, Any] = {}
@@ -541,11 +607,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if not item_type:
                         continue  # Skip if no type
 
-                    # Convert function_call_output to "function"
-                    if item_type == "function_call_output":
-                        tool_output["type"] = "function"
-                    else:
-                        tool_output["type"] = item_type
+                    # Use the API type directly
+                    tool_output["type"] = item_type
 
                     # Add call_id as "id" - handle both dict and object
                     if isinstance(output_item, dict):
@@ -556,41 +619,142 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if call_id:
                         tool_output["id"] = call_id
 
-                    # Add output field - parse JSON string if needed
-                    if isinstance(output_item, dict):
-                        output_value = output_item.get("output")
-                    else:
-                        output_value = getattr(output_item, "output", None)
-
-                    if output_value is not None:
-                        # Try to parse JSON string into object
-                        if isinstance(output_value, str):
-                            try:
-                                tool_output["output"] = json.loads(output_value)
-                            except (json.JSONDecodeError, TypeError):
-                                # If parsing fails, keep as string
-                                tool_output["output"] = output_value
+                    # Add output field only if content recording is enabled
+                    if _trace_responses_content:
+                        # Add output field - parse JSON string if needed
+                        if isinstance(output_item, dict):
+                            output_value = output_item.get("output")
                         else:
-                            tool_output["output"] = output_value
+                            output_value = getattr(output_item, "output", None)
 
-                    # Use standard content format: {"type": "tool_call_output", "tool_call_output": {...}}
-                    content_items.append({"type": "tool_call_output", "tool_call_output": tool_output})
+                        if output_value is not None:
+                            # Try to parse JSON string into object
+                            if isinstance(output_value, str):
+                                try:
+                                    parsed_output = json.loads(output_value)
+                                    # For computer_call_output, strip binary data if binary tracing is disabled
+                                    if item_type == "computer_call_output" and not _trace_binary_data:
+                                        if isinstance(parsed_output, dict):
+                                            output_type = parsed_output.get("type")
+                                            # Remove image_url from computer_screenshot if binary data tracing is off
+                                            if output_type == "computer_screenshot" and "image_url" in parsed_output:
+                                                parsed_output = {
+                                                    k: v for k, v in parsed_output.items() if k != "image_url"
+                                                }
+                                    tool_output["output"] = parsed_output
+                                except (json.JSONDecodeError, TypeError):
+                                    # If parsing fails, keep as string
+                                    tool_output["output"] = output_value
+                            else:
+                                # For non-string output, also check for binary data in computer outputs
+                                if item_type == "computer_call_output" and not _trace_binary_data:
+                                    if isinstance(output_value, dict):
+                                        output_type = output_value.get("type")
+                                        if output_type == "computer_screenshot" and "image_url" in output_value:
+                                            output_value = {k: v for k, v in output_value.items() if k != "image_url"}
+                                tool_output["output"] = output_value
+
+                    # Add to parts array (type "tool_call_output" wraps the tool output)
+                    # Always include type and id, even when content recording is disabled
+                    parts.append({"type": "tool_call_output", "content": tool_output})
                 except Exception:  # pylint: disable=broad-exception-caught
                     # Skip items that can't be processed
-                    logger.debug("Failed to process tool output item: %s", output_item, exc_info=True)
+                    logger.debug(
+                        "Failed to process tool output item: %s",
+                        output_item,
+                        exc_info=True,
+                    )
                     continue
 
-            if content_items:
-                event_body["content"] = content_items
+        # Always include parts array with type and id, even when content recording is disabled
+        content_array = [{"role": "tool", "parts": parts}] if parts else []
 
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
             message_role="tool",
         )
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+        # Store as JSON array directly without outer wrapper
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
 
         # Use "tool" for the event name: gen_ai.tool.message
-        span.span_instance.add_event(name="gen_ai.tool.message", attributes=attributes)
+        span.span_instance.add_event(name=GEN_AI_TOOL_MESSAGE_EVENT, attributes=attributes)
+
+    def _add_mcp_response_events(
+        self,
+        span: "AbstractSpan",
+        mcp_responses: List[Any],
+        conversation_id: Optional[str] = None,
+    ) -> None:
+        """Add MCP response events (user-provided responses like approval) to the span."""
+        parts: List[Dict[str, Any]] = []
+
+        # Always iterate through mcp_responses to build metadata
+        if mcp_responses:
+            for response_item in mcp_responses:
+                try:
+                    mcp_response: Dict[str, Any] = {}
+
+                    # Get the item type - handle both dict and object attributes
+                    if isinstance(response_item, dict):
+                        item_type = response_item.get("type")
+                    else:
+                        item_type = getattr(response_item, "type", None)
+
+                    if not item_type:
+                        continue  # Skip if no type
+
+                    # Use the full MCP type (e.g., "mcp_approval_response")
+                    mcp_response["type"] = item_type
+
+                    # Add id/approval_request_id - handle both dict and object
+                    if isinstance(response_item, dict):
+                        response_id = response_item.get("id") or response_item.get("approval_request_id")
+                    else:
+                        response_id = getattr(response_item, "id", None) or getattr(
+                            response_item, "approval_request_id", None
+                        )
+
+                    if response_id:
+                        mcp_response["id"] = response_id
+
+                    # Add additional fields only if content recording is enabled
+                    if _trace_responses_content:
+                        # Add approval-specific fields
+                        if isinstance(response_item, dict):
+                            for field in ["approve", "approval_request_id", "status"]:
+                                if field in response_item and response_item[field] is not None:
+                                    mcp_response[field] = response_item[field]
+                        else:
+                            for field in ["approve", "approval_request_id", "status"]:
+                                if hasattr(response_item, field):
+                                    value = getattr(response_item, field)
+                                    if value is not None:
+                                        mcp_response[field] = value
+
+                    # Add to parts array (type "mcp" wraps the MCP response)
+                    # Always include type and id, even when content recording is disabled
+                    parts.append({"type": "mcp", "content": mcp_response})
+                except Exception:  # pylint: disable=broad-exception-caught
+                    # Skip items that can't be processed
+                    logger.debug(
+                        "Failed to process MCP response item: %s",
+                        response_item,
+                        exc_info=True,
+                    )
+                    continue
+
+        # Always include parts array with type and id, even when content recording is disabled
+        content_array = [{"role": "user", "parts": parts}] if parts else []
+
+        attributes = self._create_event_attributes(
+            conversation_id=conversation_id,
+            message_role="user",
+        )
+        # Store as JSON array directly without outer wrapper
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+
+        # Use user message event name since MCP responses are user inputs
+        span.span_instance.add_event(name=GEN_AI_USER_MESSAGE_EVENT, attributes=attributes)
 
     def _add_workflow_action_events(
         self,
@@ -622,33 +786,35 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
                 }
 
-                # Add event content
-                event_body: Dict[str, Any] = {}
-                workflow_content: Dict[str, Any] = {
-                    "type": "workflow_action",
-                }
+                # Build workflow action details object
+                workflow_details: Dict[str, Any] = {}
 
                 if _trace_responses_content:
-                    # Include action details in content using standard format
+                    # Include action details in content using optimized format
                     if status:
-                        workflow_content["status"] = status
+                        workflow_details["status"] = status
                     if action_id:
-                        workflow_content["action_id"] = action_id
+                        workflow_details["action_id"] = action_id
                     if previous_action_id:
-                        workflow_content["previous_action_id"] = previous_action_id
-
-                    event_body["content"] = [workflow_content]
+                        workflow_details["previous_action_id"] = previous_action_id
                 else:
-                    # When content recording is off, only include type and status
+                    # When content recording is off, only include status
                     if status:
-                        workflow_content["status"] = status
+                        workflow_details["status"] = status
 
-                    event_body["content"] = [workflow_content]
+                # Use consistent format with role and parts wrapper
+                content_array = [
+                    {
+                        "role": "workflow",
+                        "parts": [{"type": "workflow_action", "content": workflow_details}],
+                    }
+                ]
 
-                event_attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+                # Store as JSON array directly without outer wrapper
+                event_attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
 
                 # Add the workflow action event
-                span.span_instance.add_event(name="gen_ai.workflow.action", attributes=event_attributes)
+                span.span_instance.add_event(name=GEN_AI_WORKFLOW_ACTION_EVENT, attributes=event_attributes)
 
     # pylint: disable=too-many-branches
     def _add_structured_input_events(
@@ -674,112 +840,131 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if not content:
                     continue
 
-                # Build structured event content with content parts
-                event_body: Dict[str, Any] = {}
+                # Build parts array with content parts
+                parts: List[Dict[str, Any]] = []
+                has_content = False
 
-                # Only process content if content recording is enabled
-                if _trace_responses_content:
-                    content_parts = []
-                    has_non_text_content = False
+                # Content can be a list of content items
+                if isinstance(content, list):
+                    for content_item in content:
+                        content_type = None
+                        has_content = True
 
-                    # Content can be a list of content items
-                    if isinstance(content, list):
-                        for content_item in content:
-                            content_type = None
-
-                            # Handle dict format
-                            if isinstance(content_item, dict):
-                                content_type = content_item.get("type")
-                                if content_type in ("input_text", "text"):
+                        # Handle dict format
+                        if isinstance(content_item, dict):
+                            content_type = content_item.get("type")
+                            if content_type in ("input_text", "text"):
+                                if _trace_responses_content:
                                     text = content_item.get("text")
                                     if text:
-                                        content_parts.append({"type": "text", "text": text})
-                                elif content_type == "input_image":
-                                    has_non_text_content = True
-                                    image_part = {"type": "image"}
-                                    # Include image data if binary data tracing is enabled
-                                    if _trace_binary_data:
-                                        image_url = content_item.get("image_url")
-                                        if image_url:
-                                            image_part["image_url"] = image_url
-                                    content_parts.append(image_part)
-                                elif content_type == "input_file":
-                                    has_non_text_content = True
-                                    file_part = {"type": "file"}
+                                        parts.append({"type": "text", "content": text})
+                                else:
+                                    parts.append({"type": "text"})
+                            elif content_type == "input_image":
+                                image_part: Dict[str, Any] = {"type": "image"}
+                                # Include image data if binary data tracing is enabled
+                                if _trace_responses_content and _trace_binary_data:
+                                    image_url = content_item.get("image_url")
+                                    if image_url:
+                                        image_part["content"] = image_url
+                                parts.append(image_part)
+                            elif content_type == "input_file":
+                                file_part: Dict[str, Any] = {"type": "file"}
+                                if _trace_responses_content:
+                                    file_content: Dict[str, Any] = {}
                                     # Only include filename and file_id if content recording is enabled
                                     filename = content_item.get("filename")
                                     if filename:
-                                        file_part["filename"] = filename
+                                        file_content["filename"] = filename
                                     file_id = content_item.get("file_id")
                                     if file_id:
-                                        file_part["file_id"] = file_id
+                                        file_content["file_id"] = file_id
                                     # Only include file_data if binary data tracing is enabled
                                     if _trace_binary_data:
                                         file_data = content_item.get("file_data")
                                         if file_data:
-                                            file_part["file_data"] = file_data
-                                    content_parts.append(file_part)
-                                elif content_type:
-                                    # Other content types (audio, video, etc.)
-                                    has_non_text_content = True
-                                    content_parts.append({"type": content_type})
+                                            file_content["file_data"] = file_data
+                                    if file_content:
+                                        file_part["content"] = file_content
+                                parts.append(file_part)
+                            elif content_type:
+                                # Other content types (audio, video, etc.)
+                                parts.append({"type": content_type})
 
-                            # Handle object format
-                            elif hasattr(content_item, "type"):
-                                content_type = getattr(content_item, "type", None)
-                                if content_type in ("input_text", "text"):
+                        # Handle object format
+                        elif hasattr(content_item, "type"):
+                            content_type = getattr(content_item, "type", None)
+                            if content_type in ("input_text", "text"):
+                                if _trace_responses_content:
                                     text = getattr(content_item, "text", None)
                                     if text:
-                                        content_parts.append({"type": "text", "text": text})
-                                elif content_type == "input_image":
-                                    has_non_text_content = True
-                                    image_part = {"type": "image"}
-                                    # Include image data if binary data tracing is enabled
-                                    if _trace_binary_data:
-                                        image_url = getattr(content_item, "image_url", None)
-                                        if image_url:
-                                            image_part["image_url"] = image_url
-                                    content_parts.append(image_part)
-                                elif content_type == "input_file":
-                                    has_non_text_content = True
-                                    file_part = {"type": "file"}
+                                        parts.append({"type": "text", "content": text})
+                                else:
+                                    parts.append({"type": "text"})
+                            elif content_type == "input_image":
+                                image_part = {"type": "image"}
+                                # Include image data if binary data tracing is enabled
+                                if _trace_responses_content and _trace_binary_data:
+                                    image_url = getattr(content_item, "image_url", None)
+                                    if image_url:
+                                        image_part["content"] = image_url
+                                parts.append(image_part)
+                            elif content_type == "input_file":
+                                file_part = {"type": "file"}
+                                if _trace_responses_content:
+                                    file_content = {}
                                     # Only include filename and file_id if content recording is enabled
                                     filename = getattr(content_item, "filename", None)
                                     if filename:
-                                        file_part["filename"] = filename
+                                        file_content["filename"] = filename
                                     file_id = getattr(content_item, "file_id", None)
                                     if file_id:
-                                        file_part["file_id"] = file_id
+                                        file_content["file_id"] = file_id
                                     # Only include file_data if binary data tracing is enabled
                                     if _trace_binary_data:
                                         file_data = getattr(content_item, "file_data", None)
                                         if file_data:
-                                            file_part["file_data"] = file_data
-                                    content_parts.append(file_part)
-                                elif content_type:
-                                    # Other content types
-                                    has_non_text_content = True
-                                    content_parts.append({"type": content_type})
+                                            file_content["file_data"] = file_data
+                                    if file_content:
+                                        file_part["content"] = file_content
+                                parts.append(file_part)
+                            elif content_type:
+                                # Other content types
+                                parts.append({"type": content_type})
 
-                    # Only add content if we have content parts
-                    if content_parts:
-                        # Always use consistent structured format
-                        event_body["content"] = content_parts
+                # Always create role object and include parts if we detected content
+                role_obj: Dict[str, Any] = {"role": role}
+                if parts:
+                    role_obj["parts"] = parts
+                content_array = [role_obj]
 
                 # Create event attributes
                 attributes = self._create_event_attributes(
                     conversation_id=conversation_id,
                     message_role=role,
                 )
-                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+                # Store as JSON array directly without outer wrapper
+                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+
+                # Map role to appropriate event name constant
+                if role == "user":
+                    event_name = GEN_AI_USER_MESSAGE_EVENT
+                elif role == "assistant":
+                    event_name = GEN_AI_ASSISTANT_MESSAGE_EVENT
+                else:
+                    # Fallback for any other roles (shouldn't happen in practice)
+                    event_name = f"gen_ai.{role}.message"
 
                 # Add the event
-                event_name = f"gen_ai.{role}.message"
                 span.span_instance.add_event(name=event_name, attributes=attributes)
 
             except Exception:  # pylint: disable=broad-exception-caught
                 # Skip items that can't be processed
-                logger.debug("Failed to process structured input item: %s", input_item, exc_info=True)
+                logger.debug(
+                    "Failed to process structured input item: %s",
+                    input_item,
+                    exc_info=True,
+                )
                 continue
 
     def _emit_tool_call_event(
@@ -789,13 +974,36 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Helper to emit a single tool call event."""
-        event_body: Dict[str, Any] = {"content": [{"type": "tool_call", "tool_call": tool_call}]}
+        # Wrap tool call in parts array
+        parts = [{"type": "tool_call", "content": tool_call}]
+        content_array = [{"role": "assistant", "parts": parts}]
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
             message_role="assistant",
         )
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+        # Store as JSON array directly without outer wrapper
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+        span.span_instance.add_event(name=GEN_AI_ASSISTANT_MESSAGE_EVENT, attributes=attributes)
+
+    def _emit_tool_output_event(
+        self,
+        span: "AbstractSpan",
+        tool_output: Dict[str, Any],
+        conversation_id: Optional[str] = None,
+    ) -> None:
+        """Helper to emit a single tool output event."""
+        # Wrap tool output in parts array
+        # Tool outputs are inputs TO the model (from tool execution), so use role "tool"
+        parts = [{"type": "tool_call_output", "content": tool_output}]
+        content_array = [{"role": "tool", "parts": parts}]
+        attributes = self._create_event_attributes(
+            conversation_id=conversation_id,
+            message_role="tool",
+        )
+        # Store as JSON array directly without outer wrapper
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+        # Tool outputs are inputs to the model, so use input.messages event
+        span.span_instance.add_event(name=GEN_AI_USER_MESSAGE_EVENT, attributes=attributes)
 
     def _add_tool_call_events(  # pylint: disable=too-many-branches
         self,
@@ -812,9 +1020,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         if not output:
             return
 
+        # Process output items for tool call events
         for output_item in output:
             try:
                 item_type = getattr(output_item, "type", None)
+                # Process item based on type
                 if not item_type:
                     continue
 
@@ -823,7 +1033,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle function_call type
                 if item_type == "function_call":
                     tool_call = {
-                        "type": "function",
+                        "type": item_type,
                     }
 
                     # Always include id (needed to correlate with function output)
@@ -845,7 +1055,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle file_search_call type
                 elif item_type == "file_search_call":
                     tool_call = {
-                        "type": "file_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -871,7 +1081,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle code_interpreter_call type
                 elif item_type == "code_interpreter_call":
                     tool_call = {
-                        "type": "code_interpreter",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -900,7 +1110,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle web_search_call type
                 elif item_type == "web_search_call":
                     tool_call = {
-                        "type": "web_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -931,7 +1141,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle azure_ai_search_call type
                 elif item_type == "azure_ai_search_call":
                     tool_call = {
-                        "type": "azure_ai_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -963,7 +1173,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle image_generation_call type
                 elif item_type == "image_generation_call":
                     tool_call = {
-                        "type": "image_generation",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -992,7 +1202,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle mcp_call type (Model Context Protocol)
                 elif item_type == "mcp_call":
                     tool_call = {
-                        "type": "mcp",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1009,10 +1219,40 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                     self._emit_tool_call_event(span, tool_call, conversation_id)
 
+                # Handle other MCP types (mcp_list_tools, mcp_approval_request, etc.)
+                elif item_type and item_type.startswith("mcp_"):
+                    tool_call = {
+                        "type": item_type,  # Preserve the specific MCP type
+                    }
+
+                    # Always include ID if available
+                    if hasattr(output_item, "id"):
+                        tool_call["id"] = output_item.id
+                    elif hasattr(output_item, "call_id"):
+                        tool_call["id"] = output_item.call_id
+
+                    # Only include additional details if content recording is enabled
+                    if _trace_responses_content:
+                        # Try to capture common MCP fields
+                        for field in [
+                            "name",
+                            "server_label",
+                            "arguments",
+                            "approval_request_id",
+                            "approve",
+                            "status",
+                        ]:
+                            if hasattr(output_item, field):
+                                value = getattr(output_item, field)
+                                if value is not None:
+                                    tool_call[field] = value
+
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
+
                 # Handle computer_call type (for computer use)
                 elif item_type == "computer_call":
                     tool_call = {
-                        "type": "computer",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "call_id"):
@@ -1071,7 +1311,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 tool_dict = output_item.as_dict()
                                 # Extract relevant fields (exclude already captured ones and empty/None values)
                                 for key, value in tool_dict.items():
-                                    if key not in ["type", "id", "call_id", "name", "label", "role", "content"]:
+                                    if key not in [
+                                        "type",
+                                        "id",
+                                        "call_id",
+                                        "name",
+                                        "label",
+                                        "role",
+                                        "content",
+                                    ]:
                                         # Skip empty strings and None values
                                         if value is not None and value != "":
                                             # Don't overwrite if already exists
@@ -1081,7 +1329,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 logger.debug(f"Failed to extract data from as_dict: {e}")
 
                         # Fallback: try common fields directly (skip if empty and skip redundant name/label)
-                        for field in ["input", "output", "results", "status", "error", "search_query", "query"]:
+                        for field in [
+                            "input",
+                            "output",
+                            "results",
+                            "status",
+                            "error",
+                            "search_query",
+                            "query",
+                        ]:
                             if hasattr(output_item, field):
                                 try:
                                     value = getattr(output_item, field)
@@ -1095,7 +1351,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle unknown/future tool call types with best effort
-                elif item_type and "_call" in item_type:
+                # Exclude _output types - those are handled separately as tool outputs, not tool calls
+                elif item_type and "_call" in item_type and not item_type.endswith("_output"):
+                    # Generic handler for tool calls
                     try:
                         tool_call = {
                             "type": item_type,
@@ -1109,8 +1367,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                         # Only include detailed fields if content recording is enabled
                         if _trace_responses_content:
-                            # Try to get the full tool details using as_dict() if available
-                            if hasattr(output_item, "as_dict"):
+                            # Try to get the full tool details using model_dump() for Pydantic models
+                            if hasattr(output_item, "model_dump"):
+                                tool_dict = output_item.model_dump()
+                                # Extract the tool-specific details (exclude common fields already captured)
+                                for key, value in tool_dict.items():
+                                    if (
+                                        key
+                                        not in ["type", "id", "call_id", "role", "content", "status", "partition_key"]
+                                        and value is not None
+                                    ):
+                                        tool_call[key] = value
+                            elif hasattr(output_item, "as_dict"):
                                 tool_dict = output_item.as_dict()
                                 # Extract the tool-specific details (exclude common fields already captured)
                                 for key, value in tool_dict.items():
@@ -1118,7 +1386,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                         tool_call[key] = value
                             else:
                                 # Fallback: try to capture common fields manually
-                                for field in ["name", "arguments", "input", "query", "search_query", "server_label"]:
+                                for field in [
+                                    "name",
+                                    "arguments",
+                                    "input",
+                                    "query",
+                                    "search_query",
+                                    "server_label",
+                                ]:
                                     if hasattr(output_item, field):
                                         value = getattr(output_item, field)
                                         if value is not None:
@@ -1130,6 +1405,64 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         # Log but don't crash if we can't handle an unknown tool type
                         logger.debug(f"Failed to process unknown tool call type '{item_type}': {e}")
 
+                # Handle unknown/future tool output types with best effort
+                # These are the _output types that correspond to the tool calls above
+                elif item_type and item_type.endswith("_output"):
+                    # Generic handler for tool outputs
+                    try:
+                        tool_output = {
+                            "type": item_type,
+                        }
+
+                        # Always try to include common ID fields (safe, needed for correlation)
+                        for id_field in ["id", "call_id"]:
+                            if hasattr(output_item, id_field):
+                                tool_output["id"] = getattr(output_item, id_field)
+                                break  # Use first available ID field
+
+                        # Only include detailed fields if content recording is enabled
+                        if _trace_responses_content:
+                            # Try to get the full tool output using model_dump() for Pydantic models
+                            if hasattr(output_item, "model_dump"):
+                                output_dict = output_item.model_dump()
+                                # Extract the tool-specific output (exclude common fields already captured)
+                                # Include fields even if empty string (but not None) for API consistency
+                                for key, value in output_dict.items():
+                                    if (
+                                        key
+                                        not in ["type", "id", "call_id", "role", "content", "status", "partition_key"]
+                                        and value is not None
+                                    ):
+                                        tool_output[key] = value
+                            elif hasattr(output_item, "as_dict"):
+                                output_dict = output_item.as_dict()
+                                # Extract the tool-specific output (exclude common fields already captured)
+                                for key, value in output_dict.items():
+                                    if (
+                                        key not in ["type", "id", "call_id", "role", "content", "status"]
+                                        and value is not None
+                                    ):
+                                        tool_output[key] = value
+                            else:
+                                # Fallback: try to capture common output fields manually
+                                for field in [
+                                    "output",
+                                    "result",
+                                    "results",
+                                    "data",
+                                    "response",
+                                ]:
+                                    if hasattr(output_item, field):
+                                        value = getattr(output_item, field)
+                                        if value is not None:
+                                            tool_output[field] = value
+
+                        self._emit_tool_output_event(span, tool_output, conversation_id)
+
+                    except Exception as e:
+                        # Log but don't crash if we can't handle an unknown tool output type
+                        logger.debug(f"Failed to process unknown tool output type '{item_type}': {e}")
+
             except Exception as e:
                 # Catch-all to prevent any tool call processing errors from breaking instrumentation
                 logger.debug(f"Error processing tool call events: {e}")
@@ -1140,6 +1473,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         port: Optional[int] = None,
         model: Optional[str] = None,
         assistant_name: Optional[str] = None,
+        agent_id: Optional[str] = None,
         conversation_id: Optional[str] = None,
         input_text: Optional[str] = None,
         input_raw: Optional[Any] = None,
@@ -1173,18 +1507,21 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             # Set response-specific attributes that start_span doesn't handle
             # Note: model and server_address are already set by start_span, so we don't need to set them again
-            self._set_span_attribute_safe(span, "gen_ai.conversation.id", conversation_id)
-            self._set_span_attribute_safe(span, "gen_ai.request.assistant_name", assistant_name)
+            self._set_span_attribute_safe(span, GEN_AI_CONVERSATION_ID, conversation_id)
+            self._set_span_attribute_safe(span, GEN_AI_AGENT_NAME, assistant_name)
+            self._set_span_attribute_safe(span, GEN_AI_AGENT_ID, agent_id)
 
             # Set tools attribute if tools are provided
             if tools:
                 # Convert tools list to JSON string for the attribute
                 tools_json = json.dumps(tools, ensure_ascii=False)
-                self._set_span_attribute_safe(span, "gen_ai.request.tools", tools_json)
+                self._set_span_attribute_safe(span, GEN_AI_REQUEST_TOOLS, tools_json)
 
-            # Process input - check if it contains tool outputs
+            # Process input - check if it contains tool outputs or MCP responses
             tool_outputs = []
+            mcp_responses = []
             has_tool_outputs = False
+            has_mcp_responses = False
 
             # Use input_raw (or input_text if it's a list) to check for tool outputs
             input_to_check = input_raw if input_raw is not None else input_text
@@ -1202,6 +1539,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if item_type and ("output" in item_type or item_type == "function_call_output"):
                         has_tool_outputs = True
                         tool_outputs.append(item)
+                    elif item_type and item_type.startswith("mcp_") and "response" in item_type:
+                        # MCP responses (mcp_approval_response, etc.) are user inputs
+                        has_mcp_responses = True
+                        mcp_responses.append(item)
 
             # Add appropriate message events based on input type
             if has_tool_outputs:
@@ -1209,6 +1550,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self._add_tool_message_events(
                     span,
                     tool_outputs=tool_outputs,
+                    conversation_id=conversation_id,
+                )
+            elif has_mcp_responses:
+                # Add MCP response events (user providing approval/response)
+                self._add_mcp_response_events(
+                    span,
+                    mcp_responses=mcp_responses,
                     conversation_id=conversation_id,
                 )
             elif input_text and not isinstance(input_text, list):
@@ -1268,9 +1616,43 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return agent_info.get("name")
         return None
 
+    def _extract_agent_id(self, kwargs: Dict[str, Any]) -> Optional[str]:
+        """Extract agent ID from kwargs."""
+        extra_body = kwargs.get("extra_body")
+        if extra_body and isinstance(extra_body, dict):
+            agent_info = extra_body.get("agent")
+            if agent_info and isinstance(agent_info, dict):
+                return agent_info.get("id")
+        return None
+
     def _extract_input_text(self, kwargs: Dict[str, Any]) -> Optional[str]:
         """Extract input text from kwargs."""
         return kwargs.get("input")
+
+    def _extract_finish_reason(self, response: Any) -> Optional[str]:
+        """Extract finish reason from response output."""
+        if hasattr(response, "output") and response.output:
+            try:
+                # Check if output is a list (typical case)
+                if isinstance(response.output, list) and len(response.output) > 0:
+                    output_item = response.output[0]  # Get first output item
+
+                    # Try finish_reason field
+                    if hasattr(output_item, "finish_reason") and output_item.finish_reason:
+                        return output_item.finish_reason
+
+                    # Try finish_details.type (Azure AI Agents structure)
+                    if hasattr(output_item, "finish_details") and output_item.finish_details:
+                        if hasattr(output_item.finish_details, "type"):
+                            return output_item.finish_details.type
+            except (AttributeError, TypeError, IndexError):
+                pass
+
+        # Fallback: check response.status directly
+        if hasattr(response, "status"):
+            return response.status
+
+        return None
 
     def _extract_output_text(self, response: Any) -> Optional[str]:
         """Extract output text from response."""
@@ -1302,7 +1684,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except (AttributeError, TypeError):
                 # Fallback: convert to string but log for debugging
                 logger.debug(
-                    "Failed to extract structured output text, falling back to string conversion: %s", response.output
+                    "Failed to extract structured output text, falling back to string conversion: %s",
+                    response.output,
                 )
                 return str(response.output)
         return None
@@ -1312,15 +1695,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         try:
             # Extract and set response model
             model = getattr(response, "model", None)
-            self._set_span_attribute_safe(span, "gen_ai.response.model", model)
+            self._set_span_attribute_safe(span, GEN_AI_RESPONSE_MODEL, model)
 
             # Extract and set response ID
             response_id = getattr(response, "id", None)
-            self._set_span_attribute_safe(span, "gen_ai.response.id", response_id)
+            self._set_span_attribute_safe(span, GEN_AI_RESPONSE_ID, response_id)
 
             # Extract and set system fingerprint if available
             system_fingerprint = getattr(response, "system_fingerprint", None)
-            self._set_span_attribute_safe(span, "gen_ai.openai.response.system_fingerprint", system_fingerprint)
+            self._set_span_attribute_safe(span, GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT, system_fingerprint)
 
             # Extract and set usage information (Responses API may use input_tokens/output_tokens)
             usage = getattr(response, "usage", None)
@@ -1331,9 +1714,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 output_tokens = getattr(usage, "output_tokens", None) or getattr(usage, "completion_tokens", None)
                 # total_tokens = getattr(usage, "total_tokens", None)  # Unused
 
-                self._set_span_attribute_safe(span, "gen_ai.usage.input_tokens", input_tokens)
-                self._set_span_attribute_safe(span, "gen_ai.usage.output_tokens", output_tokens)
-                # self._set_span_attribute_safe(span, "gen_ai.usage.total_tokens", total_tokens)  # Commented out as redundant
+                self._set_span_attribute_safe(span, GEN_AI_USAGE_INPUT_TOKENS, input_tokens)
+                self._set_span_attribute_safe(span, GEN_AI_USAGE_OUTPUT_TOKENS, output_tokens)
+                # self._set_span_attribute_safe(span, GEN_AI_USAGE_TOTAL_TOKENS, total_tokens)  # Commented out as redundant
 
             # Extract finish reasons from output items (Responses API structure)
             output = getattr(response, "output", None)
@@ -1344,12 +1727,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         finish_reasons.append(item.finish_reason)
 
                 if finish_reasons:
-                    self._set_span_attribute_safe(span, "gen_ai.response.finish_reasons", finish_reasons)
+                    self._set_span_attribute_safe(span, GEN_AI_RESPONSE_FINISH_REASONS, finish_reasons)
             else:
                 # Handle single finish reason (not in output array)
                 finish_reason = getattr(response, "finish_reason", None)
                 if finish_reason:
-                    self._set_span_attribute_safe(span, "gen_ai.response.finish_reasons", [finish_reason])
+                    self._set_span_attribute_safe(span, GEN_AI_RESPONSE_FINISH_REASONS, [finish_reason])
 
         except Exception as e:
             logger.debug(f"Error extracting responses API attributes: {e}")
@@ -1359,10 +1742,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         try:
             # Extract and set conversation ID
             conversation_id = getattr(response, "id", None)
-            self._set_span_attribute_safe(span, "gen_ai.conversation.id", conversation_id)
+            self._set_span_attribute_safe(span, GEN_AI_CONVERSATION_ID, conversation_id)
 
             # Set response object type
-            # self._set_span_attribute_safe(span, "gen_ai.response.object", "conversation")
+            # self._set_span_attribute_safe(span, GEN_AI_RESPONSE_OBJECT, "conversation")
 
         except Exception as e:
             logger.debug(f"Error extracting conversation attributes: {e}")
@@ -1373,7 +1756,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """Extract and set attributes for conversation items list responses."""
         try:
             # Set response object type for list operations
-            # self._set_span_attribute_safe(span, "gen_ai.response.object", "list")
+            # self._set_span_attribute_safe(span, GEN_AI_RESPONSE_OBJECT, "list")
 
             # Extract conversation_id from request parameters
             conversation_id = None
@@ -1384,7 +1767,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 conversation_id = kwargs["conversation_id"]
 
             if conversation_id:
-                self._set_span_attribute_safe(span, "gen_ai.conversation.id", conversation_id)
+                self._set_span_attribute_safe(span, GEN_AI_CONVERSATION_ID, conversation_id)
 
             # Note: Removed gen_ai.response.has_more attribute as requested
 
@@ -1399,12 +1782,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Extract response model
             model = getattr(response, "model", None)
             if model:
-                attributes["gen_ai.response.model"] = model
+                attributes[GEN_AI_RESPONSE_MODEL] = model
 
             # Extract response ID
             response_id = getattr(response, "id", None)
             if response_id:
-                attributes["gen_ai.response.id"] = response_id
+                attributes[GEN_AI_RESPONSE_ID] = response_id
 
             # Extract usage information
             usage = getattr(response, "usage", None)
@@ -1414,11 +1797,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # total_tokens = getattr(usage, "total_tokens", None)  # Unused
 
                 if prompt_tokens:
-                    attributes["gen_ai.usage.input_tokens"] = prompt_tokens
+                    attributes[GEN_AI_USAGE_INPUT_TOKENS] = prompt_tokens
                 if completion_tokens:
-                    attributes["gen_ai.usage.output_tokens"] = completion_tokens
+                    attributes[GEN_AI_USAGE_OUTPUT_TOKENS] = completion_tokens
                 # if total_tokens:
-                #     attributes["gen_ai.usage.total_tokens"] = total_tokens  # Commented out as redundant
+                #     attributes[GEN_AI_USAGE_TOTAL_TOKENS] = total_tokens  # Commented out as redundant
 
             # Extract finish reasons from output items (Responses API structure)
             output = getattr(response, "output", None)
@@ -1429,11 +1812,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         finish_reasons.append(item.finish_reason)
 
                 if finish_reasons:
-                    attributes["gen_ai.response.finish_reasons"] = finish_reasons
+                    attributes[GEN_AI_RESPONSE_FINISH_REASONS] = finish_reasons
             else:
                 finish_reason = getattr(response, "finish_reason", None)
                 if finish_reason:
-                    attributes["gen_ai.response.finish_reasons"] = [finish_reason]
+                    attributes[GEN_AI_RESPONSE_FINISH_REASONS] = [finish_reason]
 
         except Exception as e:
             logger.debug(f"Error extracting response attributes: {e}")
@@ -1450,6 +1833,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id = self._extract_conversation_id(kwargs)
         model = self._extract_model(kwargs)
         assistant_name = self._extract_assistant_name(kwargs)
+        agent_id = self._extract_agent_id(kwargs)
         input_text = self._extract_input_text(kwargs)
         input_raw = kwargs.get("input")  # Get the raw input (could be string or list)
         stream = kwargs.get("stream", False)
@@ -1460,6 +1844,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             port=port,
             model=model,
             assistant_name=assistant_name,
+            agent_id=agent_id,
             conversation_id=conversation_id,
             input_text=input_text,
             input_raw=input_raw,
@@ -1481,7 +1866,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             if frame and frame.f_back and frame.f_back.f_back:
                 # Check if the caller is trace_responses_stream
                 caller_name = frame.f_back.f_back.f_code.co_name
-                if caller_name in ("trace_responses_stream", "trace_responses_stream_async", "__enter__", "__aenter__"):
+                if caller_name in (
+                    "trace_responses_stream",
+                    "trace_responses_stream_async",
+                    "__enter__",
+                    "__aenter__",
+                ):
                     # We're being called from responses.stream(), don't create a new span
                     return function(*args, **kwargs)
 
@@ -1500,9 +1890,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 result = function(*args, **kwargs)
                 duration = time.time() - start_time
                 span_attributes = {
-                    "gen_ai.request.model": model,
-                    "server.address": server_address,
-                    "server.port": port,
+                    GEN_AI_REQUEST_MODEL: model,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="responses",
@@ -1514,9 +1904,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "gen_ai.request.model": model,
-                    "server.address": server_address,
-                    "server.port": port,
+                    GEN_AI_REQUEST_MODEL: model,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="responses",
@@ -1534,15 +1924,22 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             try:
                 result = function(*args, **kwargs)
                 result = self._wrap_streaming_response(
-                    result, span, kwargs, start_time, operation_name, server_address, port, model
+                    result,
+                    span,
+                    kwargs,
+                    start_time,
+                    operation_name,
+                    server_address,
+                    port,
+                    model,
                 )
                 return result
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "gen_ai.request.model": model,
-                    "server.address": server_address,
-                    "server.port": port,
+                    GEN_AI_REQUEST_MODEL: model,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="responses",
@@ -1574,18 +1971,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Add assistant message event
                     output_text = self._extract_output_text(result)
                     if output_text:
+                        finish_reason = self._extract_finish_reason(result)
                         self._add_message_event(
                             span,
                             role="assistant",
                             content=output_text,
                             conversation_id=conversation_id,
+                            finish_reason=finish_reason,
                         )
 
                     # Record metrics using new dedicated method
                     span_attributes = {
-                        "gen_ai.request.model": model,
-                        "server.address": server_address,
-                        "server.port": port,
+                        GEN_AI_REQUEST_MODEL: model,
+                        SERVER_ADDRESS: server_address,
+                        SERVER_PORT: port,
                     }
                     self._record_metrics(
                         operation_type="responses",
@@ -1598,9 +1997,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 except Exception as e:
                     duration = time.time() - start_time
                     span_attributes = {
-                        "gen_ai.request.model": model,
-                        "server.address": server_address,
-                        "server.port": port,
+                        GEN_AI_REQUEST_MODEL: model,
+                        SERVER_ADDRESS: server_address,
+                        SERVER_PORT: port,
                     }
                     self._record_metrics(
                         operation_type="responses",
@@ -1633,7 +2032,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             if frame and frame.f_back and frame.f_back.f_back:
                 # Check if the caller is trace_responses_stream
                 caller_name = frame.f_back.f_back.f_code.co_name
-                if caller_name in ("trace_responses_stream", "trace_responses_stream_async", "__enter__", "__aenter__"):
+                if caller_name in (
+                    "trace_responses_stream",
+                    "trace_responses_stream_async",
+                    "__enter__",
+                    "__aenter__",
+                ):
                     # We're being called from responses.stream(), don't create a new span
                     return await function(*args, **kwargs)
 
@@ -1652,9 +2056,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 result = await function(*args, **kwargs)
                 duration = time.time() - start_time
                 span_attributes = {
-                    "gen_ai.request.model": model,
-                    "server.address": server_address,
-                    "server.port": port,
+                    GEN_AI_REQUEST_MODEL: model,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="responses",
@@ -1666,9 +2070,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "gen_ai.request.model": model,
-                    "server.address": server_address,
-                    "server.port": port,
+                    GEN_AI_REQUEST_MODEL: model,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="responses",
@@ -1686,15 +2090,22 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             try:
                 result = await function(*args, **kwargs)
                 result = self._wrap_async_streaming_response(
-                    result, span, kwargs, start_time, operation_name, server_address, port, model
+                    result,
+                    span,
+                    kwargs,
+                    start_time,
+                    operation_name,
+                    server_address,
+                    port,
+                    model,
                 )
                 return result
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "gen_ai.request.model": model,
-                    "server.address": server_address,
-                    "server.port": port,
+                    GEN_AI_REQUEST_MODEL: model,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="responses",
@@ -1726,18 +2137,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Add assistant message event
                     output_text = self._extract_output_text(result)
                     if output_text:
+                        finish_reason = self._extract_finish_reason(result)
                         self._add_message_event(
                             span,
                             role="assistant",
                             content=output_text,
                             conversation_id=conversation_id,
+                            finish_reason=finish_reason,
                         )
 
                     # Record metrics using new dedicated method
                     span_attributes = {
-                        "gen_ai.request.model": model,
-                        "server.address": server_address,
-                        "server.port": port,
+                        GEN_AI_REQUEST_MODEL: model,
+                        SERVER_ADDRESS: server_address,
+                        SERVER_PORT: port,
                     }
                     self._record_metrics(
                         operation_type="responses",
@@ -1750,9 +2163,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 except Exception as e:
                     duration = time.time() - start_time
                     span_attributes = {
-                        "gen_ai.request.model": model,
-                        "server.address": server_address,
-                        "server.port": port,
+                        GEN_AI_REQUEST_MODEL: model,
+                        SERVER_ADDRESS: server_address,
+                        SERVER_PORT: port,
                     }
                     self._record_metrics(
                         operation_type="responses",
@@ -1792,20 +2205,34 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             if hasattr(result, "__aenter__"):
                 # Async stream manager
                 result = self._wrap_async_response_stream_manager(
-                    result, span, kwargs, start_time, operation_name, server_address, port, model
+                    result,
+                    span,
+                    kwargs,
+                    start_time,
+                    operation_name,
+                    server_address,
+                    port,
+                    model,
                 )
             else:
                 # Sync stream manager
                 result = self._wrap_response_stream_manager(
-                    result, span, kwargs, start_time, operation_name, server_address, port, model
+                    result,
+                    span,
+                    kwargs,
+                    start_time,
+                    operation_name,
+                    server_address,
+                    port,
+                    model,
                 )
             return result
         except Exception as e:
             duration = time.time() - start_time
             span_attributes = {
-                "gen_ai.request.model": model,
-                "server.address": server_address,
-                "server.port": port,
+                GEN_AI_REQUEST_MODEL: model,
+                SERVER_ADDRESS: server_address,
+                SERVER_PORT: port,
             }
             self._record_metrics(
                 operation_type="responses",
@@ -1839,15 +2266,22 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             result = function(*args, **kwargs)
             # Wrap the AsyncResponseStreamManager
             result = self._wrap_async_response_stream_manager(
-                result, span, kwargs, start_time, operation_name, server_address, port, model
+                result,
+                span,
+                kwargs,
+                start_time,
+                operation_name,
+                server_address,
+                port,
+                model,
             )
             return result
         except Exception as e:
             duration = time.time() - start_time
             span_attributes = {
-                "gen_ai.request.model": model,
-                "server.address": server_address,
-                "server.port": port,
+                GEN_AI_REQUEST_MODEL: model,
+                SERVER_ADDRESS: server_address,
+                SERVER_PORT: port,
             }
             self._record_metrics(
                 operation_type="responses",
@@ -1907,9 +2341,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.service_tier = None
                 self.input_tokens = 0
                 self.output_tokens = 0
+                self.finish_reason = None  # Track finish_reason from streaming chunks
 
                 # Track all output items from streaming events (tool calls, workflow actions, etc.)
-                self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id, action_id, or id
+                # Use (id, type) as key to avoid overwriting when call and output have same ID
+                self.output_items = {}  # Dict[(item_id, item_type), output_item]
                 self.has_output_items = False
 
                 # Expose response attribute for compatibility with ResponseStreamManager
@@ -1922,12 +2358,30 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             def set_response_metadata(self, chunk):
                 """Update response metadata from chunk if not already set."""
+                chunk_type = getattr(chunk, "type", None)
+
                 if not self.response_id:
                     self.response_id = getattr(chunk, "id", None)
                 if not self.response_model:
                     self.response_model = getattr(chunk, "model", None)
                 if not self.service_tier:
                     self.service_tier = getattr(chunk, "service_tier", None)
+
+                # Extract finish_reason from response.output_item.done events
+                if chunk_type == "response.output_item.done" and hasattr(chunk, "item"):
+                    item = chunk.item
+                    if hasattr(item, "status") and item.status:
+                        self.finish_reason = item.status
+                # Also check for direct finish_reason attribute
+                elif hasattr(chunk, "finish_reason") and chunk.finish_reason:
+                    self.finish_reason = chunk.finish_reason
+                # Also check for finish_details in output items (Azure AI Agents structure)
+                elif hasattr(chunk, "output") and chunk.output:
+                    if isinstance(chunk.output, list) and len(chunk.output) > 0:
+                        output_item = chunk.output[0]
+                        if hasattr(output_item, "finish_details") and output_item.finish_details:
+                            if hasattr(output_item.finish_details, "type"):
+                                self.finish_reason = output_item.finish_details.type
 
             def process_chunk(self, chunk):
                 """Process chunk to accumulate data and update metadata."""
@@ -1952,8 +2406,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             or getattr(item, "id", None)
                         )
                         if item_id:
-                            self.output_items[item_id] = item
+                            # Use (id, type) tuple as key to distinguish call from output
+                            key = (item_id, item_type)
+                            self.output_items[key] = item
                             self.has_output_items = True
+                    # Items without ID or type are skipped
 
                 # Capture response ID from ResponseCreatedEvent or ResponseCompletedEvent
                 if chunk_type == "response.created" and hasattr(chunk, "response"):
@@ -1965,6 +2422,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         self.response_id = chunk.response.id
                     if not self.response_model:
                         self.response_model = getattr(chunk.response, "model", None)
+                    # Extract usage from the completed response
+                    if hasattr(chunk.response, "usage"):
+                        response_usage = chunk.response.usage
+                        if hasattr(response_usage, "input_tokens") and response_usage.input_tokens:
+                            self.input_tokens = response_usage.input_tokens
+                        if hasattr(response_usage, "output_tokens") and response_usage.output_tokens:
+                            self.output_tokens = response_usage.output_tokens
+                        # Also handle standard token field names for compatibility
+                        if hasattr(response_usage, "prompt_tokens") and response_usage.prompt_tokens:
+                            self.input_tokens = response_usage.prompt_tokens
+                        if hasattr(response_usage, "completion_tokens") and response_usage.completion_tokens:
+                            self.output_tokens = response_usage.completion_tokens
 
                 # Only append TEXT content from delta events (not function call arguments or other deltas)
                 # Text deltas can come as:
@@ -2010,7 +2479,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if self.has_output_items:
                             # Create mock response with output items for event generation
                             # The existing _add_tool_call_events method handles all tool types
-                            mock_response = type("Response", (), {"output": list(self.output_items.values())})()
+                            mock_response = type(
+                                "Response",
+                                (),
+                                {"output": list(self.output_items.values())},
+                            )()
                             self.instrumentor._add_tool_call_events(
                                 self.span,
                                 mock_response,
@@ -2030,42 +2503,53 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 role="assistant",
                                 content=complete_content,
                                 conversation_id=self.conversation_id,
+                                finish_reason=self.finish_reason,
                             )
 
                         # Set final span attributes using accumulated metadata
                         if self.response_id:
-                            self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.response.id", self.response_id
-                            )
+                            self.instrumentor._set_span_attribute_safe(self.span, GEN_AI_RESPONSE_ID, self.response_id)
                         if self.response_model:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.response.model", self.response_model
+                                self.span, GEN_AI_RESPONSE_MODEL, self.response_model
                             )
+
                         if self.service_tier:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.openai.response.service_tier", self.service_tier
+                                self.span,
+                                GEN_AI_OPENAI_RESPONSE_SERVICE_TIER,
+                                self.service_tier,
                             )
 
                         # Set token usage span attributes
                         if self.input_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.prompt_tokens", self.input_tokens
+                                self.span, GEN_AI_USAGE_INPUT_TOKENS, self.input_tokens
                             )
                         if self.output_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.completion_tokens", self.output_tokens
+                                self.span,
+                                GEN_AI_USAGE_OUTPUT_TOKENS,
+                                self.output_tokens,
                             )
 
                     # Record metrics using accumulated data
                     span_attributes = {
-                        "gen_ai.request.model": self.model,
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        GEN_AI_REQUEST_MODEL: self.model,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
 
                     # Create mock result object with accumulated data for metrics
                     class MockResult:
-                        def __init__(self, response_id, response_model, service_tier, input_tokens, output_tokens):
+                        def __init__(
+                            self,
+                            response_id,
+                            response_model,
+                            service_tier,
+                            input_tokens,
+                            output_tokens,
+                        ):
                             self.id = response_id
                             self.model = response_model
                             self.service_tier = service_tier
@@ -2082,7 +2566,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 )()
 
                     mock_result = MockResult(
-                        self.response_id, self.response_model, self.service_tier, self.input_tokens, self.output_tokens
+                        self.response_id,
+                        self.response_model,
+                        self.service_tier,
+                        self.input_tokens,
+                        self.output_tokens,
                     )
 
                     self.instrumentor._record_metrics(
@@ -2102,6 +2590,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     self.span_ended = True
 
             def __iter__(self):
+                # Start streaming iteration
                 return self
 
             def __next__(self):
@@ -2124,9 +2613,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if not self.span_ended:
                         duration = time.time() - self.start_time
                         span_attributes = {
-                            "gen_ai.request.model": self.model,
-                            "server.address": self.server_address,
-                            "server.port": self.port,
+                            GEN_AI_REQUEST_MODEL: self.model,
+                            SERVER_ADDRESS: self.server_address,
+                            SERVER_PORT: self.port,
                         }
                         self.instrumentor._record_metrics(
                             operation_type="responses",
@@ -2151,9 +2640,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if not self.span_ended:
                     duration = time.time() - self.start_time
                     span_attributes = {
-                        "gen_ai.request.model": self.model,
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        GEN_AI_REQUEST_MODEL: self.model,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
                     self.instrumentor._record_metrics(
                         operation_type="responses",
@@ -2198,7 +2687,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 raise AttributeError("Underlying stream does not have 'get_final_response' method")
 
         return StreamWrapper(
-            stream, span, conversation_id, instrumentor, start_time, operation_name, server_address, port, model
+            stream,
+            span,
+            conversation_id,
+            instrumentor,
+            start_time,
+            operation_name,
+            server_address,
+            port,
+            model,
         )
 
     def _wrap_response_stream_manager(
@@ -2249,7 +2746,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.wrapped_stream = self.instrumentor._wrap_streaming_response(
                     raw_stream,
                     self.span,
-                    {"conversation": self.conversation_id} if self.conversation_id else {},
+                    ({"conversation": self.conversation_id} if self.conversation_id else {}),
                     self.start_time,
                     self.operation_name,
                     self.server_address,
@@ -2264,7 +2761,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return result
 
         return ResponseStreamManagerWrapper(
-            stream_manager, span, conversation_id, instrumentor, start_time, operation_name, server_address, port, model
+            stream_manager,
+            span,
+            conversation_id,
+            instrumentor,
+            start_time,
+            operation_name,
+            server_address,
+            port,
+            model,
         )
 
     def _wrap_async_streaming_response(
@@ -2313,9 +2818,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.service_tier = None
                 self.input_tokens = 0
                 self.output_tokens = 0
+                self.finish_reason = None  # Track finish_reason from streaming chunks
 
                 # Track all output items from streaming events (tool calls, workflow actions, etc.)
-                self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id, action_id, or id
+                # Use (id, type) as key to avoid overwriting when call and output have same ID
+                self.output_items = {}  # Dict[(item_id, item_type), output_item]
                 self.has_output_items = False
 
                 # Expose response attribute for compatibility with AsyncResponseStreamManager
@@ -2330,12 +2837,30 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             def set_response_metadata(self, chunk):
                 """Update response metadata from chunk if not already set."""
+                chunk_type = getattr(chunk, "type", None)
+
                 if not self.response_id:
                     self.response_id = getattr(chunk, "id", None)
                 if not self.response_model:
                     self.response_model = getattr(chunk, "model", None)
                 if not self.service_tier:
                     self.service_tier = getattr(chunk, "service_tier", None)
+
+                # Extract finish_reason from response.output_item.done events
+                if chunk_type == "response.output_item.done" and hasattr(chunk, "item"):
+                    item = chunk.item
+                    if hasattr(item, "status") and item.status:
+                        self.finish_reason = item.status
+                # Also check for direct finish_reason attribute
+                elif hasattr(chunk, "finish_reason") and chunk.finish_reason:
+                    self.finish_reason = chunk.finish_reason
+                # Also check for finish_details in output items (Azure AI Agents structure)
+                elif hasattr(chunk, "output") and chunk.output:
+                    if isinstance(chunk.output, list) and len(chunk.output) > 0:
+                        output_item = chunk.output[0]
+                        if hasattr(output_item, "finish_details") and output_item.finish_details:
+                            if hasattr(output_item.finish_details, "type"):
+                                self.finish_reason = output_item.finish_details.type
 
             def process_chunk(self, chunk):
                 """Process chunk to accumulate data and update metadata."""
@@ -2360,8 +2885,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             or getattr(item, "id", None)
                         )
                         if item_id:
-                            self.output_items[item_id] = item
+                            # Use (id, type) tuple as key to distinguish call from output
+                            self.output_items[(item_id, item_type)] = item
                             self.has_output_items = True
+                    # Items without ID or type are skipped
 
                 # Capture response ID from ResponseCreatedEvent or ResponseCompletedEvent
                 if chunk_type == "response.created" and hasattr(chunk, "response"):
@@ -2373,6 +2900,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         self.response_id = chunk.response.id
                     if not self.response_model:
                         self.response_model = getattr(chunk.response, "model", None)
+                    # Extract usage from the completed response
+                    if hasattr(chunk.response, "usage"):
+                        response_usage = chunk.response.usage
+                        if hasattr(response_usage, "input_tokens") and response_usage.input_tokens:
+                            self.input_tokens = response_usage.input_tokens
+                        if hasattr(response_usage, "output_tokens") and response_usage.output_tokens:
+                            self.output_tokens = response_usage.output_tokens
+                        # Also handle standard token field names for compatibility
+                        if hasattr(response_usage, "prompt_tokens") and response_usage.prompt_tokens:
+                            self.input_tokens = response_usage.prompt_tokens
+                        if hasattr(response_usage, "completion_tokens") and response_usage.completion_tokens:
+                            self.output_tokens = response_usage.completion_tokens
 
                 # Only append TEXT content from delta events (not function call arguments or other deltas)
                 # Text deltas can come as:
@@ -2418,7 +2957,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if self.has_output_items:
                             # Create mock response with output items for event generation
                             # The existing _add_tool_call_events method handles all tool types
-                            mock_response = type("Response", (), {"output": list(self.output_items.values())})()
+                            mock_response = type(
+                                "Response",
+                                (),
+                                {"output": list(self.output_items.values())},
+                            )()
                             self.instrumentor._add_tool_call_events(
                                 self.span,
                                 mock_response,
@@ -2438,42 +2981,53 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 role="assistant",
                                 content=complete_content,
                                 conversation_id=self.conversation_id,
+                                finish_reason=self.finish_reason,
                             )
 
                         # Set final span attributes using accumulated metadata
                         if self.response_id:
-                            self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.response.id", self.response_id
-                            )
+                            self.instrumentor._set_span_attribute_safe(self.span, GEN_AI_RESPONSE_ID, self.response_id)
                         if self.response_model:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.response.model", self.response_model
+                                self.span, GEN_AI_RESPONSE_MODEL, self.response_model
                             )
+
                         if self.service_tier:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.openai.response.service_tier", self.service_tier
+                                self.span,
+                                GEN_AI_OPENAI_RESPONSE_SERVICE_TIER,
+                                self.service_tier,
                             )
 
                         # Set token usage span attributes
                         if self.input_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.prompt_tokens", self.input_tokens
+                                self.span, GEN_AI_USAGE_INPUT_TOKENS, self.input_tokens
                             )
                         if self.output_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.completion_tokens", self.output_tokens
+                                self.span,
+                                GEN_AI_USAGE_OUTPUT_TOKENS,
+                                self.output_tokens,
                             )
 
                     # Record metrics using accumulated data
                     span_attributes = {
-                        "gen_ai.request.model": self.model,
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        GEN_AI_REQUEST_MODEL: self.model,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
 
                     # Create mock result object with accumulated data for metrics
                     class MockResult:
-                        def __init__(self, response_id, response_model, service_tier, input_tokens, output_tokens):
+                        def __init__(
+                            self,
+                            response_id,
+                            response_model,
+                            service_tier,
+                            input_tokens,
+                            output_tokens,
+                        ):
                             self.id = response_id
                             self.model = response_model
                             self.service_tier = service_tier
@@ -2490,7 +3044,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 )()
 
                     mock_result = MockResult(
-                        self.response_id, self.response_model, self.service_tier, self.input_tokens, self.output_tokens
+                        self.response_id,
+                        self.response_model,
+                        self.service_tier,
+                        self.input_tokens,
+                        self.output_tokens,
                     )
 
                     self.instrumentor._record_metrics(
@@ -2532,9 +3090,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if not self.span_ended:
                         duration = time.time() - self.start_time
                         span_attributes = {
-                            "gen_ai.request.model": self.model,
-                            "server.address": self.server_address,
-                            "server.port": self.port,
+                            GEN_AI_REQUEST_MODEL: self.model,
+                            SERVER_ADDRESS: self.server_address,
+                            SERVER_PORT: self.port,
                         }
                         self.instrumentor._record_metrics(
                             operation_type="responses",
@@ -2559,9 +3117,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if not self.span_ended:
                     duration = time.time() - self.start_time
                     span_attributes = {
-                        "gen_ai.request.model": self.model,
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        GEN_AI_REQUEST_MODEL: self.model,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
                     self.instrumentor._record_metrics(
                         operation_type="responses",
@@ -2610,7 +3168,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 raise AttributeError("Underlying stream does not have 'get_final_response' method")
 
         return AsyncStreamWrapper(
-            stream, span, conversation_id, self, start_time, operation_name, server_address, port, model
+            stream,
+            span,
+            conversation_id,
+            self,
+            start_time,
+            operation_name,
+            server_address,
+            port,
+            model,
         )
 
     def _wrap_async_response_stream_manager(
@@ -2661,7 +3227,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.wrapped_stream = self.instrumentor._wrap_async_streaming_response(
                     raw_stream,
                     self.span,
-                    {"conversation": self.conversation_id} if self.conversation_id else {},
+                    ({"conversation": self.conversation_id} if self.conversation_id else {}),
                     self.start_time,
                     self.operation_name,
                     self.server_address,
@@ -2676,7 +3242,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return result
 
         return AsyncResponseStreamManagerWrapper(
-            stream_manager, span, conversation_id, instrumentor, start_time, operation_name, server_address, port, model
+            stream_manager,
+            span,
+            conversation_id,
+            instrumentor,
+            start_time,
+            operation_name,
+            server_address,
+            port,
+            model,
         )
 
     def start_create_conversation_span(
@@ -2726,8 +3300,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 result = function(*args, **kwargs)
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2739,8 +3313,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2761,8 +3335,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 # Record metrics using new dedicated method
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2775,8 +3349,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2809,8 +3383,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 result = await function(*args, **kwargs)
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2822,8 +3396,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2844,8 +3418,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 # Record metrics using new dedicated method
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2858,8 +3432,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation",
@@ -2900,7 +3474,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             # Set conversation-specific attributes that start_span doesn't handle
             # Note: server_address is already set by start_span, so we don't need to set it again
-            self._set_span_attribute_safe(span, "gen_ai.conversation.id", conversation_id)
+            self._set_span_attribute_safe(span, GEN_AI_CONVERSATION_ID, conversation_id)
 
         return span
 
@@ -2919,27 +3493,28 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         role = getattr(item, "role", None)
 
         # Create event body - format depends on item type
-        event_body: Dict[str, Any] = {}
+        event_body: List[Dict[str, Any]] = []
 
         # Declare tool_call variable with type for use across branches
         tool_call: Dict[str, Any]
 
         # Handle different item types
         if item_type == "function_call_output":
-            # Function tool output - use standard content format
+            # Function tool output - use optimized content format
             role = "tool"  # Override role for tool outputs
+
+            tool_output: Dict[str, Any] = {
+                "type": item_type,
+            }
+
+            # Add call_id as "id" - always include for correlation
+            if hasattr(item, "call_id"):
+                tool_output["id"] = item.call_id
+            elif hasattr(item, "id"):
+                tool_output["id"] = item.id
+
+            # Add output field only if content recording is enabled
             if _trace_responses_content:
-                tool_output: Dict[str, Any] = {
-                    "type": "function",
-                }
-
-                # Add call_id as "id"
-                if hasattr(item, "call_id"):
-                    tool_output["id"] = item.call_id
-                elif hasattr(item, "id"):
-                    tool_output["id"] = item.id
-
-                # Add output field - parse JSON string if needed
                 if hasattr(item, "output"):
                     output_value = item.output
                     if isinstance(output_value, str):
@@ -2950,17 +3525,22 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     else:
                         tool_output["output"] = output_value
 
-                # Use standard content format: {"type": "tool_call_output", "tool_call_output": {...}}
-                event_body["content"] = [{"type": "tool_call_output", "tool_call_output": tool_output}]
+            # Always include role and parts with type/id, only output when content recording enabled
+            event_body = [
+                {
+                    "role": role,
+                    "parts": [{"type": "tool_call_output", "content": tool_output}],
+                }
+            ]
 
-            event_name = "gen_ai.tool.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "function_call":
-            # Function tool call - use tool_calls format
+            # Function tool call - use optimized content format
             role = "assistant"  # Override role for function calls
 
             tool_call = {
-                "type": "function",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -2989,16 +3569,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                     tool_call["function"] = function_details
 
-            event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
+            # Include role in content for semantic convention compliance
+            event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
 
-            event_name = "gen_ai.assistant.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "file_search_call":
             # File search tool call
             role = "assistant"  # Override role for file search calls
 
             tool_call = {
-                "type": "file_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3031,16 +3612,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if file_search_details:
                     tool_call["file_search"] = file_search_details
 
-            event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
+            # Include role in content for semantic convention compliance
+            event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
 
-            event_name = "gen_ai.assistant.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "code_interpreter_call":
             # Code interpreter tool call
             role = "assistant"  # Override role for code interpreter calls
 
             tool_call = {
-                "type": "code_interpreter",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3067,10 +3649,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if output_type == "logs":
                             outputs_list.append({"type": "logs", "logs": getattr(output, "logs", None)})
                         elif output_type == "image":
+                            # Use consistent "content" field for image data
                             outputs_list.append(
                                 {
                                     "type": "image",
-                                    "image": {"file_id": getattr(getattr(output, "image", None), "file_id", None)},
+                                    "content": {
+                                        "file_id": getattr(
+                                            getattr(output, "image", None),
+                                            "file_id",
+                                            None,
+                                        )
+                                    },
                                 }
                             )
                     if outputs_list:
@@ -3079,16 +3668,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if code_interpreter_details:
                     tool_call["code_interpreter"] = code_interpreter_details
 
-            event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
+            # Include role in content for semantic convention compliance
+            event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
 
-            event_name = "gen_ai.assistant.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "web_search_call":
             # Web search tool call
             role = "assistant"  # Override role for web search calls
 
             tool_call = {
-                "type": "web_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3119,16 +3709,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if web_search_details:
                     tool_call["web_search"] = web_search_details
 
-            event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
+            # Include role in content for semantic convention compliance
+            event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
 
-            event_name = "gen_ai.assistant.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "azure_ai_search_call":
             # Azure AI Search tool call
             role = "assistant"  # Override role for Azure AI Search calls
 
             tool_call = {
-                "type": "azure_ai_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3164,16 +3755,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if azure_ai_search_details:
                     tool_call["azure_ai_search"] = azure_ai_search_details
 
-            event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
+            # Include role in content for semantic convention compliance
+            event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
 
-            event_name = "gen_ai.assistant.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "image_generation_call":
             # Image generation tool call
             role = "assistant"  # Override role for image generation calls
 
             tool_call = {
-                "type": "image_generation",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3206,19 +3798,23 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if image_gen_details:
                     tool_call["image_generation"] = image_gen_details
 
-            event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
+            # Include role in content for semantic convention compliance
+            event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
 
-            event_name = "gen_ai.assistant.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
-        elif item_type == "remote_function_call_output":
-            # Remote function call output (like Azure AI Search)
+        elif item_type == "remote_function_call":
+            # Remote function call (like Bing Custom Search call)
             role = "assistant"  # Override role for remote function calls
 
-            # Extract the tool name
-            tool_name = getattr(item, "name", None) if hasattr(item, "name") else None
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
 
             tool_call = {
-                "type": tool_name if tool_name else "remote_function",
+                "type": specific_type if specific_type else item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3236,8 +3832,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Extract data from model_extra if available (Pydantic v2 style)
                 if hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
                     for key, value in item.model_extra.items():
-                        # Skip already captured fields, redundant fields (name, label), and empty/None values
-                        if key not in ["type", "id", "call_id", "name", "label"] and value is not None and value != "":
+                        # Skip already captured fields, redundant fields (name, label), internal fields (partition_key), and empty/None values
+                        if (
+                            key not in ["type", "id", "call_id", "name", "label", "partition_key"]
+                            and value is not None
+                            and value != ""
+                        ):
                             tool_call[key] = value
 
                 # Also try as_dict if available
@@ -3246,7 +3846,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         tool_dict = item.as_dict()
                         # Extract relevant fields (exclude already captured ones and empty/None values)
                         for key, value in tool_dict.items():
-                            if key not in ["type", "id", "call_id", "name", "label", "role", "content"]:
+                            if key not in [
+                                "type",
+                                "id",
+                                "call_id",
+                                "name",
+                                "label",
+                                "role",
+                                "content",
+                            ]:
                                 # Skip empty strings and None values
                                 if value is not None and value != "":
                                     # Don't overwrite if already exists
@@ -3256,7 +3864,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         logger.debug(f"Failed to extract data from as_dict: {e}")
 
                 # Fallback: try common fields directly (skip if empty and skip redundant name/label)
-                for field in ["input", "output", "results", "status", "error", "search_query", "query"]:
+                for field in [
+                    "input",
+                    "arguments",
+                    "status",
+                    "error",
+                    "search_query",
+                    "query",
+                ]:
                     if hasattr(item, field):
                         try:
                             value = getattr(item, field)
@@ -3267,24 +3882,108 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         except Exception:
                             pass
 
-            event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
+            # Include role in content for semantic convention compliance
+            event_body = [{"role": role, "parts": [{"type": "tool_call", "content": tool_call}]}]
 
-            event_name = "gen_ai.assistant.message"
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
+
+        elif item_type == "remote_function_call_output":
+            # Remote function call output (like Bing Custom Search output)
+            role = "tool"  # Tool outputs use role "tool"
+
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call_output")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
+
+            tool_output = {
+                "type": specific_type if specific_type else item_type,
+            }
+
+            # Always include ID (needed for correlation)
+            if hasattr(item, "id"):
+                tool_output["id"] = item.id
+            elif hasattr(item, "call_id"):
+                tool_output["id"] = item.call_id
+            # Check model_extra for call_id
+            elif hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
+                if "call_id" in item.model_extra:
+                    tool_output["id"] = item.model_extra["call_id"]
+
+            # Only include tool details if content recording is enabled
+            if _trace_responses_content:
+                # Extract data from model_extra if available (Pydantic v2 style)
+                if hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
+                    for key, value in item.model_extra.items():
+                        # Skip already captured fields, redundant fields (name, label), internal fields (partition_key), and empty/None values
+                        if (
+                            key not in ["type", "id", "call_id", "name", "label", "partition_key"]
+                            and value is not None
+                            and value != ""
+                        ):
+                            tool_output[key] = value
+
+                # Also try as_dict if available
+                if hasattr(item, "as_dict"):
+                    try:
+                        tool_dict = item.as_dict()
+                        # Extract relevant fields (exclude already captured ones and empty/None values)
+                        for key, value in tool_dict.items():
+                            if key not in [
+                                "type",
+                                "id",
+                                "call_id",
+                                "name",
+                                "label",
+                                "role",
+                                "content",
+                            ]:
+                                # Skip empty strings and None values
+                                if value is not None and value != "":
+                                    # Don't overwrite if already exists
+                                    if key not in tool_output:
+                                        tool_output[key] = value
+                    except Exception as e:
+                        logger.debug(f"Failed to extract data from as_dict: {e}")
+
+                # Fallback: try common fields directly (skip if empty and skip redundant name/label)
+                for field in [
+                    "input",
+                    "output",
+                    "results",
+                    "status",
+                    "error",
+                    "search_query",
+                    "query",
+                ]:
+                    if hasattr(item, field):
+                        try:
+                            value = getattr(item, field)
+                            if value is not None and value != "":
+                                # If not already in tool_output, add it
+                                if field not in tool_output:
+                                    tool_output[field] = value
+                        except Exception:
+                            pass
+
+            # Tool outputs use tool_call_output type in parts
+            event_body = [{"role": role, "parts": [{"type": "tool_call_output", "content": tool_output}]}]
+
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "workflow_action":
             # Workflow action item - include workflow execution details
-            # Workflow actions don't have a role, use a system identifier
-            role = "system"
+            role = "workflow"
 
             # Extract workflow action attributes
             status = getattr(item, "status", None)
 
-            # Create workflow action content
-            workflow_content: Dict[str, Any] = {
-                "type": "workflow_action",
-            }
+            # Build workflow action details object
+            workflow_details: Dict[str, Any] = {}
+
             if status:
-                workflow_content["status"] = status
+                workflow_details["status"] = status
 
             # Only include action_id and previous_action_id when content recording is enabled
             if _trace_responses_content:
@@ -3292,25 +3991,33 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 previous_action_id = getattr(item, "previous_action_id", None)
 
                 if action_id:
-                    workflow_content["action_id"] = action_id
+                    workflow_details["action_id"] = action_id
                 if previous_action_id:
-                    workflow_content["previous_action_id"] = previous_action_id
+                    workflow_details["previous_action_id"] = previous_action_id
 
-            event_body["content"] = [workflow_content]
+            # Wrap in parts array for semantic convention compliance
+            parts: List[Dict[str, Any]] = [{"type": "workflow_action", "content": workflow_details}]
+            event_body = [{"role": role, "parts": parts}]
 
             # Use generic event name for workflow actions
-            event_name = "gen_ai.workflow.action"
+            event_name = GEN_AI_WORKFLOW_ACTION_EVENT
 
         elif item_type == "message":
             # Regular message - use content format for consistency
-            if _trace_responses_content and hasattr(item, "content") and item.content:
-                content_parts = []
+            parts = []
+
+            # Always inspect content to determine types, regardless of recording setting
+            if hasattr(item, "content") and item.content:
                 for content_item in item.content:
                     content_type = getattr(content_item, "type", None)
 
                     if content_type in ("input_text", "output_text", "text"):
-                        if hasattr(content_item, "text"):
-                            content_parts.append({"type": "text", "text": content_item.text})
+                        if _trace_responses_content and hasattr(content_item, "text"):
+                            # Include actual text content when recording is enabled
+                            parts.append({"type": "text", "content": content_item.text})
+                        else:
+                            # Type-only when recording is disabled
+                            parts.append({"type": "text"})
                     elif content_type == "input_image":
                         # Handle image content
                         image_part = {"type": "image"}
@@ -3320,51 +4027,103 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if _trace_binary_data:
                             image_url = getattr(content_item, "image_url", None)
                             if image_url:
-                                image_part["image_url"] = image_url
-                        content_parts.append(image_part)
+                                # Use consistent format: content field directly contains the URL
+                                image_part["content"] = image_url
+                        parts.append(image_part)
                     elif content_type == "input_file":
                         # Handle file content
-                        file_part = {"type": "file"}
+                        file_part: Dict[str, Any] = {"type": "file"}
+                        file_content_dict: Dict[str, Any] = {}
                         filename = getattr(content_item, "filename", None)
                         if filename:
-                            file_part["filename"] = filename
+                            file_content_dict["filename"] = filename
                         file_id = getattr(content_item, "file_id", None)
                         if file_id:
-                            file_part["file_id"] = file_id
+                            file_content_dict["file_id"] = file_id
                         # Include file data if binary data tracing is enabled
                         if _trace_binary_data:
                             file_data = getattr(content_item, "file_data", None)
                             if file_data:
-                                file_part["file_data"] = file_data
-                        content_parts.append(file_part)
+                                file_content_dict["file_data"] = file_data
+                        if file_content_dict:
+                            file_part["content"] = file_content_dict
+                        parts.append(file_part)
 
-                if content_parts:
-                    # Use consistent structured format with content array
-                    event_body["content"] = content_parts
+            # Always create event_body with role and parts
+            role_obj: Dict[str, Any] = {"role": role}
+            if parts:
+                role_obj["parts"] = parts
 
-            # Determine event name based on role
-            if role == "assistant":
-                event_name = "gen_ai.assistant.message"
-            elif role == "user":
-                event_name = "gen_ai.user.message"
+            event_body = [role_obj]
+
+            # Use conversation item event for all message items during listing
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
+        elif item_type and item_type.startswith("mcp"):
+            # MCP-specific item types (mcp_approval_request, mcp_list_tools, mcp_call, etc.)
+            # Determine role based on whether it's a response (user) or request/call (assistant)
+            if "response" in item_type:
+                # MCP responses (e.g., mcp_approval_response) are user inputs
+                mcp_role = "user"
             else:
-                event_name = "gen_ai.conversation.item"
+                # MCP requests/calls (e.g., mcp_approval_request, mcp_list_tools, mcp_call) are assistant-initiated
+                mcp_role = "assistant"
+
+            # Create structured event body
+            mcp_tool_call: Dict[str, Any] = {
+                "type": item_type,
+            }
+
+            # Always include ID if available
+            if hasattr(item, "id"):
+                mcp_tool_call["id"] = item.id
+            elif hasattr(item, "call_id"):
+                mcp_tool_call["id"] = item.call_id
+            elif hasattr(item, "approval_request_id"):
+                # For approval responses, use the request ID
+                mcp_tool_call["id"] = item.approval_request_id
+
+            # Only include additional details if content recording is enabled
+            if _trace_responses_content:
+                # Try to capture common MCP fields
+                for field in [
+                    "name",
+                    "server_label",
+                    "arguments",
+                    "approval_request_id",
+                    "approve",
+                    "status",
+                ]:
+                    if hasattr(item, field):
+                        value = getattr(item, field)
+                        if value is not None:
+                            mcp_tool_call[field] = value
+
+            # Wrap in parts array with appropriate role
+            event_body = [{"role": mcp_role, "parts": [{"type": "mcp", "content": mcp_tool_call}]}]
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
         else:
-            # Unknown item type - use generic event name
-            event_name = "gen_ai.conversation.item"
+            # Unknown item type - create minimal event body with role if available
+            # This handles MCP tools and other future item types
+            else_role_obj: Dict[str, Any] = {}
+            if role:
+                else_role_obj["role"] = role
+            event_body = [else_role_obj] if else_role_obj else []
+
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         # Create event attributes
         event_attributes = {
             GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
-            "gen_ai.conversation.item.id": item_id,
+            GEN_AI_CONVERSATION_ITEM_ID: item_id,
         }
 
-        # Only add role if it's not None (workflow_action items don't have a role from API)
-        if role is not None:
-            event_attributes["gen_ai.conversation.item.role"] = role
+        # Commented out - message_role is now included in the event content instead
+        # # Add role attribute if present
+        # if role is not None:
+        #     event_attributes[GEN_AI_CONVERSATION_ITEM_ROLE] = role
 
         # Use JSON format for event content (consistent with responses.create)
-        event_attributes["gen_ai.event.content"] = json.dumps(event_body, ensure_ascii=False)
+        event_attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
 
         span.span_instance.add_event(name=event_name, attributes=event_attributes)
 
@@ -3380,7 +4139,16 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """Wrap the conversation items list result to add events for each item."""
 
         class ItemsWrapper:
-            def __init__(self, items_result, span, instrumentor, start_time, operation_name, server_address, port):
+            def __init__(
+                self,
+                items_result,
+                span,
+                instrumentor,
+                start_time,
+                operation_name,
+                server_address,
+                port,
+            ):
                 self.items_result = items_result
                 self.span = span
                 self.instrumentor = instrumentor
@@ -3400,8 +4168,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Record metrics when iteration is complete
                     duration = time.time() - self.start_time
                     span_attributes = {
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
                     self.instrumentor._record_metrics(
                         operation_type="conversation_items",
@@ -3421,8 +4189,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Record metrics for error case
                     duration = time.time() - self.start_time
                     span_attributes = {
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
                     self.instrumentor._record_metrics(
                         operation_type="conversation_items",
@@ -3453,8 +4221,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Record metrics when iteration is complete
                     duration = time.time() - self.start_time
                     span_attributes = {
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
                     self.instrumentor._record_metrics(
                         operation_type="conversation_items",
@@ -3474,8 +4242,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Record metrics for error case
                     duration = time.time() - self.start_time
                     span_attributes = {
-                        "server.address": self.server_address,
-                        "server.port": self.port,
+                        SERVER_ADDRESS: self.server_address,
+                        SERVER_PORT: self.port,
                     }
                     self.instrumentor._record_metrics(
                         operation_type="conversation_items",
@@ -3538,8 +4306,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation_items",
@@ -3567,8 +4335,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         except Exception as e:
             duration = time.time() - start_time
             span_attributes = {
-                "server.address": server_address,
-                "server.port": port,
+                SERVER_ADDRESS: server_address,
+                SERVER_PORT: port,
             }
             self._record_metrics(
                 operation_type="conversation_items",
@@ -3605,8 +4373,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             except Exception as e:
                 duration = time.time() - start_time
                 span_attributes = {
-                    "server.address": server_address,
-                    "server.port": port,
+                    SERVER_ADDRESS: server_address,
+                    SERVER_PORT: port,
                 }
                 self._record_metrics(
                     operation_type="conversation_items",
@@ -3634,8 +4402,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         except Exception as e:
             duration = time.time() - start_time
             span_attributes = {
-                "server.address": server_address,
-                "server.port": port,
+                SERVER_ADDRESS: server_address,
+                SERVER_PORT: port,
             }
             self._record_metrics(
                 operation_type="conversation_items",

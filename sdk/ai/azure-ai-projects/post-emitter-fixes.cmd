@@ -16,6 +16,10 @@ REM Rename "A2_A_PREVIEW" to "A2A_PREVIEW". Since this value is an extension to 
 powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'A2_A_PREVIEW', 'A2A_PREVIEW' | Set-Content azure\ai\projects\models\_models.py"
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'A2_A_PREVIEW', 'A2A_PREVIEW' | Set-Content azure\ai\projects\models\_enums.py"
 
+REM Rename `"items_property": items`, to `"items": items` in search_memories and begin_update_memories methods. "items" is specified in TypeSpec, but Python emitter does not allow it.
+powershell -Command "(Get-Content azure\ai\projects\aio\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\aio\operations\_operations.py"
+powershell -Command "(Get-Content azure\ai\projects\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\operations\_operations.py"
+
 REM Add quotation marks around "str" in the expression:   content: Union[str, list["_models.ItemContent"]] = rest_field(
 REM This fixes the serialization of this expression: item_param: ItemParam = ResponsesUserMessageItemParam(content="my text")
 powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'Union\[str, list\[\"_models\.ItemContent\"\]\] = rest_field\(', 'Union[\"str\", list[\"_models.ItemContent\"]] = rest_field(' | Set-Content azure\ai\projects\models\_models.py"

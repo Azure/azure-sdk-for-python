@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -33,34 +33,32 @@ from openai import OpenAI
 
 load_dotenv()
 
-# Load the file to be indexed for search
-asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # Load the file to be indexed for search
+    asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
 
-# Get the OpenAI client for vector store operations
-openai_client = project_client.get_openai_client()
+    print("Setting up file search with streaming responses...")
 
-print("Setting up file search with streaming responses...")
+    # Create vector store for file search
+    vector_store = openai_client.vector_stores.create(name="ProductInfoStreamStore")
+    print(f"Vector store created (id: {vector_store.id})")
 
-# Create vector store for file search
-vector_store = openai_client.vector_stores.create(name="ProductInfoStreamStore")
-print(f"Vector store created (id: {vector_store.id})")
+    # Upload file to vector store
+    try:
+        file = openai_client.vector_stores.files.upload_and_poll(
+            vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
+        )
+        print(f"File uploaded to vector store (id: {file.id})")
+    except FileNotFoundError:
+        print(f"Warning: Asset file not found at {asset_file_path}")
+        print("Creating vector store without file for demonstration...")
 
-# Upload file to vector store
-try:
-    file = openai_client.vector_stores.files.upload_and_poll(
-        vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
-    )
-    print(f"File uploaded to vector store (id: {file.id})")
-except FileNotFoundError:
-    print(f"Warning: Asset file not found at {asset_file_path}")
-    print("Creating vector store without file for demonstration...")
-
-with project_client:
     # Create agent with file search tool
     agent = project_client.agents.create_version(
         agent_name="StreamingFileSearchAgent",
@@ -142,7 +140,7 @@ with project_client:
                             print(f"File Citation - Filename: {annotation.filename}, File ID: {annotation.file_id}")
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+            print(f"Agent response: {event.response.output_text}")
 
     # Clean up resources
     print("\n" + "=" * 60)

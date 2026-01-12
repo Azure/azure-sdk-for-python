@@ -24,8 +24,9 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
     Response stream event generator.
     """
 
-    def __init__(self, logger, parent):
+    def __init__(self, logger, parent, *, hitl_helper=None):
         super().__init__(logger, parent)
+        self.hitl_helper = hitl_helper
         self.aggregated_contents: List[project_models.ItemResource] = []
 
     def on_start(
@@ -87,7 +88,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         if message:
             # create a child processor
             next_processor = ResponseOutputItemEventGenerator(
-                self.logger, self, len(self.aggregated_contents), message.id
+                self.logger, self, len(self.aggregated_contents), message.id, hitl_helper=self.hitl_helper
             )
             return is_processed, next_processor, events
 

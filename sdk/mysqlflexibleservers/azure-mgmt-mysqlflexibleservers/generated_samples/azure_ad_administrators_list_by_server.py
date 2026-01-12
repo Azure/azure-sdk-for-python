@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/stable/2024-12-30/examples/AzureADAdministratorsListByServer.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2025-06-01-preview/examples/AzureADAdministratorsListByServer.json
 if __name__ == "__main__":
     main()

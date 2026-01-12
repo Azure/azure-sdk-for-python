@@ -24,10 +24,13 @@ INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 SPAN_PROCESSORS_ARG = "span_processors"
+LOG_RECORD_PROCESSORS_ARG = "log_record_processors"
+METRIC_READERS_ARG = "metric_readers"
 VIEWS_ARG = "views"
 RATE_LIMITED_SAMPLER = "microsoft.rate_limited"
 FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed.percentage"
 SAMPLING_TRACES_PER_SECOND_ARG = "traces_per_second"
+ENABLE_TRACE_BASED_SAMPLING_ARG = "enable_trace_based_sampling_for_logs"
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 

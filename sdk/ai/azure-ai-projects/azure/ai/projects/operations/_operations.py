@@ -569,33 +569,6 @@ def build_memory_stores_update_memories_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_memory_stores_get_update_result_request(  # pylint: disable=name-too-long
-    name: str, update_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}/updates/{update_id}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "update_id": _SERIALIZER.url("update_id", update_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_memory_stores_delete_scope_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1754,13 +1727,13 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def get(self, agent_name: str, **kwargs: Any) -> _models.AgentObject:
+    def get(self, agent_name: str, **kwargs: Any) -> _models.AgentDetails:
         """Retrieves the agent.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1774,7 +1747,7 @@ class AgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         _request = build_agents_get_request(
             agent_name=agent_name,
@@ -1810,7 +1783,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1827,7 +1800,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :keyword name: The unique name that identifies the agent. Name can be used to
@@ -1852,13 +1825,13 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentObject:
+    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Required.
@@ -1866,13 +1839,13 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentObject:
+    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Required.
@@ -1880,8 +1853,8 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1900,7 +1873,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -1924,8 +1897,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1940,7 +1913,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -1991,7 +1964,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2008,7 +1981,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -2029,15 +2002,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -2048,15 +2021,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -2067,8 +2040,8 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2087,7 +2060,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -2107,8 +2080,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2123,7 +2096,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if definition is _Unset:
@@ -2173,7 +2146,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2191,7 +2164,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :keyword name: The unique name that identifies the agent. Name can be used to
@@ -2218,15 +2191,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_from_manifest(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :param body: Required.
@@ -2234,15 +2207,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_from_manifest(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :param body: Required.
@@ -2250,8 +2223,8 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2271,7 +2244,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -2297,8 +2270,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2313,7 +2286,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -2372,7 +2345,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2390,7 +2363,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -2414,15 +2387,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -2434,15 +2407,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -2454,8 +2427,8 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2475,7 +2448,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -2498,8 +2471,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2514,7 +2487,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if manifest_id is _Unset:
@@ -2571,7 +2544,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2661,7 +2634,7 @@ class AgentsOperations:
         order: Optional[Literal["asc", "desc"]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.AgentObject"]:
+    ) -> ItemPaged["_models.AgentDetails"]:
         """Returns the list of all agents.
 
         :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
@@ -2682,14 +2655,14 @@ class AgentsOperations:
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of AgentObject
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentObject]
+        :return: An iterator like instance of AgentDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AgentObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2719,7 +2692,7 @@ class AgentsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentObject], deserialized.get("data", []))
+            list_of_elem = _deserialize(List[_models.AgentDetails], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -2755,7 +2728,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -2780,15 +2753,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_version(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -2803,15 +2776,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_version(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -2826,8 +2799,8 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2846,7 +2819,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -2870,8 +2843,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2886,7 +2859,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if definition is _Unset:
@@ -2936,7 +2909,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentVersionObject, response.json())
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2954,7 +2927,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -2981,15 +2954,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_version_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -3004,15 +2977,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_version_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -3027,8 +3000,8 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3048,7 +3021,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -3074,8 +3047,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3090,7 +3063,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if manifest_id is _Unset:
@@ -3147,7 +3120,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentVersionObject, response.json())
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3160,15 +3133,15 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionObject:
+    def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionDetails:
         """Retrieves a specific version of an agent.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :param agent_version: The version of the agent to retrieve. Required.
         :type agent_version: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3182,7 +3155,7 @@ class AgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
         _request = build_agents_get_version_request(
             agent_name=agent_name,
@@ -3219,7 +3192,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentVersionObject, response.json())
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3315,7 +3288,7 @@ class AgentsOperations:
         order: Optional[Literal["asc", "desc"]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.AgentVersionObject"]:
+    ) -> ItemPaged["_models.AgentVersionDetails"]:
         """Returns the list of versions of an agent.
 
         :param agent_name: The name of the agent to retrieve versions for. Required.
@@ -3335,14 +3308,14 @@ class AgentsOperations:
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of AgentVersionObject
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentVersionObject]
+        :return: An iterator like instance of AgentVersionDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentVersionDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AgentVersionObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentVersionDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3372,7 +3345,7 @@ class AgentsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentVersionObject], deserialized.get("data", []))
+            list_of_elem = _deserialize(List[_models.AgentVersionDetails], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -3426,7 +3399,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :keyword name: The name of the memory store. Required.
@@ -3441,13 +3414,15 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.MemoryStoreObject:
+    def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Required.
@@ -3455,15 +3430,15 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Required.
@@ -3471,8 +3446,8 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3491,7 +3466,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -3505,8 +3480,8 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3521,7 +3496,7 @@ class MemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -3572,7 +3547,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreObject, response.json())
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3588,7 +3563,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -3601,15 +3576,15 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -3619,15 +3594,15 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -3637,8 +3612,8 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3656,7 +3631,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -3668,8 +3643,8 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3684,7 +3659,7 @@ class MemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"description": description, "metadata": metadata}
@@ -3732,7 +3707,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreObject, response.json())
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3745,13 +3720,13 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
+    def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
         :type name: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3765,7 +3740,7 @@ class MemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         _request = build_memory_stores_get_request(
             name=name,
@@ -3801,7 +3776,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreObject, response.json())
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3821,7 +3796,7 @@ class MemoryStoresOperations:
         order: Optional[Literal["asc", "desc"]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.MemoryStoreObject"]:
+    ) -> ItemPaged["_models.MemoryStoreDetails"]:
         """List all memory stores.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -3839,14 +3814,14 @@ class MemoryStoresOperations:
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of MemoryStoreObject
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryStoreObject]
+        :return: An iterator like instance of MemoryStoreDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.MemoryStoreObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.MemoryStoreDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3875,7 +3850,7 @@ class MemoryStoresOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.MemoryStoreObject], deserialized.get("data", []))
+            list_of_elem = _deserialize(List[_models.MemoryStoreDetails], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -4095,7 +4070,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -4185,7 +4160,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
@@ -4241,7 +4216,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    def begin_update_memories(
+    def _begin_update_memories(
         self,
         name: str,
         *,
@@ -4251,74 +4226,15 @@ class MemoryStoresOperations:
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
-        :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Default value is None.
-        :paramtype previous_update_id: str
-        :keyword update_delay: Timeout period before processing the memory update in seconds.
-         If a new update request is received during this period, it will cancel the current request and
-         reset the timeout.
-         Set to 0 to immediately trigger the update without delay.
-         Defaults to 300 (5 minutes). Default value is None.
-        :paramtype update_delay: int
-        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    def begin_update_memories(
+    def _begin_update_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    def begin_update_memories(
+    def _begin_update_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace
     @api_version_validation(
@@ -4326,7 +4242,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def begin_update_memories(
+    def _begin_update_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -4422,78 +4338,6 @@ class MemoryStoresOperations:
         return LROPoller[_models.MemoryStoreUpdateCompletedResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "update_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    def get_update_result(self, name: str, update_id: str, **kwargs: Any) -> _models.MemoryStoreUpdateResult:
-        """Get memory store update result.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param update_id: The ID of the memory update operation. Required.
-        :type update_id: str
-        :return: MemoryStoreUpdateResult. The MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreUpdateResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.MemoryStoreUpdateResult] = kwargs.pop("cls", None)
-
-        _request = build_memory_stores_get_update_result_request(
-            name=name,
-            update_id=update_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreUpdateResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
     @overload
     def delete_scope(

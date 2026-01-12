@@ -1648,17 +1648,19 @@ class JobOperations(_ScopeDependentOperations):
         try:
             if job.services is not None:
                 studio_endpoint = job.services.get("Studio", None)
-                studio_url = studio_endpoint.endpoint
-                default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
-                module_logger.debug("default_scopes used: `%s`\n", default_scopes)
-                # Extract the tenant id from the credential using PyJWT
-                decode = jwt.decode(
-                    self._credential.get_token(*default_scopes).token,
-                    options={"verify_signature": False, "verify_aud": False},
-                )
-                tid = decode["tid"]
-                formatted_tid = TID_FMT.format(tid)
-                studio_endpoint.endpoint = studio_url + formatted_tid
+                if studio_endpoint is not None:
+                    studio_url = studio_endpoint.endpoint
+                    if studio_url is not None:
+                        default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
+                        module_logger.debug("default_scopes used: `%s`\n", default_scopes)
+                        # Extract the tenant id from the credential using PyJWT
+                        decode = jwt.decode(
+                            self._credential.get_token(*default_scopes).token,
+                            options={"verify_signature": False, "verify_aud": False},
+                        )
+                        tid = decode["tid"]
+                        formatted_tid = TID_FMT.format(tid)
+                        studio_endpoint.endpoint = studio_url + formatted_tid
         except Exception:  # pylint: disable=W0718
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 

@@ -26,7 +26,7 @@ class TestWebSiteManagementWorkflowsOperations(AzureMgmtRecordedTestCase):
             name="str",
             workflow_name="str",
             key_type={"keyType": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestWebSiteManagementWorkflowsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

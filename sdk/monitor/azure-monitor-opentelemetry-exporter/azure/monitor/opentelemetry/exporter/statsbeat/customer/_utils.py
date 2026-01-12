@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os
-from typing import Optional, List, Tuple, Union
+from typing import Optional, List, Tuple, Union, Any
+
 # mypy: disable-error-code="import-untyped"
 from requests import ReadTimeout, Timeout
 from azure.core.exceptions import ServiceRequestTimeoutError
@@ -28,7 +29,7 @@ from ._state import (
 
 def get_customer_sdkstats_export_interval() -> int:
     """Get the export interval for customer SDK stats from environment or default.
-    
+
     :return: Export interval in seconds
     :rtype: int
     """
@@ -43,7 +44,7 @@ def get_customer_sdkstats_export_interval() -> int:
 
 def is_customer_sdkstats_enabled() -> bool:
     """Check if customer SDK stats collection is enabled via environment variable.
-    
+
     :return: True if enabled, False otherwise
     :rtype: bool
     """
@@ -52,7 +53,7 @@ def is_customer_sdkstats_enabled() -> bool:
 
 def categorize_status_code(status_code: int) -> str:
     """Categorize HTTP status codes into human-readable messages.
-    
+
     :param status_code: HTTP status code
     :type status_code: int
     :return: Human-readable status message
@@ -81,10 +82,13 @@ def categorize_status_code(status_code: int) -> str:
     return f"status_{status_code}"
 
 
-def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:  # pylint: disable=docstring-missing-type
+def _determine_client_retry_code(
+    error: Any,
+) -> Tuple[RetryCodeType, Optional[str]]:
     """Determine the retry code and message for a given error.
-    
+
     :param error: The error that occurred
+    :type error: Any
     :return: Tuple of retry code and optional message
     :rtype: Tuple[RetryCodeType, Optional[str]]
     """
@@ -98,17 +102,17 @@ def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]: 
         ConnectionError,
         OSError,
     )
-    if hasattr(error, 'status_code') and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
+    if hasattr(error, "status_code") and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
         # For specific status codes, preserve the custom message if available
-        error_message = getattr(error, 'message', None) if hasattr(error, 'message') else None
+        error_message = getattr(error, "message", None) if hasattr(error, "message") else None
         return (error.status_code, error_message or _UNKNOWN)
 
     if isinstance(error, timeout_exception_types):
         return (RetryCode.CLIENT_TIMEOUT, _exception_categories.TIMEOUT_EXCEPTION.value)
 
-    if hasattr(error, 'message'):
-        error_message = getattr(error, 'message', None) if hasattr(error, 'message') else None
-        if error_message is not None and ('timeout' in error_message.lower() or 'timed out' in error_message.lower()):
+    if hasattr(error, "message"):
+        error_message = getattr(error, "message", None) if hasattr(error, "message") else None
+        if error_message is not None and ("timeout" in error_message.lower() or "timed out" in error_message.lower()):
             return (RetryCode.CLIENT_TIMEOUT, _exception_categories.TIMEOUT_EXCEPTION.value)
 
     if isinstance(error, network_exception_types):
@@ -119,7 +123,7 @@ def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]: 
 
 def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
     """Extract the success flag from a telemetry envelope.
-    
+
     :param envelope: The telemetry envelope
     :type envelope: TelemetryItem
     :return: Success flag if available, None otherwise
@@ -145,7 +149,7 @@ def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
 
 def track_successful_items(envelopes: List[TelemetryItem]):
     """Track successful telemetry items in customer SDK stats.
-    
+
     :param envelopes: List of telemetry envelopes that were successfully sent
     :type envelopes: List[TelemetryItem]
     """
@@ -153,17 +157,10 @@ def track_successful_items(envelopes: List[TelemetryItem]):
 
     for envelope in envelopes:
         telemetry_type = _get_telemetry_type(envelope)
-        customer_stats.count_successful_items(
-            1,
-            telemetry_type
-        )
+        customer_stats.count_successful_items(1, telemetry_type)
 
 
-def track_dropped_items(
-        envelopes: List[TelemetryItem],
-        drop_code: DropCodeType,
-        error_message: Optional[str] = None
-    ):
+def track_dropped_items(envelopes: List[TelemetryItem], drop_code: DropCodeType, error_message: Optional[str] = None):
     customer_stats = get_customer_stats_manager()
 
     if error_message is None:
@@ -173,7 +170,7 @@ def track_dropped_items(
                 1,
                 telemetry_type,
                 drop_code,
-                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True
+                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True,
             )
     else:
         for envelope in envelopes:
@@ -183,7 +180,7 @@ def track_dropped_items(
                 telemetry_type,
                 drop_code,
                 _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True,
-                exception_message=error_message
+                exception_message=error_message,
             )
 
 
@@ -196,25 +193,11 @@ def track_retry_items(envelopes: List[TelemetryItem], error) -> None:
         if isinstance(retry_code, int):
             # For status codes, include the message if available
             if message:
-                customer_stats.count_retry_items(
-                    1,
-                    telemetry_type,
-                    retry_code,
-                    str(message)
-                )
+                customer_stats.count_retry_items(1, telemetry_type, retry_code, str(message))
             else:
-                customer_stats.count_retry_items(
-                    1,
-                    telemetry_type,
-                    retry_code
-                )
+                customer_stats.count_retry_items(1, telemetry_type, retry_code)
         else:
-            customer_stats.count_retry_items(
-                1,
-                telemetry_type,
-                retry_code,
-                str(message)
-            )
+            customer_stats.count_retry_items(1, telemetry_type, retry_code, str(message))
 
 
 def track_dropped_items_from_storage(result_from_storage_put, envelopes):
@@ -232,10 +215,14 @@ def track_dropped_items_from_storage(result_from_storage_put, envelopes):
         track_dropped_items(envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
     elif get_local_storage_setup_state_exception() != "":
         # For exceptions caught in _check_and_set_folder_permissions during storage setup
-        track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value) # pylint: disable=line-too-long
+        track_dropped_items(
+            envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value
+        )  # pylint: disable=line-too-long
     elif isinstance(result_from_storage_put, str):
         # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason # pylint: disable=line-too-long
-        track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value) # pylint: disable=line-too-long
+        track_dropped_items(
+            envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value
+        )  # pylint: disable=line-too-long
     else:
         # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long
         pass
