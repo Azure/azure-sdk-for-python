@@ -8,7 +8,7 @@
 import os
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
@@ -19,10 +19,7 @@ from azure.ai.projects.models import (
 class TestAgentCodeInterpreter(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_code_interpreter_simple_math(self, **kwargs):
         """
         Test agent with Code Interpreter for simple Python code execution.
@@ -44,7 +41,8 @@ class TestAgentCodeInterpreter(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
+        agent_name = "code-interpreter-simple-agent"
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -52,7 +50,7 @@ class TestAgentCodeInterpreter(TestBase):
         ):
             # Create agent with code interpreter tool (no files)
             agent = project_client.agents.create_version(
-                agent_name="code-interpreter-simple-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can execute Python code.",
@@ -60,10 +58,7 @@ class TestAgentCodeInterpreter(TestBase):
                 ),
                 description="Simple code interpreter agent for basic Python execution.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "code-interpreter-simple-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Ask the agent to execute a complex Python calculation
             # Problem: Calculate the sum of cubes from 1 to 50, then add 12!/(8!)
@@ -74,11 +69,7 @@ class TestAgentCodeInterpreter(TestBase):
                 input="Calculate this using Python: First, find the sum of cubes from 1 to 50 (1³ + 2³ + ... + 50³). Then add 12 factorial divided by 8 factorial (12!/8!). What is the final result?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
-
-            print(f"Response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Get the response text
             last_message = response.output[-1]
@@ -107,10 +98,7 @@ class TestAgentCodeInterpreter(TestBase):
     @pytest.mark.skip(
         reason="Skipped due to known server bug. Enable once https://msdata.visualstudio.com/Vienna/_workitems/edit/4841313 is resolved"
     )
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_code_interpreter_file_generation(self, **kwargs):
         """
         Test agent with Code Interpreter for file upload, processing, and download.
@@ -137,7 +125,7 @@ class TestAgentCodeInterpreter(TestBase):
         DELETE /files/{file_id}                              openai_client.files.delete()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -182,11 +170,7 @@ class TestAgentCodeInterpreter(TestBase):
                 input="Create a bar chart showing operating profit by sector from the uploaded CSV file. Save it as a PNG file.",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
-
-            print(f"Response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Extract file information from response annotations
             file_id = ""

@@ -8,7 +8,7 @@ A minimal command-line interface using argparse. This file provides a
 from __future__ import annotations
 
 import argparse
-import sys
+import shutil
 import os
 from typing import Sequence, Optional
 
@@ -32,6 +32,9 @@ from .bandit import bandit
 from .verify_keywords import verify_keywords
 from .generate import generate
 from .breaking import breaking
+from .samples import samples
+from .devtest import devtest
+from .optional import optional
 
 from ci_tools.logging import configure_logging, logger
 
@@ -95,6 +98,9 @@ def build_parser() -> argparse.ArgumentParser:
     verify_keywords().register(subparsers, [common])
     generate().register(subparsers, [common])
     breaking().register(subparsers, [common])
+    samples().register(subparsers, [common])
+    devtest().register(subparsers, [common])
+    optional().register(subparsers, [common])
 
     return parser
 
@@ -116,6 +122,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if not hasattr(args, "func"):
         parser.print_help()
         return 1
+
+    # default to uv if available
+    uv_path = shutil.which("uv")
+    if uv_path:
+        os.environ["TOX_PIP_IMPL"] = "uv"
 
     try:
         result = args.func(args)

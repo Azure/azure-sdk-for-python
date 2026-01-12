@@ -16,6 +16,7 @@ from azure.core.exceptions import ResourceNotModifiedError
 from azure.core.rest import HttpRequest, HttpResponse
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from ._query_param_policy import QueryParamPolicy
 from ._generated import AzureAppConfigurationClient as AzureAppConfigurationClientGenerated
 from ._generated.models import (
     SnapshotStatus,
@@ -32,6 +33,7 @@ from ._models import (
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
+from ._audience import get_audience, DEFAULT_SCOPE_SUFFIX
 from ._utils import (
     get_key_filter,
     get_label_filter,
@@ -49,6 +51,9 @@ class AzureAppConfigurationClient:
     :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword audience: The audience to use for authentication with Microsoft Entra. Defaults to the public Azure App
+        Configuration audience. See the supported audience list at https://aka.ms/appconfig/client-token-audience
+    :paramtype audience: str
 
     """
 
@@ -63,8 +68,12 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
-        credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = SyncTokenPolicy()
+        self._query_param_policy = QueryParamPolicy()
+
+        audience = kwargs.pop("audience", get_audience(base_url))
+        # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
+        kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
 
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")
@@ -76,7 +85,9 @@ class AzureAppConfigurationClient:
         elif isinstance(credential, TokenCredential):
             kwargs.update(
                 {
-                    "authentication_policy": BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                    "authentication_policy": BearerTokenCredentialPolicy(
+                        credential, *kwargs["credential_scopes"], **kwargs
+                    ),
                 }
             )
         else:
@@ -85,7 +96,10 @@ class AzureAppConfigurationClient:
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfigurationClientGenerated(
-            base_url, credential, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
+            base_url,
+            credential,
+            per_call_policies=[self._query_param_policy, self._sync_token_policy],
+            **kwargs,  # type: ignore[arg-type]
         )
 
     @classmethod

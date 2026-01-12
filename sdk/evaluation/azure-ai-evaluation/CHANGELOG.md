@@ -1,5 +1,13 @@
 # Release History
 
+## 1.14.0 (2026-01-05)
+
+### Bugs Fixed
+
+- Updated CodeVulnerability and UngroundedAttributes evaluators for RedTeam to use the binary true/false scoring pattern so their results align with service responses.
+- Fixed handling of nested fields for AOAI graders when using files as datasource 
+- Fixed `GroundednessEvaluator` with `query` not honoring `is_reasoning_model` (and `credential`) when reloading the query prompty, which could cause `max_tokens` to be sent to reasoning models. [#44385](https://github.com/Azure/azure-sdk-for-python/issues/44385)
+
 ## 1.13.7 (2025-11-14)
 
 ### Bugs Fixed

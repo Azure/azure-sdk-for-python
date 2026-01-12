@@ -140,7 +140,7 @@ with (
                             print(f"File Citation - Filename: {annotation.filename}, File ID: {annotation.file_id}")
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+            print(f"Agent response: {event.response.output_text}")
 
     # Clean up resources
     print("\n" + "=" * 60)
