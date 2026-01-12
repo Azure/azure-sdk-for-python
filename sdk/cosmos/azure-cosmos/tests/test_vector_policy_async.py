@@ -59,6 +59,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             indexing_policy=indexing_policy)
         properties = await created_container.read()
         assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
+        await self.test_db.delete_container(created_container.id)
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {

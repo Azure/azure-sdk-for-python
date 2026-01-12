@@ -110,6 +110,7 @@ class TestVectorPolicy(unittest.TestCase):
             indexing_policy=indexing_policy)
         properties = created_container.read()
         assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
+        self.test_db.delete_container(created_container.id)
 
     def test_create_vector_embedding_container(self):
         indexing_policy = {
