@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.4 (2026-01-12)
+## 1.8.4 (2026-01-13)
 
 ### Features Added
 - Added support for OTEL_TRACES_SAMPLER
