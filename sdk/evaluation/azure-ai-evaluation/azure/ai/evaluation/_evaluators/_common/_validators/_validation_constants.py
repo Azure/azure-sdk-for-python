@@ -6,13 +6,12 @@ Constants and enums for validation.
 """
 
 from enum import Enum
-from azure.ai.projects.models import ResponsesMessageRole
 
 class MessageRole(str, Enum):
     """Valid message roles in conversations."""
-    USER = ResponsesMessageRole.USER.value
-    ASSISTANT = ResponsesMessageRole.ASSISTANT.value
-    SYSTEM = ResponsesMessageRole.SYSTEM.value
+    USER = "user"
+    ASSISTANT = "assistant"
+    SYSTEM = "system"
     TOOL = "tool"
 
 

@@ -5,7 +5,8 @@
 Validator for conversation-style query and response inputs.
 """
 
-from typing import Any, Dict, Optional, override
+from typing import Any, Dict, Optional
+from typing_extensions import override
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ._validation_constants import MessageRole, ContentType
 from ._validator_interface import ValidatorInterface

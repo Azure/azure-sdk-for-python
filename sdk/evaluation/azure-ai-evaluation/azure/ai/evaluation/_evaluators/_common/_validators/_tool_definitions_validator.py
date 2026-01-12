@@ -5,7 +5,8 @@
 Validator for evaluators that require tool definitions.
 """
 
-from typing import Any, Dict, Optional, override
+from typing import Any, Dict, Optional
+from typing_extensions import override
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ._conversation_validator import ConversationValidator
 
