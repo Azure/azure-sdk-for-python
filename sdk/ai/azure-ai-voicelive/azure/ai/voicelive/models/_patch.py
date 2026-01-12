@@ -7,9 +7,33 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from typing import Any
+from ._models import RequestSession as GeneratedRequestSession
 
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+class RequestSession(GeneratedRequestSession):
+    """Extended RequestSession that tracks explicitly set None values."""
+    
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # Track which kwargs were explicitly passed as None
+        self._explicit_none_fields = {k for k, v in kwargs.items() if v is None}
+        super().__init__(*args, **kwargs)
+    
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+        """Convert to dict, including explicitly set None values."""
+        result = super().as_dict(**kwargs)
+        # Add back any fields that were explicitly set to None
+        for field in self._explicit_none_fields:
+            # Convert attribute name to rest field name if needed
+            rest_name = self._attr_to_rest_field.get(field)
+            if rest_name:
+                result[rest_name._rest_name] = None
+            else:
+                result[field] = None
+        return result
+
+
+__all__: list[str] = ["RequestSession"]
 
 
 def patch_sdk():
