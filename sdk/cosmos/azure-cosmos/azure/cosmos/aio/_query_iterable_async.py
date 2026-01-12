@@ -148,14 +148,20 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
         the query execution. Headers are captured as queries are iterated,
         so this list grows as you consume more results.
 
+        This method is typically accessed via the
+        :class:`~azure.cosmos.aio.CosmosAsyncItemPaged` object returned from
+        :meth:`~azure.cosmos.aio.ContainerProxy.query_items`.
+
         :return: List of response headers from each page request.
         :rtype: list[~azure.core.utils.CaseInsensitiveDict]
 
-        Example:
-            >>> items = container.query_items(query="SELECT * FROM c")
-            >>> async for item in items:
+        Example::
+
+            # container.query_items returns a CosmosAsyncItemPaged instance
+            >>> paged_items = container.query_items(query="SELECT * FROM c")
+            >>> async for item in paged_items:
             ...     process(item)
-            >>> headers = items.get_response_headers()
+            >>> headers = paged_items.get_response_headers()
             >>> print(f"Total pages fetched: {len(headers)}")
         """
         return [h.copy() for h in self._response_headers]
