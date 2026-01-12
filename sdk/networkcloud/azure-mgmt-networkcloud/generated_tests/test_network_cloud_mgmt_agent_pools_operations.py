@@ -24,7 +24,7 @@ class TestNetworkCloudMgmtAgentPoolsOperations(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.list_by_kubernetes_cluster(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkCloudMgmtAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             agent_pool_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestNetworkCloudMgmtAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "upgradeSettings": {"drainTimeout": 0, "maxSurge": "str", "maxUnavailable": "str"},
             },
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestNetworkCloudMgmtAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             agent_pool_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestNetworkCloudMgmtAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             agent_pool_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
