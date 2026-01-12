@@ -114,7 +114,8 @@ class pylint(Check):
                         "pylint",
                         "--rcfile={}".format(rcFileLocation),
                         "--output-format=parseable",
-                    ] + main_pylint_targets
+                    ]
+                    + main_pylint_targets
                 )
 
                 results.append(
@@ -125,7 +126,8 @@ class pylint(Check):
                             "pylint",
                             "--rcfile={}".format(rcFileLocation),
                             "--output-format=parseable",
-                        ] + main_pylint_targets
+                        ]
+                        + main_pylint_targets
                     )
                 )
             except CalledProcessError as e:
@@ -135,12 +137,12 @@ class pylint(Check):
                     )
                 )
                 results.append(e.returncode)
-                
+
             # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
             if args.next:
                 tests_dir = os.path.join(package_dir, "tests")
                 samples_dir = os.path.join(package_dir, "samples")
-                
+
                 # Run tests with test_pylintrc
                 if os.path.exists(tests_dir):
                     try:
@@ -152,7 +154,7 @@ class pylint(Check):
                                 "pylint",
                                 "--rcfile={}".format(test_rcfile),
                                 "--output-format=parseable",
-                                tests_dir
+                                tests_dir,
                             ]
                         )
                         results.append(
@@ -163,7 +165,7 @@ class pylint(Check):
                                     "pylint",
                                     "--rcfile={}".format(test_rcfile),
                                     "--output-format=parseable",
-                                    tests_dir
+                                    tests_dir,
                                 ]
                             )
                         )
@@ -174,7 +176,7 @@ class pylint(Check):
                             )
                         )
                         results.append(e.returncode)
-                        
+
                 # Run samples with main pylintrc
                 if os.path.exists(samples_dir):
                     try:
@@ -185,7 +187,7 @@ class pylint(Check):
                                 "pylint",
                                 "--rcfile={}".format(rcFileLocation),
                                 "--output-format=parseable",
-                                samples_dir
+                                samples_dir,
                             ]
                         )
                         results.append(
@@ -196,7 +198,7 @@ class pylint(Check):
                                     "pylint",
                                     "--rcfile={}".format(rcFileLocation),
                                     "--output-format=parseable",
-                                    samples_dir
+                                    samples_dir,
                                 ]
                             )
                         )
@@ -210,6 +212,7 @@ class pylint(Check):
 
             if args.next and in_ci() and any(result > 0 for result in results):
                 from gh_tools.vnext_issue_creator import create_vnext_issue
+
                 create_vnext_issue(package_dir, "pylint")
 
             if args.next and in_ci():
