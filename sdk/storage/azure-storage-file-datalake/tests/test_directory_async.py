@@ -1353,7 +1353,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         new_token = generate_directory_sas(self.dsc.account_name,
                                            self.file_system_name,
                                            "newdir",
-                                           datalake_storage_account_key,
+                                           datalake_storage_account_key.secret,
                                            permission=DirectorySasPermissions(read=True, create=True, write=True,
                                                                               delete=True),
                                            expiry=datetime.utcnow() + timedelta(hours=1),
