@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects>=2.0.0b1 azure-identity openai python-dotenv
+    pip install azure-ai-projects>=2.0.0b1 python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -42,7 +42,7 @@ validation_file_path = os.environ.get(
 )
 
 with (
-    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
@@ -58,6 +58,10 @@ with (
         validation_file = openai_client.files.create(file=f, purpose="fine-tune")
     print(f"Uploaded validation file with ID: {validation_file.id}")
 
+    print("Waits for the training and validation files to be processed...")
+    openai_client.files.wait_for_processing(train_file.id)
+    openai_client.files.wait_for_processing(validation_file.id)
+
     print("Creating supervised fine-tuning job")
     fine_tuning_job = openai_client.fine_tuning.jobs.create(
         training_file=train_file.id,
@@ -67,6 +71,11 @@ with (
             "type": "supervised",
             "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
         },
+        extra_body={
+            "trainingType": "GlobalStandard"
+        },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
+        # Preferred trainingtype is GlobalStandard.  Note:  Global training offers cost savings , but copies data and weights outside the current resource region.
+        # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
     )
     print(fine_tuning_job)
     # [END finetuning_oss_model_supervised_job_sample]

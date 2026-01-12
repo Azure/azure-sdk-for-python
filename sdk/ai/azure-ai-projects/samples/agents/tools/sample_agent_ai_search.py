@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -24,6 +24,7 @@ USAGE:
     3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
     4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
+    5) AI_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
@@ -40,41 +41,44 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
-# [START tool_declaration]
-tool = AzureAISearchAgentTool(
-    azure_ai_search=AzureAISearchToolResource(
-        indexes=[
-            AISearchIndexResource(
-                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
-                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                query_type=AzureAISearchQueryType.SIMPLE,
-            ),
-        ]
+    # [START tool_declaration]
+    tool = AzureAISearchAgentTool(
+        azure_ai_search=AzureAISearchToolResource(
+            indexes=[
+                AISearchIndexResource(
+                    project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
+                    index_name=os.environ["AI_SEARCH_INDEX_NAME"],
+                    query_type=AzureAISearchQueryType.SIMPLE,
+                ),
+            ]
+        )
     )
-)
-# [END tool_declaration]
+    # [END tool_declaration]
 
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="""You are a helpful assistant. You must always provide citations for
-            answers using the tool and render them as: `[message_idx:search_idx†source]`.""",
+            answers using the tool and render them as: `\u3010message_idx:search_idx\u2020source\u3011`.""",
             tools=[tool],
         ),
         description="You are a helpful agent.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question (e.g., 'Tell me about mental health services'): \n")
+    # Get user input from environment variable or prompt
+    user_input = os.environ.get("AI_SEARCH_USER_INPUT")
+    if not user_input:
+        user_input = input("Enter your question (e.g., 'Tell me about mental health services'): \n")
 
     stream_response = openai_client.responses.create(
         stream=True,
@@ -104,7 +108,7 @@ with project_client:
                             )
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+            print(f"Agent response: {event.response.output_text}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

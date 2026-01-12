@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects>=2.0.0b1 azure-identity openai python-dotenv
+    pip install azure-ai-projects>=2.0.0b1 python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -35,7 +35,7 @@ script_dir = Path(__file__).parent
 file_path = os.environ.get("FILE_PATH", os.path.join(script_dir, "data", "test_file.jsonl"))
 
 with (
-    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):

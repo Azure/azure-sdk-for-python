@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -42,7 +42,7 @@ from azure.ai.projects.telemetry import AIProjectInstrumentor
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, AgentReference
+from azure.ai.projects.models import PromptAgentDefinition
 from openai.types.responses.response_input_text import ResponseInputText
 from openai.types.responses.response_output_text import ResponseOutputText
 
@@ -88,12 +88,11 @@ AIProjectInstrumentor().instrument()
 scenario = os.path.basename(__file__)
 with tracer.start_as_current_span(scenario):
     # [END create_span_for_scenario]
-    project_client = AIProjectClient(
-        endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-        credential=DefaultAzureCredential(),
-    )
-
-    with project_client:
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
         agent_definition = PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that answers general questions",
@@ -102,14 +101,12 @@ with tracer.start_as_current_span(scenario):
         agent = project_client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
         print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-        openai_client = project_client.get_openai_client()
-
         conversation = openai_client.conversations.create()
 
         request = "Hello, tell me a joke."
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             input=request,
         )
         print(f"Answer: {response.output}")
@@ -117,7 +114,7 @@ with tracer.start_as_current_span(scenario):
         response = openai_client.responses.create(
             conversation=conversation.id,
             input="Tell another one about computers.",
-            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Answer: {response.output}")
 

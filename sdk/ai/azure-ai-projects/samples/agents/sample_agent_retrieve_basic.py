@@ -18,12 +18,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AGENT_NAME - The name of an existing Agent in your Microsoft Foundry project.
+    2) AZURE_AI_AGENT_NAME - The name of an existing Agent in your Microsoft Foundry project.
     3) CONVERSATION_ID - The ID of an existing Conversation associated with the Agent
 """
 
@@ -34,17 +34,16 @@ from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-agent_name = os.environ["AGENT_NAME"]
+agent_name = os.environ["AZURE_AI_AGENT_NAME"]
 conversation_id = os.environ["CONVERSATION_ID"]
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Retrieves latest version of an existing Agent
     agent = project_client.agents.get(agent_name=agent_name)

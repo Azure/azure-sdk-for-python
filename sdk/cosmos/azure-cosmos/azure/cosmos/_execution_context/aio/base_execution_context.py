@@ -27,7 +27,8 @@ from collections import deque
 import copy
 
 from ...aio import _retry_utility_async
-from ... import http_constants
+from ... import http_constants, exceptions
+
 
 # pylint: disable=protected-access
 
@@ -131,10 +132,35 @@ class _QueryExecutionContextBase(object):
         return fetched_items
 
     async def _fetch_items_helper_with_retries(self, fetch_function):
-        async def callback():
-            return await self._fetch_items_helper_no_retries(fetch_function)
+        # TODO: Properly propagate kwargs from retry utility to fetch function
+        # the callback keep the **kwargs parameter to maintain compatibility with the retry utility's execution pattern.
+        # ExecuteAsync passes retry context parameters (timeout, operation start time, logger, etc.)
+        # The callback need to accept these parameters even if unused
+        # Removing **kwargs results in a TypeError when ExecuteAsync tries to pass these parameters
+        async def execute_fetch():
+            async def callback(**kwargs):  # pylint: disable=unused-argument
+                return await self._fetch_items_helper_no_retries(fetch_function)
 
-        return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
+            return await _retry_utility_async.ExecuteAsync(
+                self._client, self._client._global_endpoint_manager, callback, **self._options
+            )
+
+        max_retries = 3
+        attempt = 0
+        while attempt <= max_retries:
+            try:
+                return await execute_fetch()
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    attempt += 1
+                    if attempt > max_retries:
+                        raise  # Exhausted retries, propagate error
+
+                    # Refresh routing map to get new partition key ranges
+                    self._client.refresh_routing_map_provider()
+                    # Retry immediately (no backoff needed for partition splits)
+                    continue
+                raise  # Not a partition split error, propagate immediately
 
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
