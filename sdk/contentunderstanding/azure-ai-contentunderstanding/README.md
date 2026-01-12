@@ -106,9 +106,9 @@ Then edit `.env` and set at minimum:
 The environment variables define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
 
 ```
-AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
 # Optionally provide a key; if omitted, DefaultAzureCredential is used.
-AZURE_CONTENT_UNDERSTANDING_KEY=<optional-api-key>
+CONTENTUNDERSTANDING_KEY=<optional-api-key>
 GPT_4_1_DEPLOYMENT=gpt-4.1
 GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
 TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
