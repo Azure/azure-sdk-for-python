@@ -33,7 +33,7 @@ from azure.cosmos import exceptions
 # pylint: disable=protected-access
 
 
-class QueryIterable(PageIterator):
+class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attributes
     """Represents an iterable object of the query results.
 
     QueryIterable is a wrapper for query execution context.
