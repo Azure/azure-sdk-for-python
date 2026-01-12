@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import pytest
 import json
 import os
@@ -18,8 +19,10 @@ from azure.codetransparency.cbor import (
 
 class MockAsyncResponse(AsyncHttpResponseImpl):
     """Mock async HTTP response for testing."""
-    
-    def __init__(self, request, body: bytes, status_code: int, headers: Optional[dict] = None):
+
+    def __init__(
+        self, request, body: bytes, status_code: int, headers: Optional[dict] = None
+    ):
         headers = headers or {}
         super().__init__(
             request=request,
@@ -38,7 +41,7 @@ class MockAsyncResponse(AsyncHttpResponseImpl):
 
 class MockAsyncTransport(AsyncHttpTransport):
     """Mock async transport that returns pre-configured responses."""
-    
+
     def __init__(self, responses: List[Tuple[int, bytes, dict]]):
         """
         Initialize with a list of responses to return in order.
@@ -47,19 +50,19 @@ class MockAsyncTransport(AsyncHttpTransport):
         self._responses = responses
         self._call_index = 0
         self.requests: List[Any] = []
-    
+
     async def __aenter__(self):
         return self
-    
+
     async def __aexit__(self, *args):
         pass
-    
+
     async def open(self):
         pass
-    
+
     async def close(self):
         pass
-    
+
     async def send(self, request, **kwargs):
         self.requests.append(request)
         if self._call_index < len(self._responses):
@@ -75,7 +78,9 @@ def cert_file(tmp_path):
     cert_path = os.path.join(tmp_path, "ledger_cert.pem")
     # Write a dummy certificate - the content doesn't matter for mocked tests
     with open(cert_path, "w") as f:
-        f.write("-----BEGIN CERTIFICATE-----\nMIIB...IDAQAB\n-----END CERTIFICATE-----\n")
+        f.write(
+            "-----BEGIN CERTIFICATE-----\nMIIB...IDAQAB\n-----END CERTIFICATE-----\n"
+        )  # cSpell:disable-line
     return cert_path
 
 
@@ -94,9 +99,9 @@ async def test_get_transparency_config_cbor_with_data(
     # CBOR encoded empty map: 0xa0 = {}
     cbor_data = b"\xa0"
 
-    transport = MockAsyncTransport([
-        (status_code, cbor_data, {"Content-Type": "application/cbor"})
-    ])
+    transport = MockAsyncTransport(
+        [(status_code, cbor_data, {"Content-Type": "application/cbor"})]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",
@@ -133,9 +138,9 @@ async def test_get_public_keys(cert_file, status_code, should_raise):
     """Test that get_public_keys returns JSON data or raises on error."""
     json_data = json.dumps({"keys": []}).encode()
 
-    transport = MockAsyncTransport([
-        (status_code, json_data, {"Content-Type": "application/json"})
-    ])
+    transport = MockAsyncTransport(
+        [(status_code, json_data, {"Content-Type": "application/json"})]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",
@@ -171,9 +176,9 @@ async def test_create_entry(cert_file, status_code, should_raise):
     # CBOR encoded: {"OperationId": "123", "Status": "running"}
     cbor_data = b"\xa2jOperationIdc123fStatusgrunning"
 
-    transport = MockAsyncTransport([
-        (status_code, cbor_data, {"Content-Type": "application/cbor"})
-    ])
+    transport = MockAsyncTransport(
+        [(status_code, cbor_data, {"Content-Type": "application/cbor"})]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",
@@ -210,11 +215,11 @@ async def test_create_entry(cert_file, status_code, should_raise):
 async def test_get_operation(cert_file, status_code, should_raise):
     """Test that get_operation returns CBOR data or raises on error."""
     # CBOR encoded: {"OperationId": "operation123", "Status": "succeeded"}
-    cbor_data = b"\xa2jOperationIdeoperation123fStatusisucceeded"
+    cbor_data = b"\xa2jOperationIdeoperation123fStatusisucceeded"  # cSpell:disable-line
 
-    transport = MockAsyncTransport([
-        (status_code, cbor_data, {"Content-Type": "application/cbor"})
-    ])
+    transport = MockAsyncTransport(
+        [(status_code, cbor_data, {"Content-Type": "application/cbor"})]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",
@@ -248,9 +253,9 @@ async def test_get_entry(cert_file, status_code, should_raise):
     # Sample COSE_Sign1 response bytes
     cose_data = b"\xd2\x84\x43\xa1\x01\x26\xa0\x44test\x40"
 
-    transport = MockAsyncTransport([
-        (status_code, cose_data, {"Content-Type": "application/cose"})
-    ])
+    transport = MockAsyncTransport(
+        [(status_code, cose_data, {"Content-Type": "application/cose"})]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",
@@ -284,9 +289,9 @@ async def test_get_entry_statement(cert_file, status_code, should_raise):
     # Sample COSE_Sign1 statement response bytes
     cose_data = b"\xd2\x84\x43\xa1\x01\x26\xa0\x44test\x40"
 
-    transport = MockAsyncTransport([
-        (status_code, cose_data, {"Content-Type": "application/cose"})
-    ])
+    transport = MockAsyncTransport(
+        [(status_code, cose_data, {"Content-Type": "application/cose"})]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",
@@ -321,14 +326,16 @@ async def test_begin_create_entry_with_polling(cert_file):
     )
     operation_succeeded_cbor = bytes.fromhex(operation_succeeded_hex)
 
-    transport = MockAsyncTransport([
-        # create_entry POST request
-        (202, running_operation_cbor, {"Content-Type": "application/cbor"}),
-        # get_operation GET request (polling) - first returns running
-        (200, running_operation_cbor, {"Content-Type": "application/cbor"}),
-        # Second poll returns succeeded
-        (200, operation_succeeded_cbor, {"Content-Type": "application/cbor"}),
-    ])
+    transport = MockAsyncTransport(
+        [
+            # create_entry POST request
+            (202, running_operation_cbor, {"Content-Type": "application/cbor"}),
+            # get_operation GET request (polling) - first returns running
+            (200, running_operation_cbor, {"Content-Type": "application/cbor"}),
+            # Second poll returns succeeded
+            (200, operation_succeeded_cbor, {"Content-Type": "application/cbor"}),
+        ]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",
@@ -365,14 +372,16 @@ async def test_begin_wait_for_operation_with_polling(cert_file):
     )
     operation_succeeded_cbor = bytes.fromhex(operation_succeeded_hex)
 
-    transport = MockAsyncTransport([
-        # First poll returns running
-        (200, running_operation_cbor, {"Content-Type": "application/cbor"}),
-        # Second poll returns running
-        (200, running_operation_cbor, {"Content-Type": "application/cbor"}),
-        # Third poll returns succeeded
-        (200, operation_succeeded_cbor, {"Content-Type": "application/cbor"}),
-    ])
+    transport = MockAsyncTransport(
+        [
+            # First poll returns running
+            (200, running_operation_cbor, {"Content-Type": "application/cbor"}),
+            # Second poll returns running
+            (200, running_operation_cbor, {"Content-Type": "application/cbor"}),
+            # Third poll returns succeeded
+            (200, operation_succeeded_cbor, {"Content-Type": "application/cbor"}),
+        ]
+    )
 
     client = CodeTransparencyClient(
         endpoint="https://test.confidential-ledger.azure.com",

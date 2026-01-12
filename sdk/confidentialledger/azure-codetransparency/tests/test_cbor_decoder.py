@@ -1,5 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
-# cSpell:ignore operationid
+# cSpell:ignore operationid, phdr, cosesign, strea, Bignums
 import math
 import pytest
 
