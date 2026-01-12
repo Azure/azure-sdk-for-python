@@ -226,21 +226,20 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Check if model deployments are configured in test environment
-        gpt41_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_DEPLOYMENT")
-        gpt41_mini_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_MINI_DEPLOYMENT")
-        text_embedding_deployment = os.getenv("CONTENTUNDERSTANDING_TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
+        gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
+        gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
+        text_embedding_3_large_deployment = os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
 
-        if not gpt41_deployment or not gpt41_mini_deployment or not text_embedding_deployment:
+        if not gpt_4_1_deployment or not gpt_4_1_mini_deployment or not text_embedding_3_large_deployment:
             pytest.skip(
                 "Model deployments are not configured in test environment. Skipping test_update_defaults_async."
             )
-            return
 
         # Update defaults with configured deployments
         model_deployments = {
-            "gpt-4.1": gpt41_deployment,
-            "gpt-4.1-mini": gpt41_mini_deployment,
-            "text-embedding-3-large": text_embedding_deployment,
+            "gpt-4.1": gpt_4_1_deployment,
+            "gpt-4.1-mini": gpt_4_1_mini_deployment,
+            "text-embedding-3-large": text_embedding_3_large_deployment,
         }
 
         response = await client.update_defaults(model_deployments=model_deployments)
@@ -255,18 +254,18 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         # Verify each deployment was set correctly
         assert "gpt-4.1" in updated_defaults.model_deployments, "Should contain gpt-4.1 deployment"
-        assert updated_defaults.model_deployments["gpt-4.1"] == gpt41_deployment, "gpt-4.1 deployment should match"
+        assert updated_defaults.model_deployments["gpt-4.1"] == gpt_4_1_deployment, "gpt-4.1 deployment should match"
 
         assert "gpt-4.1-mini" in updated_defaults.model_deployments, "Should contain gpt-4.1-mini deployment"
         assert (
-            updated_defaults.model_deployments["gpt-4.1-mini"] == gpt41_mini_deployment
+            updated_defaults.model_deployments["gpt-4.1-mini"] == gpt_4_1_mini_deployment
         ), "gpt-4.1-mini deployment should match"
 
         assert (
             "text-embedding-3-large" in updated_defaults.model_deployments
         ), "Should contain text-embedding-3-large deployment"
         assert (
-            updated_defaults.model_deployments["text-embedding-3-large"] == text_embedding_deployment
+            updated_defaults.model_deployments["text-embedding-3-large"] == text_embedding_3_large_deployment
         ), "text-embedding-3-large deployment should match"
 
         print(f"Successfully updated defaults with {len(updated_defaults.model_deployments)} model deployments")
@@ -281,9 +280,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Load expected model values from test environment
-        gpt41_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_DEPLOYMENT")
-        gpt41_mini_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_MINI_DEPLOYMENT")
-        text_embedding_deployment = os.getenv("CONTENTUNDERSTANDING_TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
+        gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
+        gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
+        text_embedding_3_large_deployment = os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
 
         response = await client.get_defaults()
 
@@ -303,24 +302,24 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 assert value is not None and len(value) > 0, "Model deployment value should not be null or empty"
 
             # Verify specific model values if they are configured in test environment
-            if gpt41_deployment:
+            if gpt_4_1_deployment:
                 assert "gpt-4.1" in defaults.model_deployments, "Should contain gpt-4.1 deployment"
                 assert (
-                    defaults.model_deployments["gpt-4.1"] == gpt41_deployment
+                    defaults.model_deployments["gpt-4.1"] == gpt_4_1_deployment
                 ), "gpt-4.1 deployment should match test environment value"
 
-            if gpt41_mini_deployment:
+            if gpt_4_1_mini_deployment:
                 assert "gpt-4.1-mini" in defaults.model_deployments, "Should contain gpt-4.1-mini deployment"
                 assert (
-                    defaults.model_deployments["gpt-4.1-mini"] == gpt41_mini_deployment
+                    defaults.model_deployments["gpt-4.1-mini"] == gpt_4_1_mini_deployment
                 ), "gpt-4.1-mini deployment should match test environment value"
 
-            if text_embedding_deployment:
+            if text_embedding_3_large_deployment:
                 assert (
                     "text-embedding-3-large" in defaults.model_deployments
                 ), "Should contain text-embedding-3-large deployment"
                 assert (
-                    defaults.model_deployments["text-embedding-3-large"] == text_embedding_deployment
+                    defaults.model_deployments["text-embedding-3-large"] == text_embedding_3_large_deployment
                 ), "text-embedding-3-large deployment should match test environment value"
 
             print(f"Successfully retrieved defaults with {len(defaults.model_deployments)} model deployments")
@@ -551,7 +550,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             elif not created_analyzer:
                 print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
-    @pytest.mark.skip(reason="TEMPORARILY SKIPPED: List operation is too long - too many analyzers")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_list_analyzers_async(self, contentunderstanding_endpoint: str) -> None:

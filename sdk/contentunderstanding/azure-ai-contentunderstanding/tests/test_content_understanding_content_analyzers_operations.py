@@ -243,14 +243,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             # Always clean up the created analyzer, even if the test fails
             delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
-    #     @ContentUnderstandingPreparer()
-    #     @recorded_by_proxy
-    #     @pytest.mark.skip(reason="GA API addition - to be implemented")
-
-    #     @ContentUnderstandingPreparer()
-    #     @recorded_by_proxy
-    #     @pytest.mark.skip(reason="GA API addition - to be implemented")
-
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_begin_create_with_json(self, contentunderstanding_endpoint: str) -> None:
