@@ -35,6 +35,11 @@ class TestQueryResponseHeaders(unittest.TestCase):
         )
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
+    @classmethod
+    def tearDownClass(cls):
+        if cls.client is not None:
+            cls.client.close()
+            cls.client = None
     def test_query_response_headers_single_page(self):
         """Test that response headers are captured for a single page query."""
         created_collection = self.created_db.create_container(
@@ -200,7 +205,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
             metrics_header = first_page_headers[metrics_header_name]
             metrics = metrics_header.split(";")
             self.assertGreater(len(metrics), 1)
-            self.assertTrue(all(["=" in x for x in metrics]))
+            self.assertTrue(all("=" in x for x in metrics))
 
         finally:
             self.created_db.delete_container(created_collection.id)

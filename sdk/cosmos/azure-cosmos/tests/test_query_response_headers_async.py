@@ -203,7 +203,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             metrics_header = first_page_headers[metrics_header_name]
             metrics = metrics_header.split(";")
             assert len(metrics) > 1
-            assert all(["=" in x for x in metrics])
+            assert all("=" in x for x in metrics)
 
         finally:
             await self.created_db.delete_container(created_collection.id)
