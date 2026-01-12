@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import pytest
 import responses
 import json
@@ -25,7 +26,7 @@ def mock_ledger_identity():
         "https://identity.confidential-ledger.core.azure.com/ledgerIdentity/test",
         body=json.dumps(
             {
-                "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIB...IDAQAB\n-----END CERTIFICATE-----\n"
+                "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIB...IDAQAB\n-----END CERTIFICATE-----\n"  # cSpell:disable-line
             }
         ),
         status=200,
@@ -172,7 +173,7 @@ def test_create_entry(mock_ledger_identity, tmp_path, status_code, should_raise)
 def test_get_operation(mock_ledger_identity, tmp_path, status_code, should_raise):
     """Test that get_operation returns CBOR data or raises on error."""
     # CBOR encoded: {"OperationId": "op123", "Status": "succeeded"}
-    cbor_data = b"\xa2jOperationIdeoperation123fStatusisucceeded"
+    cbor_data = b"\xa2jOperationIdeoperation123fStatusisucceeded"  # cSpell:disable-line
 
     responses.add(
         responses.GET,

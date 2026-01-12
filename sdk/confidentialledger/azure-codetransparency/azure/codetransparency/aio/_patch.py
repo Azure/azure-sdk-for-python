@@ -65,7 +65,7 @@ class CodeTransparencyClient(GeneratedClient):
             # Some client specific kwargs will not be supported by the identity request
             # this is to ensure users have full control of the underlying client config
             # Otherwise the client will break because get_ledger_identity request will fail
-            # with unsupported optiions that are meant for the Client
+            # with unsupported options that are meant for the Client
             valid_identity_kwargs = {
                 key: value
                 for key, value in kwargs.items()

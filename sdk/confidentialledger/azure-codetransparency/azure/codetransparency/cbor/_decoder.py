@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# cSpell:ignore phdr
 
 from typing import Any, Iterator
 
@@ -299,14 +300,14 @@ class CBORDecoder:
 
         # Shift mantissa and exponent to single-precision position,
         # preserve sign bit
-        valu = (half & 0x7FFF) << 13 | (half & 0x8000) << 16
+        value = (half & 0x7FFF) << 13 | (half & 0x8000) << 16
 
         if (half & 0x7C00) != 0x7C00:
             # Not infinity or NaN - scale the value
-            return ldexp(decode_single(valu), 112)
+            return ldexp(decode_single(value), 112)
 
         # Infinity or NaN - set exponent to all 1s for single precision
-        return decode_single(valu | 0x7F800000)
+        return decode_single(value | 0x7F800000)
 
     def decode_cose_sign1(self) -> Any:
         """Decode a COSE_Sign1 structure.
