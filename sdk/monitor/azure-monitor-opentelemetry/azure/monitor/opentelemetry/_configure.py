@@ -42,6 +42,8 @@ from azure.monitor.opentelemetry._constants import (
     METRIC_READERS_ARG,
     VIEWS_ARG,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
+    SAMPLING_ARG,
+    SAMPLER_TYPE,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
@@ -75,6 +77,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
+    _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
@@ -155,7 +158,12 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
-    if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
+    if SAMPLING_ARG in configurations:
+        sampler_arg = configurations[SAMPLING_ARG]
+        sampler_type = configurations[SAMPLER_TYPE]
+        sampler = _get_sampler_from_name(sampler_type, sampler_arg)
+        tracer_provider = TracerProvider(sampler=sampler, resource=resource)
+    elif SAMPLING_TRACES_PER_SECOND_ARG in configurations:
         traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
             sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
