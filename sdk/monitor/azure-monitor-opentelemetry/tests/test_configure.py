@@ -536,6 +536,7 @@ class TestConfigure(unittest.TestCase):
         logging_handler_mock.return_value = logging_handler_init_mock
         logger_mock = Mock()
         logger_mock.handlers = []
+        custom_lrp = Mock()
         get_logger_mock.return_value = logger_mock
         formatter_init_mock = Mock()
         elp_init_mock = Mock()
@@ -547,6 +548,7 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": True,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "log_record_processors": [custom_lrp],
             "logging_formatter": formatter_init_mock,
             "enable_trace_based_sampling_for_logs": False,
         }
@@ -572,7 +574,11 @@ class TestConfigure(unittest.TestCase):
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
         blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
-        self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
+        self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 3)
+        lp_init_mock.add_log_record_processor.assert_has_calls(
+            [call(custom_lrp), call(pclp_init_mock), call(blrp_init_mock)]
+        )
+        self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 3)
         lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
@@ -620,6 +626,7 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": True,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "log_record_processors": [],
             "logging_formatter": None,
             "enable_trace_based_sampling_for_logs": True,
         }
@@ -686,6 +693,7 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": False,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "log_record_processors": [],
             "logging_formatter": formatter_init_mock,
             "enable_trace_based_sampling_for_logs": False,
         }
@@ -745,15 +753,20 @@ class TestConfigure(unittest.TestCase):
         reader_init_mock = Mock()
         reader_mock.return_value = reader_init_mock
 
+        # Custom metric readers provided by user
+        custom_reader_1 = Mock()
+        custom_reader_2 = Mock()
+
         configurations = {
             "connection_string": "test_cs",
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
+            "metric_readers": [custom_reader_1, custom_reader_2],
             "views": [],
         }
         _setup_metrics(configurations)
         mp_mock.assert_called_once_with(
-            metric_readers=[reader_init_mock],
+            metric_readers=[custom_reader_1, custom_reader_2, reader_init_mock],
             resource=TEST_RESOURCE,
             views=[],
         )
@@ -793,6 +806,7 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
             "enable_performance_counters": False,
             "resource": TEST_RESOURCE,
+            "metric_readers": [],
             "views": [view_mock],
         }
         _setup_metrics(configurations)
@@ -836,6 +850,7 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
             "enable_performance_counters": False,
             "resource": TEST_RESOURCE,
+            "metric_readers": [],
             "views": [],
         }
         _setup_metrics(configurations)
