@@ -41,6 +41,15 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
 
     async def tear_down(self):
         if self.client is not None:
+            # Archive all ready snapshots
+            snapshots = self.client.list_snapshots(status=["ready"])
+            async for snapshot in snapshots:
+                try:
+                    await self.client.archive_snapshot(name=snapshot.name)
+                except Exception:
+                    pass
+
+            # Delete all configuration settings
             config_settings = self.client.list_configuration_settings()
             async for config_setting in config_settings:
                 await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)

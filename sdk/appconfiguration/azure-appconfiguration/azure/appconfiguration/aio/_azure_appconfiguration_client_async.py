@@ -105,7 +105,8 @@ class AzureAppConfigurationClient:
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfigurationClientGenerated(
-            base_url, credential, per_call_policies=per_call_policies, **kwargs  # type: ignore[arg-type]        )
+            base_url, credential, per_call_policies=per_call_policies, **kwargs  # type: ignore[arg-type]
+        )
 
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
