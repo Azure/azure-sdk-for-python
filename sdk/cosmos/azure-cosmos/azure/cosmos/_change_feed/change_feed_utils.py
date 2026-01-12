@@ -113,10 +113,6 @@ def validate_kwargs(
                 raise ValueError(
                     "'AllVersionsAndDeletes' mode is only supported if 'is_start_from_beginning'"
                     " is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead.")
-            if "start_time" in keyword_arguments and keyword_arguments["start_time"] != "Now":
-                raise ValueError(
-                    "'AllVersionsAndDeletes' mode is only supported if 'start_time' is 'Now'."
-                    " Please use 'start_time=\"Now\"' or 'continuation' instead.")
 
     if "partition_key_range_id" in keyword_arguments:
         warnings.warn(
