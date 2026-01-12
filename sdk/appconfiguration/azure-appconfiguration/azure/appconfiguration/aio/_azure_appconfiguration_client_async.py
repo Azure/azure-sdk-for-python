@@ -77,9 +77,14 @@ class AzureAppConfigurationClient:
         self._sync_token_policy = AsyncSyncTokenPolicy()
         self._query_param_policy = QueryParamPolicy()
 
-        audience_policy = AudienceErrorHandlingPolicy(bool(kwargs.get("audience", None)))
+        audience = kwargs.pop("audience", None)
 
+        audience_policy = AudienceErrorHandlingPolicy(bool(audience))
         per_call_policies = [self._sync_token_policy, audience_policy, self._query_param_policy]
+
+        if audience is None:
+            audience = get_audience(base_url)
+
         audience = kwargs.pop("audience", get_audience(base_url))
         # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
         kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
