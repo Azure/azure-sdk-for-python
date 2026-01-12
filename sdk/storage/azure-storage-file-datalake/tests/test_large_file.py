@@ -32,7 +32,7 @@ class TestLargeFile(StorageRecordedTestCase):
         credential_policy = _format_shared_key_credential(account_name,
                                                           account_key.secret)
         self.dsc = DataLakeServiceClient(url,
-                                         credential=account_key,
+                                         credential=account_key.secret,
                                          logging_enable=True,
                                          _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy])
         self.config = self.dsc._config

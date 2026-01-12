@@ -144,7 +144,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         container_name = self.get_resource_name('utcontainer')
         blob_name = self.get_resource_name('blob')
         # Upload a blob that can be downloaded to test read timeout
-        service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key.secret)
+        service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
         container = await service.create_container(container_name)
         await container.upload_blob(blob_name, b'Hello World', overwrite=True)
 
@@ -168,7 +168,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
 
         finally:
             # Recreate client with normal timeouts
-            service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key.secret)
+            service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
             service.delete_container(container_name)
 
     @BlobPreparer()

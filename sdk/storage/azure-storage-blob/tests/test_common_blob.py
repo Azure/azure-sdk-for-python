@@ -455,7 +455,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.account_name,
             blob.container_name,
             blob.blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

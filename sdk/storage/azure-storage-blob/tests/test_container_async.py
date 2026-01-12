@@ -465,7 +465,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(list=True),
             expiry=datetime.utcnow() + timedelta(hours=3)
@@ -1643,7 +1643,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             generate_container_sas,
             storage_account_name,
             container_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=ContainerSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )

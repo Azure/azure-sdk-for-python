@@ -34,7 +34,7 @@ TEST_BLOB_PREFIX = 'blob'
 class TestStorageBlobTags(StorageRecordedTestCase):
 
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
         self.container_name = self.get_resource_name("container")
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -96,7 +96,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         blob_client, _ = self._create_block_blob()
 
         # Act
@@ -112,7 +112,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         blob_client, _ = self._create_block_blob()
         lease = blob_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
@@ -138,7 +138,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        self._setup(versioned_storage_account_name, versioned_storage_account_key)
+        self._setup(versioned_storage_account_name, versioned_storage_account_key.secret)
         # use this version to set tag
         blob_client, resp = self._create_block_blob()
         self._create_block_blob()
@@ -156,7 +156,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         blob_client, resp = self._create_block_blob()
 
         # Act
@@ -177,7 +177,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
         blob_client, resp = self._create_block_blob(tags=tags)
 
@@ -198,7 +198,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = self._create_block_blob(tags=tags)
 
@@ -214,7 +214,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = self._create_block_blob(tags=tags)
 
@@ -232,7 +232,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
         blob_client, resp = self._create_append_blob(tags=tags)
 
@@ -248,7 +248,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = self._create_page_blob(tags=tags)
 
@@ -264,7 +264,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = self._create_empty_block_blob(tags={'condition tag': 'test tag'})
 
@@ -290,7 +290,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = self._create_block_blob()
 
@@ -322,7 +322,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
@@ -363,7 +363,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         tags2 = {"hello": "world"}
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
@@ -402,7 +402,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         self._create_block_blob(tags=tags)
         container = self.bsc.get_container_client(self.container_name)
@@ -420,7 +420,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
         container_name1 = self._create_container(prefix="container1")
         container_name2 = self._create_container(prefix="container2")
         container_name3 = self._create_container(prefix="container3")
@@ -530,7 +530,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key.secret)
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)

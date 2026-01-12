@@ -1649,7 +1649,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        async with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
+        async with ShareServiceClient(url, credential=credential.secret, transport=transport) as fsc:
             await fsc.get_service_properties()
             assert transport.session is not None
             async with fsc.get_share_client(share_name) as fc:

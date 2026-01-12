@@ -1230,7 +1230,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
                                   self.file_system_name,
                                   None,
                                   "oldfile",
-                                  datalake_storage_account_key,
+                                  datalake_storage_account_key.secret,
                                   permission=FileSasPermissions(read=True, create=True, write=True, delete=True, move=True),
                                   expiry=datetime.utcnow() + timedelta(hours=1),
                                   )

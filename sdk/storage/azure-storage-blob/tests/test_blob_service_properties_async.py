@@ -452,7 +452,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         # Arrange
         sas_token = generate_account_sas(
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=3)

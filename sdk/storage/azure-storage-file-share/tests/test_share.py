@@ -1530,7 +1530,7 @@ class TestStorageShare(StorageRecordedTestCase):
             generate_share_sas,
             share.account_name,
             share.share_name,
-            share.credential.account_key.secret,
+            share.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ShareSasPermissions(read=True),
         )
@@ -1616,7 +1616,7 @@ class TestStorageShare(StorageRecordedTestCase):
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
+        with ShareServiceClient(url, credential=credential.secret, transport=transport) as fsc:
             fsc.get_service_properties()
             assert transport.session is not None
             with fsc.get_share_client(share_name) as fc:
