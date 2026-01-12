@@ -87,51 +87,79 @@ For more information on deploying models, see [Create model deployments in Micro
 
 > **IMPORTANT:**  This is a **one-time setup per Microsoft Foundry resource** that maps your deployed models to those required by the prebuilt analyzers and custom models. If you have multiple Microsoft Foundry resources, you need to configure each one separately.
 
-You need to configure the default model mappings in your Microsoft Foundry resource. This can be done programmatically using the SDK. The configuration maps your deployed models (currently gpt-4.1, gpt-4.1-mini, and text-embedding-3-large) to the large language models required by prebuilt analyzers.
+You need to configure the default model mappings in your Microsoft Foundry resource so that prebuilt analyzers know which of your deployed models to use. This configuration maps your deployed models (e.g., `gpt-4.1`, `gpt-4.1-mini`) to the standard names required by the service.
 
-To configure model deployments using code, see [`sample_update_defaults.py`][sample_update_defaults] for a complete example. The sample shows how to:
-- Map your deployed models to the models required by prebuilt analyzers
-- Retrieve the current default model deployment configuration
+This is done programmatically. We provide a sample script [`sample_update_defaults.py`][sample_update_defaults] to handle this configuration.
 
-Before running the sample, set up environment variables. For local development and tests this repository uses a root-level `.env` file. A template is provided in the package directory as `env.sample`.
+**1. Set environment variables**
 
-Copy it to the repository root:
+The sample script reads configuration from environment variables. Set these variables to match your resource endpoint and the deployment names you created in Step 2.
 
+**Option A: Using command line (Select your platform)**
+
+**On Linux/macOS (bash):**
 ```bash
-cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
+export CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
+export CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
+export GPT_4_1_DEPLOYMENT="gpt-4.1"
+export GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
+export TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
 ```
 
-Then edit `.env` and set at minimum:
-
-The environment variables define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
-
-```
-CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
-# Optionally provide a key; if omitted, DefaultAzureCredential is used.
-CONTENTUNDERSTANDING_KEY=<optional-api-key>
-GPT_4_1_DEPLOYMENT=gpt-4.1
-GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
-TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+**On Windows (PowerShell):**
+```powershell
+$env:CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
+$env:CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
+$env:GPT_4_1_DEPLOYMENT="gpt-4.1"
+$env:GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
+$env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
 ```
 
-Notes:
-- If `CONTENTUNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
-- Keep the `.env` file out of version control—do not commit secrets.
-- The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
+**On Windows (Command Prompt):**
+```bat
+set CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+set CONTENTUNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
+set GPT_4_1_DEPLOYMENT=gpt-4.1
+set GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
+set TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+```
 
-**This is a critical step:** After setting up the environment variables, you must run the sample to configure the default model deployments. This one-time configuration maps your deployed models to the standard model names that prebuilt analyzers require. Without running this configuration, prebuilt analyzers will not work because they won't know which of your deployed models to use.
+**Option B: Using .env file (Recommended for development)**
 
-Run the sample:
+For local development, you can use a `.env` file. A template is provided in the package directory.
+
+1. Copy the template to your repository root:
+   ```bash
+   cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
+   ```
+
+2. Edit `.env` with your values:
+   ```
+   CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+   CONTENTUNDERSTANDING_KEY=<optional-api-key>
+   GPT_4_1_DEPLOYMENT=gpt-4.1
+   GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
+   TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+   ```
+   *Note: Do not commit the `.env` file to version control.*
+
+**2. Run the configuration script**
+
+Once environment variables are set, run the sample script to apply the configuration.
 
 ```bash
 python samples/sample_update_defaults.py
 ```
 
-After a successful run you can immediately use prebuilt analyzers such as `prebuilt-invoice` or `prebuilt-documentSearch`. If you encounter errors:
+(Or for async: `python async_samples/sample_update_defaults_async.py`)
 
-- Recheck deployment names (they must match exactly)
-- Confirm the **Cognitive Services User** role assignment
-- Verify the endpoint points to the correct resource
+**Verification**
+
+After the script runs successfully, you can use prebuilt analyzers like `prebuilt-invoice` or `prebuilt-documentSearch`.
+
+If you encounter errors:
+- **Deployment Not Found**: Check that deployment names in environment variables match exactly what you created in Foundry.
+- **Access Denied**: Ensure you have the **Cognitive Services User** role assignment.
 
 ### Authenticate the client
 
@@ -426,62 +454,6 @@ For more information about logging, see the [Azure SDK Python logging documentat
 * [`sample_analyze_binary.py`][sample_analyze_binary] - Analyze PDF files from disk using `prebuilt-documentSearch`
 * Explore the [samples directory][python_cu_samples] for complete code examples
 * Read the [Azure AI Content Understanding documentation][python_cu_product_docs] for detailed service information
-
-## Running the update defaults sample
-
-To run the `update_defaults` code example shown above, you need to set environment variables with your credentials and model deployment names.
-
-### Setting environment variables
-
-**On Linux/macOS (bash):**
-```bash
-export CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
-export CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
-export GPT_4_1_DEPLOYMENT="gpt-4.1"
-export GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
-export TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
-```
-
-**On Windows (PowerShell):**
-```powershell
-$env:CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
-$env:CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
-$env:GPT_4_1_DEPLOYMENT="gpt-4.1"
-$env:GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
-$env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
-```
-
-**On Windows (Command Prompt):**
-```bat
-set CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
-set CONTENTUNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
-set GPT_4_1_DEPLOYMENT=gpt-4.1
-set GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
-set TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
-```
-
-### Running the sample code
-
-After setting the environment variables, you can run the code examples shown in the [Configure Model Deployments](#step-3-configure-model-deployments-required-for-prebuilt-analyzers) section above.
-
-**Alternatively, use the prepared sample script:**
-
-For a complete, ready-to-use example, see `sample_update_defaults.py` in the [samples directory][sample_readme]. This sample includes error handling and additional features:
-
-```bash
-# Navigate to samples directory
-cd samples
-
-# Run the prepared sample
-python sample_update_defaults.py
-```
-
-For async version:
-```bash
-python async_samples/sample_update_defaults_async.py
-```
-
-For comprehensive documentation on all available samples, see the [samples README][sample_readme].
 
 ## Running tests
 
