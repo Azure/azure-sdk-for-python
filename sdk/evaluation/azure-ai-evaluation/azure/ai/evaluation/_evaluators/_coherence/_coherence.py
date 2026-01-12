@@ -7,6 +7,8 @@ from typing import Dict, Union, List
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
 
 
@@ -67,6 +69,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/coherence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -76,6 +80,12 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
         self._higher_is_better = True
+
+        # Initialize input validator
+        self._validator = ConversationValidator(
+            error_target=ErrorTarget.COHERENCE_EVALUATOR
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -141,3 +151,17 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+        
+        return await super()._real_call(**kwargs)

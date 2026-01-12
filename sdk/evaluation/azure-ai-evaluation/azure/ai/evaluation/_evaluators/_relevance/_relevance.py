@@ -13,6 +13,7 @@ from ..._common.utils import reformat_conversation_history, reformat_agent_respo
 
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "relevance.prompty"
     _RESULT_KEY = "relevance"
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/relevance"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -87,6 +90,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     def __init__(self, model_config, *, credential=None, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ConversationValidator(
+            error_target=ErrorTarget.RELEVANCE_EVALUATOR
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -152,6 +161,20 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+        
+        return await super()._real_call(**kwargs)
 
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.

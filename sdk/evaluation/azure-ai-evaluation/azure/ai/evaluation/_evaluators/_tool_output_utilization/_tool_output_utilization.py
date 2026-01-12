@@ -15,6 +15,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
 )
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from ..._common.utils import (
     reformat_conversation_history,
     reformat_agent_response,
@@ -68,6 +69,8 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE = 1
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/tool_output_utilization"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -81,6 +84,12 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ToolDefinitionsValidator(
+            error_target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -90,6 +99,18 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             _higher_is_better=True,
             **kwargs,
         )
+
+    @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        self._validator.validate_eval_input(kwargs)
+        return await super()._real_call(**kwargs)
 
     @overload
     def __call__(

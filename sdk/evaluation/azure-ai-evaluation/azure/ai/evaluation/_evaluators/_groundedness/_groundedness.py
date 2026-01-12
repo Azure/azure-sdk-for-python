@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
 from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.utils import (
     ErrorBlame,
@@ -96,6 +97,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _OPTIONAL_PARAMS = ["query"]
     _SUPPORTED_TOOLS = ["file_search"]
 
+    _validator: ValidatorInterface
+    _validator_with_query: ValidatorInterface
+
     id = "azureai://built-in/evaluators/groundedness"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -103,6 +107,18 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
+
+        # Initialize input validator
+        self._validator = ConversationValidator(
+            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            requires_query=False,
+        )
+
+        self._validator_with_query = ConversationValidator(
+            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            requires_query=True
+        )
+
 
         self._higher_is_better = True
         super().__init__(
@@ -272,6 +288,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Convert inputs into list of evaluable inputs.
         try:
+            # Validate input before processing
+            if kwargs.get("context") or kwargs.get("conversation"):
+                self._validator.validate_eval_input(kwargs)
+            else:
+                self._validator_with_query.validate_eval_input(kwargs)
             return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
@@ -299,7 +320,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             raise EvaluationException(
                 message=msg,
                 blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
+                category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
         context = self._get_context_from_agent_response(response, tool_definitions)

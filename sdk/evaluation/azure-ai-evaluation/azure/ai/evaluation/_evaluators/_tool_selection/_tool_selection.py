@@ -7,6 +7,7 @@ import math
 from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
@@ -71,6 +72,8 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool selection score must be 0 or 1."
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/tool_selection"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -79,6 +82,12 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
+
+        # Initialize input validator
+        self._validator = ToolCallsValidator(
+            error_target=ErrorTarget.TOOL_SELECTION_EVALUATOR
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -246,6 +255,9 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+        
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):

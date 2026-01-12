@@ -8,6 +8,7 @@ import json
 from typing import Dict, List, Union, TypeVar, Optional, cast
 from typing_extensions import override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
@@ -75,6 +76,8 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
 
+    _validator: ValidatorInterface
+
     def __init__(
         self,
         model_config,
@@ -84,6 +87,13 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ToolDefinitionsValidator(
+            error_target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+            optional_tool_definitions=False
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -222,6 +232,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+        
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
