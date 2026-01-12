@@ -23,6 +23,7 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) FABRIC_PROJECT_CONNECTION_ID - The Fabric project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
+    4) FABRIC_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
@@ -65,7 +66,7 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question (e.g., 'Tell me about sales records'): \n")
+    user_input = os.environ.get("FABRIC_SEARCH_USER_INPUT") or input("Enter your question: \n")
 
     response = openai_client.responses.create(
         tool_choice="required",
