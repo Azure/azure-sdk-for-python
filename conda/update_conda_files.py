@@ -18,7 +18,12 @@ from conda_helper_functions import (
     build_package_index,
     get_package_path,
     get_bundle_name,
-    map_bundle_to_packages
+    map_bundle_to_packages,
+    PACKAGE_COL,
+    VERSION_GA_COL,
+    LATEST_GA_DATE_COL,
+    REPO_PATH_COL,
+    SUPPORT_COL,
 )
 
 from conda_release_groups import (
@@ -41,16 +46,6 @@ CONDA_MGMT_META_YAML_PATH = os.path.join(CONDA_RECIPES_DIR, "azure-mgmt", "meta.
 
 # constants
 RELEASE_PERIOD_MONTHS = 3
-AZURE_SDK_CSV_URL = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
-PACKAGE_COL = "Package"
-LATEST_GA_DATE_COL = "LatestGADate"
-VERSION_GA_COL = "VersionGA"
-FIRST_GA_DATE_COL = "FirstGADate"
-DISPLAY_NAME_COL = "DisplayName"
-SERVICE_NAME_COL = "ServiceName"
-REPO_PATH_COL = "RepoPath"
-TYPE_COL = "Type"
-SUPPORT_COL = "Support"
 
 # packages that should be shipped but are known to be missing from the csv
 PACKAGES_WITH_DOWNLOAD_URI = [
