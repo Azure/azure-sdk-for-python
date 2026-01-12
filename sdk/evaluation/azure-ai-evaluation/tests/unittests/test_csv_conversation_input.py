@@ -1,10 +1,5 @@
 """Unit tests for CSV conversation input handling."""
-import json
 import pytest
-import tempfile
-import pandas as pd
-from pathlib import Path
-from unittest.mock import Mock, patch
 
 from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
