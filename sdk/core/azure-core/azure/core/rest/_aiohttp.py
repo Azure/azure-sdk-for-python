@@ -28,7 +28,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from itertools import groupby
 from typing import Iterator, cast
 
-import aiohttp
+import aiohttp  # pylint: disable=networking-import-outside-azure-core-transport
 from multidict import CIMultiDict
 
 from ._http_response_impl_async import (
