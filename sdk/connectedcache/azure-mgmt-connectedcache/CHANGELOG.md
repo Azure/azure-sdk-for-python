@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2025-12-24)
+## 1.0.0b2 (2025-01-13)
 
 ### Features Added
 
@@ -40,8 +40,6 @@
   - Deleted or renamed model `CacheNodePreviewResource`
   - Deleted or renamed model `CycleType`
   - Deleted or renamed model `EnterprisePreviewResource`
-  - Deleted or renamed operation group `CacheNodesOperationsOperations`
-  - Deleted or renamed operation group `EnterpriseCustomerOperationsOperations`
 
 ## 1.0.0b1 (2024-11-21)
 
