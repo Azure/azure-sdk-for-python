@@ -146,14 +146,14 @@ class TestChangeAllVersionsFeed:
         assert_change_feed(expected_change_feeds, actual_change_feeds)
         setup["created_db"].delete_container(container_name)
 
+    @pytest.mark.skip(reason="not supported in emulator yet")
     def test_query_change_feed_all_versions_and_deletes_start_time(self, setup):
         partition_key = 'pk'
         # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
         # change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
         container_name = "change_feed_test_" + str(uuid.uuid4())
         created_collection = setup["created_db"].create_container(container_name,
-                                                                  PartitionKey(path=f"/{partition_key}"),
-                                                                  change_feed_policy=change_feed_policy)
+                                                                  PartitionKey(path=f"/{partition_key}"))
 
         new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
         created_items = []

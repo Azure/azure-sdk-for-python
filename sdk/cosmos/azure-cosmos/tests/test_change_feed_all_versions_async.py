@@ -152,6 +152,7 @@ class TestAllVersionsChangeFeedAsync:
         await assert_change_feed(expected_change_feeds, actual_change_feeds)
         await setup["created_db"].delete_container(container_name)
 
+    @pytest.mark.skip(reason="not supported in emulator yet")
     async def test_query_change_feed_all_versions_and_deletes_start_time_async(self, setup):
         partition_key = 'pk'
         # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
@@ -196,12 +197,10 @@ class TestAllVersionsChangeFeedAsync:
         await assert_change_feed(expected_change_feeds, actual_change_feeds)
         await setup["created_db"].delete_container(container_name)
 
-
     async def test_query_change_feed_all_versions_and_deletes_errors_async(self, setup):
         container_name = "change_feed_test_" + str(uuid.uuid4())
         created_collection = await setup["created_db"].create_container(container_name,
-                                                                        PartitionKey(path=f"/{partition_key}"),
-                                                                        change_feed_policy=change_feed_policy)
+                                                                        PartitionKey(path="/pk"))
         mode = 'AllVersionsAndDeletes'
 
         # Error if invalid mode was used
