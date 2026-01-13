@@ -82,9 +82,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._higher_is_better = True
 
         # Initialize input validator
-        self._validator = ConversationValidator(
-            error_target=ErrorTarget.COHERENCE_EVALUATOR
-        )
+        self._validator = ConversationValidator(error_target=ErrorTarget.COHERENCE_EVALUATOR)
 
         super().__init__(
             model_config=model_config,

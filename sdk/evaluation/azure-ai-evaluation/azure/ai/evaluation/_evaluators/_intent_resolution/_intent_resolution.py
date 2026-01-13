@@ -70,9 +70,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self.threshold = threshold
 
         # Initialize input validator
-        self._validator = ToolDefinitionsValidator(
-            error_target=ErrorTarget.INTENT_RESOLUTION_EVALUATOR
-        )
+        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.INTENT_RESOLUTION_EVALUATOR)
 
         super().__init__(
             model_config=model_config,

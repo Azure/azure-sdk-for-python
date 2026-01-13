@@ -80,9 +80,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self.threshold = threshold  # to be removed in favor of _threshold
 
         # Initialize input validator
-        self._validator = ToolDefinitionsValidator(
-            error_target=ErrorTarget.TASK_ADHERENCE_EVALUATOR
-        )
+        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_ADHERENCE_EVALUATOR)
 
         super().__init__(
             model_config=model_config,

@@ -11,6 +11,7 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from ._validation_constants import MessageRole, ContentType
 from ._validator_interface import ValidatorInterface
 
+
 class ConversationValidator(ValidatorInterface):
     """
     Validate conversation inputs (queries and responses) comprised of message lists.
@@ -19,13 +20,14 @@ class ConversationValidator(ValidatorInterface):
     requires_query: bool = True
     error_target: ErrorTarget
 
-
     def __init__(self, error_target: ErrorTarget, requires_query: bool = True):
         """Initialize with error target and query requirement."""
         self.requires_query = requires_query
         self.error_target = error_target
 
-    def _validate_string_field(self, item: Dict[str, Any], field_name: str, context: str) -> Optional[EvaluationException]:
+    def _validate_string_field(
+        self, item: Dict[str, Any], field_name: str, context: str
+    ) -> Optional[EvaluationException]:
         """Validate that a field exists and is a string."""
         if field_name not in item:
             return EvaluationException(
@@ -34,7 +36,7 @@ class ConversationValidator(ValidatorInterface):
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
             )
-        
+
         if not isinstance(item[field_name], str):
             return EvaluationException(
                 message=f"The '{field_name}' field must be a string in {context}.",
@@ -44,7 +46,9 @@ class ConversationValidator(ValidatorInterface):
             )
         return None
 
-    def _validate_dict_field(self, item: Dict[str, Any], field_name: str, context: str) -> Optional[EvaluationException]:
+    def _validate_dict_field(
+        self, item: Dict[str, Any], field_name: str, context: str
+    ) -> Optional[EvaluationException]:
         """Validate that a field exists and is a dictionary."""
         if field_name not in item:
             return EvaluationException(
@@ -53,7 +57,7 @@ class ConversationValidator(ValidatorInterface):
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
             )
-        
+
         if not isinstance(item[field_name], dict):
             return EvaluationException(
                 message=f"The '{field_name}' field must be a dictionary in {context}.",
@@ -72,7 +76,7 @@ class ConversationValidator(ValidatorInterface):
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
             )
-        
+
         if not isinstance(content_item["text"], str):
             return EvaluationException(
                 message=f"The 'text' field must be a string in content items.",
@@ -99,17 +103,17 @@ class ConversationValidator(ValidatorInterface):
         error = self._validate_dict_field(content_item, "arguments", "tool_call content items")
         if error:
             return error
-        
+
         error = self._validate_string_field(content_item, "tool_call_id", "tool_call content items")
         if error:
             return error
-        
+
         return None
 
     def _validate_user_or_system_message(self, message: Dict[str, Any], role: str) -> Optional[EvaluationException]:
         """Validate user or system message content."""
         content = message["content"]
-        
+
         if isinstance(content, list):
             for content_item in content:
                 content_type = content_item["type"]
@@ -121,7 +125,7 @@ class ConversationValidator(ValidatorInterface):
                         category=ErrorCategory.INVALID_VALUE,
                         target=self.error_target,
                     )
-                
+
                 error = self._validate_text_content_item(content_item, role)
                 if error:
                     return error
@@ -130,7 +134,7 @@ class ConversationValidator(ValidatorInterface):
     def _validate_assistant_message(self, message: Dict[str, Any]) -> Optional[EvaluationException]:
         """Validate assistant message content."""
         content = message["content"]
-        
+
         if isinstance(content, list):
             for content_item in content:
                 content_type = content_item["type"]
@@ -142,7 +146,7 @@ class ConversationValidator(ValidatorInterface):
                         category=ErrorCategory.INVALID_VALUE,
                         target=self.error_target,
                     )
-                
+
                 if content_type in [ContentType.TEXT, ContentType.OUTPUT_TEXT]:
                     error = self._validate_text_content_item(content_item, MessageRole.ASSISTANT)
                     if error:
@@ -156,7 +160,7 @@ class ConversationValidator(ValidatorInterface):
     def _validate_tool_message(self, message: Dict[str, Any]) -> Optional[EvaluationException]:
         """Validate tool message content."""
         content = message["content"]
-        
+
         if not isinstance(content, list):
             return EvaluationException(
                 message=f"The 'content' field must be a list of message dictionaries for role '{MessageRole.TOOL.value}'.",
@@ -165,7 +169,9 @@ class ConversationValidator(ValidatorInterface):
                 target=self.error_target,
             )
 
-        error = self._validate_string_field(message, "tool_call_id", f"content items for role '{MessageRole.TOOL.value}'")
+        error = self._validate_string_field(
+            message, "tool_call_id", f"content items for role '{MessageRole.TOOL.value}'"
+        )
         if error:
             return error
 
@@ -178,11 +184,13 @@ class ConversationValidator(ValidatorInterface):
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
                 )
-            
-            error = self._validate_dict_field(content_item, "tool_result", f"content items for role '{MessageRole.TOOL.value}'")
+
+            error = self._validate_dict_field(
+                content_item, "tool_result", f"content items for role '{MessageRole.TOOL.value}'"
+            )
             if error:
                 return error
-            
+
         return None
 
     def _validate_message_dict(self, message: Dict[str, Any]) -> Optional[EvaluationException]:
@@ -207,7 +215,8 @@ class ConversationValidator(ValidatorInterface):
         content = message["content"]
 
         content_is_string_or_list_of_dicts = isinstance(content, str) or (
-            isinstance(content, list) and all(item and isinstance(item, dict) for item in content))
+            isinstance(content, list) and all(item and isinstance(item, dict) for item in content)
+        )
         if not content_is_string_or_list_of_dicts:
             return EvaluationException(
                 message="The 'content' field must be a string or a list of message dictionaries.",
@@ -215,7 +224,7 @@ class ConversationValidator(ValidatorInterface):
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
             )
-        
+
         if len(content) == 0:
             return EvaluationException(
                 message=f"The 'content' field can't be empty.",
@@ -247,7 +256,7 @@ class ConversationValidator(ValidatorInterface):
             if error:
                 return error
         # TODO: Should we error on unknown roles?
-        
+
         return None
 
     def _validate_input_messages_list(self, input_messages: Any, input_name: str) -> Optional[EvaluationException]:
@@ -305,13 +314,13 @@ class ConversationValidator(ValidatorInterface):
         """Validate the query input."""
         if not self.requires_query:
             return None
-        
+
         return self._validate_input_messages_list(query, "Query")
-    
+
     def _validate_response(self, response: Any) -> Optional[EvaluationException]:
         """Validate the response input."""
         return self._validate_input_messages_list(response, "Response")
-    
+
     @override
     def validate_eval_input(self, eval_input: Dict[str, Any]) -> bool:
         """Validate the evaluation input dictionary."""

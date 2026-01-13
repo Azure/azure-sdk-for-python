@@ -15,7 +15,7 @@ from ._validator_interface import ValidatorInterface
 class TaskNavigationEfficiencyValidator(ValidatorInterface):
     """
     Validate task navigation efficiency inputs (actions and expected_actions).
-    
+
     Validates:
     - actions: List of assistant messages containing tool calls
     - expected_actions: Either a list of expected tool names, or a tuple of (tool names, parameters dict)
@@ -128,7 +128,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
         # expected_actions can be either:
         # 1. A list of tool names (strings)
         # 2. A tuple of (list of tool names, dict of parameters)
-        
+
         if isinstance(expected_actions, tuple):
             # Validate tuple format: (list, dict)
             if len(expected_actions) != 2:
@@ -219,13 +219,13 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
     def validate_eval_input(self, eval_input: Dict[str, Any]) -> bool:
         """
         Validate task navigation evaluation input.
-        
+
         Args:
             eval_input: Dictionary containing 'actions' and 'expected_actions'.
-            
+
         Returns:
             True if validation passes.
-            
+
         Raises:
             EvaluationException: If validation fails.
         """

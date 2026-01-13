@@ -73,9 +73,7 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
         # Initialize input validator
-        self._validator = ToolDefinitionsValidator(
-            error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR
-        )
+        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR)
 
         super().__init__(
             model_config=model_config,

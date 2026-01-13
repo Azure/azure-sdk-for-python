@@ -94,7 +94,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     @override
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
-        
+
         :keyword kwargs: The inputs to evaluate.
         :type kwargs: Dict
         :return: The evaluation result.

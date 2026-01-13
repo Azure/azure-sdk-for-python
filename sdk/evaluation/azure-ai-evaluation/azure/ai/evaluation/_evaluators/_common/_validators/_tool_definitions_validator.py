@@ -54,17 +54,17 @@ class ToolDefinitionsValidator(ConversationValidator):
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
                 )
-            
-            error = self._validate_string_field(tool_definition, 'name', 'tool definitions')
+
+            error = self._validate_string_field(tool_definition, "name", "tool definitions")
             if error:
                 return error
-            
-            error = self._validate_dict_field(tool_definition, 'parameters', 'tool definitions')
+
+            error = self._validate_dict_field(tool_definition, "parameters", "tool definitions")
             if error:
                 return error
-        
+
         return None
-    
+
     @override
     def validate_eval_input(self, eval_input: Dict[str, Any]) -> bool:
         """Validate the evaluation input dictionary."""

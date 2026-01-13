@@ -108,6 +108,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
 
+        self._higher_is_better = True
+
         # Initialize input validator
         self._validator = ConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
@@ -115,12 +117,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
 
         self._validator_with_query = ConversationValidator(
-            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
-            requires_query=True
+            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR, requires_query=True
         )
 
-
-        self._higher_is_better = True
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,

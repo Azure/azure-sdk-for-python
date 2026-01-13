@@ -7,8 +7,10 @@ Constants and enums for validation.
 
 from enum import Enum
 
+
 class MessageRole(str, Enum):
     """Valid message roles in conversations."""
+
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
@@ -17,6 +19,7 @@ class MessageRole(str, Enum):
 
 class ContentType(str, Enum):
     """Valid content types in messages."""
+
     TEXT = "text"
     INPUT_TEXT = "input_text"
     OUTPUT_TEXT = "output_text"

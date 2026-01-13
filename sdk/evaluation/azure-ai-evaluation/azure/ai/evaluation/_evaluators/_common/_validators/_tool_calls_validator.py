@@ -63,7 +63,7 @@ class ToolCallsValidator(ToolDefinitionsValidator):
         query_validation_exception = self._validate_query(query)
         if query_validation_exception:
             raise query_validation_exception
-        
+
         tool_definitions = eval_input.get("tool_definitions")
         tool_definitions_validation_exception = self._validate_tool_definitions(tool_definitions)
         if tool_definitions_validation_exception:

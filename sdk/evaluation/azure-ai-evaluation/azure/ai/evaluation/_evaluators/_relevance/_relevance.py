@@ -92,9 +92,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
         # Initialize input validator
-        self._validator = ConversationValidator(
-            error_target=ErrorTarget.RELEVANCE_EVALUATOR
-        )
+        self._validator = ConversationValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
 
         super().__init__(
             model_config=model_config,
