@@ -39,7 +39,7 @@ class ConnectionStringParser:
         self._connection_string = connection_string
         self.aad_audience = ""
         self.region = ""
-        self.applicationId = ""
+        self.application_id = ""
         self._initialize()
         self._validate_instrumentation_key()
 
@@ -75,8 +75,8 @@ class ConnectionStringParser:
         # Extract region information
         self.region = self._extract_region()  # type: ignore
 
-        # Extract applicationId
-        self.applicationId = code_cs.get(APPLICATION_ID) or env_cs.get(APPLICATION_ID)  # type: ignore
+        # Extract application_id
+        self.application_id = code_cs.get(APPLICATION_ID) or env_cs.get(APPLICATION_ID)  # type: ignore
 
     def _extract_region(self) -> typing.Optional[str]:
         """Extract region from endpoint URL.

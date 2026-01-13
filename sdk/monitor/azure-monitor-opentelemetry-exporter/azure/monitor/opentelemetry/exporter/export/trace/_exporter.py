@@ -122,7 +122,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelopes = []
         application_id = None
         parsed_connection_string = ConnectionStringParser(self._connection_string)
-        application_id = parsed_connection_string.applicationId
+        application_id = parsed_connection_string.application_id
 
         if spans and self._should_collect_otel_resource_metric():
             resource = None

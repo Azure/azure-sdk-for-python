@@ -365,7 +365,7 @@ class TestConnectionStringParser(unittest.TestCase):
             + ";IngestionEndpoint=https://northeurope-999.in.applicationinsights.azure.com/"
             + ";LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=3cd3dd3f-64cc-4d7c-9303-8d69a4bb8558"
         )
-        self.assertEqual(parser.applicationId, "3cd3dd3f-64cc-4d7c-9303-8d69a4bb8558")
+        self.assertEqual(parser.application_id, "3cd3dd3f-64cc-4d7c-9303-8d69a4bb8558")
 
     def test_application_id_extraction_from_no_application_id(self):
         parser = ConnectionStringParser(
@@ -374,4 +374,4 @@ class TestConnectionStringParser(unittest.TestCase):
             + ";IngestionEndpoint=https://northeurope-999.in.applicationinsights.azure.com/"
             + ";LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
         )
-        self.assertEqual(parser.applicationId, None)
+        self.assertEqual(parser.application_id, None)
