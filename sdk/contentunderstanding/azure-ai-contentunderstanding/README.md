@@ -118,7 +118,7 @@ pip install -r dev_requirements.txt  # Includes aiohttp, pytest, python-dotenv, 
 
 **3-2. Set environment variables**
 
-The sample script reads configuration from environment variables. Set these variables to match your resource endpoint and the deployment names you created in Step 2.
+The sample script reads configuration from environment variables, which define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
 
 **Option A: Using .env file (Recommended for development)**
 
@@ -131,9 +131,6 @@ For local development and tests, this repository uses a root-level `.env` file. 
    ```
 
 2. Then, edit the `.env` file and set the following variables at minimum:
-
-    The environment variables define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
-
     Set the following in `.env`:
     * `CONTENTUNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
     * `CONTENTUNDERSTANDING_KEY` (optional) - Your API key. Required if using API key authentication. If omitted, `DefaultAzureCredential` will be used.
