@@ -38,5 +38,5 @@ class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
 ContentUnderstandingPreparer = functools.partial(
     PowerShellPreparer,
     "contentunderstanding",
-    contentunderstanding_endpoint="https://fake_contentunderstanding_endpoint.services.ai.azure.com/",
+    contentunderstanding_endpoint="https://Sanitized.services.ai.azure.com/",
 )

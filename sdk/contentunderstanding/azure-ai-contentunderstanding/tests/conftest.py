@@ -70,6 +70,14 @@ def add_sanitizers(test_proxy):
     if contentunderstanding_key:
         add_general_string_sanitizer(target=contentunderstanding_key, value="fake-api-key")
 
+    # Sanitize endpoint URLs to match DocumentIntelligence SDK pattern
+    # Normalize any endpoint hostname to "Sanitized" to ensure recordings match between recording and playback
+    # This regex matches the hostname part (between // and .services.ai.azure.com) and replaces it with "Sanitized"
+    add_general_regex_sanitizer(
+        value="Sanitized",
+        regex="(?<=\\/\\/)[^/]+(?=\\.services\\.ai\\.azure\\.com)"
+    )
+
     # Sanitize Ocp-Apim-Subscription-Key header (where the API key is sent)
     add_header_regex_sanitizer(key="Ocp-Apim-Subscription-Key", value="fake-api-key", regex=".*")
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
