@@ -66,8 +66,6 @@ test:
     - azure.mgmt.appcontainers.aio.operations
     - azure.mgmt.appcontainers.models
     - azure.mgmt.appcontainers.operations
-    - azure.mgmt.appplatform
-    - azure.mgmt.appplatform.aio
     - azure.mgmt.applicationinsights
     - azure.mgmt.applicationinsights.aio
     - azure.mgmt.applicationinsights.v2022_06_15
@@ -75,6 +73,8 @@ test:
     - azure.mgmt.applicationinsights.v2022_06_15.aio.operations
     - azure.mgmt.applicationinsights.v2022_06_15.models
     - azure.mgmt.applicationinsights.v2022_06_15.operations
+    - azure.mgmt.appplatform
+    - azure.mgmt.appplatform.aio
     - azure.mgmt.arizeaiobservabilityeval
     - azure.mgmt.arizeaiobservabilityeval.aio
     - azure.mgmt.arizeaiobservabilityeval.aio.operations
@@ -107,6 +107,11 @@ test:
     - azure.mgmt.automation.aio.operations
     - azure.mgmt.automation.models
     - azure.mgmt.automation.operations
+    - azure.mgmt.avs
+    - azure.mgmt.avs.aio
+    - azure.mgmt.avs.aio.operations
+    - azure.mgmt.avs.models
+    - azure.mgmt.avs.operations
     - azure.mgmt.azurearcdata
     - azure.mgmt.azurearcdata.aio
     - azure.mgmt.azurearcdata.aio.operations
@@ -122,11 +127,6 @@ test:
     - azure.mgmt.azurestackhci.aio.operations
     - azure.mgmt.azurestackhci.models
     - azure.mgmt.azurestackhci.operations
-    - azure.mgmt.avs
-    - azure.mgmt.avs.aio
-    - azure.mgmt.avs.aio.operations
-    - azure.mgmt.avs.models
-    - azure.mgmt.avs.operations
     - azure.mgmt.baremetalinfrastructure
     - azure.mgmt.baremetalinfrastructure.aio
     - azure.mgmt.baremetalinfrastructure.aio.operations
@@ -260,15 +260,14 @@ test:
     - azure.mgmt.dashboard.aio.operations
     - azure.mgmt.dashboard.models
     - azure.mgmt.dashboard.operations
-    - azure.mgmt.databox
-    - azure.mgmt.databox.aio
     - azure.mgmt.datab
     - azure.mgmt.datab.aio
     - azure.mgmt.datab.aio.operations
     - azure.mgmt.datab.models
     - azure.mgmt.datab.operations
+    - azure.mgmt.databox
+    - azure.mgmt.databox.aio
     - azure.mgmt.databoxedge
-    - azure.mgmt.databoxedge.aio
     - azure.mgmt.databoxedge.aio
     - azure.mgmt.databoxedge.aio.operations
     - azure.mgmt.databoxedge.models
@@ -278,6 +277,16 @@ test:
     - azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations
     - azure.mgmt.databoxedge.v2021_02_01_preview.models
     - azure.mgmt.databoxedge.v2021_02_01_preview.operations
+    - azure.mgmt.databricks
+    - azure.mgmt.databricks.aio
+    - azure.mgmt.databricks.aio.operations
+    - azure.mgmt.databricks.models
+    - azure.mgmt.databricks.operations
+    - azure.mgmt.datadog
+    - azure.mgmt.datadog.aio
+    - azure.mgmt.datadog.aio.operations
+    - azure.mgmt.datadog.models
+    - azure.mgmt.datadog.operations
     - azure.mgmt.datafactory
     - azure.mgmt.datafactory.aio
     - azure.mgmt.datafactory.aio.operations
@@ -298,16 +307,6 @@ test:
     - azure.mgmt.datashare.aio.operations
     - azure.mgmt.datashare.models
     - azure.mgmt.datashare.operations
-    - azure.mgmt.databricks
-    - azure.mgmt.databricks.aio
-    - azure.mgmt.databricks.aio.operations
-    - azure.mgmt.databricks.models
-    - azure.mgmt.databricks.operations
-    - azure.mgmt.datadog
-    - azure.mgmt.datadog.aio
-    - azure.mgmt.datadog.aio.operations
-    - azure.mgmt.datadog.models
-    - azure.mgmt.datadog.operations
     - azure.mgmt.deploymentmanager
     - azure.mgmt.deploymentmanager.aio
     - azure.mgmt.deploymentmanager.aio.operations
@@ -476,6 +475,11 @@ test:
     - azure.mgmt.informaticadatamanagement.aio.operations
     - azure.mgmt.informaticadatamanagement.models
     - azure.mgmt.informaticadatamanagement.operations
+    - azure.mgmt.iotfirmwaredefense
+    - azure.mgmt.iotfirmwaredefense.aio
+    - azure.mgmt.iotfirmwaredefense.aio.operations
+    - azure.mgmt.iotfirmwaredefense.models
+    - azure.mgmt.iotfirmwaredefense.operations
     - azure.mgmt.iothub
     - azure.mgmt.iothub.aio
     - azure.mgmt.iothub.v2023_06_30
@@ -488,11 +492,6 @@ test:
     - azure.mgmt.iothubprovisioningservices.aio.operations
     - azure.mgmt.iothubprovisioningservices.models
     - azure.mgmt.iothubprovisioningservices.operations
-    - azure.mgmt.iotfirmwaredefense
-    - azure.mgmt.iotfirmwaredefense.aio
-    - azure.mgmt.iotfirmwaredefense.aio.operations
-    - azure.mgmt.iotfirmwaredefense.models
-    - azure.mgmt.iotfirmwaredefense.operations
     - azure.mgmt.iotoperations
     - azure.mgmt.iotoperations.aio
     - azure.mgmt.iotoperations.aio.operations
@@ -572,16 +571,6 @@ test:
     - azure.mgmt.managementpartner.aio.operations
     - azure.mgmt.managementpartner.models
     - azure.mgmt.managementpartner.operations
-    - azure.mgmt.managementgroups
-    - azure.mgmt.managementgroups.aio
-    - azure.mgmt.managementgroups.aio.operations
-    - azure.mgmt.managementgroups.models
-    - azure.mgmt.managementgroups.operations
-    - azure.mgmt.managementpartner
-    - azure.mgmt.managementpartner.aio
-    - azure.mgmt.managementpartner.aio.operations
-    - azure.mgmt.managementpartner.models
-    - azure.mgmt.managementpartner.operations
     - azure.mgmt.maps
     - azure.mgmt.maps.aio
     - azure.mgmt.maps.aio.operations
@@ -627,6 +616,11 @@ test:
     - azure.mgmt.msi.aio.operations
     - azure.mgmt.msi.models
     - azure.mgmt.msi.operations
+    - azure.mgmt.mysqlflexibleservers
+    - azure.mgmt.mysqlflexibleservers.aio
+    - azure.mgmt.mysqlflexibleservers.aio.operations
+    - azure.mgmt.mysqlflexibleservers.models
+    - azure.mgmt.mysqlflexibleservers.operations
     - azure.mgmt.neonpostgres
     - azure.mgmt.neonpostgres.aio
     - azure.mgmt.neonpostgres.aio.operations
@@ -647,11 +641,6 @@ test:
     - azure.mgmt.networkcloud.aio.operations
     - azure.mgmt.networkcloud.models
     - azure.mgmt.networkcloud.operations
-    - azure.mgmt.nginx
-    - azure.mgmt.nginx.aio
-    - azure.mgmt.nginx.aio.operations
-    - azure.mgmt.nginx.models
-    - azure.mgmt.nginx.operations
     - azure.mgmt.newrelicobservability
     - azure.mgmt.newrelicobservability.aio
     - azure.mgmt.newrelicobservability.aio.operations
@@ -682,11 +671,6 @@ test:
     - azure.mgmt.orbital.aio.operations
     - azure.mgmt.orbital.models
     - azure.mgmt.orbital.operations
-    - azure.mgmt.operationsmanagement
-    - azure.mgmt.operationsmanagement.aio
-    - azure.mgmt.operationsmanagement.aio.operations
-    - azure.mgmt.operationsmanagement.models
-    - azure.mgmt.operationsmanagement.operations
     - azure.mgmt.paloaltonetworksngfw
     - azure.mgmt.paloaltonetworksngfw.aio
     - azure.mgmt.paloaltonetworksngfw.aio.operations
@@ -820,11 +804,6 @@ test:
     - azure.mgmt.reservations.aio.operations
     - azure.mgmt.reservations.models
     - azure.mgmt.reservations.operations
-    - azure.mgmt.resourcemover
-    - azure.mgmt.resourcemover.aio
-    - azure.mgmt.resourcemover.aio.operations
-    - azure.mgmt.resourcemover.models
-    - azure.mgmt.resourcemover.operations
     - azure.mgmt.resource
     - azure.mgmt.resource.deploymentscripts
     - azure.mgmt.resource.deploymentscripts.aio
@@ -890,6 +869,11 @@ test:
     - azure.mgmt.resourceconnector.aio.operations
     - azure.mgmt.resourceconnector.models
     - azure.mgmt.resourceconnector.operations
+    - azure.mgmt.resourcemover
+    - azure.mgmt.resourcemover.aio
+    - azure.mgmt.resourcemover.aio.operations
+    - azure.mgmt.resourcemover.models
+    - azure.mgmt.resourcemover.operations
     - azure.mgmt.scvmm
     - azure.mgmt.scvmm.aio
     - azure.mgmt.scvmm.aio.operations
@@ -921,6 +905,9 @@ test:
     - azure.mgmt.servermanager
     - azure.mgmt.servermanager.models
     - azure.mgmt.servermanager.operations
+    - azure.mgmt.servicebus
+    - azure.mgmt.servicebus.aio
+    - azure.mgmt.servicebus.models
     - azure.mgmt.servicefabric
     - azure.mgmt.servicefabric.aio
     - azure.mgmt.servicefabric.aio.operations
@@ -931,9 +918,6 @@ test:
     - azure.mgmt.servicefabricmanagedclusters.aio.operations
     - azure.mgmt.servicefabricmanagedclusters.models
     - azure.mgmt.servicefabricmanagedclusters.operations
-    - azure.mgmt.servicebus
-    - azure.mgmt.servicebus.aio
-    - azure.mgmt.servicebus.models
     - azure.mgmt.servicelinker
     - azure.mgmt.servicelinker.aio
     - azure.mgmt.servicelinker.aio.operations

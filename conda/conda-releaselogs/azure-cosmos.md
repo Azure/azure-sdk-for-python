@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-cosmos-4.14.1
+- azure-cosmos-4.14.4
 
 ## 2025.09.01
 

@@ -4,9 +4,9 @@
 
 ### Packages included
 
-- azure-eventhub-5.15.1
 - azure-eventhub-checkpointstoreblob-1.2.0
 - azure-eventhub-checkpointstoreblob-aio-1.2.0
+- azure-eventhub-5.15.1
 
 ## 2025.09.01
 
