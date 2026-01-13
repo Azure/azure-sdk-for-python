@@ -310,9 +310,9 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
     def get_value_to_append(self, query):
         if query == QueryStringConstants.SIGNED_REQUEST_HEADERS:
-            return (self._sts_srh + "\n") if self._sts_srh else ""
+            return (self._sts_srh or "")  + "\n"
         if query == QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS:
-            return (self._sts_srq + "\n") if self._sts_srq else ""
+            return (self._sts_srq or "") + "\n"
         return_value = self.query_dict.get(query) or ''
         return return_value + '\n'
 
