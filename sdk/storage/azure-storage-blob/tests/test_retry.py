@@ -6,6 +6,7 @@
 import pytest
 from unittest import mock
 from functools import wraps
+from typing import NamedTuple
 
 from azure.core.exceptions import (
     AzureError,
@@ -51,7 +52,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         if connection_string:
             service = service_class.from_connection_string(connection_string, **kwargs)
         else:
-            service = service_class(self.account_url(account, "blob"), credential=key, **kwargs)
+            service = service_class(self.account_url(account, "blob"), credential=key.secret, **kwargs)
         return service
 
     # --Test Cases --------------------------------------------
@@ -556,7 +557,8 @@ class TestStorageRetry(StorageRecordedTestCase):
     @BlobPreparer()
     def test_invalid_storage_account_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = "a"
+        # secret attribute necessary for credential parameter because of hidden environment variables from loader
+        storage_account_key = NamedTuple("StorageAccountKey", [("secret", str)])("a")
 
         # Arrange
         blob_client = self._create_storage_service(
