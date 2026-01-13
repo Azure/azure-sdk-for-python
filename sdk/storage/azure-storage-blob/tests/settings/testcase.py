@@ -9,7 +9,7 @@ from __future__ import division
 import functools
 import os
 import logging
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import EnvironmentVariableLoader, EnvironmentVariableOptions
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
 try:
@@ -47,7 +47,7 @@ os.environ['PROTOCOL'] = PROTOCOL
 os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
 
 BlobPreparer = functools.partial(
-    PowerShellPreparer, "storage",
+    EnvironmentVariableLoader, "storage",
     storage_account_name="storagename",
     storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
     secondary_storage_account_name="pyrmtstoragestorname",
@@ -60,7 +60,17 @@ BlobPreparer = functools.partial(
     premium_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
     soft_delete_storage_account_name="storagesoftdelname",
     soft_delete_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
-    storage_resource_group_name="rgname"
+    storage_resource_group_name="rgname",
+    options=EnvironmentVariableOptions(
+        hide_secrets=[
+            "storage_account_key",
+            "secondary_storage_account_key",
+            "blob_storage_account_key",
+            "versioned_storage_account_key",
+            "premium_storage_account_key",
+            "soft_delete_storage_account_key"
+        ]
+    ),
 )
 
 
