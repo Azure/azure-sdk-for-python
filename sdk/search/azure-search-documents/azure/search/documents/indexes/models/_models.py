@@ -6983,8 +6983,9 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     :ivar pattern: A regular expression pattern to match token separators. Default is an expression
      that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: Regular expression flags.
-    :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
+    :ivar flags: Regular expression flags. Known values are: "CANON_EQ", "CASE_INSENSITIVE",
+     "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", and "UNIX_LINES".
+    :vartype flags: str or ~azure.search.documents.indexes.models.RegexFlags
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
     :ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
@@ -6999,10 +7000,11 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     pattern: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern to match token separators. Default is an expression that matches
      one or more non-word characters."""
-    flags: Optional[list[Union[str, "_models.RegexFlags"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="pipeDelimited"
+    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Regular expression flags."""
+    """Regular expression flags. Known values are: \"CANON_EQ\", \"CASE_INSENSITIVE\", \"COMMENTS\",
+     \"DOTALL\", \"LITERAL\", \"MULTILINE\", \"UNICODE_CASE\", and \"UNIX_LINES\"."""
     stopwords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stopwords."""
     odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7016,7 +7018,7 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
         name: str,
         lower_case_terms: Optional[bool] = None,
         pattern: Optional[str] = None,
-        flags: Optional[list[Union[str, "_models.RegexFlags"]]] = None,
+        flags: Optional[Union[str, "_models.RegexFlags"]] = None,
         stopwords: Optional[list[str]] = None,
     ) -> None: ...
 
