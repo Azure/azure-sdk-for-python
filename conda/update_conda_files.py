@@ -960,6 +960,7 @@ if __name__ == "__main__":
     logger.info(f"Filtered to {len(packages)} GA packages")
 
     data_pkgs, mgmt_pkgs = separate_packages_by_type(packages)
+
     outdated_data_plane_names = [
         pkg.get(PACKAGE_COL, "")
         for pkg in data_pkgs
@@ -1022,8 +1023,10 @@ if __name__ == "__main__":
         package_dict, bundle_map, new_data_plane_names, new_version
     )
 
+    all_mgmt_plane_names = [pkg.get(PACKAGE_COL, "") for pkg in mgmt_pkgs]
+
     mgmt_plane_release_log_results = update_mgmt_plane_release_log(
-        package_dict, outdated_mgmt_plane_names + new_mgmt_plane_names, new_version
+        package_dict, all_mgmt_plane_names, new_version
     )
 
     # TODO AKA link logic
