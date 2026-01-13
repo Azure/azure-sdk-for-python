@@ -33,11 +33,13 @@ class AgentThreadRepository(ABC):
         """
 
 
-class AgentThreadStorage:
-    async def save(self, conversation_id: str, serialized_thread: str) -> None:
+class AgentThreadStorage(ABC):
+    @abstractmethod
+    async def save(self, conversation_id: str, serialized_thread: Any) -> None:
         pass
 
-    async def get(self, conversation_id: str) -> Optional[str]:
+    @abstractmethod
+    async def get(self, conversation_id: str) -> Optional[Any]:
         pass
 
 
