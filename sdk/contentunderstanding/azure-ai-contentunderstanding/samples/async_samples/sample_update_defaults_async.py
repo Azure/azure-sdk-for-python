@@ -60,9 +60,9 @@ USAGE:
     python sample_update_defaults_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
+    1) CONTENTUNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
        Example: https://your-foundry.services.ai.azure.com
-    2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using
+    2) CONTENTUNDERSTANDING_KEY - your Content Understanding API key (optional if using
        DefaultAzureCredential). Use key-based authentication for testing only; use
        DefaultAzureCredential (recommended) for production.
     3) GPT_4_1_DEPLOYMENT - your GPT-4.1 deployment name in Microsoft Foundry.
@@ -89,8 +89,8 @@ async def main() -> None:
     # 2. Managed identity (for Azure-hosted applications)
     # 3. Azure CLI (az login)
     # 4. Azure Developer CLI (azd login)
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:

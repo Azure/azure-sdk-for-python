@@ -13,179 +13,11 @@ urlFragment: contentunderstanding-samples
 
 These code samples demonstrate common scenarios with the Azure AI Content Understanding client library.
 
-**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/async_samples) directory.
-
-## Prerequisites
-
-* Python 3.9 or later is required to use this package
-* You need an [Azure subscription][azure_sub] and a [Microsoft Foundry resource][contentunderstanding_quickstart] to use this package.
-* The Microsoft Foundry resource must be created in a [supported region][contentunderstanding_regions].
-* **Required setup:** GPT-4.1, GPT-4.1-mini, and text-embedding-3-large models must be deployed in your Microsoft Foundry project and configured using `sample_update_defaults.py` before using prebuilt analyzers.
-* The 'Cognitive Services User' role is required for your credential to perform operations like configuring model deployments and creating custom analyzers.
+**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](async_samples) directory.
 
 ## Setup
 
-### Quick Start (Recommended)
-
-```bash
-# 1. Navigate to package directory
-cd sdk/contentunderstanding/azure-ai-contentunderstanding
-
-# 2. Activate virtual environment
-source .venv/bin/activate  # On Linux/macOS
-# .venv\Scripts\activate  # On Windows
-
-# 3. Install SDK and all dependencies
-pip install azure-ai-contentunderstanding
-pip install -r dev_requirements.txt  # Includes aiohttp, pytest, python-dotenv, azure-identity
-
-# 4. Set up environment variables
-cd samples
-cp ../env.sample .env
-# Edit .env with your credentials
-
-# 5. Configure model deployments (required for prebuilt analyzers)
-python sample_update_defaults.py
-
-# 6. Run a sync sample
-python sample_analyze_url.py
-
-# Or run an async sample
-python ../async_samples/sample_analyze_url_async.py
-```
-
-### Detailed Setup Instructions
-
-#### 1. Activate the Virtual Environment
-
-**This project uses a virtual environment. All samples MUST be run from the activated virtual environment.**
-
-```bash
-# From the package directory
-cd sdk/contentunderstanding/azure-ai-contentunderstanding
-
-# Activate virtual environment
-source .venv/bin/activate  # On Linux/macOS
-# or
-.venv\Scripts\activate  # On Windows
-
-# Verify activation
-which python  # Should show: .../azure-ai-contentunderstanding/.venv/bin/python
-```
-
-#### 2. Install Dependencies
-
-```bash
-# Install the SDK in editable mode
-pip install -e .
-
-# Install development dependencies (includes aiohttp, pytest, python-dotenv, azure-identity)
-pip install -r dev_requirements.txt
-```
-
-**Note:** All dependencies for running samples and tests are in `dev_requirements.txt`. This includes:
-- `aiohttp` - Required for async operations
-- `python-dotenv` - For loading `.env` files
-- `azure-identity` - For `DefaultAzureCredential` authentication
-- `pytest-xdist` - For parallel test execution
-
-#### 3. Configure Environment Variables
-
-```bash
-# Navigate to samples directory
-cd samples
-
-# Copy the env.sample file
-cp ../env.sample .env
-
-# Edit .env file with your credentials
-# Use your favorite editor (vim, nano, code, cursor, etc.)
-```
-
-Set the following in `.env`:
-* `AZURE_CONTENT_UNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
-* `AZURE_CONTENT_UNDERSTANDING_KEY` (optional) - Your API key. If not set, `DefaultAzureCredential` will be used.
-* `GPT_4_1_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1 deployment name in Microsoft Foundry
-* `GPT_4_1_MINI_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1-mini deployment name in Microsoft Foundry
-* `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for sample_update_defaults.py) - Your text-embedding-3-large deployment name in Microsoft Foundry
-
-**Important:** Your credential must have the 'Cognitive Services User' role assigned to perform operations like configuring model deployments and creating custom analyzers.
-
-**Example `.env` file:**
-```bash
-AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://mmi-sample-foundry.services.ai.azure.com/
-AZURE_CONTENT_UNDERSTANDING_KEY=your-api-key-here  # Optional
-GPT_4_1_DEPLOYMENT=gpt-4.1
-GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
-TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
-```
-
-#### 4. Authenticate (if using DefaultAzureCredential)
-
-If you're not using an API key, authenticate with Azure CLI:
-```bash
-az login
-```
-
-## Running the Samples
-
-**Important:** Always run samples from the activated virtual environment!
-
-### Running Sync Samples
-
-Sync samples are in the `samples/` directory. Run them from the package directory:
-
-```bash
-# Make sure virtual environment is activated
-source .venv/bin/activate
-
-# From the package directory, run sync samples
-python samples/sample_analyze_url.py
-python samples/sample_analyze_binary.py
-```
-
-Or navigate to the samples directory first:
-
-```bash
-# Make sure virtual environment is activated
-source .venv/bin/activate
-
-# Navigate to samples directory
-cd samples
-
-# Run sync samples
-python sample_analyze_url.py
-python sample_analyze_binary.py
-```
-
-### Running Async Samples
-
-Async samples are in the `samples/async_samples/` directory. Run them from the package directory:
-
-```bash
-# Make sure virtual environment is activated
-source .venv/bin/activate
-
-# From the package directory, run async samples
-python samples/async_samples/sample_analyze_url_async.py
-python samples/async_samples/sample_analyze_binary_async.py
-```
-
-Or navigate to the async_samples directory:
-
-```bash
-# Make sure virtual environment is activated
-source .venv/bin/activate
-
-# Navigate to async_samples directory
-cd samples/async_samples
-
-# Run async samples
-python sample_analyze_url_async.py
-python sample_analyze_binary_async.py
-```
-
-**Note:** When running samples that use local files (like `sample_analyze_binary.py`), make sure you run them from the `samples/` directory (or use the full path) so that relative paths like `sample_files/sample_invoice.pdf` resolve correctly.
+To run the samples for this package, please follow the setup instructions in [Step 3: Configure model deployments](../README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers) to configure with the necessary dependencies, environment variables, and model mappings required for the samples.
 
 ## Sample Files
 
@@ -449,13 +281,13 @@ source .venv/bin/activate
 pip install -r dev_requirements.txt
 ```
 
-### "KeyError: 'AZURE_CONTENT_UNDERSTANDING_ENDPOINT'"
+### "KeyError: 'CONTENTUNDERSTANDING_ENDPOINT'"
 
-**Solution:** Create a `.env` file with your credentials (see [Setup step 3](#3-configure-environment-variables)).
+**Solution:** Create a `.env` file with your credentials (see [Setup step 3](../README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers)).
 
 ### "Could not load credentials from the environment"
 
-**Solution:** Either set `AZURE_CONTENT_UNDERSTANDING_KEY` in `.env` or run `az login`.
+**Solution:** Either set `CONTENTUNDERSTANDING_KEY` in `.env` or run `az login`.
 
 ### Import errors or type checking issues
 
@@ -507,7 +339,4 @@ python samples/sample_analyze_binary.py  # Make sure you're in the package direc
 * See the main [README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md) for more getting started information
 
 <!-- LINKS -->
-[azure_sub]: https://azure.microsoft.com/free/
 [contentunderstanding_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
-[contentunderstanding_quickstart]: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api
-[contentunderstanding_regions]: https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support

@@ -32,7 +32,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_document_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_document_from_url_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document from URL (async version).
 
         This test validates:
@@ -43,23 +43,16 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
         02_AnalyzeUrl.AnalyzeDocumentUrlAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Use a publicly accessible URL for testing
-        # In production, this would be a real URL to a document
-        # For testing, we'll use binary data instead since file:// URLs are not supported
-        tests_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(tests_dir, "test_data", "sample_invoice.pdf")
+        url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
 
-        # Read file as binary data (since test proxy doesn't support file:// URLs)
-        with open(file_path, "rb") as f:
-            file_data = f.read()
-
-        print(f"[PASS] Document loaded from: {file_path}")
+        print(f"[PASS] Analyzing document from URL: {url}")
 
         # Analyze the document
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-documentSearch", inputs=[AnalyzeInput(data=file_data)]
+            analyzer_id="prebuilt-documentSearch", inputs=[AnalyzeInput(url=url)]
         )
 
         result = await poller.result()
@@ -113,7 +106,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_video_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_video_from_url_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a video from URL (async version).
 
         This test validates:
@@ -124,23 +117,16 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
         02_AnalyzeUrl.AnalyzeVideoUrlAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
-        # For testing purposes, use binary data
-        tests_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(tests_dir, "test_data", "sample_video.mp4")
+        # Use a publicly accessible URL for testing
+        url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/videos/sdk_samples/FlightSimulator.mp4"
 
-        if not os.path.exists(file_path):
-            pytest.skip(f"Video test file not found at {file_path}")
-
-        with open(file_path, "rb") as f:
-            file_data = f.read()
-
-        print(f"[PASS] Video loaded from: {file_path}")
+        print(f"[PASS] Analyzing video from URL: {url}")
 
         # Analyze the video
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(data=file_data)]
+            analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(url=url)]
         )
 
         result = await poller.result()
@@ -165,7 +151,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_audio_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_audio_from_url_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing audio from URL (async version).
 
         This test validates:
@@ -176,25 +162,18 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
         02_AnalyzeUrl.AnalyzeAudioUrlAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
-        # For testing purposes, use binary data
-        tests_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(tests_dir, "test_data", "sample_audio.mp3")
+        # Use a publicly accessible URL for testing
+        url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/audio/callCenterRecording.mp3"
 
-        if not os.path.exists(file_path):
-            pytest.skip(f"Audio test file not found at {file_path}")
-
-        with open(file_path, "rb") as f:
-            file_data = f.read()
-
-        print(f"[PASS] Audio loaded from: {file_path}")
+        print(f"[PASS] Analyzing audio from URL: {url}")
 
         # Analyze the audio
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(data=file_data)]
+            analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(url=url)]
         )
-
+        
         result = await poller.result()
 
         # Assertion: Verify analysis operation completed
@@ -217,7 +196,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_image_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_image_from_url_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing an image from URL (async version).
 
         This test validates:
@@ -227,25 +206,18 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
         02_AnalyzeUrl.AnalyzeImageUrlAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
-        # For testing purposes, use binary data
-        tests_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(tests_dir, "test_data", "sample_image.jpg")
+        # Use a publicly accessible URL for testing
+        url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
 
-        if not os.path.exists(file_path):
-            pytest.skip(f"Image test file not found at {file_path}")
-
-        with open(file_path, "rb") as f:
-            file_data = f.read()
-
-        print(f"[PASS] Image loaded from: {file_path}")
+        print(f"[PASS] Analyzing image from URL: {url}")
 
         # Analyze the image
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-imageSearch", inputs=[AnalyzeInput(data=file_data)]
+            analyzer_id="prebuilt-imageSearch", inputs=[AnalyzeInput(url=url)]
         )
-
+        
         result = await poller.result()
 
         # Assertion: Verify analysis operation completed

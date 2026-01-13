@@ -38,7 +38,7 @@ class TestSampleAnalyzeConfigsAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_configs_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_configs_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document with specific configuration options (async version).
 
         This test validates:
@@ -49,7 +49,7 @@ class TestSampleAnalyzeConfigsAsync(ContentUnderstandingClientTestBaseAsync):
 
         10_AnalyzeConfigs.AnalyzeConfigsAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Read the sample file (using sample_invoice.pdf as it contains various features)
         tests_dir = os.path.dirname(os.path.dirname(__file__))

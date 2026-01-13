@@ -35,7 +35,7 @@ class TestSampleUpdateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_update_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_update_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """Test updating an analyzer's properties (async version).
 
         This test validates:
@@ -48,7 +48,7 @@ class TestSampleUpdateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
         """
         # Skip this test if API is not available
         try:
-            client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+            client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
             # Generate unique analyzer ID for this test
             analyzer_id = f"test_analyzer_{uuid.uuid4().hex}"

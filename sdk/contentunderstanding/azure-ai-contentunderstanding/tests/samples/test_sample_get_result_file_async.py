@@ -30,7 +30,7 @@ class TestSampleGetResultFileAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_get_result_file_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_get_result_file_async(self, contentunderstanding_endpoint: str) -> None:
         """Test getting result files (like keyframe images) from analysis results (async version).
 
         This test validates:
@@ -44,7 +44,7 @@ class TestSampleGetResultFileAsync(ContentUnderstandingClientTestBaseAsync):
         Note: This test uses document analysis as video analysis may not be available.
         The API pattern is the same for both document and video analysis.
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Use document analysis for testing as video analysis may not be available
         # The get_result_file API pattern is the same for both document and video

@@ -33,7 +33,7 @@ class TestSampleAnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_return_raw_json(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_analyze_return_raw_json(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document and getting raw JSON response.
 
         This test validates:
@@ -43,7 +43,7 @@ class TestSampleAnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
 
         11_AnalyzeReturnRawJson.AnalyzeReturnRawJson()
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Read the sample file
         tests_dir = os.path.dirname(os.path.dirname(__file__))

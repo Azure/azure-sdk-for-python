@@ -37,7 +37,7 @@ class TestSampleListAnalyzersAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_list_analyzers_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_list_analyzers_async(self, contentunderstanding_endpoint: str) -> None:
         """Test listing all available analyzers (async version).
 
         This test validates:
@@ -45,7 +45,7 @@ class TestSampleListAnalyzersAsync(ContentUnderstandingClientTestBaseAsync):
         2. Counting prebuilt vs custom analyzers
         3. Displaying analyzer details
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # List all analyzers
         analyzers = [analyzer async for analyzer in client.list_analyzers()]

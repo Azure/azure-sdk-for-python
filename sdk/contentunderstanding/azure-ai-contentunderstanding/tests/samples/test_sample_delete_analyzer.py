@@ -36,7 +36,7 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_delete_analyzer(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_delete_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """Test deleting an analyzer.
 
         This test validates:
@@ -49,7 +49,7 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
         """
         # Skip this test if API is not available
         try:
-            client = self.create_client(endpoint=azure_content_understanding_endpoint)
+            client = self.create_client(endpoint=contentunderstanding_endpoint)
 
             # Generate unique analyzer ID for this test
             analyzer_id = f"test_analyzer_{uuid.uuid4().hex}"

@@ -41,7 +41,7 @@ class TestSampleAnalyzeBinaryAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_binary_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_binary_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document from binary data (async version).
 
         This test validates:
@@ -51,7 +51,7 @@ class TestSampleAnalyzeBinaryAsync(ContentUnderstandingClientTestBaseAsync):
         4. Document properties (MIME type, pages, tables)
 
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Read the sample file
         # Use test_data directory from parent tests folder

@@ -34,7 +34,7 @@ class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_update_defaults_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_update_defaults_async(self, contentunderstanding_endpoint: str) -> None:
         """Test configuring and getting model deployment defaults (async version).
 
         This test validates:
@@ -44,7 +44,7 @@ class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
 
         00_UpdateDefaults.UpdateDefaultsAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Test UpdateDefaults - only if deployment names are provided
         await self._test_update_defaults(client)

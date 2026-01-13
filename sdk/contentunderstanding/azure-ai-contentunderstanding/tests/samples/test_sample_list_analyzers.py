@@ -37,7 +37,7 @@ class TestSampleListAnalyzers(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_list_analyzers(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_list_analyzers(self, contentunderstanding_endpoint: str) -> None:
         """Test listing all available analyzers.
 
         This test validates:
@@ -45,7 +45,7 @@ class TestSampleListAnalyzers(ContentUnderstandingClientTestBase):
         2. Counting prebuilt vs custom analyzers
         3. Displaying analyzer details
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # List all analyzers
         analyzers = list(client.list_analyzers())

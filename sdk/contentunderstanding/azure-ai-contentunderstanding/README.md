@@ -93,45 +93,114 @@ To configure model deployments using code, see [`sample_update_defaults.py`][sam
 - Map your deployed models to the models required by prebuilt analyzers
 - Retrieve the current default model deployment configuration
 
-Before running the sample, set up environment variables. For local development and tests this repository uses a root-level `.env` file. A template is provided in the package directory as `env.sample`.
-
-Copy it to the repository root:
-
+**3-1. Set up virtual environment for running samples**
 ```bash
-cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
+# 1. Navigate to package directory
+cd sdk/contentunderstanding/azure-ai-contentunderstanding
+
+# 2. Create virtual environment (only needed once)
+python -m venv .venv
+
+# 3. Activate virtual environment
+source .venv/bin/activate  # On Linux/macOS
+# .venv\Scripts\activate  # On Windows
+
+# 4. Install SDK and all dependencies
+pip install azure-ai-contentunderstanding  # Install SDK if you haven't installed it in the previous step
+pip install -r dev_requirements.txt  # Includes aiohttp, pytest, python-dotenv, azure-identity
 ```
 
-Then edit `.env` and set at minimum:
+**Note:** All dependencies for running samples and tests are in `dev_requirements.txt`. This includes:
+- `aiohttp` - Required for async operations
+- `python-dotenv` - For loading `.env` files
+- `azure-identity` - For `DefaultAzureCredential` authentication
+- `pytest-xdist` - For parallel test execution
+
+**3-2. Set environment variables**
 
 The environment variables define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
 
+**Option A: Using .env file (Recommended for development)**
+
+For local development and tests, this repository uses a root-level `.env` file. A template is provided in the package directory as `env.sample`.
+
+1. Copy the template to the samples directory:
+   ```bash
+   # from sdk/contentunderstanding/azure-ai-contentunderstanding in Step 3-1
+   cp env.sample samples/.env
+   ```
+
+2. Then, edit the `.env` file and set the following variables at minimum:
+    Set the following in `.env`:
+    * `CONTENTUNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
+    * `CONTENTUNDERSTANDING_KEY` (optional) - Your API key. Required if using API key authentication. If omitted, `DefaultAzureCredential` will be used.
+    * `GPT_4_1_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1 deployment name in Microsoft Foundry
+    * `GPT_4_1_MINI_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1-mini deployment name in Microsoft Foundry
+    * `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for sample_update_defaults.py) - Your text-embedding-3-large deployment name in Microsoft Foundry
+
+    ```bash
+    CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+    # Optionally provide a key; if omitted, DefaultAzureCredential is used.
+    CONTENTUNDERSTANDING_KEY=<optional-api-key>
+    GPT_4_1_DEPLOYMENT=gpt-4.1
+    GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
+    TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+    ```
+
+**Option B: Using command line (Select your platform)**
+
+**On Linux/macOS (bash):**
+```bash
+export CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
+export CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
+export GPT_4_1_DEPLOYMENT="gpt-4.1"
+export GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
+export TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
 ```
-CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
-# Optionally provide a key; if omitted, DefaultAzureCredential is used.
-CONTENTUNDERSTANDING_KEY=<optional-api-key>
-GPT_4_1_DEPLOYMENT=gpt-4.1
-GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
-TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+
+**On Windows (PowerShell):**
+```powershell
+$env:CONTENTUNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
+$env:CONTENTUNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
+$env:GPT_4_1_DEPLOYMENT="gpt-4.1"
+$env:GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
+$env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
+```
+
+**On Windows (Command Prompt):**
+```bat
+set CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+set CONTENTUNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
+set GPT_4_1_DEPLOYMENT=gpt-4.1
+set GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
+set TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
 ```
 
 Notes:
-- If `AZURE_CONTENT_UNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
+- If `CONTENTUNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
 - Keep the `.env` file out of version control—do not commit secrets.
 - The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
+
+**3-3. Run the configuration script**
 
 **This is a critical step:** After setting up the environment variables, you must run the sample to configure the default model deployments. This one-time configuration maps your deployed models to the standard model names that prebuilt analyzers require. Without running this configuration, prebuilt analyzers will not work because they won't know which of your deployed models to use.
 
 Run the sample:
 
 ```bash
+# from sdk/contentunderstanding/azure-ai-contentunderstanding
 python samples/sample_update_defaults.py
 ```
 
-After a successful run you can immediately use prebuilt analyzers such as `prebuilt-invoice` or `prebuilt-documentSearch`. If you encounter errors:
+(Or for async: `python async_samples/sample_update_defaults_async.py`)
 
-- Recheck deployment names (they must match exactly)
-- Confirm the **Cognitive Services User** role assignment
-- Verify the endpoint points to the correct resource
+**Verification**
+
+After the script runs successfully, you can use prebuilt analyzers like `prebuilt-invoice` or `prebuilt-documentSearch`.
+
+If you encounter errors:
+- **Deployment Not Found**: Check that deployment names in environment variables match exactly what you created in Foundry.
+- **Access Denied**: Ensure you have the **Cognitive Services User** role assignment.
 
 ### Authenticate the client
 
@@ -146,7 +215,7 @@ import os
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
+endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 ```
@@ -158,7 +227,7 @@ import os
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.identity.aio import DefaultAzureCredential
 
-endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
+endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 ```
@@ -172,8 +241,8 @@ import os
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
 
-endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-api_key = os.environ["AZURE_CONTENT_UNDERSTANDING_KEY"]
+endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+api_key = os.environ["CONTENTUNDERSTANDING_KEY"]
 client = ContentUnderstandingClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 ```
 
@@ -263,9 +332,52 @@ The samples demonstrate:
 * **Analyzer Management** - Get, list, update, copy, and delete analyzers
 * **Result Management** - Retrieve result files from video analysis and delete analysis results
 
-See the [samples directory][python_cu_samples] for complete examples.
+See the [samples README](sample_readme) for introductions of samples and the [samples directory][python_cu_samples] for complete examples. 
 
-### Extract markdown content from documents
+### Running the samples
+
+To run the samples for this package, please follow the setup instructions in [Step 3: Configure model deployments](#step-3-configure-model-deployments-required-for-prebuilt-analyzers) to configure with the necessary dependencies, environment variables, and model mappings required for the samples.
+
+**Important:** Always run samples from the activated virtual environment!
+
+#### Running sync samples
+
+Sync samples are in the `samples/` directory. We recommend running them from the `samples/` directory to ensure relative paths (for local files and `.env` configuration) resolve correctly:
+
+```bash
+# Make sure virtual environment is activated
+source .venv/bin/activate      # Linux/macOS
+# .venv\Scripts\activate       # Windows
+
+# Navigate to samples directory
+cd samples
+
+# Run sync samples
+python sample_analyze_url.py
+python sample_analyze_binary.py
+```
+
+#### Running async samples
+
+Async samples are in the `samples/async_samples/` directory. Run them from that directory:
+
+```bash
+# Make sure virtual environment is activated
+source .venv/bin/activate
+
+# Navigate to async_samples directory
+cd samples/async_samples
+
+# Run async samples
+python sample_analyze_url_async.py
+python sample_analyze_binary_async.py
+```
+
+**Note:** When running samples that use local files (like `sample_analyze_binary.py`), make sure you run them from the `samples/` directory (or use the full path) so that relative paths like `sample_files/sample_invoice.pdf` resolve correctly.
+
+### Example code
+
+#### Extract markdown content from documents
 
 Use the `prebuilt-documentSearch` to extract markdown content from documents:
 
@@ -274,24 +386,24 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent, DocumentContent, MediaContentKind
+from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, MediaContent, DocumentContent, MediaContentKind
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
 
 async def analyze_document():
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
         
         # Analyze document using prebuilt-documentSearch
-        poller = await client.content_analyzers.begin_analyze(
+        poller = await client.begin_analyze(
             analyzer_id="prebuilt-documentSearch", 
-            url=file_url
+            inputs=[AnalyzeInput(url=file_url)]
         )
         result: AnalyzeResult = await poller.result()
         
@@ -312,7 +424,7 @@ async def analyze_document():
 asyncio.run(analyze_document())
 ```
 
-### Extract structured fields from invoices
+#### Extract structured fields from invoices
 
 Use the `prebuilt-invoice` analyzer to extract structured invoice fields:
 
@@ -321,7 +433,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent
+from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, DocumentContent
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -333,22 +445,22 @@ def get_field_value(fields, field_name):
     return field.value if field else None
 
 async def analyze_invoice():
-    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
         
         # Analyze invoice using prebuilt-invoice analyzer
-        poller = await client.content_analyzers.begin_analyze(
+        poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice", 
-            url=file_url
+            inputs=[AnalyzeInput(url=file_url)]
         )
         result: AnalyzeResult = await poller.result()
         
         # Extract invoice fields
-        content: MediaContent = result.contents[0]
+        content: DocumentContent = result.contents[0]  # type: ignore
         
         # Extract basic invoice information
         customer_name = get_field_value(content.fields, "CustomerName")
@@ -427,120 +539,9 @@ For more information about logging, see the [Azure SDK Python logging documentat
 * Explore the [samples directory][python_cu_samples] for complete code examples
 * Read the [Azure AI Content Understanding documentation][python_cu_product_docs] for detailed service information
 
-## Running the update defaults sample
-
-To run the `update_defaults` code example shown above, you need to set environment variables with your credentials and model deployment names.
-
-### Setting environment variables
-
-**On Linux/macOS (bash):**
-```bash
-export AZURE_CONTENT_UNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
-export AZURE_CONTENT_UNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
-export GPT_4_1_DEPLOYMENT="gpt-4.1"
-export GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
-export TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
-```
-
-**On Windows (PowerShell):**
-```powershell
-$env:AZURE_CONTENT_UNDERSTANDING_ENDPOINT="https://<your-resource-name>.services.ai.azure.com/"
-$env:AZURE_CONTENT_UNDERSTANDING_KEY="<your-api-key>"  # Optional if using DefaultAzureCredential
-$env:GPT_4_1_DEPLOYMENT="gpt-4.1"
-$env:GPT_4_1_MINI_DEPLOYMENT="gpt-4.1-mini"
-$env:TEXT_EMBEDDING_3_LARGE_DEPLOYMENT="text-embedding-3-large"
-```
-
-**On Windows (Command Prompt):**
-```bat
-set AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
-set AZURE_CONTENT_UNDERSTANDING_KEY=<your-api-key>  # Optional if using DefaultAzureCredential
-set GPT_4_1_DEPLOYMENT=gpt-4.1
-set GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
-set TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
-```
-
-### Running the sample code
-
-After setting the environment variables, you can run the code examples shown in the [Configure Model Deployments](#step-3-configure-model-deployments-required-for-prebuilt-analyzers) section above.
-
-**Alternatively, use the prepared sample script:**
-
-For a complete, ready-to-use example, see `sample_update_defaults.py` in the [samples directory][sample_readme]. This sample includes error handling and additional features:
-
-```bash
-# Navigate to samples directory
-cd samples
-
-# Run the prepared sample
-python sample_update_defaults.py
-```
-
-For async version:
-```bash
-python async_samples/sample_update_defaults_async.py
-```
-
-For comprehensive documentation on all available samples, see the [samples README][sample_readme].
-
 ## Running tests
 
-To run the tests for this package, you need to set up a `.env` file at the repository root with your test credentials.
-
-### Setting up the .env file for tests
-
-1. The `env.sample` file is located in this package directory. This file contains a template with all the required environment variables.
-
-2. **Important**: The `.env` file should be placed at the **root of the `azure-sdk-for-python` repository**, not in the package directory. This follows the Azure SDK testing guidelines.
-
-3. Copy the `env.sample` file from this package to the repo root to create your `.env` file:
-   ```bash
-   # From the repo root directory
-   cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
-   ```
-   
-   Or if you're in the package directory:
-   ```bash
-   # From the package directory
-   cp env.sample ../../../../.env
-   ```
-
-4. Edit the `.env` file at the repo root and fill in your actual values:
-   - `AZURE_CONTENT_UNDERSTANDING_ENDPOINT`: Your Microsoft Foundry resource endpoint
-   - `AZURE_CONTENT_UNDERSTANDING_KEY`: Your API key (optional if using DefaultAzureCredential)
-   - `AZURE_TEST_RUN_LIVE`: Set to `true` to run tests against real Azure resources
-   - `AZURE_SKIP_LIVE_RECORDING`: Set to `true` to skip recording when running live tests
-
-### Running tests
-
-**Important:** Make sure you have activated the virtual environment before running tests.
-
-Install the development dependencies (if not already installed):
-```bash
-pip install -r dev_requirements.txt
-pip install -e .
-```
-
-Run tests with pytest:
-```bash
-pytest tests/
-```
-
-#### Running tests in parallel
-
-The tests support parallel execution using `pytest-xdist` for faster test runs:
-
-```bash
-# Auto-detect number of CPUs and run tests in parallel
-pytest tests/ -n auto
-
-# Or specify the number of workers
-pytest tests/ -n 4
-```
-
-**Note:** The test proxy server is session-scoped and automatically handles parallel execution, so no additional configuration is needed.
-
-For more information about running tests, see the [tests README][tests_readme] and the [Azure SDK Python Testing Guide][azure_sdk_testing_guide].
+To run the tests for this package, see the [tests README][tests_readme] and the [Azure SDK Python Testing Guide][azure_sdk_testing_guide].
 
 ## Contributing
 
@@ -570,7 +571,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [diagnostics]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#logging
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
-[sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
+[sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/README.md
 [sample_update_defaults]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_update_defaults.py
 [sample_analyze_binary]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary.py
 [tests_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/tests/README.md

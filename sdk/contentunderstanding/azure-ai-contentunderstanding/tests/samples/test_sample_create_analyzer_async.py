@@ -35,7 +35,7 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_create_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_create_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """Test creating a custom analyzer with field schema (async version).
 
         This test validates:
@@ -47,7 +47,7 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
 
         04_CreateAnalyzer.CreateAnalyzerAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
         analyzer_id = f"test_custom_analyzer_{uuid.uuid4().hex[:16]}"

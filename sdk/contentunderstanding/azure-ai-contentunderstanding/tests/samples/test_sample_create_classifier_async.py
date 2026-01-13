@@ -37,7 +37,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_create_classifier_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_create_classifier_async(self, contentunderstanding_endpoint: str) -> None:
         """Test creating a custom classifier with content categories (async version).
 
         This test validates:
@@ -47,7 +47,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
         05_CreateClassifier.CreateClassifierAsync()
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
         analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"
@@ -138,7 +138,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_with_classifier_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_with_classifier_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document with a classifier to categorize content into segments (async version).
 
         This test validates:
@@ -148,7 +148,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
         Demonstrates: Analyze documents with segmentation (async)
         """
-        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
         analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"
