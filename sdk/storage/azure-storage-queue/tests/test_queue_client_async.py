@@ -483,7 +483,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
         name = self.get_resource_name("cont")
 
         # Act
@@ -505,7 +507,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
         name = self.get_resource_name("cont")
         queue = service.get_queue_client(name)
 
@@ -523,7 +527,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
 
         def callback(response):
             assert "User-Agent" in response.http_request.headers
@@ -539,7 +545,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
         custom_app = "TestApp/v1.0"
         service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, user_agent=custom_app
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
+            user_agent=custom_app,
         )
 
         def callback(response):
@@ -567,7 +575,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
 
         def callback(response):
             assert "User-Agent" in response.http_request.headers
@@ -587,7 +597,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, queue_name="queue"
+                self.account_url(storage_account_name, "queue"),
+                credential=storage_account_key.secret,
+                queue_name="queue",
             )
 
             # Assert
@@ -604,7 +616,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, queue_name="queue"
+                self.account_url(storage_account_name, "queue"),
+                credential=storage_account_key.secret,
+                queue_name="queue",
             )
             await service.close()
 
