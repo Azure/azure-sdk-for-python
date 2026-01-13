@@ -176,7 +176,7 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
             except Exception as e:
                 print(f"[WARN] Cleanup failed: {str(e)}")
         
+        print("\n[SUCCESS] All test_sample_create_analyzer assertions passed")
+
         # Return variables to be recorded for playback mode
         return variables
-
-        print("\n[SUCCESS] All test_sample_create_analyzer assertions passed")

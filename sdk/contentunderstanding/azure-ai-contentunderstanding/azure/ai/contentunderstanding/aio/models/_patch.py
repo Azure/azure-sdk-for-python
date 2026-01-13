@@ -54,7 +54,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :raises ValueError: If the operation ID cannot be extracted
         """
         try:
-            operation_location = self._polling_method._initial_response.http_response.headers["Operation-Location"]  # type: ignore # pylint: disable=protected-access
+            operation_location = self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore # pylint: disable=protected-access
             return _parse_operation_id(operation_location)
         except (KeyError, ValueError) as e:
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
