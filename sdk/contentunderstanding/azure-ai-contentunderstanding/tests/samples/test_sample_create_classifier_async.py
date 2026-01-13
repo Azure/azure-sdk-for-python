@@ -209,10 +209,9 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
             test_data_dir = os.path.join(os.path.dirname(current_dir), "test_data")
             file_path = os.path.join(test_data_dir, "mixed_financial_docs.pdf")
 
-            # Check if file exists, if not skip this test
+            # Check if file exists, fail if missing
             if not os.path.exists(file_path):
-                print(f"[INFO] Test file not found: {file_path}")
-                pytest.skip(f"Test data file not available: {file_path}")
+                raise FileNotFoundError(f"Test data file not found: {file_path}")
 
             with open(file_path, "rb") as f:
                 file_bytes = f.read()

@@ -47,7 +47,6 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
 
         09_DeleteAnalyzer.DeleteAnalyzerAsync()
         """
-        # Skip this test if API is not available
         try:
             client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -168,7 +167,5 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
             print("\n[SUCCESS] All test_sample_delete_analyzer assertions passed")
 
         except Exception as e:
-            error_msg = str(e).lower()
-            if "not supported" in error_msg or "not available" in error_msg or "not implemented" in error_msg:
-                pytest.skip(f"API not available: {str(e)[:100]}")
+            # Let all exceptions fail - don't skip
             raise

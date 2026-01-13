@@ -211,29 +211,35 @@ async def download_keyframes_and_assert_async(
     print(f"Successfully completed get_result_file test - downloaded {files_retrieved} keyframe images")
 
 
-import pytest
-
-
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_update_defaults_async(self, contentunderstanding_endpoint: str) -> None:
+    async def test_update_defaults_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """
         Tests updating default model deployments for the Content Understanding service.
         Verifies that model deployments (gpt-4.1, gpt-4.1-mini, text-embedding-3-large) can be updated and are correctly persisted.
         """
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        import os
+
+        # Get deployment names from variables (playback) or environment (recording)
+        # If not found, use defaults and record them
+        gpt_4_1_deployment = variables.setdefault(
+            "gpt_4_1_deployment",
+            os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1")
+        )
+        gpt_4_1_mini_deployment = variables.setdefault(
+            "gpt_4_1_mini_deployment",
+            os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
+        )
+        text_embedding_3_large_deployment = variables.setdefault(
+            "text_embedding_3_large_deployment",
+            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large")
+        )
+
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
-
-        # Check if model deployments are configured in test environment
-        gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
-        gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
-        text_embedding_3_large_deployment = os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
-
-        if not gpt_4_1_deployment or not gpt_4_1_mini_deployment or not text_embedding_3_large_deployment:
-            pytest.skip(
-                "Model deployments are not configured in test environment. Skipping test_update_defaults_async."
-            )
 
         # Update defaults with configured deployments
         model_deployments = {
@@ -269,6 +275,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         ), "text-embedding-3-large deployment should match"
 
         print(f"Successfully updated defaults with {len(updated_defaults.model_deployments)} model deployments")
+
+        # Return variables to be recorded for playback mode
+        return variables
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async

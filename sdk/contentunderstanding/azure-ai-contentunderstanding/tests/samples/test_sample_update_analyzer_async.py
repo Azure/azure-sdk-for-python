@@ -46,7 +46,6 @@ class TestSampleUpdateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
 
         08_UpdateAnalyzer.UpdateAnalyzerAsync()
         """
-        # Skip this test if API is not available
         try:
             client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
@@ -137,9 +136,7 @@ class TestSampleUpdateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
             print("\n[SUCCESS] All test_sample_update_analyzer_async assertions passed")
 
         except Exception as e:
-            error_msg = str(e).lower()
-            if "not supported" in error_msg or "not available" in error_msg or "not implemented" in error_msg:
-                pytest.skip(f"API not available: {str(e)[:100]}")
+            # Let all exceptions fail - don't skip
             raise
         finally:
             # Clean up: delete the test analyzer
