@@ -96,10 +96,10 @@ class HttpXStreamDownloadGenerator:
         except httpx.RemoteProtocolError as ex:
             msg = ex.__str__()
             if "complete message" in msg:
-                _LOGGER.warning("Incomplete download: %s", ex)
+                _LOGGER.warning("Incomplete download.")
                 internal_response.close()
                 raise IncompleteReadError(ex, error=ex) from ex
-            _LOGGER.warning("Unable to stream download: %s", ex)
+            _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise HttpResponseError(ex, error=ex) from ex
         except httpx.DecodingError as ex:
@@ -108,8 +108,8 @@ class HttpXStreamDownloadGenerator:
             raise DecodeError("Failed to decode.", error=ex) from ex
         except httpx.RequestError as err:
             raise ServiceRequestError(err, error=err) from err
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
+        except Exception:
+            _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise
 
@@ -186,10 +186,10 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         except httpx.RemoteProtocolError as ex:
             msg = ex.__str__()
             if "complete message" in msg:
-                _LOGGER.warning("Incomplete download: %s", ex)
+                _LOGGER.warning("Incomplete download.")
                 await internal_response.aclose()
                 raise IncompleteReadError(ex, error=ex) from ex
-            _LOGGER.warning("Unable to stream download: %s", ex)
+            _LOGGER.warning("Unable to stream download.")
             await internal_response.aclose()
             raise HttpResponseError(ex, error=ex) from ex
         except httpx.DecodingError as ex:
@@ -198,7 +198,7 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
             raise DecodeError("Failed to decode.", error=ex) from ex
         except httpx.RequestError as err:
             raise ServiceRequestError(err, error=err) from err
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
+        except Exception:
+            _LOGGER.warning("Unable to stream download.")
             await internal_response.aclose()
             raise
