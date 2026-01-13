@@ -760,7 +760,7 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
-                logger.warning(
+                logger.debug(
                     f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}"
                 )
             return response
@@ -769,7 +769,7 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.debug(f"Agent response could not be parsed, falling back to original response: {response}")
         return response
 
 
