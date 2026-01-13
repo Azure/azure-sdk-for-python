@@ -734,6 +734,12 @@ def update_data_plane_release_logs(
             # handle exception for packages with download_uri
             if curr_service_name in PACKAGES_WITH_DOWNLOAD_URI:
                 version = PACKAGES_WITH_DOWNLOAD_URI[curr_service_name]
+                if not version:
+                    logger.warning(
+                        f"Package {curr_service_name} with download_uri is missing version info, it may be deprecated. Skipping in release log update"
+                    )
+                    result.append(curr_service_name)
+                    continue
             else:
                 pkg = package_dict.get(curr_service_name, {})
                 version = pkg.get(VERSION_GA_COL)
