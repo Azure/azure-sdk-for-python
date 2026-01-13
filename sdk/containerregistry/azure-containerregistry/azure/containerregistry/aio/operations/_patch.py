@@ -34,7 +34,7 @@ T = TypeVar("T")
 
 class AuthenticationOperations(AuthenticationOperationsGenerated):
     @distributed_trace_async
-    async def exchange_aad_access_token_for_acr_refresh_token( # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
+    async def exchange_aad_access_token_for_acr_refresh_token(  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
         self,
         grant_type: Union[str, "_models.PostContentSchemaGrantType"],
         service: str,
@@ -111,7 +111,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         return deserialized
 
     @distributed_trace_async
-    async def exchange_acr_refresh_token_for_acr_access_token( # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
+    async def exchange_acr_refresh_token_for_acr_access_token(  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
         self,
         service: str,
         scope: str,

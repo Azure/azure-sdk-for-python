@@ -175,7 +175,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop("cls", None)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
-        accept = "application/json" # pylint: disable=unused-variable
+        accept = "application/json"  # pylint: disable=unused-variable
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -192,11 +192,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     params=query_parameters,
                 )
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url( # pylint: disable=protected-access
-                        "self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.endpoint",
+                        self._client._config.endpoint,
+                        "str",
+                        skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
-                _request.url = self._client._client.format_url(_request.url, **path_format_arguments) # pylint: disable=protected-access
+                _request.url = self._client._client.format_url(
+                    _request.url, **path_format_arguments
+                )  # pylint: disable=protected-access
 
             else:
                 # make call to next link with the client's api-version
@@ -207,16 +212,23 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._client._config.api_version # pylint: disable=protected-access
+                _next_request_params["api-version"] = (
+                    self._client._config.api_version
+                )  # pylint: disable=protected-access
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url( # pylint: disable=protected-access
-                        "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
+                        self._client._config.endpoint,
+                        "str",
+                        skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments) # pylint: disable=no-member
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )  # pylint: disable=no-member
 
             return _request
 
@@ -307,18 +319,23 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     last=last,
                     n=results_per_page,
                     orderby=order_by,
-                    api_version=self._client._config.api_version, # pylint: disable=protected-access
+                    api_version=self._client._config.api_version,  # pylint: disable=protected-access
                     headers=header_parameters,
                     params=query_parameters,
                 )
 
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url( # pylint: disable=protected-access
-                        "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
+                        self._client._config.endpoint,
+                        "str",
+                        skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
 
-                _request.url = self._client._client.format_url(_request.url, **path_format_arguments) # pylint: disable=protected-access
+                _request.url = self._client._client.format_url(
+                    _request.url, **path_format_arguments
+                )  # pylint: disable=protected-access
             else:
                 _parsed_next_link = urllib.parse.urlparse(next_link)
                 _next_request_params = case_insensitive_dict(
@@ -327,17 +344,24 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._client._config.api_version # pylint: disable=protected-access
+                _next_request_params["api-version"] = (
+                    self._client._config.api_version
+                )  # pylint: disable=protected-access
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
 
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url( # pylint: disable=protected-access
-                        "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
+                        self._client._config.endpoint,
+                        "str",
+                        skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
-                _request.url = self._client._client.format_url(_request.url, **path_format_arguments) # pylint: disable=protected-access
+                _request.url = self._client._client.format_url(
+                    _request.url, **path_format_arguments
+                )  # pylint: disable=protected-access
             return _request
 
         async def extract_data(pipeline_response):
