@@ -119,7 +119,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _search_get(
+    async def _search_get(  # pylint: disable=too-many-locals
         self,
         *,
         query_source_authorization: Optional[str] = None,
@@ -400,7 +400,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def _search_post(
+    async def _search_post(  # pylint: disable=too-many-locals
         self,
         *,
         query_source_authorization: Optional[str] = None,
@@ -463,7 +463,7 @@ class _SearchClientOperationsMixin(
     ) -> _models2.SearchDocumentsResult: ...
 
     @distributed_trace_async
-    async def _search_post(
+    async def _search_post(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1007,7 +1007,7 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.SuggestDocumentsResult: ...
 
     @distributed_trace_async
-    async def _suggest_post(
+    async def _suggest_post(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1404,7 +1404,7 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.AutocompleteResult: ...
 
     @distributed_trace_async
-    async def _autocomplete_post(
+    async def _autocomplete_post(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,

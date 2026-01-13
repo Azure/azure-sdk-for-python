@@ -66,7 +66,7 @@ def build_search_get_document_count_request(index_name: str, **kwargs: Any) -> H
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_search_get_request(
+def build_search_search_get_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     index_name: str,
     *,
     query_source_authorization: Optional[str] = None,
@@ -542,7 +542,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _search_get(
+    def _search_get(  # pylint: disable=too-many-locals
         self,
         *,
         query_source_authorization: Optional[str] = None,
@@ -823,7 +823,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    def _search_post(
+    def _search_post(  # pylint: disable=too-many-locals
         self,
         *,
         query_source_authorization: Optional[str] = None,
@@ -886,7 +886,7 @@ class _SearchClientOperationsMixin(
     ) -> _models1.SearchDocumentsResult: ...
 
     @distributed_trace
-    def _search_post(
+    def _search_post(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1430,7 +1430,7 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.SuggestDocumentsResult: ...
 
     @distributed_trace
-    def _suggest_post(
+    def _suggest_post(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1827,7 +1827,7 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.AutocompleteResult: ...
 
     @distributed_trace
-    def _autocomplete_post(
+    def _autocomplete_post(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
