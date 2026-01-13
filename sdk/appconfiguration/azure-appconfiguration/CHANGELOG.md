@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `match_conditions` parameter to `by_page()` method in `list_configuration_settings()` to efficiently monitor configuration changes using etags without fetching unchanged data.
+- Added query parameter normalization to support Azure Front Door as a CDN. Query parameter keys are now converted to lowercase and sorted alphabetically.
 - Added support for custom authentication audiences via the `audience` keyword argument in `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
 
 ### Breaking Changes
