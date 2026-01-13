@@ -465,6 +465,7 @@ def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
         except:
             return {}
 
+
 def get_conda_config(package_path: str) -> Optional[Dict[str, Any]]:
     """
     Attempts to retrieve all values within [tools.azure-sdk-conda] section of a pyproject.toml.
@@ -484,6 +485,7 @@ def get_conda_config(package_path: str) -> Optional[Dict[str, Any]]:
                         return tool_configs["azure-sdk-conda"]
         except:
             return {}
+
 
 def get_ci_config(package_path: str) -> Optional[Dict[str, Any]]:
     """

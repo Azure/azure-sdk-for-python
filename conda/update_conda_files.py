@@ -703,7 +703,7 @@ def update_data_plane_release_logs(
             continue
         if (
             curr_service_name not in package_dict
-            and curr_service_name not in bundle_map.values()
+            and curr_service_name not in bundle_map
         ):
             logger.warning(
                 f"Existing release log service {curr_service_name} was not found in CSV data, skipping update. It may be deprecated."
