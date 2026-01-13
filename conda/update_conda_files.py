@@ -932,8 +932,6 @@ if __name__ == "__main__":
         logger.error("No packages found in CSV data.")
         exit(1)
 
-    # TODO clean this part up
-
     # Only ship GA packages that are not deprecated
     packages = [
         pkg
@@ -946,16 +944,20 @@ if __name__ == "__main__":
     logger.info(f"Filtered to {len(packages)} GA packages")
 
     data_pkgs, mgmt_pkgs = separate_packages_by_type(packages)
-    outdated_data_pkgs = [
-        pkg for pkg in data_pkgs if package_needs_update(pkg, old_version, is_new=False)
+    outdated_data_plane_names = [
+        pkg.get(PACKAGE_COL, "")
+        for pkg in data_pkgs
+        if package_needs_update(pkg, old_version, is_new=False)
     ]
     new_data_plane_names = [
         pkg.get(PACKAGE_COL, "")
         for pkg in data_pkgs
         if package_needs_update(pkg, old_version, is_new=True)
     ]
-    outdated_mgmt_pkgs = [
-        pkg for pkg in mgmt_pkgs if package_needs_update(pkg, old_version, is_new=False)
+    outdated_mgmt_plane_names = [
+        pkg.get(PACKAGE_COL, "")
+        for pkg in mgmt_pkgs
+        if package_needs_update(pkg, old_version, is_new=False)
     ]
     new_mgmt_plane_names = [
         pkg.get(PACKAGE_COL, "")
@@ -963,17 +965,18 @@ if __name__ == "__main__":
         if package_needs_update(pkg, old_version, is_new=True)
     ]
 
+    # don't overlap new packages with outdated packages
+    outdated_data_plane_names = [
+        name for name in outdated_data_plane_names if name not in new_data_plane_names
+    ]
+    outdated_mgmt_plane_names = [
+        name for name in outdated_mgmt_plane_names if name not in new_mgmt_plane_names
+    ]
+
     # map package name to csv row for easy lookup
     package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
 
-    # Extract package names from the filtered lists
-    outdated_data_pkg_names = [
-        pkg.get(PACKAGE_COL, "") for pkg in outdated_data_pkgs if pkg.get(PACKAGE_COL)
-    ]
-    outdated_mgmt_pkg_names = [
-        pkg.get(PACKAGE_COL, "") for pkg in outdated_mgmt_pkgs if pkg.get(PACKAGE_COL)
-    ]
-    outdated_package_names = outdated_data_pkg_names + outdated_mgmt_pkg_names
+    outdated_package_names = outdated_data_plane_names + outdated_mgmt_plane_names
 
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
@@ -984,8 +987,9 @@ if __name__ == "__main__":
     # pre-process bundled packages to minimize file writes for new data plane packages,
     # and release logs
     bundle_map = map_bundle_to_packages(list(package_dict.keys()))
-    # TODO testing
-    print(bundle_map)
+    logger.info(
+        f"Identified {len(bundle_map)} release bundles from package data: {bundle_map}"
+    )
 
     # handle new data plane libraries
     new_data_plane_results = add_new_data_plane_packages(
@@ -1003,7 +1007,7 @@ if __name__ == "__main__":
     )
 
     mgmt_plane_release_log_results = update_mgmt_plane_release_log(
-        package_dict, outdated_mgmt_pkg_names + new_mgmt_plane_names, new_version
+        package_dict, outdated_mgmt_plane_names + new_mgmt_plane_names, new_version
     )
 
     # TODO AKA link logic
