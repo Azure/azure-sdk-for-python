@@ -29,53 +29,15 @@
 
 ### Breaking Changes
 
-  - Model `ApplianceOperation` deleted or renamed its instance variable `description`
-  - Model `ApplianceOperation` deleted or renamed its instance variable `operation`
-  - Model `ApplianceOperation` deleted or renamed its instance variable `provider`
-  - Model `ApplianceOperation` deleted or renamed its instance variable `resource`
-  - Deleted or renamed model `ApplianceOperationsList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ApplianceOperation` moved instance variable `description`, `operation`, `provider` and `resource` under property `display`
   - Method `AppliancesOperations.list_keys` changed its parameter `artifact_type` from `positional_or_keyword` to `keyword_only`
   - Method `AppliancesOperations.update` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
   - Method `AppliancesOperations.update` inserted a `positional_or_keyword` parameter `parameters`
 
-## 2.0.0b1 (2026-01-09)
+### Other Changes
 
-### Features Added
-
-  - Model `ResourceConnectorMgmtClient` added parameter `cloud_setting` in method `__init__`
-  - Client `ResourceConnectorMgmtClient` added method `send_request`
-  - Model `ApplianceOperation` added property `display`
-  - Enum `SSHKeyType` added member `USER_MANAGEMENT_KEY`
-  - Enum `Status` added member `ARC_GATEWAY_UPDATE_COMPLETE`
-  - Enum `Status` added member `ARC_GATEWAY_UPDATE_FAILED`
-  - Enum `Status` added member `ARC_GATEWAY_UPDATE_PREPARING`
-  - Enum `Status` added member `ARC_GATEWAY_UPDATING`
-  - Enum `Status` added member `NETWORK_DNS_UPDATE_COMPLETE`
-  - Enum `Status` added member `NETWORK_DNS_UPDATE_FAILED`
-  - Enum `Status` added member `NETWORK_DNS_UPDATE_PREPARING`
-  - Enum `Status` added member `NETWORK_DNS_UPDATING`
-  - Enum `Status` added member `NETWORK_PROXY_UPDATE_COMPLETE`
-  - Enum `Status` added member `NETWORK_PROXY_UPDATE_FAILED`
-  - Enum `Status` added member `NETWORK_PROXY_UPDATE_PREPARING`
-  - Enum `Status` added member `NETWORK_PROXY_UPDATING`
-  - Added model `ApplianceOperationValueDisplay`
-  - Added model `DnsConfiguration`
-  - Added model `Event`
-  - Added model `GatewayConfiguration`
-  - Added model `NetworkProfile`
-  - Added model `ProxyConfiguration`
-
-### Breaking Changes
-
-  - Model `ApplianceOperation` deleted or renamed its instance variable `description`
-  - Model `ApplianceOperation` deleted or renamed its instance variable `operation`
-  - Model `ApplianceOperation` deleted or renamed its instance variable `provider`
-  - Model `ApplianceOperation` deleted or renamed its instance variable `resource`
-  - Deleted or renamed model `ApplianceOperationsList`
-  - Method `AppliancesOperations.list_keys` changed its parameter `artifact_type` from `positional_or_keyword` to `keyword_only`
-  - Method `AppliancesOperations.update` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `AppliancesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
-  - Method `AppliancesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'resource_name', 'parameters', 'kwargs']`
+  - Deleted model `ApplianceOperationsList` which actually was not used by SDK users
 
 ## 1.0.0 (2023-08-18)
 
