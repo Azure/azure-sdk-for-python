@@ -16,6 +16,8 @@ This step ensures your environment is correctly configured with the necessary de
 
 Run all tests:
 ```bash
+# Navigate to package directory
+cd sdk/contentunderstanding/azure-ai-contentunderstanding
 pytest
 ```
 
