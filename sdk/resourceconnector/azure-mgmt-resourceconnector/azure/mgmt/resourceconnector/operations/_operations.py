@@ -38,6 +38,7 @@ from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserial
 from .._utils.serialization import Deserializer, Serializer
 
 JSON = MutableMapping[str, Any]
+_Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -117,9 +118,9 @@ def build_appliances_update_request(
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ResourceConnector/appliances/{resourceName}"
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -685,9 +686,9 @@ class AppliancesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: _models.PatchableAppliance,
         *,
         content_type: str = "application/json",
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Appliance:
         """Updates an Appliance.
@@ -700,11 +701,11 @@ class AppliancesOperations:
         :type resource_group_name: str
         :param resource_name: Appliances name. Required.
         :type resource_name: str
-        :param parameters: The updatable fields of an existing Appliance. Required.
-        :type parameters: ~azure.mgmt.resourceconnector.models.PatchableAppliance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword tags: Resource tags. Default value is None.
+        :paramtype tags: dict[str, str]
         :return: Appliance. The Appliance is compatible with MutableMapping
         :rtype: ~azure.mgmt.resourceconnector.models.Appliance
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -775,7 +776,9 @@ class AppliancesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.PatchableAppliance, JSON, IO[bytes]],
+        parameters: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Appliance:
         """Updates an Appliance.
@@ -788,9 +791,11 @@ class AppliancesOperations:
         :type resource_group_name: str
         :param resource_name: Appliances name. Required.
         :type resource_name: str
-        :param parameters: The updatable fields of an existing Appliance. Is one of the following
-         types: PatchableAppliance, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resourceconnector.models.PatchableAppliance or JSON or IO[bytes]
+        :param parameters: The updatable fields of an existing Appliance. Is either a JSON type or a
+         IO[bytes] type. Required.
+        :type parameters: JSON or IO[bytes]
+        :keyword tags: Resource tags. Default value is None.
+        :paramtype tags: dict[str, str]
         :return: Appliance. The Appliance is compatible with MutableMapping
         :rtype: ~azure.mgmt.resourceconnector.models.Appliance
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -809,6 +814,9 @@ class AppliancesOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Appliance] = kwargs.pop("cls", None)
 
+        if parameters is _Unset:
+            parameters = {"tags": tags}
+            parameters = {k: v for k, v in parameters.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
