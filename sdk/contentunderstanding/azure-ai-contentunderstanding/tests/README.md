@@ -174,9 +174,29 @@ pytest tests/
 - [Azure SDK Python Testing Guide][azure_sdk_testing_guide] - Comprehensive testing documentation
 - [Test-Proxy Documentation][test_proxy_docs] - Official test-proxy documentation
 
+## Next steps
+
+* Review the [main package README][main_readme] for package documentation and usage examples
+* Explore the [samples directory][python_cu_samples] to see working code examples
+* Read the [Azure SDK Python Testing Guide][azure_sdk_testing_guide] for comprehensive testing documentation
+* Check the [Test-Proxy Documentation][test_proxy_docs] for detailed test-proxy information
+
+## Contributing
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][code_of_conduct_faq] or contact [opencode@microsoft.com][opencode_email] with any additional questions or comments.
+
 <!-- LINKS -->
 
 [main_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md
 [main_readme_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers
 [azure_sdk_testing_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [test_proxy_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy
+[python_cu_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
+[cla]: https://cla.microsoft.com
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[opencode_email]: mailto:opencode@microsoft.com
