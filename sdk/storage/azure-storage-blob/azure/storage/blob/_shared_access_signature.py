@@ -310,9 +310,9 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
     def get_value_to_append(self, query):
         if query == QueryStringConstants.SIGNED_REQUEST_HEADERS:
-            return (self._sts_srh or "")  + "\n"
+            return (self._sts_srh + "\n") if self._sts_srh else ""
         if query == QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS:
-            return (self._sts_srq or "") + "\n"
+            return (self._sts_srq + "\n") if self._sts_srq else ""
         return_value = self.query_dict.get(query) or ''
         return return_value + '\n'
 
@@ -353,20 +353,29 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         else:
             string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
 
-        string_to_sign += \
-            (self.get_value_to_append(QueryStringConstants.SIGNED_IP) +
+        string_to_sign += (
+             self.get_value_to_append(QueryStringConstants.SIGNED_IP) +
              self.get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
              self.get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
              self.get_value_to_append(QueryStringConstants.SIGNED_RESOURCE) +
              self.get_value_to_append(BlobQueryStringConstants.SIGNED_TIMESTAMP) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_HEADERS) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS) +
+             self.get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE)
+        )
+
+        if user_delegation_key is not None:
+            string_to_sign += (self._sts_srh + "\n") if self._sts_srh else "\n"
+            string_to_sign += (self._sts_srq + "\n") if self._sts_srq else "\n"
+        else:
+            string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_HEADERS)
+            string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS)
+
+        string_to_sign += (
              self.get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_LANGUAGE) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE))
+             self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE)
+        )
 
         # remove the trailing newline
         if string_to_sign[-1] == '\n':
