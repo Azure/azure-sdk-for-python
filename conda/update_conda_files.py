@@ -41,11 +41,12 @@ CONDA_MGMT_META_YAML_PATH = os.path.join(CONDA_RECIPES_DIR, "azure-mgmt", "meta.
 # constants
 RELEASE_PERIOD_MONTHS = 3
 
-# packages that should be shipped but are known to be missing from the csv
-PACKAGES_WITH_DOWNLOAD_URI = [
-    "msal",
-    "msal-extensions",
-]
+# packages that should be shipped but are known to be missing from the csv - store version here
+PACKAGES_WITH_DOWNLOAD_URI = {
+    "msal": "",
+    "msal-extensions": "",
+}
+
 
 # =====================================
 # Helpers for updating conda_env.yml
@@ -169,6 +170,9 @@ def update_conda_sdk_client_yml(
                 )
                 result.append(pkg_name)
                 continue
+
+            # store retrieved version for release log
+            PACKAGES_WITH_DOWNLOAD_URI[pkg_name] = latest_version
 
             if curr_download_uri != download_uri:
                 # version needs update
@@ -704,6 +708,7 @@ def update_data_plane_release_logs(
         if (
             curr_service_name not in package_dict
             and curr_service_name not in bundle_map
+            and curr_service_name not in PACKAGES_WITH_DOWNLOAD_URI
         ):
             logger.warning(
                 f"Existing release log service {curr_service_name} was not found in CSV data, skipping update. It may be deprecated."
@@ -726,8 +731,13 @@ def update_data_plane_release_logs(
                     )
                     result.append(pkg_name)
         else:
-            pkg = package_dict.get(curr_service_name, {})
-            version = pkg.get(VERSION_GA_COL)
+            # handle exception for packages with download_uri
+            if curr_service_name in PACKAGES_WITH_DOWNLOAD_URI:
+                version = PACKAGES_WITH_DOWNLOAD_URI[curr_service_name]
+            else:
+                pkg = package_dict.get(curr_service_name, {})
+                version = pkg.get(VERSION_GA_COL)
+
             if version:
                 pkg_updates.append(f"- {curr_service_name}-{version}")
             else:
