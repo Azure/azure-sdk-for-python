@@ -13,21 +13,26 @@ from ._models import RequestSession as GeneratedRequestSession
 
 class RequestSession(GeneratedRequestSession):
     """Extended RequestSession that tracks explicitly set None values."""
-    
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         # Track which kwargs were explicitly passed as None
         self._explicit_none_fields = {k for k, v in kwargs.items() if v is None}
         super().__init__(*args, **kwargs)
-    
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
-        """Convert to dict, including explicitly set None values."""
+        """Convert to dict, including explicitly set None values.
+
+        :return: A dictionary representation of the RequestSession, including fields that were
+            explicitly set to None.
+        :rtype: dict[str, Any]
+        """
         result = super().as_dict(**kwargs)
         # Add back any fields that were explicitly set to None
         for field in self._explicit_none_fields:
             # Convert attribute name to rest field name if needed
             rest_name = self._attr_to_rest_field.get(field)
             if rest_name:
-                result[rest_name._rest_name] = None
+                result[rest_name._rest_name] = None  # pylint: disable=protected-access
             else:
                 result[field] = None
         return result
