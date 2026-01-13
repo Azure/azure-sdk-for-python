@@ -143,10 +143,14 @@ def main() -> None:
         amount_field = total_amount_field.value.get("Amount")
         currency_field = total_amount_field.value.get("CurrencyCode")
         amount = amount_field.value if amount_field else None
-        currency = currency_field.value if currency_field else "$"
-        print(f"\nTotal: {currency}{amount:.2f}" if isinstance(amount, (int, float)) else f"\nTotal: {currency}{amount}")
-        print(f"  Confidence: {total_amount_field.confidence:.2f}" if total_amount_field.confidence else "  Confidence: N/A")  # type: ignore
-        print(f"  Source: {total_amount_field.source or 'N/A'}")  # type: ignore
+        # Use currency value if present, otherwise default to "$"
+        currency = (currency_field.value if currency_field and currency_field.value else "")
+        if isinstance(amount, (int, float)):
+            print(f"\nTotal: {currency}{amount:.2f}")
+        else:
+            print(f"\nTotal: {currency}{amount or '(None)'}")
+        print(f"  Amount Confidence: {amount_field.confidence:.2f}" if amount_field and amount_field.confidence else "  Amount Confidence: N/A")
+        print(f"  Source for Amount: {amount_field.source or 'N/A'}" if amount_field else "  Source: N/A")
 
     # Extract array fields (collections like line items)
     line_items_field = document_content.fields.get("LineItems")
@@ -156,10 +160,11 @@ def main() -> None:
             if isinstance(item, ObjectField) and item.value:
                 description_field = item.value.get("Description")
                 quantity_field = item.value.get("Quantity")
-                description = description_field.value if description_field else "N/A"
-                quantity = quantity_field.value if quantity_field else "N/A"
-                print(f"  Item {i}: {description} (Qty: {quantity})")
-                print(f"    Confidence: {item.confidence:.2f}" if item.confidence else "    Confidence: N/A")  # type: ignore
+                description = description_field.value if description_field and description_field.value else "N/A"
+                quantity = quantity_field.value if quantity_field and quantity_field.value else "N/A"
+                print(f"  Item {i}: {description}")
+                print(f"    Quantity: {quantity}")
+                print(f"    Quantity Confidence: {quantity_field.confidence:.2f}" if quantity_field and quantity_field.confidence else "    Quantity Confidence: N/A")
     # [END extract_invoice_fields]
 
 

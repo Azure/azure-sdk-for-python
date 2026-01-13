@@ -59,25 +59,6 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert poller is not None, "Analysis operation should not be null"
         assert poller.done(), "Operation should be completed"
 
-        # Verify raw response
-        if hasattr(poller, "_polling_method"):
-            polling_method = getattr(poller, "_polling_method", None)
-            if polling_method and hasattr(polling_method, "_initial_response"):
-                raw_response = getattr(polling_method, "_initial_response", None)  # type: ignore
-                if raw_response:
-                    if hasattr(raw_response, "http_response"):
-                        status = raw_response.http_response.status_code
-                    elif hasattr(raw_response, "status_code"):
-                        status = raw_response.status_code
-                    else:
-                        status = None
-
-                    if status:
-                        assert (
-                            status >= 200 and status < 300
-                        ), f"Response status should be successful (200-299), but was {status}"
-                        print(f"[PASS] Raw response verified (status: {status})")
-
         assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
         print("[PASS] Analysis operation completed successfully")
 

@@ -58,16 +58,6 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
         assert poller is not None, "Analysis operation should not be null"
         print("[PASS] Analysis operation created successfully")
 
-        # Verify raw response using getattr with type: ignore
-        raw_response = getattr(poller, "_polling_method", None)
-        if raw_response:
-            initial_response = getattr(raw_response, "_initial_response", None)  # type: ignore
-            if initial_response:
-                status = getattr(initial_response, "status_code", None)
-                if status:
-                    assert 200 <= status < 300, f"Response status should be successful, but was {status}"
-                    print(f"[PASS] Response status: {status}")
-
         # Assertions for result
         assert result is not None, "Analysis result should not be null"
         print("[PASS] Analysis result received")

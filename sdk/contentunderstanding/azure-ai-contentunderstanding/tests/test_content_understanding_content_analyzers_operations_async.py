@@ -1225,17 +1225,15 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             polling_interval=1,
         )
 
-        # Get the operation ID from the poller
-        operation_id = poller._polling_method._operation.get_polling_url().split("/")[-1]  # type: ignore[attr-defined]
-        if "?" in operation_id:
-            operation_id = operation_id.split("?")[0]
-        assert operation_id is not None, "Operation ID should not be null"
-        assert len(operation_id) > 0, "Operation ID should not be empty"
-        print(f"Operation ID: {operation_id}")
-
         # Wait for completion
         print("Waiting for analysis to complete...")
         result = await poller.result()
+
+        # Get the operation ID using the public property
+        operation_id = poller.operation_id
+        assert operation_id is not None, "Operation ID should not be null"
+        assert len(operation_id) > 0, "Operation ID should not be empty"
+        print(f"Operation ID: {operation_id}")
 
         # Verify analysis completed successfully
         assert result is not None, "Analysis result should not be null"

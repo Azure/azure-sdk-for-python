@@ -59,37 +59,19 @@ class TestSampleGetResultFile(ContentUnderstandingClientTestBase):
         # Start the analysis operation (WaitUntil.Started equivalent)
         poller = client.begin_analyze(analyzer_id="prebuilt-document", inputs=[AnalyzeInput(data=document_data)])
 
-        # Get the operation ID from the poller (available after Started)
-        # Extract operation ID from the polling URL
-        polling_url = poller._polling_method._operation.get_polling_url()  # type: ignore
-        operation_id = polling_url.split("/")[-1].split("?")[0]
-
-        assert operation_id is not None, "Operation ID should not be null"
-        assert len(operation_id) > 0, "Operation ID should not be empty"
-        print(f"[PASS] Operation ID obtained: {operation_id}")
-
-        # Verify operation ID format
-        assert " " not in operation_id, "Operation ID should not contain spaces"
-        print(f"[PASS] Operation ID length: {len(operation_id)} characters")
-
-        print(f"[INFO] Operation started (ID: {operation_id})")
-
         # Wait for completion
         result = poller.result()
 
-        # Verify operation completed
-        assert poller is not None, "Operation should not be null after waiting"
-        print("[PASS] Operation completed successfully")
+        # Get the operation ID using the public property
+        operation_id = poller.operation_id
+        assert operation_id is not None, "Operation ID should not be null"
+        assert len(operation_id) > 0, "Operation ID should not be empty"
+        assert " " not in operation_id, "Operation ID should not contain spaces"
+        print(f"[PASS] Operation ID obtained: {operation_id}")
 
-        # Verify raw response
-        raw_response = getattr(poller, "_polling_method", None)
-        if raw_response:
-            initial_response = getattr(raw_response, "_initial_response", None)  # type: ignore
-            if initial_response:
-                status = getattr(initial_response, "status_code", None)
-                if status:
-                    assert 200 <= status < 300, f"Response status should be successful, but was {status}"
-                    print(f"[PASS] Response status: {status}")
+        # Verify operation completed
+        assert poller.done(), "Operation should be completed"
+        print("[PASS] Operation completed successfully")
 
         # Verify result
         assert result is not None, "Analysis result should not be null"

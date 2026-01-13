@@ -81,8 +81,6 @@ class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
             print("\n[SUCCESS] All test_sample_update_defaults_async assertions passed")
         finally:
             await client.close()
-            # Return variables to be recorded
-            return variables
 
     async def _test_update_defaults(
         self,
