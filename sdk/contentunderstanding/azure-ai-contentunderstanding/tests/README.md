@@ -4,7 +4,11 @@ This guide provides instructions for running tests for the Azure AI Content Unde
 
 ## Getting started
 
-Please see [Step 3: Configure model deployments](../README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers)
+To run the tests for this package, please follow the setup instructions in the main package README:
+
+[Step 3: Configure model deployments](../README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers)
+
+This step ensures your environment is correctly configured with the necessary dependencies, environment variables, and model mappings required for the tests.
 
 ## Running Tests
 
