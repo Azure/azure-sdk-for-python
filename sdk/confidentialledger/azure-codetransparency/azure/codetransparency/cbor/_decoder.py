@@ -312,13 +312,21 @@ class CBORDecoder:
     def decode_cose_sign1(self) -> Any:
         """Decode a COSE_Sign1 structure.
 
-        :return: A dictionary representation of the COSE_Sign1 structure.
+        :return: A dictionary representation of the COSE_Sign1 structure with keys:
+            - protected_headers: The decoded protected headers map
+            - unprotected_headers: The unprotected headers map
+            - payload: The payload bytes
+            - signature: The signature bytes
+            - was_tagged: True if the structure was tagged with COSE_Sign1 tag (18)
         :raises ValueError: If the data is not a well-formed COSE_Sign1 structure.
         """
         cose_structure = self.decode()
 
         # Handle COSE_Sign1 structure (tag 18)
-        if isinstance(cose_structure, dict) and cose_structure.get("tag") == 18:
+        was_tagged = (
+            isinstance(cose_structure, dict) and cose_structure.get("tag") == 18
+        )
+        if was_tagged:
             cose_structure = cose_structure["value"]
 
         if not isinstance(cose_structure, list) or len(cose_structure) != 4:
@@ -356,4 +364,5 @@ class CBORDecoder:
             ),
             "payload": payload_bytes,
             "signature": signature_bytes,
+            "was_tagged": was_tagged,
         }
