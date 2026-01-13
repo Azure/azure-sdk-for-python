@@ -1,6 +1,7 @@
 -e ../../../eng/tools/azure-sdk-tools
 -e ../../core/azure-core
 -e ../../identity/azure-identity
+-e ../../keyvault/azure-keyvault-keys
 ../azure-confidentialledger-certificate
 aiohttp
 responses
