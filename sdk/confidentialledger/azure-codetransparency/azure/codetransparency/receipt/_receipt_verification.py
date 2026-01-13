@@ -13,7 +13,7 @@ from typing import Dict, List, Any, Optional, Tuple
 
 from azure.keyvault.keys.crypto import CryptographyClient, SignatureAlgorithm
 
-from azure.codetransparency.cbor._decoder import CBORDecoder
+from azure.codetransparency.cbor import CBOREncoder, CBORDecoder
 
 
 # COSE header labels
@@ -131,10 +131,13 @@ def _combine_byte_arrays(*arrays: bytes) -> bytes:
     return b"".join(arrays)
 
 
-def _decode_cose_sign1(data: bytes) -> Dict[str, Any]:
-    """Decode a COSE_Sign1 structure using CBORDecoder."""
-    decoder = CBORDecoder(data)
-    return decoder.decode_cose_sign1()
+def _base64url_decode(data: str) -> bytes:
+    """Decode base64url encoded string with padding."""
+    # Add padding if needed
+    padding = 4 - len(data) % 4
+    if padding != 4:
+        data += "=" * padding
+    return urlsafe_b64decode(data)
 
 
 def _get_receipts_from_transparent_statement(
@@ -146,7 +149,7 @@ def _get_receipts_from_transparent_statement(
     :return: A list of tuples containing (issuer_host, receipt_bytes).
     :raises ValueError: If embedded receipts are not found.
     """
-    cose_sign1 = _decode_cose_sign1(transparent_statement_bytes)
+    cose_sign1 = CBORDecoder(transparent_statement_bytes).decode_cose_sign1()
     unprotected_headers = cose_sign1.get("unprotected_headers", {})
 
     embedded_receipts = unprotected_headers.get(COSE_HEADER_EMBEDDED_RECEIPTS)
@@ -184,7 +187,7 @@ def _get_receipt_issuer_host(receipt_bytes: bytes) -> str:
     :return: The issuer host string.
     :raises ValueError: If the issuer cannot be found.
     """
-    cose_sign1 = _decode_cose_sign1(receipt_bytes)
+    cose_sign1 = CBORDecoder(receipt_bytes).decode_cose_sign1()
     protected_headers = cose_sign1.get("protected_headers", {})
 
     cwt_map = protected_headers.get(COSE_HEADER_CWT_MAP)
@@ -286,211 +289,15 @@ def _encode_cose_sign1_to_be_signed(
     :param payload: The payload bytes.
     :return: The CBOR-encoded Sig_structure.
     """
-    # Manual CBOR encoding for Sig_structure array
-    # This is a 4-element array
-    result = bytearray()
-
-    # CBOR array header for 4 elements
-    result.append(0x84)  # array(4)
-
-    # context: "Signature1"
-    context = b"Signature1"
-    result.append(0x6A)  # text(10)
-    result.extend(context)
-
-    # body_protected: bstr
-    if len(protected_headers_bytes) < 24:
-        result.append(0x40 | len(protected_headers_bytes))
-    elif len(protected_headers_bytes) < 256:
-        result.append(0x58)
-        result.append(len(protected_headers_bytes))
-    else:
-        result.append(0x59)
-        result.extend(len(protected_headers_bytes).to_bytes(2, "big"))
-    result.extend(protected_headers_bytes)
-
-    # external_aad: empty bstr
-    result.append(0x40)  # bstr(0)
-
-    # payload: bstr
-    if len(payload) < 24:
-        result.append(0x40 | len(payload))
-    elif len(payload) < 256:
-        result.append(0x58)
-        result.append(len(payload))
-    elif len(payload) < 65536:
-        result.append(0x59)
-        result.extend(len(payload).to_bytes(2, "big"))
-    else:
-        result.append(0x5A)
-        result.extend(len(payload).to_bytes(4, "big"))
-    result.extend(payload)
-
-    return bytes(result)
-
-
-def _encode_cose_sign1_message(
-    cose_sign1: Dict[str, Any], clear_unprotected: bool = False
-) -> bytes:
-    """Re-encode a COSE_Sign1 message to bytes.
-
-    :param cose_sign1: The decoded COSE_Sign1 structure.
-    :param clear_unprotected: If True, clear the unprotected headers.
-    :return: The CBOR-encoded COSE_Sign1 message (without tag).
-    """
-    protected_headers = cose_sign1.get("protected_headers", {})
-    unprotected_headers = (
-        {} if clear_unprotected else cose_sign1.get("unprotected_headers", {})
-    )
-    payload = cose_sign1.get("payload", b"")
-    signature = cose_sign1.get("signature", b"")
-
-    # Encode protected headers as CBOR map
-    protected_bytes = _encode_cbor_map(protected_headers)
-
-    result = bytearray()
-
-    # CBOR tag 18 for COSE_Sign1 (optional, but let's include for compatibility)
-    result.append(0xD8)  # tag
-    result.append(18)  # COSE_Sign1
-
-    # CBOR array header for 4 elements
-    result.append(0x84)  # array(4)
-
-    # protected: bstr containing CBOR-encoded map
-    _append_cbor_bstr(result, protected_bytes)
-
-    # unprotected: map
-    _append_cbor_map(result, unprotected_headers)
-
-    # payload: bstr or nil
-    if payload is None:
-        result.append(0xF6)  # null
-    else:
-        _append_cbor_bstr(result, payload)
-
-    # signature: bstr
-    _append_cbor_bstr(result, signature)
-
-    return bytes(result)
-
-
-def _encode_cbor_map(data: Dict[Any, Any]) -> bytes:
-    """Encode a dictionary as a CBOR map."""
-    result = bytearray()
-    length = len(data)
-
-    if length < 24:
-        result.append(0xA0 | length)
-    elif length < 256:
-        result.append(0xB8)
-        result.append(length)
-    else:
-        result.append(0xB9)
-        result.extend(length.to_bytes(2, "big"))
-
-    for key, value in data.items():
-        _append_cbor_value(result, key)
-        _append_cbor_value(result, value)
-
-    return bytes(result)
-
-
-def _append_cbor_map(result: bytearray, data: Dict[Any, Any]) -> None:
-    """Append a CBOR map to the result."""
-    result.extend(_encode_cbor_map(data))
-
-
-def _append_cbor_bstr(result: bytearray, data: bytes) -> None:
-    """Append a CBOR byte string to the result."""
-    length = len(data)
-    if length < 24:
-        result.append(0x40 | length)
-    elif length < 256:
-        result.append(0x58)
-        result.append(length)
-    elif length < 65536:
-        result.append(0x59)
-        result.extend(length.to_bytes(2, "big"))
-    else:
-        result.append(0x5A)
-        result.extend(length.to_bytes(4, "big"))
-    result.extend(data)
-
-
-def _append_cbor_value(result: bytearray, value: Any) -> None:
-    """Append a CBOR value to the result."""
-    if isinstance(value, int):
-        if value >= 0:
-            if value < 24:
-                result.append(value)
-            elif value < 256:
-                result.append(0x18)
-                result.append(value)
-            elif value < 65536:
-                result.append(0x19)
-                result.extend(value.to_bytes(2, "big"))
-            elif value < 4294967296:
-                result.append(0x1A)
-                result.extend(value.to_bytes(4, "big"))
-            else:
-                result.append(0x1B)
-                result.extend(value.to_bytes(8, "big"))
-        else:
-            neg = -1 - value
-            if neg < 24:
-                result.append(0x20 | neg)
-            elif neg < 256:
-                result.append(0x38)
-                result.append(neg)
-            elif neg < 65536:
-                result.append(0x39)
-                result.extend(neg.to_bytes(2, "big"))
-            elif neg < 4294967296:
-                result.append(0x3A)
-                result.extend(neg.to_bytes(4, "big"))
-            else:
-                result.append(0x3B)
-                result.extend(neg.to_bytes(8, "big"))
-    elif isinstance(value, bytes):
-        _append_cbor_bstr(result, value)
-    elif isinstance(value, str):
-        encoded = value.encode("utf-8")
-        length = len(encoded)
-        if length < 24:
-            result.append(0x60 | length)
-        elif length < 256:
-            result.append(0x78)
-            result.append(length)
-        elif length < 65536:
-            result.append(0x79)
-            result.extend(length.to_bytes(2, "big"))
-        else:
-            result.append(0x7A)
-            result.extend(length.to_bytes(4, "big"))
-        result.extend(encoded)
-    elif isinstance(value, list):
-        length = len(value)
-        if length < 24:
-            result.append(0x80 | length)
-        elif length < 256:
-            result.append(0x98)
-            result.append(length)
-        else:
-            result.append(0x99)
-            result.extend(length.to_bytes(2, "big"))
-        for item in value:
-            _append_cbor_value(result, item)
-    elif isinstance(value, dict):
-        _append_cbor_map(result, value)
-    elif value is None:
-        result.append(0xF6)
-    elif value is True:
-        result.append(0xF5)
-    elif value is False:
-        result.append(0xF4)
-    else:
-        raise ValueError(f"Unsupported CBOR value type: {type(value)}")
+    # Sig_structure is a 4-element array:
+    # ["Signature1", protected_headers_bytes, b"", payload]
+    sig_structure = [
+        "Signature1",
+        protected_headers_bytes,
+        b"",  # external_aad (empty)
+        payload,
+    ]
+    return CBOREncoder.encode_value(sig_structure)
 
 
 def _get_protected_headers_bytes_from_cose(data: bytes) -> bytes:
@@ -530,7 +337,7 @@ def _verify_receipt(
     expected_kid = jwk.get("kid", "").encode("utf-8")
 
     # Decode the receipt
-    receipt = _decode_cose_sign1(receipt_bytes)
+    receipt = CBORDecoder(receipt_bytes).decode_cose_sign1()
     protected_headers = receipt.get("protected_headers", {})
     unprotected_headers = receipt.get("unprotected_headers", {})
     signature = receipt.get("signature", b"")
@@ -592,7 +399,6 @@ def _verify_receipt(
     if not isinstance(inclusion_proofs_data, list) or len(inclusion_proofs_data) == 0:
         raise ValueError("At least one inclusion proof is required.")
 
-    crypto_client = CryptographyClient.from_jwk(jwk)
     alg = protected_headers.get(COSE_HEADER_ALG)
     if alg == -7:  # ES256
         sig_alg = SignatureAlgorithm.es256
@@ -605,6 +411,15 @@ def _verify_receipt(
         hash_alg = sha512
     else:
         raise ValueError(f"Unsupported algorithm for signature verification: {alg}")
+
+    # update JWK to match azure keyvault expectations
+    # Decode x and y from base64url if they are strings
+    if "x" in jwk and isinstance(jwk["x"], str):
+        jwk["x"] = _base64url_decode(jwk["x"])
+    if "y" in jwk and isinstance(jwk["y"], str):
+        jwk["y"] = _base64url_decode(jwk["y"])
+    jwk["key_ops"] = ["verify"]
+    crypto_client = CryptographyClient.from_jwk(jwk)
 
     # Get the protected headers bytes for signature verification
     protected_headers_bytes = _get_protected_headers_bytes_from_cose(receipt_bytes)
@@ -690,7 +505,7 @@ def _verify_receipt(
         # Verify claims digest matches leaf data digest
         if claims_digest != leaf.data_digest:
             raise ValueError(
-                f"Claim digest mismatch: {leaf.data_digest.hex()} != {claims_digest.hex()}"
+                f"Statement digest does not match the leaf digest in the receipt: {claims_digest.hex()} != {leaf.data_digest.hex()}"
             )
 
 
@@ -782,7 +597,7 @@ def _get_service_certificate_key(
             keys_dict[kid] = key
 
     # Get KID from receipt
-    receipt = _decode_cose_sign1(receipt_bytes)
+    receipt = CBORDecoder(receipt_bytes).decode_cose_sign1()
     protected_headers = receipt.get("protected_headers", {})
 
     kid = protected_headers.get(COSE_HEADER_KID)
@@ -808,8 +623,14 @@ def _prepare_signed_statement_for_verification(
     :param transparent_statement_bytes: The transparent statement COSE_Sign1 bytes.
     :return: The encoded signed statement with cleared unprotected headers.
     """
-    cose_sign1 = _decode_cose_sign1(transparent_statement_bytes)
-    return _encode_cose_sign1_message(cose_sign1, clear_unprotected=True)
+    cose_sign1 = CBORDecoder(transparent_statement_bytes).decode_cose_sign1()
+    return CBOREncoder().encode_cose_sign1(
+        protected_headers=cose_sign1.get("protected_headers", {}),
+        unprotected_headers={},
+        payload=cose_sign1.get("payload", b""),
+        signature=cose_sign1.get("signature", b""),
+        include_tag=cose_sign1.get("was_tagged", True),
+    )
 
 
 def verify_transparent_statement(

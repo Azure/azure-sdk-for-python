@@ -7,7 +7,6 @@
 
 import os
 import pytest
-import base64
 
 from azure.codetransparency.receipt import (
     verify_transparent_statement,
@@ -18,10 +17,10 @@ from azure.codetransparency.receipt import (
     OfflineKeysBehavior,
     AggregateError,
 )
+from azure.codetransparency.cbor import CBORDecoder, CBOREncoder
 from azure.codetransparency.receipt._receipt_verification import (
     _verify_receipt,
     _get_receipt_issuer_host,
-    _decode_cose_sign1,
     _get_receipts_from_transparent_statement,
 )
 
@@ -37,15 +36,6 @@ def read_file_bytes(name: str) -> bytes:
         return f.read()
 
 
-def _base64url_decode(data: str) -> bytes:
-    """Decode base64url encoded string with padding."""
-    # Add padding if needed
-    padding = 4 - len(data) % 4
-    if padding != 4:
-        data += "=" * padding
-    return base64.urlsafe_b64decode(data)
-
-
 class TestReceiptVerification:
     """Tests for receipt verification functionality."""
 
@@ -56,9 +46,8 @@ class TestReceiptVerification:
             "crv": "P-384",
             "kid": "fb29ce6d6b37e7a0b03a5fc94205490e1c37de1f41f68b92e3620021e9981d01",
             "kty": "EC",
-            "x": _base64url_decode("Tv_tP9eJIb5oJY9YB6iAzMfds4v3N84f8pgcPYLaxd_Nj3Nb_dBm6Fc8ViDZQhGR"),
-            "y": _base64url_decode("xJ7fI2kA8gs11XDc9h2zodU-fZYRrE0UJHpzPfDVJrOpTvPcDoC5EWOBx9Fks0bZ"),
-            "key_ops": ["verify"],
+            "x": "Tv_tP9eJIb5oJY9YB6iAzMfds4v3N84f8pgcPYLaxd_Nj3Nb_dBm6Fc8ViDZQhGR",
+            "y": "xJ7fI2kA8gs11XDc9h2zodU-fZYRrE0UJHpzPfDVJrOpTvPcDoC5EWOBx9Fks0bZ",
         }
 
         receipt_bytes = read_file_bytes("receipt.cose")
@@ -69,7 +58,7 @@ class TestReceiptVerification:
 
         assert "KID mismatch" in str(exc_info.value)
 
-    def test_verify_receipt_statement_digest_mismatch_throws_value_error(self):
+    def test_verify_valid_receipt_statement_digest_mismatch_throws_value_error(self):
         """Test that verification fails with statement digest mismatch when using correct key and receipt."""
 
         # JWK with correct KID but we'll verify against wrong/modified payload
@@ -78,13 +67,8 @@ class TestReceiptVerification:
             "crv": "P-384",
             "kid": "87d64669f1c5988e28f22da4f3526334de860ad2395a71a735de59f9ec3aa662",
             "kty": "EC",
-            "x": _base64url_decode(
-                "9y7Zs09nKjYQHdJ7oAsxftOvSK9RfGWJM3p0_5XXyBuvkUs-kN-YB-EQCCuB_Hsw"
-            ),
-            "y": _base64url_decode(
-                "teV4Jkd2zphYJa2gPSm5HEjuvEM9MNu3e5E7z1L_0s0GWKaEqmHpAiXBtLGHC5-A"
-            ),
-            "key_ops": ["verify"],
+            "x": "9y7Zs09nKjYQHdJ7oAsxftOvSK9RfGWJM3p0_5XXyBuvkUs-kN-YB-EQCCuB_Hsw",
+            "y": "teV4Jkd2zphYJa2gPSm5HEjuvEM9MNu3e5E7z1L_0s0GWKaEqmHpAiXBtLGHC5-A",
         }
 
         receipt_bytes = read_file_bytes("receipt.cose")
@@ -94,13 +78,13 @@ class TestReceiptVerification:
             _verify_receipt(correct_kid_jwk, receipt_bytes, input_signed_payload_bytes)
 
         error_message = str(exc_info.value)
-        assert "claim digest mismatch" in error_message.lower()
+        assert "statement digest does not match the leaf digest in the receipt" in error_message.lower()
 
     def test_decode_receipt_cose_structure(self):
         """Test that we can decode the receipt COSE_Sign1 structure."""
         receipt_bytes = read_file_bytes("receipt.cose")
 
-        cose_sign1 = _decode_cose_sign1(receipt_bytes)
+        cose_sign1 = CBORDecoder(receipt_bytes).decode_cose_sign1()
 
         assert "protected_headers" in cose_sign1
         assert "unprotected_headers" in cose_sign1
@@ -111,11 +95,21 @@ class TestReceiptVerification:
         """Test that we can decode the transparent statement COSE_Sign1 structure."""
         transparent_statement_bytes = read_file_bytes("transparent_statement.cose")
 
-        cose_sign1 = _decode_cose_sign1(transparent_statement_bytes)
+        decoded = CBORDecoder(transparent_statement_bytes).decode_cose_sign1()
 
-        assert "protected_headers" in cose_sign1
-        assert "unprotected_headers" in cose_sign1
-        assert "signature" in cose_sign1
+        assert "protected_headers" in decoded
+        assert "unprotected_headers" in decoded
+        assert "payload" in decoded
+        assert "signature" in decoded
+
+        reencoded = CBOREncoder().encode_cose_sign1(
+            protected_headers=decoded.get("protected_headers", {}),
+            unprotected_headers=decoded.get("unprotected_headers", {}),
+            payload=decoded.get("payload", b""),
+            signature=decoded.get("signature", b""),
+            include_tag=decoded.get("was_tagged", True),
+        )
+        assert reencoded.hex() == transparent_statement_bytes.hex()
 
     def test_get_receipts_from_transparent_statement(self):
         """Test that we can extract receipts from a transparent statement."""
@@ -278,7 +272,7 @@ class TestTransparentStatementWithFiles:
         assert issuer == "foo.bar.com"
 
         # The receipt bytes should be valid COSE
-        receipt_cose = _decode_cose_sign1(receipt_bytes)
+        receipt_cose = CBORDecoder(receipt_bytes).decode_cose_sign1()
         assert "protected_headers" in receipt_cose
 
         receipt_issuer = _get_receipt_issuer_host(receipt_bytes)
@@ -319,3 +313,32 @@ class TestTransparentStatementWithFiles:
             or "no valid receipt" in error_message
             or "no keys available" in error_message
         )
+
+    def test_verify_transparent_statement_with_offline_jwks(self):
+        """Test verifying transparent statement with mocked offline JWKS for the issuer."""
+        transparent_statement_bytes = read_file_bytes("transparent_statement.cose")
+
+        # Valid JWKS for the issuer foo.bar.com (taken from C# test)
+        valid_jwk = {
+            "crv": "P-384",
+            "kid": "fb29ce6d6b37e7a0b03a5fc94205490e1c37de1f41f68b92e3620021e9981d01",
+            "kty": "EC",
+            "x": "Tv_tP9eJIb5oJY9YB6iAzMfds4v3N84f8pgcPYLaxd_Nj3Nb_dBm6Fc8ViDZQhGR",
+            "y": "xJ7fI2kA8gs11XDc9h2zodU-fZYRrE0UJHpzPfDVJrOpTvPcDoC5EWOBx9Fks0bZ",
+        }
+
+        # Create offline keys with the valid JWKS for foo.bar.com
+        offline_keys = CodeTransparencyOfflineKeys(
+            by_issuer={"foo.bar.com": {"keys": [valid_jwk]}}
+        )
+
+        verification_options = VerificationOptions(
+            authorized_domains=["foo.bar.com"],
+            authorized_receipt_behavior=AuthorizedReceiptBehavior.VERIFY_ALL_MATCHING,
+            unauthorized_receipt_behavior=UnauthorizedReceiptBehavior.FAIL_IF_PRESENT,
+            offline_keys=offline_keys,
+            offline_keys_behavior=OfflineKeysBehavior.NO_FALLBACK_TO_NETWORK,
+        )
+
+        # This should succeed - verifying the transparent statement with valid offline keys
+        verify_transparent_statement(transparent_statement_bytes, verification_options)

@@ -5,5 +5,6 @@
 # --------------------------------------------------------------------------
 
 from ._decoder import CBORDecoder
+from ._encoder import CBOREncoder
 
-__all__ = ["CBORDecoder"]
+__all__ = ["CBORDecoder", "CBOREncoder"]
