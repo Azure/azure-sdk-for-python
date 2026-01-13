@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.edge_actions.begin_delete(
+    client.edge_actions_mgmt_client.begin_delete(
         resource_group_name="testrg",
         edge_action_name="edgeAction1",
     ).result()

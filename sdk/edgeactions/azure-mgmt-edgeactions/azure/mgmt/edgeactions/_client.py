@@ -19,7 +19,11 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import CdnClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import EdgeActionExecutionFiltersOperations, EdgeActionVersionsOperations, EdgeActionsOperations
+from .operations import (
+    EdgeActionExecutionFiltersOperations,
+    EdgeActionVersionsOperations,
+    EdgeActionsMgmtClientOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -29,8 +33,9 @@ if TYPE_CHECKING:
 class CdnClient:
     """CdnClient.
 
-    :ivar edge_actions: EdgeActionsOperations operations
-    :vartype edge_actions: azure.mgmt.edgeactions.operations.EdgeActionsOperations
+    :ivar edge_actions_mgmt_client: EdgeActionsMgmtClientOperations operations
+    :vartype edge_actions_mgmt_client:
+     azure.mgmt.edgeactions.operations.EdgeActionsMgmtClientOperations
     :ivar edge_action_versions: EdgeActionVersionsOperations operations
     :vartype edge_action_versions: azure.mgmt.edgeactions.operations.EdgeActionVersionsOperations
     :ivar edge_action_execution_filters: EdgeActionExecutionFiltersOperations operations
@@ -100,7 +105,9 @@ class CdnClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.edge_actions = EdgeActionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.edge_actions_mgmt_client = EdgeActionsMgmtClientOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.edge_action_versions = EdgeActionVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

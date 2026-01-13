@@ -50,12 +50,12 @@ from ...operations._operations import (
     build_edge_action_versions_list_by_edge_action_request,
     build_edge_action_versions_swap_default_request,
     build_edge_action_versions_update_request,
-    build_edge_actions_create_request,
-    build_edge_actions_delete_request,
-    build_edge_actions_get_request,
-    build_edge_actions_list_by_resource_group_request,
-    build_edge_actions_list_by_subscription_request,
-    build_edge_actions_update_request,
+    build_edge_actions_mgmt_client_create_request,
+    build_edge_actions_mgmt_client_delete_request,
+    build_edge_actions_mgmt_client_get_request,
+    build_edge_actions_mgmt_client_list_by_resource_group_request,
+    build_edge_actions_mgmt_client_list_by_subscription_request,
+    build_edge_actions_mgmt_client_update_request,
 )
 from .._configuration import CdnClientConfiguration
 
@@ -64,14 +64,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class EdgeActionsOperations:
+class EdgeActionsMgmtClientOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.edgeactions.aio.CdnClient`'s
-        :attr:`edge_actions` attribute.
+        :attr:`edge_actions_mgmt_client` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -107,7 +107,7 @@ class EdgeActionsOperations:
 
         cls: ClsType[_models.EdgeAction] = kwargs.pop("cls", None)
 
-        _request = build_edge_actions_get_request(
+        _request = build_edge_actions_mgmt_client_get_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -178,7 +178,7 @@ class EdgeActionsOperations:
         else:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_edge_actions_create_request(
+        _request = build_edge_actions_mgmt_client_create_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -413,7 +413,7 @@ class EdgeActionsOperations:
         else:
             _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_edge_actions_update_request(
+        _request = build_edge_actions_mgmt_client_update_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -634,7 +634,7 @@ class EdgeActionsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_edge_actions_delete_request(
+        _request = build_edge_actions_mgmt_client_delete_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -764,7 +764,7 @@ class EdgeActionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_edge_actions_list_by_resource_group_request(
+                _request = build_edge_actions_mgmt_client_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
@@ -852,7 +852,7 @@ class EdgeActionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_edge_actions_list_by_subscription_request(
+                _request = build_edge_actions_mgmt_client_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
                     headers=_headers,

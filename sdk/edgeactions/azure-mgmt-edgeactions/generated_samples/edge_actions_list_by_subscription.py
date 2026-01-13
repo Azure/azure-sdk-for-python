@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.edge_actions.list_by_subscription()
+    response = client.edge_actions_mgmt_client.list_by_subscription()
     for item in response:
         print(item)
 

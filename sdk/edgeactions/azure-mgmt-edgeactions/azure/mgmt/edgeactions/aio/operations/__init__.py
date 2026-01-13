@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import EdgeActionsOperations  # type: ignore
+from ._operations import EdgeActionsMgmtClientOperations  # type: ignore
 from ._operations import EdgeActionVersionsOperations  # type: ignore
 from ._operations import EdgeActionExecutionFiltersOperations  # type: ignore
 
@@ -21,7 +21,7 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "EdgeActionsOperations",
+    "EdgeActionsMgmtClientOperations",
     "EdgeActionVersionsOperations",
     "EdgeActionExecutionFiltersOperations",
 ]

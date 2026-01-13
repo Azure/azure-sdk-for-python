@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.edge_actions.begin_update(
+    response = client.edge_actions_mgmt_client.begin_update(
         resource_group_name="testrg",
         edge_action_name="edgeAction1",
         properties={"sku": {"name": "Standard", "tier": "Standard"}},

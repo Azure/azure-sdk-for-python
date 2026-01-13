@@ -15,14 +15,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestCdnEdgeActionsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestCdnEdgeActionsMgmtClientOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(CdnClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_get(self, resource_group):
-        response = await self.client.edge_actions.get(
+    async def test_edge_actions_mgmt_client_get(self, resource_group):
+        response = await self.client.edge_actions_mgmt_client.get(
             resource_group_name=resource_group.name,
             edge_action_name="str",
         )
@@ -32,9 +32,9 @@ class TestCdnEdgeActionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_begin_create(self, resource_group):
+    async def test_edge_actions_mgmt_client_begin_create(self, resource_group):
         response = await (
-            await self.client.edge_actions.begin_create(
+            await self.client.edge_actions_mgmt_client.begin_create(
                 resource_group_name=resource_group.name,
                 edge_action_name="str",
                 resource={
@@ -65,9 +65,9 @@ class TestCdnEdgeActionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_begin_update(self, resource_group):
+    async def test_edge_actions_mgmt_client_begin_update(self, resource_group):
         response = await (
-            await self.client.edge_actions.begin_update(
+            await self.client.edge_actions_mgmt_client.begin_update(
                 resource_group_name=resource_group.name,
                 edge_action_name="str",
                 properties={
@@ -98,9 +98,9 @@ class TestCdnEdgeActionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_begin_delete(self, resource_group):
+    async def test_edge_actions_mgmt_client_begin_delete(self, resource_group):
         response = await (
-            await self.client.edge_actions.begin_delete(
+            await self.client.edge_actions_mgmt_client.begin_delete(
                 resource_group_name=resource_group.name,
                 edge_action_name="str",
             )
@@ -111,8 +111,8 @@ class TestCdnEdgeActionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_list_by_resource_group(self, resource_group):
-        response = self.client.edge_actions.list_by_resource_group(
+    async def test_edge_actions_mgmt_client_list_by_resource_group(self, resource_group):
+        response = self.client.edge_actions_mgmt_client.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
@@ -121,8 +121,8 @@ class TestCdnEdgeActionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_list_by_subscription(self, resource_group):
-        response = self.client.edge_actions.list_by_subscription()
+    async def test_edge_actions_mgmt_client_list_by_subscription(self, resource_group):
+        response = self.client.edge_actions_mgmt_client.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

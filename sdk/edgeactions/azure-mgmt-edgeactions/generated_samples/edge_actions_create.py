@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.edge_actions.begin_create(
+    response = client.edge_actions_mgmt_client.begin_create(
         resource_group_name="testrg",
         edge_action_name="edgeAction1",
         resource={"location": "global", "sku": {"name": "Standard", "tier": "Standard"}},

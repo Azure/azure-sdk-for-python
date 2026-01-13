@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.edge_actions.list_by_resource_group(
+    response = client.edge_actions_mgmt_client.list_by_resource_group(
         resource_group_name="testrg",
     )
     for item in response:
