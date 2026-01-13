@@ -105,11 +105,31 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         is_reasoning_model = kwargs.get("is_reasoning_model", False)
 
         evaluators = [
-            GroundednessEvaluator(model_config, threshold=groundedness_threshold, is_reasoning_model=is_reasoning_model),
-            RelevanceEvaluator(model_config, threshold=relevance_threshold, is_reasoning_model=is_reasoning_model),
-            CoherenceEvaluator(model_config, threshold=coherence_threshold, is_reasoning_model=is_reasoning_model),
-            FluencyEvaluator(model_config, threshold=fluency_threshold, is_reasoning_model=is_reasoning_model),
-            SimilarityEvaluator(model_config, threshold=similarity_threshold, is_reasoning_model=is_reasoning_model),
+            GroundednessEvaluator(
+                model_config,
+                threshold=groundedness_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            RelevanceEvaluator(
+                model_config,
+                threshold=relevance_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            CoherenceEvaluator(
+                model_config,
+                threshold=coherence_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            FluencyEvaluator(
+                model_config,
+                threshold=fluency_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            SimilarityEvaluator(
+                model_config,
+                threshold=similarity_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
             F1ScoreEvaluator(threshold=f1_score_threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
