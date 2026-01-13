@@ -122,7 +122,7 @@ The sample script reads configuration from environment variables. Set these vari
 
 **Option A: Using .env file (Recommended for development)**
 
-For local development and tests, the samples use a `.env` file in the samples directory. A template is provided in the package directory as `env.sample`.
+For local development and tests, this repository uses a root-level `.env` file. A template is provided in the package directory as `env.sample`.
 
 1. Copy the template to the samples directory:
    ```bash
