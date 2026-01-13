@@ -13,11 +13,11 @@ urlFragment: contentunderstanding-samples
 
 These code samples demonstrate common scenarios with the Azure AI Content Understanding client library.
 
-**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](async_samples) directory.
+**Note:** All samples in this folder use synchronous operations. For async samples, see the [async_samples][async_samples] directory.
 
 ## Setup
 
-To run the samples for this package, please follow the setup instructions in [Step 3: Configure model deployments](../README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers) to configure with the necessary dependencies, environment variables, and model mappings required for the samples.
+To run the samples for this package, please follow the setup instructions in [Step 3: Configure model deployments][main_readme_setup] to configure with the necessary dependencies, environment variables, and model mappings required for the samples.
 
 ## Sample Files
 
@@ -283,7 +283,7 @@ pip install -r dev_requirements.txt
 
 ### "KeyError: 'CONTENTUNDERSTANDING_ENDPOINT'"
 
-**Solution:** Create a `.env` file with your credentials (see [Setup step 3](../README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers)).
+**Solution:** Create a `.env` file with your credentials (see [Setup step 3][main_readme_setup]).
 
 ### "Could not load credentials from the environment"
 
@@ -339,4 +339,6 @@ python samples/sample_analyze_binary.py  # Make sure you're in the package direc
 * See the main [README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md) for more getting started information
 
 <!-- LINKS -->
+[async_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/async_samples
 [contentunderstanding_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
+[main_readme_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers

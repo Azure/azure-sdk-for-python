@@ -332,7 +332,7 @@ The samples demonstrate:
 * **Analyzer Management** - Get, list, update, copy, and delete analyzers
 * **Result Management** - Retrieve result files from video analysis and delete analysis results
 
-See the [samples README](sample_readme) for introductions of samples and the [samples directory][python_cu_samples] for complete examples. 
+See the [samples README][sample_readme] for introductions of samples and the [samples directory][python_cu_samples] for complete examples. 
 
 ### Running the samples
 
