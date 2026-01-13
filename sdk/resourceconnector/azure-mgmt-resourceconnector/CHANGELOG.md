@@ -33,11 +33,11 @@
   - Model `ApplianceOperation` moved instance variable `description`, `operation`, `provider` and `resource` under property `display`
   - Method `AppliancesOperations.list_keys` changed its parameter `artifact_type` from `positional_or_keyword` to `keyword_only`
   - Method `AppliancesOperations.update` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
-  - Method `AppliancesOperations.update` inserted a `positional_or_keyword` parameter `parameters`
 
 ### Other Changes
 
   - Deleted model `ApplianceOperationsList` which actually was not used by SDK users
+  - Method `AppliancesOperations.update` inserted a `positional_or_keyword` parameter `parameters` but this change won't break runtime behavior
 
 ## 1.0.0 (2023-08-18)
 
