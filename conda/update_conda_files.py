@@ -967,11 +967,13 @@ if __name__ == "__main__":
     package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
 
     # Extract package names from the filtered lists
-    outdated_package_names = [
-        pkg.get(PACKAGE_COL, "")
-        for pkg in (outdated_data_pkgs + outdated_mgmt_pkgs)
-        if pkg.get(PACKAGE_COL)
+    outdated_data_pkg_names = [
+        pkg.get(PACKAGE_COL, "") for pkg in outdated_data_pkgs if pkg.get(PACKAGE_COL)
     ]
+    outdated_mgmt_pkg_names = [
+        pkg.get(PACKAGE_COL, "") for pkg in outdated_mgmt_pkgs if pkg.get(PACKAGE_COL)
+    ]
+    outdated_package_names = outdated_data_pkg_names + outdated_mgmt_pkg_names
 
     # update conda-sdk-client.yml
     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
@@ -1000,10 +1002,8 @@ if __name__ == "__main__":
         package_dict, bundle_map, new_data_plane_names, new_version
     )
 
-    exit()
-
     mgmt_plane_release_log_results = update_mgmt_plane_release_log(
-        package_dict, all_mgmt_packages, new_version
+        package_dict, outdated_mgmt_pkg_names + new_mgmt_plane_names, new_version
     )
 
     # TODO AKA link logic
