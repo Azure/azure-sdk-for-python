@@ -116,7 +116,6 @@ class apistub(Check):
             out_token_path = os.path.abspath(staging_directory)
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
-
             if cross_language_mapping_path:
                 cross_language_mapping_path = os.path.abspath(cross_language_mapping_path)
 
