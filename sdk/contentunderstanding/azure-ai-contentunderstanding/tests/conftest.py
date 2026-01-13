@@ -77,6 +77,14 @@ def add_sanitizers(test_proxy):
         value="Sanitized",
         regex="(?<=\\/\\/)[^/]+(?=\\.services\\.ai\\.azure\\.com)"
     )
+    
+    # Sanitize Operation-Location headers specifically (used by LRO polling)
+    # This ensures the poller uses the correct endpoint URL
+    add_header_regex_sanitizer(
+        key="Operation-Location",
+        value="https://Sanitized.services.ai.azure.com",
+        regex="https://[^/]+(?=\\.services\\.ai\\.azure\\.com)"
+    )
 
     # Sanitize Ocp-Apim-Subscription-Key header (where the API key is sent)
     add_header_regex_sanitizer(key="Ocp-Apim-Subscription-Key", value="fake-api-key", regex=".*")
