@@ -335,9 +335,52 @@ The samples demonstrate:
 * **Analyzer Management** - Get, list, update, copy, and delete analyzers
 * **Result Management** - Retrieve result files from video analysis and delete analysis results
 
-See the [samples directory][python_cu_samples] for complete examples.
+See the [samples README](sample_readme) for introductions of samples and the [samples directory][python_cu_samples] for complete examples. 
 
-### Extract markdown content from documents
+### Running the samples
+
+To run the samples for this package, please follow the setup instructions in [Step 3: Configure model deployments](#step-3-configure-model-deployments-required-for-prebuilt-analyzers) to configure with the necessary dependencies, environment variables, and model mappings required for the samples.
+
+**Important:** Always run samples from the activated virtual environment!
+
+#### Running sync samples
+
+Sync samples are in the `samples/` directory. We recommend running them from the `samples/` directory to ensure relative paths (for local files and `.env` configuration) resolve correctly:
+
+```bash
+# Make sure virtual environment is activated
+source .venv/bin/activate      # Linux/macOS
+# .venv\Scripts\activate       # Windows
+
+# Navigate to samples directory
+cd samples
+
+# Run sync samples
+python sample_analyze_url.py
+python sample_analyze_binary.py
+```
+
+#### Running async samples
+
+Async samples are in the `samples/async_samples/` directory. Run them from that directory:
+
+```bash
+# Make sure virtual environment is activated
+source .venv/bin/activate
+
+# Navigate to async_samples directory
+cd samples/async_samples
+
+# Run async samples
+python sample_analyze_url_async.py
+python sample_analyze_binary_async.py
+```
+
+**Note:** When running samples that use local files (like `sample_analyze_binary.py`), make sure you run them from the `samples/` directory (or use the full path) so that relative paths like `sample_files/sample_invoice.pdf` resolve correctly.
+
+### Example code
+
+#### Extract markdown content from documents
 
 Use the `prebuilt-documentSearch` to extract markdown content from documents:
 
@@ -346,7 +389,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent, DocumentContent, MediaContentKind
+from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, MediaContent, DocumentContent, MediaContentKind
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -361,9 +404,9 @@ async def analyze_document():
         file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
         
         # Analyze document using prebuilt-documentSearch
-        poller = await client.content_analyzers.begin_analyze(
+        poller = await client.begin_analyze(
             analyzer_id="prebuilt-documentSearch", 
-            url=file_url
+            inputs=[AnalyzeInput(url=file_url)]
         )
         result: AnalyzeResult = await poller.result()
         
@@ -384,7 +427,7 @@ async def analyze_document():
 asyncio.run(analyze_document())
 ```
 
-### Extract structured fields from invoices
+#### Extract structured fields from invoices
 
 Use the `prebuilt-invoice` analyzer to extract structured invoice fields:
 
@@ -393,7 +436,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent
+from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, DocumentContent
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -413,14 +456,14 @@ async def analyze_invoice():
         file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
         
         # Analyze invoice using prebuilt-invoice analyzer
-        poller = await client.content_analyzers.begin_analyze(
+        poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice", 
-            url=file_url
+            inputs=[AnalyzeInput(url=file_url)]
         )
         result: AnalyzeResult = await poller.result()
         
         # Extract invoice fields
-        content: MediaContent = result.contents[0]
+        content: DocumentContent = result.contents[0]  # type: ignore
         
         # Extract basic invoice information
         customer_name = get_field_value(content.fields, "CustomerName")
@@ -501,62 +544,7 @@ For more information about logging, see the [Azure SDK Python logging documentat
 
 ## Running tests
 
-To run the tests for this package, you need to set up a `.env` file at the repository root with your test credentials.
-
-### Setting up the .env file for tests
-
-1. The `env.sample` file is located in this package directory. This file contains a template with all the required environment variables.
-
-2. **Important**: The `.env` file should be placed at the **root of the `azure-sdk-for-python` repository**, not in the package directory. This follows the Azure SDK testing guidelines.
-
-3. Copy the `env.sample` file from this package to the repo root to create your `.env` file:
-   ```bash
-   # From the repo root directory
-   cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
-   ```
-   
-   Or if you're in the package directory:
-   ```bash
-   # From the package directory
-   cp env.sample ../../../../.env
-   ```
-
-4. Edit the `.env` file at the repo root and fill in your actual values:
-   - `CONTENTUNDERSTANDING_ENDPOINT`: Your Microsoft Foundry resource endpoint
-   - `CONTENTUNDERSTANDING_KEY`: Your API key (optional if using DefaultAzureCredential)
-   - `AZURE_TEST_RUN_LIVE`: Set to `true` to run tests against real Azure resources
-   - `AZURE_SKIP_LIVE_RECORDING`: Set to `true` to skip recording when running live tests
-
-### Running tests
-
-**Important:** Make sure you have activated the virtual environment before running tests.
-
-Install the development dependencies (if not already installed):
-```bash
-pip install -r dev_requirements.txt
-pip install -e .
-```
-
-Run tests with pytest:
-```bash
-pytest tests/
-```
-
-#### Running tests in parallel
-
-The tests support parallel execution using `pytest-xdist` for faster test runs:
-
-```bash
-# Auto-detect number of CPUs and run tests in parallel
-pytest tests/ -n auto
-
-# Or specify the number of workers
-pytest tests/ -n 4
-```
-
-**Note:** The test proxy server is session-scoped and automatically handles parallel execution, so no additional configuration is needed.
-
-For more information about running tests, see the [tests README][tests_readme] and the [Azure SDK Python Testing Guide][azure_sdk_testing_guide].
+To run the tests for this package, see the [tests README][tests_readme] and the [Azure SDK Python Testing Guide][azure_sdk_testing_guide].
 
 ## Contributing
 
@@ -586,7 +574,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [diagnostics]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#logging
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
-[sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
+[sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/README.md
 [sample_update_defaults]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_update_defaults.py
 [sample_analyze_binary]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary.py
 [tests_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/tests/README.md
