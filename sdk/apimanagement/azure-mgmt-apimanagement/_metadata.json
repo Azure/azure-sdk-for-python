@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-03-01-preview",
+  "commit": "faa8067ed77c61c9bfe5f189372bc51451a4c148",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/ApiManagement",
+  "emitterVersion": "0.57.0"
+}
