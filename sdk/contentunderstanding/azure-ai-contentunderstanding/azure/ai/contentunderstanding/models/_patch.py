@@ -213,7 +213,7 @@ def patch_sdk():
     # The service returns "KeyFrameTimesMs" (capital K) but TypeSpec defines "keyFrameTimesMs" (lowercase k)
     # This fix is forward compatible: if the service fixes the issue and returns "keyFrameTimesMs" correctly,
     # the patch will be a no-op and the correct value will pass through unchanged.
-    _original_audio_visual_content_init = _models.AudioVisualContent.__init__  # type: ignore[attr-defined]
+    _original_audio_visual_content_init = _models.AudioVisualContent.__init__  # type: ignore[attr-defined] # pylint: disable=I1101
 
     def _patched_audio_visual_content_init(self, *args: Any, **kwargs: Any) -> None:
         """Patched __init__ that normalizes casing for KeyFrameTimesMs before calling parent.
@@ -235,4 +235,4 @@ def patch_sdk():
             args = (mapping,) + args[1:]
         _original_audio_visual_content_init(self, *args, **kwargs)
 
-    _models.AudioVisualContent.__init__ = _patched_audio_visual_content_init  # type: ignore[assignment]
+    _models.AudioVisualContent.__init__ = _patched_audio_visual_content_init  # type: ignore[assignment] # pylint: disable=I1101
