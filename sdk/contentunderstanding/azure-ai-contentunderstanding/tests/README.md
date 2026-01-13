@@ -6,7 +6,7 @@ This guide provides instructions for running tests for the Azure AI Content Unde
 
 To run the tests for this package, please follow the setup instructions in the main package README:
 
-[Step 3: Configure model deployments](../README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers)
+[Step 3: Configure model deployments][main_readme_setup]
 
 This step ensures your environment is correctly configured with the necessary dependencies, environment variables, and model mappings required for the tests.
 
@@ -168,6 +168,13 @@ pytest tests/
 
 ## Additional Resources
 
-- [main README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md) - Package documentation
-- [Azure SDK Python Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) - Comprehensive testing documentation
-- [Test-Proxy Documentation](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy) - Official test-proxy documentation
+- [main README][main_readme] - Package documentation
+- [Azure SDK Python Testing Guide][azure_sdk_testing_guide] - Comprehensive testing documentation
+- [Test-Proxy Documentation][test_proxy_docs] - Official test-proxy documentation
+
+<!-- LINKS -->
+
+[main_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md
+[main_readme_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers
+[azure_sdk_testing_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
+[test_proxy_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy
