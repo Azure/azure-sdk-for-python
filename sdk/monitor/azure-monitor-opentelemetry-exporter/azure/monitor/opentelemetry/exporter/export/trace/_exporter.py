@@ -120,7 +120,6 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = []
-        application_id = None
         parsed_connection_string = ConnectionStringParser(self._connection_string)
         application_id = parsed_connection_string.application_id
 
