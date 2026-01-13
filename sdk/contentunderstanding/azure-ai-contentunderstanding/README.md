@@ -93,11 +93,64 @@ To configure model deployments using code, see [`sample_update_defaults.py`][sam
 - Map your deployed models to the models required by prebuilt analyzers
 - Retrieve the current default model deployment configuration
 
-**1. Set environment variables**
+**3-1. Set up virtual environment for running samples**
+```bash
+# 1. Navigate to package directory
+cd sdk/contentunderstanding/azure-ai-contentunderstanding
+
+# 2. Create virtual environment (only needed once)
+python -m venv .venv
+
+# 3. Activate virtual environment
+source .venv/bin/activate  # On Linux/macOS
+# .venv\Scripts\activate  # On Windows
+
+# 4. Install SDK and all dependencies
+pip install azure-ai-contentunderstanding  # Install SDK if you haven't installed it in the previous step
+pip install -r dev_requirements.txt  # Includes aiohttp, pytest, python-dotenv, azure-identity
+```
+
+**Note:** All dependencies for running samples and tests are in `dev_requirements.txt`. This includes:
+- `aiohttp` - Required for async operations
+- `python-dotenv` - For loading `.env` files
+- `azure-identity` - For `DefaultAzureCredential` authentication
+- `pytest-xdist` - For parallel test execution
+
+**3-2. Set environment variables**
 
 The sample script reads configuration from environment variables. Set these variables to match your resource endpoint and the deployment names you created in Step 2.
 
-**Option A: Using command line (Select your platform)**
+**Option A: Using .env file (Recommended for development)**
+
+For local development and tests, the samples use a `.env` file in the samples directory. A template is provided in the package directory as `env.sample`.
+
+1. Copy the template to the samples directory:
+   ```bash
+   # from sdk/contentunderstanding/azure-ai-contentunderstanding in Step 3-1
+   cp env.sample samples/.env
+   ```
+
+2. Then, edit the `.env` file and set the following variables at minimum:
+
+    The environment variables define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
+
+    Set the following in `.env`:
+    * `CONTENTUNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
+    * `CONTENTUNDERSTANDING_KEY` (optional) - Your API key. Required if using API key authentication. If omitted, `DefaultAzureCredential` will be used.
+    * `GPT_4_1_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1 deployment name in Microsoft Foundry
+    * `GPT_4_1_MINI_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1-mini deployment name in Microsoft Foundry
+    * `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for sample_update_defaults.py) - Your text-embedding-3-large deployment name in Microsoft Foundry
+
+    ```bash
+    CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+    # Optionally provide a key; if omitted, DefaultAzureCredential is used.
+    CONTENTUNDERSTANDING_KEY=<optional-api-key>
+    GPT_4_1_DEPLOYMENT=gpt-4.1
+    GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
+    TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+    ```
+
+**Option B: Using command line (Select your platform)**
 
 **On Linux/macOS (bash):**
 ```bash
@@ -126,44 +179,23 @@ set GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
 set TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
 ```
 
-**Option B: Using .env file (Recommended for development)**
+Notes:
+- If `CONTENTUNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
+- Keep the `.env` file out of version control—do not commit secrets.
+- The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
 
-For local development and tests this repository uses a root-level `.env` file. A template is provided in the package directory as `env.sample`.
+**3-3. Run the configuration script**
 
-1. Copy the template to your repository root:
-   ```bash
-   cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
-   ```
+**This is a critical step:** After setting up the environment variables, you must run the sample to configure the default model deployments. This one-time configuration maps your deployed models to the standard model names that prebuilt analyzers require. Without running this configuration, prebuilt analyzers will not work because they won't know which of your deployed models to use.
 
-    Then edit `.env` and set at minimum:
+Run the sample:
 
-    The environment variables define your Microsoft Foundry resource endpoint and the deployment names for the models you deployed in Step 2. **Important:** The deployment name values (e.g., `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`) must exactly match the deployment names you chose when deploying models in Step 2.
+```bash
+# from sdk/contentunderstanding/azure-ai-contentunderstanding
+python samples/sample_update_defaults.py
+```
 
-    ```
-    CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
-    # Optionally provide a key; if omitted, DefaultAzureCredential is used.
-    CONTENTUNDERSTANDING_KEY=<optional-api-key>
-    GPT_4_1_DEPLOYMENT=gpt-4.1
-    GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
-    TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
-    ```
-
-    Notes:
-    - If `CONTENTUNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
-    - Keep the `.env` file out of version control—do not commit secrets.
-    - The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
-
-2. Run the configuration script
-
-    **This is a critical step:** After setting up the environment variables, you must run the sample to configure the default model deployments. This one-time configuration maps your deployed models to the standard model names that prebuilt analyzers require. Without running this configuration, prebuilt analyzers will not work because they won't know which of your deployed models to use.
-
-    Run the sample:
-
-    ```bash
-    python samples/sample_update_defaults.py
-    ```
-
-    (Or for async: `python async_samples/sample_update_defaults_async.py`)
+(Or for async: `python async_samples/sample_update_defaults_async.py`)
 
 **Verification**
 
