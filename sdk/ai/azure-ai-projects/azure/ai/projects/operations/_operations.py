@@ -201,7 +201,7 @@ def build_agents_list_request(
     *,
     kind: Optional[Union[str, _models.AgentKind]] = None,
     limit: Optional[int] = None,
-    order: Optional[Literal["asc", "desc"]] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -344,7 +344,7 @@ def build_agents_list_versions_request(
     agent_name: str,
     *,
     limit: Optional[int] = None,
-    order: Optional[Literal["asc", "desc"]] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -456,7 +456,7 @@ def build_memory_stores_get_request(name: str, **kwargs: Any) -> HttpRequest:
 def build_memory_stores_list_request(
     *,
     limit: Optional[int] = None,
-    order: Optional[Literal["asc", "desc"]] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -2631,7 +2631,7 @@ class AgentsOperations:
         *,
         kind: Optional[Union[str, _models.AgentKind]] = None,
         limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.AgentDetails"]:
@@ -2646,9 +2646,8 @@ class AgentsOperations:
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
@@ -3285,7 +3284,7 @@ class AgentsOperations:
         agent_name: str,
         *,
         limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.AgentVersionDetails"]:
@@ -3299,9 +3298,8 @@ class AgentsOperations:
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
@@ -3793,7 +3791,7 @@ class MemoryStoresOperations:
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.MemoryStoreDetails"]:
@@ -3805,9 +3803,8 @@ class MemoryStoresOperations:
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
@@ -3952,7 +3949,7 @@ class MemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.Item]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
@@ -3968,7 +3965,7 @@ class MemoryStoresOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.Item]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -4027,7 +4024,7 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.Item]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
@@ -4042,7 +4039,7 @@ class MemoryStoresOperations:
          Required.
         :paramtype scope: str
         :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.Item]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -4137,7 +4134,7 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.Item]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -4222,7 +4219,7 @@ class MemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.Item]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -4248,7 +4245,7 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.Item]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -4263,7 +4260,7 @@ class MemoryStoresOperations:
          Required.
         :paramtype scope: str
         :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.Item]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
