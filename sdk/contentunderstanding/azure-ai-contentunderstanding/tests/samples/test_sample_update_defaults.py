@@ -25,6 +25,7 @@ USAGE:
 """
 
 import pytest
+from typing import Dict, Optional
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
@@ -34,7 +35,7 @@ class TestSampleUpdateDefaults(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_update_defaults(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_update_defaults(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test configuring and getting model deployment defaults.
 
         This test validates:
@@ -44,29 +45,61 @@ class TestSampleUpdateDefaults(ContentUnderstandingClientTestBase):
 
         00_UpdateDefaults.UpdateDefaultsAsync()
         """
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        import os
+
+        # Get deployment names from variables (playback) or environment (recording)
+        # If not found, use defaults and record them
+        gpt_4_1_deployment = variables.setdefault(
+            "gpt_4_1_deployment",
+            os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1")
+        )
+        gpt_4_1_mini_deployment = variables.setdefault(
+            "gpt_4_1_mini_deployment",
+            os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
+        )
+        text_embedding_3_large_deployment = variables.setdefault(
+            "text_embedding_3_large_deployment",
+            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large")
+        )
+
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
-        # Test UpdateDefaults - only if deployment names are provided
-        self._test_update_defaults(client)
+        # Test UpdateDefaults - pass deployment names directly from variables
+        self._test_update_defaults(
+            client,
+            gpt_4_1_deployment=gpt_4_1_deployment,
+            gpt_4_1_mini_deployment=gpt_4_1_mini_deployment,
+            text_embedding_3_large_deployment=text_embedding_3_large_deployment,
+        )
 
         # Test GetDefaults - always run
         self._test_get_defaults(client)
 
         print("\n[SUCCESS] All test_sample_update_defaults assertions passed")
 
-    def _test_update_defaults(self, client):
+        # Return variables to be recorded
+        return variables
+
+    def _test_update_defaults(
+        self,
+        client,
+        gpt_4_1_deployment: Optional[str] = None,
+        gpt_4_1_mini_deployment: Optional[str] = None,
+        text_embedding_3_large_deployment: Optional[str] = None,
+    ) -> None:
         """Test updating model deployment defaults.
 
-        This test attempts to update model deployments if deployment names are provided
-        via environment variables. If not provided, it checks if defaults are already
-        configured. This is a best-effort test.
+        This test attempts to update model deployments if deployment names are provided.
+        If not provided, it checks if defaults are already configured. This is a best-effort test.
+
+        Args:
+            client: The ContentUnderstandingClient instance.
+            gpt_4_1_deployment: GPT-4.1 deployment name (from test variables).
+            gpt_4_1_mini_deployment: GPT-4.1-mini deployment name (from test variables).
+            text_embedding_3_large_deployment: text-embedding-3-large deployment name (from test variables).
         """
-        import os
-
-        gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
-        gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
-        text_embedding_3_large_deployment = os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
-
         if gpt_4_1_deployment and gpt_4_1_mini_deployment and text_embedding_3_large_deployment:
             # All deployment names are provided, attempt to update defaults
             model_deployments = {
@@ -83,7 +116,7 @@ class TestSampleUpdateDefaults(ContentUnderstandingClientTestBase):
                 )
         else:
             # Deployment names not provided, check if defaults are already configured
-            print("[INFO] UpdateDefaults: Deployment names not set in environment variables.")
+            print("[INFO] UpdateDefaults: Deployment names not provided.")
             print("       Checking if defaults are already configured...")
 
             # Fallback: Check if defaults are already configured (read-only check)

@@ -16,6 +16,9 @@ import functools
 class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
 
     def create_async_client(self, endpoint: str) -> ContentUnderstandingClient:
+        # Normalize endpoint: remove trailing slashes to prevent double slashes in URLs
+        endpoint = endpoint.rstrip("/")
+        
         # Try API key first (for Content Understanding service)
         # Check CONTENTUNDERSTANDING_KEY
         key = os.getenv("CONTENTUNDERSTANDING_KEY")
@@ -38,5 +41,5 @@ class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
 ContentUnderstandingPreparer = functools.partial(
     PowerShellPreparer,
     "contentunderstanding",
-    contentunderstanding_endpoint="https://Sanitized.services.ai.azure.com/",
+    contentunderstanding_endpoint="https://Sanitized.services.ai.azure.com",
 )
