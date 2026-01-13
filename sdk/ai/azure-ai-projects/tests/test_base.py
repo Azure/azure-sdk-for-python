@@ -24,17 +24,16 @@ from azure.ai.projects.models import (
     DeploymentType,
     Index,
     IndexType,
-    ItemContentType,
     ItemResource,
     ItemType,
     ModelDeployment,
-    ResponsesMessageRole,
 )
 from openai.types.responses import Response
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+from openai.types.conversations.conversation_item import ConversationItem
 
 # Store reference to built-in open before any mocking occurs
 _BUILTIN_OPEN = open
@@ -539,12 +538,12 @@ class TestBase(AzureRecordedTestCase):
 
     def _validate_conversation_item(
         self,
-        item: ItemResource,
+        item: ConversationItem,
         *,
         expected_type: Optional[ItemType] = None,
         expected_id: Optional[str] = None,
-        expected_role: Optional[ResponsesMessageRole] = None,
-        expected_content_type: Optional[ItemContentType] = None,
+        expected_role: Optional[str] = None,
+        expected_content_type: Optional[str] = None,
         expected_content_text: Optional[str] = None,
     ) -> None:
         assert item

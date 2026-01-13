@@ -6,6 +6,7 @@
 # cSpell:disable
 
 from test_base import TestBase, servicePreparer
+from typing import Any, List
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
@@ -13,9 +14,10 @@ from azure.ai.projects.models import (
     #    ResponsesSystemMessageItemParam,
     #    ItemContentInputText,
     ItemType,
-    ResponsesMessageRole,
-    ItemContentType,
 )
+
+from openai.types.conversations.conversation_item_list import ConversationItemList
+from openai.types.responses.response_input_param import ResponseInputItemParam
 
 
 # TODO: Emitter did not produce the output class OpenAI.ConversationResource. Validating service response as Dict for now.
@@ -39,7 +41,7 @@ class TestConversationItemsCrudAsync(TestBase):
                     {"type": "message", "role": "user", "content": "first message"},
                     {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "second message"}]},
                 ]
-                items = await client.conversations.items.create(
+                items: ConversationItemList = await client.conversations.items.create(
                     conversation.id,
                     items=items,
                 )
@@ -50,15 +52,15 @@ class TestConversationItemsCrudAsync(TestBase):
                 self._validate_conversation_item(
                     item_list[0],
                     expected_type=ItemType.MESSAGE,
-                    expected_role=ResponsesMessageRole.USER,
-                    expected_content_type=ItemContentType.INPUT_TEXT,
+                    expected_role="user",
+                    expected_content_type="input_text",
                     expected_content_text="first message",
                 )
                 self._validate_conversation_item(
                     item_list[1],
                     expected_type=ItemType.MESSAGE,
-                    expected_role=ResponsesMessageRole.USER,
-                    expected_content_type=ItemContentType.INPUT_TEXT,
+                    expected_role="user",
+                    expected_content_type="input_text",
                     expected_content_text="second message",
                 )
                 item1_id = item_list[0].id
@@ -99,8 +101,8 @@ class TestConversationItemsCrudAsync(TestBase):
                     item,
                     expected_type=ItemType.MESSAGE,
                     expected_id=item1_id,
-                    expected_role=ResponsesMessageRole.USER,
-                    expected_content_type=ItemContentType.INPUT_TEXT,
+                    expected_role="user",
+                    expected_content_type="input_text",
                     expected_content_text="first message",
                 )
 
