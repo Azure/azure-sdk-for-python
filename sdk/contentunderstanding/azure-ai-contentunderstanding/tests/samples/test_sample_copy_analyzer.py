@@ -20,6 +20,8 @@ USAGE:
 
 import uuid
 import pytest
+from typing import Dict
+from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 from azure.ai.contentunderstanding.models import (
@@ -37,7 +39,7 @@ class TestSampleCopyAnalyzer(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_copy_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_copy_analyzer(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test copying an analyzer (within same resource or across resources).
 
         This test validates:
@@ -50,13 +52,18 @@ class TestSampleCopyAnalyzer(ContentUnderstandingClientTestBase):
 
         Note: This test requires copy API support. If not available, test will be skipped.
         """
-        # Skip this test if API is not available
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        
         try:
             client = self.create_client(endpoint=contentunderstanding_endpoint)
 
             # Generate unique analyzer IDs for this test
-            source_analyzer_id = f"test_analyzer_source_{uuid.uuid4().hex}"
-            target_analyzer_id = f"test_analyzer_target_{uuid.uuid4().hex}"
+            # Use variables from recording if available (playback mode), otherwise generate new ones (record mode)
+            default_source_id = f"test_analyzer_source_{uuid.uuid4().hex[:16]}"
+            default_target_id = f"test_analyzer_target_{uuid.uuid4().hex[:16]}"
+            source_analyzer_id = variables.setdefault("copySourceAnalyzerId", default_source_id)
+            target_analyzer_id = variables.setdefault("copyTargetAnalyzerId", default_target_id)
 
             print(f"[INFO] Source analyzer ID: {source_analyzer_id}")
             print(f"[INFO] Target analyzer ID: {target_analyzer_id}")
@@ -148,39 +155,24 @@ class TestSampleCopyAnalyzer(ContentUnderstandingClientTestBase):
             # For same-resource copying, no authorization is needed
             print(f"\n[INFO] Attempting to copy analyzer from '{source_analyzer_id}' to '{target_analyzer_id}'")
 
-            # Check if copy_analyzer API exists
-            if not hasattr(client, "begin_copy_analyzer") and not hasattr(client, "copy_analyzer"):
-                pytest.skip("Copy analyzer API not available")
-
-            # Try to copy (this may not be implemented yet)
-            try:
-                if hasattr(client, "begin_copy_analyzer"):
-                    # begin_copy_analyzer requires:
-                    # - analyzer_id: target analyzer ID
-                    # - source_analyzer_id: source analyzer ID (as keyword arg)
-                    copy_poller = client.begin_copy_analyzer(  # type: ignore
-                        analyzer_id=target_analyzer_id, source_analyzer_id=source_analyzer_id
-                    )
-                    copy_result = copy_poller.result()  # type: ignore
-                    print(f"[PASS] Analyzer copied successfully to '{target_analyzer_id}'")
-                else:
-                    print("[INFO] Copy analyzer API not yet implemented in Python SDK")
-                    pytest.skip("Copy analyzer API not yet implemented")
-
-            except Exception as copy_error:
-                error_msg = str(copy_error).lower()
-                if "not found" in error_msg or "not implemented" in error_msg or "not supported" in error_msg:
-                    print(f"[INFO] Copy API not available: {str(copy_error)[:100]}")
-                    pytest.skip(f"Copy analyzer API not available: {str(copy_error)[:100]}")
-                raise
+            # Copy analyzer
+            # begin_copy_analyzer requires:
+            # - analyzer_id: target analyzer ID
+            # - source_analyzer_id: source analyzer ID (as keyword arg)
+            copy_poller = client.begin_copy_analyzer(
+                analyzer_id=target_analyzer_id, source_analyzer_id=source_analyzer_id
+            )
+            copy_result = copy_poller.result()
+            print(f"[PASS] Analyzer copied successfully to '{target_analyzer_id}'")
 
             print("\n[SUCCESS] All test_sample_copy_analyzer assertions passed")
             print("[INFO] Copy analyzer functionality demonstrated")
 
+            # Return variables to be recorded for playback mode
+            return variables
+
         except Exception as e:
-            error_msg = str(e).lower()
-            if "not supported" in error_msg or "not available" in error_msg or "not implemented" in error_msg:
-                pytest.skip(f"API not available: {str(e)[:100]}")
+            # Let all exceptions fail - don't skip
             raise
         finally:
             # Clean up: delete test analyzers

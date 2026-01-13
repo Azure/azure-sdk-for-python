@@ -93,6 +93,8 @@ To configure model deployments using code, see [`sample_update_defaults.py`][sam
 - Map your deployed models to the models required by prebuilt analyzers
 - Retrieve the current default model deployment configuration
 
+The following shows how to set up the environment to run this sample successfully:
+
 **3-1. Set up virtual environment for running samples**
 ```bash
 # 1. Navigate to package directory
@@ -179,24 +181,21 @@ set TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
 Notes:
 - If `CONTENTUNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
 - Keep the `.env` file out of version control—do not commit secrets.
-- The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
 
 **3-3. Run the configuration script**
 
-**This is a critical step:** After setting up the environment variables, you must run the sample to configure the default model deployments. This one-time configuration maps your deployed models to the standard model names that prebuilt analyzers require. Without running this configuration, prebuilt analyzers will not work because they won't know which of your deployed models to use.
-
-Run the sample:
+Run the sample to update the model deployment defaults:
 
 ```bash
 # from sdk/contentunderstanding/azure-ai-contentunderstanding
 python samples/sample_update_defaults.py
 ```
 
-(Or for async: `python async_samples/sample_update_defaults_async.py`)
+(Or for async: `python samples/async_samples/sample_update_defaults_async.py`)
 
 **Verification**
 
-After the script runs successfully, you can use prebuilt analyzers like `prebuilt-invoice` or `prebuilt-documentSearch`.
+After the script runs successfully, you can use prebuilt analyzers like `prebuilt-invoice` or `prebuilt-documentSearch`. For more examples and sample code, see the [Examples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md#examples) section.
 
 If you encounter errors:
 - **Deployment Not Found**: Check that deployment names in environment variables match exactly what you created in Foundry.
@@ -311,8 +310,6 @@ We guarantee that all client instance methods are thread-safe and independent of
 ### Additional concepts
 
 [Client options][client_options] |
-[Accessing the response][accessing_response] |
-[Long-running operations][long_running_operations] |
 [Handling failures][handling_failures] |
 [Diagnostics][diagnostics]
 
@@ -564,10 +561,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [deploy_models_docs]: https://learn.microsoft.com/azure/ai-studio/how-to/deploy-models-openai
 [azure_identity_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity/README.md
 [cu_prebuilt_analyzers]: https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/prebuilt-analyzers
-[client_options]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configuring-service-clients-using-clientoptions
-[accessing_response]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#accessing-http-response-details-using-responset
-[long_running_operations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#consuming-long-running-operations-using-operationt
-[handling_failures]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#reporting-errors-requestfailedexception
+[client_options]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configurations
+[handling_failures]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#azure-core-library-exceptions
 [diagnostics]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#logging
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging

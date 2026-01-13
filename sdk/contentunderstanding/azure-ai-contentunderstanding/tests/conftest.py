@@ -104,6 +104,32 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..sourceAzureResourceId", value="placeholder-source-resource-id")
     add_body_key_sanitizer(json_path="$..sourceRegion", value="placeholder-source-region")
 
+    # Sanitize cross-resource copy environment variable values
+    # This ensures that real resource IDs and regions are sanitized before being stored in test proxy variables
+    source_resource_id = os.environ.get("CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID", "")
+    if source_resource_id and source_resource_id != "placeholder-source-resource-id":
+        add_general_string_sanitizer(
+            target=source_resource_id, value="placeholder-source-resource-id"
+        )
+    
+    source_region = os.environ.get("CONTENTUNDERSTANDING_SOURCE_REGION", "")
+    if source_region and source_region != "placeholder-source-region":
+        add_general_string_sanitizer(
+            target=source_region, value="placeholder-source-region"
+        )
+    
+    target_resource_id = os.environ.get("CONTENTUNDERSTANDING_TARGET_RESOURCE_ID", "")
+    if target_resource_id and target_resource_id != "placeholder-target-resource-id":
+        add_general_string_sanitizer(
+            target=target_resource_id, value="placeholder-target-resource-id"
+        )
+    
+    target_region = os.environ.get("CONTENTUNDERSTANDING_TARGET_REGION", "")
+    if target_region and target_region != "placeholder-target-region":
+        add_general_string_sanitizer(
+            target=target_region, value="placeholder-target-region"
+        )
+
     # Sanitize dynamic analyzer IDs in URLs only
     # Note: We don't sanitize analyzer IDs in response bodies because tests using variables
     # (like test_sample_grant_copy_auth) need the actual IDs to match the variables.

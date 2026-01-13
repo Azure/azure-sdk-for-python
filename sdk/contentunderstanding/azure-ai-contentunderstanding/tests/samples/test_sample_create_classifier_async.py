@@ -22,6 +22,7 @@ USAGE:
 import os
 import pytest
 import uuid
+from typing import Dict
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
 from azure.ai.contentunderstanding.models import (
@@ -37,7 +38,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_create_classifier_async(self, contentunderstanding_endpoint: str) -> None:
+    async def test_sample_create_classifier_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test creating a custom classifier with content categories (async version).
 
         This test validates:
@@ -47,10 +48,15 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
         05_CreateClassifier.CreateClassifierAsync()
         """
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
-        analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"
+        # Use variables from recording if available (playback mode), otherwise generate new one (record mode)
+        default_analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"
+        analyzer_id = variables.setdefault("createClassifierId", default_analyzer_id)
 
         print(f"[PASS] Classifier ID generated: {analyzer_id}")
 
@@ -131,14 +137,18 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
         except Exception as e:
             error_msg = str(e)
             print(f"\n[ERROR] Full error message:\n{error_msg}")
-            pytest.skip(f"Classifier creation not available or failed: {error_msg[:100]}")
+            # Let all exceptions fail - don't skip
+            raise
 
         await client.close()
         print("\n[SUCCESS] All test_sample_create_classifier_async assertions passed")
 
+        # Return variables to be recorded for playback mode
+        return variables
+
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_with_classifier_async(self, contentunderstanding_endpoint: str) -> None:
+    async def test_sample_analyze_with_classifier_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test analyzing a document with a classifier to categorize content into segments (async version).
 
         This test validates:
@@ -148,10 +158,15 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
         Demonstrates: Analyze documents with segmentation (async)
         """
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
-        analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"
+        # Use variables from recording if available (playback mode), otherwise generate new one (record mode)
+        default_analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"
+        analyzer_id = variables.setdefault("analyzeWithClassifierId", default_analyzer_id)
 
         print(f"[PASS] Classifier ID generated: {analyzer_id}")
 
@@ -251,7 +266,11 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
         except Exception as e:
             error_msg = str(e)
             print(f"\n[ERROR] Full error message:\n{error_msg}")
-            pytest.skip(f"Classifier analysis not available or failed: {error_msg[:100]}")
+            # Let all exceptions fail - don't skip
+            raise
 
         await client.close()
         print("\n[SUCCESS] All test_sample_analyze_with_classifier_async assertions passed")
+
+        # Return variables to be recorded for playback mode
+        return variables

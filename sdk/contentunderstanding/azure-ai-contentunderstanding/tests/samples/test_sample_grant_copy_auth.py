@@ -23,7 +23,7 @@ import os
 import uuid
 import pytest
 from datetime import datetime, timezone
-from typing import Optional, cast
+from typing import Optional, cast, Dict
 from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 from azure.ai.contentunderstanding import ContentUnderstandingClient
@@ -42,7 +42,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_grant_copy_auth(self, contentunderstanding_endpoint: str, **kwargs) -> None:
+    def test_sample_grant_copy_auth(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test granting copy authorization for cross-resource analyzer copying.
 
         This test validates:
@@ -57,44 +57,59 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
         source_client: Optional[ContentUnderstandingClient] = None
         target_client: Optional[ContentUnderstandingClient] = None
 
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        
         try:
-            # Get source and target resource information from environment
-            # For testing, we may use the same endpoint for both source and target
-            # In production, these would be different resources
-            source_resource_id = os.environ.get("CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID")
-            source_region = os.environ.get("CONTENTUNDERSTANDING_SOURCE_REGION")
-            target_endpoint = os.environ.get(
-                "CONTENTUNDERSTANDING_TARGET_ENDPOINT", contentunderstanding_endpoint
-            )
-            target_resource_id = os.environ.get("CONTENTUNDERSTANDING_TARGET_RESOURCE_ID")
-            target_region = os.environ.get("CONTENTUNDERSTANDING_TARGET_REGION")
+            # Always use placeholder values in variables to avoid storing real resource IDs/regions
+            # Real values are read from environment for API calls (they'll be sanitized in request bodies)
+            # But variables should only contain placeholders for security
+            target_endpoint = variables.setdefault("target_endpoint", contentunderstanding_endpoint)
+            source_resource_id = variables.setdefault("source_resource_id", "placeholder-source-resource-id")
+            source_region = variables.setdefault("source_region", "placeholder-source-region")
+            target_resource_id = variables.setdefault("target_resource_id", "placeholder-target-resource-id")
+            target_region = variables.setdefault("target_region", "placeholder-target-region")
+            
+            # For actual API calls, use real values from environment if available (in live mode)
+            # These will be sanitized in request/response bodies by conftest sanitizers
+            if is_live():
+                env_target_endpoint = os.environ.get("CONTENTUNDERSTANDING_TARGET_ENDPOINT")
+                if env_target_endpoint:
+                    target_endpoint = env_target_endpoint
+                env_source_resource_id = os.environ.get("CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID")
+                if env_source_resource_id:
+                    source_resource_id = env_source_resource_id
+                env_source_region = os.environ.get("CONTENTUNDERSTANDING_SOURCE_REGION")
+                if env_source_region:
+                    source_region = env_source_region
+                env_target_resource_id = os.environ.get("CONTENTUNDERSTANDING_TARGET_RESOURCE_ID")
+                if env_target_resource_id:
+                    target_resource_id = env_target_resource_id
+                env_target_region = os.environ.get("CONTENTUNDERSTANDING_TARGET_REGION")
+                if env_target_region:
+                    target_region = env_target_region
+            
             target_key = os.environ.get("CONTENTUNDERSTANDING_TARGET_KEY")
 
             # Only require environment variables in live mode
             # In playback mode, the test proxy will replay recorded interactions
             if is_live():
-                if not source_resource_id:
+                if source_resource_id == "placeholder-source-resource-id":
                     raise ValueError(
                         "CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID is required for cross-resource copy test in live mode"
                     )
-                if not source_region:
+                if source_region == "placeholder-source-region":
                     raise ValueError(
                         "CONTENTUNDERSTANDING_SOURCE_REGION is required for cross-resource copy test in live mode"
                     )
-                if not target_resource_id:
+                if target_resource_id == "placeholder-target-resource-id":
                     raise ValueError(
                         "CONTENTUNDERSTANDING_TARGET_RESOURCE_ID is required for cross-resource copy test in live mode"
                     )
-                if not target_region:
+                if target_region == "placeholder-target-region":
                     raise ValueError(
                         "CONTENTUNDERSTANDING_TARGET_REGION is required for cross-resource copy test in live mode"
                     )
-            else:
-                # In playback mode, use placeholder values - test proxy will use recorded values
-                source_resource_id = source_resource_id or "placeholder-source-resource-id"
-                source_region = source_region or "placeholder-source-region"
-                target_resource_id = target_resource_id or "placeholder-target-resource-id"
-                target_region = target_region or "placeholder-target-region"
 
             # Create clients
             source_client = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -120,9 +135,6 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             else:
                 # Use same endpoint and credential as source
                 target_client = self.create_client(endpoint=target_endpoint)
-
-            # Get variables from test proxy (for playback mode) or use defaults (for record mode)
-            variables = kwargs.pop("variables", {})
 
             # Generate unique analyzer IDs for this test
             # Use variables from recording if available (playback mode), otherwise generate new ones (record mode)

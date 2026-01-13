@@ -20,6 +20,7 @@ USAGE:
 
 import pytest
 import uuid
+from typing import Dict
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
 from azure.ai.contentunderstanding.models import (
@@ -35,7 +36,7 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_create_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
+    async def test_sample_create_analyzer_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test creating a custom analyzer with field schema (async version).
 
         This test validates:
@@ -47,10 +48,15 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
 
         04_CreateAnalyzer.CreateAnalyzerAsync()
         """
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
-        analyzer_id = f"test_custom_analyzer_{uuid.uuid4().hex[:16]}"
+        # Use variables from recording if available (playback mode), otherwise generate new one (record mode)
+        default_analyzer_id = f"test_custom_analyzer_{uuid.uuid4().hex[:16]}"
+        analyzer_id = variables.setdefault("createAnalyzerId", default_analyzer_id)
         assert analyzer_id and analyzer_id.strip(), "Analyzer ID should not be empty"
         print(f"[PASS] Analyzer ID generated: {analyzer_id}")
 
@@ -151,7 +157,8 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
         except Exception as e:
             error_msg = str(e)
             print(f"\n[ERROR] Analyzer creation failed: {error_msg}")
-            pytest.skip(f"Analyzer creation not available: {error_msg[:100]}")
+            # Let all exceptions fail - don't skip
+            raise
         finally:
             # Cleanup: Delete the analyzer
             try:
@@ -163,3 +170,6 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
             await client.close()
 
         print("\n[SUCCESS] All test_sample_create_analyzer_async assertions passed")
+
+        # Return variables to be recorded for playback mode
+        return variables

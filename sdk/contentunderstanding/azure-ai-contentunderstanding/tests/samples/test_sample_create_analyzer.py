@@ -20,6 +20,8 @@ USAGE:
 
 import pytest
 import uuid
+from typing import Dict
+from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 from azure.ai.contentunderstanding.models import (
@@ -35,7 +37,7 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_create_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_create_analyzer(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test creating a custom analyzer with field schema.
 
         This test validates:
@@ -47,10 +49,15 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
 
         04_CreateAnalyzer.CreateAnalyzerAsync()
         """
+        # Get variables from test proxy (recorded values in playback, empty dict in recording)
+        variables = kwargs.pop("variables", {})
+        
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
-        analyzer_id = f"test_custom_analyzer_{uuid.uuid4().hex[:16]}"
+        # Use variables from recording if available (playback mode), otherwise generate new one (record mode)
+        default_analyzer_id = f"test_custom_analyzer_{uuid.uuid4().hex[:16]}"
+        analyzer_id = variables.setdefault("createAnalyzerId", default_analyzer_id)
         assert analyzer_id and analyzer_id.strip(), "Analyzer ID should not be empty"
         print(f"[PASS] Analyzer ID generated: {analyzer_id}")
 
@@ -148,10 +155,19 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
                     assert result_id == analyzer_id, "Result analyzer ID should match"
                     print(f"[PASS] Result analyzer ID verified: {result_id}")
 
+        except ResourceNotFoundError as proxy_error:
+            # Check if this is a test proxy playback error (missing recording)
+            error_msg = str(proxy_error)
+            if "Unable to find a record for the request" in error_msg:
+                # This is a test proxy error - recording is missing or outdated, let it fail
+                raise
+            # Otherwise, it's a real API error - let it fail, don't skip
+            raise
         except Exception as e:
             error_msg = str(e)
             print(f"\n[ERROR] Analyzer creation failed: {error_msg}")
-            pytest.skip(f"Analyzer creation not available: {error_msg[:100]}")
+            # Let all exceptions fail - don't skip
+            raise
         finally:
             # Cleanup: Delete the analyzer
             try:
@@ -159,5 +175,8 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
                 print(f"[PASS] Cleanup: Analyzer '{analyzer_id}' deleted")
             except Exception as e:
                 print(f"[WARN] Cleanup failed: {str(e)}")
+        
+        # Return variables to be recorded for playback mode
+        return variables
 
         print("\n[SUCCESS] All test_sample_create_analyzer assertions passed")
