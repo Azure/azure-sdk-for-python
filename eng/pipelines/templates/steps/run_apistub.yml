@@ -41,8 +41,3 @@ steps:
         --checks="apistub"
         --disablecov
         --filter-type="Omit_management"
-        ${{ parameters.AdditionalTestArgs }}
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""

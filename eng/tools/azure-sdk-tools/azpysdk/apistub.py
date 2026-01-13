@@ -111,12 +111,12 @@ class apistub(Check):
             self.pip_freeze(executable)
 
             pkg_path = get_package_wheel_path(package_dir)
-            out_token_path = staging_directory
+            pkg_path = os.path.abspath(pkg_path)
+
+            out_token_path = os.path.abspath(staging_directory)
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
-            pkg_path = os.path.abspath(pkg_path)
-            if out_token_path:
-                out_token_path = os.path.abspath(out_token_path)
+
             if cross_language_mapping_path:
                 cross_language_mapping_path = os.path.abspath(cross_language_mapping_path)
 

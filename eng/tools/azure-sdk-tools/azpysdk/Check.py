@@ -71,13 +71,6 @@ class Check(abc.ABC):
 
             subprocess.check_call(venv_cmd + [venv_location])
 
-            # ensure uv venv has pip for tools that require pip
-            if venv_cmd[0] == "uv":
-                try:
-                    subprocess.check_call(["uv", "pip", "install", "--python", venv_python, "pip"])
-                except subprocess.CalledProcessError as e:
-                    logger.error(f"Failed to ensure pip in uv venv: {e}")
-
             if in_ci():
                 # first attempt to retrieve azure-sdk-tools from the prebuilt wheel directory
                 # if present, install from there instead of constantly rebuilding azure-sdk-tools in a possible
