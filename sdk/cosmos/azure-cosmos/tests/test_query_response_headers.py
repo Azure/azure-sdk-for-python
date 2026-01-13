@@ -35,11 +35,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
         )
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
-    @classmethod
-    def tearDownClass(cls):
-        if cls.client is not None:
-            cls.client.close()
-            cls.client = None
     def test_query_response_headers_single_page(self):
         """Test that response headers are captured for a single page query."""
         created_collection = self.created_db.create_container(
