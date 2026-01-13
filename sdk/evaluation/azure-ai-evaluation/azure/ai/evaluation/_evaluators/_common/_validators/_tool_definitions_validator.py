@@ -22,6 +22,25 @@ class ToolDefinitionsValidator(ConversationValidator):
         super().__init__(error_target, requires_query)
         self.optional_tool_definitions = optional_tool_definitions
 
+    def _validate_tool_definition(self, tool_definition) -> Optional[EvaluationException]:
+        """Validate a single tool definition item."""
+        if not isinstance(tool_definition, dict):
+            return EvaluationException(
+                message="Each tool definition must be a dictionary.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=self.error_target,
+            )
+
+        error = self._validate_string_field(tool_definition, "name", "tool definitions")
+        if error:
+            return error
+
+        error = self._validate_dict_field(tool_definition, "parameters", "tool definitions")
+        if error:
+            return error
+        return None
+
     def _validate_tool_definitions(self, tool_definitions) -> Optional[EvaluationException]:
         """Validate tool definitions input."""
         if not tool_definitions:
@@ -55,13 +74,19 @@ class ToolDefinitionsValidator(ConversationValidator):
                     target=self.error_target,
                 )
 
-            error = self._validate_string_field(tool_definition, "name", "tool definitions")
-            if error:
-                return error
-
-            error = self._validate_dict_field(tool_definition, "parameters", "tool definitions")
-            if error:
-                return error
+            if tool_definition and tool_definition.get("type") == "openapi":
+                error = self._validate_list_field(tool_definition, "functions", "openapi tool definition")
+                if error:
+                    return error
+                functions_tool_definitions = tool_definition.get("functions", [])
+                for function_tool_definition in functions_tool_definitions:
+                    error = self._validate_tool_definition(function_tool_definition)
+                    if error:
+                        return error
+            else:
+                error = self._validate_tool_definition(tool_definition)
+                if error:
+                    return error
 
         return None
 

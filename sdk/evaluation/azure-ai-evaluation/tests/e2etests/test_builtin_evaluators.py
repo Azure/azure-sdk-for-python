@@ -19,6 +19,7 @@ from azure.ai.inference.models import (
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._common.constants import HarmSeverityLevel
+from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 from azure.ai.evaluation import (
@@ -221,11 +222,13 @@ class TestBuiltInEvaluators:
 
     def test_quality_evaluator_prompt_based_with_dict_input(self, sanitized_model_config):
         eval_fn = FluencyEvaluator(sanitized_model_config)
-        score = eval_fn(
-            response={"bar": 2},
-        )
-        assert score is not None
-        assert score["fluency"] > 0.0
+
+        with pytest.raises(EvaluationException) as exc_info:
+            score = eval_fn(
+                response={"bar": 2},
+            )
+
+        assert "Response must be a string or a list of messages" in str(exc_info.value)
 
     def test_quality_evaluator_retrieval(self, sanitized_model_config, simple_conversation):
         eval_fn = RetrievalEvaluator(sanitized_model_config)

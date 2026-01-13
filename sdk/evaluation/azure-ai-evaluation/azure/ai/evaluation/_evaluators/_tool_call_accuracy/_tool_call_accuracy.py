@@ -82,7 +82,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _DEFAULT_TOOL_CALL_ACCURACY_SCORE = 3
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
-    _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
+    _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions input is required but not provided"
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 

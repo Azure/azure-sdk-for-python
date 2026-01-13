@@ -25,7 +25,7 @@ class ToolCallsValidator(ToolDefinitionsValidator):
         """Validate tool calls input."""
         if not tool_calls:
             return EvaluationException(
-                message="Tool calls input is required but not provided.",
+                message="No tool calls found in response or provided tool_calls.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=self.error_target,

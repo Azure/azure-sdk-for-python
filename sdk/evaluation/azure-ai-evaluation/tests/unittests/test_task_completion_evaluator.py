@@ -179,7 +179,7 @@ class TestTaskCompletionEvaluator:
         with pytest.raises(EvaluationException) as exc_info:
             evaluator()
 
-        assert "Either 'conversation' or individual inputs must be provided" in str(exc_info.value)
+        assert "Query is a required input" in str(exc_info.value)
 
     def test_string_success_value_true(self, mock_model_config):
         """Test handling of string 'TRUE' as success value"""
@@ -286,7 +286,13 @@ class TestTaskCompletionEvaluator:
                     }
                 ],
             },
-            {"role": "tool", "tool_call_id": "call_1", "content": "Found 5 Italian restaurants downtown."},
+            {
+                "role": "tool",
+                "tool_call_id": "call_1",
+                "content": [
+                    {"type": "tool_result", "tool_result": {"result": "Found 5 Italian restaurants downtown."}}
+                ],
+            },
             {"role": "assistant", "content": "Task complete! I found restaurants and made a reservation."},
         ]
         tool_definitions = [

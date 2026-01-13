@@ -46,10 +46,10 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._flow = MagicMock(return_value=quality_response_async_mock())
 
-        score = fluency_eval(response={"bar": "2"})
+        with pytest.raises(EvaluationException) as exc_info:
+            fluency_eval(response={"bar": "2"})
 
-        assert score is not None
-        assert score["fluency"] == score["gpt_fluency"] == 1
+        assert "Response must be a string or a list of messages" in str(exc_info.value)
 
     def test_fluency_evaluator_empty_string(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
@@ -58,9 +58,7 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(response=None)
 
-        assert (
-            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
-        )
+        assert "Response is a required input" in str(exc_info.value)
 
     def test_similarity_evaluator_keys(self, mock_model_config):
         similarity_eval = SimilarityEvaluator(model_config=mock_model_config)
@@ -166,20 +164,18 @@ class TestBuiltInEvaluators:
                     "content": [
                         {
                             "type": "tool_result",
-                            "tool_result": [
-                                {
-                                    "file_id": "assistant-6QeBNfMsJpL3AHnE3T6dwY",
-                                    "file_name": "product_info_1.md",
-                                    "score": 0.03333333507180214,
-                                    "attributes": {},
-                                    "content": [
-                                        {
-                                            "type": "text",
-                                            "text": "# Information about product item_number: 1\n\n## Brand\nContoso Galaxy Innovations\n\n## Category\nSmart Eyewear\n",
-                                        }
-                                    ],
-                                }
-                            ],
+                            "tool_result": {
+                                "file_id": "assistant-6QeBNfMsJpL3AHnE3T6dwY",
+                                "file_name": "product_info_1.md",
+                                "score": 0.03333333507180214,
+                                "attributes": {},
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "# Information about product item_number: 1\n\n## Brand\nContoso Galaxy Innovations\n\n## Category\nSmart Eyewear\n",
+                                    }
+                                ],
+                            },
                         }
                     ],
                 },
@@ -239,7 +235,4 @@ class TestBuiltInEvaluators:
                 # Missing response
             )
 
-        assert (
-            "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
-            in exc_info.value.args[0]
-        )
+        assert "Response is a required input" in str(exc_info.value)

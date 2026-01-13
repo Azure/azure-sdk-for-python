@@ -46,6 +46,27 @@ class ConversationValidator(ValidatorInterface):
             )
         return None
 
+    def _validate_list_field(
+        self, item: Dict[str, Any], field_name: str, context: str
+    ) -> Optional[EvaluationException]:
+        """Validate that a field exists and is a dictionary."""
+        if field_name not in item:
+            return EvaluationException(
+                message=f"Each {context} must contain a '{field_name}' field.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=self.error_target,
+            )
+
+        if not isinstance(item[field_name], list):
+            return EvaluationException(
+                message=f"The '{field_name}' field must be a list in {context}.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=self.error_target,
+            )
+        return None
+
     def _validate_dict_field(
         self, item: Dict[str, Any], field_name: str, context: str
     ) -> Optional[EvaluationException]:
@@ -262,7 +283,7 @@ class ConversationValidator(ValidatorInterface):
     def _validate_input_messages_list(self, input_messages: Any, input_name: str) -> Optional[EvaluationException]:
         if input_messages is None:
             return EvaluationException(
-                message=f"{input_name} cannot be None.",
+                message=f"{input_name} is a required input and cannot be None.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=self.error_target,
@@ -310,6 +331,23 @@ class ConversationValidator(ValidatorInterface):
 
         return None
 
+    def _validate_conversation(self, conversation: Any) -> Optional[EvaluationException]:
+        """Validate the conversation input."""
+        if not isinstance(conversation, dict):
+            return EvaluationException(
+                message="Conversation must be a dictionary.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=self.error_target,
+            )
+
+        error = self._validate_list_field(conversation, "messages", "Conversation")
+        if error:
+            return error
+
+        messages = conversation["messages"]
+        return self._validate_input_messages_list(messages, "Conversation messages")
+
     def _validate_query(self, query: Any) -> Optional[EvaluationException]:
         """Validate the query input."""
         if not self.requires_query:
@@ -324,6 +362,13 @@ class ConversationValidator(ValidatorInterface):
     @override
     def validate_eval_input(self, eval_input: Dict[str, Any]) -> bool:
         """Validate the evaluation input dictionary."""
+        conversation = eval_input.get("conversation")
+        if conversation:
+            conversation_validation_exception = self._validate_conversation(conversation)
+            if conversation_validation_exception:
+                raise conversation_validation_exception
+            return True
+
         query = eval_input.get("query")
         response = eval_input.get("response")
         query_validation_exception = self._validate_query(query)

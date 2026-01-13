@@ -222,41 +222,35 @@ class TestToolSelectionEvaluator:
     def test_evaluate_tool_selection_fail_no_tools_selected(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+        with pytest.raises(EvaluationException) as exc_info:
 
-        query = "What's the weather like today?"
-        tool_calls = []
-        tool_definitions = [
-            {
-                "name": "get_weather",
-                "type": "function",
-                "description": "Get weather information",
-                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
-            }
-        ]
+            query = "What's the weather like today?"
+            tool_calls = []
+            tool_definitions = [
+                {
+                    "name": "get_weather",
+                    "type": "function",
+                    "description": "Get weather information",
+                    "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
+                }
+            ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_reason" in result
+        assert "No tool calls found" in str(exc_info.value)
 
     def test_evaluate_tool_selection_not_applicable_no_tool_definitions(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+        with pytest.raises(EvaluationException) as exc_info:
 
-        query = "What's the weather like today?"
-        tool_calls = []
-        tool_definitions = []
+            query = "What's the weather like today?"
+            tool_calls = []
+            tool_definitions = []
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_reason" in result
+        assert "Tool definitions input is required" in str(exc_info.value)
 
     def test_evaluate_tool_selection_exception_invalid_score(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
