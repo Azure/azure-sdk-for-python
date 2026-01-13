@@ -32,7 +32,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_exchange_aad_access_token_for_acr_refresh_token_request( # pylint: disable=name-too-long
+def build_exchange_aad_access_token_for_acr_refresh_token_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -56,7 +56,7 @@ def build_exchange_aad_access_token_for_acr_refresh_token_request( # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_exchange_acr_refresh_token_for_acr_access_token_request( # pylint: disable=name-too-long
+def build_exchange_acr_refresh_token_for_acr_access_token_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
