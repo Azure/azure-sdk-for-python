@@ -33,16 +33,6 @@ class AgentThreadRepository(ABC):
         """
 
 
-class AgentThreadStorage(ABC):
-    @abstractmethod
-    async def save(self, conversation_id: str, serialized_thread: Any) -> None:
-        pass
-
-    @abstractmethod
-    async def get(self, conversation_id: str) -> Optional[Any]:
-        pass
-
-
 class InMemoryAgentThreadRepository(AgentThreadRepository):
     """In-memory implementation of AgentThreadRepository."""
     def __init__(self) -> None:
@@ -76,9 +66,16 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
 
 
 class JsonSerializedAgentThreadRepository(AgentThreadRepository):
-    """File-based implementation of AgentThreadRepository."""
-    def __init__(self, storage: AgentThreadStorage) -> None:
-        self._storage = storage
+    """Json File based implementation of AgentThreadRepository."""
+    def __init__(self, storage_path: str) -> None:
+        """
+        Initialize the JsonSerializedAgentThreadRepository.
+
+        :param storage_path: The path to the storage directory.
+        :type storage_path: str
+        """
+        self._storage_path = storage_path
+        os.makedirs(self._storage_path, exist_ok=True)
 
     async def get(self, agent: AgentProtocol, conversation_id: str) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
@@ -89,7 +86,7 @@ class JsonSerializedAgentThreadRepository(AgentThreadRepository):
         :return: The saved AgentThread if available, None otherwise.
         :rtype: Optional[AgentThread]
         """
-        serialized_thread = await self._storage.get(conversation_id)
+        serialized_thread = self._read_from_file(conversation_id)
         if serialized_thread:
             thread_dict = json.loads(serialized_thread)
             thread = await agent.deserialize_thread(thread_dict)
@@ -106,20 +103,14 @@ class JsonSerializedAgentThreadRepository(AgentThreadRepository):
         """
         serialized_thread = await thread.serialize()
         serialized_str = json.dumps(serialized_thread)
-        await self._storage.save(conversation_id, serialized_str)
+        self._write_to_file(conversation_id, serialized_str)
 
-
-class FileStorage(AgentThreadStorage):
-    def __init__(self, storage_path: str) -> None:
-        self._storage_path = storage_path
-        os.makedirs(self._storage_path, exist_ok=True)
-
-    async def save(self, conversation_id: str, serialized_thread: str) -> None:
+    def _write_to_file(self, conversation_id: str, serialized_thread: str) -> None:
         file_path = self._get_file_path(conversation_id)
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(serialized_thread)
 
-    async def get(self, conversation_id: str) -> Optional[str]:
+    def _read_from_file(self, conversation_id: str) -> Optional[str]:
         file_path = self._get_file_path(conversation_id)
         if os.path.exists(file_path):
             with open(file_path, "r", encoding="utf-8") as f:

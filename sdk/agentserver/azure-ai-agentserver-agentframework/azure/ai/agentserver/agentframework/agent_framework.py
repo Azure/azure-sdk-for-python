@@ -28,9 +28,9 @@ from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
-from .models.agent_thread_repository import AgentThreadRepository
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
 from .models.constants import Constants
+from .persistence import AgentThreadRepository
 from .tool_client import ToolClient
 
 if TYPE_CHECKING:
@@ -252,7 +252,6 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             if self._checkpoint_storage:
                 checkpoints = await self._checkpoint_storage.list_checkpoints()
                 last_checkpoint = checkpoints[-1] if len(checkpoints) > 0 else None
-                logger.info(f"Last checkpoint data: {last_checkpoint.to_dict() if last_checkpoint else 'None'}")
                 if last_checkpoint:
                     summary = get_checkpoint_summary(last_checkpoint)
                     logger.info(f"Last checkpoint summary status: {summary.status}")

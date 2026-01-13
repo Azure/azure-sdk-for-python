@@ -13,7 +13,7 @@ from agent_framework._types import UserInputRequestContents
 from agent_framework.azure import AzureOpenAIChatClient
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-from azure.ai.agentserver.agentframework.models.agent_thread_repository import JsonSerializedAgentThreadRepository, FileStorage
+from azure.ai.agentserver.agentframework.persistence.agent_thread_repository import JsonSerializedAgentThreadRepository
 
 """
 Tool Approvals with Threads
@@ -77,63 +77,11 @@ def build_agent():
         chat_message_store_factory=CustomChatMessageStore,
     )
 
-async def run_agent() -> None:
-    """Example showing approval with threads."""
-    print("=== Tool Approval with Thread ===\n")
-
-    agent = build_agent()
-    
-    thread = agent.get_new_thread()
-    thread_id = thread.service_thread_id
-    # Step 1: Agent requests to call the tool
-    query = "Add a dentist appointment on March 15th"
-    print(f"User: {query}")
-    result = await agent.run(query, thread=thread)
-    serialized_thread = await thread.serialize()
-    print(f"Agent: {result.to_dict()}")
-    print(f"Thread: {serialized_thread}\n\n")
-
-    resume_thread = await agent.deserialize_thread(serialized_thread)
-    res = await resume_thread.message_store.list_messages()
-    print(f"Resumed thread messages: {res}")
-    for message in res:
-        print(f"  Thread message {type(message)}: {message.to_dict()}")
-        for content in message.contents:
-            print(f"    Content {type(content)}: {content.to_dict()}")
-
-    # Check for approval requests
-    if result.user_input_requests:
-        for request in result.user_input_requests:
-            print("\nApproval needed:")
-            print(f"  Function: {request.function_call.name}")
-            print(f"  Arguments: {request.function_call.arguments}")
-            print(f"  type: {type(request.function_call)}")
-            print(f"  function arg type: {type(request.function_call.arguments)}")
-
-            # User approves (in real app, this would be user input)
-            approved = True  # Change to False to see rejection
-            print(f"  Decision: {'Approved' if approved else 'Rejected'}")
-
-            # Step 2: Send approval response
-            # approval_response = request.create_response(approved=approved)
-            #response_message = ChatMessage(role="user", contents=[approval_response])
-            approval_response = FunctionResultContent(
-                call_id = request.function_call.call_id,
-                result="denied",
-            )
-            response_message = ChatMessage(role="tool", contents=[approval_response])
-            result = await agent.run(response_message, thread=resume_thread)
-
-    print(f"Agent: {result}\n")
-
 
 async def main() -> None:
     agent = build_agent()
-    thread_repository = JsonSerializedAgentThreadRepository(
-        storage=FileStorage(storage_path="./thread_storage")
-    )
+    thread_repository = JsonSerializedAgentThreadRepository(storage_path="./thread_storage")
     await from_agent_framework(agent, thread_repository=thread_repository).run_async()
 
 if __name__ == "__main__":
     asyncio.run(main())
-    # asyncio.run(run_agent())
