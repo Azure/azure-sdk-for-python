@@ -26,12 +26,6 @@ from conda_helper_functions import (
     SUPPORT_COL,
 )
 
-from conda_release_groups import (
-    get_package_group_data,
-    get_release_group,
-    get_package_to_group_mapping,
-)
-
 # paths
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SDK_DIR = os.path.join(ROOT_DIR, "sdk")
@@ -425,7 +419,9 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
     return list(host_requirements), list(run_requirements)
 
 
-def get_package_metadata(package_name: str, package_path: Optional[str]) -> Tuple[str, str, str]:
+def get_package_metadata(
+    package_name: str, package_path: Optional[str]
+) -> Tuple[str, str, str]:
     """Extract package metadata for about section in meta.yaml."""
     pkg_metadata = extract_package_metadata(package_path)
     if package_path:
@@ -488,9 +484,7 @@ def generate_data_plane_meta_yaml(
         run_reqs = list(run_reqs)
 
         package_path = get_package_path(bundle_map[bundle_name][0])
-        home_url, summary, description = get_package_metadata(
-            bundle_name, package_path
-        )
+        home_url, summary, description = get_package_metadata(bundle_name, package_path)
     else:
         logger.info(f"Generating meta.yaml for package {package_name}")
         package_path = get_package_path(package_name)
@@ -550,7 +544,9 @@ extra:
 
 
 def add_new_data_plane_packages(
-    package_dict: Dict[str, Dict[str, str]], bundle_map: Dict[str, List[str]], new_data_plane_names: List[str]
+    package_dict: Dict[str, Dict[str, str]],
+    bundle_map: Dict[str, List[str]],
+    new_data_plane_names: List[str],
 ) -> List[str]:
     """Create meta.yaml files for new data plane packages and add import tests."""
     if len(new_data_plane_names) == 0:
@@ -604,11 +600,13 @@ def add_new_data_plane_packages(
 # =====================================
 
 
-def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]:
+def add_new_mgmt_plane_packages(
+    package_dict: Dict[str, Dict[str, str]], new_mgmt_plane_names: List[str]
+) -> List[str]:
     """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
-    if len(new_packages) == 0:
+    if len(new_mgmt_plane_names) == 0:
         return []
-    logger.info(f"Adding {len(new_packages)} new management plane packages")
+    logger.info(f"Adding {len(new_mgmt_plane_names)} new management plane packages")
     result = []
 
     # can't use pyyaml due to jinja2
@@ -620,7 +618,7 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
     )
     if not test_match:
         logger.error("Could not find 'test: imports:' section in meta.yaml")
-        result.extend([pkg.get(PACKAGE_COL) for pkg in new_packages])
+        result.extend(new_mgmt_plane_names)
         return result
 
     existing_imports_text = test_match.group(1)
@@ -631,14 +629,10 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
     ]
 
     new_imports = []
-    for pkg in new_packages:
-        package_name = pkg.get(PACKAGE_COL)
+    for package_name in new_mgmt_plane_names:
         if not package_name:
             logger.warning("Skipping package with missing name")
             continue
-
-        # TODO there are some existing packages that have hyphens instead of . which seems wrong?
-        # ^ should manually edit these before running this script coz it messes with alphabetical sort
 
         module_name = package_name.replace("-", ".")
 
@@ -675,9 +669,11 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
             file.write(updated_content)
     except Exception as e:
         logger.error(f"Failed to update {CONDA_MGMT_META_YAML_PATH}: {e}")
-        result.extend([pkg.get(PACKAGE_COL) for pkg in new_packages])
+        result.extend(new_mgmt_plane_names)
 
-    logger.info(f"Added {len(new_packages)} new management plane packages to meta.yaml")
+    logger.info(
+        f"Added {len(new_mgmt_plane_names)} new management plane packages to meta.yaml"
+    )
     return result
 
 
@@ -688,6 +684,7 @@ def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> List[str]
 
 def update_data_plane_release_logs(
     package_dict: Dict,
+    bundle_map: Dict[str, List[str]],
     new_data_plane_names: List[str],
     release_date: str,
 ) -> List[str]:
@@ -695,11 +692,8 @@ def update_data_plane_release_logs(
     Add and update release logs for data plane conda packages. Release log includes versions of all packages for the release
     """
     result = []
-    package_to_group = get_package_to_group_mapping()
 
     # Update all existing data plane release logs by file
-    # NOTE: for new packages added to an existing release group, this should handle that as well
-    # as long as conda_release_groups.py was updated to include the new package in the group
 
     existing_release_logs = glob.glob(os.path.join(CONDA_RELEASE_LOGS_DIR, "*.md"))
     for release_log_path in existing_release_logs:
@@ -709,7 +703,7 @@ def update_data_plane_release_logs(
             continue
         if (
             curr_service_name not in package_dict
-            and curr_service_name not in package_to_group.values()
+            and curr_service_name not in bundle_map.values()
         ):
             logger.warning(
                 f"Existing release log service {curr_service_name} was not found in CSV data, skipping update. It may be deprecated."
@@ -717,20 +711,18 @@ def update_data_plane_release_logs(
             result.append(curr_service_name)
             continue
 
-        group_name = get_release_group(curr_service_name, package_to_group)
-        group_data = get_package_group_data(group_name)
-
         pkg_updates = []
-        if group_data:
-            pkg_names_in_log = group_data["packages"]
-            for pkg_name in pkg_names_in_log:
+        if curr_service_name in bundle_map:
+            # handle grouped packages
+            pkg_names_in_bundle = bundle_map[curr_service_name]
+            for pkg_name in pkg_names_in_bundle:
                 pkg = package_dict.get(pkg_name, {})
                 version = pkg.get(VERSION_GA_COL)
                 if version:
                     pkg_updates.append(f"- {pkg_name}-{version}")
                 else:
                     logger.warning(
-                        f"Package {pkg_name} in group {group_name} is missing version info, it may be deprecated. Skipping in release log update"
+                        f"Package {pkg_name} in group {curr_service_name} is missing version info, it may be deprecated. Skipping in release log update"
                     )
                     result.append(pkg_name)
         else:
@@ -796,21 +788,21 @@ def update_data_plane_release_logs(
             result.append(package_name)
             continue
 
-        # check for group
-        group_name = get_release_group(package_name, get_package_to_group_mapping())
-        group_data = get_package_group_data(group_name)
-        if group_data:
-            release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{group_name}.md")
+        bundle_name = get_bundle_name(package_name)
+        # check for bundle
+        if bundle_name:
+            release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{bundle_name}.md")
         else:
             release_log_path = os.path.join(
                 CONDA_RELEASE_LOGS_DIR, f"{package_name}.md"
             )
+            bundle_name = package_name  # for release log logic below
 
         if not os.path.exists(release_log_path):
             # Add brand new release log file
-            logger.info(f"Creating new release log for: {group_name}")
+            logger.info(f"Creating new release log for: {bundle_name}")
 
-            title_parts = group_name.replace("azure-", "").split("-")
+            title_parts = bundle_name.replace("azure-", "").split("-")
             title = " ".join(word.title() for word in title_parts)
 
             content = f"# Azure {title} client library for Python (conda)\n\n"
@@ -818,8 +810,8 @@ def update_data_plane_release_logs(
             content += "### Packages included\n\n"
 
             pkg_updates = []
-            if group_data:
-                pkg_names_in_log = group_data["packages"]
+            if bundle_name:
+                pkg_names_in_log = bundle_map.get(bundle_name, [])
                 for pkg_name in pkg_names_in_log:
                     pkg = package_dict.get(pkg_name, {})
                     version = pkg.get(VERSION_GA_COL)
@@ -833,14 +825,14 @@ def update_data_plane_release_logs(
             try:
                 with open(release_log_path, "w") as f:
                     f.write(content)
-                logger.info(f"Created new release log for {group_name}")
+                logger.info(f"Created new release log for {bundle_name}")
             except Exception as e:
-                logger.error(f"Failed to create release log for {group_name}: {e}")
-                result.append(group_name)
+                logger.error(f"Failed to create release log for {bundle_name}: {e}")
+                result.append(bundle_name)
 
         else:
             logger.info(
-                f"Release log for {group_name} already exists, check that new package {package_name} is included"
+                f"Release log for {bundle_name} already exists, check that new package {package_name} is included"
             )
 
     return result
@@ -997,15 +989,18 @@ if __name__ == "__main__":
     new_data_plane_results = add_new_data_plane_packages(
         package_dict, bundle_map, new_data_plane_names
     )
-    exit()
 
     # handle new mgmt plane libraries
-    new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_packages)
+    new_mgmt_plane_results = add_new_mgmt_plane_packages(
+        package_dict, new_mgmt_plane_names
+    )
 
     # add/update release logs
     data_plane_release_log_results = update_data_plane_release_logs(
-        package_dict, new_data_plane_names, new_version
+        package_dict, bundle_map, new_data_plane_names, new_version
     )
+
+    exit()
 
     mgmt_plane_release_log_results = update_mgmt_plane_release_log(
         package_dict, all_mgmt_packages, new_version

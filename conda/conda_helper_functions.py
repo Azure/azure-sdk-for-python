@@ -30,6 +30,7 @@ SUPPORT_COL = "Support"
 # Helpers for handling bundled releases
 # =====================================
 
+
 def get_package_path(package_name: str) -> Optional[str]:
     """Get the filesystem path of an SDK package given its name."""
     pattern = os.path.join(SDK_DIR, "**", package_name)
@@ -39,9 +40,10 @@ def get_package_path(package_name: str) -> Optional[str]:
         return None
     return matches[0]
 
+
 def get_bundle_name(package_name: str) -> Optional[str]:
     """
-    Check bundled release config from package's pyproject.toml file.
+    Check bundled release config from package's pyproject.toml file given the package name.
 
     If bundled, return the bundle name; otherwise, return None.
     """
@@ -51,22 +53,25 @@ def get_bundle_name(package_name: str) -> Optional[str]:
         return None
     parsed = ParsedSetup.from_path(package_path)
     if not parsed:
-        # TODO raise something 
+        # TODO raise something
         logger.error(f"Failed to parse setup for package {package_name}")
         return None
-        
+
     conda_config = parsed.get_conda_config()
 
     if not conda_config:
         if parsed.is_stable_release():
             # TODO raise something
-            logger.warning(f"Stable release package {package_name} needs a conda config")
+            logger.warning(
+                f"Stable release package {package_name} needs a conda config"
+            )
         return None
 
     if conda_config and "bundle_name" in conda_config:
         return conda_config["bundle_name"]
-    
+
     return None
+
 
 def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
     """Create a mapping of bundle names to their constituent package names."""
@@ -78,7 +83,7 @@ def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
         for p in all_paths
         if os.path.isdir(p) and not os.path.basename(p).startswith((".", "__"))
     }
-    
+
     bundle_map = {}
     for package_name in package_names:
         logger.debug(f"Processing package for bundle mapping: {package_name}")
@@ -86,17 +91,17 @@ def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
         if not package_path:
             logger.warning(f"Package path not found for {package_name}")
             continue
-        
+
         # Skip directories without pyproject.toml
         if not os.path.exists(os.path.join(package_path, "pyproject.toml")):
             logger.warning(f"Skipping {package_name}: no pyproject.toml found")
             continue
-        
+
         parsed = ParsedSetup.from_path(package_path)
         if not parsed:
             logger.error(f"Failed to parse setup for package {package_name}")
             continue
-        
+
         conda_config = parsed.get_conda_config()
         if conda_config and "bundle_name" in conda_config:
             bundle_name = conda_config["bundle_name"]
@@ -105,9 +110,11 @@ def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
 
     return bundle_map
 
+
 # =====================================
 # Utility functions for parsing data
 # =====================================
+
 
 def parse_csv() -> List[Dict[str, str]]:
     """Download and parse the Azure SDK Python packages CSV file."""
