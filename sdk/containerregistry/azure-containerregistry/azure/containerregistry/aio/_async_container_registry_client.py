@@ -930,7 +930,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
 
-            response_headers = await self._client.container_registry.create_manifest(
+            response_headers = await self._client.container_registry.create_manifest(  # type: ignore[func-returns-value]
                 name=repository,
                 reference=tag_or_digest,
                 payload=data,
@@ -938,7 +938,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 cls=_return_response_headers,
                 **kwargs,
             )
-            digest = response_headers["Docker-Content-Digest"]
+            digest = response_headers["Docker-Content-Digest"]  # type: ignore[index]
             if not _validate_digest(data, digest):
                 raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
@@ -1040,7 +1040,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 response_headers = cast(
                     Dict[str, str],
                     await self._client.container_registry_blob.upload_chunk(
-                        location, buffer_stream, cls=_return_response_headers, **kwargs
+                        location, buffer_stream, cls=_return_response_headers, **kwargs  # type: ignore[arg-type]
                     ),
                 )
                 location = response_headers["Location"]

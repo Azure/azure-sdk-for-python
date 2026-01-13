@@ -85,7 +85,7 @@ def build_exchange_acr_refresh_token_for_acr_access_token_request(  # pylint: di
 
 class AuthenticationOperations(AuthenticationOperationsGenerated):
     @distributed_trace
-    def exchange_aad_access_token_for_acr_refresh_token(  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only
+    def exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[override]  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only
         self,
         grant_type: Union[str, "_models.PostContentSchemaGrantType"],
         service: str,
@@ -162,7 +162,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         return deserialized
 
     @distributed_trace
-    def exchange_acr_refresh_token_for_acr_access_token(  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only
+    def exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[override]  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only
         self,
         service: str,
         scope: str,

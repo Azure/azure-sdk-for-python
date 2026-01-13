@@ -58,7 +58,7 @@ class AsyncDownloadBlobStream(
     async def _download_chunk(self) -> PipelineResponse:
         end_range = self._downloaded + self._chunk_size - 1
         range_header = f"bytes={self._downloaded}-{end_range}"
-        next_chunk, headers = cast(Tuple[PipelineResponse, Dict[str, str]], await self._next(range=range_header))
+        next_chunk, headers = cast(Tuple[PipelineResponse, Dict[str, str]], await self._next(range=range_header)) # type: ignore[call-arg]
         self._downloaded += int(headers["Content-Length"])
         return next_chunk
 

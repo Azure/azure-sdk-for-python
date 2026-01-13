@@ -922,7 +922,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 cls=_return_response_headers,
                 **kwargs,
             )
-            digest = response_headers["Docker-Content-Digest"]
+            digest = response_headers["Docker-Content-Digest"]  # type: ignore[index]
             if not _validate_digest(data, digest):
                 raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
@@ -1020,7 +1020,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             response_headers = cast(
                 Dict[str, str],
                 self._client.container_registry_blob.upload_chunk(
-                    location, BytesIO(buffer), cls=_return_response_headers, **kwargs
+                    location, BytesIO(buffer), cls=_return_response_headers, **kwargs  # type: ignore[arg-type]
                 ),
             )
             location = response_headers["Location"]
