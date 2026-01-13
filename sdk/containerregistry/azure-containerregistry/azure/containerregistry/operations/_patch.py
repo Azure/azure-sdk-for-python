@@ -8,9 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
-from .._utils.serialization import Serializer
-
+from typing import Any, Optional, TypeVar, Union
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -18,11 +16,10 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
+from .._utils.serialization import Serializer
 
 from .. import models as _models
 from ..operations import AuthenticationOperations as AuthenticationOperationsGenerated
@@ -30,16 +27,14 @@ from ..operations import AuthenticationOperations as AuthenticationOperationsGen
 from .._utils.model_base import _deserialize, _failsafe_deserialize
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_exchange_aad_access_token_for_acr_refresh_token_request(
-    **kwargs,  # type: Any
-):
-    # type: (...) -> HttpRequest
+def build_exchange_aad_access_token_for_acr_refresh_token_request( # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -61,10 +56,9 @@ def build_exchange_aad_access_token_for_acr_refresh_token_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_exchange_acr_refresh_token_for_acr_access_token_request(
-    **kwargs,  # type: Any
-):
-    # type: (...) -> HttpRequest
+def build_exchange_acr_refresh_token_for_acr_access_token_request( # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -91,16 +85,15 @@ def build_exchange_acr_refresh_token_for_acr_access_token_request(
 
 class AuthenticationOperations(AuthenticationOperationsGenerated):
     @distributed_trace
-    def exchange_aad_access_token_for_acr_refresh_token(
+    def exchange_aad_access_token_for_acr_refresh_token(  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only
         self,
-        grant_type,  # type: Union[str, "_models.PostContentSchemaGrantType"]
-        service,  # type: str
-        tenant=None,  # type: Optional[str]
-        refresh_token=None,  # type: Optional[str]
-        access_token=None,  # type: Optional[str]
-        **kwargs,  # type: Any
-    ):
-        # type: (...) -> _models.AcrRefreshToken
+        grant_type: Union[str, "_models.PostContentSchemaGrantType"],
+        service: str,
+        tenant: Optional[str] = None,
+        refresh_token: Optional[str] = None,
+        access_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.AcrRefreshToken:
         """Exchange AAD tokens for an ACR refresh Token.
         :param grant_type: Can take a value of access_token_refresh_token, or access_token, or
          refresh_token.
@@ -130,7 +123,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrRefreshToken]
+        cls = kwargs.pop("cls", None)
 
         # Construct form data
         _data = {
@@ -169,15 +162,14 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         return deserialized
 
     @distributed_trace
-    def exchange_acr_refresh_token_for_acr_access_token(
+    def exchange_acr_refresh_token_for_acr_access_token(  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only
         self,
-        service,  # type: str
-        scope,  # type: str
-        refresh_token,  # type: str
-        grant_type="refresh_token",  # type: Union[str, "_models.TokenGrantType"]
-        **kwargs,  # type: Any
-    ):
-        # type: (...) -> _models.AcrAccessToken
+        service: str,
+        scope: str,
+        refresh_token: str,
+        grant_type: Union[str, "_models.TokenGrantType"] = "refresh_token",
+        **kwargs: Any,
+    ) -> _models.AcrAccessToken:
         """Exchange ACR Refresh token for an ACR Access Token.
         :param service: Indicates the name of your Azure container registry.
         :type service: str
@@ -205,7 +197,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrAccessToken]
+        cls = kwargs.pop("cls", None)
 
         # Construct form data
         _data = {

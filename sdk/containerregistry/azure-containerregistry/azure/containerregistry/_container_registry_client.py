@@ -50,7 +50,6 @@ from ._models import (
     ManifestAttributesBase,
 )
 
-from .models import AcrManifests
 from ._utils.model_base import _deserialize
 
 if TYPE_CHECKING:

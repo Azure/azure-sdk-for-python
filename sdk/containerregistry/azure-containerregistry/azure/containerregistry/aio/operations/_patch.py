@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -17,9 +17,6 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -33,12 +30,11 @@ from ...operations._patch import (
 from ..._utils.model_base import _deserialize, _failsafe_deserialize
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class AuthenticationOperations(AuthenticationOperationsGenerated):
     @distributed_trace_async
-    async def exchange_aad_access_token_for_acr_refresh_token(
+    async def exchange_aad_access_token_for_acr_refresh_token( # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
         self,
         grant_type: Union[str, "_models.PostContentSchemaGrantType"],
         service: str,
@@ -76,7 +72,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrRefreshToken]
+        cls = kwargs.pop("cls", None)
 
         # Construct form data
         _data = {
@@ -115,7 +111,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         return deserialized
 
     @distributed_trace_async
-    async def exchange_acr_refresh_token_for_acr_access_token(
+    async def exchange_acr_refresh_token_for_acr_access_token( # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
         self,
         service: str,
         scope: str,
@@ -150,7 +146,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrAccessToken]
+        cls = kwargs.pop("cls", None)
 
         # Construct form data
         _data = {
