@@ -7,7 +7,14 @@ import datetime
 import json
 from typing import Any, List
 
-from agent_framework import AgentRunResponse, FunctionCallContent, FunctionResultContent, ErrorContent, TextContent
+from agent_framework import (
+    AgentRunResponse,
+    FunctionCallContent,
+    FunctionResultContent,
+    ErrorContent,
+    TextContent,
+)
+from agent_framework._types import UserInputRequestContents
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
@@ -21,6 +28,7 @@ from azure.ai.agentserver.core.models.projects import (
 
 from .agent_id_generator import AgentIdGenerator
 from .constants import Constants
+from .human_in_the_loop_helper import HumanInTheLoopHelper
 
 logger = get_logger()
 
@@ -28,10 +36,11 @@ logger = get_logger()
 class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-long
     """Non-streaming converter: AgentRunResponse -> OpenAIResponse."""
 
-    def __init__(self, context: AgentRunContext):
+    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper):
         self._context = context
         self._response_id = None
         self._response_created_at = None
+        self._hitl_helper = hitl_helper
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
@@ -120,6 +129,8 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             self._append_function_call_content(content, sink, author_name)
         elif isinstance(content, FunctionResultContent):
             self._append_function_result_content(content, sink, author_name)
+        elif isinstance(content, UserInputRequestContents):
+            self._append_user_input_request_contents(content, sink, author_name)
         elif isinstance(content, ErrorContent):
             raise ValueError(f"ErrorContent received: code={content.error_code}, message={content.message}")
         else:
@@ -205,6 +216,22 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             call_id,
             len(result),
         )
+    
+    def _append_user_input_request_contents(self, content: UserInputRequestContents, sink: List[dict], author_name: str) -> None:
+        item_id = self._context.id_generator.generate_function_call_id()
+        content = self._hitl_helper.convert_user_input_request_content(content)
+        sink.append(
+            {
+                "id": item_id,
+                "type": "function_call",
+                "status": "in_progress",
+                "call_id": content["call_id"],
+                "name": content["name"],
+                "arguments": content["arguments"],
+                "created_by": self._build_created_by(author_name),
+            }
+        )
+        logger.debug("    added user_input_request item id=%s call_id=%s", item_id, content["call_id"])
 
     # ------------- simple normalization helper -------------------------
     def _coerce_result_text(self, value: Any) -> str | dict:

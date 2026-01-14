@@ -8,8 +8,9 @@ import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
 import inspect
 
-from agent_framework import AgentProtocol, AIFunction
+from agent_framework import AgentProtocol, AIFunction, InMemoryCheckpointStorage
 from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
+from agent_framework._workflows import get_checkpoint_summary
 from opentelemetry import trace
 
 from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
@@ -27,7 +28,9 @@ from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
+from .models.human_in_the_loop_helper import HumanInTheLoopHelper
 from .models.constants import Constants
+from .persistence import AgentThreadRepository
 from .tool_client import ToolClient
 
 if TYPE_CHECKING:
@@ -73,7 +76,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def __init__(self, agent: Union[AgentProtocol, AgentFactory],
                  credentials: "Optional[AsyncTokenCredential]" = None,
-                 **kwargs: Any):
+                 *,
+                 thread_repository: AgentThreadRepository = None,
+                 **kwargs: Any,
+                ):
         """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
 
         :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient
@@ -81,10 +87,16 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         :type agent: Union[AgentProtocol, AgentFactory]
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
+        :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
+        :type thread_repository: Optional[AgentThreadRepository]
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         self._agent_or_factory: Union[AgentProtocol, AgentFactory] = agent
         self._resolved_agent: "Optional[AgentProtocol]" = None
+        self._hitl_helper = HumanInTheLoopHelper()
+        self._checkpoint_storage = InMemoryCheckpointStorage()
+        self._thread_repository = thread_repository
+
         # If agent is already instantiated, use it directly
         if isinstance(agent, AgentProtocol):
             self._resolved_agent = agent
@@ -284,24 +296,54 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
+            # TODO: load agent thread from storage and deserialize
+            agent_thread = None
+            if self._thread_repository:
+                agent_thread = await self._thread_repository.get(context.conversation_id)
+                if agent_thread:
+                    logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
+                else:
+                    agent_thread = agent.get_new_thread()
 
-            input_converter = AgentFrameworkInputConverter()
-            message = input_converter.transform_input(request_input)
+            last_checkpoint = None
+            if self._checkpoint_storage:
+                checkpoints = await self._checkpoint_storage.list_checkpoints()
+                last_checkpoint = checkpoints[-1] if len(checkpoints) > 0 else None
+                if last_checkpoint:
+                    summary = get_checkpoint_summary(last_checkpoint)
+                    logger.info(f"Last checkpoint summary status: {summary.status}")
+                    if summary.status == "completed":
+                        last_checkpoint = None  # Do not resume from completed checkpoints
+
+            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
+            message = await input_converter.transform_input(
+                request_input,
+                agent_thread=agent_thread,
+                checkpoint=last_checkpoint)
             logger.debug(f"Transformed input message type: {type(message)}")
 
             # Use split converters
             if context.stream:
                 logger.info("Running agent in streaming mode")
-                streaming_converter = AgentFrameworkOutputStreamingConverter(context)
+                streaming_converter = AgentFrameworkOutputStreamingConverter(context, hitl_helper=self._hitl_helper)
 
                 async def stream_updates():
                     try:
                         update_count = 0
-                        updates = agent.run_stream(message)
+                        updates = agent.run_stream(
+                            message,
+                            thread=agent_thread,
+                            checkpoint_storage=self._checkpoint_storage,
+                            checkpoint_id=last_checkpoint.checkpoint_id if last_checkpoint else None,
+                        )
                         async for event in streaming_converter.convert(updates):
                             update_count += 1
                             yield event
-
+                        
+                        if agent_thread and self._thread_repository:
+                            await self._thread_repository.set(context.conversation_id, agent_thread)
+                            logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+                            
                         logger.info("Streaming completed with %d updates", update_count)
                     finally:
                         # Close tool_client if it was created for this request
@@ -316,9 +358,16 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
-            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context)
-            result = await agent.run(message)
-            logger.debug(f"Agent run completed, result type: {type(result)}")
+            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
+            result = await agent.run(message,
+                        thread=agent_thread,
+                        checkpoint_storage=self._checkpoint_storage,
+                        checkpoint_id=last_checkpoint.checkpoint_id if last_checkpoint else None,
+                        )
+
+            if agent_thread and self._thread_repository:
+                await self._thread_repository.set(context.conversation_id, agent_thread)
+                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
             return transformed_result
@@ -340,3 +389,4 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                     logger.debug("Closed tool_client after request processing")
                 except Exception as ex:  # pylint: disable=broad-exception-caught
                     logger.warning(f"Error closing tool_client: {ex}")
+           
