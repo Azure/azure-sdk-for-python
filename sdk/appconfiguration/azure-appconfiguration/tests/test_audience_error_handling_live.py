@@ -5,16 +5,22 @@
 # --------------------------------------------------------------------------
 import pytest
 from azure.core.exceptions import ClientAuthenticationError
-from azure.appconfiguration import AzureAppConfigurationClient
 from azure.appconfiguration._audience_error_handling_policy import (
-    AudienceErrorHandlingPolicy,
-    NO_AUDIENCE_ERROR_MESSAGE,
+    AudienceErrorHandlingPolicy,\
     INCORRECT_AUDIENCE_ERROR_MESSAGE,
 )
 from testcase import AppConfigTestCase
 from preparers import app_config_aad_decorator
-from devtools_testutils import recorded_by_proxy
-from consts import KEY, LABEL
+from devtools_testutils import recorded_by_proxy\
+
+# cspell:disable-next-line
+AZCONFIG_DOMAIN = "azconfig.io" 
+CORRECT_AUDIENCE = f"https://{AZCONFIG_DOMAIN}"
+VALID_ENDPOINT_SUFFIX = f".{AZCONFIG_DOMAIN}"
+# cspell:disable-next-line
+INVALID_ENDPOINT_SUFFIX = ".azconfig.sovcloud-api.fr"
+# cspell:disable-next-line
+INCORRECT_AUDIENCE = "https://login.sovcloud-identity2.fr"
 
 
 class TestAudienceErrorHandlingLive(AppConfigTestCase):
@@ -45,7 +51,7 @@ class TestAudienceErrorHandlingLive(AppConfigTestCase):
     def test_client_has_audience_policy_with_audience(self, appconfiguration_endpoint_string):
         """Test that client created with audience has policy with has_audience=True."""
         # Create client with audience
-        client = self.create_aad_client(appconfiguration_endpoint_string, audience="https://azconfig.io")
+        client = self.create_aad_client(appconfiguration_endpoint_string, audience=CORRECT_AUDIENCE)
 
         # Check that audience error handling policy is in the pipeline
         policies = client._impl._client._pipeline._impl_policies
@@ -66,8 +72,8 @@ class TestAudienceErrorHandlingLive(AppConfigTestCase):
         """Test that correct error message is raised when incorrect audience is provided."""
         # Create client with invalid endpoint to trigger authentication error
         # Replace the endpoint domain with an invalid one to force audience mismatch
-        invalid_endpoint = appconfiguration_endpoint_string.replace(".azconfig.io", ".azconfig.sovcloud-api.fr")
-        client = self.create_aad_client(invalid_endpoint, audience="https://login.sovcloud-identity2.fr")
+        invalid_endpoint = appconfiguration_endpoint_string.replace(VALID_ENDPOINT_SUFFIX, INVALID_ENDPOINT_SUFFIX)
+        client = self.create_aad_client(invalid_endpoint, audience=INCORRECT_AUDIENCE)
 
         # Attempt operation that should fail with audience error
         with pytest.raises(ClientAuthenticationError) as exc_info:
