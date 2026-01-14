@@ -9,7 +9,7 @@ INGESTION_ENDPOINT = "ingestionendpoint"
 INSTRUMENTATION_KEY = "instrumentationkey"
 # cspell:disable-next-line
 AAD_AUDIENCE = "aadaudience"
-APPLICATION_ID = "applicationid" # cspell:disable-line
+APPLICATION_ID = "applicationid"  # cspell:disable-line
 
 # Validate UUID format
 # Specs taken from https://tools.ietf.org/html/rfc4122

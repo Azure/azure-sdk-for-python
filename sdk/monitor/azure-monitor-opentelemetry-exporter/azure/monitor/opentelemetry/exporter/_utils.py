@@ -433,6 +433,7 @@ def get_compute_type():
 def _get_sha256_hash(input_str: str) -> str:
     return hashlib.sha256(input_str.encode("utf-8")).hexdigest()
 
+
 def _get_application_id(connection_string: Optional[str]) -> Optional[str]:
     parsed_connection_string = ConnectionStringParser(connection_string)
     return parsed_connection_string.application_id
