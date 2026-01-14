@@ -15,6 +15,7 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     add_uri_regex_sanitizer,
     add_general_regex_sanitizer,
+    set_custom_default_matcher,
 )
 
 load_dotenv()
@@ -24,6 +25,21 @@ load_dotenv()
 def start_proxy(test_proxy):
     # Ensures the test proxy is started for the session
     return
+
+
+@pytest.fixture(scope="session", autouse=True)
+def configure_test_proxy_matcher(test_proxy):
+    """Configure the test proxy to ignore headers that differ between recording and playback.
+    
+    The User-Agent header changes between environments due to different Python versions,
+    OS versions, and CI build identifiers. Ignoring these headers ensures consistent
+    request matching during playback, especially for LRO polling where multiple identical
+    requests are made to the same endpoint.
+    """
+    set_custom_default_matcher(
+        ignored_headers="User-Agent, Accept, x-ms-client-request-id",
+        excluded_headers="Connection"
+    )
 
 
 # For security, please avoid record sensitive identity information in recordings
