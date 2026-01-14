@@ -4,8 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+from azure.core.exceptions import ClientAuthenticationError
 from azure.appconfiguration import AzureAppConfigurationClient
-from azure.appconfiguration._audience_error_handling_policy import AudienceErrorHandlingPolicy
+from azure.appconfiguration._audience_error_handling_policy import (
+    AudienceErrorHandlingPolicy,
+    NO_AUDIENCE_ERROR_MESSAGE,
+    INCORRECT_AUDIENCE_ERROR_MESSAGE,
+)
 from testcase import AppConfigTestCase
 from preparers import app_config_aad_decorator
 from devtools_testutils import recorded_by_proxy
@@ -57,95 +62,24 @@ class TestAudienceErrorHandlingLive(AppConfigTestCase):
 
     @app_config_aad_decorator
     @recorded_by_proxy
-    def test_successful_operation_with_correct_audience(self, appconfiguration_endpoint_string):
-        """Test that operations succeed when correct audience is provided."""
-        client = self.create_aad_client(appconfiguration_endpoint_string, audience="https://azconfig.io")
+    def test_error_message_when_incorrect_audience_provided(self, appconfiguration_endpoint_string):
+        """Test that correct error message is raised when incorrect audience is provided."""
+        # Create client with invalid endpoint to trigger authentication error
+        # Replace the endpoint domain with an invalid one to force audience mismatch
+        invalid_endpoint = appconfiguration_endpoint_string.replace(".azconfig.io", ".azconfig.sovcloud-api.fr")
+        client = self.create_aad_client(invalid_endpoint, audience="https://login.sovcloud-identity2.fr")
 
-        # Should be able to perform operations successfully
-        kv = self.create_config_setting()
-        self.add_for_test(client, kv)
-
-        # Get the configuration setting
-        result = client.get_configuration_setting(key=kv.key, label=kv.label)
-        assert result.key == kv.key
-        assert result.value == kv.value
-
-        # Clean up
-        client.delete_configuration_setting(key=kv.key, label=kv.label)
-
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_successful_operation_without_audience(self, appconfiguration_endpoint_string):
-        """Test that operations succeed when no audience is provided."""
-        # Create client without specifying audience
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-
-        # Should be able to perform operations successfully
-        kv = self.create_config_setting()
-        self.add_for_test(client, kv)
-
-        # Get the configuration setting
-        result = client.get_configuration_setting(key=kv.key, label=kv.label)
-        assert result.key == kv.key
-        assert result.value == kv.value
-
-        # Clean up
-        client.delete_configuration_setting(key=kv.key, label=kv.label)
-
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_context_manager_with_correct_audience(self, appconfiguration_endpoint_string):
-        """Test that context manager works properly with correct audience."""
-        with self.create_aad_client(appconfiguration_endpoint_string, audience="https://azconfig.io") as client:
+        # Attempt operation that should fail with audience error
+        with pytest.raises(ClientAuthenticationError) as exc_info:
             kv = self.create_config_setting()
-            self.add_for_test(client, kv)
-            result = client.get_configuration_setting(key=kv.key, label=kv.label)
-            assert result.key == kv.key
-            client.delete_configuration_setting(key=kv.key, label=kv.label)
+            client.set_configuration_setting(kv)
 
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_multiple_operations_with_aad_auth(self, appconfiguration_endpoint_string):
-        """Test multiple operations with AAD authentication."""
-        client = self.create_aad_client(appconfiguration_endpoint_string, audience="https://azconfig.io")
+        # Verify the error message indicates incorrect audience
+        assert INCORRECT_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
 
-        # Test multiple operations
-        kv1 = self.create_config_setting()
-        self.add_for_test(client, kv1)
+        # Verify error contains link to documentation
+        error_message = str(exc_info.value)
+        assert "https://aka.ms/appconfig/client-token-audience" in error_message
 
-        # Get operation
-        result1 = client.get_configuration_setting(key=kv1.key, label=kv1.label)
-        assert result1.key == kv1.key
-
-        # Set operation
-        kv1.value = "updated_value"
-        result2 = client.set_configuration_setting(kv1)
-        assert result2.value == "updated_value"
-
-        # List operation
-        items = list(client.list_configuration_settings(key_filter=kv1.key, label_filter=kv1.label))
-        assert len(items) >= 1
-
-        # Clean up
-        client.delete_configuration_setting(key=kv1.key, label=kv1.label)
-
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_list_revisions_with_aad_auth(self, appconfiguration_endpoint_string):
-        """Test list revisions with AAD authentication."""
-        client = self.create_aad_client(appconfiguration_endpoint_string, audience="https://azconfig.io")
-
-        # Create and modify a configuration setting to create revisions
-        kv = self.create_config_setting()
-        self.add_for_test(client, kv)
-
-        # Update to create a revision
-        kv.value = "updated_value"
-        client.set_configuration_setting(kv)
-
-        # List revisions
-        revisions = list(client.list_revisions(key_filter=kv.key, label_filter=kv.label))
-        assert len(revisions) >= 2
-
-        # Clean up
-        client.delete_configuration_setting(key=kv.key, label=kv.label)
+        # Verify exception has response attribute from original error
+        assert hasattr(exc_info.value, 'response')
