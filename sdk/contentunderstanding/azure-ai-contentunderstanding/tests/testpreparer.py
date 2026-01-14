@@ -33,6 +33,7 @@ class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
                 ContentUnderstandingClient,
                 credential=credential,
                 endpoint=endpoint,
+                polling_interval=3,  # Use 3-second polling interval for test stability
             ),
         )
 

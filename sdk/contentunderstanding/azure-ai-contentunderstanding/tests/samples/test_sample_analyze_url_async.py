@@ -106,8 +106,9 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         print(f"[PASS] Analyzing video from URL: {url}")
 
         # Analyze the video
+        # Use 10-second polling interval for video analysis (longer processing time)
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(url=url)]
+            analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10
         )
 
         result = await poller.result()
@@ -151,8 +152,9 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         print(f"[PASS] Analyzing audio from URL: {url}")
 
         # Analyze the audio
+        # Use 10-second polling interval for audio analysis (longer processing time)
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(url=url)]
+            analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10
         )
         
         result = await poller.result()

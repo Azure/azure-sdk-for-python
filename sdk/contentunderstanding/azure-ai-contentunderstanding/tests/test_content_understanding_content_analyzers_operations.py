@@ -846,7 +846,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         poller = client.begin_analyze(
             analyzer_id="prebuilt-invoice",
             inputs=[AnalyzeInput(url=document_url)],
-            polling_interval=1,
         )
 
         # Wait for completion

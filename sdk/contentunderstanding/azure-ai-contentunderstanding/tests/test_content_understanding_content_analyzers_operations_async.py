@@ -1222,7 +1222,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice",
             inputs=[AnalyzeInput(url=document_url)],
-            polling_interval=1,
         )
 
         # Wait for completion

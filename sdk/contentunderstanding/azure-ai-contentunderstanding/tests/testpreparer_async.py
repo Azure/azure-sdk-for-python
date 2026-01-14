@@ -34,6 +34,7 @@ class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
                 credential=credential,
                 endpoint=endpoint,
                 connection_verify=False,  # Disable SSL verification for localhost
+                polling_interval=3,  # Use 3-second polling interval for test stability
             ),
         )
 
