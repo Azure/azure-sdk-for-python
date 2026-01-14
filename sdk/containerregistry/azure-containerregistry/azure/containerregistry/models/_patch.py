@@ -8,6 +8,11 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from ._enums import ArtifactManifestOrder, ArtifactTagOrder
+
+ArtifactManifestOrder.__doc__ = ":no-index:\n\n" + (ArtifactManifestOrder.__doc__ or "")
+    ArtifactTagOrder.__doc__ = ":no-index:\n\n" + (ArtifactTagOrder.__doc__ or "")
+
 
 __all__: list[str] = []  # Add all objects you want publicly available to users at this package level
 
