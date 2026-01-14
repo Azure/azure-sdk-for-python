@@ -213,10 +213,10 @@ class TestQueryFeedRangeAsync:
         print(f"Found {len(expected_pk_values)} unique partition keys before split")
 
         # Trigger split
-        # await test_config.TestConfig.trigger_split_async(container, target_throughput)
-        container.replace_throughput(target_throughput)
+        await test_config.TestConfig.trigger_split_async(container, target_throughput)
+        # container.replace_throughput(target_throughput)
         # wait for the split to begin
-        time.sleep(20)
+        # time.sleep(20)
 
         # Test 1: Basic query with stale feed ranges (SDK should handle split)
         actual_pk_values = set()
@@ -267,7 +267,7 @@ class TestQueryFeedRangeAsync:
         assert initial_sum == post_split_sum, f"Sum mismatch: before={initial_sum}, after={post_split_sum}"
         print("Test 4 (sum aggregate with stale feed ranges) passed")
 
-    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_async_during_partition_split_combined_async")
+    # @pytest.mark.skip(reason="Covered by test_query_with_feed_range_async_during_partition_split_combined_async")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     async def test_query_with_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
@@ -276,7 +276,7 @@ class TestQueryFeedRangeAsync:
         expected_pk_values = set(PK_VALUES)
         actual_pk_values = set()
 
-        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges(force_refresh=True)]
         await test_config.TestConfig.trigger_split_async(container, 11000)
         for feed_range in feed_ranges:
             items = [item async for item in
