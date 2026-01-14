@@ -36,7 +36,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             key = key.encode('utf-8')
         self.bsc = BlobServiceClient(
             account_url,
-            credential=key,
+            credential=key.secret,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024)

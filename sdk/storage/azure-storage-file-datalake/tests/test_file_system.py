@@ -41,7 +41,7 @@ TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 class TestFileSystem(StorageRecordedTestCase):
     def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, account_key)
+        self.dsc = DataLakeServiceClient(url, account_key.secret)
         self.config = self.dsc._config
         self.test_file_systems = []
 
@@ -411,7 +411,7 @@ class TestFileSystem(StorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             datalake_storage_account_name,
-            datalake_storage_account_key,
+            datalake_storage_account_key.secret,
             ResourceTypes(service=True),
             AccountSasPermissions(list=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -483,7 +483,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key.secret)
         # Act
         filesystems = list(dsc.list_file_systems(include_system=True))
 
@@ -712,8 +712,8 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        dsc2 = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
-        with DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key) as ds_client:
+        dsc2 = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key.secret)
+        with DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key.secret) as ds_client:
             fs1 = ds_client.create_file_system(self._get_file_system_reference(prefix="fs1"))
             fs1.delete_file_system()
         dsc2.create_file_system(self._get_file_system_reference(prefix="fs2"))
