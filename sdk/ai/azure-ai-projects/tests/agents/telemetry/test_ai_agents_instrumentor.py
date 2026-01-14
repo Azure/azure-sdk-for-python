@@ -12,11 +12,6 @@ from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
 
-from azure.ai.projects.models import (
-    Reasoning,
-    FunctionTool,
-    ResponseTextFormatConfigurationText,
-)
 from devtools_testutils import (
     recorded_by_proxy,
 )
@@ -24,7 +19,6 @@ from devtools_testutils import (
 from test_base import servicePreparer
 from test_ai_instrumentor_base import (
     TestAiAgentsInstrumentorBase,
-    MessageCreationMode,
     CONTENT_TRACING_ENV_VARIABLE,
 )
 

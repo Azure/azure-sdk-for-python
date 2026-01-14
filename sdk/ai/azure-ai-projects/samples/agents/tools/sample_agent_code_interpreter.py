@@ -28,7 +28,7 @@ import tempfile
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto
+from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterContainerAuto
 
 load_dotenv()
 
@@ -48,7 +48,7 @@ with (
 
     # Upload the CSV file for the code interpreter
     file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
-    tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
+    tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))
     # [END tool_declaration]
 
     print(f"File uploaded (id: {file.id})")

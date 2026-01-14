@@ -2756,7 +2756,7 @@ class CodeBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="code"):
 
 
 class CodeInterpreterContainerAuto(_Model):
-    """CodeInterpreterToolAuto.
+    """CodeInterpreterContainerAuto.
 
     :ivar type: Always ``auto``. Required. Default value is "auto".
     :vartype type: str
