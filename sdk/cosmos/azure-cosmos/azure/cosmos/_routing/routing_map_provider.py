@@ -70,32 +70,24 @@ class PartitionKeyRangeCache(object):
             # this method, which triggers _ReadPartitionKeyRanges. If that query also goes through
             # the 410 retry logic and calls refresh again, we get infinite recursion.
             _LOGGER.debug(
-                "PK range cache: Initializing routing map for collection_id=%s. "
-                "Setting _internal_pk_range_fetch=True to prevent recursive 410 retry.",
+                "PK range cache: Initializing routing map for collection_id=%s with "
+                "_internal_pk_range_fetch=True to prevent recursive 410 retry.",
                 collection_id
             )
             pk_range_kwargs = {**kwargs, "_internal_pk_range_fetch": True}
             collection_pk_ranges = list(self._documentClient._ReadPartitionKeyRanges(collection_link,
                                                                                      feed_options,
                                                                                      **pk_range_kwargs))
-            _LOGGER.debug(
-                "PK range cache: Retrieved %d partition key ranges for collection_id=%s",
-                len(collection_pk_ranges), collection_id
-            )
             # for large collections, a split may complete between the read partition key ranges query page responses,
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
             # to discard the parent ranges to have a valid routing map.
-            collection_pk_ranges = PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges)
-            _LOGGER.debug(
-                "PK range cache: After discarding parent ranges, %d ranges remain for collection_id=%s",
-                len(collection_pk_ranges), collection_id
-            )
+            collection_pk_ranges = list(PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges))
             collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(
                 [(r, True) for r in collection_pk_ranges], collection_id
             )
             self._collection_routing_map_by_item[collection_id] = collection_routing_map
-            _LOGGER.info(
-                "PK range cache: Successfully cached routing map for collection_id=%s with %d ranges",
+            _LOGGER.debug(
+                "PK range cache: Cached routing map for collection_id=%s with %d ranges",
                 collection_id, len(collection_pk_ranges)
             )
 

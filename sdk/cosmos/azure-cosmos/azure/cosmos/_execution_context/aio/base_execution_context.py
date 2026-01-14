@@ -154,21 +154,11 @@ class _QueryExecutionContextBase(object):
         if is_pk_range_fetch:
             # For partition key range queries, just execute without 410 partition split retry
             # The underlying retry utility will still handle other transient errors
-            _LOGGER.debug(
-                "Partition split retry (async): Skipping 410 retry logic for internal PK range fetch "
-                "(is_pk_range_fetch=%s) to prevent recursion",
-                is_pk_range_fetch
-            )
+            _LOGGER.debug("Partition split retry (async): Skipping 410 retry for internal PK range fetch")
             return await execute_fetch()
 
         max_retries = 3
         attempt = 0
-
-        _LOGGER.debug(
-            "Partition split retry (async): Starting query execution with max_retries=%d, "
-            "_has_started=%s, _continuation=%s",
-            max_retries, self._has_started, self._continuation
-        )
 
         while attempt <= max_retries:
             try:
@@ -178,47 +168,27 @@ class _QueryExecutionContextBase(object):
                     attempt += 1
                     if attempt > max_retries:
                         _LOGGER.error(
-                            "Partition split retry (async): Exhausted all %d retries for partition split. "
-                            "Propagating error. Final state: _has_started=%s, _continuation=%s",
+                            "Partition split retry (async): Exhausted all %d retries. "
+                            "state: _has_started=%s, _continuation=%s",
                             max_retries, self._has_started, self._continuation
                         )
                         raise  # Exhausted retries, propagate error
 
                     _LOGGER.warning(
-                        "Partition split retry (async): Received 410 partition split error "
-                        "(status_code=%d, sub_status=%s). Attempt %d of %d. "
-                        "Current state: _has_started=%s, _continuation=%s",
-                        e.status_code,
+                        "Partition split retry (async): 410 error (sub_status=%s). Attempt %d of %d. "
+                        "Refreshing routing map and resetting state.",
                         getattr(e, 'sub_status', 'N/A'),
                         attempt,
-                        max_retries,
-                        self._has_started,
-                        self._continuation
+                        max_retries
                     )
 
                     # Refresh routing map to get new partition key ranges
-                    _LOGGER.info(
-                        "Partition split retry (async): Refreshing routing map provider and resetting state. "
-                        "Before reset: _has_started=%s, _continuation=%s",
-                        self._has_started, self._continuation
-                    )
                     self._client.refresh_routing_map_provider()
                     # Reset execution context state to allow retry from the beginning
                     self._has_started = False
                     self._continuation = None
-                    _LOGGER.debug(
-                        "Partition split retry (async): State reset complete. "
-                        "After reset: _has_started=%s, _continuation=%s. Retrying...",
-                        self._has_started, self._continuation
-                    )
                     # Retry immediately (no backoff needed for partition splits)
                     continue
-                _LOGGER.debug(
-                    "Partition split retry (async): Received non-partition-split error "
-                    "(status_code=%d, sub_status=%s). Propagating error.",
-                    e.status_code,
-                    getattr(e, 'sub_status', 'N/A')
-                )
                 raise  # Not a partition split error, propagate immediately
 
         # This should never be reached, but added for safety
