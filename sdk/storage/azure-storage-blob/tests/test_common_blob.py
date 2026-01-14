@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 from io import BytesIO
-from urllib.parse import parse_qsl, quote, urlparse, urlunparse
+from urllib.parse import quote, urlencode
 
 from azure.mgmt.storage import StorageManagementClient
 
@@ -3794,13 +3794,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         def callback(request):
             for k, v in request_headers.items():
                 request.http_request.headers[k] = v
-
-            parsed_url = urlparse(request.http_request.url)
-            existing_queries = dict(parse_qsl(parsed_url.query))
-            quoted_query_params = {k: quote(v) for k, v in request_query_params.items()}
-            new_queries = {**existing_queries, **quoted_query_params}
-            url = urlunparse(parsed_url._replace(query="&".join([f"{k}={v}" for k, v in new_queries.items()])))
-            request.http_request.url = url
+            extra = urlencode(request_query_params, quote_via=quote, safe="")
+            request.http_request.url = request.http_request.url + "&" + extra
 
         identity_blob = BlobClient.from_blob_url(f"{blob.url}?{blob_token}", credential=token_credential)
         props = identity_blob.get_blob_properties(raw_request_hook=callback)
