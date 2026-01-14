@@ -34,7 +34,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._generated.models import (
     ContextTagKeys,
     MessageData,
@@ -108,6 +107,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def __init__(self, **kwargs: Any):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
+        self.application_id = _utils._get_application_id(self._connection_string)
 
     def export(
         self, spans: Sequence[ReadableSpan], **kwargs: Any  # pylint: disable=unused-argument
@@ -120,15 +120,13 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = []
-        parsed_connection_string = ConnectionStringParser(self._connection_string)
-        application_id = parsed_connection_string.application_id
 
         if spans and self._should_collect_otel_resource_metric():
             resource = None
             try:
                 tracer_provider = self._tracer_provider or get_tracer_provider()
                 resource = tracer_provider.resource  # type: ignore
-                envelopes.append(self._get_otel_resource_envelope(resource, application_id))
+                envelopes.append(self._get_otel_resource_envelope(resource, self.application_id))
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)  # pylint: disable=C4769
         for span in spans:
