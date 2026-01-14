@@ -194,8 +194,8 @@ def _default_sampling_ratio(configurations):
     elif sampler_type in (FIXED_PERCENTAGE_SAMPLER,"microsoft.fixed.percentage"): # to support older string
         try:
             sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
-            if sampler_value < 0.0:
-                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+            if sampler_value < 0.0 or sampler_value > 1.0:
+                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1.")
                 sampler_value = default_value
             else:
                 _logger.info("Using sampling ratio: %s", sampler_value)

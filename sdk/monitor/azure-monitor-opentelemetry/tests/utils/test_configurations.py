@@ -239,7 +239,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["sampling_ratio"], 10.45)
+        self.assertEqual(configurations["sampling_ratio"], 1.0)
 
     @patch.dict(
         "os.environ",
