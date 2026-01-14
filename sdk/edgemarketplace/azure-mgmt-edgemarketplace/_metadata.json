@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-10-01-preview",
+  "commit": "06616874d9002bb259ca541be63272c3a4edafa8",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/edgemarketplace/Microsoft.EdgeMarketPlace.Management",
+  "emitterVersion": "0.57.0"
+}
