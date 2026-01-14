@@ -174,7 +174,7 @@ def _default_sampling_ratio(configurations):
     # Handle rate-limited sampler
     if sampler_type == RATE_LIMITED_SAMPLER:
         try:
-            sampler_value = float(sampler_arg)
+            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
             if sampler_value < 0.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
                 sampler_value = default_value
@@ -191,9 +191,9 @@ def _default_sampling_ratio(configurations):
             configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value
 
     # Handle fixed percentage sampler
-    elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
+    elif sampler_type in (FIXED_PERCENTAGE_SAMPLER,"microsoft.fixed.percentage"): # to support older string
         try:
-            sampler_value = float(sampler_arg)
+            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
             if sampler_value < 0.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
                 sampler_value = default_value

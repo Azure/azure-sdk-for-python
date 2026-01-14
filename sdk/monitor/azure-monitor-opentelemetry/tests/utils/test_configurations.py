@@ -224,6 +224,26 @@ class TestConfigurations(TestCase):
     @patch.dict(
         "os.environ",
         {
+            OTEL_TRACES_SAMPLER: "microsoft.fixed.percentage",
+            OTEL_TRACES_SAMPLER_ARG: "10.45",
+            OTEL_TRACES_EXPORTER: "False",
+            OTEL_LOGS_EXPORTER: "no",
+            OTEL_METRICS_EXPORTER: "True",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_validation_check_backward_compatibility(self, resource_create_mock):
+        configurations = _get_configurations()
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], False)
+        self.assertEqual(configurations["disable_metrics"], False)
+        self.assertEqual(configurations["disable_tracing"], False)
+        self.assertEqual(configurations["sampling_ratio"], 10.45)
+
+    @patch.dict(
+        "os.environ",
+        {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "django , urllib3,previewlib1,azure_sdk",
         },
         clear=True,
