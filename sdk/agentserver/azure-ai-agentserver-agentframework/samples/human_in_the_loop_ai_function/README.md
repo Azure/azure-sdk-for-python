@@ -24,7 +24,7 @@ Follow these steps from this folder:
 1) Start the agent server (defaults to 0.0.0.0:8088):
 
 ```bash
-python minimal_example.py
+python main.py
 ```
 
 2) Send a non-streaming request (returns a single JSON response):
@@ -33,7 +33,7 @@ python minimal_example.py
 curl -sS \
   -H "Content-Type: application/json" \
   -X POST http://localhost:8088/responses \
-  -d "{\"input\":\"What's the weather like in Seattle?\",\"stream\":false}"
+  -d "{\"input\":\"Add a dentist appointment on March 15th\",\"stream\":false}"
 ```
 
 3) Send a streaming request (server-sent events). Use -N to disable curl buffering:
@@ -42,5 +42,5 @@ curl -sS \
 curl -N \
   -H "Content-Type: application/json" \
   -X POST http://localhost:8088/responses \
-  -d "{\"input\":\"What's the weather like in New York?\",\"stream\":true}"
+  -d "{\"input\":\"Add a dentist appointment on March 15th\",\"stream\":true}"
 ```
