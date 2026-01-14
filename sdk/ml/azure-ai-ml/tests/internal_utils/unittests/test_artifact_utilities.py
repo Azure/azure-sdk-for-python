@@ -61,7 +61,7 @@ class TestArtifactUtilities:
         mock_operations = Mock()
         mock_operations.get.return_value = mock_datastore
         mock_operations._credential = Mock()
-        
+
         # Mock _list_secrets to return a SAS token
         mock_secrets = Mock()
         mock_secrets.sas_token = "generated-sas-token"
@@ -94,7 +94,7 @@ class TestArtifactUtilities:
         mock_operations = Mock()
         mock_operations.get.return_value = mock_datastore
         mock_operations._credential = Mock()
-        
+
         # Mock _list_secrets to return a SAS token
         mock_secrets = Mock()
         mock_secrets.sas_token = "generated-sas-token-from-key"
