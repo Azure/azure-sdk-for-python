@@ -191,7 +191,7 @@ def _default_sampling_ratio(configurations):
             configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value
 
     # Handle fixed percentage sampler
-    elif sampler_type in (FIXED_PERCENTAGE_SAMPLER,"microsoft.fixed.percentage"): # to support older string
+    elif sampler_type in (FIXED_PERCENTAGE_SAMPLER, "microsoft.fixed.percentage"):  # to support older string
         try:
             sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
             if sampler_value < 0.0 or sampler_value > 1.0:
