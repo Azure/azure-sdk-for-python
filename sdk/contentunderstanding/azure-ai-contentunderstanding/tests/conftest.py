@@ -79,11 +79,13 @@ def add_sanitizers(test_proxy):
     )
     
     # Sanitize Operation-Location headers specifically (used by LRO polling)
-    # This ensures the poller uses the correct endpoint URL
+    # This ensures the poller uses the correct endpoint URL during playback
+    # IMPORTANT: Do NOT use lookahead (?=...) as it doesn't consume the match,
+    # causing double-domain bugs (e.g., Sanitized.services.ai.azure.com.services.ai.azure.com)
     add_header_regex_sanitizer(
         key="Operation-Location",
         value="https://Sanitized.services.ai.azure.com",
-        regex="https://[^/]+(?=\\.services\\.ai\\.azure\\.com)"
+        regex=r"https://[a-zA-Z0-9\-]+\.services\.ai\.azure\.com"
     )
 
     # Sanitize Ocp-Apim-Subscription-Key header (where the API key is sent)
