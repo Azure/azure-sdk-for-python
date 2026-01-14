@@ -41,7 +41,7 @@ class TestServiceStats(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bs = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bs = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         # Act
         stats = bs.get_service_stats()
@@ -60,7 +60,7 @@ class TestServiceStats(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bs = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bs = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         # Act
         stats = bs.get_service_stats()
