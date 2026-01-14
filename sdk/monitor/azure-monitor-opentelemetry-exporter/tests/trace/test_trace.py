@@ -138,7 +138,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             transmit.return_value = ExportResult.FAILED_RETRYABLE
             storage_mock = mock.Mock()
             exporter.storage.put = storage_mock
-            exporter._connection_string = "InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=3cd3dd3f-64cc-4d7c-9303-8d69a4bb8558"
+            exporter._connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=4321abcd-5678-4efa-8abc-1234567890ab"
             result = exporter.export([test_span])
         self.assertEqual(result, SpanExportResult.FAILURE)
         self.assertEqual(storage_mock.call_count, 1)
