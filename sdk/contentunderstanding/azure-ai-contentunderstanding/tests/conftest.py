@@ -29,16 +29,23 @@ def start_proxy(test_proxy):
 
 @pytest.fixture(scope="session", autouse=True)
 def configure_test_proxy_matcher(test_proxy):
-    """Configure the test proxy to ignore headers that differ between recording and playback.
+    """Configure the test proxy to handle LRO polling request matching.
     
-    The User-Agent header changes between environments due to different Python versions,
-    OS versions, and CI build identifiers. Ignoring these headers ensures consistent
-    request matching during playback, especially for LRO polling where multiple identical
-    requests are made to the same endpoint.
+    LRO operations (like begin_analyze) make multiple identical GET requests to poll status.
+    The test proxy must match these requests in the correct order. We configure:
+    
+    1. compare_bodies=False: Don't match on body content (polling requests have no body)
+    2. excluded_headers: Completely exclude these headers from matching consideration.
+       These headers vary between recording and playback environments:
+       - User-Agent: Contains Python version, OS version, CI build info
+       - x-ms-client-request-id: Unique per request
+       - x-ms-request-id: Server-generated, varies per call
+       - Authorization: Different auth tokens between environments
+       - Content-Length: May vary
     """
     set_custom_default_matcher(
-        ignored_headers="User-Agent, Accept, x-ms-client-request-id",
-        excluded_headers="Connection"
+        compare_bodies=False,
+        excluded_headers="User-Agent,x-ms-client-request-id,x-ms-request-id,Authorization,Content-Length,Accept,Connection"
     )
 
 
