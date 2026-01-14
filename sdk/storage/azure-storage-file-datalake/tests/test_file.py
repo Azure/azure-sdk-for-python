@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
-from urllib.parse import parse_qsl, quote, urlparse, urlunparse
+from urllib.parse import quote, urlencode
 
 import pytest
 from azure.core import MatchConditions
@@ -1824,13 +1824,8 @@ class TestFile(StorageRecordedTestCase):
         def callback(request):
             for k, v in request_headers.items():
                 request.http_request.headers[k] = v
-
-            parsed_url = urlparse(request.http_request.url)
-            existing_queries = dict(parse_qsl(parsed_url.query))
-            quoted_query_params = {k: quote(v) for k, v in request_query_params.items()}
-            new_queries = {**existing_queries, **quoted_query_params}
-            url = urlunparse(parsed_url._replace(query="&".join([f"{k}={v}" for k, v in new_queries.items()])))
-            request.http_request.url = url
+            extra = urlencode(request_query_params, quote_via=quote, safe="")
+            request.http_request.url = request.http_request.url + "&" + extra
 
         identity_file = DataLakeFileClient(
             self.account_url(datalake_storage_account_name, 'dfs'),
