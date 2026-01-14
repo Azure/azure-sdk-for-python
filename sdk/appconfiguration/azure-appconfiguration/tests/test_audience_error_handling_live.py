@@ -82,4 +82,4 @@ class TestAudienceErrorHandlingLive(AppConfigTestCase):
         assert "https://aka.ms/appconfig/client-token-audience" in error_message
 
         # Verify exception has response attribute from original error
-        assert hasattr(exc_info.value, 'response')
+        assert hasattr(exc_info.value, "response")

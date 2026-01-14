@@ -85,7 +85,6 @@ class AzureAppConfigurationClient:
         if audience is None:
             audience = get_audience(base_url)
 
-        audience = kwargs.pop("audience", get_audience(base_url))
         # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
         kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
 
