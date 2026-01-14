@@ -169,12 +169,13 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
     def init_tracing(self):
         try:
             otel_exporter_endpoint = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
+            otel_exporter_protocol = os.environ.get(AdapterConstants.OTEL_EXPORTER_OTLP_PROTOCOL)
             app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
             project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
             exporters = []
             if otel_exporter_endpoint:
-                otel_exporter = self._create_otlp_exporter(otel_exporter_endpoint)
+                otel_exporter = self._create_otlp_exporter(otel_exporter_endpoint, protocol=otel_exporter_protocol)
                 if otel_exporter:
                     exporters.append(otel_exporter)
             if app_insights_conn_str:
@@ -199,11 +200,16 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             logger.error(f"Failed to create Application Insights exporter: {e}", exc_info=True)
             return None
 
-    def _create_otlp_exporter(self, endpoint):
+    def _create_otlp_exporter(self, endpoint, protocol=None):
         try:
-            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+            if protocol and protocol.lower() in ("http", "http/protobuf", "http/json"):
+                    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 
-            return OTLPSpanExporter(endpoint=endpoint)
+                    return OTLPSpanExporter(endpoint=endpoint)
+            else:
+                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+
+                return OTLPSpanExporter(endpoint=endpoint)
         except Exception as e:
             logger.error(f"Failed to create OTLP exporter: {e}", exc_info=True)
             return None
