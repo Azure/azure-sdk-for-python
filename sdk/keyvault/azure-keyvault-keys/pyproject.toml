@@ -47,6 +47,10 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-build]
 pyright = false
 
+[tool.azure-sdk-conda]
+in_bundle = true 
+bundle_name = "azure-keyvault"
+
 [tool.uv.sources]
 azure-core = { path = "../../core/azure-core" }
 azure-keyvault-nspkg = { path = "../../nspkg/azure-keyvault-nspkg" }

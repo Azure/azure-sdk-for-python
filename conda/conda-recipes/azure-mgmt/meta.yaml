@@ -75,7 +75,7 @@ test:
     - azure.mgmt.applicationinsights.v2022_06_15.aio.operations
     - azure.mgmt.applicationinsights.v2022_06_15.models
     - azure.mgmt.applicationinsights.v2022_06_15.operations
-    - azure-mgmt-arizeaiobservabilityeval
+    - azure.mgmt.arizeaiobservabilityeval
     - azure.mgmt.arizeaiobservabilityeval.aio
     - azure.mgmt.arizeaiobservabilityeval.aio.operations
     - azure.mgmt.arizeaiobservabilityeval.models
@@ -152,7 +152,7 @@ test:
     - azure.mgmt.botservice.aio.operations
     - azure.mgmt.botservice.models
     - azure.mgmt.botservice.operations
-    - azure-mgmt-carbonoptimization
+    - azure.mgmt.carbonoptimization
     - azure.mgmt.carbonoptimization.aio
     - azure.mgmt.carbonoptimization.aio.operations
     - azure.mgmt.carbonoptimization.models
@@ -421,7 +421,7 @@ test:
     - azure.mgmt.hanaonazure.aio.operations
     - azure.mgmt.hanaonazure.models
     - azure.mgmt.hanaonazure.operations
-    - azure-mgmt-hardwaresecuritymodules
+    - azure.mgmt.hardwaresecuritymodules
     - azure.mgmt.hardwaresecuritymodules.aio
     - azure.mgmt.hardwaresecuritymodules.aio.operations
     - azure.mgmt.hardwaresecuritymodules.models
@@ -517,7 +517,7 @@ test:
     - azure.mgmt.labservices.aio.operations
     - azure.mgmt.labservices.models
     - azure.mgmt.labservices.operations
-    - azure-mgmt-lambdatesthyperexecute
+    - azure.mgmt.lambdatesthyperexecute
     - azure.mgmt.lambdatesthyperexecute.aio
     - azure.mgmt.lambdatesthyperexecute.aio.operations
     - azure.mgmt.lambdatesthyperexecute.models
@@ -612,7 +612,7 @@ test:
     - azure.mgmt.mongocluster.aio.operations
     - azure.mgmt.mongocluster.models
     - azure.mgmt.mongocluster.operations
-    - azure-mgmt-mongodbatlas
+    - azure.mgmt.mongodbatlas
     - azure.mgmt.mongodbatlas.aio
     - azure.mgmt.mongodbatlas.aio.operations
     - azure.mgmt.mongodbatlas.models
@@ -732,7 +732,7 @@ test:
     - azure.mgmt.privatedns.aio.operations
     - azure.mgmt.privatedns.models
     - azure.mgmt.privatedns.operations
-    - azure-mgmt-purestorageblock
+    - azure.mgmt.purestorageblock
     - azure.mgmt.purestorageblock.aio
     - azure.mgmt.purestorageblock.aio.operations
     - azure.mgmt.purestorageblock.models
@@ -793,7 +793,7 @@ test:
     - azure.mgmt.recoveryservicesbackup.passivestamp.aio.operations
     - azure.mgmt.recoveryservicesbackup.passivestamp.models
     - azure.mgmt.recoveryservicesbackup.passivestamp.operations
-    - azure-mgmt-recoveryservicesdatareplication
+    - azure.mgmt.recoveryservicesdatareplication
     - azure.mgmt.recoveryservicesdatareplication.aio
     - azure.mgmt.recoveryservicesdatareplication.aio.operations
     - azure.mgmt.recoveryservicesdatareplication.models
@@ -974,7 +974,7 @@ test:
     - azure.mgmt.storage.aio.operations
     - azure.mgmt.storage.models
     - azure.mgmt.storage.operations
-    - azure-mgmt-storageactions
+    - azure.mgmt.storageactions
     - azure.mgmt.storageactions.aio
     - azure.mgmt.storageactions.aio.operations
     - azure.mgmt.storageactions.models

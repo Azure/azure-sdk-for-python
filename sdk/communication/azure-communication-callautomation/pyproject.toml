@@ -1,3 +1,7 @@
 [tool.azure-sdk-build]
 pyright = false
 verifytypes = false
+
+[tool.azure-sdk-conda]
+in_bundle = true 
+bundle_name = "azure-communication"

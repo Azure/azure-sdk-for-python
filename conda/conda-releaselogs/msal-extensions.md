@@ -1,5 +1,11 @@
 # Microsoft Authentication Extensions for Python (conda)
 
+## 2026.03.01
+
+### Packages included
+
+- msal-extensions-1.3.1
+
 ## 2025.12.01
 
 ### Packages included
