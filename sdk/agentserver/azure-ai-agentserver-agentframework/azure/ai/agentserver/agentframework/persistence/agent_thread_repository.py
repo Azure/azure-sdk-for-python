@@ -10,11 +10,9 @@ class AgentThreadRepository(ABC):
     """AgentThread repository to manage saved thread messages of agent threads and workflows."""
 
     @abstractmethod
-    async def get(self, agent: AgentProtocol, conversation_id: str) -> Optional[AgentThread]:
+    async def get(self, conversation_id: str) -> Optional[AgentThread]:
         """Retrieve the savedt thread for a given conversation ID.
 
-        :param agent: The agent instance.
-        :type agent: AgentProtocol
         :param conversation_id: The conversation ID.
         :type conversation_id: str
 
@@ -38,11 +36,9 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
     def __init__(self) -> None:
         self._inventory: dict[str, AgentThread] = {}
 
-    async def get(self, agent: AgentProtocol, conversation_id: str) -> Optional[AgentThread]:
+    async def get(self, conversation_id: str) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
 
-        :param agent: The agent instance.
-        :type agent: AgentProtocol
         :param conversation_id: The conversation ID.
         :type conversation_id: str
 
