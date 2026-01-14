@@ -3,21 +3,6 @@
 
 """
 Sync unit tests for partition split (410) retry logic.
-These tests use mocks.
-
-For async tests, see test_partition_split_retry_unit_async.py
-
-IMPORTANT - Running without Emulator:
-=====================================
-The conftest.py in this directory creates a CosmosClient at import time,
-which requires the emulator to be running. To run these unit tests WITHOUT
-the emulator, use unittest directly instead of pytest:
-
-    cd tests
-    python -m unittest test_partition_split_retry_unit -v
-
-When running via IDE (which uses pytest), the emulator must be running
-because conftest.py will try to connect before any tests run.
 """
 
 import unittest
@@ -29,9 +14,9 @@ from azure.cosmos._execution_context.base_execution_context import _DefaultQuery
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
 
-# =============================================================================
+# =================================
 # Shared Test Helpers
-# =============================================================================
+# =================================
 
 class MockGlobalEndpointManager:
     """Mock global endpoint manager for testing."""
@@ -68,27 +53,21 @@ def raise_410_partition_split_error(*args, **kwargs):
     raise create_410_partition_split_error()
 
 
-# =============================================================================
+# ==========================
 # Test Class
-# =============================================================================
+# ==========================
 
 @pytest.mark.cosmosEmulator
 class TestPartitionSplitRetryUnit(unittest.TestCase):
     """
     Sync unit tests for 410 partition split retry logic.
-    These tests mock all dependencies and don't require emulator.
     """
 
     def test_execution_context_state_reset_on_partition_split(self):
         """
         Test that execution context state is properly reset on 410 partition split retry.
-
-        Verifies the fix for a bug where the while loop in _fetch_items_helper_no_retries
+        Verifies the fix where the while loop in _fetch_items_helper_no_retries
         would not execute after a retry because _has_started was still True.
-
-        The while loop condition: self._continuation or not self._has_started
-        - Without state reset: None or not True = False (loop doesn't run - BUG)
-        - With state reset: None or not False = True (loop runs correctly - FIX)
         """
         mock_client = MockClient()
 
@@ -104,7 +83,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         # Verify the loop condition without state reset - this is false
         loop_condition_without_reset = context._continuation or not context._has_started
         assert not loop_condition_without_reset, \
-            "Without state reset, loop condition should be False - this demonstrates the bug!"
+            "Without state reset, loop condition should be False"
 
         # Verify _fetch_items_helper_no_retries returns empty when state is not reset
         fetch_was_called = [False]
@@ -126,7 +105,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         # verify the loop condition with state reset
         loop_condition_with_reset = context._continuation or not context._has_started
         assert loop_condition_with_reset, \
-            "With state reset, loop condition should be True - this verifies the fix!"
+            "With state reset, loop condition should be True"
 
         # verify _fetch_items_helper_no_retries works after state reset
         result = context._fetch_items_helper_no_retries(tracking_fetch)
@@ -176,7 +155,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         4. If _ReadPartitionKeyRanges also uses 410 retry logic and gets a 410,
            it would call refresh_routing_map_provider() again, creating infinite recursion
 
-        This test verifies that queries with _internal_pk_range_fetch=True do nt
+        This test verifies that queries with _internal_pk_range_fetch=True do not
         trigger the 410 retry with refresh logic.
         """
         mock_client = MockClient()
@@ -199,7 +178,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             "Execute should only be called once - no retry for PK range queries"
 
     @patch('azure.cosmos._retry_utility.Execute')
-    def test_recursion_problem_demonstration(self, mock_execute):
+    def test_410_retry_behavior_with_and_without_pk_range_flag(self, mock_execute):
         """
         Test that verifies the fix for the partition split recursion problem.
 

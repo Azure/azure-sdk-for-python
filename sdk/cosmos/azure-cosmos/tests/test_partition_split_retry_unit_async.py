@@ -3,21 +3,6 @@
 
 """
 Async unit tests for partition split (410) retry logic.
-These tests use mocks.
-
-For sync tests, see test_partition_split_retry_unit.py
-
-IMPORTANT - Running these tests:
-================================
-1. In CI/CD Pipeline: These tests run with pytest and the emulator, which
-   properly initializes the azure.cosmos module - tests will PASS.
-
-2. With pytest locally: Start the emulator first, then run:
-       pytest test_partition_split_retry_unit_async.py -v
-
-3. With unittest standalone: May be SKIPPED due to circular import issues
-   in the async module. Use sync tests instead:
-       python -m unittest test_partition_split_retry_unit -v
 """
 
 import unittest
@@ -28,9 +13,9 @@ from azure.cosmos import exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
 
-# =============================================================================
+# ====================================
 # Shared Test Helpers
-# =============================================================================
+# ====================================
 
 class MockGlobalEndpointManager:
     """Mock global endpoint manager for testing."""
@@ -67,9 +52,9 @@ def raise_410_partition_split_error(*args, **kwargs):
     raise create_410_partition_split_error()
 
 
-# =============================================================================
+# ===============================
 # Test Class
-# =============================================================================
+# ===============================
 
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 
@@ -83,13 +68,9 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
     async def test_execution_context_state_reset_on_partition_split_async(self):
         """
         Test that execution context state is properly reset on 410 partition split retry (async).
-
         Verifies the fix for a bug where the while loop in _fetch_items_helper_no_retries
         would not execute after a retry because _has_started was still True.
 
-        The while loop condition: self._continuation or not self._has_started
-        - Without state reset: None or not True = False (loop doesn't run - BUG)
-        - With state reset: None or not False = True (loop runs correctly - FIX)
         """
         mock_client = MockClient()
 
@@ -120,7 +101,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert result == [], \
             "Should return empty list when while loop doesn't execute"
 
-        # Now apply the fix: reset state
+        # reset state
         context._has_started = False
         context._continuation = None
 
@@ -184,7 +165,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             "ExecuteAsync should only be called once - no retry for PK range queries"
 
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
-    async def test_recursion_problem_demonstration_async(self, mock_execute):
+    async def test_410_retry_behavior_with_and_without_pk_range_flag_async(self, mock_execute):
         """
         Test that verifies the fix for the partition split recursion problem (async).
 
