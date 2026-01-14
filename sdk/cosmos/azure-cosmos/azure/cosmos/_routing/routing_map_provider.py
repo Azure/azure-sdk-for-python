@@ -22,12 +22,15 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
+import logging
 from typing import Any, Optional
 
 from .. import _base
 from .collection_routing_map import CollectionRoutingMap
 from . import routing_range
 from .routing_range import PartitionKeyRange
+
+_LOGGER = logging.getLogger(__name__)
 
 
 # pylint: disable=protected-access
@@ -61,17 +64,40 @@ class PartitionKeyRangeCache(object):
     ):
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if not collection_routing_map:
+            # Pass _internal_pk_range_fetch flag to prevent recursive 410 retry logic
+            # When a 410 partition split error occurs, the SDK calls refresh_routing_map_provider()
+            # which clears the cache and retries. The retry needs partition key ranges, which calls
+            # this method, which triggers _ReadPartitionKeyRanges. If that query also goes through
+            # the 410 retry logic and calls refresh again, we get infinite recursion.
+            _LOGGER.debug(
+                "PK range cache: Initializing routing map for collection_id=%s. "
+                "Setting _internal_pk_range_fetch=True to prevent recursive 410 retry.",
+                collection_id
+            )
+            pk_range_kwargs = {**kwargs, "_internal_pk_range_fetch": True}
             collection_pk_ranges = list(self._documentClient._ReadPartitionKeyRanges(collection_link,
                                                                                      feed_options,
-                                                                                     **kwargs))
+                                                                                     **pk_range_kwargs))
+            _LOGGER.debug(
+                "PK range cache: Retrieved %d partition key ranges for collection_id=%s",
+                len(collection_pk_ranges), collection_id
+            )
             # for large collections, a split may complete between the read partition key ranges query page responses,
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
             # to discard the parent ranges to have a valid routing map.
             collection_pk_ranges = PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges)
+            _LOGGER.debug(
+                "PK range cache: After discarding parent ranges, %d ranges remain for collection_id=%s",
+                len(collection_pk_ranges), collection_id
+            )
             collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(
                 [(r, True) for r in collection_pk_ranges], collection_id
             )
             self._collection_routing_map_by_item[collection_id] = collection_routing_map
+            _LOGGER.info(
+                "PK range cache: Successfully cached routing map for collection_id=%s with %d ranges",
+                collection_id, len(collection_pk_ranges)
+            )
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options, **kwargs):
         """Given a partition key range and a collection, return the list of
