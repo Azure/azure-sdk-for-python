@@ -51,3 +51,7 @@ type_check_samples = true
 verifytypes = false
 pylint = true
 black = false
+
+[tool.azure-sdk-conda]
+in_bundle = true 
+bundle_name = "azure-eventhub"
