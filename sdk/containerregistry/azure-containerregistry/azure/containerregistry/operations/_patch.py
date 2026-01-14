@@ -95,18 +95,19 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         **kwargs: Any,
     ) -> _models.AcrRefreshToken:
         """Exchange AAD tokens for an ACR refresh Token.
+
         :param grant_type: Can take a value of access_token_refresh_token, or access_token, or
-         refresh_token.
+            refresh_token.
         :type grant_type: str or ~container_registry.models.PostContentSchemaGrantType
         :param service: Indicates the name of your Azure container registry.
         :type service: str
         :param tenant: AAD tenant associated to the AAD credentials. Default value is None.
         :type tenant: str
         :param refresh_token: AAD refresh token, mandatory when grant_type is
-         access_token_refresh_token or refresh_token. Default value is None.
+            access_token_refresh_token or refresh_token. Default value is None.
         :type refresh_token: str
         :param access_token: AAD access token, mandatory when grant_type is access_token_refresh_token
-         or access_token. Default value is None.
+            or access_token. Default value is None.
         :type access_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrRefreshToken, or the result of cls(response)
@@ -171,16 +172,17 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         **kwargs: Any,
     ) -> _models.AcrAccessToken:
         """Exchange ACR Refresh token for an ACR Access Token.
+
         :param service: Indicates the name of your Azure container registry.
         :type service: str
         :param scope: Which is expected to be a valid scope, and can be specified more than once for
-         multiple scope requests. You obtained this from the Www-Authenticate response header from the
-         challenge.
+            multiple scope requests. You obtained this from the Www-Authenticate response header from the
+            challenge.
         :type scope: str
         :param refresh_token: Must be a valid ACR refresh token.
         :type refresh_token: str
         :param grant_type: Grant type is expected to be refresh_token. Default value is
-         "refresh_token".
+            "refresh_token".
         :type grant_type: str or ~container_registry.models.TokenGrantType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrAccessToken, or the result of cls(response)
