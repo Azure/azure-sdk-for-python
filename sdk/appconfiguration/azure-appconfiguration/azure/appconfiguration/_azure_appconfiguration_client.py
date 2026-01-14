@@ -76,7 +76,7 @@ class AzureAppConfigurationClient:
         audience = kwargs.pop("audience", None)
 
         audience_policy = AudienceErrorHandlingPolicy(bool(audience))
-        per_call_policies = [self._sync_token_policy, audience_policy, self._query_param_policy]
+        per_call_policies = [self._query_param_policy, self._sync_token_policy, audience_policy]
 
         if audience is None:
             audience = get_audience(base_url)
