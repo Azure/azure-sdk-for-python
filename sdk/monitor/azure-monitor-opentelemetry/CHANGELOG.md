@@ -9,6 +9,8 @@
 ### Bugs Fixed
 - Fix the format of the fixed percentage sampler constant and ensure backward compatability
   ([#44656](https://github.com/Azure/azure-sdk-for-python/pull/44656))
+- Only add PerformanceCounter Processors after PerformanceCounter setup to avoid circular dependency.
+  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
 
  ### Other Changes
 
