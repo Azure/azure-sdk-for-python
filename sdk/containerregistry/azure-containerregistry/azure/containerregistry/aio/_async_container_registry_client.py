@@ -194,12 +194,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.endpoint",
-                        self._client._config.endpoint, # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
-                _request.url = self._client._client.format_url( # pylint: disable=protected-access
+                _request.url = self._client._client.format_url(  # pylint: disable=protected-access
                     _request.url, **path_format_arguments
                 )  # pylint: disable=protected-access
 
@@ -221,12 +221,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.endpoint",
-                        self._client._config.endpoint, # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
-                _request.url = self._client.format_url( # pylint: disable=no-member
+                _request.url = self._client.format_url(  # pylint: disable=no-member
                     _request.url, **path_format_arguments
                 )  # pylint: disable=no-member
 
@@ -327,13 +327,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.endpoint",
-                        self._client._config.endpoint, # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
 
-                _request.url = self._client._client.format_url( # pylint: disable=protected-access
+                _request.url = self._client._client.format_url(  # pylint: disable=protected-access
                     _request.url, **path_format_arguments
                 )  # pylint: disable=protected-access
             else:
@@ -354,12 +354,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.endpoint",
-                        self._client._config.endpoint, # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,  # pylint: disable=protected-access
                     ),
                 }
-                _request.url = self._client._client.format_url( # pylint: disable=protected-access
+                _request.url = self._client._client.format_url(  # pylint: disable=protected-access
                     _request.url, **path_format_arguments
                 )  # pylint: disable=protected-access
             return _request

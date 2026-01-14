@@ -59,8 +59,8 @@ class DownloadBlobStream(
         end_range = self._downloaded + self._chunk_size - 1
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = cast(
-            Tuple[PipelineResponse, Dict[str, str]],
-            self._next(range=range_header))  # type: ignore[call-arg]
+            Tuple[PipelineResponse, Dict[str, str]], self._next(range=range_header)
+        )  # type: ignore[call-arg]
         self._downloaded += int(headers["Content-Length"])
         return next_chunk
 
