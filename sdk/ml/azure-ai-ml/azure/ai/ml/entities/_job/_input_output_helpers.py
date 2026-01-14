@@ -277,7 +277,11 @@ def to_rest_dataset_literal_inputs(
             else:
                 # otherwise, the input is a literal input
                 if isinstance(input_value, dict):
-                    value_str = str(input_value["value"])
+                    dict_value = input_value["value"]
+                    # Skip None values for optional inputs
+                    if dict_value is None:
+                        continue
+                    value_str = str(dict_value)
                     # Skip empty strings for optional inputs - they should not be sent to REST API
                     if value_str == "":
                         continue

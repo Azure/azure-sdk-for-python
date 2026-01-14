@@ -297,3 +297,37 @@ class TestCommandJobEntity:
         assert "required_input" in rest_obj_value.properties.inputs
         assert "optional_input" in rest_obj_value.properties.inputs
         assert rest_obj_value.properties.inputs["optional_input"].value == "value2"
+
+        # Test with dict containing None value - should be excluded from REST inputs
+        inputs_with_dict_none = {
+            "required_input": "value1",
+            "optional_input": {"value": None},
+        }
+        command_job_dict_none = CommandJob(
+            display_name="test-optional-inputs-dict-none",
+            command='echo "hello world"',
+            environment="AzureML-Minimal:1",
+            compute="cpu-cluster",
+            inputs=inputs_with_dict_none,
+        )
+        rest_obj_dict_none = command_job_dict_none._to_rest_object()
+        # Dict with None value should not be in the REST inputs
+        assert "required_input" in rest_obj_dict_none.properties.inputs
+        assert "optional_input" not in rest_obj_dict_none.properties.inputs
+
+        # Test with dict containing empty string - should be excluded from REST inputs
+        inputs_with_dict_empty = {
+            "required_input": "value1",
+            "optional_input": {"value": ""},
+        }
+        command_job_dict_empty = CommandJob(
+            display_name="test-optional-inputs-dict-empty",
+            command='echo "hello world"',
+            environment="AzureML-Minimal:1",
+            compute="cpu-cluster",
+            inputs=inputs_with_dict_empty,
+        )
+        rest_obj_dict_empty = command_job_dict_empty._to_rest_object()
+        # Dict with empty string should not be in the REST inputs
+        assert "required_input" in rest_obj_dict_empty.properties.inputs
+        assert "optional_input" not in rest_obj_dict_empty.properties.inputs
