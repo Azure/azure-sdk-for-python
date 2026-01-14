@@ -978,7 +978,7 @@ def _build_sync_eval_payload(
             {
                 "type": "azure_ai_evaluator",
                 "name": metric_name,
-                "evaluator_name": metric_name,
+                "evaluator_name": f"builtin.{metric_name}",
                 "data_mapping": data_mapping,
             }
         ],
@@ -1207,7 +1207,7 @@ def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
             {
                 "type": "azure_ai_evaluator",
                 "name": metric_name,
-                "evaluator_name": metric_name,
+                "evaluator_name": f"builtin.{metric_name}",
                 "data_mapping": data_mapping,
             }
         ],
