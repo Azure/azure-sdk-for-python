@@ -550,7 +550,7 @@ class InvokeConnectedToolsResult(BaseModel):
 
 	:ivar Any value: The result value from the tool invocation.
 	"""
-	value: Any = Field(serialization_alias="toolResult")
+	value: Any = Field(validation_alias="toolResult", serialization_alias="toolResult")
 
 
 class InvokeFoundryConnectedToolsResponse(BaseModel):
@@ -576,7 +576,10 @@ class InvokeFoundryConnectedToolsResponse(BaseModel):
 				Annotated[InvokeConnectedToolsResult, Tag("ResultType")],
 			],
 			Discriminator(
-				lambda payload: "ErrorType" if isinstance(payload, dict) and "type" in payload else "ResultType"
+				lambda payload: "ErrorType" if isinstance(payload, dict) and
+				# handle other error types in the future
+				payload.get("type") == "OAuthConsentRequired"
+				else "ResultType"
 			),
 		])
 

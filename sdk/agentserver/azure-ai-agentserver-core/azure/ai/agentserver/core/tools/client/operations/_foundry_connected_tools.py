@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from abc import ABC
 from typing import Any, ClassVar, Dict, List, Mapping, Optional, cast
+from urllib import response
 
 from azure.core.pipeline.transport import HttpRequest
 
@@ -10,6 +11,7 @@ from .._models import FoundryConnectedTool, FoundryToolDetails, FoundryToolSourc
 	ListFoundryConnectedToolsResponse, ResolvedFoundryTool, UserInfo
 from ..._exceptions import ToolInvocationError
 from ._base import BaseOperations
+import json
 
 
 class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
@@ -81,7 +83,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 					description=tool.description,
 					input_schema=tool.input_schema,
 				)
-				result[tool] = details
+				result[input_tool] = details
 
 		return result
 
@@ -109,7 +111,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 				"tenantId": user.tenant_id,
 			}
 		return self._client.post(
-			self._list_tools_path(agent_name),
+			self._invoke_tool_path(agent_name),
 			params=self._QUERY_PARAMS,
 			headers=self._HEADERS,
 			content=payload)
@@ -146,7 +148,13 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		request = self._build_list_tools_request(tools, user, agent_name)
 		response = await self._send_request(request)
 		async with response:
-			tools_response = ListFoundryConnectedToolsResponse.model_validate(response.json())
+			try:
+				payload_text = response.text()
+				payload_json = json.loads(payload_text) if payload_text else {}
+			except AttributeError as e:
+				payload_bytes = response.body()
+				payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
+			tools_response = ListFoundryConnectedToolsResponse.model_validate(payload_json)
 		return self._convert_listed_tools(tools_response, tools)
 
 
@@ -172,5 +180,12 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		request = self._build_invoke_tool_request(tool, arguments, user, agent_name)
 		response = await self._send_request(request)
 		async with response:
-			invoke_response = InvokeFoundryConnectedToolsResponse.model_validate(response.json())
+			try:
+				payload_text = response.text()
+				payload_json = json.loads(payload_text) if payload_text else {}
+			except AttributeError as e:
+				payload_bytes = response.body()
+				payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
+			invoke_response = InvokeFoundryConnectedToolsResponse.model_validate(payload_json)
 		return self._convert_invoke_result(invoke_response)
+	

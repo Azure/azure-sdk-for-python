@@ -6,9 +6,14 @@ from typing import Any, ClassVar, Dict, List, Mapping, TYPE_CHECKING, cast
 
 from azure.core.rest import HttpRequest
 
-from azure.ai.agentserver.core.tools import FoundryHostedMcpTool, FoundryToolSource, ResolvedFoundryTool, \
-	ToolInvocationError
-from azure.ai.agentserver.core.tools.client._models import FoundryToolDetails, ListFoundryHostedMcpToolsResponse
+from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
+from azure.ai.agentserver.core.tools.client._models import (
+    FoundryHostedMcpTool,
+    FoundryToolSource,
+    ResolvedFoundryTool,
+    FoundryToolDetails,
+    ListFoundryHostedMcpToolsResponse,
+)
 from azure.ai.agentserver.core.tools.client.operations._base import BaseOperations
 
 

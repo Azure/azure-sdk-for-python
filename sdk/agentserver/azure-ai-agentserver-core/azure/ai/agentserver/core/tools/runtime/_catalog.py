@@ -75,7 +75,7 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
             for tool in tools_to_fetch:
                 # safe to write cache since it's the only runner in this event loop
-                self._cache[tool] = asyncio.create_task(self._as_resolving_task(tool, fetched_tools))
+                self._cache[self._get_key(user, tool)] = asyncio.create_task(self._as_resolving_task(tool, fetched_tools))
 
         # now we have every tool associated with a task
         resolving_tasks: Dict[FoundryTool, Awaitable[Optional[FoundryToolDetails]]] = {
