@@ -330,7 +330,7 @@ class TestMassEvaluate:
         "multi_modal_input_type",
         [
             "imageurls",
-            # "imageurls_with_target",
+            "imageurls_with_target",
             "b64_images",
         ],
     )
