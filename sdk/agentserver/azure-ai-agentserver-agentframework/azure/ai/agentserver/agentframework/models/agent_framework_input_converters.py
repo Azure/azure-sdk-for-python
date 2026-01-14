@@ -5,9 +5,15 @@
 # mypy: disable-error-code="no-redef"
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
-from agent_framework import ChatMessage, Role as ChatRole
+from agent_framework import (
+    AgentThread,
+    ChatMessage,
+    RequestInfoEvent,
+    Role as ChatRole,
+    WorkflowCheckpoint,
+)
 from agent_framework._types import TextContent
 
 from azure.ai.agentserver.core.logger import get_logger
@@ -21,10 +27,14 @@ class AgentFrameworkInputConverter:
     Accepts: str | List | None
     Returns: None | str | ChatMessage | list[str] | list[ChatMessage]
     """
+    def __init__(self, *, hitl_helper=None) -> None:
+        self._hitl_helper = hitl_helper
 
-    def transform_input(
+    async def transform_input(
         self,
         input: str | List[Dict] | None,
+        agent_thread: Optional[AgentThread] = None,
+        checkpoint: Optional[WorkflowCheckpoint] = None,
     ) -> str | ChatMessage | list[str] | list[ChatMessage] | None:
         logger.debug("Transforming input of type: %s", type(input))
 
@@ -33,7 +43,28 @@ class AgentFrameworkInputConverter:
 
         if isinstance(input, str):
             return input
+        
+        if self._hitl_helper:
+            # load pending requests from checkpoint and thread messages if available
+            thread_messages = []
+            if agent_thread:
+                thread_messages = await agent_thread.message_store.list_messages()
+            logger.info(f"Thread messages count: {len(thread_messages)}")
+            pending_hitl_requests = self._hitl_helper.get_pending_hitl_request(thread_messages, checkpoint)
+            logger.info(f"Pending HitL requests: {list(pending_hitl_requests.keys())}")
+            hitl_response = self._hitl_helper.validate_and_convert_hitl_response(
+                input,
+                pending_requests=pending_hitl_requests)
+            logger.info(f"HitL response validation result: {[m.to_dict() for m in hitl_response]}")
+            if hitl_response:
+                return hitl_response
+        
+        return self._transform_input_internal(input)
 
+    def _transform_input_internal(
+        self,
+        input: str | List[Dict] | None,
+    ) -> str | ChatMessage | list[str] | list[ChatMessage] | None:
         try:
             if isinstance(input, list):
                 messages: list[str | ChatMessage] = []
@@ -118,3 +149,35 @@ class AgentFrameworkInputConverter:
             if isinstance(text_content, str):
                 return text_content
         return None  # type: ignore
+
+    def _validate_and_convert_hitl_response(
+        self,
+        pending_request: Dict,
+        input: List[Dict],
+    ) -> Optional[List[ChatMessage]]:
+        if not self._hitl_helper:
+            logger.warning("HitL helper not provided; cannot validate HitL response.")
+            return None
+        if isinstance(input, str):
+            logger.warning("Expected list input for HitL response validation, got str.")
+            return None
+        if not isinstance(input, list) or len(input) != 1:
+            logger.warning("Expected single-item list input for HitL response validation.")
+            return None
+        
+        item = input[0]
+        if item.get("type") != "function_call_output":
+            logger.warning("Expected function_call_output type for HitL response validation.")
+            return None
+        call_id = item.get("call_id", None)
+        if not call_id or call_id not in pending_request:
+            logger.warning("Function call output missing valid call_id for HitL response validation.")
+            return None
+        request_info = pending_request[call_id]
+        if isinstance(request_info, dict):
+            request_info = RequestInfoEvent.from_dict(request_info)
+        if not isinstance(request_info, RequestInfoEvent):
+            logger.warning("No valid pending request info found for call_id: %s", call_id)
+            return None
+        
+        return self._hitl_helper.convert_response(request_info, item)
