@@ -242,7 +242,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             # TODO: load agent thread from storage and deserialize
             agent_thread = None
             if self._thread_repository:
-                agent_thread = await self._thread_repository.get(agent, context.conversation_id)
+                agent_thread = await self._thread_repository.get(context.conversation_id)
                 if agent_thread:
                     logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
                 else:

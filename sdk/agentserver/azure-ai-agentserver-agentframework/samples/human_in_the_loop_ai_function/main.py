@@ -13,7 +13,7 @@ from agent_framework._types import UserInputRequestContents
 from agent_framework.azure import AzureOpenAIChatClient
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-from azure.ai.agentserver.agentframework.persistence.agent_thread_repository import JsonSerializedAgentThreadRepository
+from azure.ai.agentserver.agentframework.persistence.agent_thread_repository import JsonLocalFileAgentThreadRepository
 
 """
 Tool Approvals with Threads
@@ -80,7 +80,7 @@ def build_agent():
 
 async def main() -> None:
     agent = build_agent()
-    thread_repository = JsonSerializedAgentThreadRepository(storage_path="./thread_storage")
+    thread_repository = JsonLocalFileAgentThreadRepository(agent=agent, storage_path="./thread_storage")
     await from_agent_framework(agent, thread_repository=thread_repository).run_async()
 
 if __name__ == "__main__":

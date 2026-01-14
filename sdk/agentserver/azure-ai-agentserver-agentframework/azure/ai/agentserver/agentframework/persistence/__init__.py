@@ -1,7 +1,13 @@
-from .agent_thread_repository import AgentThreadRepository, InMemoryAgentThreadRepository, JsonSerializedAgentThreadRepository
+from .agent_thread_repository import (
+    AgentThreadRepository,
+    InMemoryAgentThreadRepository,
+    SerializedAgentThreadRepository,
+    JsonLocalFileAgentThreadRepository,
+)
 
 __all__ = [
     "AgentThreadRepository",
     "InMemoryAgentThreadRepository",
-    "JsonSerializedAgentThreadRepository",
+    "SerializedAgentThreadRepository",
+    "JsonLocalFileAgentThreadRepository",
 ]
