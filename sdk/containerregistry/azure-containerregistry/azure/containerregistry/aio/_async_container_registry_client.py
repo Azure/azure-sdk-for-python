@@ -930,7 +930,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
 
-            response_headers = await self._client.container_registry.create_manifest(  # type: ignore[func-returns-value]
+            response_headers = await self._client.container_registry.create_manifest(  # type: ignore[func-returns-value]  # pylint: disable=line-too-long
                 name=repository,
                 reference=tag_or_digest,
                 payload=data,
