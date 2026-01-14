@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import Optional, Union, TypeVar, Dict, Any, Sequence
+from typing import Optional, Union, TypeVar, Dict, Any, Sequence, Mapping
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling.base_polling import (
@@ -46,6 +46,8 @@ from azure.core.pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
+
+from ._utils import _filter_arm_headers
 
 ResponseType = Union[HttpResponse, AsyncHttpResponse]
 PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
@@ -207,6 +209,18 @@ class ARMPolling(LROBasePolling):
             path_format_arguments=path_format_arguments,
             **operation_config
         )
+
+    def _filter_headers_for_continuation_token(self, headers: Mapping[str, str]) -> Dict[str, str]:
+        """Filter headers to include in the continuation token.
+
+        ARM-specific override that includes the azure-asyncoperation header.
+
+        :param headers: The response headers to filter.
+        :type headers: Mapping[str, str]
+        :return: A filtered dictionary of headers to include in the continuation token.
+        :rtype: dict[str, str]
+        """
+        return _filter_arm_headers(headers)
 
 
 __all__ = [

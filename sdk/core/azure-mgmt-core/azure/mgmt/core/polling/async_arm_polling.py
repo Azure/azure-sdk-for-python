@@ -23,12 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Optional, Dict, Any, Sequence
+from typing import Optional, Dict, Any, Sequence, Mapping
 
 from azure.core.polling.base_polling import LocationPolling, StatusCheckPolling, LongRunningOperation
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from .arm_polling import AzureAsyncOperationPolling, BodyContentPolling, HttpRequestTypeVar, AllHttpResponseTypeVar
+from ._utils import _filter_arm_headers
 
 
 class AsyncARMPolling(AsyncLROBasePolling):
@@ -53,6 +54,18 @@ class AsyncARMPolling(AsyncLROBasePolling):
             path_format_arguments=path_format_arguments,
             **operation_config
         )
+
+    def _filter_headers_for_continuation_token(self, headers: Mapping[str, str]) -> Dict[str, str]:
+        """Filter headers to include in the continuation token.
+
+        ARM-specific override that includes the azure-asyncoperation header.
+
+        :param headers: The response headers to filter.
+        :type headers: Mapping[str, str]
+        :return: A filtered dictionary of headers to include in the continuation token.
+        :rtype: dict[str, str]
+        """
+        return _filter_arm_headers(headers)
 
 
 __all__ = ["AsyncARMPolling"]
