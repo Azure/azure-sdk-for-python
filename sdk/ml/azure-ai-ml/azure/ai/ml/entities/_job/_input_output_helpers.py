@@ -271,17 +271,26 @@ def to_rest_dataset_literal_inputs(
                             error_type=ValidationErrorType.INVALID_VALUE,
                         )
             elif input_value is None:
-                # If the input is None, we need to pass the origin None to the REST API
-                input_data = LiteralJobInput(value=None)
+                # Skip None values for optional inputs - they should not be sent to REST API
+                # The backend will use the default value from the component definition if one exists
+                continue
             else:
                 # otherwise, the input is a literal input
                 if isinstance(input_value, dict):
-                    input_data = LiteralJobInput(value=str(input_value["value"]))
+                    value_str = str(input_value["value"])
+                    # Skip empty strings for optional inputs - they should not be sent to REST API
+                    if value_str == "":
+                        continue
+                    input_data = LiteralJobInput(value=value_str)
                     # set mode attribute manually for binding job input
                     if "mode" in input_value:
                         input_data.mode = input_value["mode"]
                 else:
-                    input_data = LiteralJobInput(value=str(input_value))
+                    value_str = str(input_value)
+                    # Skip empty strings for optional inputs - they should not be sent to REST API
+                    if value_str == "":
+                        continue
+                    input_data = LiteralJobInput(value=value_str)
                 input_data.job_input_type = JobInputType.LITERAL
             # Pack up inputs into PipelineInputs or ComponentJobInputs depending on caller
             rest_inputs[input_name] = input_data
