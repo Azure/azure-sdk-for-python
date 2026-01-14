@@ -99,7 +99,7 @@ class apistub(Check):
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
-                skip_install=False,
+                skip_install=True,
                 cache_dir=None,
                 work_dir=staging_directory,
                 force_create=False,
