@@ -12,6 +12,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     TextResponseFormatJsonSchema,
     PromptAgentDefinitionText,
+    ResponseFormatJsonSchemaSchema,
 )
 
 

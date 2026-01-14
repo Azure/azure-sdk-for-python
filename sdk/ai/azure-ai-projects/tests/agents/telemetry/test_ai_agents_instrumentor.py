@@ -10,7 +10,7 @@ from typing import Optional
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText, ResponseFormatJsonSchemaSchema
 
 from devtools_testutils import (
     recorded_by_proxy,
@@ -532,7 +532,7 @@ trigger:
                 text=PromptAgentDefinitionText(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
-                        schema=test_schema,
+                        schema=ResponseFormatJsonSchemaSchema(test_schema),
                     )
                 ),
             )
@@ -618,7 +618,7 @@ trigger:
                 text=PromptAgentDefinitionText(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
-                        schema=test_schema,
+                        schema=ResponseFormatJsonSchemaSchema(test_schema),
                     )
                 ),
             )
@@ -691,7 +691,7 @@ trigger:
                 text=PromptAgentDefinitionText(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
-                        schema=test_schema,
+                        schema=ResponseFormatJsonSchemaSchema(test_schema),
                     )
                 ),
             )
@@ -773,7 +773,7 @@ trigger:
                 text=PromptAgentDefinitionText(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
-                        schema=test_schema,
+                        schema=ResponseFormatJsonSchemaSchema(test_schema),
                     )
                 ),
             )
