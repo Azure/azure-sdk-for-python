@@ -10,7 +10,8 @@
 
 ### Other Changes
 
-- Declare support for Python 3.13 and 3.14.
+- Declare support for Python 3.13 and 3.14
+([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
 
 ## 1.0.0b46 (2025-12-04)
 
