@@ -98,11 +98,11 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
 
-        # Smulate state AFTER first successful fetch but BEFORE 410 error
+        # Simulate state AFTER first successful fetch but BEFORE 410 error
         context._has_started = True
         context._continuation = None
 
-        # erify the loop condition WITHOUT state reset - this is FALSE
+        # Verify the loop condition WITHOUT state reset - this is FALSE
         loop_condition_without_reset = context._continuation or not context._has_started
         assert not loop_condition_without_reset, \
             "Without state reset, loop condition should be False"

@@ -106,7 +106,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert not loop_condition_without_reset, \
             "Without state reset, loop condition should be False - this demonstrates the bug!"
 
-        # verfy _fetch_items_helper_no_retries returns empty when state is not reset
+        # Verify _fetch_items_helper_no_retries returns empty when state is not reset
         fetch_was_called = [False]
 
         def tracking_fetch(options):
