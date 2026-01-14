@@ -3,12 +3,11 @@
 # ---------------------------------------------------------
 from __future__ import annotations
 
-import asyncio
 import inspect
-from typing import Any, AsyncIterable, Callable, Dict, List, Optional, Sequence
+from typing import Any, AsyncIterable, Dict, List, Optional, Sequence
 
-from agent_framework import AIFunction, BaseChatClient, ChatOptions, Context, ContextProvider
-from pydantic import BaseModel, Field, create_model
+from agent_framework import AIFunction, BaseChatClient, ChatOptions
+from pydantic import Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
 from azure.ai.agentserver.core.logger import get_logger
@@ -178,104 +177,5 @@ class ChatClientWithFoundryTools(BaseChatClient):
         ):
             yield update
 
-    def create_agent(
-        self,
-        *,
-        id: str | None = None,
-        name: str | None = None,
-        description: str | None = None,
-        instructions: str | None = None,
-        chat_message_store_factory: Callable[[], Any] | None = None,
-        context_providers: Any = None,
-        middleware: Any = None,
-        allow_multiple_tool_calls: bool | None = None,
-        conversation_id: str | None = None,
-        frequency_penalty: float | None = None,
-        logit_bias: dict[str | int, float] | None = None,
-        max_tokens: int | None = None,
-        metadata: dict[str, Any] | None = None,
-        model_id: str | None = None,
-        presence_penalty: float | None = None,
-        response_format: type[BaseModel] | None = None,
-        seed: int | None = None,
-        stop: str | Sequence[str] | None = None,
-        store: bool | None = None,
-        temperature: float | None = None,
-        tool_choice: Any = "auto",
-        tools: Any = None,
-        top_p: float | None = None,
-        user: str | None = None,
-        additional_chat_options: dict[str, Any] | None = None,
-        **kwargs: Any,
-    ) -> Any:
-        """Create a ChatAgent and inject Foundry tools via a context provider.
-
-        This allows `ChatClientWithFoundryTools.create_agent(...)` to behave like a normal
-        chat client factory while ensuring the resulting ChatAgent has access to Foundry tools.
-        """
-
-        foundry_provider = FoundryToolsContextProvider(tools=self._tools)
-
-        # Merge/append provider without mutating caller-owned provider objects.
-        merged_providers: Any
-        if context_providers is None:
-            merged_providers = [foundry_provider]
-        else:
-            providers = context_providers if isinstance(context_providers, list) else [context_providers]
-
-            if any(isinstance(p, FoundryToolsContextProvider) for p in providers):
-                raise ValueError(
-                    "Do not pass FoundryToolsContextProvider explicitly when using ChatClientWithFoundryTools. "
-                    "It is injected automatically."
-                )
-
-            merged_providers = [*providers, foundry_provider]
-
-        return super().create_agent(
-            id=id,
-            name=name,
-            description=description,
-            instructions=instructions,
-            chat_message_store_factory=chat_message_store_factory,
-            context_providers=merged_providers,
-            middleware=middleware,
-            allow_multiple_tool_calls=allow_multiple_tool_calls,
-            conversation_id=conversation_id,
-            frequency_penalty=frequency_penalty,
-            logit_bias=logit_bias,
-            max_tokens=max_tokens,
-            metadata=metadata,
-            model_id=model_id,
-            presence_penalty=presence_penalty,
-            response_format=response_format,
-            seed=seed,
-            stop=stop,
-            store=store,
-            temperature=temperature,
-            tool_choice=tool_choice,
-            tools=tools,
-            top_p=top_p,
-            user=user,
-            additional_chat_options=additional_chat_options,
-            **kwargs,
-        )
-
     def __getattr__(self, name: str) -> Any:
         return getattr(self._inner, name)
-
-
-class FoundryToolsContextProvider(ContextProvider):
-    """ContextProvider that injects Foundry tools as Agent Framework tools.
-
-    This provider resolves the configured Foundry tools into Agent Framework `AIFunction`s
-    and returns them via `Context.tools` so `ChatAgent` can merge them into the request.
-
-    By default, it caches the resolved tool list for the lifetime of the provider.
-    """
-
-    def __init__(self, *, tools: Sequence[FoundryToolLike]) -> None:
-        self._foundry_tool_client = FoundryToolClient(tools=tools)
-
-    async def invoking(self, messages: Any, **kwargs: Any) -> Context:
-        tools = await self._foundry_tool_client.list_tools()
-        return Context(tools=tools)

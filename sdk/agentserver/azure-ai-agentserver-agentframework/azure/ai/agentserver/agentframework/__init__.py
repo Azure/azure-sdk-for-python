@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from azure.ai.agentserver.agentframework._version import VERSION
 from azure.ai.agentserver.agentframework._agent_framework import AgentFrameworkCBAgent
-from azure.ai.agentserver.agentframework._foundry_tools import ChatClientWithFoundryTools, FoundryToolsContextProvider
+from azure.ai.agentserver.agentframework._foundry_tools import ChatClientWithFoundryTools
 from azure.ai.agentserver.core.application._package_metadata import PackageMetadata, set_current_app
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -26,7 +26,6 @@ def from_agent_framework(
 __all__ = [
     "from_agent_framework",
     "ChatClientWithFoundryTools",
-    "FoundryToolsContextProvider",
 ]
 __version__ = VERSION
 
