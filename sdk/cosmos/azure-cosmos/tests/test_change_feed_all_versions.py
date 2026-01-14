@@ -193,8 +193,7 @@ class TestChangeAllVersionsFeed:
     def test_query_change_feed_all_versions_and_deletes_errors(self, setup):
         container_name = "change_feed_test_" + str(uuid.uuid4())
         created_collection = setup["created_db"].create_container(container_name,
-                                                                  PartitionKey(path=f"/{partition_key}"),
-                                                                  change_feed_policy=change_feed_policy)
+                                                                  PartitionKey(path="/pk"))
         mode = 'AllVersionsAndDeletes'
 
         # Error if invalid mode was used
