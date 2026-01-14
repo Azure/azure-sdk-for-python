@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Bing Custom Search capabilities
-    using the BingCustomSearchAgentTool and synchronous Azure AI Projects client. The agent can search
+    using the BingCustomSearchPreviewTool and synchronous Azure AI Projects client. The agent can search
     custom search instances and provide responses with relevant results.
 
 USAGE:
@@ -33,7 +33,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingCustomSearchAgentTool,
+    BingCustomSearchPreviewTool,
     BingCustomSearchToolParameters,
     BingCustomSearchConfiguration,
 )
@@ -49,7 +49,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = BingCustomSearchAgentTool(
+    tool = BingCustomSearchPreviewTool(
         bing_custom_search_preview=BingCustomSearchToolParameters(
             search_configurations=[
                 BingCustomSearchConfiguration(
