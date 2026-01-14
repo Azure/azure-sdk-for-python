@@ -38,7 +38,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     PromptAgentDefinitionText,
-    ResponseTextFormatConfigurationJsonSchema,
+    TextResponseFormatJsonSchema,
 )
 from pydantic import BaseModel, Field
 
@@ -65,7 +65,7 @@ with (
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             text=PromptAgentDefinitionText(
-                format=ResponseTextFormatConfigurationJsonSchema(
+                format=TextResponseFormatJsonSchema(
                     name="CalendarEvent", schema=CalendarEvent.model_json_schema()
                 )
             ),
