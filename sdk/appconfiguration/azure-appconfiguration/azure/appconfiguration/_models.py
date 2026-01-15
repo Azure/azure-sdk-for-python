@@ -23,19 +23,19 @@ from ._generated._model_base import _deserialize
 class ConfigurationSetting(Model):
     """A setting, defined by a unique combination of a key and label."""
 
-    value: str
+    value: Optional[str]
     """The value of the configuration setting."""
-    etag: str
+    etag: Optional[str]
     """A value representing the current state of the resource."""
-    key: str
+    key: Optional[str]
     """The key of the configuration setting."""
-    label: str
+    label: Optional[str]
     """The label of the configuration setting."""
     content_type: Optional[str]
     """The content_type of the configuration setting."""
-    last_modified: datetime
+    last_modified: Optional[datetime]
     """A date representing the last time the key-value was modified."""
-    read_only: bool
+    read_only: Optional[bool]
     """Indicates whether the key-value is locked."""
     tags: Dict[str, str]
     """The tags assigned to the configuration setting."""
@@ -56,7 +56,7 @@ class ConfigurationSetting(Model):
 
     def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
-        self.key = kwargs.get("key", None)
+        self.key = kwargs.get("key")
         self.label = kwargs.get("label", None)
         self.value = kwargs.get("value", None)
         self.etag = kwargs.get("etag", None)
@@ -113,7 +113,7 @@ class ConfigurationSetting(Model):
 class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
     """A configuration setting that stores a feature flag value."""
 
-    etag: str
+    etag: Optional[str]
     """A value representing the current state of the resource."""
     feature_id: str
     """The identity of the configuration setting."""
@@ -125,17 +125,17 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     filters: Optional[List[Dict[str, Any]]]
     """Filters that must run on the client and be evaluated as true for the feature
         to be considered enabled."""
-    label: str
+    label: Optional[str]
     """The label used to group this configuration setting with others."""
-    display_name: str
+    display_name: Optional[str]
     """The name for the feature to use for display rather than the ID."""
-    description: str
+    description: Optional[str]
     """The description of the feature."""
-    content_type: str
+    content_type: Optional[str]
     """The content_type of the configuration setting."""
-    last_modified: datetime
+    last_modified: Optional[datetime]
     """A date representing the last time the key-value was modified."""
-    read_only: bool
+    read_only: Optional[bool]
     """Indicates whether the key-value is locked."""
     tags: Dict[str, str]
     """The tags assigned to the configuration setting."""
@@ -280,19 +280,19 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """A configuration value that references a configuration setting secret."""
 
-    etag: str
+    etag: Optional[str]
     """A value representing the current state of the resource."""
     key: str
     """The key of the configuration setting."""
     secret_id: Optional[str]
     """The identity of the configuration setting."""
-    label: str
+    label: Optional[str]
     """The label used to group this configuration setting with others."""
-    content_type: str
+    content_type: Optional[str]
     """The content_type of the configuration setting."""
-    last_modified: datetime
+    last_modified: Optional[datetime]
     """A date representing the last time the key-value was modified."""
-    read_only: bool
+    read_only: Optional[bool]
     """Indicates whether the key-value is locked."""
     tags: Dict[str, str]
     """The tags assigned to the configuration setting."""

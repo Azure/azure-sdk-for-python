@@ -80,7 +80,8 @@ IGNORED_SAMPLES = {
     "azure-appconfiguration-provider": [
         "key_vault_reference_customized_clients_sample.py",
         "aad_sample.py",
-        "key_vault_reference_sample.py"
+        "key_vault_reference_sample.py",
+        "hello_world_sample_entra_id_and_bleu.py"
     ],
     "azure-ai-ml": [
         "ml_samples_authentication_sovereign_cloud.py"
