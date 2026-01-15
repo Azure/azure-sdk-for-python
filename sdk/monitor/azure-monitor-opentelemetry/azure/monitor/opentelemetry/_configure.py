@@ -133,27 +133,27 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_metrics = configurations[DISABLE_METRICS_ARG]
     enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
-    # Setup metrics pipeline
+    # Set up metrics pipeline
     # Set up metrics with Performance Counters before _PerformanceCountersSpanProcessor and _PerformanceCountersLogRecordProcessor
     # This avoids a circular dependency in the case that Performance Counter setup produces a log.
     if not disable_metrics:
         _setup_metrics(configurations)
 
-    # Setup live metrics
+    # Set up live metrics
     if enable_live_metrics_config:
         _setup_live_metrics(configurations)
 
-    # Setup tracing pipeline
+    # Set up tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
 
-    # Setup logging pipeline
+    # Set up logging pipeline
     if not disable_logging:
         _setup_logging(configurations)
 
-    # Setup instrumentations
-    # Instrumentations need to be setup last so to use the global providers
-    # instanstiated in the other setup steps
+    # Set up instrumentations
+    # Instrumentations need to be set up last so to use the global providers
+    # instantiated in the other setup steps
     _setup_instrumentations(configurations)
 
 
