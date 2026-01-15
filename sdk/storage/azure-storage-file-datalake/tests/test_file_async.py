@@ -1686,7 +1686,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_dynamic_user_delegation_sas(self, **kwargs):
+    async def test_datalake_dynamic_user_delegation_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
 
         token_credential = self.get_credential(DataLakeServiceClient, is_async=True)

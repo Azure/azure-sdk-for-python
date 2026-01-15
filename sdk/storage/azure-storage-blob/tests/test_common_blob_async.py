@@ -3625,7 +3625,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_dynamic_user_delegation_sas(self, **kwargs):
+    async def test_blob_dynamic_user_delegation_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
         token_credential = self.get_credential(BlobServiceClient, is_async=True)
@@ -3714,6 +3714,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in container_token
         assert "skdutid=" + delegated_user_tid in container_token
 
@@ -3737,6 +3738,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in blob_token
         assert "skdutid=" + delegated_user_tid in blob_token
 

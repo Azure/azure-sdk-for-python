@@ -3690,7 +3690,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_dynamic_user_delegation_sas(self, **kwargs):
+    def test_blob_dynamic_user_delegation_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
         token_credential = self.get_credential(BlobServiceClient)
@@ -3779,6 +3779,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in container_token
         assert "skdutid=" + delegated_user_tid in container_token
 
@@ -3799,6 +3800,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in blob_token
         assert "skdutid=" + delegated_user_tid in blob_token
 
