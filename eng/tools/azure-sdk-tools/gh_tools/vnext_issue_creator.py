@@ -186,7 +186,15 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     # create an issue for the library failing the vnext check
     if not vnext_issue:
-        labels, assignees = get_labels(package_name, service_directory)
+        try:
+            labels, assignees = get_labels(package_name, service_directory)
+        except Exception as e:
+            logging.warning(f"Failed to get labels and assignees from CODEOWNERS for {package_name}: {e}")
+            labels = []
+            assignees = []
+            if "mgmt" in package_name:
+                labels.append("Mgmt")
+        
         labels.extend([check_type])
         logging.info(f"Issue does not exist for {package_name} with {check_type} version {version}. Creating...")
         issue = repo.create_issue(title=title, body=template, labels=labels)
@@ -202,7 +210,13 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     # an issue exists, let's update it so it reflects the latest typing/linting errors
     logging.info(f"Issue exists for {package_name} with {check_type} version {version}. Updating...")
-    labels, assignees = get_labels(package_name, service_directory)
+    try:
+        labels, assignees = get_labels(package_name, service_directory)
+    except Exception as e:
+        logging.warning(f"Failed to get labels and assignees from CODEOWNERS for {package_name}: {e}")
+        labels = []
+        assignees = []
+    
     vnext_issue[0].edit(
         title=title,
         body=template,
