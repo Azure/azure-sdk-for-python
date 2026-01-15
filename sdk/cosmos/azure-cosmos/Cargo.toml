@@ -1,0 +1,28 @@
+[package]
+name = "azure-cosmos"
+version = "5.0.0"
+edition = "2021"
+rust-version = "1.70"
+
+[lib]
+name = "azure_cosmos_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20", features = ["extension-module", "abi3-py38"] }
+pyo3-asyncio = { version = "0.20", features = ["tokio-runtime"] }
+pythonize = "0.20"
+tokio = { version = "1", features = ["full"] }
+azure_data_cosmos = { version = "0.29", features = ["key_auth"] }
+azure_core = { version = "0.30", features = ["reqwest"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+futures = "0.3"
+typespec = "0.10"
+once_cell = "1.19"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

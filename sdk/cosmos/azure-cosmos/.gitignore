@@ -1,0 +1,55 @@
+# Rust build artifacts
+target/
+Cargo.lock
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# IDE settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing/Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Documentation and planning files (not source code)
+docs/*.md
+doc/*.md
+
+# Keep these important docs
+!README.md
+!CHANGELOG.md
+!Contributing.md
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maturin build files
+*.whl
+

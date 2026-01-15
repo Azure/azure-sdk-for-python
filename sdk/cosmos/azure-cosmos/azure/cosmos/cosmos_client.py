@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -39,6 +39,7 @@ from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
+from azure.cosmos._rust import CosmosClient as RustCosmosClient
 
 if TYPE_CHECKING:
     from . import ThroughputProperties
@@ -230,9 +231,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> None:
         """Instantiate a new CosmosClient.
         """
-
+        # KEEP: Build auth and connection policy (needed for fallback methods)
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
+
+        # KEEP: Create CosmosClientConnection (needed for methods not yet in Rust)
         self.client_connection = CosmosClientConnection(
             url_connection=url,
             auth=auth,
@@ -242,6 +245,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy_executor=availability_strategy_executor,
             **kwargs
         )
+        # Create Rust client
+        self._rust_client = RustCosmosClient(url, credential, **kwargs)
+        self._url = url  # Keep for backward compatibility
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
@@ -426,10 +432,62 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
+
+        # Use Rust backend with fallback to Python
+        # Environment variable to toggle backend (for testing purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        response_hook = kwargs.pop("response_hook", None)
+
+        if use_rust and self._rust_client is not None:
+            try:
+                # RUST PATH: Call Rust SDK
+                # Rust now returns (DatabaseClient, headers_dict) tuple
+                rust_db, headers_dict = self._rust_client.create_database(id)
+
+                from azure.core.utils import CaseInsensitiveDict
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+                # Create DatabaseProxy with Rust client
+                db_proxy = DatabaseProxy(
+                    client_connection=self.client_connection,
+                    id=id,
+                    rust_database=rust_db
+                )
+
+                if response_hook:
+                    response_hook(response_headers)
+
+                if not return_properties:
+                    return db_proxy
+
+                # For return_properties=True, get properties
+                # Rust read() now returns (properties, headers) tuple
+                properties, props_headers = rust_db.read()
+                return db_proxy, CosmosDict(dict(properties), response_headers=CaseInsensitiveDict(dict(props_headers)))
+
+            except Exception as e:
+                # Log and fall back to Python implementation
+                import logging
+                logging.getLogger(__name__).warning(f"Rust SDK failed, falling back to Python: {e}")
+                # Fall through to Python implementation
+
+        # PYTHON PATH (fallback): Use existing Python implementation
         result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
+        db_proxy = DatabaseProxy(
+            client_connection=self.client_connection,
+            id=id,
+            properties=result
+        )
+
         if not return_properties:
-            return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
-        return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
+            return db_proxy
+        return db_proxy, CosmosDict(result, response_headers=self.client_connection.last_response_headers)
+
+
 
     @overload
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -581,13 +639,25 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseProxy` instance representing the retrieved database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
+        """"""
         if isinstance(database, DatabaseProxy):
             id_value = database.id
         elif isinstance(database, str):
             id_value = database
         else:
             id_value = database["id"]
-        return DatabaseProxy(self.client_connection, id_value)
+
+        #Get Rust database client
+        rust_db = self._rust_client.get_database_client(id_value)
+
+        # Pass Rust client to DatabaseProxy
+        return DatabaseProxy(
+            client_connection=self.client_connection,  # Keep for fallback methods
+            id=id_value,
+            rust_database=rust_db  # Pass Rust client
+        )
+
+
 
     @distributed_trace
     def list_databases(  # pylint:disable=docstring-missing-param
@@ -698,14 +768,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace
     def delete_database(  # pylint:disable=docstring-missing-param
-        self,
-        database: Union[str, DatabaseProxy, Mapping[str, Any]],
-        populate_query_metrics: Optional[bool] = None,
-        *,
-        initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            database: Union[str, DatabaseProxy, Mapping[str, Any]],
+            populate_query_metrics: Optional[bool] = None,
+            *,
+            initial_headers: Optional[dict[str, str]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
 
@@ -747,10 +817,24 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)
-        database_link = _get_database_link(database)
-        self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
+        # CURRENT CODE uses _get_database_link() which handles isinstance:
+        # database_link = _get_database_link(database)  # Returns "dbs/{id}"
+
+        # MODIFY: For Rust, extract the ID directly using same helper or inline:
+        if isinstance(database, DatabaseProxy):
+            database_id = database.id
+        elif isinstance(database, str):
+            database_id = database
+        else:
+            database_id = database["id"]
+
+        # MODIFY: Delegate to Rust
+        response_headers = self._rust_client.delete_database(database_id)
+
+        # KEEP: Call response_hook if provided
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(response_headers)
+
 
     @distributed_trace
     def get_database_account(

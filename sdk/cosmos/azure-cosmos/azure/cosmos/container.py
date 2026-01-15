@@ -83,14 +83,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
+        rust_container: Optional[Any] = None
     ) -> None:
         self.id = id
-        self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
+        self._database_link = database_link  # FIX: Store database_link (was not stored before)
         self.container_cache_lock = threading.Lock()
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        self._rust_container = rust_container  # Store Rust client for migration
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -116,6 +118,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 if self.container_link not in self.__get_client_container_caches():
                     self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
+
+    @property
+    def container_link(self) -> str:
+        """The URL path of the container."""
+        return "{}/colls/{}".format(self._database_link, self.id)
 
     @property
     def is_system_key(self) -> bool:
@@ -297,6 +304,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        
+        # Use Rust backend if available
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust and self._rust_container is not None:
+            try:
+                # Extract item_id from item parameter
+                item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
+                # Rust returns (item_dict, headers_dict) tuple
+                result_dict, headers_dict = self._rust_container.read_item(item_id, partition_key)
+                from azure.core.utils import CaseInsensitiveDict
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+                if response_hook:
+                    response_hook(response_headers, dict(result_dict))
+                return CosmosDict(dict(result_dict), response_headers=response_headers)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Rust SDK failed for read_item, falling back to Python: {e}")
+        
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -1393,6 +1419,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["indexingDirective"] = indexing_directive
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        
+        # Use Rust backend if available
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust and self._rust_container is not None:
+            try:
+                # Rust returns (item_dict, headers_dict) tuple
+                result_dict, headers_dict = self._rust_container.create_item(body)
+                from azure.core.utils import CaseInsensitiveDict
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+                if response_hook:
+                    response_hook(response_headers, dict(result_dict))
+                return CosmosDict(dict(result_dict), response_headers=response_headers)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Rust SDK failed for create_item, falling back to Python: {e}")
+        
         result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result

@@ -85,16 +85,20 @@ class DatabaseProxy(object):
         self,
         client_connection: CosmosClientConnection,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
+        rust_database: Optional[Any] = None
     ) -> None:
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
         :param str id: ID (name) of the database.
+        :param properties: Optional pre-loaded database properties.
+        :param rust_database: Optional Rust DatabaseClient for Rust SDK operations.
         """
         self.client_connection = client_connection
         self.id = id
         self.database_link: str = "dbs/{}".format(self.id)
         self._properties: Optional[dict[str, Any]] = properties
+        self._rust_database = rust_database  # Store Rust client for migration
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
@@ -748,7 +752,21 @@ class DatabaseProxy(object):
             id_value = container
         else:
             id_value = container["id"]
-        return ContainerProxy(self.client_connection, self.database_link, id_value)
+
+        # Get Rust container client if Rust database is available
+        rust_container = None
+        if self._rust_database is not None:
+            try:
+                rust_container = self._rust_database.get_container_client(id_value)
+            except Exception:
+                pass  # Fall back to Python-only mode
+
+        return ContainerProxy(
+            self.client_connection,
+            self.database_link,
+            id_value,
+            rust_container=rust_container
+        )
 
     @distributed_trace
     def list_containers(  # pylint:disable=docstring-missing-param
