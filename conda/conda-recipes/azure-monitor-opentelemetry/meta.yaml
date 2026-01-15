@@ -14,13 +14,13 @@ build:
 
 requirements:
   host:
-    - azure-monitor-opentelemetry-exporter~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-monitor-opentelemetry-exporter >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
     - python
     - opentelemetry-instrumentation-django==0.60b0
     - opentelemetry-instrumentation-requests==0.60b0
-    - azure-core-tracing-opentelemetry~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-core-tracing-opentelemetry >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - opentelemetry-resource-detector-azure<1.0.0,>=0.1.5
     - opentelemetry-sdk==1.39
     - requests-oauthlib >=0.5.0
@@ -33,13 +33,13 @@ requirements:
     - aiohttp
     - pip
   run:
-    - azure-monitor-opentelemetry-exporter~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-monitor-opentelemetry-exporter >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
     - python
     - opentelemetry-instrumentation-django==0.60b0
     - opentelemetry-instrumentation-requests==0.60b0
-    - azure-core-tracing-opentelemetry~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-core-tracing-opentelemetry >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - opentelemetry-sdk==1.39
     - requests-oauthlib >=0.5.0
     - opentelemetry-instrumentation-urllib3==0.60b0
