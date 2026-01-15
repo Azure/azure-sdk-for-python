@@ -1,5 +1,22 @@
 # Release History
 
+## 1.8.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fix the format of the fixed percentage sampler constant and ensure backward compatability
+  ([#44656](https://github.com/Azure/azure-sdk-for-python/pull/44656))
+- Only add PerformanceCounter Processors after PerformanceCounter setup to avoid circular dependency.
+  ([#44661](https://github.com/Azure/azure-sdk-for-python/pull/44661))
+
+ ### Other Changes
+
+- Declare support for Python 3.13 and 3.14
+([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
+
 ## 1.8.4 (2026-01-13)
 
 ### Features Added
