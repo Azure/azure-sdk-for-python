@@ -4,3 +4,6 @@ pyright = false
 type_check_samples = true
 verifytypes = false
 black = false
+
+[tool.azure-sdk-conda]
+in_bundle = false

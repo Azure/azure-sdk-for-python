@@ -1,1 +1,4 @@
 [tool.azure-sdk-build]
+
+[tool.azure-sdk-conda]
+in_bundle = false
