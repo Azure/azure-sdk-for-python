@@ -1251,6 +1251,10 @@ class TestFileSystem(StorageRecordedTestCase):
             expiry=expiry,
             user_delegation_oid=user_delegation_oid,
         )
+
+        assert "sduoid=" + user_delegation_oid in file_system_token
+        assert "skdutid=" + delegated_user_tid in file_system_token
+
         file_system_client = FileSystemClient(
             f"{account_url}?{file_system_token}",
             file_system_name=file_system_name,
@@ -1271,6 +1275,10 @@ class TestFileSystem(StorageRecordedTestCase):
             expiry=expiry,
             user_delegation_oid=user_delegation_oid
         )
+
+        assert "sduoid=" + user_delegation_oid in directory_token
+        assert "skdutid=" + delegated_user_tid in directory_token
+
         directory_client = DataLakeDirectoryClient(
             f"{account_url}?{directory_token}",
             file_system_name=file_system_name,
@@ -1291,6 +1299,10 @@ class TestFileSystem(StorageRecordedTestCase):
             expiry=expiry,
             user_delegation_oid=user_delegation_oid
         )
+
+        assert "sduoid=" + user_delegation_oid in file_token
+        assert "skdutid=" + delegated_user_tid in file_token
+
         file_client = DataLakeFileClient(
             f"{account_url}?{file_token}",
             file_system_name=file_system_name,
