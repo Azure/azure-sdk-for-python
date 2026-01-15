@@ -6,10 +6,10 @@ from typing import Any, ClassVar, Dict, List, Mapping, Optional, cast
 
 from azure.core.pipeline.transport import HttpRequest
 
+from ._base import BaseOperations
 from .._models import FoundryConnectedTool, FoundryToolDetails, FoundryToolSource, InvokeFoundryConnectedToolsResponse, \
 	ListFoundryConnectedToolsResponse, ResolvedFoundryTool, UserInfo
 from ..._exceptions import ToolInvocationError
-from ._base import BaseOperations
 
 
 class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
@@ -62,14 +62,14 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 	def _convert_listed_tools(
 			cls,
 			resp: ListFoundryConnectedToolsResponse,
-			input_tools: List[FoundryConnectedTool]) -> Mapping[FoundryConnectedTool, FoundryToolDetails]:
+			input_tools: List[FoundryConnectedTool]) -> Mapping[FoundryConnectedTool, List[FoundryToolDetails]]:
 		if resp.error:
 			raise resp.error.as_exception()
 		if not resp.result:
 			return {}
 
 		tool_map = {(tool.project_connection_id, tool.protocol): tool for tool in input_tools}
-		result = {}
+		result: Dict[FoundryConnectedTool, List[FoundryToolDetails]] = {}
 		for server in resp.result.servers:
 			input_tool = tool_map.get((server.project_connection_id, server.protocol))
 			if not input_tool:
@@ -81,7 +81,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 					description=tool.description,
 					input_schema=tool.input_schema,
 				)
-				result[tool] = details
+				result.setdefault(input_tool, []).append(details)
 
 		return result
 
@@ -129,7 +129,7 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 	async def list_tools(self,
 						 tools: List[FoundryConnectedTool],
 						 user: Optional[UserInfo],
-						 agent_name: str) -> Mapping[FoundryConnectedTool, FoundryToolDetails]:
+						 agent_name: str) -> Mapping[FoundryConnectedTool, List[FoundryToolDetails]]:
 		"""List connected tools.
 
 		:param tools: List of connected tool definitions.
@@ -139,7 +139,7 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		:param agent_name: Name of the agent.
 		:type agent_name: str
 		:return: Details of connected tools.
-		:rtype: Mapping[FoundryConnectedTool, FoundryToolDetails]
+		:rtype: Mapping[FoundryConnectedTool, List[FoundryToolDetails]]
 		"""
 		if not tools:
 			return {}

@@ -2,8 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import asyncio
+import threading
 from abc import ABC, abstractmethod
-from typing import Any, Awaitable, Dict, List, Mapping, MutableMapping, Optional
+from concurrent.futures import Future
+from typing import Any, Awaitable, Collection, Dict, List, Mapping, MutableMapping, Optional, Tuple
 
 from cachetools import TTLCache
 
@@ -46,51 +48,50 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
     def __init__(self, user_provider: UserProvider):
         super().__init__(user_provider)
-        self._cache: MutableMapping[FoundryTool, Awaitable[Optional[FoundryToolDetails]]] = self._create_cache()
+        self._cache: MutableMapping[FoundryTool, Awaitable[List[FoundryToolDetails]]] = self._create_cache()
 
-    def _create_cache(self) -> MutableMapping[FoundryTool, Awaitable[Optional[FoundryToolDetails]]]:
+    def _create_cache(self) -> MutableMapping[Any, Awaitable[List[FoundryToolDetails]]]:
         return TTLCache(maxsize=1024, ttl=600)
 
     def _get_key(self, user: Optional[UserInfo], tool: FoundryTool) -> Any:
         if tool.source is FoundryToolSource.HOSTED_MCP:
-            return tool
-        return user, tool
+            return tool.id
+        return user, tool.id
 
     async def list(self, tools: List[FoundryToolLike]) -> List[ResolvedFoundryTool]:
-        """Lists all available Foundry tools with concurrency-safe caching.
-
-        :param tools: The list of Foundry tools to resolve.
-        :type tools: List[FoundryToolLike]
-        :return: A list of resolved Foundry tools.
-        :rtype: List[ResolvedFoundryTool]
-        """
         user = await self._user_provider.get_user()
-        tools: List[FoundryTool] = [ensure_foundry_tool(tool) for tool in tools]  # type: ignore
+        foundry_tools = [ensure_foundry_tool(tool) for tool in tools]
 
         # for tools that are not being listed, create a batch task, convert to per-tool resolving tasks, and cache them
-        tools_to_fetch = [tool for tool in tools if self._get_key(user, tool) not in self._cache]
+        tools_to_fetch = {k: tool for tool in foundry_tools if (k := self._get_key(user, tool) not in self._cache)}
         if tools_to_fetch:
-            # Awaitable[Mapping[FoundryTool, FoundryToolDetails]]
-            fetched_tools = asyncio.create_task(self._fetch_tools(tools_to_fetch, user))
+            # Awaitable[Mapping[FoundryTool, List[FoundryToolDetails]]]
+            fetched_tools = asyncio.create_task(self._fetch_tools(tools_to_fetch.values(), user))
 
-            for tool in tools_to_fetch:
+            for k, tool in tools_to_fetch.items():
                 # safe to write cache since it's the only runner in this event loop
-                self._cache[tool] = asyncio.create_task(self._as_resolving_task(tool, fetched_tools))
+                self._cache[k] = asyncio.create_task(self._as_resolving_task(tool, fetched_tools))
 
         # now we have every tool associated with a task
-        resolving_tasks: Dict[FoundryTool, Awaitable[Optional[FoundryToolDetails]]] = {
+        resolving_tasks = {
             tool: self._cache[self._get_key(user, tool)]
-            for tool in tools
+            for tool in foundry_tools
         }
 
-        await asyncio.gather(*resolving_tasks.values())
+        try:
+            await asyncio.gather(*resolving_tasks.values())
+        except:
+            # exception can only be caused by fetching tasks, remove them from cache
+            for k, tool in tools_to_fetch.items():
+                if k in self._cache:
+                    del self._cache[k]
+            raise
 
         resolved_tools = []
         for tool, task in resolving_tasks.items():
             # this acts like a lock - every task of the same tool waits for the same underlying fetch
-            details = await task
-            if details is not None:
-                # filter out unresolved tools in _as_resolving_task()
+            details_list = await task
+            for details in details_list:
                 resolved_tools.append(
                     ResolvedFoundryTool(
                         definition=tool,
@@ -103,14 +104,15 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
     @staticmethod
     async def _as_resolving_task(
             tool: FoundryTool,
-            fetching: Awaitable[Mapping[FoundryTool, FoundryToolDetails]]) -> Optional[FoundryToolDetails]:
+            fetching: Awaitable[Mapping[FoundryTool, List[FoundryToolDetails]]]
+    ) -> List[FoundryToolDetails]:
         details = await fetching
-        return details.get(tool, None)
+        return details.get(tool, [])
 
     @abstractmethod
     async def _fetch_tools(self,
-                           tools: List[FoundryTool],
-                           user: Optional[UserInfo]) -> Mapping[FoundryTool, FoundryToolDetails]:
+                           tools: Collection[FoundryTool],
+                           user: Optional[UserInfo]) -> Mapping[FoundryTool, List[FoundryToolDetails]]:
         raise NotImplementedError
 
 
@@ -123,6 +125,6 @@ class DefaultFoundryToolCatalog(CachedFoundryToolCatalog):
         self._agent_name = agent_name
 
     async def _fetch_tools(self,
-                           tools: List[FoundryTool],
-                           user: Optional[UserInfo]) -> Mapping[FoundryTool, FoundryToolDetails]:
+                           tools: Collection[FoundryTool],
+                           user: Optional[UserInfo]) -> Mapping[FoundryTool, List[FoundryToolDetails]]:
         return await self._client.list_tools(tools, self._agent_name, user)

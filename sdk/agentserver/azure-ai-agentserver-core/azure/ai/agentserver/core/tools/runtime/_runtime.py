@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, AsyncContextManager, Dict, Optional
+from typing import Any, AsyncContextManager, Dict, Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
 
@@ -10,6 +10,7 @@ from ._catalog import DefaultFoundryToolCatalog, FoundryToolCatalog
 from ._facade import FoundryToolLike
 from ._resolver import DefaultFoundryToolInvocationResolver, FoundryToolInvocationResolver
 from ._user import ContextVarUserProvider, UserProvider
+from ..client._models import ResolvedFoundryTool
 from ..client._client import FoundryToolClient
 from ...constants import Constants
 
@@ -35,11 +36,11 @@ class FoundryToolRuntime(AsyncContextManager["FoundryToolRuntime"]):
         """
         raise NotImplementedError
 
-    async def invoke(self, tool: FoundryToolLike, arguments: Dict[str, Any]) -> Any:
+    async def invoke(self, tool: Union[FoundryToolLike, ResolvedFoundryTool], arguments: Dict[str, Any]) -> Any:
         """Invoke a tool with the given arguments.
 
         :param tool: The tool to invoke.
-        :type tool: FoundryToolLike
+        :type tool: Union[FoundryToolLike, ResolvedFoundryTool]
         :param arguments: The arguments to pass to the tool.
         :type arguments: Dict[str, Any]
         :return: The result of the tool invocation.
