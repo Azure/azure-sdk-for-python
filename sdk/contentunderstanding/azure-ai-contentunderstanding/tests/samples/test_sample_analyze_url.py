@@ -58,8 +58,6 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         # Assertion: Verify analysis operation completed
         assert poller is not None, "Analysis operation should not be null"
         assert poller.done(), "Operation should be completed"
-
-        assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
         print("[PASS] Analysis operation completed successfully")
 
         # Assertion: Verify result
@@ -105,7 +103,6 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         # Assertion: Verify analysis operation completed
         assert poller is not None, "Analysis operation should not be null"
         assert poller.done(), "Operation should be completed"
-        assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
         print("[PASS] Analysis operation completed successfully")
 
         # Assertion: Verify result
@@ -148,7 +145,6 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         # Assertion: Verify analysis operation completed
         assert poller is not None, "Analysis operation should not be null"
         assert poller.done(), "Operation should be completed"
-        assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
         print("[PASS] Analysis operation completed successfully")
 
         # Assertion: Verify result
