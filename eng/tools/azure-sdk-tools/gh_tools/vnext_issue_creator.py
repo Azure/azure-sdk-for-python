@@ -122,17 +122,17 @@ def get_labels(package_name: str, service: str) -> tuple[list[str], list[str]]:
                     labels.append(label)
                     # Extract codeowners from the line
                     tokens = line.split()
-                    owners = [token.lstrip('@') for token in tokens if token.startswith('@')]
+                    owners = [token.lstrip("@") for token in tokens if token.startswith("@")]
                     # Filter out teams (containing '/')
-                    assignees = [owner for owner in owners if '/' not in owner]
+                    assignees = [owner for owner in owners if "/" not in owner]
                     return labels, assignees
             except IndexError:
                 if service_directory == service:
                     service_label = label
                     # Extract service-level codeowners
                     tokens = line.split()
-                    owners = [token.lstrip('@') for token in tokens if token.startswith('@')]
-                    service_owners = [owner for owner in owners if '/' not in owner]
+                    owners = [token.lstrip("@") for token in tokens if token.startswith("@")]
+                    service_owners = [owner for owner in owners if "/" not in owner]
 
     if service_label:
         labels.append(service_label)
@@ -190,7 +190,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         labels.extend([check_type])
         logging.info(f"Issue does not exist for {package_name} with {check_type} version {version}. Creating...")
         issue = repo.create_issue(title=title, body=template, labels=labels)
-        
+
         # Assign codeowners individually with error handling
         for assignee in assignees:
             try:
@@ -207,7 +207,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         title=title,
         body=template,
     )
-    
+
     # Assign codeowners individually with error handling
     for assignee in assignees:
         try:
