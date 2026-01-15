@@ -19,7 +19,7 @@ Determines what part of the script to run. Has to be either Install or Launch
 #>
 [CmdletBinding()]
 Param (
-  [string] $EmulatorMsiUrl = "https://aka.ms/cosmosdbemulator-internal",
+  [string] $EmulatorMsiUrl = "https://aka.ms/cosmosdb-emulator",
   [string] $StartParameters,
   [string] $Emulator,
   [Parameter(Mandatory=$True)]
@@ -102,7 +102,7 @@ if ($Stage -eq "Launch")
       $argumentList += , $StartParameters
   } else {
     # Use the default params if none provided
-    $argumentList = "/noexplorer /noui /enablepreview /disableratelimiting /enableaadauthentication /overrides=enableffcfstarttimesearch:true"
+    $argumentList = "/noexplorer /noui /enablepreview /disableratelimiting /enableaadauthentication"
   }
 
   Write-Host "Starting emulator process: $Emulator $argumentList"
