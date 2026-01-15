@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
@@ -379,7 +378,7 @@ class PageViewData(MonitorDomain):
     _validation = {
         "version": {"required": True},
         "id": {"required": True, "max_length": 512, "min_length": 0},
-        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "name": {"required": True, "max_length": 512, "min_length": 0},
         "url": {"max_length": 2048, "min_length": 0},
         "referred_uri": {"max_length": 2048, "min_length": 0},
     }
@@ -478,7 +477,7 @@ class PageViewPerfData(MonitorDomain):
     _validation = {
         "version": {"required": True},
         "id": {"required": True, "max_length": 512, "min_length": 0},
-        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "name": {"required": True, "max_length": 512, "min_length": 0},
         "url": {"max_length": 2048, "min_length": 0},
     }
 

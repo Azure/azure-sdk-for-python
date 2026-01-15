@@ -5,20 +5,22 @@ import logging
 from typing import Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
+from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportResult
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_ESCAPED,
     EXCEPTION_MESSAGE,
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
-from opentelemetry.sdk._logs import ReadableLogRecord
-from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportResult
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+    _DEFAULT_LOG_MESSAGE,
     _EXCEPTION_ENVELOPE_NAME,
     _MESSAGE_ENVELOPE_NAME,
-    _DEFAULT_LOG_MESSAGE,
+    _MICROSOFT_CUSTOM_EVENT_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import (
     ContextTagKeys,
@@ -34,15 +36,35 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
-from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
-    _MICROSOFT_CUSTOM_EVENT_NAME,
-)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_shutdown,
     get_statsbeat_custom_events_feature_set,
     is_statsbeat_enabled,
     set_statsbeat_custom_events_feature_set,
+)
+
+try:
+    from opentelemetry.semconv.logs import (
+        LogRecordAttributes as _SemconvLogRecordAttributes,
+    )
+except ImportError:
+    _SemconvLogRecordAttributes = None
+try:
+    from opentelemetry.semconv._incubating.attributes import (
+        enduser_attributes as _enduser_attributes,
+    )
+except ImportError:
+    _enduser_attributes = None
+
+_ENDUSER_ID_ATTRIBUTE = (
+    getattr(_SemconvLogRecordAttributes, "ENDUSER_ID", None)
+    or getattr(_enduser_attributes, "ENDUSER_ID", None)
+    or "enduser.id"
+)
+_ENDUSER_PSEUDO_ID_ATTRIBUTE = (
+    getattr(_SemconvLogRecordAttributes, "ENDUSER_PSEUDO_ID", None)
+    or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
+    or "enduser.pseudo.id"
 )
 
 _logger = logging.getLogger(__name__)
@@ -56,7 +78,9 @@ __all__ = ["AzureMonitorLogExporter"]
 class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:
+    def export(
+        self, batch: Sequence[ReadableLogRecord], **kwargs: Any
+    ) -> LogRecordExportResult:
         # pylint: disable=unused-argument
         """Export log data.
 
@@ -71,7 +95,9 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_log_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while exporting the data."
+            )  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
@@ -89,7 +115,9 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorLogExporter":
+    def from_connection_string(
+        cls, conn_str: str, **kwargs: Any
+    ) -> "AzureMonitorLogExporter":
         """
         Create an AzureMonitorLogExporter from a connection string. This is the
         recommended way of instantiation if a connection string is passed in
@@ -111,7 +139,9 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
     log_record = readable_log_record.log_record
     is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or log_record.attributes.get(
+        is_event = log_record.attributes.get(
+            _MICROSOFT_CUSTOM_EVENT_NAME
+        ) or log_record.attributes.get(
             _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE
         )  # type: ignore
     return is_event is not None
@@ -121,12 +151,25 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 # pylint: disable=too-many-statements
 def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> TelemetryItem:
     log_record = readable_log_record.log_record
-    time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
+    time_stamp = (
+        log_record.timestamp
+        if log_record.timestamp is not None
+        else log_record.observed_timestamp
+    )
     envelope = _utils._create_telemetry_item(time_stamp)
     envelope.tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
+    if _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
+        envelope.tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[
+            _ENDUSER_ID_ATTRIBUTE
+        ]
+    if _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
+        envelope.tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[
+            _ENDUSER_PSEUDO_ID_ATTRIBUTE
+        ]
+
     envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
@@ -236,7 +279,7 @@ def _map_body_to_message(log_body: Any) -> str:
 
     try:
         return json.dumps(log_body)[:32768]
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=broad-except
         return str(log_body)[:32768]
 
 
@@ -257,5 +300,9 @@ _IGNORED_ATTRS = frozenset(
 
 
 def _set_statsbeat_custom_events_feature():
-    if is_statsbeat_enabled() and not get_statsbeat_shutdown() and not get_statsbeat_custom_events_feature_set():
+    if (
+        is_statsbeat_enabled()
+        and not get_statsbeat_shutdown()
+        and not get_statsbeat_custom_events_feature_set()
+    ):
         set_statsbeat_custom_events_feature_set()
