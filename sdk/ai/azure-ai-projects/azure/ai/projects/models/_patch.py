@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Dict, Optional, Any, Tuple
+from typing import List, Dict, Optional, Any, Tuple, Mapping, overload
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -14,7 +14,11 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from ._models import CustomCredential as CustomCredentialGenerated
+from ._models import (
+    CustomCredential as CustomCredentialGenerated,
+    TextResponseFormatJsonSchema as TextResponseFormatJsonSchemaGenerated,
+    TextResponseFormatConfigurationType,
+)
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 
 
@@ -227,6 +231,45 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+class TextResponseFormatJsonSchema(TextResponseFormatJsonSchemaGenerated, discriminator="json_schema"):
+    """JSON schema.
+
+    :ivar type: The type of response format being defined. Always ``json_schema``. Required.
+    :vartype type: str or ~azure.ai.projects.models.JSON_SCHEMA
+    :ivar description: A description of what the response format is for, used by the model to
+       determine how to respond in the format.
+    :vartype description: str
+    :ivar name: The name of the response format. Must be a-z, A-Z, 0-9, or contain
+       underscores and dashes, with a maximum length of 64. Required.
+    :vartype name: str
+    :ivar schema: Required.
+    :vartype schema: Dict[str, Any]
+    :ivar strict:
+    :vartype strict: bool
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        schema: Dict[str, Any],
+        description: Optional[str] = None,
+        strict: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TextResponseFormatConfigurationType.JSON_SCHEMA  # type: ignore
+
+
 class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom AsyncLROPoller for Memory Store update operations."""
 
@@ -259,7 +302,7 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         cls,
         polling_method: AsyncPollingMethod[MemoryStoreUpdateCompletedResult],
         continuation_token: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> "AsyncUpdateMemoriesLROPoller":
         """Create a poller from a continuation token.
 
@@ -286,6 +329,7 @@ __all__: List[str] = [
     "AsyncUpdateMemoriesLROPollingMethod",
     "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
+    "TextResponseFormatJsonSchema",
 ]  # Add all objects you want publicly available to users at this package level
 
 

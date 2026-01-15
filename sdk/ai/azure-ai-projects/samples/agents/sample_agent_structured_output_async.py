@@ -40,7 +40,6 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     PromptAgentDefinitionText,
     TextResponseFormatJsonSchema,
-    ResponseFormatJsonSchemaSchema,
 )
 from pydantic import BaseModel, Field
 
@@ -67,9 +66,7 @@ async def main() -> None:
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 text=PromptAgentDefinitionText(
-                    format=TextResponseFormatJsonSchema(
-                        name="CalendarEvent", schema=ResponseFormatJsonSchemaSchema(CalendarEvent.model_json_schema())
-                    )
+                    format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),
                 instructions="""
                     You are a helpful assistant that extracts calendar event information from the input user messages,
