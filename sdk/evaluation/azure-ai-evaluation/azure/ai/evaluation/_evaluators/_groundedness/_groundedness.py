@@ -284,7 +284,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     self._result_key: self._NOT_APPLICABLE_RESULT,
                     f"{self._result_key}_result": "pass",
                     f"{self._result_key}_threshold": self.threshold,
-                    f"{self._result_key}_reason": f"Supported tools were not called. Supported tools for groundedness are {self._SUPPORTED_TOOLS}.",
+                    f"{self._result_key}_reason": ex.message,
                 }
             else:
                 raise ex
@@ -318,7 +318,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         context = self._get_context_from_agent_response(response, tool_definitions)
 
         if not self._validate_context(context) and self._is_single_entry(response) and self._is_single_entry(query):
-            msg = f"{type(self).__name__}: No valid context provided or could be extracted from the query or response."
+            msg = (
+                f"{type(self).__name__}: No valid context provided or could be extracted from the query or response. "
+                "Please either provide valid context or pass the full items list for 'response' and 'query' "
+                "to extract context from tool calls."
+            )
             raise EvaluationException(
                 message=msg,
                 blame=ErrorBlame.USER_ERROR,
