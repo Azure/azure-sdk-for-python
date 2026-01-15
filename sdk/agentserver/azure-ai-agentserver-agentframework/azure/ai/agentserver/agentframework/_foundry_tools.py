@@ -4,9 +4,9 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any, AsyncIterable, Dict, List, Optional, Sequence
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence
 
-from agent_framework import AIFunction, BaseChatClient, ChatOptions
+from agent_framework import AIFunction, ChatContext, ChatOptions, ChatMiddleware
 from pydantic import Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
@@ -126,56 +126,21 @@ class FoundryToolClient:
         return type_map.get(json_type, str)
 
 
-class ChatClientWithFoundryTools(BaseChatClient):
-    """Wrap a BaseChatClient and inject Foundry tools into ChatOptions on each call.
-
-    Callers only provide:
-    - `inner`: the BaseChatClient to delegate to
-    - `tools`: a list of FoundryToolLike descriptors (facades or FoundryTool objects)
-    """
+class FoundryToolsChatMiddleware(ChatMiddleware):
+    """Chat middleware to inject Foundry tools into ChatOptions on each call."""
 
     def __init__(
             self,
-            *,
-            inner: BaseChatClient, 
             tools: Sequence[FoundryToolLike]) -> None:
-        if not isinstance(inner, BaseChatClient):
-            raise TypeError(
-                "inner must be an instance of agent_framework.BaseChatClient"
-            )
+        self._foundry_tool_client = FoundryToolClient(tools=tools)
 
-        super().__init__(middleware=getattr(inner, "middleware", None))
-
-        self._inner = inner
-        self._tools: List[FoundryToolLike] = list(tools)
-
-        self._foundry_tool_client = FoundryToolClient(tools=self._tools)
-
-    async def _inject_chat_options(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    async def process(
+        self,
+        context: ChatContext,
+        next: Callable[[ChatContext], Awaitable[None]],
+    ) -> None:
         tools = await self._foundry_tool_client.list_tools()
-        base: Optional[ChatOptions] = kwargs.pop("chat_options", None)
-        kwargs["chat_options"] = (base or ChatOptions()) & ChatOptions(tools=tools)
-        return kwargs
-
-    async def get_response(self, messages: Any, **kwargs: Any) -> Any:
-        kwargs = await self._inject_chat_options(kwargs)
-        return await self._inner.get_response(messages=messages, **kwargs)
-
-    async def get_streaming_response(self, messages: Any, **kwargs: Any) -> AsyncIterable[Any]:
-        kwargs = await self._inject_chat_options(kwargs)
-        async for update in self._inner.get_streaming_response(messages=messages, **kwargs):
-            yield update
-
-    async def _inner_get_response(self, *, messages: Any, chat_options: ChatOptions, **kwargs: Any) -> Any:
-        return await self._inner._inner_get_response(messages=messages, chat_options=chat_options, **kwargs)
-
-    async def _inner_get_streaming_response(
-        self, *, messages: Any, chat_options: ChatOptions, **kwargs: Any
-    ) -> AsyncIterable[Any]:
-        async for update in self._inner._inner_get_streaming_response(
-            messages=messages, chat_options=chat_options, **kwargs
-        ):
-            yield update
-
-    def __getattr__(self, name: str) -> Any:
-        return getattr(self._inner, name)
+        base = context.chat_options or ChatOptions()
+        base_tools = base.tools or []
+        context.chat_options.tools = base_tools + tools
+        await next(context)

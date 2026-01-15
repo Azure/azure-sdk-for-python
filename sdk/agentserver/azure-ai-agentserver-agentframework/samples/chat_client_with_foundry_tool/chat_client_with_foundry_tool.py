@@ -11,7 +11,7 @@ import os
 from dotenv import load_dotenv
 from agent_framework.azure import AzureOpenAIChatClient
 
-from azure.ai.agentserver.agentframework import from_agent_framework, ChatClientWithFoundryTools
+from azure.ai.agentserver.agentframework import from_agent_framework, FoundryToolsChatMiddleware
 from azure.identity import DefaultAzureCredential
 
 load_dotenv()
@@ -19,12 +19,13 @@ load_dotenv()
 def main():
     tool_connection_id = os.getenv("AZURE_AI_PROJECT_TOOL_CONNECTION_ID")
 
-    agent = ChatClientWithFoundryTools(
-        inner=AzureOpenAIChatClient(credential=DefaultAzureCredential()), 
-        tools=[{"type": "mcp", "project_connection_id": tool_connection_id}]
-        ).create_agent(
-            name="FoundryToolAgent",
-            instructions="You are a helpful assistant with access to various tools.",
+    agent = AzureOpenAIChatClient(
+        credential=DefaultAzureCredential(), 
+        middleware=FoundryToolsChatMiddleware(
+            tools=[{"type": "mcp", "project_connection_id": tool_connection_id}]
+            )).create_agent(
+                name="FoundryToolAgent",
+                instructions="You are a helpful assistant with access to various tools.",
         )
 
     from_agent_framework(agent).run()
