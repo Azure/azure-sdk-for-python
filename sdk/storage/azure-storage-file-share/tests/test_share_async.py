@@ -1987,7 +1987,9 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in share_token
+        assert "skdutid=" + delegated_user_tid in share_token
 
         share_client = ShareClient.from_share_url(
             f"{share.url}?{share_token}",
@@ -2010,7 +2012,9 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in file_token
+        assert "skdutid=" + delegated_user_tid in file_token
 
         file_client = ShareFileClient.from_file_url(
             f"{file.url}?{file_token}",
