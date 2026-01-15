@@ -13,6 +13,5 @@ extends:
         Public:
           Location: eastus
       EnvVars:
-        TEST_MODE: 'RunLiveNoRecord'
-        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_SKIP_LIVE_RECORDING: 'true'
         AZURE_TEST_RUN_LIVE: 'false'
