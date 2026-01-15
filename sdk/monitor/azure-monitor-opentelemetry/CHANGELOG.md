@@ -1,14 +1,27 @@
 # Release History
 
-## 1.8.4 (Unreleased)
+## 1.8.5 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix the format of the fixed percentage sampler constant and ensure backward compatability
+  ([#44656](https://github.com/Azure/azure-sdk-for-python/pull/44656))
 
-### Other Changes
+ ### Other Changes
+
+- Declare support for Python 3.13 and 3.14
+([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
+
+## 1.8.4 (2026-01-13)
+
+### Features Added
+- Added support for OTEL_TRACES_SAMPLER
+  ([#44535](https://github.com/Azure/azure-sdk-for-python/pull/44535))
+- Added ability to add additional Log Record Processors and Metric Readers via configure_azure_monitor
+  ([#44367](https://github.com/Azure/azure-sdk-for-python/pull/44367))
 
 ## 1.8.3 (2025-12-04)
 
