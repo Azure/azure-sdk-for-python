@@ -1,6 +1,6 @@
 # Human-in-the-Loop Agent Framework Sample
 
-This sample shows how to host a Microsoft Agent Framework workflow inside Azure AI Agent Server while escalating responses to a real human when the reviewer executor decides that manual approval is required. The sample is provided by [agent-framework](https://github.com/microsoft/agent-framework/blob/main/python/samples/getting_started/workflows/agents/workflow_as_agent_human_in_the_loop.py).
+This sample shows how to host a Microsoft Agent Framework workflow inside Azure AI Agent Server while escalating responses to a real human when the reviewer executor decides that manual approval is required. The sample is created by [agent-framework](https://github.com/microsoft/agent-framework/blob/main/python/samples/getting_started/workflows/agents/workflow_as_agent_human_in_the_loop.py).
 
 ## Prerequisites
 
