@@ -155,19 +155,18 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
                 # Add etag and match_condition to headers
                 _next_headers = dict(_headers)
                 accept = _headers.pop("Accept", None)
-                if etag is not None:
-                    if sync_token is not None:
-                        _next_headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
-                    if accept_datetime is not None:
-                        _next_headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
-                    if accept is not None:
-                        _next_headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-                    if_match = prep_if_match(etag, match_condition)
-                    if if_match is not None:
-                        _next_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-                    if_none_match = prep_if_none_match(etag, match_condition)
-                    if if_none_match is not None:
-                        _next_headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+                if sync_token is not None:
+                    _next_headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+                if accept_datetime is not None:
+                    _next_headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
+                if accept is not None:
+                    _next_headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+                if_match = prep_if_match(etag, match_condition)
+                if if_match is not None:
+                    _next_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+                if_none_match = prep_if_none_match(etag, match_condition)
+                if if_none_match is not None:
+                    _next_headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
                 _request = HttpRequest(
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
@@ -191,7 +190,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         response = pipeline_response.http_response
 
         valid_status_codes = [200]
-        if etag is not None and match_condition is not None:
+        if etag is not None and match_condition is  MatchConditions.IfModified:
             valid_status_codes.append(304)
 
         if response.status_code not in valid_status_codes:
