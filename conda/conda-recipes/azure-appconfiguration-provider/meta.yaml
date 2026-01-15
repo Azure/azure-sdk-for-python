@@ -18,10 +18,8 @@ requirements:
     - cryptography
     - python
     - dnspython>=2.6.1
-    - azure-keyvault >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - requests-oauthlib >=0.5.0
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - azure-appconfiguration >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
     - pip
   run:
@@ -29,10 +27,8 @@ requirements:
     - cryptography
     - python
     - dnspython>=2.6.1
-    - azure-keyvault >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - requests-oauthlib >=0.5.0
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - azure-appconfiguration >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
 
 test:
