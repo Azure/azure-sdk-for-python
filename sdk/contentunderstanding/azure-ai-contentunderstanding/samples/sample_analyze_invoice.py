@@ -143,7 +143,7 @@ def main() -> None:
         amount_field = total_amount_field.value.get("Amount")
         currency_field = total_amount_field.value.get("CurrencyCode")
         amount = amount_field.value if amount_field else None
-        # Use currency value if present, otherwise default to "$"
+        # Use currency value if present, otherwise default to ""
         currency = (currency_field.value if currency_field and currency_field.value else "")
         if isinstance(amount, (int, float)):
             print(f"\nTotal: {currency}{amount:.2f}")
