@@ -8,7 +8,7 @@ import glob
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from ci_tools.logging import logger, configure_logging
-from ci_tools.parsing import ParsedSetup, extract_package_metadata
+from ci_tools.parsing import ParsedSetup
 from typing import Dict, List, Optional, Tuple
 from conda_helper_functions import (
     parse_csv,
@@ -427,7 +427,6 @@ def get_package_metadata(
     package_name: str, package_path: Optional[str]
 ) -> Tuple[str, str, str]:
     """Extract package metadata for about section in meta.yaml."""
-    pkg_metadata = extract_package_metadata(package_path)
     if package_path:
         service_dir = os.path.basename(os.path.dirname(package_path))
     else:
@@ -435,11 +434,7 @@ def get_package_metadata(
         service_dir = package_name.replace("azure-", "")
     home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
-    # TODO check correctness of this
-    if pkg_metadata and pkg_metadata.get("description"):
-        summary = pkg_metadata["description"]
-    else:
-        summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
+    summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
 
     # TODO definitely need to check if this is actually always correct
     conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
