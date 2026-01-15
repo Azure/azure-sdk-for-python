@@ -1,5 +1,10 @@
 ## Release History
 
+### 4.14.5 (2026-01-15)
+
+#### Bugs Fixed
+* Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error.See [PR 44659](https://github.com/Azure/azure-sdk-for-python/pull/44649)
+
 ### 4.14.4 (2026-01-12)
 
 #### Bugs Fixed
