@@ -14,9 +14,9 @@ from async_preparers import app_config_aad_decorator_async
 from devtools_testutils.aio import recorded_by_proxy_async
 
 # cspell:disable-next-line
-AZCONFIG_DOMAIN = "azconfig.io"
-CORRECT_AUDIENCE = f"https://{AZCONFIG_DOMAIN}"
-VALID_ENDPOINT_SUFFIX = f".{AZCONFIG_DOMAIN}"
+CORRECT_AUDIENCE = "https://azconfig.io"
+# cspell:disable-next-line
+VALID_ENDPOINT_SUFFIX = ".azconfig.io"
 # cspell:disable-next-line
 INVALID_ENDPOINT_SUFFIX = ".azconfig.sovcloud-api.fr"
 # cspell:disable-next-line
@@ -72,11 +72,15 @@ class TestAudienceErrorHandlingLiveAsync(AsyncAppConfigTestCase):
 
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_async_error_message_when_incorrect_audience_provided(self, appconfiguration_endpoint_string):
+    async def test_async_error_message_when_incorrect_audience_provided(self, appconfiguration_endpoint_string, **kwargs):
         """Test that correct error message is raised when incorrect audience is provided."""
+        recorded_variables = kwargs.pop("variables", {})
         # Create client with invalid endpoint to trigger authentication error
         # Replace the endpoint domain with an invalid one to force audience mismatch
-        invalid_endpoint = appconfiguration_endpoint_string.replace(VALID_ENDPOINT_SUFFIX, INVALID_ENDPOINT_SUFFIX)
+        invalid_endpoint = recorded_variables.setdefault(
+            "invalid_endpoint",
+            appconfiguration_endpoint_string.replace(VALID_ENDPOINT_SUFFIX, INVALID_ENDPOINT_SUFFIX)
+        )
         client = self.create_aad_client(invalid_endpoint, audience=INCORRECT_AUDIENCE)
 
         # Attempt operation that should fail with audience error
@@ -95,3 +99,5 @@ class TestAudienceErrorHandlingLiveAsync(AsyncAppConfigTestCase):
         assert hasattr(exc_info.value, "response")
 
         await client.close()
+
+        return recorded_variables
