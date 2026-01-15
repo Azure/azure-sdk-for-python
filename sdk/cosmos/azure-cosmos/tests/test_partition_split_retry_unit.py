@@ -5,8 +5,12 @@
 Sync unit tests for partition split (410) retry logic.
 """
 
+import gc
+import time
+import tracemalloc
 import unittest
 from unittest.mock import patch
+
 import pytest
 
 from azure.cosmos import exceptions
@@ -221,6 +225,96 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             f"With flag, expected 0 refresh calls, got {mock_client.refresh_routing_map_provider_call_count}"
         assert mock_execute.call_count == 1, \
             f"With flag, expected 1 Execute call, got {mock_execute.call_count}"
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_memory_bounded_no_leak_on_410_retries(self, mock_execute):
+        """
+        Test that memory usage is bounded during 410 partition split retries.
+        - Execute calls are bounded (max 4: 1 initial + 3 retries)
+        - Refresh calls are bounded (max 3)
+        - Memory growth is minimal (no recursive accumulation)
+        - No infinite recursion (max depth = 0 for PK range queries)
+        """
+        # tracemalloc.start() begins tracing memory allocations to detect leaks
+        tracemalloc.start()
+        # gc.collect() forces garbage collection to get accurate baseline memory measurement
+        gc.collect()
+        # take_snapshot() captures current memory state for comparison after test
+        snapshot_before = tracemalloc.take_snapshot()
+        start_time = time.time()
+
+        mock_client = MockClient()
+
+        mock_execute.side_effect = raise_410_partition_split_error
+
+        def mock_fetch_function(options):
+            return ([{"id": "1"}], {})
+
+        # Test regular query - should have bounded retries
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+
+        with pytest.raises(exceptions.CosmosHttpResponseError):
+            context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        elapsed_time = time.time() - start_time
+        # gc.collect() before snapshot ensures we measure actual leaks, not pending garbage
+        gc.collect()
+        snapshot_after = tracemalloc.take_snapshot()
+        # compare_to() shows memory difference between snapshots to identify growth
+        top_stats = snapshot_after.compare_to(snapshot_before, 'lineno')
+        memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
+        peak_memory = tracemalloc.get_traced_memory()[1]
+        # tracemalloc.stop() ends memory tracing and frees tracing overhead
+        tracemalloc.stop()
+
+        # Collect metrics
+        execute_calls = mock_execute.call_count
+        refresh_calls = mock_client.refresh_routing_map_provider_call_count
+
+        # Print metrics
+        print(f"\n{'=' * 60}")
+        print("MEMORY METRICS - Partition Split Memory Verification")
+        print(f"{'=' * 60}")
+        print(f"Metrics:")
+        print(f"  - Execute calls:   {execute_calls} (bounded)")
+        print(f"  - Refresh calls:   {refresh_calls}")
+        print(f"  - Elapsed time:    {elapsed_time:.2f}s")
+        print(f"  - Memory growth:   {memory_growth / 1024:.2f} KB")
+        print(f"  - Peak memory:     {peak_memory / 1024:.2f} KB")
+        print(f"{'=' * 60}")
+
+        assert execute_calls == 4, \
+            f"Execute calls should be bounded to 4, got {execute_calls}"
+        assert refresh_calls == 3, \
+            f"Refresh calls should be bounded to 3, got {refresh_calls}"
+        assert elapsed_time < 1.0, \
+            f"Should complete quickly (< 1s), took {elapsed_time:.2f}s - indicates no infinite loop"
+        assert memory_growth < 500 * 1024, \
+            f"Memory growth should be < 500KB, got {memory_growth / 1024:.2f} KB - indicates no memory leak"
+
+        # Test PK range query - should have NO retries (prevents recursion)
+        mock_client.reset_counts()
+        mock_execute.reset_mock()
+        mock_execute.side_effect = raise_410_partition_split_error
+
+        options_with_flag = {"_internal_pk_range_fetch": True}
+        context_pk = _DefaultQueryExecutionContext(mock_client, options_with_flag, mock_fetch_function)
+
+        with pytest.raises(exceptions.CosmosHttpResponseError):
+            context_pk._fetch_items_helper_with_retries(mock_fetch_function)
+
+        pk_execute_calls = mock_execute.call_count
+        pk_refresh_calls = mock_client.refresh_routing_map_provider_call_count
+
+        print(f"\nPK Range Query:")
+        print(f"  - Execute calls:   {pk_execute_calls} (no retry)")
+        print(f"  - Refresh calls:   {pk_refresh_calls} (no recursion)")
+        print(f"{'=' * 60}\n")
+
+        assert pk_execute_calls == 1, \
+            f"PK range query should have 1 execute call, got {pk_execute_calls}"
+        assert pk_refresh_calls == 0, \
+            f"PK range query should have 0 refresh calls, got {pk_refresh_calls}"
 
 
 if __name__ == "__main__":
