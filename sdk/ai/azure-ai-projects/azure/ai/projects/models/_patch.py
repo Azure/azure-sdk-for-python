@@ -16,9 +16,12 @@ from azure.core.polling.base_polling import (
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._models import (
     CustomCredential as CustomCredentialGenerated,
-    TextResponseFormatJsonSchema as TextResponseFormatJsonSchemaGenerated,
+    TextResponseFormatConfiguration,
     TextResponseFormatConfigurationType,
+    TextResponseFormatJsonSchema as TextResponseFormatJsonSchemaGenerated,
+    TextResponseFormatJsonSchema as _GeneratedTextResponseFormatJsonSchema,
 )
+from .._utils.model_base import rest_field
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 
 
@@ -248,6 +251,10 @@ class TextResponseFormatJsonSchema(TextResponseFormatJsonSchemaGenerated, discri
     :vartype strict: bool
     """
 
+    schema: Dict[str, Any] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
     @overload
     def __init__(
         self,
@@ -267,7 +274,6 @@ class TextResponseFormatJsonSchema(TextResponseFormatJsonSchemaGenerated, discri
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = TextResponseFormatConfigurationType.JSON_SCHEMA  # type: ignore
 
 
 class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
