@@ -229,7 +229,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
             # Find the result matching our metric
             for result_item in results:
-                result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+                # Handle dict, Model objects (which support dict-like access), or fall back to __dict__
+                if isinstance(result_item, dict):
+                    result_dict = result_item
+                elif hasattr(result_item, "get") and callable(getattr(result_item, "get")):
+                    # Model objects from OneDP client support dict-like access via .get()
+                    result_dict = result_item
+                else:
+                    result_dict = result_item.__dict__
 
                 # Get metric name
                 metric_name = result_dict.get("metric")
@@ -237,7 +244,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                     continue
 
                 # Check if this result matches our evaluator's metric
-                if metric_name == self._eval_metric or metric_name == self._eval_metric.value:
+                # Handle both exact match ("violence") and prefixed format ("builtin.violence")
+                expected_metric = self._eval_metric.value if hasattr(self._eval_metric, 'value') else self._eval_metric
+                if (metric_name == expected_metric or
+                    metric_name == f"builtin.{expected_metric}" or
+                    metric_name == self._eval_metric):
                     # Extract common fields
                     score = result_dict.get("score", 0)
                     reason = result_dict.get("reason", "")
@@ -313,13 +324,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                         return parsed_result
 
                     # Standard handling for harm severity evaluators
-                    # Convert score to severity label if needed
-                    severity_label = result_dict.get("label")
-                    if severity_label is None:
-                        # Calculate severity from score
-                        from azure.ai.evaluation._common.utils import get_harm_severity_level
+                    # For sync_evals endpoint, the "label" field contains "pass"/"fail" (threshold check result),
+                    # not the severity label. We must always calculate severity from the score.
+                    from azure.ai.evaluation._common.utils import get_harm_severity_level
 
-                        severity_label = get_harm_severity_level(score)
+                    severity_label = get_harm_severity_level(score)
 
                     # Extract token counts
                     metrics = properties.get("metrics", {})

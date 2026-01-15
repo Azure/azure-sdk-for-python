@@ -966,10 +966,13 @@ def _build_sync_eval_payload(
         "response": "{{item.response}}",
     }
 
+    # Convert metric_name to string value if it's an enum
+    metric_name_str = metric_name.value if hasattr(metric_name, 'value') else metric_name
+
     # Create the sync eval input payload
     # Structure: Uses QueryResponseInlineMessage format with azure_ai_evaluator type
     sync_eval_payload = {
-        "name": f"Safety Eval - {metric_name}",
+        "name": f"Safety Eval - {metric_name_str}",
         "data_source": {
             "type": "jsonl",
             "source": {"type": "file_content", "content": {"item": item_content}},
@@ -977,8 +980,8 @@ def _build_sync_eval_payload(
         "testing_criteria": [
             {
                 "type": "azure_ai_evaluator",
-                "name": metric_name,
-                "evaluator_name": f"builtin.{metric_name}",
+                "name": metric_name_str,
+                "evaluator_name": f"builtin.{metric_name_str}",
                 "data_mapping": data_mapping,
             }
         ],
