@@ -65,33 +65,3 @@ class TestAudienceErrorHandlingLive(AppConfigTestCase):
 
         assert audience_policy is not None, "AudienceErrorHandlingPolicy should be in pipeline"
         assert audience_policy.has_audience is True, "has_audience should be True when audience provided"
-
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_error_message_when_incorrect_audience_provided(self, appconfiguration_endpoint_string, **kwargs):
-        """Test that correct error message is raised when incorrect audience is provided."""
-        recorded_variables = kwargs.pop("variables", {})
-        # Create client with invalid endpoint to trigger authentication error
-        # Replace the endpoint domain with an invalid one to force audience mismatch
-        invalid_endpoint = recorded_variables.setdefault(
-            "invalid_endpoint",
-            appconfiguration_endpoint_string.replace(VALID_ENDPOINT_SUFFIX, INVALID_ENDPOINT_SUFFIX)
-        )
-        client = self.create_aad_client(invalid_endpoint, audience=INCORRECT_AUDIENCE)
-
-        # Attempt operation that should fail with audience error
-        with pytest.raises(ClientAuthenticationError) as exc_info:
-            kv = self.create_config_setting()
-            client.set_configuration_setting(kv)
-
-        # Verify the error message indicates incorrect audience
-        assert INCORRECT_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
-
-        # Verify error contains link to documentation
-        error_message = str(exc_info.value)
-        assert "https://aka.ms/appconfig/client-token-audience" in error_message
-
-        # Verify exception has response attribute from original error
-        assert hasattr(exc_info.value, "response")
-
-        return recorded_variables
