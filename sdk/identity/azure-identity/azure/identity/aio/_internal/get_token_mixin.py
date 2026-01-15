@@ -75,6 +75,8 @@ class GetTokenMixin(abc.ABC):
 
     def _should_refresh(self, token: AccessTokenInfo) -> bool:
         now = int(time.time())
+        if now >= token.expires_on:
+            return True
         if token.refresh_on is not None and now >= token.refresh_on:
             return True
         if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
@@ -179,9 +181,10 @@ class GetTokenMixin(abc.ABC):
                             )
                         except Exception:  # pylint:disable=broad-except
                             self._last_request_time = int(time.time())
-                            # Only raise if we don't have a token to return
-                            if not token:
+                            # Only raise if we don't have a valid (non-expired) token to return
+                            if current_token is None or current_token.expires_on <= self._last_request_time:
                                 raise
+                            token = current_token
 
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,

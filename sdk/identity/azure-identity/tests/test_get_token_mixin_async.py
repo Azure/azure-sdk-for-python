@@ -520,3 +520,107 @@ async def test_token_with_refresh_on_attribute(get_token_method):
 
     # Only one refresh should have been made
     assert credential.request_count == 1
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_no_token_refresh_failure_raises(get_token_method):
+    """When there's no token and refresh fails, should raise the exception"""
+
+    class MockCredentialNoToken(GetTokenMixin):
+        def __init__(self):
+            super().__init__()
+            self.acquire_called = False
+            self.request_called = False
+
+        async def _acquire_token_silently(self, *scopes, **kwargs):
+            self.acquire_called = True
+            return None
+
+        async def _request_token(self, *scopes, **kwargs):
+            self.request_called = True
+            raise ValueError("Authentication failed - no credentials")
+
+    credential = MockCredentialNoToken()
+
+    with pytest.raises(ValueError) as exc_info:
+        await getattr(credential, get_token_method)(SCOPE)
+
+    assert str(exc_info.value) == "Authentication failed - no credentials"
+    assert credential.acquire_called
+    assert credential.request_called
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_expired_token_refresh_failure_raises(get_token_method):
+    """When token is expired and refresh fails, should raise the exception"""
+
+    class MockCredentialExpiredToken(GetTokenMixin):
+        def __init__(self):
+            super().__init__()
+            self.cached_token = AccessTokenInfo("expired_token", int(time.time() - 100))
+            self.request_called = False
+
+        async def _acquire_token_silently(self, *scopes, **kwargs):
+            return self.cached_token
+
+        async def _request_token(self, *scopes, **kwargs):
+            self.request_called = True
+            raise ValueError("Network error during refresh")
+
+    credential = MockCredentialExpiredToken()
+
+    with pytest.raises(ValueError) as exc_info:
+        await getattr(credential, get_token_method)(SCOPE)
+
+    assert str(exc_info.value) == "Network error during refresh"
+    assert credential.request_called
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_valid_token_in_refresh_window_refresh_fails_returns_old(get_token_method):
+    """When token is in refresh window and refresh fails, return the old (still valid) token"""
+
+    class MockCredentialRefreshWindowToken(GetTokenMixin):
+        def __init__(self):
+            super().__init__()
+            # Token in refresh window (expires in 200s, refresh offset is 300s)
+            self.cached_token = AccessTokenInfo("old_valid_token", int(time.time() + 200))
+            self.request_called = False
+
+        async def _acquire_token_silently(self, *scopes, **kwargs):
+            return self.cached_token
+
+        async def _request_token(self, *scopes, **kwargs):
+            self.request_called = True
+            raise ValueError("Transient network error")
+
+    credential = MockCredentialRefreshWindowToken()
+    token = await getattr(credential, get_token_method)(SCOPE)
+
+    assert token.token == "old_valid_token", "Should return old token when refresh fails but token is still valid"
+    assert credential.request_called, "Should have attempted refresh for token in refresh window"
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_valid_token_in_refresh_window_refresh_succeeds_returns_new(get_token_method):
+    """When token is in refresh window and refresh succeeds, return the new token"""
+
+    class MockCredentialRefreshSuccess(GetTokenMixin):
+        def __init__(self):
+            super().__init__()
+            # Token in refresh window
+            self.cached_token = AccessTokenInfo("old_token", int(time.time() + 200))
+            self.request_called = False
+
+        async def _acquire_token_silently(self, *scopes, **kwargs):
+            return self.cached_token
+
+        async def _request_token(self, *scopes, **kwargs):
+            self.request_called = True
+            return AccessTokenInfo("new_refreshed_token", int(time.time() + 3600))
+
+    credential = MockCredentialRefreshSuccess()
+    token = await getattr(credential, get_token_method)(SCOPE)
+
+    assert token.token == "new_refreshed_token", "Should return new token when refresh succeeds"
+    assert credential.request_called
