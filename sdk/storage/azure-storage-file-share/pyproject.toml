@@ -5,4 +5,5 @@ type_check_samples = true
 black = false
 
 [tool.azure-sdk-conda]
-in_bundle = false
+in_bundle = true
+bundle_name = "azure-storage"

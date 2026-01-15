@@ -2,4 +2,5 @@
 pyright = false
 
 [tool.azure-sdk-conda]
-in_bundle = false
+in_bundle = true
+bundle_name = "azure-communication"

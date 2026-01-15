@@ -5,4 +5,5 @@ type_check_samples = true
 verifytypes = true
 
 [tool.azure-sdk-conda]
-in_bundle = false
+in_bundle = true
+bundle_name = "azure-schemaregistry"
