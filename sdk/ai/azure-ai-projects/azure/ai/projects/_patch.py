@@ -25,7 +25,7 @@ def _patch_user_agent(user_agent: Optional[str]) -> str:
     # All authenticated external clients exposed by this client will have this application id
     # set on their user-agent. For more info on user-agent HTTP header, see:
     # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
-    USER_AGENT_APP_ID = "AIProjectClient"
+    USER_AGENT_APP_ID = "AIProjectClient/Python"
 
     if user_agent:
         # If the calling application has set "user_agent" when constructing the AIProjectClient,
@@ -120,6 +120,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai" appended.
         * ``api-version`` set to "2025-05-15-preview" by default, unless overridden by the ``api_version`` keyword argument.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient constructor, with scope "https://ai.azure.com/.default".
+        * ``default_headers`` will automatically include a User-Agent header with the default value "AIProjectClient/Python".
 
         .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
 
@@ -135,6 +136,13 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         if "default_query" not in kwargs:
             kwargs["default_query"] = {"api-version": "2025-11-15-preview"}
+
+        # Set User-Agent header
+        user_headers = kwargs.pop("default_headers", {})
+        if "User-Agent" in user_headers:
+            user_headers["User-Agent"] = _patch_user_agent(user_headers["User-Agent"])
+        else:
+            user_headers["User-Agent"] = self._patched_user_agent
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
@@ -249,6 +257,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             ),
             base_url=base_url,
             http_client=http_client,
+            default_headers=user_headers,
             **kwargs,
         )
 
