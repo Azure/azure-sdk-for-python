@@ -3736,4 +3736,53 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         props = await identity_blob.get_blob_properties(raw_request_hook=callback)
         assert props is not None
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_cross_tenant_delegation_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        data = b"abc123"
+        service = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        token = await token_credential.get_token("https://storage.azure.com/.default")
+        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        user_delegated_oid = decoded.get("oid")
+        delegated_user_tid = decoded.get("tid")
+        user_delegation_key = await service.get_user_delegation_key(
+            key_start_time=start,
+            key_expiry_time=expiry,
+            delegated_user_tid=delegated_user_tid
+        )
+
+        assert user_delegation_key is not None
+        assert user_delegation_key.signed_delegated_user_tid == delegated_user_tid
+
+        container_name = self.get_resource_name('oauthcontainer')
+        container = await service.create_container(container_name)
+        blob = container.get_blob_client(self.get_resource_name('oauthblob'))
+        await blob.upload_blob(data, length=len(data))
+
+        blob_token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=expiry,
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegated_oid
+        )
+
+        identity_blob = BlobClient.from_blob_url(
+            f"{blob.url}?{blob_token}",
+            credential=token_credential
+        )
+        content = await (await identity_blob.download_blob()).readall()
+        assert content == data
+
 # ------------------------------------------------------------------------------
