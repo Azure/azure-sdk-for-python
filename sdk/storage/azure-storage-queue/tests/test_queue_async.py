@@ -1496,9 +1496,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = await qsc.get_user_delegation_key(
-            start=start,
-            expiry=expiry,
-            delegated_user_tid=delegated_user_tid
+            start=start, expiry=expiry, delegated_user_tid=delegated_user_tid
         )
 
         assert user_delegation_key is not None
