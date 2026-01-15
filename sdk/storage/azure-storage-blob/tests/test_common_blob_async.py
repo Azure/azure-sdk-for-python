@@ -3535,7 +3535,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     @BlobPreparer()
     async def test_blob_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        variables = kwargs.pop("variables", {})
         token_credential = self.get_credential(BlobServiceClient, is_async=True)
         data = b"abc123"
 
@@ -3543,8 +3542,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             account_url=self.account_url(storage_account_name, "blob"),
             credential=token_credential
         )
-        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
         user_delegation_key = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         token = await token_credential.get_token("https://storage.azure.com/.default")
         user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
@@ -3559,7 +3558,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             container.account_name,
             container.container_name,
             permission=ContainerSasPermissions(read=True, list=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
+            expiry=expiry,
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
@@ -3593,8 +3592,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         )
         content = await (await blob_client.download_blob()).readall()
         assert content == data
-
-        return variables
 
     @BlobPreparer()
     @recorded_by_proxy_async
