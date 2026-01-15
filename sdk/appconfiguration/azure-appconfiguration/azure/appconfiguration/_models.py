@@ -56,7 +56,7 @@ class ConfigurationSetting(Model):
 
     def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
-        self.key = kwargs.get("key")
+        self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
         self.value = kwargs.get("value", None)
         self.etag = kwargs.get("etag", None)
