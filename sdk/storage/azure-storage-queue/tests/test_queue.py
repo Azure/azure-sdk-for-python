@@ -1465,18 +1465,26 @@ class TestStorageQueue(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @QueuePreparer()
-    def test_queue_user_delegation_oid(self, **kwargs):
+    def test_queue_cross_tenant_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        message = "addedmessage"
 
         token_credential = self.get_credential(QueueServiceClient)
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
-        user_delegation_key = qsc.get_user_delegation_key(start=start, expiry=expiry)
         token = token_credential.get_token("https://storage.azure.com/.default")
-        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        user_delegation_oid = decoded.get("oid")
+        delegated_user_tid = decoded.get("tid")
+        user_delegation_key = qsc.get_user_delegation_key(
+            start=start,
+            expiry=expiry,
+            delegated_user_tid=delegated_user_tid
+        )
+
+        assert user_delegation_key is not None
+        assert user_delegation_key.signed_delegated_user_tid == delegated_user_tid
 
         queue_name = self.get_resource_name(TEST_QUEUE_PREFIX)
         queue = qsc.get_queue_client(queue_name)
@@ -1493,7 +1501,11 @@ class TestStorageQueue(StorageRecordedTestCase):
             user_delegation_oid=user_delegation_oid,
         )
 
+        assert "sduoid=" + user_delegation_oid in queue_token
+        assert "skdutid=" + delegated_user_tid in queue_token
+
         queue_client = QueueClient.from_queue_url(queue_url=f"{queue.url}?{queue_token}", credential=token_credential)
+        message = "addedmessage"
         queue_msg = queue_client.send_message(message)
         assert queue_msg is not None
 
