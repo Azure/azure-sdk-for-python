@@ -36,11 +36,11 @@ stages:
             displayName: 'Run Pylint Next'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+              scriptPath: 'eng/scripts/dispatch_checks.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="next-pylint"
+                --checks="next-pylint"
                 --disablecov
                 --filter-type="Omit_management"
             env:
@@ -50,11 +50,11 @@ stages:
             displayName: 'Run MyPy Next'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+              scriptPath: 'eng/scripts/dispatch_checks.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="next-mypy"
+                --checks="next-mypy"
                 --disablecov
             env:
               GH_TOKEN: $(azuresdk-github-pat)
@@ -63,11 +63,11 @@ stages:
             displayName: 'Run Pyright Next'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+              scriptPath: 'eng/scripts/dispatch_checks.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="next-pyright"
+                --checks="next-pyright"
                 --disablecov
             env:
               GH_TOKEN: $(azuresdk-github-pat)
