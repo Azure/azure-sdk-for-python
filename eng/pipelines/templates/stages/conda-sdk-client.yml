@@ -829,7 +829,7 @@ extends:
                           version: 2.3.0
                         - package: azure-mgmt-resource
                           version: 24.0.0
-                        - package: azure-mgmt-resource-graph
+                        - package: azure-mgmt-resourcegraph
                           version: 8.0.1
                         - package: azure-mgmt-resourceconnector
                           version: 1.0.0

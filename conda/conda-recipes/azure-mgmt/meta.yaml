@@ -840,11 +840,11 @@ test:
     - azure.mgmt.resource.features.v2021_07_01.aio.operations
     - azure.mgmt.resource.features.v2021_07_01.models
     - azure.mgmt.resource.features.v2021_07_01.operations
-    - azure.mgmt.resource.graph
-    - azure.mgmt.resource.graph.aio
-    - azure.mgmt.resource.graph.aio.operations
-    - azure.mgmt.resource.graph.models
-    - azure.mgmt.resource.graph.operations
+    - azure.mgmt.resourcegraph
+    - azure.mgmt.resourcegraph.aio
+    - azure.mgmt.resourcegraph.aio.operations
+    - azure.mgmt.resourcegraph.models
+    - azure.mgmt.resourcegraph.operations
     - azure.mgmt.resource.links
     - azure.mgmt.resource.links.aio
     - azure.mgmt.resource.links.v2016_09_01
