@@ -13,6 +13,18 @@ from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
+try:
+    from opentelemetry.semconv.logs import (
+        LogRecordAttributes as _SemconvLogRecordAttributes,
+    )
+except ImportError:
+    _SemconvLogRecordAttributes = None
+try:
+    from opentelemetry.semconv._incubating.attributes import (
+        enduser_attributes as _enduser_attributes,
+    )
+except ImportError:
+    _enduser_attributes = None
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -42,19 +54,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
     set_statsbeat_custom_events_feature_set,
 )
-
-try:
-    from opentelemetry.semconv.logs import (
-        LogRecordAttributes as _SemconvLogRecordAttributes,
-    )
-except ImportError:
-    _SemconvLogRecordAttributes = None
-try:
-    from opentelemetry.semconv._incubating.attributes import (
-        enduser_attributes as _enduser_attributes,
-    )
-except ImportError:
-    _enduser_attributes = None
 
 _ENDUSER_ID_ATTRIBUTE = (
     getattr(_SemconvLogRecordAttributes, "ENDUSER_ID", None)

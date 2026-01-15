@@ -124,7 +124,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def export(
         self,
         spans: Sequence[ReadableSpan],
-        **kwargs: Any  # pylint: disable=unused-argument
+        **_kwargs: Any
     ) -> SpanExportResult:
         """Export span data.
 
