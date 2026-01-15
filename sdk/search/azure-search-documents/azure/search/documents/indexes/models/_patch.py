@@ -97,7 +97,7 @@ def Collection(typ) -> str:
 def SimpleField(
     *,
     name: str,
-    type: str,
+    type: Union[str, _SearchFieldDataType],
     key: bool = False,
     hidden: bool = False,
     filterable: bool = False,
@@ -114,7 +114,7 @@ def SimpleField(
         SearchFieldDataType.Int32, SearchFieldDataType.Int64, SearchFieldDataType.Double, SearchFieldDataType.Boolean,
         SearchFieldDataType.DateTimeOffset, SearchFieldDataType.GeographyPoint, SearchFieldDataType.ComplexType,
         from `azure.search.documents.SearchFieldDataType`.
-    :paramtype type: str
+    :paramtype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :keyword key: A value indicating whether the field uniquely identifies documents in the index.
         Exactly one top-level field in each index must be chosen as the key field and it must be of
         type SearchFieldDataType.String. Key fields can be used to look up documents directly and
@@ -151,9 +151,11 @@ def SimpleField(
     :return: The search field object.
     :rtype:  SearchField
     """
+    # If type is an enum, get its value; otherwise use it as-is
+    field_type = type.value if hasattr(type, "value") else type
     result: Dict[str, Any] = {
         "name": name,
-        "type": type,
+        "type": field_type,
         "key": key,
         "searchable": False,
         "filterable": filterable,
