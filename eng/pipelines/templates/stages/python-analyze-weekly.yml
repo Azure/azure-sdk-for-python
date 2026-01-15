@@ -115,10 +115,10 @@ stages:
             displayName: 'Generate Docs Next'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+              scriptPath: 'eng/scripts/dispatch_checks.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="next-sphinx"
+                --checks="next-sphinx"
             env:
               GH_TOKEN: $(azuresdk-github-pat)
