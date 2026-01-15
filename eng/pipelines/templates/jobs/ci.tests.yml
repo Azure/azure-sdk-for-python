@@ -86,7 +86,9 @@ jobs:
 
     steps:
     - pwsh: |
+        Write-Host "`$HOME"
         Write-Host $HOME
+        Write-Host "`$`(HOME`)"
         Write-Host "$(HOME)"
         Write-Host $env:DOTNET_ROOT
       displayName: 'Show Environment Variables'
