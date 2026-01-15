@@ -7,7 +7,6 @@ Async unit tests for partition split (410) retry logic.
 
 import gc
 import time
-import tracemalloc
 import unittest
 from unittest.mock import patch
 
@@ -17,6 +16,13 @@ from azure.cosmos import exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
+
+# tracemalloc is not available in PyPy, so we import conditionally
+try:
+    import tracemalloc
+    HAS_TRACEMALLOC = True
+except ImportError:
+    HAS_TRACEMALLOC = False
 
 
 # ====================================
@@ -214,6 +220,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert mock_execute.call_count == 1, \
             f"With flag, expected 1 ExecuteAsync call, got {mock_execute.call_count}"
 
+    @pytest.mark.skipif(not HAS_TRACEMALLOC, reason="tracemalloc not available in PyPy")
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
     async def test_memory_bounded_no_leak_on_410_retries_async(self, mock_execute):
         """

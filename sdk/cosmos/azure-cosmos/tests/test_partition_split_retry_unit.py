@@ -7,7 +7,6 @@ Sync unit tests for partition split (410) retry logic.
 
 import gc
 import time
-import tracemalloc
 import unittest
 from unittest.mock import patch
 
@@ -16,6 +15,13 @@ import pytest
 from azure.cosmos import exceptions
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
+
+# tracemalloc is not available in PyPy, so we import conditionally
+try:
+    import tracemalloc
+    HAS_TRACEMALLOC = True
+except ImportError:
+    HAS_TRACEMALLOC = False
 
 
 # =================================
@@ -226,6 +232,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert mock_execute.call_count == 1, \
             f"With flag, expected 1 Execute call, got {mock_execute.call_count}"
 
+    @pytest.mark.skipif(not HAS_TRACEMALLOC, reason="tracemalloc not available in PyPy")
     @patch('azure.cosmos._retry_utility.Execute')
     def test_memory_bounded_no_leak_on_410_retries(self, mock_execute):
         """
