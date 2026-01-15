@@ -9,17 +9,18 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
-from ._enums import ResourceKind
+from azure.core.exceptions import ODataV4Format
+
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import Frequency, NotificationEventType, NotificationScopeType, ResourceKind, TriggerType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AppComponent(_model_base.Model):
+class AppComponent(_Model):
     """An Azure resource object (Refer azure generic resource model
     :`https://learn.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource
     <https://learn.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource>`_).
@@ -82,7 +83,7 @@ class AppComponent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ArtifactsContainerInfo(_model_base.Model):
+class ArtifactsContainerInfo(_Model):
     """Artifacts container info.
 
     :ivar url: This is a SAS URI to an Azure Storage Container that contains the test run
@@ -118,7 +119,7 @@ class ArtifactsContainerInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoStopCriteria(_model_base.Model):
+class AutoStopCriteria(_Model):
     """Auto stop criteria for a test. This will automatically stop a load test if the error percentage
     is high for a certain time window.
 
@@ -130,6 +131,9 @@ class AutoStopCriteria(_model_base.Model):
     :ivar error_rate_time_window_in_seconds: Time window during which the error percentage should
      be evaluated in seconds.
     :vartype error_rate_time_window_in_seconds: int
+    :ivar maximum_virtual_users_per_engine: Maximum number of virtual users per load testing
+     engine, at which the test run should be automatically stopped.
+    :vartype maximum_virtual_users_per_engine: int
     """
 
     auto_stop_disabled: Optional[bool] = rest_field(
@@ -145,6 +149,11 @@ class AutoStopCriteria(_model_base.Model):
         name="errorRateTimeWindowInSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
     """Time window during which the error percentage should be evaluated in seconds."""
+    maximum_virtual_users_per_engine: Optional[int] = rest_field(
+        name="maximumVirtualUsersPerEngine", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of virtual users per load testing engine, at which the test run should be
+     automatically stopped."""
 
     @overload
     def __init__(
@@ -153,6 +162,7 @@ class AutoStopCriteria(_model_base.Model):
         auto_stop_disabled: Optional[bool] = None,
         error_rate: Optional[float] = None,
         error_rate_time_window_in_seconds: Optional[int] = None,
+        maximum_virtual_users_per_engine: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -166,7 +176,7 @@ class AutoStopCriteria(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateMetadata(_model_base.Model):
+class CertificateMetadata(_Model):
     """Certificates metadata.
 
     :ivar value: The value of the certificate for respective type.
@@ -206,28 +216,43 @@ class CertificateMetadata(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DimensionFilter(_model_base.Model):
-    """Dimension name and values to filter.
+class Recurrence(_Model):
+    """Recurrence model.
 
-    :ivar name: The dimension name.
-    :vartype name: str
-    :ivar values_property: The dimension values. Maximum values can be 20.
-    :vartype values_property: list[str]
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RecurrenceWithCron, DailyRecurrence, HourlyRecurrence, MonthlyRecurrenceByDates,
+    MonthlyRecurrenceByWeekDays, WeeklyRecurrence
+
+    :ivar frequency: Frequency of the recurrence. Required. Known values are: "Cron", "Hourly",
+     "Daily", "Weekly", "MonthlyByDays", and "MonthlyByDates".
+    :vartype frequency: str or ~azure.developer.loadtesting.models.Frequency
+    :ivar recurrence_end: Recurrence end model. You can specify the end either by providing a
+     numberOfOccurrences (which will end the recurrence after the specified number of occurrences)
+     or by providing an endDateTime (which will end the recurrence after the specified date). If
+     neither value is provided, the recurrence will continue until it is manually ended. However, if
+     both values are provided, an error will be thrown.
+    :vartype recurrence_end: ~azure.developer.loadtesting.models.RecurrenceEnd
     """
 
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The dimension name."""
-    values_property: Optional[List[str]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
+    __mapping__: dict[str, _Model] = {}
+    frequency: str = rest_discriminator(name="frequency", visibility=["read", "create", "update", "delete", "query"])
+    """Frequency of the recurrence. Required. Known values are: \"Cron\", \"Hourly\", \"Daily\",
+     \"Weekly\", \"MonthlyByDays\", and \"MonthlyByDates\"."""
+    recurrence_end: Optional["_models.RecurrenceEnd"] = rest_field(
+        name="recurrenceEnd", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The dimension values. Maximum values can be 20."""
+    """Recurrence end model. You can specify the end either by providing a numberOfOccurrences (which
+     will end the recurrence after the specified number of occurrences) or by providing an
+     endDateTime (which will end the recurrence after the specified date). If neither value is
+     provided, the recurrence will continue until it is manually ended. However, if both values are
+     provided, an error will be thrown."""
 
     @overload
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        values_property: Optional[List[str]] = None,
+        frequency: str,
+        recurrence_end: Optional["_models.RecurrenceEnd"] = None,
     ) -> None: ...
 
     @overload
@@ -241,7 +266,86 @@ class DimensionFilter(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DimensionValue(_model_base.Model):
+class DailyRecurrence(Recurrence, discriminator="Daily"):
+    """Recurrence model when frequency is set as Daily.
+
+    :ivar recurrence_end: Recurrence end model. You can specify the end either by providing a
+     numberOfOccurrences (which will end the recurrence after the specified number of occurrences)
+     or by providing an endDateTime (which will end the recurrence after the specified date). If
+     neither value is provided, the recurrence will continue until it is manually ended. However, if
+     both values are provided, an error will be thrown.
+    :vartype recurrence_end: ~azure.developer.loadtesting.models.RecurrenceEnd
+    :ivar frequency: Frequency of the day recurrence. Required. Recurrence defined on a daily
+     basis, as specified by DailyRecurrence.
+    :vartype frequency: str or ~azure.developer.loadtesting.models.DAILY
+    :ivar interval: The interval at which the recurrence should repeat. It signifies the number of
+     days between each recurrence. Required.
+    :vartype interval: int
+    """
+
+    frequency: Literal[Frequency.DAILY] = rest_discriminator(name="frequency", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Frequency of the day recurrence. Required. Recurrence defined on a daily basis, as specified by
+     DailyRecurrence."""
+    interval: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The interval at which the recurrence should repeat. It signifies the number of days between
+     each recurrence. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        interval: int,
+        recurrence_end: Optional["_models.RecurrenceEnd"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.frequency = Frequency.DAILY  # type: ignore
+
+
+class DimensionFilter(_Model):
+    """Dimension name and values to filter.
+
+    :ivar name: The dimension name.
+    :vartype name: str
+    :ivar values_property: The dimension values. Maximum values can be 20.
+    :vartype values_property: list[str]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The dimension name."""
+    values_property: Optional[list[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
+    """The dimension values. Maximum values can be 20."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        values_property: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DimensionValue(_Model):
     """Represents a metric dimension value.
 
     :ivar name: The name of the dimension.
@@ -274,18 +378,30 @@ class DimensionValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorDetails(_model_base.Model):
+class ErrorDetails(_Model):
     """Error details if there is any failure in load test run.
 
+    :ivar code: Error code if there is any failure in load test run.
+    :vartype code: str
     :ivar message: Error details in case test run was not successfully run.
     :vartype message: str
+    :ivar properties: A dictionary for storing additional error information for better context.
+     Each key is a property name (e.g., "Description", "Resolution", "Category", "Region"), and its
+     value is an array of strings with relevant details.
+    :vartype properties: dict[str, list[str]]
     """
 
+    code: Optional[str] = rest_field(visibility=["read"])
+    """Error code if there is any failure in load test run."""
     message: Optional[str] = rest_field(visibility=["read"])
     """Error details in case test run was not successfully run."""
+    properties: Optional[dict[str, list[str]]] = rest_field(visibility=["read"])
+    """A dictionary for storing additional error information for better context. Each key is a
+     property name (e.g., \"Description\", \"Resolution\", \"Category\", \"Region\"), and its value
+     is an array of strings with relevant details."""
 
 
-class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint: disable=name-too-long
+class FunctionFlexConsumptionResourceConfiguration(_Model):  # pylint: disable=name-too-long
     """Resource configuration instance for a Flex Consumption based Azure Function App.
 
     :ivar instance_memory_mb: Memory size of the instance. Supported values are 2048, 4096.
@@ -323,7 +439,7 @@ class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class TargetResourceConfigurations(_model_base.Model):
+class TargetResourceConfigurations(_Model):
     """Configurations of a target resource. This varies with the kind of resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -334,7 +450,7 @@ class TargetResourceConfigurations(_model_base.Model):
     :vartype kind: str or ~azure.developer.loadtesting.models.ResourceKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create"])
     """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
 
@@ -374,7 +490,7 @@ class FunctionFlexConsumptionTargetResourceConfigurations(
     """The kind value to use when providing configuration.
      This should typically be not changed from its value. Required. Resource is a Azure FunctionApp
      on Flex Consumption Plan."""
-    configurations: Optional[Dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = rest_field(
+    configurations: Optional[dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A map of configurations for a Function app using Flex Consumption Plan."""
@@ -383,7 +499,7 @@ class FunctionFlexConsumptionTargetResourceConfigurations(
     def __init__(
         self,
         *,
-        configurations: Optional[Dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = None,
+        configurations: Optional[dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -394,10 +510,55 @@ class FunctionFlexConsumptionTargetResourceConfigurations(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=ResourceKind.FUNCTIONS_FLEX_CONSUMPTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = ResourceKind.FUNCTIONS_FLEX_CONSUMPTION  # type: ignore
 
 
-class LoadTestConfiguration(_model_base.Model):
+class HourlyRecurrence(Recurrence, discriminator="Hourly"):
+    """Recurrence model when frequency is set as Hourly.
+
+    :ivar recurrence_end: Recurrence end model. You can specify the end either by providing a
+     numberOfOccurrences (which will end the recurrence after the specified number of occurrences)
+     or by providing an endDateTime (which will end the recurrence after the specified date). If
+     neither value is provided, the recurrence will continue until it is manually ended. However, if
+     both values are provided, an error will be thrown.
+    :vartype recurrence_end: ~azure.developer.loadtesting.models.RecurrenceEnd
+    :ivar frequency: Frequency of the hour recurrence. Required. Recurrence defined on an hourly
+     basis, as specified by HourlyRecurrence.
+    :vartype frequency: str or ~azure.developer.loadtesting.models.HOURLY
+    :ivar interval: The interval at which the recurrence should repeat. It signifies the number of
+     hours between each recurrence. Required.
+    :vartype interval: int
+    """
+
+    frequency: Literal[Frequency.HOURLY] = rest_discriminator(name="frequency", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Frequency of the hour recurrence. Required. Recurrence defined on an hourly basis, as specified
+     by HourlyRecurrence."""
+    interval: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The interval at which the recurrence should repeat. It signifies the number of hours between
+     each recurrence. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        interval: int,
+        recurrence_end: Optional["_models.RecurrenceEnd"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.frequency = Frequency.HOURLY  # type: ignore
+
+
+class LoadTestConfiguration(_Model):
     """Configurations for the load test.
 
     :ivar engine_instances: The number of engine instances to execute load test. Supported values
@@ -442,7 +603,7 @@ class LoadTestConfiguration(_model_base.Model):
         name="optionalLoadTestConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """Configuration for quick load test."""
-    regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = rest_field(
+    regional_load_test_config: Optional[list["_models.RegionalConfiguration"]] = rest_field(
         name="regionalLoadTestConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """Region distribution configuration for the load test."""
@@ -455,7 +616,7 @@ class LoadTestConfiguration(_model_base.Model):
         split_all_csvs: Optional[bool] = None,
         quick_start_test: Optional[bool] = None,
         optional_load_test_config: Optional["_models.OptionalLoadTestConfiguration"] = None,
-        regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = None,
+        regional_load_test_config: Optional[list["_models.RegionalConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -469,7 +630,7 @@ class LoadTestConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricAvailability(_model_base.Model):
+class MetricAvailability(_Model):
     """Metric availability specifies the time grain (aggregation interval or frequency).
 
     :ivar time_grain: The time grain specifies the aggregation interval for the metric. Expressed
@@ -503,7 +664,7 @@ class MetricAvailability(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricDefinition(_model_base.Model):
+class MetricDefinition(_Model):
     """Metric definition.
 
     :ivar dimensions: List of dimensions.
@@ -530,7 +691,7 @@ class MetricDefinition(_model_base.Model):
     :vartype metric_availabilities: list[~azure.developer.loadtesting.models.MetricAvailability]
     """
 
-    dimensions: Optional[List["_models.NameAndDescription"]] = rest_field(
+    dimensions: Optional[list["_models.NameAndDescription"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of dimensions."""
@@ -547,7 +708,7 @@ class MetricDefinition(_model_base.Model):
      are: \"Average\", \"Count\", \"None\", \"Total\", \"Percentile75\", \"Percentile90\",
      \"Percentile95\", \"Percentile96\", \"Percentile97\", \"Percentile98\", \"Percentile99\",
      \"Percentile999\", and \"Percentile9999\"."""
-    supported_aggregation_types: Optional[List[str]] = rest_field(
+    supported_aggregation_types: Optional[list[str]] = rest_field(
         name="supportedAggregationTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of what all aggregation types are supported."""
@@ -556,7 +717,7 @@ class MetricDefinition(_model_base.Model):
     )
     """The unit of the metric. Known values are: \"NotSpecified\", \"Percent\", \"Count\",
      \"Seconds\", \"Milliseconds\", \"Bytes\", \"BytesPerSecond\", and \"CountPerSecond\"."""
-    metric_availabilities: Optional[List["_models.MetricAvailability"]] = rest_field(
+    metric_availabilities: Optional[list["_models.MetricAvailability"]] = rest_field(
         name="metricAvailabilities", visibility=["read", "create", "update", "delete", "query"]
     )
     """Metric availability specifies the time grain (aggregation interval or
@@ -566,14 +727,14 @@ class MetricDefinition(_model_base.Model):
     def __init__(
         self,
         *,
-        dimensions: Optional[List["_models.NameAndDescription"]] = None,
+        dimensions: Optional[list["_models.NameAndDescription"]] = None,
         description: Optional[str] = None,
         name: Optional[str] = None,
         namespace: Optional[str] = None,
         primary_aggregation_type: Optional[Union[str, "_models.Aggregation"]] = None,
-        supported_aggregation_types: Optional[List[str]] = None,
+        supported_aggregation_types: Optional[list[str]] = None,
         unit: Optional[Union[str, "_models.MetricUnit"]] = None,
-        metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
+        metric_availabilities: Optional[list["_models.MetricAvailability"]] = None,
     ) -> None: ...
 
     @overload
@@ -587,21 +748,21 @@ class MetricDefinition(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricDefinitionCollection(_model_base.Model):
+class MetricDefinitionCollection(_Model):
     """Represents collection of metric definitions.
 
     :ivar value: the values for the metric definitions. Required.
     :vartype value: list[~azure.developer.loadtesting.models.MetricDefinition]
     """
 
-    value: List["_models.MetricDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: list["_models.MetricDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """the values for the metric definitions. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        value: List["_models.MetricDefinition"],
+        value: list["_models.MetricDefinition"],
     ) -> None: ...
 
     @overload
@@ -615,7 +776,7 @@ class MetricDefinitionCollection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricNamespace(_model_base.Model):
+class MetricNamespace(_Model):
     """Metric namespace class specifies the metadata for a metric namespace.
 
     :ivar description: The namespace description.
@@ -648,21 +809,21 @@ class MetricNamespace(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricNamespaceCollection(_model_base.Model):
+class MetricNamespaceCollection(_Model):
     """Represents collection of metric namespaces.
 
     :ivar value: The values for the metric namespaces. Required.
     :vartype value: list[~azure.developer.loadtesting.models.MetricNamespace]
     """
 
-    value: List["_models.MetricNamespace"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: list["_models.MetricNamespace"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The values for the metric namespaces. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        value: List["_models.MetricNamespace"],
+        value: list["_models.MetricNamespace"],
     ) -> None: ...
 
     @overload
@@ -676,7 +837,7 @@ class MetricNamespaceCollection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricRequestPayload(_model_base.Model):
+class MetricRequestPayload(_Model):
     """Filters to fetch the set of metric.
 
     :ivar filters: Get metrics for specific dimension values. Example: Metric contains dimension
@@ -686,7 +847,7 @@ class MetricRequestPayload(_model_base.Model):
     :vartype filters: list[~azure.developer.loadtesting.models.DimensionFilter]
     """
 
-    filters: Optional[List["_models.DimensionFilter"]] = rest_field(
+    filters: Optional[list["_models.DimensionFilter"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Get metrics for specific dimension values. Example: Metric contains dimension
@@ -698,7 +859,7 @@ class MetricRequestPayload(_model_base.Model):
     def __init__(
         self,
         *,
-        filters: Optional[List["_models.DimensionFilter"]] = None,
+        filters: Optional[list["_models.DimensionFilter"]] = None,
     ) -> None: ...
 
     @overload
@@ -712,7 +873,7 @@ class MetricRequestPayload(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricValue(_model_base.Model):
+class MetricValue(_Model):
     """Represents a metric value.
 
     :ivar timestamp: The timestamp for the metric value in RFC 3339 format.
@@ -747,7 +908,122 @@ class MetricValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NameAndDescription(_model_base.Model):
+class MonthlyRecurrenceByDates(Recurrence, discriminator="MonthlyByDates"):
+    """Recurrence model when frequency is set as MonthlyByDates.
+
+    :ivar recurrence_end: Recurrence end model. You can specify the end either by providing a
+     numberOfOccurrences (which will end the recurrence after the specified number of occurrences)
+     or by providing an endDateTime (which will end the recurrence after the specified date). If
+     neither value is provided, the recurrence will continue until it is manually ended. However, if
+     both values are provided, an error will be thrown.
+    :vartype recurrence_end: ~azure.developer.loadtesting.models.RecurrenceEnd
+    :ivar frequency: Frequency of the month recurrence. Required. Recurrence defined monthly on
+     specific dates, as specified by MonthlyRecurrenceByDates.
+    :vartype frequency: str or ~azure.developer.loadtesting.models.MONTHLY_BY_DATES
+    :ivar dates_in_month: Recurrence set to repeat on the specified dates of the month. Value of
+     dates can be 1 to 31 and -1. -1 represents the last day of the month.
+    :vartype dates_in_month: list[int]
+    :ivar interval: The interval at which the recurrence should repeat. It signifies the number of
+     months between each recurrence.
+    :vartype interval: int
+    """
+
+    frequency: Literal[Frequency.MONTHLY_BY_DATES] = rest_discriminator(name="frequency", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Frequency of the month recurrence. Required. Recurrence defined monthly on specific dates, as
+     specified by MonthlyRecurrenceByDates."""
+    dates_in_month: Optional[list[int]] = rest_field(
+        name="datesInMonth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recurrence set to repeat on the specified dates of the month. Value of dates can be 1 to 31 and
+     -1. -1 represents the last day of the month."""
+    interval: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The interval at which the recurrence should repeat. It signifies the number of months between
+     each recurrence."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recurrence_end: Optional["_models.RecurrenceEnd"] = None,
+        dates_in_month: Optional[list[int]] = None,
+        interval: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.frequency = Frequency.MONTHLY_BY_DATES  # type: ignore
+
+
+class MonthlyRecurrenceByWeekDays(Recurrence, discriminator="MonthlyByDays"):
+    """Recurrence model when frequency is set as MonthlyByDays .
+
+    :ivar recurrence_end: Recurrence end model. You can specify the end either by providing a
+     numberOfOccurrences (which will end the recurrence after the specified number of occurrences)
+     or by providing an endDateTime (which will end the recurrence after the specified date). If
+     neither value is provided, the recurrence will continue until it is manually ended. However, if
+     both values are provided, an error will be thrown.
+    :vartype recurrence_end: ~azure.developer.loadtesting.models.RecurrenceEnd
+    :ivar frequency: Frequency of the month recurrence. Required. Recurrence defined monthly on
+     specific days, as specified by MonthlyRecurrenceByWeekDays.
+    :vartype frequency: str or ~azure.developer.loadtesting.models.MONTHLY_BY_DAYS
+    :ivar week_days_in_month: Specific days of the week when the recurrence should repeat.
+    :vartype week_days_in_month: list[str or ~azure.developer.loadtesting.models.WeekDays]
+    :ivar index: Index of the week in a month at which the recurrence should repeat. For example,
+     if the index is '2', weekDay is 'Monday', interval is 3 and frequency is 'Month', the
+     recurrence will run every second Monday of the month and repeat every 3 months. Value of index
+     can be 1 to 5. Required.
+    :vartype index: int
+    :ivar interval: The interval at which the recurrence should repeat. It signifies the number of
+     months between each recurrence. Required.
+    :vartype interval: int
+    """
+
+    frequency: Literal[Frequency.MONTHLY_BY_DAYS] = rest_discriminator(name="frequency", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Frequency of the month recurrence. Required. Recurrence defined monthly on specific days, as
+     specified by MonthlyRecurrenceByWeekDays."""
+    week_days_in_month: Optional[list[Union[str, "_models.WeekDays"]]] = rest_field(
+        name="weekDaysInMonth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specific days of the week when the recurrence should repeat."""
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Index of the week in a month at which the recurrence should repeat. For example, if the index
+     is '2', weekDay is 'Monday', interval is 3 and frequency is 'Month', the recurrence will run
+     every second Monday of the month and repeat every 3 months. Value of index can be 1 to 5.
+     Required."""
+    interval: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The interval at which the recurrence should repeat. It signifies the number of months between
+     each recurrence. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        interval: int,
+        recurrence_end: Optional["_models.RecurrenceEnd"] = None,
+        week_days_in_month: Optional[list[Union[str, "_models.WeekDays"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.frequency = Frequency.MONTHLY_BY_DAYS  # type: ignore
+
+
+class NameAndDescription(_Model):
     """The name and description.
 
     :ivar description: The description.
@@ -780,7 +1056,123 @@ class NameAndDescription(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OptionalLoadTestConfiguration(_model_base.Model):
+class NotificationRule(_Model):
+    """Notification rule model.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TestsNotificationRule
+
+    :ivar notification_rule_id: The unique identifier of the notification rule. Required.
+    :vartype notification_rule_id: str
+    :ivar display_name: The name of the notification rule. Required.
+    :vartype display_name: str
+    :ivar action_group_ids: The action groups to notify. Required.
+    :vartype action_group_ids: list[str]
+    :ivar scope: The scope of the notification rule. Required. "Tests"
+    :vartype scope: str or ~azure.developer.loadtesting.models.NotificationScopeType
+    :ivar created_date_time: The creation datetime(RFC 3339 literal format).
+    :vartype created_date_time: ~datetime.datetime
+    :ivar created_by: The user that created.
+    :vartype created_by: str
+    :ivar last_modified_date_time: The last Modified datetime(RFC 3339 literal format).
+    :vartype last_modified_date_time: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified.
+    :vartype last_modified_by: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    notification_rule_id: str = rest_field(name="notificationRuleId", visibility=["read"])
+    """The unique identifier of the notification rule. Required."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the notification rule. Required."""
+    action_group_ids: list[str] = rest_field(
+        name="actionGroupIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action groups to notify. Required."""
+    scope: str = rest_discriminator(name="scope", visibility=["read", "create", "update", "delete", "query"])
+    """The scope of the notification rule. Required. \"Tests\""""
+    created_date_time: Optional[datetime.datetime] = rest_field(
+        name="createdDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The creation datetime(RFC 3339 literal format)."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The user that created."""
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The last Modified datetime(RFC 3339 literal format)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The user that last modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        action_group_ids: list[str],
+        scope: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OperationStatus(_Model):
+    """Status of a long running operation.
+
+    :ivar id: The unique ID of the operation. Required.
+    :vartype id: str
+    :ivar status: The state of the operation. Required. Known values are: "NotStarted", "Running",
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.developer.loadtesting.models.OperationState
+    :ivar kind: The kind of the operation. Required. Known values are: "CloneTest",
+     "GenerateTestRunInsights", and "TestPlanRecommendations".
+    :vartype kind: str or ~azure.developer.loadtesting.models.OperationKind
+    :ivar error: Error object that describes the error when status is "Failed".
+    :vartype error: ~azure.core.ODataV4Format
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """The unique ID of the operation. Required."""
+    status: Union[str, "_models.OperationState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The state of the operation. Required. Known values are: \"NotStarted\", \"Running\",
+     \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    kind: Union[str, "_models.OperationKind"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The kind of the operation. Required. Known values are: \"CloneTest\",
+     \"GenerateTestRunInsights\", and \"TestPlanRecommendations\"."""
+    error: Optional[ODataV4Format] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error object that describes the error when status is \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.OperationState"],
+        kind: Union[str, "_models.OperationKind"],
+        error: Optional[ODataV4Format] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OptionalLoadTestConfiguration(_Model):
     """Configuration for quick load test.
 
     :ivar endpoint_url: Test URL. Provide the complete HTTP URL. For example,
@@ -847,7 +1239,7 @@ class OptionalLoadTestConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PassFailCriteria(_model_base.Model):
+class PassFailCriteria(_Model):
     """Pass fail criteria for a test.
 
     :ivar pass_fail_metrics: Map of id and pass fail metrics { id  : pass fail metrics }.
@@ -858,11 +1250,11 @@ class PassFailCriteria(_model_base.Model):
      ~azure.developer.loadtesting.models.PassFailServerMetric]
     """
 
-    pass_fail_metrics: Optional[Dict[str, "_models.PassFailMetric"]] = rest_field(
+    pass_fail_metrics: Optional[dict[str, "_models.PassFailMetric"]] = rest_field(
         name="passFailMetrics", visibility=["read", "create", "update", "delete", "query"]
     )
     """Map of id and pass fail metrics { id  : pass fail metrics }."""
-    pass_fail_server_metrics: Optional[Dict[str, "_models.PassFailServerMetric"]] = rest_field(
+    pass_fail_server_metrics: Optional[dict[str, "_models.PassFailServerMetric"]] = rest_field(
         name="passFailServerMetrics", visibility=["read", "create", "update", "delete", "query"]
     )
     """Map of id and pass fail server metrics { id  : pass fail metrics }."""
@@ -871,8 +1263,8 @@ class PassFailCriteria(_model_base.Model):
     def __init__(
         self,
         *,
-        pass_fail_metrics: Optional[Dict[str, "_models.PassFailMetric"]] = None,
-        pass_fail_server_metrics: Optional[Dict[str, "_models.PassFailServerMetric"]] = None,
+        pass_fail_metrics: Optional[dict[str, "_models.PassFailMetric"]] = None,
+        pass_fail_server_metrics: Optional[dict[str, "_models.PassFailServerMetric"]] = None,
     ) -> None: ...
 
     @overload
@@ -886,17 +1278,18 @@ class PassFailCriteria(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PassFailMetric(_model_base.Model):
+class PassFailMetric(_Model):
     """Pass fail metric.
 
     :ivar client_metric: The client metric on which the criteria should be applied. Known values
      are: "response_time_ms", "latency", "error", "requests", and "requests_per_sec".
     :vartype client_metric: str or ~azure.developer.loadtesting.models.PFMetrics
     :ivar aggregate: The aggregation function to be applied on the client metric. Allowed functions
+
      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
      ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
-     ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75", "p90",
-     "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99", "min", and "max".
+     ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75",
+     "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99", "min", and "max".
     :vartype aggregate: str or ~azure.developer.loadtesting.models.PassFailAggregationFunction
     :ivar condition: The comparison operator. Supported types ‘>’, ‘<’.
     :vartype condition: str
@@ -924,11 +1317,12 @@ class PassFailMetric(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The aggregation function to be applied on the client metric. Allowed functions
-     * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
-     ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
-     ‘count’ - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\", \"p75\",
-     \"p90\", \"p95\", \"p96\", \"p97\", \"p98\", \"p99\", \"p99.9\", \"p99.99\", \"min\", and
-     \"max\"."""
+ 
+      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
+      ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
+      ‘count’ - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\",
+      \"p75\", \"p90\", \"p95\", \"p96\", \"p97\", \"p98\", \"p99\", \"p99.9\", \"p99.99\", \"min\",
+      and \"max\"."""
     condition: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The comparison operator. Supported types ‘>’, ‘<’."""
     request_name: Optional[str] = rest_field(
@@ -971,7 +1365,7 @@ class PassFailMetric(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PassFailServerMetric(_model_base.Model):
+class PassFailServerMetric(_Model):
     """Pass fail server metric.
 
     :ivar resource_id: The resource id of the resource emitting the metric. Required.
@@ -1044,7 +1438,129 @@ class PassFailServerMetric(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionalConfiguration(_model_base.Model):
+class RecurrenceEnd(_Model):
+    """Recurrence end model. Either provide numberOfOccurrences if you want recurrence to end after a
+    specified number of occurrences or provide endDate if you want recurrence to end after a
+    specified end date. If both values are provided, a validation error will be thrown indicating
+    that only one field should be provided. If neither value is provided, the recurrence will end
+    when manually ended.
+
+    :ivar number_of_occurrences: Number of occurrences after which the recurrence will end.
+    :vartype number_of_occurrences: int
+    :ivar end_date_time: The date after which the recurrence will end. (RFC 3339 literal format).
+    :vartype end_date_time: ~datetime.datetime
+    """
+
+    number_of_occurrences: Optional[int] = rest_field(
+        name="numberOfOccurrences", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of occurrences after which the recurrence will end."""
+    end_date_time: Optional[datetime.datetime] = rest_field(
+        name="endDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The date after which the recurrence will end. (RFC 3339 literal format)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        number_of_occurrences: Optional[int] = None,
+        end_date_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RecurrenceStatus(_Model):
+    """Actual state of the recurrence for the trigger.
+
+    :ivar remaining_occurrences: The number of occurrences remaining for the trigger. Null if
+     recurrence end has end date instead of number of occurrences.
+    :vartype remaining_occurrences: int
+    :ivar next_scheduled_date_times: The next three execution times of the trigger. (RFC 3339
+     literal format).
+    :vartype next_scheduled_date_times: list[~datetime.datetime]
+    """
+
+    remaining_occurrences: Optional[int] = rest_field(
+        name="remainingOccurrences", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of occurrences remaining for the trigger. Null if recurrence end has end date
+     instead of number of occurrences."""
+    next_scheduled_date_times: Optional[list[datetime.datetime]] = rest_field(
+        name="nextScheduledDateTimes", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The next three execution times of the trigger. (RFC 3339 literal format)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        remaining_occurrences: Optional[int] = None,
+        next_scheduled_date_times: Optional[list[datetime.datetime]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RecurrenceWithCron(Recurrence, discriminator="Cron"):
+    """Recurrence is set based on cron expression.
+
+    :ivar recurrence_end: Recurrence end model. You can specify the end either by providing a
+     numberOfOccurrences (which will end the recurrence after the specified number of occurrences)
+     or by providing an endDateTime (which will end the recurrence after the specified date). If
+     neither value is provided, the recurrence will continue until it is manually ended. However, if
+     both values are provided, an error will be thrown.
+    :vartype recurrence_end: ~azure.developer.loadtesting.models.RecurrenceEnd
+    :ivar frequency: Specify frequency using a cron expression. Required. Recurrence defined by a
+     cron expression.
+    :vartype frequency: str or ~azure.developer.loadtesting.models.CRON
+    :ivar cron_expression: Cron expression for the recurrence. Required.
+    :vartype cron_expression: str
+    """
+
+    frequency: Literal[Frequency.CRON] = rest_discriminator(name="frequency", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specify frequency using a cron expression. Required. Recurrence defined by a cron expression."""
+    cron_expression: str = rest_field(name="cronExpression", visibility=["read", "create", "update", "delete", "query"])
+    """Cron expression for the recurrence. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cron_expression: str,
+        recurrence_end: Optional["_models.RecurrenceEnd"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.frequency = Frequency.CRON  # type: ignore
+
+
+class RegionalConfiguration(_Model):
     """Region distribution configuration for the load test.
 
     :ivar engine_instances:   The number of engine instances to execute load test in specified
@@ -1089,7 +1605,7 @@ class RegionalConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceMetric(_model_base.Model):
+class ResourceMetric(_Model):
     """Associated metric definition for particular metrics of the azure resource (
     Refer :
     `https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
@@ -1158,7 +1674,161 @@ class ResourceMetric(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Secret(_model_base.Model):
+class Trigger(_Model):
+    """Trigger model.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ScheduleTestsTrigger
+
+    :ivar trigger_id: The unique identifier of the trigger. Required.
+    :vartype trigger_id: str
+    :ivar display_name: The name of the trigger. Required.
+    :vartype display_name: str
+    :ivar description: The description of the trigger.
+    :vartype description: str
+    :ivar kind: The type of the trigger. Required. "ScheduleTestsTrigger"
+    :vartype kind: str or ~azure.developer.loadtesting.models.TriggerType
+    :ivar state: The current state of the trigger. Known values are: "Active", "Paused",
+     "Completed", and "Disabled".
+    :vartype state: str or ~azure.developer.loadtesting.models.TriggerState
+    :ivar state_details: Details of current state of the trigger.
+    :vartype state_details: ~azure.developer.loadtesting.models.StateDetails
+    :ivar created_date_time: The creation datetime(RFC 3339 literal format).
+    :vartype created_date_time: ~datetime.datetime
+    :ivar created_by: The user that created.
+    :vartype created_by: str
+    :ivar last_modified_date_time: The last Modified datetime(RFC 3339 literal format).
+    :vartype last_modified_date_time: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified.
+    :vartype last_modified_by: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    trigger_id: str = rest_field(name="triggerId", visibility=["read"])
+    """The unique identifier of the trigger. Required."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the trigger. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the trigger."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the trigger. Required. \"ScheduleTestsTrigger\""""
+    state: Optional[Union[str, "_models.TriggerState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current state of the trigger. Known values are: \"Active\", \"Paused\", \"Completed\", and
+     \"Disabled\"."""
+    state_details: Optional["_models.StateDetails"] = rest_field(name="stateDetails", visibility=["read"])
+    """Details of current state of the trigger."""
+    created_date_time: Optional[datetime.datetime] = rest_field(
+        name="createdDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The creation datetime(RFC 3339 literal format)."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The user that created."""
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The last Modified datetime(RFC 3339 literal format)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The user that last modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        kind: str,
+        description: Optional[str] = None,
+        state: Optional[Union[str, "_models.TriggerState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduleTestsTrigger(Trigger, discriminator="ScheduleTestsTrigger"):
+    """ScheduleTestsTrigger model.
+
+    :ivar trigger_id: The unique identifier of the trigger. Required.
+    :vartype trigger_id: str
+    :ivar display_name: The name of the trigger. Required.
+    :vartype display_name: str
+    :ivar description: The description of the trigger.
+    :vartype description: str
+    :ivar state: The current state of the trigger. Known values are: "Active", "Paused",
+     "Completed", and "Disabled".
+    :vartype state: str or ~azure.developer.loadtesting.models.TriggerState
+    :ivar state_details: Details of current state of the trigger.
+    :vartype state_details: ~azure.developer.loadtesting.models.StateDetails
+    :ivar created_date_time: The creation datetime(RFC 3339 literal format).
+    :vartype created_date_time: ~datetime.datetime
+    :ivar created_by: The user that created.
+    :vartype created_by: str
+    :ivar last_modified_date_time: The last Modified datetime(RFC 3339 literal format).
+    :vartype last_modified_date_time: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified.
+    :vartype last_modified_by: str
+    :ivar kind: The type of the trigger is ScheduleTestsTrigger. Required. Trigger is a Scheduled
+     Trigger on a Test.
+    :vartype kind: str or ~azure.developer.loadtesting.models.SCHEDULE_TESTS_TRIGGER
+    :ivar test_ids: The test id of test to be triggered by this schedule trigger. Currently only
+     one test is supported for a trigger. Required.
+    :vartype test_ids: list[str]
+    :ivar start_date_time: Start date time of the trigger in UTC timezone. (RFC 3339 literal
+     format).
+    :vartype start_date_time: ~datetime.datetime
+    :ivar recurrence_status:
+    :vartype recurrence_status: ~azure.developer.loadtesting.models.RecurrenceStatus
+    :ivar recurrence: Recurrence details of the trigger. Null if schedule is not recurring.
+    :vartype recurrence: ~azure.developer.loadtesting.models.Recurrence
+    """
+
+    kind: Literal[TriggerType.SCHEDULE_TESTS_TRIGGER] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the trigger is ScheduleTestsTrigger. Required. Trigger is a Scheduled Trigger on a
+     Test."""
+    test_ids: list[str] = rest_field(name="testIds", visibility=["read", "create", "update", "delete", "query"])
+    """The test id of test to be triggered by this schedule trigger. Currently only one test is
+     supported for a trigger. Required."""
+    start_date_time: Optional[datetime.datetime] = rest_field(
+        name="startDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Start date time of the trigger in UTC timezone. (RFC 3339 literal format)."""
+    recurrence_status: Optional["_models.RecurrenceStatus"] = rest_field(name="recurrenceStatus", visibility=["read"])
+    recurrence: Optional["_models.Recurrence"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Recurrence details of the trigger. Null if schedule is not recurring."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        test_ids: list[str],
+        description: Optional[str] = None,
+        state: Optional[Union[str, "_models.TriggerState"]] = None,
+        start_date_time: Optional[datetime.datetime] = None,
+        recurrence: Optional["_models.Recurrence"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = TriggerType.SCHEDULE_TESTS_TRIGGER  # type: ignore
+
+
+class Secret(_Model):
     """Secret.
 
     :ivar value: The value of the secret for the respective type.
@@ -1193,7 +1863,35 @@ class Secret(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Test(_model_base.Model):
+class StateDetails(_Model):
+    """State details of the trigger.
+
+    :ivar message: The error message if the trigger is in disabled state.
+    :vartype message: str
+    """
+
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error message if the trigger is in disabled state."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Test(_Model):
     """Load test model.
 
     :ivar pass_fail_criteria: Pass fail criteria for a test.
@@ -1252,6 +1950,10 @@ class Test(_model_base.Model):
     :ivar engine_built_in_identity_ids: Resource Ids of the managed identity built in to load test
      engines. Required if engineBuiltInIdentityType is UserAssigned.
     :vartype engine_built_in_identity_ids: list[str]
+    :ivar estimated_virtual_user_hours: Estimated virtual user hours for the test.
+    :vartype estimated_virtual_user_hours: float
+    :ivar preferences: Preferences for the test.
+    :vartype preferences: ~azure.developer.loadtesting.models.TestPreferences
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
     :vartype created_date_time: ~datetime.datetime
     :ivar created_by: The user that created.
@@ -1271,7 +1973,7 @@ class Test(_model_base.Model):
     )
     """Auto stop criteria for a test. This will automatically stop a load test if the error percentage
      is high for a certain time window."""
-    secrets: Optional[Dict[str, "_models.Secret"]] = rest_field(
+    secrets: Optional[dict[str, "_models.Secret"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Secrets can be stored in an Azure Key Vault or any other secret store. If the
@@ -1283,7 +1985,7 @@ class Test(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Certificates metadata."""
-    environment_variables: Optional[Dict[str, str]] = rest_field(
+    environment_variables: Optional[dict[str, str]] = rest_field(
         name="environmentVariables", visibility=["read", "create", "update", "delete", "query"]
     )
     """Environment variables which are defined as a set of <name,value> pairs."""
@@ -1339,11 +2041,17 @@ class Test(_model_base.Model):
     )
     """Type of the managed identity built in load test engines. Known values are: \"SystemAssigned\"
      and \"UserAssigned\"."""
-    engine_built_in_identity_ids: Optional[List[str]] = rest_field(
+    engine_built_in_identity_ids: Optional[list[str]] = rest_field(
         name="engineBuiltInIdentityIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource Ids of the managed identity built in to load test engines. Required if
      engineBuiltInIdentityType is UserAssigned."""
+    estimated_virtual_user_hours: Optional[float] = rest_field(name="estimatedVirtualUserHours", visibility=["read"])
+    """Estimated virtual user hours for the test."""
+    preferences: Optional["_models.TestPreferences"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Preferences for the test."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
     )
@@ -1363,9 +2071,9 @@ class Test(_model_base.Model):
         *,
         pass_fail_criteria: Optional["_models.PassFailCriteria"] = None,
         auto_stop_criteria: Optional["_models.AutoStopCriteria"] = None,
-        secrets: Optional[Dict[str, "_models.Secret"]] = None,
+        secrets: Optional[dict[str, "_models.Secret"]] = None,
         certificate: Optional["_models.CertificateMetadata"] = None,
-        environment_variables: Optional[Dict[str, str]] = None,
+        environment_variables: Optional[dict[str, str]] = None,
         load_test_configuration: Optional["_models.LoadTestConfiguration"] = None,
         baseline_test_run_id: Optional[str] = None,
         description: Optional[str] = None,
@@ -1378,7 +2086,8 @@ class Test(_model_base.Model):
         metrics_reference_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
         metrics_reference_identity_id: Optional[str] = None,
         engine_built_in_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
-        engine_built_in_identity_ids: Optional[List[str]] = None,
+        engine_built_in_identity_ids: Optional[list[str]] = None,
+        preferences: Optional["_models.TestPreferences"] = None,
     ) -> None: ...
 
     @overload
@@ -1392,7 +2101,7 @@ class Test(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestAppComponents(_model_base.Model):
+class TestAppComponents(_Model):
     """Test app components.
 
     :ivar components: Azure resource collection { resource id (fully qualified resource Id e.g
@@ -1411,7 +2120,7 @@ class TestAppComponents(_model_base.Model):
     :vartype last_modified_by: str
     """
 
-    components: Dict[str, "_models.AppComponent"] = rest_field(
+    components: dict[str, "_models.AppComponent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure resource collection { resource id (fully qualified resource Id e.g
@@ -1436,7 +2145,7 @@ class TestAppComponents(_model_base.Model):
     def __init__(
         self,
         *,
-        components: Dict[str, "_models.AppComponent"],
+        components: dict[str, "_models.AppComponent"],
     ) -> None: ...
 
     @overload
@@ -1450,7 +2159,7 @@ class TestAppComponents(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestFileInfo(_model_base.Model):
+class TestFileInfo(_Model):
     """Test file info.
 
     :ivar file_name: Name of the file. Required.
@@ -1458,7 +2167,8 @@ class TestFileInfo(_model_base.Model):
     :ivar url: File URL.
     :vartype url: str
     :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
+     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", "TEST_SCRIPT",
+     "BROWSER_RECORDING", and "TEST_PLAN_RECOMMENDATIONS".
     :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
     :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
     :vartype expire_date_time: ~datetime.datetime
@@ -1476,7 +2186,8 @@ class TestFileInfo(_model_base.Model):
     """File URL."""
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
+     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", \"TEST_SCRIPT\", \"BROWSER_RECORDING\", and
+     \"TEST_PLAN_RECOMMENDATIONS\"."""
     expire_date_time: Optional[datetime.datetime] = rest_field(
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
@@ -1507,7 +2218,7 @@ class TestFileInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestInputArtifacts(_model_base.Model):
+class TestInputArtifacts(_Model):
     """The input artifacts for the test.
 
     :ivar config_file_info: The load test YAML file that contains the the test configuration.
@@ -1544,7 +2255,7 @@ class TestInputArtifacts(_model_base.Model):
         name="urlTestConfigFileInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The config json file for url based test."""
-    additional_file_info: Optional[List["_models.TestFileInfo"]] = rest_field(
+    additional_file_info: Optional[list["_models.TestFileInfo"]] = rest_field(
         name="additionalFileInfo", visibility=["read"]
     )
     """Additional supported files for the test run."""
@@ -1571,7 +2282,37 @@ class TestInputArtifacts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestProfile(_model_base.Model):
+class TestPreferences(_Model):
+    """Preferences for the test.
+
+    :ivar enable_ai_error_insights: Enable or disable AI based insights on Test Run Errors.
+    :vartype enable_ai_error_insights: bool
+    """
+
+    enable_ai_error_insights: Optional[bool] = rest_field(
+        name="enableAIErrorInsights", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enable or disable AI based insights on Test Run Errors."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_ai_error_insights: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TestProfile(_Model):
     """Test Profile Model.
 
     :ivar test_profile_id: Unique identifier for the test profile, must contain only lower-case
@@ -1655,7 +2396,7 @@ class TestProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestProfileRun(_model_base.Model):
+class TestProfileRun(_Model):
     """Test Profile Run model.
 
     :ivar test_profile_run_id: Unique identifier for the test profile run, must contain only
@@ -1723,7 +2464,7 @@ class TestProfileRun(_model_base.Model):
     status: Optional[Union[str, "_models.TestProfileRunStatus"]] = rest_field(visibility=["read"])
     """The test profile run status. Known values are: \"ACCEPTED\", \"NOTSTARTED\", \"EXECUTING\",
      \"DONE\", \"CANCELLING\", \"CANCELLED\", and \"FAILED\"."""
-    error_details: Optional[List["_models.ErrorDetails"]] = rest_field(name="errorDetails", visibility=["read"])
+    error_details: Optional[list["_models.ErrorDetails"]] = rest_field(name="errorDetails", visibility=["read"])
     """Error details if there is any failure in test profile run. These errors are specific to the
      Test Profile Run."""
     start_date_time: Optional[datetime.datetime] = rest_field(
@@ -1734,12 +2475,12 @@ class TestProfileRun(_model_base.Model):
     """The test profile run end DateTime(RFC 3339 literal format)."""
     duration_in_seconds: Optional[int] = rest_field(name="durationInSeconds", visibility=["read"])
     """Test profile run duration in seconds."""
-    test_run_details: Optional[Dict[str, "_models.TestRunDetail"]] = rest_field(
+    test_run_details: Optional[dict[str, "_models.TestRunDetail"]] = rest_field(
         name="testRunDetails", visibility=["read"]
     )
     """Details of the test runs ran as part of the test profile run.
      Key is the testRunId of the corresponding testRun."""
-    recommendations: Optional[List["_models.TestProfileRunRecommendation"]] = rest_field(visibility=["read"])
+    recommendations: Optional[list["_models.TestProfileRunRecommendation"]] = rest_field(visibility=["read"])
     """Recommendations provided based on a successful test profile run."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
@@ -1774,7 +2515,7 @@ class TestProfileRun(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestProfileRunRecommendation(_model_base.Model):
+class TestProfileRunRecommendation(_Model):
     """A recommendation object that provides a list of configuration that optimizes its category.
 
     :ivar category: Category of the recommendation. Required. Known values are:
@@ -1790,7 +2531,7 @@ class TestProfileRunRecommendation(_model_base.Model):
     )
     """Category of the recommendation. Required. Known values are: \"ThroughputOptimized\" and
      \"CostOptimized\"."""
-    configurations: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    configurations: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of configurations IDs for which the recommendation is applicable. These are a subset of
      the provided target resource configurations."""
 
@@ -1799,7 +2540,7 @@ class TestProfileRunRecommendation(_model_base.Model):
         self,
         *,
         category: Union[str, "_models.RecommendationCategory"],
-        configurations: Optional[List[str]] = None,
+        configurations: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1813,7 +2554,7 @@ class TestProfileRunRecommendation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRun(_model_base.Model):
+class TestRun(_Model):
     """Load test run model.
 
     :ivar test_run_id: Unique test run identifier for the load test run, must contain only
@@ -1895,8 +2636,18 @@ class TestRun(_model_base.Model):
      access.
     :vartype public_ip_disabled: bool
     :ivar created_by_type: The type of the entity that created the test run. (E.x. User,
-     ScheduleTrigger, etc). Known values are: "User" and "ScheduledTrigger".
+     ScheduleTrigger, etc). Known values are: "User", "ScheduledTrigger", "AzurePipelines", and
+     "GitHubWorkflows".
     :vartype created_by_type: str or ~azure.developer.loadtesting.models.CreatedByType
+    :ivar created_by_uri: The URI pointing to the entity that created the test run.
+    :vartype created_by_uri: str
+    :ivar estimated_virtual_user_hours: Estimated virtual user hours for the test run.
+    :vartype estimated_virtual_user_hours: float
+    :ivar execution_start_date_time: The test run execution start DateTime(RFC 3339 literal
+     format).
+    :vartype execution_start_date_time: ~datetime.datetime
+    :ivar execution_end_date_time: The test run execution end DateTime(RFC 3339 literal format).
+    :vartype execution_end_date_time: ~datetime.datetime
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
     :vartype created_date_time: ~datetime.datetime
     :ivar created_by: The user that created.
@@ -1919,7 +2670,7 @@ class TestRun(_model_base.Model):
     )
     """Auto stop criteria for a test. This will automatically stop a load test if the error percentage
      is high for a certain time window."""
-    secrets: Optional[Dict[str, "_models.Secret"]] = rest_field(
+    secrets: Optional[dict[str, "_models.Secret"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Secrets can be stored in an Azure Key Vault or any other secret store. If the
@@ -1931,20 +2682,20 @@ class TestRun(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Certificates metadata."""
-    environment_variables: Optional[Dict[str, str]] = rest_field(
+    environment_variables: Optional[dict[str, str]] = rest_field(
         name="environmentVariables", visibility=["read", "create", "update", "delete", "query"]
     )
     """Environment variables which are defined as a set of <name,value> pairs."""
-    error_details: Optional[List["_models.ErrorDetails"]] = rest_field(name="errorDetails", visibility=["read"])
+    error_details: Optional[list["_models.ErrorDetails"]] = rest_field(name="errorDetails", visibility=["read"])
     """Error details if there is any failure in load test run."""
-    test_run_statistics: Optional[Dict[str, "_models.TestRunStatistics"]] = rest_field(
+    test_run_statistics: Optional[dict[str, "_models.TestRunStatistics"]] = rest_field(
         name="testRunStatistics", visibility=["read"]
     )
     """Test run statistics. Key is the sampler name and value is the set of statistics for performance
      metrics like response time, throughput, etc. from the load test run.
      The sampler name is the same as the name mentioned in the test script.
      Sampler name \"Total\" represents the aggregated statistics of all the samplers."""
-    regional_statistics: Optional[Dict[str, "_models.TestRunStatistics"]] = rest_field(
+    regional_statistics: Optional[dict[str, "_models.TestRunStatistics"]] = rest_field(
         name="regionalStatistics", visibility=["read"]
     )
     """Regional statistics. Key is the Azure region name and value is the test run statistics.
@@ -2011,7 +2762,19 @@ class TestRun(_model_base.Model):
         name="createdByType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc). Known
-     values are: \"User\" and \"ScheduledTrigger\"."""
+     values are: \"User\", \"ScheduledTrigger\", \"AzurePipelines\", and \"GitHubWorkflows\"."""
+    created_by_uri: Optional[str] = rest_field(name="createdByUri", visibility=["read"])
+    """The URI pointing to the entity that created the test run."""
+    estimated_virtual_user_hours: Optional[float] = rest_field(name="estimatedVirtualUserHours", visibility=["read"])
+    """Estimated virtual user hours for the test run."""
+    execution_start_date_time: Optional[datetime.datetime] = rest_field(
+        name="executionStartDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The test run execution start DateTime(RFC 3339 literal format)."""
+    execution_end_date_time: Optional[datetime.datetime] = rest_field(
+        name="executionEndDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The test run execution end DateTime(RFC 3339 literal format)."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
     )
@@ -2031,9 +2794,9 @@ class TestRun(_model_base.Model):
         *,
         pass_fail_criteria: Optional["_models.PassFailCriteria"] = None,
         auto_stop_criteria: Optional["_models.AutoStopCriteria"] = None,
-        secrets: Optional[Dict[str, "_models.Secret"]] = None,
+        secrets: Optional[dict[str, "_models.Secret"]] = None,
         certificate: Optional["_models.CertificateMetadata"] = None,
-        environment_variables: Optional[Dict[str, str]] = None,
+        environment_variables: Optional[dict[str, str]] = None,
         display_name: Optional[str] = None,
         test_id: Optional[str] = None,
         description: Optional[str] = None,
@@ -2053,7 +2816,7 @@ class TestRun(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunAppComponents(_model_base.Model):
+class TestRunAppComponents(_Model):
     """Test run app component.
 
     :ivar components: Azure resource collection { resource id (fully qualified resource Id e.g
@@ -2072,7 +2835,7 @@ class TestRunAppComponents(_model_base.Model):
     :vartype last_modified_by: str
     """
 
-    components: Dict[str, "_models.AppComponent"] = rest_field(
+    components: dict[str, "_models.AppComponent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure resource collection { resource id (fully qualified resource Id e.g
@@ -2097,7 +2860,7 @@ class TestRunAppComponents(_model_base.Model):
     def __init__(
         self,
         *,
-        components: Dict[str, "_models.AppComponent"],
+        components: dict[str, "_models.AppComponent"],
     ) -> None: ...
 
     @overload
@@ -2111,7 +2874,7 @@ class TestRunAppComponents(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunArtifacts(_model_base.Model):
+class TestRunArtifacts(_Model):
     """Collection of test run artifacts.
 
     :ivar input_artifacts: The input artifacts for the test run.
@@ -2145,7 +2908,7 @@ class TestRunArtifacts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunDetail(_model_base.Model):
+class TestRunDetail(_Model):
     """Details of a particular test run for a test profile run.
 
     :ivar status: Status of the test run. Required. Known values are: "ACCEPTED", "NOTSTARTED",
@@ -2168,7 +2931,7 @@ class TestRunDetail(_model_base.Model):
         name="configurationId", visibility=["read", "create", "update", "delete", "query"]
     )
     """ID of the configuration on which the test ran. Required."""
-    properties: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Key value pair of extra properties associated with the test run. Required."""
 
     @overload
@@ -2177,7 +2940,7 @@ class TestRunDetail(_model_base.Model):
         *,
         status: Union[str, "_models.TestRunStatus"],
         configuration_id: str,
-        properties: Dict[str, str],
+        properties: dict[str, str],
     ) -> None: ...
 
     @overload
@@ -2191,7 +2954,116 @@ class TestRunDetail(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunFileInfo(_model_base.Model):
+class TestRunEndedEventCondition(_Model):
+    """TestRunEnded Event condition.
+
+    :ivar test_run_statuses: The test run statuses to send notification for.
+    :vartype test_run_statuses: list[str or ~azure.developer.loadtesting.models.TestRunStatus]
+    :ivar test_run_results: The test run results to send notification for.
+    :vartype test_run_results: list[str or ~azure.developer.loadtesting.models.PassFailTestResult]
+    """
+
+    test_run_statuses: Optional[list[Union[str, "_models.TestRunStatus"]]] = rest_field(
+        name="testRunStatuses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The test run statuses to send notification for."""
+    test_run_results: Optional[list[Union[str, "_models.PassFailTestResult"]]] = rest_field(
+        name="testRunResults", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The test run results to send notification for."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        test_run_statuses: Optional[list[Union[str, "_models.TestRunStatus"]]] = None,
+        test_run_results: Optional[list[Union[str, "_models.PassFailTestResult"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TestsNotificationEventFilter(_Model):
+    """The notification event filter for Tests scope.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TestRunEndedNotificationEventFilter, TestRunStartedNotificationEventFilter,
+    TriggerCompletedNotificationEventFilter, TriggerDisabledNotificationEventFilter
+
+    :ivar kind: The event type. Required. Known values are: "TestRunEnded", "TestRunStarted",
+     "TriggerCompleted", and "TriggerDisabled".
+    :vartype kind: str or ~azure.developer.loadtesting.models.NotificationEventType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The event type. Required. Known values are: \"TestRunEnded\", \"TestRunStarted\",
+     \"TriggerCompleted\", and \"TriggerDisabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TestRunEndedNotificationEventFilter(TestsNotificationEventFilter, discriminator="TestRunEnded"):
+    """The notification event filter when the event type is TestRunEnded and scope is Tests.
+
+    :ivar kind: Event type for test run ended event. Required. Test run ended event. This event
+     would occur when a test run reaches terminal state.
+    :vartype kind: str or ~azure.developer.loadtesting.models.TEST_RUN_ENDED
+    :ivar condition: Event filtering condition.
+    :vartype condition: ~azure.developer.loadtesting.models.TestRunEndedEventCondition
+    """
+
+    kind: Literal[NotificationEventType.TEST_RUN_ENDED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Event type for test run ended event. Required. Test run ended event. This event would occur
+     when a test run reaches terminal state."""
+    condition: Optional["_models.TestRunEndedEventCondition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Event filtering condition."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        condition: Optional["_models.TestRunEndedEventCondition"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = NotificationEventType.TEST_RUN_ENDED  # type: ignore
+
+
+class TestRunFileInfo(_Model):
     """Test run file info.
 
     :ivar file_name: Name of the file. Required.
@@ -2199,7 +3071,8 @@ class TestRunFileInfo(_model_base.Model):
     :ivar url: File URL.
     :vartype url: str
     :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
+     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", "TEST_SCRIPT",
+     "BROWSER_RECORDING", and "TEST_PLAN_RECOMMENDATIONS".
     :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
     :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
     :vartype expire_date_time: ~datetime.datetime
@@ -2217,7 +3090,8 @@ class TestRunFileInfo(_model_base.Model):
     """File URL."""
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
+     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", \"TEST_SCRIPT\", \"BROWSER_RECORDING\", and
+     \"TEST_PLAN_RECOMMENDATIONS\"."""
     expire_date_time: Optional[datetime.datetime] = rest_field(
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
@@ -2248,7 +3122,7 @@ class TestRunFileInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunInputArtifacts(_model_base.Model):
+class TestRunInputArtifacts(_Model):
     """The input artifacts for the test run.
 
     :ivar config_file_info: The load test YAML file that contains the the test configuration.
@@ -2285,7 +3159,7 @@ class TestRunInputArtifacts(_model_base.Model):
         name="urlTestConfigFileInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The config json file for url based test."""
-    additional_file_info: Optional[List["_models.TestRunFileInfo"]] = rest_field(
+    additional_file_info: Optional[list["_models.TestRunFileInfo"]] = rest_field(
         name="additionalFileInfo", visibility=["read"]
     )
     """Additional supported files for the test run."""
@@ -2312,7 +3186,82 @@ class TestRunInputArtifacts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunOutputArtifacts(_model_base.Model):
+class TestRunInsightColumn(_Model):
+    """Represents a column of the test run insight.
+
+    :ivar name: Name of the column. Required.
+    :vartype name: str
+    :ivar data_type: The data type of the column. Required.
+    :vartype data_type: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the column. Required."""
+    data_type: str = rest_field(name="dataType", visibility=["read", "create", "update", "delete", "query"])
+    """The data type of the column. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TestRunInsights(_Model):
+    """Represents insights for the test run.
+
+    :ivar columns: The columns of the insights.
+    :vartype columns: list[~azure.developer.loadtesting.models.TestRunInsightColumn]
+    :ivar rows: The rows of the insights.
+    :vartype rows: dict[str, dict[str, str]]
+    :ivar version: The version of the insights.
+    :vartype version: int
+    :ivar status: The status of the insights. Known values are: "NotStarted", "Running",
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.developer.loadtesting.models.OperationState
+    """
+
+    columns: Optional[list["_models.TestRunInsightColumn"]] = rest_field(visibility=["read"])
+    """The columns of the insights."""
+    rows: Optional[dict[str, dict[str, str]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The rows of the insights."""
+    version: Optional[int] = rest_field(visibility=["read"])
+    """The version of the insights."""
+    status: Optional[Union[str, "_models.OperationState"]] = rest_field(visibility=["read"])
+    """The status of the insights. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rows: Optional[dict[str, dict[str, str]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TestRunOutputArtifacts(_Model):
     """The output artifacts for the test run.
 
     :ivar result_file_info: The test run results file.
@@ -2363,7 +3312,7 @@ class TestRunOutputArtifacts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunServerMetricsConfiguration(_model_base.Model):
+class TestRunServerMetricsConfiguration(_Model):
     """Test run server metrics configuration.
 
     :ivar test_run_id: Test run identifier.
@@ -2385,7 +3334,7 @@ class TestRunServerMetricsConfiguration(_model_base.Model):
 
     test_run_id: Optional[str] = rest_field(name="testRunId", visibility=["read"])
     """Test run identifier."""
-    metrics: Optional[Dict[str, "_models.ResourceMetric"]] = rest_field(
+    metrics: Optional[dict[str, "_models.ResourceMetric"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure resource metrics collection {metric id : metrics object} (Refer :
@@ -2409,7 +3358,7 @@ class TestRunServerMetricsConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        metrics: Optional[Dict[str, "_models.ResourceMetric"]] = None,
+        metrics: Optional[dict[str, "_models.ResourceMetric"]] = None,
     ) -> None: ...
 
     @overload
@@ -2423,7 +3372,36 @@ class TestRunServerMetricsConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunStatistics(_model_base.Model):
+class TestRunStartedNotificationEventFilter(TestsNotificationEventFilter, discriminator="TestRunStarted"):
+    """The notification event filter when the event type is TestRunStarted and scope is Tests.
+
+    :ivar kind: Event type for test run started event. Required. Test run started event. This event
+     would occur when a new test run is triggered.
+    :vartype kind: str or ~azure.developer.loadtesting.models.TEST_RUN_STARTED
+    """
+
+    kind: Literal[NotificationEventType.TEST_RUN_STARTED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Event type for test run started event. Required. Test run started event. This event would occur
+     when a new test run is triggered."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = NotificationEventType.TEST_RUN_STARTED  # type: ignore
+
+
+class TestRunStatistics(_Model):
     """Test run statistics.
 
     :ivar transaction: Transaction name.
@@ -2510,7 +3488,7 @@ class TestRunStatistics(_model_base.Model):
     """Send network bytes."""
 
 
-class TestServerMetricsConfiguration(_model_base.Model):
+class TestServerMetricsConfiguration(_Model):
     """Test server metrics configuration.
 
     :ivar test_id: Test identifier.
@@ -2532,7 +3510,7 @@ class TestServerMetricsConfiguration(_model_base.Model):
 
     test_id: Optional[str] = rest_field(name="testId", visibility=["read"])
     """Test identifier."""
-    metrics: Dict[str, "_models.ResourceMetric"] = rest_field(
+    metrics: dict[str, "_models.ResourceMetric"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure resource metrics collection {metric id : metrics object} (Refer :
@@ -2556,7 +3534,7 @@ class TestServerMetricsConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        metrics: Dict[str, "_models.ResourceMetric"],
+        metrics: dict[str, "_models.ResourceMetric"],
     ) -> None: ...
 
     @overload
@@ -2570,7 +3548,69 @@ class TestServerMetricsConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeSeriesElement(_model_base.Model):
+class TestsNotificationRule(NotificationRule, discriminator="Tests"):
+    """Tests Notification rule model.
+
+    :ivar notification_rule_id: The unique identifier of the notification rule. Required.
+    :vartype notification_rule_id: str
+    :ivar display_name: The name of the notification rule. Required.
+    :vartype display_name: str
+    :ivar action_group_ids: The action groups to notify. Required.
+    :vartype action_group_ids: list[str]
+    :ivar created_date_time: The creation datetime(RFC 3339 literal format).
+    :vartype created_date_time: ~datetime.datetime
+    :ivar created_by: The user that created.
+    :vartype created_by: str
+    :ivar last_modified_date_time: The last Modified datetime(RFC 3339 literal format).
+    :vartype last_modified_date_time: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified.
+    :vartype last_modified_by: str
+    :ivar scope: Scope of type Tests. Required. Notification rule is for Tests.
+    :vartype scope: str or ~azure.developer.loadtesting.models.TESTS
+    :ivar test_ids: The test ids to include. If not provided, notification will be sent for all
+     testIds.
+    :vartype test_ids: list[str]
+    :ivar event_filters: The event to receive notifications for along with filtering conditions.
+     Key is a user-assigned identifier for the event filter. Required.
+    :vartype event_filters: dict[str,
+     ~azure.developer.loadtesting.models.TestsNotificationEventFilter]
+    """
+
+    scope: Literal[NotificationScopeType.TESTS] = rest_discriminator(name="scope", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Scope of type Tests. Required. Notification rule is for Tests."""
+    test_ids: Optional[list[str]] = rest_field(
+        name="testIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The test ids to include. If not provided, notification will be sent for all testIds."""
+    event_filters: dict[str, "_models.TestsNotificationEventFilter"] = rest_field(
+        name="eventFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The event to receive notifications for along with filtering conditions.
+     Key is a user-assigned identifier for the event filter. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        action_group_ids: list[str],
+        event_filters: dict[str, "_models.TestsNotificationEventFilter"],
+        test_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scope = NotificationScopeType.TESTS  # type: ignore
+
+
+class TimeSeriesElement(_Model):
     """The time series returned when a data query is performed.
 
     :ivar data: An array of data points representing the metric values.
@@ -2579,9 +3619,9 @@ class TimeSeriesElement(_model_base.Model):
     :vartype dimension_values: list[~azure.developer.loadtesting.models.DimensionValue]
     """
 
-    data: Optional[List["_models.MetricValue"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: Optional[list["_models.MetricValue"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of data points representing the metric values."""
-    dimension_values: Optional[List["_models.DimensionValue"]] = rest_field(
+    dimension_values: Optional[list["_models.DimensionValue"]] = rest_field(
         name="dimensionValues", visibility=["read", "create", "update", "delete", "query"]
     )
     """The dimension values."""
@@ -2590,8 +3630,8 @@ class TimeSeriesElement(_model_base.Model):
     def __init__(
         self,
         *,
-        data: Optional[List["_models.MetricValue"]] = None,
-        dimension_values: Optional[List["_models.DimensionValue"]] = None,
+        data: Optional[list["_models.MetricValue"]] = None,
+        dimension_values: Optional[list["_models.DimensionValue"]] = None,
     ) -> None: ...
 
     @overload
@@ -2603,3 +3643,112 @@ class TimeSeriesElement(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TriggerCompletedNotificationEventFilter(TestsNotificationEventFilter, discriminator="TriggerCompleted"):
+    """The notification event filter when the event type is TriggerCompleted.
+
+    :ivar kind: Event type for trigger ended event. Required. Trigger completed event. This event
+     would occur when a trigger completes.
+    :vartype kind: str or ~azure.developer.loadtesting.models.TRIGGER_COMPLETED
+    """
+
+    kind: Literal[NotificationEventType.TRIGGER_COMPLETED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Event type for trigger ended event. Required. Trigger completed event. This event would occur
+     when a trigger completes."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = NotificationEventType.TRIGGER_COMPLETED  # type: ignore
+
+
+class TriggerDisabledNotificationEventFilter(TestsNotificationEventFilter, discriminator="TriggerDisabled"):
+    """The notification event filter when the event type is TriggerDisabled.
+
+    :ivar kind: Event type for trigger disabled event. Required. Trigger disabled event. This event
+     would occur when a trigger is disabled.
+    :vartype kind: str or ~azure.developer.loadtesting.models.TRIGGER_DISABLED
+    """
+
+    kind: Literal[NotificationEventType.TRIGGER_DISABLED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Event type for trigger disabled event. Required. Trigger disabled event. This event would occur
+     when a trigger is disabled."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = NotificationEventType.TRIGGER_DISABLED  # type: ignore
+
+
+class WeeklyRecurrence(Recurrence, discriminator="Weekly"):
+    """Recurrence model when frequency is set as weekly.
+
+    :ivar recurrence_end: Recurrence end model. You can specify the end either by providing a
+     numberOfOccurrences (which will end the recurrence after the specified number of occurrences)
+     or by providing an endDateTime (which will end the recurrence after the specified date). If
+     neither value is provided, the recurrence will continue until it is manually ended. However, if
+     both values are provided, an error will be thrown.
+    :vartype recurrence_end: ~azure.developer.loadtesting.models.RecurrenceEnd
+    :ivar frequency: Frequency of the week recurrence. Required. Recurrence defined on a weekly
+     basis, as specified by WeeklyRecurrence.
+    :vartype frequency: str or ~azure.developer.loadtesting.models.WEEKLY
+    :ivar days_of_week: Recurrence set to repeat on the specified days of the week.
+    :vartype days_of_week: list[str or ~azure.developer.loadtesting.models.WeekDays]
+    :ivar interval: The interval at which the recurrence should repeat. It signifies the number of
+     weeks between each recurrence.
+    :vartype interval: int
+    """
+
+    frequency: Literal[Frequency.WEEKLY] = rest_discriminator(name="frequency", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Frequency of the week recurrence. Required. Recurrence defined on a weekly basis, as specified
+     by WeeklyRecurrence."""
+    days_of_week: Optional[list[Union[str, "_models.WeekDays"]]] = rest_field(
+        name="daysOfWeek", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recurrence set to repeat on the specified days of the week."""
+    interval: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The interval at which the recurrence should repeat. It signifies the number of weeks between
+     each recurrence."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recurrence_end: Optional["_models.RecurrenceEnd"] = None,
+        days_of_week: Optional[list[Union[str, "_models.WeekDays"]]] = None,
+        interval: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.frequency = Frequency.WEEKLY  # type: ignore
