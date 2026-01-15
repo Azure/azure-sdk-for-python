@@ -322,10 +322,6 @@ def update_conda_sdk_client_yml(
     # sort mgmt packages alphabetically
     azure_mgmt_artifact_checkout.sort(key=lambda x: x["package"])
 
-    # TODO note this dump doesn't preserve some quotes like around
-    #    displayName: 'azure-developer-loadtesting' but i don't think those functionally necessary?
-    #   double check that this is ok, esp for URLs... ^
-
     if updated_count > 0 or added_count > 0:
         with open(CONDA_CLIENT_YAML_PATH, "w") as file:
             yaml.dump(
@@ -381,9 +377,12 @@ def format_requirement(req: str) -> str:
     name_unpinned = re.split(r"[>=<!]", req)[0].strip()
 
     # TODO idk if this is right, certain reqs never seem to have pinned versions like aiohttp or isodate
-
+    # and does this actually only apply to azure-core and azure-identity, not all azure-* reqs?
     if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
         return f"{name_unpinned} >={{{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}}}"
+
+    # filter out ~ for yml format
+    req = req.replace("~", "")
     return req
 
 
@@ -620,6 +619,7 @@ def add_new_mgmt_plane_packages(
         result.extend(new_mgmt_plane_names)
         return result
 
+    # TODO probably need to automate removal of deprecated packages from here
     existing_imports_text = test_match.group(1)
     existing_imports = [
         line.strip()
@@ -991,7 +991,6 @@ if __name__ == "__main__":
     outdated_package_names = outdated_data_plane_names + outdated_mgmt_plane_names
 
     # update conda-sdk-client.yml
-    # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
     conda_sdk_client_pkgs_result = update_conda_sdk_client_yml(
         package_dict, outdated_package_names, new_data_plane_names, new_mgmt_plane_names
     )
