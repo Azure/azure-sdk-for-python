@@ -6983,9 +6983,8 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     :ivar pattern: A regular expression pattern to match token separators. Default is an expression
      that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: Regular expression flags. Known values are: "CANON_EQ", "CASE_INSENSITIVE",
-     "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", and "UNIX_LINES".
-    :vartype flags: str or ~azure.search.documents.indexes.models.RegexFlags
+    :ivar flags: Regular expression flags.
+    :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
     :ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
@@ -7000,11 +6999,10 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     pattern: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern to match token separators. Default is an expression that matches
      one or more non-word characters."""
-    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    flags: Optional[list[Union[str, "_models.RegexFlags"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="pipeDelimited"
     )
-    """Regular expression flags. Known values are: \"CANON_EQ\", \"CASE_INSENSITIVE\", \"COMMENTS\",
-     \"DOTALL\", \"LITERAL\", \"MULTILINE\", \"UNICODE_CASE\", and \"UNIX_LINES\"."""
+    """Regular expression flags."""
     stopwords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stopwords."""
     odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7018,7 +7016,7 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
         name: str,
         lower_case_terms: Optional[bool] = None,
         pattern: Optional[str] = None,
-        flags: Optional[Union[str, "_models.RegexFlags"]] = None,
+        flags: Optional[list[Union[str, "_models.RegexFlags"]]] = None,
         stopwords: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -7193,9 +7191,8 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     :ivar pattern: A regular expression pattern to match token separators. Default is an expression
      that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: Regular expression flags. Known values are: "CANON_EQ", "CASE_INSENSITIVE",
-     "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", and "UNIX_LINES".
-    :vartype flags: str or ~azure.search.documents.indexes.models.RegexFlags
+    :ivar flags: Regular expression flags.
+    :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
     :ivar group: The zero-based ordinal of the matching group in the regular expression pattern to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.
@@ -7208,11 +7205,10 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     pattern: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern to match token separators. Default is an expression that matches
      one or more non-word characters."""
-    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    flags: Optional[list[Union[str, "_models.RegexFlags"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="pipeDelimited"
     )
-    """Regular expression flags. Known values are: \"CANON_EQ\", \"CASE_INSENSITIVE\", \"COMMENTS\",
-     \"DOTALL\", \"LITERAL\", \"MULTILINE\", \"UNICODE_CASE\", and \"UNIX_LINES\"."""
+    """Regular expression flags."""
     group: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The zero-based ordinal of the matching group in the regular expression pattern to extract into
      tokens. Use -1 if you want to use the entire pattern to split the input into tokens,
@@ -7227,7 +7223,7 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
         *,
         name: str,
         pattern: Optional[str] = None,
-        flags: Optional[Union[str, "_models.RegexFlags"]] = None,
+        flags: Optional[list[Union[str, "_models.RegexFlags"]]] = None,
         group: Optional[int] = None,
     ) -> None: ...
 
