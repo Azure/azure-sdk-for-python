@@ -85,6 +85,12 @@ jobs:
         value: $(HOME)/.dotnet
 
     steps:
+    - pwsh: |
+        Write-Host $HOME
+        Write-Host "$(HOME)"
+        Write-Host $env:DOTNET_ROOT
+      displayName: 'Show Environment Variables'
+
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
