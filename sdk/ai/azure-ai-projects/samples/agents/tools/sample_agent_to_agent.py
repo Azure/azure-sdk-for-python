@@ -67,7 +67,7 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question (e.g., 'What can the secondary agent do?'): \n")
+    user_input = os.environ.get("A2A_USER_INPUT") or input("Enter your question (e.g., 'What can the secondary agent do?'): \n")
 
     stream_response = openai_client.responses.create(
         stream=True,
