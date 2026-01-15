@@ -71,6 +71,10 @@ parameters:
     displayName: 'azure-appconfiguration'
     type: boolean
     default: true
+  - name: release_azure_appconfiguration_provider
+    displayName: 'azure-appconfiguration-provider'
+    type: boolean
+    default: true
   - name: release_azure_communication
     displayName: 'azure-communication'
     type: boolean
@@ -165,6 +169,10 @@ parameters:
     default: true
   - name: release_azure_monitor_querymetrics
     displayName: 'azure-monitor-querymetrics'
+    type: boolean
+    default: true
+  - name: release_azure_monitor_opentelemetry
+    displayName: 'azure-monitor-opentelemetry'
     type: boolean
     default: true
   - name: release_azure_mgmt
@@ -316,6 +324,12 @@ extends:
                       checkout:
                         - package: azure-appconfiguration
                           version: 1.7.2
+                    - name: azure-appconfiguration-provider
+                      service: appconfiguration
+                      in_batch: ${{ parameters.release_azure_appconfiguration_provider }}
+                      checkout:
+                        - package: azure-appconfiguration-provider
+                          version: 2.3.1
                     - name: azure-communication
                       service: communication
                       common_root: azure/communication
@@ -429,6 +443,12 @@ extends:
                       checkout:
                         - package: azure-monitor-ingestion
                           version: 1.1.0
+                    - name: azure-monitor-opentelemetry
+                      service: monitor
+                      in_batch: ${{ parameters.release_azure_monitor_opentelemetry }}
+                      checkout:
+                        - package: azure-monitor-opentelemetry
+                          version: 1.8.4
                     - name: azure-monitor-query
                       service: monitor
                       in_batch: ${{ parameters.release_azure_monitor_query }}

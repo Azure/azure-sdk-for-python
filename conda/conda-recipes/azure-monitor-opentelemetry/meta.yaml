@@ -1,0 +1,72 @@
+{% set name = "azure-monitor-opentelemetry" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('OPENTELEMETRY_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-monitor-opentelemetry-exporter~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - python
+    - opentelemetry-instrumentation-django==0.60b0
+    - opentelemetry-instrumentation-requests==0.60b0
+    - azure-core-tracing-opentelemetry~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - opentelemetry-resource-detector-azure<1.0.0,>=0.1.5
+    - opentelemetry-sdk==1.39
+    - requests-oauthlib >=0.5.0
+    - opentelemetry-instrumentation-urllib3==0.60b0
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - opentelemetry-instrumentation-psycopg2==0.60b0
+    - opentelemetry-instrumentation-fastapi==0.60b0
+    - opentelemetry-instrumentation-urllib==0.60b0
+    - opentelemetry-instrumentation-flask==0.60b0
+    - aiohttp
+    - pip
+  run:
+    - azure-monitor-opentelemetry-exporter~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - python
+    - opentelemetry-instrumentation-django==0.60b0
+    - opentelemetry-instrumentation-requests==0.60b0
+    - azure-core-tracing-opentelemetry~ >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - opentelemetry-sdk==1.39
+    - requests-oauthlib >=0.5.0
+    - opentelemetry-instrumentation-urllib3==0.60b0
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - opentelemetry-instrumentation-psycopg2==0.60b0
+    - opentelemetry-instrumentation-fastapi==0.60b0
+    - opentelemetry-instrumentation-urllib==0.60b0
+    - opentelemetry-instrumentation-flask==0.60b0
+    - aiohttp
+    - opentelemetry-resource-detector-azure<1.0.0,>=0.1.5
+
+test:
+  imports:
+    - azure.monitor.opentelemetry
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Monitor Opentelemetry Client Library for Python"
+  description: |
+    This is the Microsoft Azure Monitor Opentelemetry Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/monitor for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99
