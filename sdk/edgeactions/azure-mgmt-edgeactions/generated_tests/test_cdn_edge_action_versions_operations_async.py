@@ -75,28 +75,7 @@ class TestCdnEdgeActionVersionsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 edge_action_name="str",
                 version="str",
-                properties={
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "deploymentType": "str",
-                        "isDefaultVersion": "str",
-                        "lastPackageUpdateTime": "2020-02-20 00:00:00",
-                        "provisioningState": "str",
-                        "validationStatus": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
+                properties={"properties": {"deploymentType": "str", "isDefaultVersion": "str"}, "tags": {"str": "str"}},
             )
         ).result()  # call '.result()' to poll until service return final result
 

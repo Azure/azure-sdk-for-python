@@ -76,26 +76,12 @@ class TestCdnEdgeActionExecutionFiltersOperationsAsync(AzureMgmtRecordedTestCase
                 edge_action_name="str",
                 execution_filter="str",
                 properties={
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
                     "properties": {
                         "executionFilterIdentifierHeaderName": "str",
                         "executionFilterIdentifierHeaderValue": "str",
                         "versionId": "str",
-                        "lastUpdateTime": "2020-02-20 00:00:00",
-                        "provisioningState": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
                     },
                     "tags": {"str": "str"},
-                    "type": "str",
                 },
             )
         ).result()  # call '.result()' to poll until service return final result

@@ -70,26 +70,7 @@ class TestCdnEdgeActionsMgmtClientOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.edge_actions_mgmt_client.begin_update(
                 resource_group_name=resource_group.name,
                 edge_action_name="str",
-                properties={
-                    "location": "str",
-                    "sku": {"name": "str", "tier": "str"},
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "attachments": [{"attachedResourceId": "str", "id": "str"}],
-                        "provisioningState": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
+                properties={"properties": {}, "sku": {"name": "str", "tier": "str"}, "tags": {"str": "str"}},
             )
         ).result()  # call '.result()' to poll until service return final result
 

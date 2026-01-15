@@ -280,6 +280,85 @@ class EdgeActionExecutionFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class EdgeActionExecutionFilterUpdate(_Model):
+    """The type used for update operations of the EdgeActionExecutionFilter.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilterUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.EdgeActionExecutionFilterUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.EdgeActionExecutionFilterUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeActionExecutionFilterUpdateProperties(_Model):  # pylint: disable=name-too-long
+    """The updatable properties of the EdgeActionExecutionFilter.
+
+    :ivar version_id: The referenced versionId of the edgeaction version.
+    :vartype version_id: str
+    :ivar execution_filter_identifier_header_name: Custom Header Key associated with the execution
+     filter.
+    :vartype execution_filter_identifier_header_name: str
+    :ivar execution_filter_identifier_header_value: Custom Header Value associated with the
+     execution filter.
+    :vartype execution_filter_identifier_header_value: str
+    """
+
+    version_id: Optional[str] = rest_field(name="versionId", visibility=["read", "create", "update"])
+    """The referenced versionId of the edgeaction version."""
+    execution_filter_identifier_header_name: Optional[str] = rest_field(
+        name="executionFilterIdentifierHeaderName", visibility=["read", "create", "update"]
+    )
+    """Custom Header Key associated with the execution filter."""
+    execution_filter_identifier_header_value: Optional[str] = rest_field(
+        name="executionFilterIdentifierHeaderValue", visibility=["read", "create", "update"]
+    )
+    """Custom Header Value associated with the execution filter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        version_id: Optional[str] = None,
+        execution_filter_identifier_header_name: Optional[str] = None,
+        execution_filter_identifier_header_value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EdgeActionProperties(_Model):
     """Represents an edge action properties.
 
@@ -297,6 +376,50 @@ class EdgeActionProperties(_Model):
      \"Canceled\", \"Provisioning\", and \"Upgrading\"."""
     attachments: list["_models.EdgeActionAttachment"] = rest_field(visibility=["read"])
     """A list of attachments for the edge action. Required."""
+
+
+class EdgeActionPropertiesUpdate(_Model):
+    """Represents an edge action properties."""
+
+
+class EdgeActionUpdate(_Model):
+    """The type used for update operations of the EdgeAction.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.edgeactions.models.EdgeActionPropertiesUpdate
+    :ivar sku: The sku type of the edge action.
+    :vartype sku: ~azure.mgmt.edgeactions.models.SkuTypeUpdate
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.EdgeActionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    sku: Optional["_models.SkuTypeUpdate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The sku type of the edge action."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.EdgeActionPropertiesUpdate"] = None,
+        sku: Optional["_models.SkuTypeUpdate"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class EdgeActionVersion(TrackedResource):
@@ -406,6 +529,78 @@ class EdgeActionVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class EdgeActionVersionUpdate(_Model):
+    """The type used for update operations of the EdgeActionVersion.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.edgeactions.models.EdgeActionVersionUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.EdgeActionVersionUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.EdgeActionVersionUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeActionVersionUpdateProperties(_Model):
+    """The updatable properties of the EdgeActionVersion.
+
+    :ivar deployment_type: The deployment type. Known values are: "zip", "file", and "others".
+    :vartype deployment_type: str or ~azure.mgmt.edgeactions.models.EdgeActionVersionDeploymentType
+    :ivar is_default_version: The active state. Known values are: "True" and "False".
+    :vartype is_default_version: str or ~azure.mgmt.edgeactions.models.EdgeActionIsDefaultVersion
+    """
+
+    deployment_type: Optional[Union[str, "_models.EdgeActionVersionDeploymentType"]] = rest_field(
+        name="deploymentType", visibility=["read", "create", "update"]
+    )
+    """The deployment type. Known values are: \"zip\", \"file\", and \"others\"."""
+    is_default_version: Optional[Union[str, "_models.EdgeActionIsDefaultVersion"]] = rest_field(
+        name="isDefaultVersion", visibility=["read", "create", "update"]
+    )
+    """The active state. Known values are: \"True\" and \"False\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deployment_type: Optional[Union[str, "_models.EdgeActionVersionDeploymentType"]] = None,
+        is_default_version: Optional[Union[str, "_models.EdgeActionIsDefaultVersion"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -498,6 +693,39 @@ class SkuType(_Model):
         *,
         name: str,
         tier: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuTypeUpdate(_Model):
+    """The SKU type for update operations.
+
+    :ivar name: The name of the SKU.
+    :vartype name: str
+    :ivar tier: The tier of the SKU.
+    :vartype tier: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the SKU."""
+    tier: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tier of the SKU."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        tier: Optional[str] = None,
     ) -> None: ...
 
     @overload

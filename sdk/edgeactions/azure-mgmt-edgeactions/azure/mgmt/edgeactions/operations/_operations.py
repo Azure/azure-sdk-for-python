@@ -907,7 +907,7 @@ class EdgeActionsMgmtClientOperations:
         self,
         resource_group_name: str,
         edge_action_name: str,
-        properties: Union[_models.EdgeAction, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -982,7 +982,7 @@ class EdgeActionsMgmtClientOperations:
         self,
         resource_group_name: str,
         edge_action_name: str,
-        properties: _models.EdgeAction,
+        properties: _models.EdgeActionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -995,7 +995,7 @@ class EdgeActionsMgmtClientOperations:
         :param edge_action_name: The name of the Edge Action. Required.
         :type edge_action_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeAction
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1066,7 +1066,7 @@ class EdgeActionsMgmtClientOperations:
         self,
         resource_group_name: str,
         edge_action_name: str,
-        properties: Union[_models.EdgeAction, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeAction]:
         """Update a EdgeAction.
@@ -1077,8 +1077,8 @@ class EdgeActionsMgmtClientOperations:
         :param edge_action_name: The name of the Edge Action. Required.
         :type edge_action_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         EdgeAction, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeAction or JSON or IO[bytes]
+         EdgeActionUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns EdgeAction. The EdgeAction is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeAction]
@@ -1776,7 +1776,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        properties: Union[_models.EdgeActionVersion, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionVersionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1853,7 +1853,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        properties: _models.EdgeActionVersion,
+        properties: _models.EdgeActionVersionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1868,7 +1868,7 @@ class EdgeActionVersionsOperations:
         :param version: The name of the Edge Action version. Required.
         :type version: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionVersion
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionVersionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1946,7 +1946,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        properties: Union[_models.EdgeActionVersion, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionVersionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionVersion]:
         """Update a EdgeActionVersion.
@@ -1959,8 +1959,8 @@ class EdgeActionVersionsOperations:
         :param version: The name of the Edge Action version. Required.
         :type version: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         EdgeActionVersion, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionVersion or JSON or IO[bytes]
+         EdgeActionVersionUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionVersionUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns EdgeActionVersion. The EdgeActionVersion is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersion]
@@ -3098,7 +3098,7 @@ class EdgeActionExecutionFiltersOperations:
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        properties: Union[_models.EdgeActionExecutionFilter, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionExecutionFilterUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3175,7 +3175,7 @@ class EdgeActionExecutionFiltersOperations:
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        properties: _models.EdgeActionExecutionFilter,
+        properties: _models.EdgeActionExecutionFilterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3190,7 +3190,7 @@ class EdgeActionExecutionFiltersOperations:
         :param execution_filter: The name of the execution filter. Required.
         :type execution_filter: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilter
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3268,7 +3268,7 @@ class EdgeActionExecutionFiltersOperations:
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        properties: Union[_models.EdgeActionExecutionFilter, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionExecutionFilterUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionExecutionFilter]:
         """Update a EdgeActionExecutionFilter.
@@ -3281,8 +3281,9 @@ class EdgeActionExecutionFiltersOperations:
         :param execution_filter: The name of the execution filter. Required.
         :type execution_filter: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         EdgeActionExecutionFilter, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilter or JSON or IO[bytes]
+         EdgeActionExecutionFilterUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilterUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns EdgeActionExecutionFilter. The
          EdgeActionExecutionFilter is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionExecutionFilter]
