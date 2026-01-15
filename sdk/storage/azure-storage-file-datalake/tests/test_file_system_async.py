@@ -1344,9 +1344,8 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_datalake_user_delegation_oid(self, **kwargs):
+    async def test_datalake_cross_tenant_delegation_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        data = b"abc123"
 
         token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         account_url = self.account_url(datalake_storage_account_name, "dfs")
@@ -1357,90 +1356,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         directory = await file_system.create_directory(directory_name)
         file_name = "file"
         file = await directory.create_file(file_name)
-        await file.upload_data(data, length=len(data), overwrite=True)
-
-        start = datetime.utcnow()
-        expiry = datetime.utcnow() + timedelta(hours=1)
-        user_delegation_key = await dsc.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
-        token = await token_credential.get_token("https://storage.azure.com/.default")
-        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
-
-        file_system_token = self.generate_sas(
-            generate_file_system_sas,
-            dsc.account_name,
-            file_system_name,
-            user_delegation_key,
-            permission=FileSystemSasPermissions(write=True, read=True, delete=True, list=True),
-            expiry=expiry,
-            user_delegation_oid=user_delegation_oid,
-        )
-        file_system_client = FileSystemClient(
-            f"{account_url}?{file_system_token}",
-            file_system_name=file_system_name,
-            credential=token_credential
-        )
-        paths = []
-        async for path in file_system_client.get_paths() :
-            paths.append(path)
-
-        assert len(paths) == 2
-        assert paths[0]["name"] == directory.path_name
-        assert paths[1]["name"] == file.path_name
-
-        directory_token = self.generate_sas(
-            generate_directory_sas,
-            dsc.account_name,
-            file_system_name,
-            directory_name,
-            user_delegation_key,
-            permission=FileSasPermissions(write=True, read=True, delete=True),
-            expiry=expiry,
-            user_delegation_oid=user_delegation_oid
-        )
-        directory_client = DataLakeDirectoryClient(
-            f"{account_url}?{directory_token}",
-            file_system_name=file_system_name,
-            directory_name=directory_name,
-            credential=token_credential
-        )
-        props = await directory_client.get_directory_properties()
-        assert props is not None
-
-        file_token = self.generate_sas(
-            generate_file_sas,
-            datalake_storage_account_name,
-            file_system_name,
-            directory_name,
-            file_name,
-            credential=user_delegation_key,
-            permission=FileSasPermissions(write=True, read=True, delete=True),
-            expiry=expiry,
-            user_delegation_oid=user_delegation_oid
-        )
-        file_client = DataLakeFileClient(
-            f"{account_url}?{file_token}",
-            file_system_name=file_system_name,
-            file_path=f"{directory_name}/{file_name}",
-            credential=token_credential
-        )
-        content = await (await file_client.download_file()).readall()
-        assert content == data
-
-    @pytest.mark.live_test_only
-    @DataLakePreparer()
-    async def test_cross_tenant_delegation_sas(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-
         data = b"abc123"
-        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
-        account_url = self.account_url(datalake_storage_account_name, "dfs")
-        dsc = DataLakeServiceClient(account_url, credential=token_credential)
-        file_system_name = self.get_resource_name(TEST_FILE_SYSTEM_PREFIX)
-        file_system = await dsc.create_file_system(file_system_name)
-        directory_name = "dir"
-        directory = await file_system.create_directory(directory_name)
-        file_name = "file"
-        file = await directory.create_file(file_name)
         await file.upload_data(data, length=len(data), overwrite=True)
 
         start = datetime.utcnow()
