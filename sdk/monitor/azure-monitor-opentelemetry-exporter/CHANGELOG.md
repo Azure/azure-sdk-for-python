@@ -10,7 +10,7 @@
 
 ### Other Changes
 - Update maximum size of custom properties
-([#](https://github.com/Azure/azure-sdk-for-python/pull/))
+([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
 - Declare support for Python 3.13 and 3.14
 ([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
 
