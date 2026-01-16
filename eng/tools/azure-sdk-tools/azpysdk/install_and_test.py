@@ -59,7 +59,7 @@ class InstallAndTest(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} using interpreter {executable}")
 
-            install_result = self.install_all_requiremenmts(
+            install_result = self.install_all_requirements(
                 executable, staging_directory, package_name, package_dir, args
             )
             if install_result != 0:
