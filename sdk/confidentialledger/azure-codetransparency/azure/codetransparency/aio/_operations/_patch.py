@@ -120,7 +120,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
                 response=http_response,
                 error=error_details,
             )
-        elif http_response.headers.get("Content-Type", "") == "application/json":
+        if http_response.headers.get("Content-Type", "") == "application/json":
             return HttpResponseError(
                 message="Error response received",
                 response=http_response,
@@ -278,7 +278,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         :rtype: ~azure.core.polling.AsyncLROPoller[Optional[bytes]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop("polling", True)
+        _ = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", 0.8)
 
         async def operation() -> Optional[bytes]:

@@ -24,6 +24,7 @@ class CBOREncoder:
     """
 
     def __init__(self) -> None:
+        """Initialize a CBOREncoder with an empty buffer."""
         self._buffer: bytearray = bytearray()
 
     def encode(self, value: Any) -> bytes:
@@ -60,7 +61,12 @@ class CBOREncoder:
         return encoder.encode(value)
 
     def _encode_value(self, value: Any) -> None:
-        """Encode a single value and append to the buffer."""
+        """Encode a single value and append to the buffer.
+
+        :param value: The Python value to encode.
+        :type value: Any
+        :raises ValueError: If the value type is not supported for CBOR encoding.
+        """
         if value is None:
             self._encode_null()
         elif isinstance(value, bool):
@@ -92,18 +98,23 @@ class CBOREncoder:
             raise ValueError(f"Cannot encode type: {type(value).__name__}")
 
     def _encode_initial_byte(self, major_type: int, additional_info: int) -> None:
-        """Encode the initial byte with major type and additional info."""
+        """Encode the initial byte with major type and additional info.
+
+        :param major_type: The CBOR major type (0-7).
+        :type major_type: int
+        :param additional_info: The 5-bit additional info value (0-31).
+        :type additional_info: int
+        """
         self._buffer.append((major_type << 5) | additional_info)
 
     def _encode_unsigned(self, major_type: int, value: int) -> None:
         """Encode an unsigned integer with the given major type (RFC 8949 Section 3).
 
-        Additional info encoding:
-        - 0-23: Value encoded directly in additional info
-        - 24: Next 1 byte is uint8
-        - 25: Next 2 bytes are uint16 (big-endian)
-        - 26: Next 4 bytes are uint32 (big-endian)
-        - 27: Next 8 bytes are uint64 (big-endian)
+        :param major_type: The CBOR major type (0-7).
+        :type major_type: int
+        :param value: The unsigned integer value to encode.
+        :type value: int
+        :raises ValueError: If the value is negative or too large to encode.
         """
         if value < 0:
             raise ValueError("Cannot encode negative value as unsigned")
@@ -126,7 +137,11 @@ class CBOREncoder:
             raise ValueError(f"Integer too large to encode: {value}")
 
     def _encode_int(self, value: int) -> None:
-        """Encode an integer (major type 0 or 1)."""
+        """Encode an integer (major type 0 for positive, major type 1 for negative).
+
+        :param value: The integer value to encode.
+        :type value: int
+        """
         if value >= 0:
             # Major type 0: Unsigned integer
             self._encode_unsigned(0, value)
@@ -136,38 +151,65 @@ class CBOREncoder:
             self._encode_unsigned(1, -1 - value)
 
     def _encode_bytes(self, value: bytes) -> None:
-        """Encode a byte string (major type 2)."""
+        """Encode a byte string (major type 2).
+
+        :param value: The byte string to encode.
+        :type value: bytes
+        """
         self._encode_unsigned(2, len(value))
         self._buffer.extend(value)
 
     def _encode_string(self, value: str) -> None:
-        """Encode a text string as UTF-8 (major type 3)."""
+        """Encode a text string as UTF-8 (major type 3).
+
+        :param value: The text string to encode.
+        :type value: str
+        """
         encoded = value.encode("utf-8")
         self._encode_unsigned(3, len(encoded))
         self._buffer.extend(encoded)
 
     def _encode_array(self, value: Union[List[Any], tuple]) -> None:
-        """Encode an array (major type 4)."""
+        """Encode an array (major type 4).
+
+        :param value: The list or tuple to encode as a CBOR array.
+        :type value: Union[List[Any], tuple]
+        """
         self._encode_unsigned(4, len(value))
         for item in value:
             self._encode_value(item)
 
     def _encode_map(self, value: Dict[Any, Any]) -> None:
-        """Encode a map (major type 5)."""
+        """Encode a map (major type 5).
+
+        :param value: The dictionary to encode as a CBOR map.
+        :type value: Dict[Any, Any]
+        """
         self._encode_unsigned(5, len(value))
         for k, v in value.items():
             self._encode_value(k)
             self._encode_value(v)
 
     def _encode_tag(self, tag_number: int, tagged_value: Any) -> None:
-        """Encode a tagged value (major type 6)."""
+        """Encode a tagged value (major type 6).
+
+        :param tag_number: The CBOR tag number (must be non-negative).
+        :type tag_number: int
+        :param tagged_value: The value to be tagged.
+        :type tagged_value: Any
+        :raises ValueError: If tag_number is negative.
+        """
         if tag_number < 0:
             raise ValueError(f"Tag number must be non-negative: {tag_number}")
         self._encode_unsigned(6, tag_number)
         self._encode_value(tagged_value)
 
     def _encode_bool(self, value: bool) -> None:
-        """Encode a boolean (major type 7, simple values 20/21)."""
+        """Encode a boolean (major type 7, simple values 20/21).
+
+        :param value: The boolean value to encode.
+        :type value: bool
+        """
         if value:
             self._encode_initial_byte(7, 21)  # true
         else:
@@ -184,14 +226,9 @@ class CBOREncoder:
     def _encode_simple(self, value: int) -> None:
         """Encode a simple value (major type 7).
 
-        Simple values:
-        - 0-19: Unassigned (encoded directly)
-        - 20: false (use _encode_bool instead)
-        - 21: true (use _encode_bool instead)
-        - 22: null (use _encode_null instead)
-        - 23: undefined (use _encode_undefined instead)
-        - 24-31: Reserved
-        - 32-255: Encoded with two-byte form
+        :param value: The simple value to encode (0-255).
+        :type value: int
+        :raises ValueError: If value is not in the range 0-255.
         """
         if value < 0 or value > 255:
             raise ValueError(f"Simple value must be 0-255: {value}")
@@ -208,9 +245,11 @@ class CBOREncoder:
         """Encode a floating-point number (major type 7).
 
         Uses the smallest representation that preserves the value:
-        - Half-precision (16-bit) if possible
-        - Single-precision (32-bit) if half doesn't preserve value
-        - Double-precision (64-bit) otherwise
+        half-precision (16-bit), single-precision (32-bit), or
+        double-precision (64-bit).
+
+        :param value: The floating-point value to encode.
+        :type value: float
         """
         # Handle special values
         if isnan(value):
@@ -247,13 +286,16 @@ class CBOREncoder:
         self._encode_initial_byte(7, 27)
         self._buffer.extend(struct.pack(">d", value))
 
-    def _try_encode_half(self, value: float) -> Optional[bytes]:
+    def _try_encode_half(self, value: float) -> Optional[bytes]:  # pylint: disable=too-many-return-statements
         """Try to encode a float as half-precision (16-bit IEEE 754).
 
-        Returns the encoded bytes if the value can be represented exactly,
-        or None if half-precision would lose precision.
+        Format (16 bits): 1 sign + 5 exponent + 10 mantissa.
 
-        Format (16 bits): 1 sign + 5 exponent + 10 mantissa
+        :param value: The floating-point value to encode.
+        :type value: float
+        :return: The encoded bytes if the value can be represented exactly
+            in half-precision, or None if it would lose precision.
+        :rtype: Optional[bytes]
         """
         # Convert to single precision first to get the bit pattern
         single_bytes = struct.pack(">f", value)

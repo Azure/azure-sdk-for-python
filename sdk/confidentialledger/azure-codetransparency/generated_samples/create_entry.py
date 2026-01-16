@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.create_entry(
-        body="{binary}",
+        body=b""
     )
     print(response)
 
