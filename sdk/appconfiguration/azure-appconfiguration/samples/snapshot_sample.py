@@ -70,8 +70,8 @@ def main():
             print(config_setting)
         # [END list_configuration_settings_for_snapshot]
 
-        client.delete_configuration_setting(key=config_setting1.key, label=config_setting1.label) # type: ignore[arg-type]
-        client.delete_configuration_setting(key=config_setting2.key, label=config_setting2.label) # type: ignore[arg-type]
+        client.delete_configuration_setting(key=config_setting1.key, label=config_setting1.label)
+        client.delete_configuration_setting(key=config_setting2.key, label=config_setting2.label)
 
 
 if __name__ == "__main__":

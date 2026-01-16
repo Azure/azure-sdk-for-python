@@ -553,7 +553,7 @@ class AzureAppConfigurationClient:
         """
         if read_only:
             key_value = self._impl.put_lock(
-                key=configuration_setting.key,  # type: ignore[arg-type]
+                key=configuration_setting.key,
                 label=configuration_setting.label,
                 etag=configuration_setting.etag,
                 match_condition=match_condition,
@@ -561,7 +561,7 @@ class AzureAppConfigurationClient:
             )
         else:
             key_value = self._impl.delete_lock(
-                key=configuration_setting.key,  # type: ignore[arg-type]
+                key=configuration_setting.key,
                 label=configuration_setting.label,
                 etag=configuration_setting.etag,
                 match_condition=match_condition,

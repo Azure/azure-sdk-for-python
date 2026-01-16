@@ -23,19 +23,19 @@ from ._generated._model_base import _deserialize
 class ConfigurationSetting(Model):
     """A setting, defined by a unique combination of a key and label."""
 
-    value: Optional[str]
+    value: str
     """The value of the configuration setting."""
-    etag: Optional[str]
+    etag: str
     """A value representing the current state of the resource."""
-    key: Optional[str]
+    key: str
     """The key of the configuration setting."""
-    label: Optional[str]
+    label: str
     """The label of the configuration setting."""
     content_type: Optional[str]
     """The content_type of the configuration setting."""
-    last_modified: Optional[datetime]
+    last_modified: datetime
     """A date representing the last time the key-value was modified."""
-    read_only: Optional[bool]
+    read_only: bool
     """Indicates whether the key-value is locked."""
     tags: Dict[str, str]
     """The tags assigned to the configuration setting."""
@@ -56,13 +56,13 @@ class ConfigurationSetting(Model):
 
     def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
-        self.key = kwargs.get("key", None)
-        self.label = kwargs.get("label", None)
-        self.value = kwargs.get("value", None)
-        self.etag = kwargs.get("etag", None)
+        self.key = kwargs.get("key", None)  # type: ignore[assignment]
+        self.label = kwargs.get("label", None)  # type: ignore[assignment]
+        self.value = kwargs.get("value", None)  # type: ignore[assignment]
+        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
         self.content_type = kwargs.get("content_type", None)
-        self.last_modified = kwargs.get("last_modified", None)
-        self.read_only = kwargs.get("read_only", None)
+        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
+        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
         self.tags = kwargs.get("tags", {})
 
     @classmethod
@@ -113,7 +113,7 @@ class ConfigurationSetting(Model):
 class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
     """A configuration setting that stores a feature flag value."""
 
-    etag: Optional[str]
+    etag: str
     """A value representing the current state of the resource."""
     feature_id: str
     """The identity of the configuration setting."""
@@ -125,17 +125,17 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     filters: Optional[List[Dict[str, Any]]]
     """Filters that must run on the client and be evaluated as true for the feature
         to be considered enabled."""
-    label: Optional[str]
+    label: str
     """The label used to group this configuration setting with others."""
-    display_name: Optional[str]
+    display_name: str
     """The name for the feature to use for display rather than the ID."""
-    description: Optional[str]
+    description: str
     """The description of the feature."""
-    content_type: Optional[str]
+    content_type: str
     """The content_type of the configuration setting."""
-    last_modified: Optional[datetime]
+    last_modified: datetime
     """A date representing the last time the key-value was modified."""
-    read_only: Optional[bool]
+    read_only: bool
     """Indicates whether the key-value is locked."""
     tags: Dict[str, str]
     """The tags assigned to the configuration setting."""
@@ -177,14 +177,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.feature_id = feature_id
         self.key = kwargs.get("key", None) or (self._key_prefix + self.feature_id)
-        self.label = kwargs.get("label", None)
-        self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
-        self.last_modified = kwargs.get("last_modified", None)
+        self.label = kwargs.get("label", None)  # type: ignore[assignment]
+        self.content_type = kwargs.get("content_type", self._feature_flag_content_type)  # type: ignore[assignment]
+        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
         self.tags = kwargs.get("tags", {})
-        self.read_only = kwargs.get("read_only", None)
-        self.etag = kwargs.get("etag", None)
-        self.description = kwargs.get("description", None)
-        self.display_name = kwargs.get("display_name", None)
+        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
+        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
+        self.description = kwargs.get("description", None)  # type: ignore[assignment]
+        self.display_name = kwargs.get("display_name", None)  # type: ignore[assignment]
         self.filters = [] if filters is None else filters
         self.enabled = enabled
         self._value = json.dumps(
@@ -280,19 +280,19 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """A configuration value that references a configuration setting secret."""
 
-    etag: Optional[str]
+    etag: str
     """A value representing the current state of the resource."""
     key: str
     """The key of the configuration setting."""
     secret_id: Optional[str]
     """The identity of the configuration setting."""
-    label: Optional[str]
+    label: str
     """The label used to group this configuration setting with others."""
-    content_type: Optional[str]
+    content_type: str
     """The content_type of the configuration setting."""
-    last_modified: Optional[datetime]
+    last_modified: datetime
     """A date representing the last time the key-value was modified."""
-    read_only: Optional[bool]
+    read_only: bool
     """Indicates whether the key-value is locked."""
     tags: Dict[str, str]
     """The tags assigned to the configuration setting."""
@@ -321,10 +321,10 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
         self.label = kwargs.pop("label", None)
-        self.content_type = kwargs.get("content_type", self._secret_reference_content_type)
-        self.etag = kwargs.get("etag", None)
-        self.last_modified = kwargs.get("last_modified", None)
-        self.read_only = kwargs.get("read_only", None)
+        self.content_type = kwargs.get("content_type", self._secret_reference_content_type)  # type: ignore[assignment]
+        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
+        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
+        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
         self.tags = kwargs.get("tags", {})
         self.secret_id = secret_id
         self._value = json.dumps({"uri": secret_id})

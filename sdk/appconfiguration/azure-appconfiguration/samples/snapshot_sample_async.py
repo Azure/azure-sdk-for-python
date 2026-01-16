@@ -62,8 +62,8 @@ async def main():
         async for config_setting in config_settings:
             print(config_setting)
 
-        await client.delete_configuration_setting(key=config_setting1.key, label=config_setting1.label)  # type: ignore[arg-type]
-        await client.delete_configuration_setting(key=config_setting2.key, label=config_setting2.label)  # type: ignore[arg-type]
+        await client.delete_configuration_setting(key=config_setting1.key, label=config_setting1.label)
+        await client.delete_configuration_setting(key=config_setting2.key, label=config_setting2.label)
 
 
 if __name__ == "__main__":
