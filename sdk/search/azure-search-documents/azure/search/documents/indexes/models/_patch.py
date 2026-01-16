@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Union
 from ._models import SearchField as _SearchField
 from ._enums import (
     LexicalAnalyzerName,
@@ -57,7 +57,7 @@ class SearchField(_SearchField):
             self.retrievable = not value
 
 
-def _collection_helper(typ: Union[str, _SearchFieldDataType]) -> str:
+def _collection_helper(typ: Any) -> str:
     """Helper function to create a collection type string.
 
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
@@ -71,28 +71,13 @@ def _collection_helper(typ: Union[str, _SearchFieldDataType]) -> str:
     return "Collection({})".format(typ)
 
 
-if TYPE_CHECKING:
-    # For type checking, create a class that has all enum members plus the Collection method
-    class SearchFieldDataType(_SearchFieldDataType):
-        """Search field data type with Collection helper method."""
-
-        @staticmethod
-        def Collection(typ: Union[str, "SearchFieldDataType"]) -> str:
-            """Create a Collection type string.
-
-            :param typ: The type to wrap in a collection.
-            :type typ: str or SearchFieldDataType
-            :return: A collection type string.
-            :rtype: str
-            """
-            ...
-else:
-    # At runtime, use the original enum with monkey-patched Collection method
-    SearchFieldDataType = _SearchFieldDataType
-    SearchFieldDataType.Collection = staticmethod(_collection_helper)
+# Re-export SearchFieldDataType with Collection method
+# The Collection method is added at runtime via monkey-patching
+SearchFieldDataType = _SearchFieldDataType
+SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
 
 
-def Collection(typ: Union[str, _SearchFieldDataType]) -> str:
+def Collection(typ: Any) -> str:
     """Helper function to create a collection type string.
 
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
