@@ -2,11 +2,13 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use azure_data_cosmos::{CosmosClient as RustCosmosClient, models::{ContainerProperties, PartitionKeyDefinition}};
 use std::sync::Arc;
+use std::collections::HashMap;
 use crate::container::ContainerClient;
 use crate::exceptions::map_error;
 use crate::utils::empty_headers_dict;
 use once_cell::sync::Lazy;
 use tokio::runtime::Runtime;
+use serde_json::Value;
 
 static TOKIO_RUNTIME: Lazy<Runtime> = Lazy::new(|| {
     tokio::runtime::Builder::new_multi_thread()
@@ -53,22 +55,39 @@ impl DatabaseClient {
             .clone();
         
         let container_id = id.clone();
-        TOKIO_RUNTIME.block_on(async move {
+        let pk_path_clone = partition_key_path.clone();
+        
+        let header_map = TOKIO_RUNTIME.block_on(async move {
             let props = ContainerProperties {
                 id: container_id.into(),
-                partition_key: PartitionKeyDefinition::from(partition_key_path),
+                partition_key: PartitionKeyDefinition::from(pk_path_clone),
                 ..Default::default()
             };
-            db_client.create_container(props, None)
+            let response = db_client.create_container(props, None)
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+            
+            // Extract headers into a HashMap
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+            
+            Ok::<_, PyErr>(headers)
         })?;
 
-        let headers = empty_headers_dict(py);
-        Ok((ContainerClient::new(
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
+        }
+        
+        // Use with_partition_key_path to pass the partition key path to the container client
+        Ok((ContainerClient::with_partition_key_path(
             self.cosmos_client.clone(),
             self.database_id.clone(),
             id,
+            partition_key_path,
         ), headers))
     }
 
@@ -92,14 +111,27 @@ impl DatabaseClient {
     ) -> PyResult<&'py PyDict> {
         let db_client = self.cosmos_client.database_client(&self.database_id);
         
-        TOKIO_RUNTIME.block_on(async move {
+        let header_map = TOKIO_RUNTIME.block_on(async move {
             let container = db_client.container_client(&container_id);
-            container.delete(None)
+            let response = container.delete(None)
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+            
+            // Extract headers into a HashMap
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+            
+            Ok::<_, PyErr>(headers)
         })?;
 
-        Ok(empty_headers_dict(py))
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
+        }
+        Ok(headers)
     }
 
     /// Read database properties
@@ -112,15 +144,35 @@ impl DatabaseClient {
     ) -> PyResult<(&'py PyDict, &'py PyDict)> {
         let db_client = self.cosmos_client.database_client(&self.database_id);
         
-        TOKIO_RUNTIME.block_on(async move {
-            db_client.read(None)
+        let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
+            let response = db_client.read(None)
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+            
+            // Extract headers into a HashMap before consuming the body
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+            
+            // Get the body as JSON
+            let body_value = response.into_body().json::<Value>()
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
+            
+            Ok::<_, PyErr>((headers, body_value))
         })?;
 
-        let dict = PyDict::new(py);
-        dict.set_item("id", &self.database_id)?;
-        let headers = empty_headers_dict(py);
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
+        }
+        
+        let json_str = serde_json::to_string(&value)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+        
+        let json_module = py.import("json")?;
+        let dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
         Ok((dict, headers))
     }
 

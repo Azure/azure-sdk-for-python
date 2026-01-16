@@ -157,6 +157,31 @@ class DatabaseProxy(object):
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         request_options = build_options(kwargs)
+
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[DatabaseProxy.read] Using RUST SDK")
+            if self._rust_database is None:
+                raise RuntimeError("COSMOS_USE_RUST_BACKEND=true but _rust_database is None. "
+                                   "Database must be created/retrieved with Rust backend enabled.")
+            # RUST PATH: Call Rust SDK - convert Rust exceptions to Python SDK exceptions
+            try:
+                result_dict, headers_dict = self._rust_database.read()
+            except Exception as e:
+                # Convert Rust exceptions to Python SDK exceptions
+                error_msg = str(e)
+                if "404" in error_msg or "NotFound" in error_msg:
+                    raise CosmosResourceNotFoundError(status_code=404, message=error_msg) from e
+                raise
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            self._properties = CosmosDict(dict(result_dict), response_headers=response_headers)
+            return self._properties
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[DatabaseProxy.read] Using PURE PYTHON")
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
@@ -436,6 +461,36 @@ class DatabaseProxy(object):
             definition["fullTextPolicy"] = full_text_policy
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
+
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[DatabaseProxy.create_container] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Build partition_key dict for Rust
+            pk_dict = {"paths": partition_key["paths"]} if partition_key else {}
+            rust_container, headers_dict = self._rust_database.create_container(id, pk_dict)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+            result = {"id": id}
+            result.update(definition)
+
+            container_proxy = ContainerProxy(
+                self.client_connection,
+                self.database_link,
+                id,
+                properties=result,
+                rust_container=rust_container
+            )
+
+            if not return_properties:
+                return container_proxy
+            return container_proxy, CosmosDict(result, response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[DatabaseProxy.create_container] Using PURE PYTHON")
         result = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
@@ -726,6 +781,32 @@ class DatabaseProxy(object):
             kwargs['initial_headers'] = initial_headers
         request_options = build_options(kwargs)
         collection_link = self._get_container_link(container)
+
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[DatabaseProxy.delete_container] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Extract container_id
+            if isinstance(container, ContainerProxy):
+                container_id = container.id
+            elif isinstance(container, str):
+                container_id = container
+            else:
+                container_id = container["id"]
+
+            headers_dict = self._rust_database.delete_container(container_id)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+            response_hook = kwargs.get('response_hook')
+            if response_hook:
+                response_hook(response_headers)
+            return
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[DatabaseProxy.delete_container] Using PURE PYTHON")
         self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
 
     def get_container_client(self, container: Union[str, ContainerProxy, Mapping[str, Any]]) -> ContainerProxy:

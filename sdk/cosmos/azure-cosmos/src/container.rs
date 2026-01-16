@@ -2,7 +2,9 @@ use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use azure_data_cosmos::CosmosClient as RustCosmosClient;
 use azure_data_cosmos::PartitionKey as RustPartitionKey;
+use azure_data_cosmos::ItemOptions;
 use std::sync::Arc;
+use std::collections::HashMap;
 use serde_json::Value;
 use crate::exceptions::map_error;
 use crate::utils::{py_object_to_json, empty_headers_dict};
@@ -22,6 +24,7 @@ pub struct ContainerClient {
     cosmos_client: Arc<RustCosmosClient>,
     database_id: String,
     container_id: String,
+    partition_key_path: Option<String>,  // e.g., "/pk" or "/category"
 }
 
 impl ContainerClient {
@@ -30,6 +33,16 @@ impl ContainerClient {
             cosmos_client,
             database_id,
             container_id,
+            partition_key_path: None,
+        }
+    }
+
+    pub fn with_partition_key_path(cosmos_client: Arc<RustCosmosClient>, database_id: String, container_id: String, partition_key_path: String) -> Self {
+        Self {
+            cosmos_client,
+            database_id,
+            container_id,
+            partition_key_path: Some(partition_key_path),
         }
     }
 }
@@ -61,23 +74,43 @@ impl ContainerClient {
             self.extract_partition_key_from_kwargs(_kwargs)?
         };
         
-        let _result = TOKIO_RUNTIME.block_on(async move {
-            container.create_item(partition_key, item_value, None)
+        // Execute and get both headers and body
+        let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
+            // Enable content response on write to get the created item back
+            let options = ItemOptions {
+                enable_content_response_on_write: true,
+                ..Default::default()
+            };
+
+            let response = container.create_item(partition_key, item_value, Some(options))
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+
+            // Extract headers into a HashMap before consuming the body
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+
+            // Get the body as JSON - with enable_content_response_on_write, this contains the created item
+            let body_value = response.into_body().json::<Value>()
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
+
+            Ok::<_, PyErr>((headers, body_value))
         })?;
 
-        let headers = empty_headers_dict(py);
-        
-        // Return the created item as dict (convert if it was a string)
-        if let Ok(dict) = body.downcast::<PyDict>() {
-            Ok((dict, headers))
-        } else {
-            // If input was a string, we need to convert it back to dict for return
-            let json_module = py.import("json")?;
-            let result: &PyDict = json_module.call_method1("loads", (body,))?.extract()?;
-            Ok((result, headers))
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
         }
+
+        let json_str = serde_json::to_string(&value)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+
+        let json_module = py.import("json")?;
+        let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+        Ok((py_dict, headers))
     }
 
     /// Read an item by ID and partition key
@@ -97,22 +130,36 @@ impl ContainerClient {
         let pk = self.python_to_partition_key(py, partition_key)?;
         let item_id = item.clone();
         
-        let result = TOKIO_RUNTIME.block_on(async move {
-            container.read_item::<Value>(pk, &item_id, None)
+        // Execute and get both headers and body
+        let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
+            let response = container.read_item::<Value>(pk, &item_id, None)
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+
+            // Extract headers into a HashMap before consuming the body
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+
+            // Get the body - read_item always returns the item
+            let body_value = response.into_body().json::<Value>()
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
+
+            Ok::<_, PyErr>((headers, body_value))
         })?;
 
-        // Extract the value from the Response
-        let value = result.into_body().json::<Value>()
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
-        
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
+        }
+
         let json_str = serde_json::to_string(&value)
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
         
         let json_module = py.import("json")?;
         let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
-        let headers = empty_headers_dict(py);
         Ok((py_dict, headers))
     }
 
@@ -139,23 +186,43 @@ impl ContainerClient {
             self.extract_partition_key_from_kwargs(_kwargs)?
         };
         
-        let _result = TOKIO_RUNTIME.block_on(async move {
-            container.upsert_item(partition_key, item_value, None)
+        // Execute and get both headers and body
+        let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
+            // Enable content response on write to get the upserted item back
+            let options = ItemOptions {
+                enable_content_response_on_write: true,
+                ..Default::default()
+            };
+
+            let response = container.upsert_item(partition_key, item_value, Some(options))
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+
+            // Extract headers into a HashMap before consuming the body
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+
+            // Get the body as JSON
+            let body_value = response.into_body().json::<Value>()
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
+
+            Ok::<_, PyErr>((headers, body_value))
         })?;
 
-        let headers = empty_headers_dict(py);
-        
-        // Return the created item as dict (convert if it was a string)
-        if let Ok(dict) = body.downcast::<PyDict>() {
-            Ok((dict, headers))
-        } else {
-            // If input was a string, we need to convert it back to dict for return
-            let json_module = py.import("json")?;
-            let result: &PyDict = json_module.call_method1("loads", (body,))?.extract()?;
-            Ok((result, headers))
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
         }
+
+        let json_str = serde_json::to_string(&value)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+
+        let json_module = py.import("json")?;
+        let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+        Ok((py_dict, headers))
     }
 
     /// Replace an item
@@ -183,23 +250,43 @@ impl ContainerClient {
         };
         let item_id = item.clone();
         
-        let _result = TOKIO_RUNTIME.block_on(async move {
-            container.replace_item(partition_key, &item_id, item_value, None)
+        // Execute and get both headers and body
+        let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
+            // Enable content response on write to get the replaced item back
+            let options = ItemOptions {
+                enable_content_response_on_write: true,
+                ..Default::default()
+            };
+
+            let response = container.replace_item(partition_key, &item_id, item_value, Some(options))
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+
+            // Extract headers into a HashMap before consuming the body
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+
+            // Get the body as JSON
+            let body_value = response.into_body().json::<Value>()
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
+
+            Ok::<_, PyErr>((headers, body_value))
         })?;
 
-        let headers = empty_headers_dict(py);
-        
-        // Return the created item as dict (convert if it was a string)
-        if let Ok(dict) = body.downcast::<PyDict>() {
-            Ok((dict, headers))
-        } else {
-            // If input was a string, we need to convert it back to dict for return
-            let json_module = py.import("json")?;
-            let result: &PyDict = json_module.call_method1("loads", (body,))?.extract()?;
-            Ok((result, headers))
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
         }
+
+        let json_str = serde_json::to_string(&value)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+
+        let json_module = py.import("json")?;
+        let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+        Ok((py_dict, headers))
     }
 
     /// Delete an item
@@ -219,13 +306,26 @@ impl ContainerClient {
         let pk = self.python_to_partition_key(py, partition_key)?;
         let item_id = item.clone();
         
-        TOKIO_RUNTIME.block_on(async move {
-            container.delete_item(pk, &item_id, None)
+        let header_map = TOKIO_RUNTIME.block_on(async move {
+            let response = container.delete_item(pk, &item_id, None)
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+
+            // Extract headers into a HashMap
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+
+            Ok::<_, PyErr>(headers)
         })?;
 
-        Ok(empty_headers_dict(py))
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
+        }
+        Ok(headers)
     }
 
     /// Query items with SQL
@@ -368,9 +468,18 @@ impl ContainerClient {
             }
         }
         
-        // Otherwise, try common partition key fields from the body
-        // Try common partition key field names (including "id" which is very common)
-        let common_pk_fields = ["id", "category", "partitionKey", "pk", "type", "tenantId"];
+        // If we have a partition key path, use it to extract the value from the body
+        if let Some(ref pk_path) = self.partition_key_path {
+            // Convert path like "/pk" to field name "pk"
+            let field_name = pk_path.trim_start_matches('/');
+            if let Ok(Some(value)) = body.get_item(field_name) {
+                return self.python_to_partition_key(py, value.into());
+            }
+        }
+
+        // Fallback: try common partition key field names
+        // Note: "pk" should be checked before "id" since "pk" is more commonly the partition key
+        let common_pk_fields = ["pk", "partitionKey", "category", "type", "tenantId", "id"];
         for field in &common_pk_fields {
             if let Ok(Some(value)) = body.get_item(field) {
                 return self.python_to_partition_key(py, value.into());

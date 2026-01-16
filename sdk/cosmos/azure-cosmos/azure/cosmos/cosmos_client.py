@@ -433,46 +433,40 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
-        # Use Rust backend with fallback to Python
-        # Environment variable to toggle backend (for testing purposes)
+        # Environment variable to toggle backend (for testing/comparison purposes)
         import os
         use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
         response_hook = kwargs.pop("response_hook", None)
 
-        if use_rust and self._rust_client is not None:
-            try:
-                # RUST PATH: Call Rust SDK
-                # Rust now returns (DatabaseClient, headers_dict) tuple
-                rust_db, headers_dict = self._rust_client.create_database(id)
+        if use_rust:
+            print("[CosmosClient.create_database] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Rust now returns (DatabaseClient, headers_dict) tuple
+            rust_db, headers_dict = self._rust_client.create_database(id)
 
-                from azure.core.utils import CaseInsensitiveDict
-                response_headers = CaseInsensitiveDict(dict(headers_dict))
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
 
-                # Create DatabaseProxy with Rust client
-                db_proxy = DatabaseProxy(
-                    client_connection=self.client_connection,
-                    id=id,
-                    rust_database=rust_db
-                )
+            # Create DatabaseProxy with Rust client
+            db_proxy = DatabaseProxy(
+                client_connection=self.client_connection,
+                id=id,
+                rust_database=rust_db
+            )
 
-                if response_hook:
-                    response_hook(response_headers)
+            if response_hook:
+                response_hook(response_headers)
 
-                if not return_properties:
-                    return db_proxy
+            if not return_properties:
+                return db_proxy
 
-                # For return_properties=True, get properties
-                # Rust read() now returns (properties, headers) tuple
-                properties, props_headers = rust_db.read()
-                return db_proxy, CosmosDict(dict(properties), response_headers=CaseInsensitiveDict(dict(props_headers)))
+            # For return_properties=True, get properties
+            # Rust read() now returns (properties, headers) tuple
+            properties, props_headers = rust_db.read()
+            return db_proxy, CosmosDict(dict(properties), response_headers=CaseInsensitiveDict(dict(props_headers)))
 
-            except Exception as e:
-                # Log and fall back to Python implementation
-                import logging
-                logging.getLogger(__name__).warning(f"Rust SDK failed, falling back to Python: {e}")
-                # Fall through to Python implementation
-
-        # PYTHON PATH (fallback): Use existing Python implementation
+        # PYTHON PATH: Use existing Python implementation
+        print("[CosmosClient.create_database] Using PURE PYTHON")
         result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -698,6 +692,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+
+        # NOTE: list_databases Rust integration is disabled for now
+        # The Rust facade's list_databases returns malformed data (debug format instead of proper dict)
+        # This will be fixed later when proper serialization is implemented
+
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -817,10 +816,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)
-        # CURRENT CODE uses _get_database_link() which handles isinstance:
-        # database_link = _get_database_link(database)  # Returns "dbs/{id}"
 
-        # MODIFY: For Rust, extract the ID directly using same helper or inline:
+        # Extract the database ID
         if isinstance(database, DatabaseProxy):
             database_id = database.id
         elif isinstance(database, str):
@@ -828,12 +825,25 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         else:
             database_id = database["id"]
 
-        # MODIFY: Delegate to Rust
-        response_headers = self._rust_client.delete_database(database_id)
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[CosmosClient.delete_database] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            headers_dict = self._rust_client.delete_database(database_id)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers)
+            return
 
-        # KEEP: Call response_hook if provided
+        # PYTHON PATH: Use existing Python implementation
+        print("[CosmosClient.delete_database] Using PURE PYTHON")
+        database_link = _get_database_link(database)
+        self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
-            response_hook(response_headers)
+            response_hook(self.client_connection.last_response_headers)
 
 
     @distributed_trace

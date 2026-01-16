@@ -326,6 +326,232 @@ class TestJsonSerializationOverhead:
         benchmark(create_large_item)
 
 
+class TestHighVolumeOperations:
+    """High-volume benchmark tests inspired by prototype project."""
+
+    @pytest.mark.benchmark(group="high-volume", warmup=True, min_rounds=3)
+    def test_create_100_items(self, benchmark, benchmark_container, backend_mode):
+        """Benchmark creating 100 items across 10 partitions."""
+        def create_100_items():
+            for i in range(100):
+                item = {
+                    "id": f"hv-create-{uuid.uuid4().hex}",
+                    "pk": f"partition_{i % 10}",
+                    "name": f"Product {i}",
+                    "category": "electronics",
+                    "price": 99.99 + i,
+                    "description": f"Description for item {i}" * 3,
+                    "tags": ["tag1", "tag2", "tag3"],
+                }
+                try:
+                    benchmark_container.create_item(item)
+                except Exception:
+                    pass
+
+        benchmark.extra_info['backend'] = backend_mode
+        benchmark.extra_info['operation_count'] = 100
+        benchmark(create_100_items)
+
+    @pytest.mark.benchmark(group="high-volume", warmup=True, min_rounds=3)
+    def test_read_100_items(self, benchmark, benchmark_container, backend_mode):
+        """Benchmark reading 100 items by ID."""
+        # Pre-create items to read
+        item_ids = []
+        for i in range(100):
+            item_id = f"hv-read-{i}-{uuid.uuid4().hex[:8]}"
+            item = {"id": item_id, "pk": f"partition_{i % 10}", "value": i}
+            try:
+                benchmark_container.create_item(item)
+                item_ids.append((item_id, f"partition_{i % 10}"))
+            except Exception:
+                pass
+
+        def read_100_items():
+            for item_id, pk in item_ids:
+                try:
+                    benchmark_container.read_item(item_id, partition_key=pk)
+                except Exception:
+                    pass
+
+        benchmark.extra_info['backend'] = backend_mode
+        benchmark.extra_info['operation_count'] = len(item_ids)
+        benchmark(read_100_items)
+
+        # Cleanup
+        for item_id, pk in item_ids:
+            try:
+                benchmark_container.delete_item(item_id, partition_key=pk)
+            except Exception:
+                pass
+
+    @pytest.mark.benchmark(group="high-volume", warmup=True, min_rounds=3)
+    def test_upsert_50_items(self, benchmark, benchmark_container, backend_mode):
+        """Benchmark upserting 50 items (mix of create and update)."""
+        def upsert_50_items():
+            for i in range(50):
+                item = {
+                    "id": f"hv-upsert-{i % 25}",  # Reuse some IDs to test update path
+                    "pk": f"partition_{i % 10}",
+                    "name": f"Upserted Product {i}",
+                    "value": i * 2,
+                }
+                try:
+                    benchmark_container.upsert_item(item)
+                except Exception:
+                    pass
+
+        benchmark.extra_info['backend'] = backend_mode
+        benchmark.extra_info['operation_count'] = 50
+        benchmark(upsert_50_items)
+
+
+# NOTE: TestQueryOperations is commented out because query_items() was NOT migrated to Rust in Phase 1.
+# These tests would not show meaningful Python vs Rust performance differences.
+# Uncomment when query_items() is migrated in a future phase.
+
+# class TestQueryOperations:
+#     """Benchmark query operations - key test for Rust performance."""
+#
+#     @pytest.mark.benchmark(group="query", warmup=True, min_rounds=3)
+#     def test_query_single_partition(self, benchmark, benchmark_container, backend_mode):
+#         """Benchmark querying items in a single partition."""
+#         # Pre-create items to query
+#         for i in range(20):
+#             item = {
+#                 "id": f"query-sp-{i}-{uuid.uuid4().hex[:8]}",
+#                 "pk": "query-partition-1",
+#                 "value": i,
+#                 "category": "test"
+#             }
+#             try:
+#                 benchmark_container.create_item(item)
+#             except Exception:
+#                 pass
+#
+#         def query_partition():
+#             query = "SELECT * FROM c WHERE c.category = 'test'"
+#             results = benchmark_container.query_items(
+#                 query=query,
+#                 partition_key="query-partition-1"
+#             )
+#             # Consume results
+#             _ = list(results)
+#
+#         benchmark.extra_info['backend'] = backend_mode
+#         benchmark(query_partition)
+#
+#     @pytest.mark.benchmark(group="query", warmup=True, min_rounds=3)
+#     def test_query_10_partitions(self, benchmark, benchmark_container, backend_mode):
+#         """Benchmark querying items across 10 partitions."""
+#         # Pre-create items across partitions
+#         for i in range(50):
+#             item = {
+#                 "id": f"query-mp-{i}-{uuid.uuid4().hex[:8]}",
+#                 "pk": f"query-partition-{i % 10}",
+#                 "value": i,
+#                 "searchable": True
+#             }
+#             try:
+#                 benchmark_container.create_item(item)
+#             except Exception:
+#                 pass
+#
+#         def query_10_partitions():
+#             for p in range(10):
+#                 query = "SELECT * FROM c WHERE c.searchable = true"
+#                 results = benchmark_container.query_items(
+#                     query=query,
+#                     partition_key=f"query-partition-{p}"
+#                 )
+#                 # Consume results
+#                 _ = list(results)
+#
+#         benchmark.extra_info['backend'] = backend_mode
+#         benchmark.extra_info['partition_count'] = 10
+#         benchmark(query_10_partitions)
+
+
+class TestMixedWorkload:
+    """Benchmark mixed workload - simulates real application patterns."""
+
+    @pytest.mark.benchmark(group="mixed", warmup=True, min_rounds=3)
+    def test_mixed_workload_100_ops(self, benchmark, benchmark_container, backend_mode):
+        """
+        Benchmark mixed workload: 100 operations
+        - 40% creates
+        - 30% reads
+        - 20% upserts
+        - 10% deletes
+        """
+        # Pre-create some items for read/update/delete operations
+        existing_items = []
+        for i in range(30):
+            item_id = f"mixed-pre-{i}-{uuid.uuid4().hex[:8]}"
+            item = {"id": item_id, "pk": f"mixed-pk-{i % 5}", "value": i}
+            try:
+                benchmark_container.create_item(item)
+                existing_items.append((item_id, f"mixed-pk-{i % 5}"))
+            except Exception:
+                pass
+
+        def mixed_workload():
+            read_idx = 0
+            delete_idx = 0
+
+            for i in range(100):
+                pk = f"mixed-pk-{i % 5}"
+
+                if i % 10 < 4:  # 40% creates
+                    item = {
+                        "id": f"mixed-new-{uuid.uuid4().hex}",
+                        "pk": pk,
+                        "name": f"Mixed Item {i}",
+                        "value": i
+                    }
+                    try:
+                        benchmark_container.create_item(item)
+                    except Exception:
+                        pass
+
+                elif i % 10 < 7:  # 30% reads
+                    if read_idx < len(existing_items):
+                        item_id, item_pk = existing_items[read_idx % len(existing_items)]
+                        try:
+                            benchmark_container.read_item(item_id, partition_key=item_pk)
+                        except Exception:
+                            pass
+                        read_idx += 1
+
+                elif i % 10 < 9:  # 20% upserts
+                    item = {
+                        "id": f"mixed-upsert-{i % 10}",
+                        "pk": pk,
+                        "name": f"Upserted {i}",
+                        "value": i * 2
+                    }
+                    try:
+                        benchmark_container.upsert_item(item)
+                    except Exception:
+                        pass
+
+                else:  # 10% deletes
+                    if delete_idx < len(existing_items):
+                        item_id, item_pk = existing_items[delete_idx]
+                        try:
+                            benchmark_container.delete_item(item_id, partition_key=item_pk)
+                        except Exception:
+                            pass
+                        delete_idx += 1
+
+        benchmark.extra_info['backend'] = backend_mode
+        benchmark.extra_info['operation_count'] = 100
+        benchmark.extra_info['create_pct'] = 40
+        benchmark.extra_info['read_pct'] = 30
+        benchmark.extra_info['upsert_pct'] = 20
+        benchmark.extra_info['delete_pct'] = 10
+        benchmark(mixed_workload)
+
+
 def generate_comparison_report(python_results: str, rust_results: str, output_file: str = "comparison_report.md"):
     """
     Generate a comparison report from benchmark results.
@@ -345,25 +571,126 @@ def generate_comparison_report(python_results: str, rust_results: str, output_fi
     # Create comparison table
     report = ["# Benchmark Comparison Report\n"]
     report.append("## Python vs Rust Backend Performance\n")
-    report.append("| Operation | Python (ms) | Rust (ms) | Improvement |")
-    report.append("|-----------|-------------|-----------|-------------|")
+    report.append("| Operation | Python (ms) | Rust (ms) | Speedup | Improvement |")
+    report.append("|-----------|-------------|-----------|---------|-------------|")
 
     python_benchmarks = {b["name"]: b["stats"] for b in python_data.get("benchmarks", [])}
     rust_benchmarks = {b["name"]: b["stats"] for b in rust_data.get("benchmarks", [])}
 
-    for name, py_stats in python_benchmarks.items():
+    total_py_time = 0
+    total_rust_time = 0
+
+    for name, py_stats in sorted(python_benchmarks.items()):
         if name in rust_benchmarks:
             rust_stats = rust_benchmarks[name]
             py_mean = py_stats["mean"] * 1000  # Convert to ms
             rust_mean = rust_stats["mean"] * 1000
-            improvement = ((py_mean - rust_mean) / py_mean) * 100
 
-            report.append(f"| {name} | {py_mean:.3f} | {rust_mean:.3f} | {improvement:.1f}% faster |")
+            total_py_time += py_mean
+            total_rust_time += rust_mean
+
+            speedup = py_mean / rust_mean if rust_mean > 0 else 0
+            improvement = ((py_mean - rust_mean) / py_mean) * 100 if py_mean > 0 else 0
+
+            speedup_emoji = "🚀" if speedup > 1.1 else "⚖️" if speedup > 0.9 else "🐌"
+
+            report.append(f"| {name} | {py_mean:.3f} | {rust_mean:.3f} | {speedup_emoji} {speedup:.2f}x | {improvement:.1f}% |")
+
+    # Add totals
+    if total_rust_time > 0:
+        overall_speedup = total_py_time / total_rust_time
+        overall_improvement = ((total_py_time - total_rust_time) / total_py_time) * 100
+        report.append("|-----------|-------------|-----------|---------|-------------|")
+        report.append(f"| **TOTAL** | **{total_py_time:.3f}** | **{total_rust_time:.3f}** | **{overall_speedup:.2f}x** | **{overall_improvement:.1f}%** |")
+
+    report.append("\n## Summary\n")
+    if overall_speedup > 1:
+        report.append(f"🎉 **Rust backend is {overall_speedup:.2f}x faster overall!**\n")
+    else:
+        report.append(f"⚠️ Python backend was faster in this run.\n")
 
     with open(output_file, "w") as f:
         f.write("\n".join(report))
 
     print(f"Report generated: {output_file}")
+    return overall_speedup
+
+
+def run_comparison_benchmarks():
+    """
+    Run benchmarks for both Python and Rust backends and generate comparison.
+
+    Usage:
+        python -c "from tests.benchmarks.test_benchmark_phase1 import run_comparison_benchmarks; run_comparison_benchmarks()"
+    """
+    import subprocess
+    import sys
+    import os
+
+    # Get the project root
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(script_dir))
+
+    print("=" * 70)
+    print("PHASE 1 BENCHMARK COMPARISON")
+    print("Python (Pure Python) vs Rust Backend")
+    print("=" * 70)
+
+    # Run Python backend benchmarks
+    print("\n[1/3] Running benchmarks with PURE PYTHON backend...")
+    env_py = os.environ.copy()
+    env_py["COSMOS_USE_RUST_BACKEND"] = "false"
+
+    result_py = subprocess.run(
+        [sys.executable, "-m", "pytest",
+         "tests/benchmarks/test_benchmark_phase1.py",
+         "-v", "--benchmark-json=benchmark_python.json",
+         "--benchmark-disable-gc"],
+        cwd=project_root,
+        env=env_py,
+        capture_output=True,
+        text=True
+    )
+
+    if result_py.returncode != 0:
+        print(f"Python benchmark failed: {result_py.stderr}")
+        return
+
+    # Run Rust backend benchmarks
+    print("\n[2/3] Running benchmarks with RUST backend...")
+    env_rs = os.environ.copy()
+    env_rs["COSMOS_USE_RUST_BACKEND"] = "true"
+
+    result_rs = subprocess.run(
+        [sys.executable, "-m", "pytest",
+         "tests/benchmarks/test_benchmark_phase1.py",
+         "-v", "--benchmark-json=benchmark_rust.json",
+         "--benchmark-disable-gc"],
+        cwd=project_root,
+        env=env_rs,
+        capture_output=True,
+        text=True
+    )
+
+    if result_rs.returncode != 0:
+        print(f"Rust benchmark failed: {result_rs.stderr}")
+        return
+
+    # Generate comparison report
+    print("\n[3/3] Generating comparison report...")
+    py_results = os.path.join(project_root, "benchmark_python.json")
+    rs_results = os.path.join(project_root, "benchmark_rust.json")
+    report_file = os.path.join(project_root, "BENCHMARK_COMPARISON.md")
+
+    speedup = generate_comparison_report(py_results, rs_results, report_file)
+
+    print("\n" + "=" * 70)
+    if speedup > 1:
+        print(f"🎉 RUST IS {speedup:.2f}x FASTER THAN PURE PYTHON!")
+    else:
+        print(f"⚠️ Python was faster in this run (speedup: {speedup:.2f}x)")
+    print("=" * 70)
+    print(f"\nDetailed report: {report_file}")
 
 
 if __name__ == "__main__":

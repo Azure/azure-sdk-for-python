@@ -22,6 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
+import os
 import warnings
 from datetime import datetime
 from typing import (Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
@@ -81,7 +82,8 @@ class ContainerProxy:
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
+        rust_container: Optional[Any] = None
     ) -> None:
         self.client_connection = client_connection
         self.container_cache_lock = asyncio.Lock()
@@ -90,6 +92,7 @@ class ContainerProxy:
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        self._rust_container = rust_container  # Store Rust client for migration
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -306,6 +309,23 @@ class ContainerProxy:
         await self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        response_hook = kwargs.get('response_hook')
+        if use_rust:
+            print("[async ContainerProxy.create_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            result_dict, headers_dict = await asyncio.to_thread(
+                self._rust_container.create_item, body
+            )
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async ContainerProxy.create_item] Using PURE PYTHON")
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
         )
@@ -389,6 +409,24 @@ class ContainerProxy:
         await self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        response_hook = kwargs.get('response_hook')
+        if use_rust:
+            print("[async ContainerProxy.read_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
+            result_dict, headers_dict = await asyncio.to_thread(
+                self._rust_container.read_item, item_id, partition_key
+            )
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async ContainerProxy.read_item] Using PURE PYTHON")
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -1258,6 +1296,23 @@ class ContainerProxy:
         await self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        response_hook = kwargs.get('response_hook')
+        if use_rust:
+            print("[async ContainerProxy.upsert_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            result_dict, headers_dict = await asyncio.to_thread(
+                self._rust_container.upsert_item, body
+            )
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async ContainerProxy.upsert_item] Using PURE PYTHON")
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
             document=body,
@@ -1398,6 +1453,24 @@ class ContainerProxy:
         await self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        response_hook = kwargs.get('response_hook')
+        if use_rust:
+            print("[async ContainerProxy.replace_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
+            result_dict, headers_dict = await asyncio.to_thread(
+                self._rust_container.replace_item, item_id, body
+            )
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async ContainerProxy.replace_item] Using PURE PYTHON")
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
@@ -1585,6 +1658,25 @@ class ContainerProxy:
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
+
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        response_hook = kwargs.get('response_hook')
+        if use_rust:
+            print("[async ContainerProxy.delete_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
+            headers_dict = await asyncio.to_thread(
+                self._rust_container.delete_item, item_id, partition_key
+            )
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, None)
+            return
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async ContainerProxy.delete_item] Using PURE PYTHON")
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace_async

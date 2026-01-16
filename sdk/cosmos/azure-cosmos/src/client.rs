@@ -2,6 +2,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use azure_data_cosmos::CosmosClient as RustCosmosClient;
 use std::sync::Arc;
+use std::collections::HashMap;
 use crate::database::DatabaseClient;
 use crate::exceptions::map_error;
 use crate::utils::empty_headers_dict;
@@ -67,15 +68,25 @@ impl CosmosClient {
         let client = self.inner.clone();
         let id_clone = id.clone();
         
-        let _result = TOKIO_RUNTIME.block_on(async move {
-            client.create_database(&id_clone, None)
+        let header_map = TOKIO_RUNTIME.block_on(async move {
+            let response = client.create_database(&id_clone, None)
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+
+            // Extract headers into a HashMap
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+
+            Ok::<_, PyErr>(headers)
         })?;
 
-        // Return DatabaseClient and empty headers dict
-        // TODO: Extract actual headers from response when Rust SDK supports it
-        let headers = empty_headers_dict(py);
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
+        }
         Ok((DatabaseClient::new(self.inner.clone(), id), headers))
     }
 
@@ -95,13 +106,26 @@ impl CosmosClient {
     ) -> PyResult<&'py PyDict> {
         let client = self.inner.database_client(&database_id);
         
-        TOKIO_RUNTIME.block_on(async move {
-            client.delete(None)
+        let header_map = TOKIO_RUNTIME.block_on(async move {
+            let response = client.delete(None)
                 .await
-                .map_err(map_error)
+                .map_err(map_error)?;
+
+            // Extract headers into a HashMap
+            let mut headers: HashMap<String, String> = HashMap::new();
+            for (name, value) in response.headers().iter() {
+                headers.insert(name.as_str().to_string(), value.as_str().to_string());
+            }
+
+            Ok::<_, PyErr>(headers)
         })?;
 
-        Ok(empty_headers_dict(py))
+        // Convert headers to Python dict
+        let headers = PyDict::new(py);
+        for (key, value) in header_map.iter() {
+            headers.set_item(key, value)?;
+        }
+        Ok(headers)
     }
 
     /// List all databases

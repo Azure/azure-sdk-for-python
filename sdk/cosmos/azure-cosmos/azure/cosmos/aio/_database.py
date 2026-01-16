@@ -24,6 +24,8 @@
 
 from typing import Any, Mapping, Optional, Union, Callable, overload, Literal
 
+import asyncio
+import os
 import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -90,17 +92,20 @@ class DatabaseProxy(object):
         self,
         client_connection: CosmosClientConnection,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
+        rust_database: Optional[Any] = None
     ) -> None:
         """
         :param client_connection: Client from which this database was retrieved.
         :type client_connection: ~azure.cosmos.aio.CosmosClientConnection
         :param str id: ID (name) of the database.
+        :param rust_database: Optional Rust DatabaseClient for Rust SDK operations.
         """
         self.client_connection = client_connection
         self.id = id
         self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
+        self._rust_database = rust_database  # Store Rust client for migration
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
@@ -155,6 +160,19 @@ class DatabaseProxy(object):
             kwargs['initial_headers'] = initial_headers
         request_options = _build_options(kwargs)
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[async DatabaseProxy.read] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            result_dict, headers_dict = await asyncio.to_thread(self._rust_database.read)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            self._properties = CosmosDict(dict(result_dict), response_headers=response_headers)
+            return self._properties
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async DatabaseProxy.read] Using PURE PYTHON")
         self._properties = await self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
@@ -443,6 +461,36 @@ class DatabaseProxy(object):
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[async DatabaseProxy.create_container] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Build partition_key dict for Rust
+            pk_dict = {"paths": partition_key["paths"]} if partition_key else {}
+            rust_container, headers_dict = await asyncio.to_thread(
+                self._rust_database.create_container, id, pk_dict
+            )
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+            result = {"id": id}
+            result.update(definition)
+
+            container_proxy = ContainerProxy(
+                self.client_connection,
+                self.database_link,
+                id,
+                properties=result,
+                rust_container=rust_container
+            )
+
+            if not return_properties:
+                return container_proxy
+            return container_proxy, CosmosDict(result, response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async DatabaseProxy.create_container] Using PURE PYTHON")
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
@@ -708,7 +756,21 @@ class DatabaseProxy(object):
             id_value = container.id
         else:
             id_value = str(container['id'])
-        return ContainerProxy(self.client_connection, self.database_link, id_value)
+
+        # Get Rust container client if Rust database is available
+        rust_container = None
+        if self._rust_database is not None:
+            try:
+                rust_container = self._rust_database.get_container_client(id_value)
+            except Exception:
+                pass  # Fall back to Python-only mode
+
+        return ContainerProxy(
+            self.client_connection,
+            self.database_link,
+            id_value,
+            rust_container=rust_container
+        )
 
     @distributed_trace
     def list_containers(
@@ -1087,7 +1149,28 @@ class DatabaseProxy(object):
             kwargs['initial_headers'] = initial_headers
         request_options = _build_options(kwargs)
 
+        # Extract container_id
+        container_id = self._get_container_id(container)
         collection_link = self._get_container_link(container)
+
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[async DatabaseProxy.delete_container] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            headers_dict = await asyncio.to_thread(
+                self._rust_database.delete_container, container_id
+            )
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+            response_hook = kwargs.get('response_hook')
+            if response_hook:
+                response_hook(response_headers, None)
+            return
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async DatabaseProxy.delete_container] Using PURE PYTHON")
         await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
 
     @distributed_trace_async

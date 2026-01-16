@@ -46,13 +46,8 @@ from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
-# Import Rust client for integration
-try:
-    from azure.cosmos._rust import CosmosClient as RustCosmosClient
-    RUST_CLIENT_AVAILABLE = True
-except ImportError:
-    RUST_CLIENT_AVAILABLE = False
-    RustCosmosClient = None  # type: ignore
+# Import Rust client - always required (no fallback)
+from azure.cosmos._rust import CosmosClient as RustCosmosClient
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
@@ -228,17 +223,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             **kwargs
         )
 
-        # Initialize Rust client for supported operations
-        # Rust SDK uses TOKIO_RUNTIME.block_on() internally, so we can call it from async context
-        # using asyncio.to_thread() to avoid blocking the event loop
-        self._rust_client = None
+        # Initialize Rust client - always required for COSMOS_USE_RUST_BACKEND=true
         self._url = url
-        if RUST_CLIENT_AVAILABLE and isinstance(credential, str):
-            try:
-                self._rust_client = RustCosmosClient(url, credential, **kwargs)
-            except Exception:
-                # Rust client initialization failed, will use Python fallback
-                pass
+        self._rust_client = RustCosmosClient(url, credential, **kwargs)
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
@@ -429,44 +416,40 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
-        # Use Rust backend when available and enabled
+        # Environment variable to toggle backend (for testing/comparison purposes)
         use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
 
-        if use_rust and self._rust_client is not None:
-            try:
-                # Rust SDK uses TOKIO_RUNTIME.block_on() internally which blocks the thread.
-                # Use asyncio.to_thread() to run the blocking Rust call in a thread pool,
-                # avoiding blocking the async event loop. See PHASE1_COMPREHENSIVE_PLAN.md
-                # section "ASYNC HANDLING STRATEGY" for details on this approach.
-                rust_db, headers_dict = await asyncio.to_thread(
-                    self._rust_client.create_database, id, **request_options
-                )
+        if use_rust:
+            print("[async CosmosClient.create_database] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Rust SDK uses TOKIO_RUNTIME.block_on() internally which blocks the thread.
+            # Use asyncio.to_thread() to run the blocking Rust call in a thread pool,
+            # avoiding blocking the async event loop.
+            rust_db, headers_dict = await asyncio.to_thread(
+                self._rust_client.create_database, id, **request_options
+            )
 
-                response_headers = CaseInsensitiveDict(dict(headers_dict))
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
 
-                if response_hook:
-                    response_hook(response_headers)
+            if response_hook:
+                response_hook(response_headers)
 
-                db_proxy = DatabaseProxy(
-                    self.client_connection,
-                    id=id,
-                    properties={"id": id}
-                )
+            db_proxy = DatabaseProxy(
+                self.client_connection,
+                id=id,
+                properties={"id": id},
+                rust_database=rust_db
+            )
 
-                if not return_properties:
-                    return db_proxy
+            if not return_properties:
+                return db_proxy
 
-                # Get full properties using Rust
-                properties, props_headers = await asyncio.to_thread(rust_db.read)
-                return db_proxy, CosmosDict(dict(properties), response_headers=CaseInsensitiveDict(dict(props_headers)))
+            # Get full properties using Rust
+            properties, props_headers = await asyncio.to_thread(rust_db.read)
+            return db_proxy, CosmosDict(dict(properties), response_headers=CaseInsensitiveDict(dict(props_headers)))
 
-            except Exception as e:
-                # Log and fall back to Python implementation
-                import logging
-                logging.getLogger(__name__).warning(f"Rust SDK failed, falling back to Python: {e}")
-                # Fall through to Python implementation
-
-        # Python implementation (fallback or default)
+        # PYTHON PATH: Use existing Python implementation
+        print("[async CosmosClient.create_database] Using PURE PYTHON")
         result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -632,7 +615,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             id_value = database.id
         else:
             id_value = str(database['id'])
-        return DatabaseProxy(self.client_connection, id_value)
+
+        # Get Rust database client if Rust client is available
+        rust_db = None
+        if self._rust_client is not None:
+            try:
+                rust_db = self._rust_client.get_database_client(id_value)
+            except Exception:
+                pass  # Fall back to Python-only mode
+
+        return DatabaseProxy(self.client_connection, id_value, rust_database=rust_db)
 
     @distributed_trace
     def list_databases(
@@ -668,6 +660,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+
+        # NOTE: list_databases Rust integration is disabled for new
+        # The Rust facade's list_databases returns malformed data (debug format instead of proper dict)
+        # This will be fixed later when proper serialization is implemented
 
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
@@ -777,32 +773,27 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         else:
             database_id = str(database['id'])
 
-        # Use Rust backend when available and enabled
+        # Environment variable to toggle backend (for testing/comparison purposes)
         use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
 
-        if use_rust and self._rust_client is not None:
-            try:
-                # Rust SDK uses TOKIO_RUNTIME.block_on() internally which blocks the thread.
-                # Use asyncio.to_thread() to run the blocking Rust call in a thread pool,
-                # avoiding blocking the async event loop. See PHASE1_COMPREHENSIVE_PLAN.md
-                # section "ASYNC HANDLING STRATEGY" for details on this approach.
-                headers_dict = await asyncio.to_thread(
-                    self._rust_client.delete_database, database_id, **request_options
-                )
+        if use_rust:
+            print("[async CosmosClient.delete_database] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Rust SDK uses TOKIO_RUNTIME.block_on() internally which blocks the thread.
+            # Use asyncio.to_thread() to run the blocking Rust call in a thread pool,
+            # avoiding blocking the async event loop.
+            headers_dict = await asyncio.to_thread(
+                self._rust_client.delete_database, database_id, **request_options
+            )
 
-                response_headers = CaseInsensitiveDict(dict(headers_dict))
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
 
-                if response_hook:
-                    response_hook(response_headers)
-                return
+            if response_hook:
+                response_hook(response_headers)
+            return
 
-            except Exception as e:
-                # Log and fall back to Python implementation
-                import logging
-                logging.getLogger(__name__).warning(f"Rust SDK failed, falling back to Python: {e}")
-                # Fall through to Python implementation
-
-        # Python implementation (fallback or default)
+        # PYTHON PATH: Use existing Python implementation
+        print("[async CosmosClient.delete_database] Using PURE PYTHON")
         database_link = _get_database_link(database)
         await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
@@ -826,3 +817,4 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
+

@@ -305,24 +305,24 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         
-        # Use Rust backend if available
+        # Environment variable to toggle backend (for testing/comparison purposes)
         import os
         use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
-        if use_rust and self._rust_container is not None:
-            try:
-                # Extract item_id from item parameter
-                item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
-                # Rust returns (item_dict, headers_dict) tuple
-                result_dict, headers_dict = self._rust_container.read_item(item_id, partition_key)
-                from azure.core.utils import CaseInsensitiveDict
-                response_headers = CaseInsensitiveDict(dict(headers_dict))
-                if response_hook:
-                    response_hook(response_headers, dict(result_dict))
-                return CosmosDict(dict(result_dict), response_headers=response_headers)
-            except Exception as e:
-                import logging
-                logging.getLogger(__name__).warning(f"Rust SDK failed for read_item, falling back to Python: {e}")
-        
+        if use_rust:
+            print("[ContainerProxy.read_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Extract item_id from item parameter
+            item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
+            # Rust returns (item_dict, headers_dict) tuple
+            result_dict, headers_dict = self._rust_container.read_item(item_id, partition_key)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[ContainerProxy.read_item] Using PURE PYTHON")
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -1209,6 +1209,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[ContainerProxy.replace_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Extract item_id from item parameter
+            item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
+            # Rust returns (item_dict, headers_dict) tuple
+            result_dict, headers_dict = self._rust_container.replace_item(item_id, body)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[ContainerProxy.replace_item] Using PURE PYTHON")
         result = self.client_connection.ReplaceItem(
             document_link=item_link,
             new_document=body,
@@ -1308,6 +1327,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[ContainerProxy.upsert_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Rust returns (item_dict, headers_dict) tuple
+            result_dict, headers_dict = self._rust_container.upsert_item(body)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[ContainerProxy.upsert_item] Using PURE PYTHON")
         result = self.client_connection.UpsertItem(
                 database_or_container_link=self.container_link,
                 document=body,
@@ -1420,22 +1455,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         
-        # Use Rust backend if available
+        # Environment variable to toggle backend (for testing/comparison purposes)
         import os
         use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
-        if use_rust and self._rust_container is not None:
-            try:
-                # Rust returns (item_dict, headers_dict) tuple
-                result_dict, headers_dict = self._rust_container.create_item(body)
-                from azure.core.utils import CaseInsensitiveDict
-                response_headers = CaseInsensitiveDict(dict(headers_dict))
-                if response_hook:
-                    response_hook(response_headers, dict(result_dict))
-                return CosmosDict(dict(result_dict), response_headers=response_headers)
-            except Exception as e:
-                import logging
-                logging.getLogger(__name__).warning(f"Rust SDK failed for create_item, falling back to Python: {e}")
-        
+        if use_rust:
+            print("[ContainerProxy.create_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Rust returns (item_dict, headers_dict) tuple
+            result_dict, headers_dict = self._rust_container.create_item(body)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, dict(result_dict))
+            return CosmosDict(dict(result_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[ContainerProxy.create_item] Using PURE PYTHON")
         result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result
@@ -1721,6 +1756,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         document_link = self._get_document_link(item)
+
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+        if use_rust:
+            print("[ContainerProxy.delete_item] Using RUST SDK")
+            # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
+            # Extract item_id from item parameter
+            item_id = item if isinstance(item, str) else item.get("id", item.get("_self", "").split("/")[-1])
+            # Rust returns headers_dict only (no body for delete)
+            headers_dict = self._rust_container.delete_item(item_id, partition_key)
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+            if response_hook:
+                response_hook(response_headers, None)
+            return
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[ContainerProxy.delete_item] Using PURE PYTHON")
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace

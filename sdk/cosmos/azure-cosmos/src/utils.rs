@@ -3,6 +3,8 @@ use pyo3::types::PyDict;
 use serde_json::Value;
 use std::collections::HashMap;
 use pythonize::depythonize;
+use azure_core::http::Response;
+use azure_core::http::headers::{HeaderName, HeaderValue};
 
 /// Convert Python object (dict or string) to serde_json::Value
 /// Hybrid approach: accepts both PyDict (PyO3 native serialization) and String (direct serde parsing)
@@ -81,3 +83,19 @@ pub fn headers_to_py_dict<'py>(py: Python<'py>, headers: &HashMap<String, String
 pub fn empty_headers_dict<'py>(py: Python<'py>) -> &'py PyDict {
     PyDict::new(py)
 }
+
+/// Extract response headers from Azure SDK Response and convert to Python dict
+/// This extracts all headers from the HTTP response
+pub fn extract_response_headers<'py, T>(py: Python<'py>, response: &Response<T>) -> PyResult<&'py PyDict> {
+    let dict = PyDict::new(py);
+
+    // Iterate over all headers in the response
+    for (name, value) in response.headers().iter() {
+        let header_name: &HeaderName = name;
+        let header_value: &HeaderValue = value;
+        dict.set_item(header_name.as_str(), header_value.as_str())?;
+    }
+
+    Ok(dict)
+}
+
