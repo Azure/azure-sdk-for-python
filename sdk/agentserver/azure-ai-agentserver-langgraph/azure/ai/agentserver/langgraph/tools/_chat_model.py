@@ -78,7 +78,10 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         return self
 
     def _bound_delegate_for_call(self) -> Runnable[LanguageModelInput, AIMessage]:
-        foundry_tools = FoundryToolContext.get_current().resolved_tools.get(self._foundry_tools_to_bind)
+        foundry_tools = (FoundryToolContext
+                         .get_current()
+                         .resolved__foundry__langchain__tools
+                         .get(self._foundry_tools_to_bind))
         all_tools = self._bound_tools.copy()
         all_tools.extend(foundry_tools)
 

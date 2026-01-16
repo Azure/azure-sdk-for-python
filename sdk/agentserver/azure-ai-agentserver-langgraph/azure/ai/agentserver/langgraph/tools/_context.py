@@ -5,17 +5,17 @@ from dataclasses import dataclass, field
 
 from langgraph.runtime import get_runtime
 
-from azure.ai.agentserver.langgraph.tools._resolver import ResolvedTools
+from ._resolver import ResolvedTools
 
 
 @dataclass
 class FoundryToolContext:
     """Context for tool resolution.
 
-    :param resolved_tools: The resolved tools of all registered foundry tools.
-    :type resolved_tools: ResolvedTools
+    :param resolved__foundry__langchain__tools: The resolved tools of all registered foundry tools.
+    :type resolved__foundry__langchain__tools: ResolvedTools
     """
-    resolved_tools: ResolvedTools = field(default_factory=lambda: ResolvedTools([]))
+    resolved__foundry__langchain__tools: ResolvedTools = field(default_factory=lambda: ResolvedTools([]))
 
     @classmethod
     def get_current(cls) -> "FoundryToolContext":

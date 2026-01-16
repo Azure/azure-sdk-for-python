@@ -88,7 +88,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
     async def setup_tool_context(self):
         resolved = await self._tool_resolver.resolve_from_registry()
-        return FoundryToolContext(resolved_tools=resolved)
+        return FoundryToolContext(resolved)
 
     def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
         # set env vars for langsmith

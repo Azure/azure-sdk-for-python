@@ -3,12 +3,12 @@
 # ---------------------------------------------------------
 from typing import Awaitable, Callable, List, TypedDict, Union
 
+from azure.ai.agentserver.core.tools import FoundryToolLike
 from langchain_core.messages import ToolMessage
 from langgraph.prebuilt.tool_node import AsyncToolCallWrapper, ToolCallRequest, ToolCallWrapper
 from langgraph.types import Command
 
 from ._context import FoundryToolContext
-from ...core.tools import FoundryToolLike
 
 ToolInvocationResult = Union[ToolMessage, Command]
 ToolInvocation = Callable[[ToolCallRequest], ToolInvocationResult]
@@ -79,7 +79,7 @@ class FoundryToolCallWrapper(ToolCallWrapper, AsyncToolCallWrapper):
             # tool is already resolved
             return request
         tool_name = request.tool_call["name"]
-        for t in FoundryToolContext.get_current().resolved_tools.get(self._allowed_foundry_tools):
+        for t in FoundryToolContext.get_current().resolved__foundry__langchain__tools.get(self._allowed_foundry_tools):
             if t.name == tool_name:
                 return ToolCallRequest(
                     tool_call=request.tool_call,
