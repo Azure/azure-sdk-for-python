@@ -310,16 +310,15 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             
             if self._checkpoint_repository:
                 checkpoint_storage = await self._checkpoint_repository.get_or_create(context.conversation_id)
-                last_checkpoint = await self.get_latest_checkpoint(checkpoint_storage)
+                last_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
                 if last_checkpoint:
                     summary = get_checkpoint_summary(last_checkpoint)
                     if summary.status == "completed":
                         logger.warning("Last checkpoint is completed. Will not resume from it.")
                         last_checkpoint = None  # Do not resume from completed checkpoints
                 if last_checkpoint:
-                    logger.info(f"Loading checkpoint ID: {last_checkpoint.checkpoint_id}")
-                    await self.load_checkpoint(agent, last_checkpoint, checkpoint_storage)
-
+                    await self._load_checkpoint(agent, last_checkpoint, checkpoint_storage)
+                    logger.info(f"Loaded checkpoint with ID: {last_checkpoint.checkpoint_id}")
 
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
@@ -340,7 +339,6 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                             message,
                             thread=agent_thread,
                             checkpoint_storage=checkpoint_storage,
-                            checkpoint_id=last_checkpoint.checkpoint_id if last_checkpoint else None,
                         )
                         async for event in streaming_converter.convert(updates):
                             update_count += 1
@@ -365,14 +363,14 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
             non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
-            result = await agent.run(message,
+            result = await agent.run(
+                        message,
                         thread=agent_thread,
                         checkpoint_storage=checkpoint_storage,
-                        checkpoint_id=last_checkpoint.checkpoint_id if last_checkpoint else None,
-                        )
+                    )
 
             if agent_thread and self._thread_repository:
-                await self._thread_repository.set(context.conversation_id, agent_thread, checkpoint_storage)
+                await self._thread_repository.set(context.conversation_id, agent_thread)
                 logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
@@ -396,7 +394,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 except Exception as ex:  # pylint: disable=broad-exception-caught
                     logger.warning(f"Error closing tool_client: {ex}")
 
-    async def get_latest_checkpoint(self,
+    async def _get_latest_checkpoint(self,
                 checkpoint_storage: CheckpointStorage) -> Optional[Any]:
         """Load the latest checkpoint from the given storage.
 
@@ -409,11 +407,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         checkpoints = await checkpoint_storage.list_checkpoints()
         if checkpoints:
             latest_checkpoint = max(checkpoints, key=lambda cp: cp.timestamp)
-            logger.info(f"Got latest checkpoint with ID: {latest_checkpoint.checkpoint_id}")
             return latest_checkpoint
         return None
 
-    async def load_checkpoint(self, agent: AgentProtocol,
+    async def _load_checkpoint(self, agent: AgentProtocol,
                               checkpoint: WorkflowCheckpoint,
                               checkpoint_storage: CheckpointStorage) -> None:
         """Load the checkpoint data from the given WorkflowCheckpoint.
@@ -421,8 +418,5 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         :param checkpoint: The WorkflowCheckpoint to load data from.
         :type checkpoint: WorkflowCheckpoint
         """
-        if checkpoint:
-            res = await agent.run(checkpoint_id=checkpoint.checkpoint_id,
-                                  checkpoint_storage=checkpoint_storage)
-            logger.info(f"Loaded checkpoint with ID: {checkpoint.checkpoint_id}")
-            logger.info(f"Result: {res}")
+        await agent.run(checkpoint_id=checkpoint.checkpoint_id,
+                        checkpoint_storage=checkpoint_storage)
