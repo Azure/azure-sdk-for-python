@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import re
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
