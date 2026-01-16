@@ -33,10 +33,10 @@ def generate_analyzer_id(client, test_name: str, is_async: bool = False) -> str:
         is_async: If True, uses 'async' prefix; if False, uses 'sync' prefix
 
     Returns:
-        str: A unique analyzer ID (format: python_sdk_{sync|async}_{test_name})
+        str: A unique analyzer ID (format: python_sdk_{sync|async}_{test_name}_{uuid})
     """
     prefix = "async" if is_async else "sync"
-    analyzer_id = f"python_sdk_{prefix}_{test_name}"
+    analyzer_id = f"python_sdk_{prefix}_{test_name}_{uuid.uuid4().hex[:8]}"
     return analyzer_id
 
 
