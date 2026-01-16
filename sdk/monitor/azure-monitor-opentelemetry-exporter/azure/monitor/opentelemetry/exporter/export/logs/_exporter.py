@@ -161,17 +161,11 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
-    if (
-        log_record.attributes
-        and _ENDUSER_ID_ATTRIBUTE in log_record.attributes
-    ):
+    if log_record.attributes and _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
         envelope.tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[
             _ENDUSER_ID_ATTRIBUTE
         ]
-    if (
-        log_record.attributes
-        and _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
-    )
+    if log_record.attributes and _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
         envelope.tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[
             _ENDUSER_PSEUDO_ID_ATTRIBUTE
         ]
