@@ -63,7 +63,7 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
         foundry_tools = [ensure_foundry_tool(tool) for tool in tools]
 
         # for tools that are not being listed, create a batch task, convert to per-tool resolving tasks, and cache them
-        tools_to_fetch = {k: tool for tool in foundry_tools if (k := self._get_key(user, tool) not in self._cache)}
+        tools_to_fetch = {k: tool for tool in foundry_tools if (k := self._get_key(user, tool)) not in self._cache}
         if tools_to_fetch:
             # Awaitable[Mapping[FoundryTool, List[FoundryToolDetails]]]
             fetched_tools = asyncio.create_task(self._fetch_tools(tools_to_fetch.values(), user))

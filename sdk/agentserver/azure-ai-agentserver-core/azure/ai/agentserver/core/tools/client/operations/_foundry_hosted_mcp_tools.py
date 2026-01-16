@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
+import json
 from typing import Any, ClassVar, Dict, List, Mapping, TYPE_CHECKING, cast
 
 from azure.core.rest import HttpRequest
@@ -93,7 +94,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 		return result
 
 	def _build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
-		if tool.definition.source != FoundryToolSource.FOUNDRY_HOSTED_MCP:
+		if tool.definition.source != FoundryToolSource.HOSTED_MCP:
 			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry-hosted MCP tool.", tool=tool)
 		definition = cast(FoundryHostedMcpTool, tool.definition) if TYPE_CHECKING else tool.definition
 
@@ -145,7 +146,13 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		request = self._build_list_tools_request()
 		response = await self._send_request(request)
 		async with response:
-			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(response.json())
+			try:
+				payload_text = response.text()
+				payload_json = json.loads(payload_text) if payload_text else {}
+			except AttributeError as e:
+				payload_bytes = response.body()
+				payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
+			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(payload_json)
 		return self._convert_listed_tools(tools_response, allowed_tools)
 
 	async def invoke_tool(
@@ -165,4 +172,11 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		request = self._build_invoke_tool_request(tool, arguments)
 		response = await self._send_request(request)
 		async with response:
-			return response.json().get("result")
+			try:
+				payload_text = response.text()
+				payload_json = json.loads(payload_text) if payload_text else {}
+			except AttributeError as e:
+				payload_bytes = response.body()
+				payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
+			invoke_response = payload_json
+		return invoke_response

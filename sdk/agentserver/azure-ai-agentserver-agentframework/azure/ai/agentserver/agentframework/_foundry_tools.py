@@ -93,10 +93,8 @@ class FoundryToolClient:
             :rtype: Any
             """
             server_context = AgentServerContext.get()
-            invoker = await server_context.tools.invocation.resolve(foundry_tool)
-
             logger.debug("Invoking tool: %s with input: %s", foundry_tool.name, kwargs)
-            return await invoker.invoke(kwargs)
+            return await server_context.tools.invoke(foundry_tool, kwargs)
         _attach_signature_from_pydantic_model(tool_func, input_model)
 
         # Create and return the AIFunction
