@@ -157,20 +157,22 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         else log_record.observed_timestamp
     )
     envelope = _utils._create_telemetry_item(time_stamp)
-    envelope.tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
-    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
+    tags = envelope.tags or {}
+    envelope.tags = tags
+    tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
+    tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
     if log_record.attributes and _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
-        envelope.tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[
+        tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[
             _ENDUSER_ID_ATTRIBUTE
         ]
     if log_record.attributes and _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
-        envelope.tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[
+        tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[
             _ENDUSER_PSEUDO_ID_ATTRIBUTE
         ]
 
-    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
+    tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
     if (
@@ -178,15 +180,15 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         and ContextTagKeys.AI_OPERATION_NAME in log_record.attributes
         and log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] is not None
     ):
-        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
     if _utils._is_any_synthetic_source(log_record.attributes):
-        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
     location_ip = trace_utils._get_location_ip(log_record.attributes)
     if location_ip:
-        envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
+        tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
         log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )
