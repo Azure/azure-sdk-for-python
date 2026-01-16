@@ -107,14 +107,14 @@ def SimpleField(
     :keyword name: Required. The name of the field, which must be unique within the fields collection
         of the index or parent field.
     :paramtype name: str
-    :keyword type: Required. The data type of the field. Possible values include: SearchFieldDataType.String,
-        SearchFieldDataType.Int32, SearchFieldDataType.Int64, SearchFieldDataType.Double, SearchFieldDataType.Boolean,
-        SearchFieldDataType.DateTimeOffset, SearchFieldDataType.GeographyPoint, SearchFieldDataType.ComplexType,
+    :keyword type: Required. The data type of the field. Possible values include: SearchFieldDataType.STRING,
+        SearchFieldDataType.INT32, SearchFieldDataType.INT64, SearchFieldDataType.DOUBLE, SearchFieldDataType.BOOLEAN,
+        SearchFieldDataType.DATETIMEOFFSET, SearchFieldDataType.GEOGRAPHY_POINT, SearchFieldDataType.COMPLEXTYPE,
         from `azure.search.documents.SearchFieldDataType`.
     :paramtype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :keyword key: A value indicating whether the field uniquely identifies documents in the index.
         Exactly one top-level field in each index must be chosen as the key field and it must be of
-        type SearchFieldDataType.String. Key fields can be used to look up documents directly and
+        type SearchFieldDataType.STRING. Key fields can be used to look up documents directly and
         update or delete specific documents. Default is False
     :paramtype key: bool
     :keyword hidden: A value indicating whether the field will be returned in a search result.
@@ -125,7 +125,7 @@ def SimpleField(
     :paramtype hidden: bool
     :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
         queries. filterable differs from searchable in how strings are handled. Fields of type
-        SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
+        SearchFieldDataType.STRING or Collection(SearchFieldDataType.STRING) that are filterable do
         not undergo word-breaking, so comparisons are for exact matches only. For example, if you
         set such a field f to "sunny day", $filter=f eq 'sunny' will find no matches, but
         $filter=f eq 'sunny day' will. This property must be null for complex fields. Default is False
@@ -142,8 +142,8 @@ def SimpleField(
     :keyword facetable: A value indicating whether to enable the field to be referenced in facet
         queries. Typically used in a presentation of search results that includes hit count by category
         (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
-        on). Fields of type SearchFieldDataType.GeographyPoint or
-        Collection(SearchFieldDataType.GeographyPoint) cannot be facetable. Default is False.
+        on). Fields of type SearchFieldDataType.GEOGRAPHY_POINT or
+        Collection(SearchFieldDataType.GEOGRAPHY_POINT) cannot be facetable. Default is False.
     :paramtype facetable: bool
     :return: The search field object.
     :rtype:  SearchField
@@ -188,7 +188,7 @@ def SearchableField(
     :paramtype collection: bool
     :keyword key: A value indicating whether the field uniquely identifies documents in the index.
         Exactly one top-level field in each index must be chosen as the key field and it must be of
-        type SearchFieldDataType.String. Key fields can be used to look up documents directly and update or delete
+        type SearchFieldDataType.STRING. Key fields can be used to look up documents directly and update or delete
         specific documents. Default is False
     :paramtype key: bool
     :keyword hidden: A value indicating whether the field will be returned in a search result.
@@ -295,7 +295,7 @@ def SearchableField(
     :return: The search field object.
     :rtype:  SearchField
     """
-    typ = Collection(SearchFieldDataType.String) if collection else SearchFieldDataType.String
+    typ = Collection(SearchFieldDataType.STRING) if collection else SearchFieldDataType.STRING
     result: Dict[str, Any] = {
         "name": name,
         "type": typ,

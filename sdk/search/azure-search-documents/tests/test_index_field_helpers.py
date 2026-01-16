@@ -74,7 +74,7 @@ class TestSearchableField:
     def test_defaults(self):
         fld = SearchableField(name="foo", collection=True)
         assert fld.name == "foo"
-        assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.String)
+        assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.STRING)
         assert fld.retrievable == True
         assert fld.sortable == False
         assert fld.facetable == False

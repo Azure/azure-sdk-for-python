@@ -44,15 +44,15 @@ async def create_index():
     client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="hotelName", type=SearchFieldDataType.String, searchable=True),
-        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+        SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="hotelName", type=SearchFieldDataType.STRING, searchable=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
+        SearchableField(name="description", type=SearchFieldDataType.STRING, collection=True),
         ComplexField(
             name="address",
             fields=[
-                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-                SimpleField(name="city", type=SearchFieldDataType.String),
+                SimpleField(name="streetAddress", type=SearchFieldDataType.STRING),
+                SimpleField(name="city", type=SearchFieldDataType.STRING),
             ],
             collection=True,
         ),
@@ -81,16 +81,16 @@ async def update_index():
     client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="hotelName", type=SearchFieldDataType.String, searchable=True),
-        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+        SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="hotelName", type=SearchFieldDataType.STRING, searchable=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
+        SearchableField(name="description", type=SearchFieldDataType.STRING, collection=True),
         ComplexField(
             name="address",
             fields=[
-                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-                SimpleField(name="city", type=SearchFieldDataType.String),
-                SimpleField(name="state", type=SearchFieldDataType.String),
+                SimpleField(name="streetAddress", type=SearchFieldDataType.STRING),
+                SimpleField(name="city", type=SearchFieldDataType.STRING),
+                SimpleField(name="state", type=SearchFieldDataType.STRING),
             ],
             collection=True,
         ),

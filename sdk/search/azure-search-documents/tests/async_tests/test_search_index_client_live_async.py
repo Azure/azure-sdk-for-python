@@ -60,8 +60,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     async def _test_create_index(self, client, index_name):
         fields = fields = [
-            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
         ]
 
         scoring_profile = ScoringProfile(name="MyProfile")
@@ -128,8 +128,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     async def _test_create_or_update_index(self, client):
         name = "hotels-cou"
         fields = fields = [
-            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
         ]
 
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
@@ -206,14 +206,14 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
         fields = [
             SearchField(
                 name="id",
-                type=SearchFieldDataType.String,
+                type=SearchFieldDataType.STRING,
                 key=True,
                 filterable=True,
                 sortable=True,
             ),
             SearchField(
                 name="sensitivityLabel",
-                type=SearchFieldDataType.String,
+                type=SearchFieldDataType.STRING,
                 filterable=True,
                 sensitivity_label=True,
             ),

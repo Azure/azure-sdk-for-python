@@ -63,18 +63,18 @@ def get_hotel_index(name: str):
     )
 
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SearchableField(name="hotelName", type=SearchFieldDataType.String, sortable=True, filterable=True),
-        SearchableField(name="description", type=SearchFieldDataType.String),
+        SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+        SearchableField(name="hotelName", type=SearchFieldDataType.STRING, sortable=True, filterable=True),
+        SearchableField(name="description", type=SearchFieldDataType.STRING),
         SearchField(
             name="descriptionVector",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),
             searchable=True,
             vector_search_dimensions=1536,
             vector_search_profile_name="my-vector-config",
         ),
         SearchableField(
-            name="category", type=SearchFieldDataType.String, sortable=True, filterable=True, facetable=True
+            name="category", type=SearchFieldDataType.STRING, sortable=True, filterable=True, facetable=True
         ),
     ]
     vector_search = VectorSearch(

@@ -60,16 +60,16 @@ def _create_index():
 
     # Here we create an index with listed fields.
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, filterable=True, sortable=True, key=True),
-        SearchableField(name="hotelName", type=SearchFieldDataType.String),
-        SimpleField(name="description", type=SearchFieldDataType.String),
-        SimpleField(name="descriptionFr", type=SearchFieldDataType.String),
-        SimpleField(name="category", type=SearchFieldDataType.String),
-        SimpleField(name="parkingIncluded", type=SearchFieldDataType.Boolean, filterable=True),
-        SimpleField(name="smokingAllowed", type=SearchFieldDataType.Boolean, filterable=True),
-        SimpleField(name="lastRenovationDate", type=SearchFieldDataType.String),
-        SimpleField(name="rating", type=SearchFieldDataType.Int64, sortable=True),
-        SimpleField(name="location", type=SearchFieldDataType.GeographyPoint),
+        SimpleField(name="hotelId", type=SearchFieldDataType.STRING, filterable=True, sortable=True, key=True),
+        SearchableField(name="hotelName", type=SearchFieldDataType.STRING),
+        SimpleField(name="description", type=SearchFieldDataType.STRING),
+        SimpleField(name="descriptionFr", type=SearchFieldDataType.STRING),
+        SimpleField(name="category", type=SearchFieldDataType.STRING),
+        SimpleField(name="parkingIncluded", type=SearchFieldDataType.BOOLEAN, filterable=True),
+        SimpleField(name="smokingAllowed", type=SearchFieldDataType.BOOLEAN, filterable=True),
+        SimpleField(name="lastRenovationDate", type=SearchFieldDataType.STRING),
+        SimpleField(name="rating", type=SearchFieldDataType.INT64, sortable=True),
+        SimpleField(name="location", type=SearchFieldDataType.GEOGRAPHY_POINT),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 

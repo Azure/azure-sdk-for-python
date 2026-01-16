@@ -42,8 +42,8 @@ def create_indexer():
     # create an index
     index_name = "indexer-hotels"
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+        SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
     ]
     index = SearchIndex(name=index_name, fields=fields)
     ind_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
