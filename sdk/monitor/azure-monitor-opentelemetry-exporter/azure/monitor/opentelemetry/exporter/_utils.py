@@ -18,7 +18,10 @@ from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.models import (
+    ContextTagKeys,
+    TelemetryItem,
+)
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
@@ -127,7 +130,10 @@ def _get_sdk_version_prefix():
 
 def _get_sdk_version():
     return "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
+        _get_sdk_version_prefix(),
+        platform.python_version(),
+        opentelemetry_version,
+        ext_version,
     )
 
 
@@ -160,7 +166,9 @@ def ns_to_duration(nanoseconds: int) -> str:
     value, seconds = divmod(value, 60)
     value, minutes = divmod(value, 60)
     days, hours = divmod(value, 24)
-    return "{:d}.{:02d}:{:02d}:{:02d}.{:03d}".format(days, hours, minutes, seconds, milliseconds)
+    return "{:d}.{:02d}:{:02d}:{:02d}.{:03d}".format(
+        days, hours, minutes, seconds, milliseconds
+    )
 
 
 # Replicate .netDateTime.Ticks(), which is the UTC time, expressed as the number
@@ -170,9 +178,11 @@ def _ticks_since_dot_net_epoch():
     # Since time.time() is the elapsed time since UTC January 1, 1970, we have
     # to shift this start time, and  then multiply by 10^7 to get the number of
     # 100-nanosecond intervals
-    shift_time = int((datetime.datetime(1970, 1, 1, 0, 0, 0) - datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()) * (
-        10**7
-    )
+    shift_time = int(
+        (
+            datetime.datetime(1970, 1, 1, 0, 0, 0) - datetime.datetime(1, 1, 1, 0, 0, 0)
+        ).total_seconds()
+    ) * (10**7)
     # Add shift time to 100-ns intervals since time.time()
     return int(time.time() * (10**7)) + shift_time
 
@@ -253,7 +263,9 @@ def _populate_part_a_fields(resource: Resource):
         app_version = resource.attributes.get(ResourceAttributes.SERVICE_VERSION)
         tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(resource)
         tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = _get_cloud_role_instance(resource)
-        tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
+        tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[
+            ContextTagKeys.AI_CLOUD_ROLE_INSTANCE
+        ]
         if device_id:
             tags[ContextTagKeys.AI_DEVICE_ID] = device_id  # type: ignore
         if device_model:
@@ -271,7 +283,9 @@ def _get_cloud_role(resource: Resource) -> str:
     cloud_role = ""
     service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
     if service_name:
-        service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
+        service_namespace = resource.attributes.get(
+            ResourceAttributes.SERVICE_NAMESPACE
+        )
         if service_namespace:
             cloud_role = str(service_namespace) + "." + str(service_name)
         else:
@@ -285,7 +299,9 @@ def _get_cloud_role(resource: Resource) -> str:
     k8s_rep_set_name = resource.attributes.get(ResourceAttributes.K8S_REPLICASET_NAME)
     if k8s_rep_set_name:
         return k8s_rep_set_name  # type: ignore
-    k8s_stateful_set_name = resource.attributes.get(ResourceAttributes.K8S_STATEFULSET_NAME)
+    k8s_stateful_set_name = resource.attributes.get(
+        ResourceAttributes.K8S_STATEFULSET_NAME
+    )
     if k8s_stateful_set_name:
         return k8s_stateful_set_name  # type: ignore
     k8s_job_name = resource.attributes.get(ResourceAttributes.K8S_JOB_NAME)
@@ -302,7 +318,9 @@ def _get_cloud_role(resource: Resource) -> str:
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
-    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    service_instance_id = resource.attributes.get(
+        ResourceAttributes.SERVICE_INSTANCE_ID
+    )
     if service_instance_id:
         return service_instance_id  # type: ignore
     k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
@@ -389,7 +407,9 @@ def _get_scope(aad_audience=None):
     # (For example: "https://monitor.azure.com/").
     # The SCOPE is the audience + the permission
     # (For example: "https://monitor.azure.com//.default").
-    return _DEFAULT_AAD_SCOPE if not aad_audience else "{}/.default".format(aad_audience)
+    return (
+        _DEFAULT_AAD_SCOPE if not aad_audience else "{}/.default".format(aad_audience)
+    )
 
 
 class Singleton(type):
