@@ -38,6 +38,15 @@ class FoundryTool(ABC):
 	"""Definition of a foundry tool including its parameters."""
 	source: FoundryToolSource = field(init=False)
 
+	@property
+	@abstractmethod
+	def id(self) -> str:
+		"""Unique identifier for the tool."""
+		raise NotImplementedError
+
+	def __str__(self):
+		return self.id
+
 
 @dataclass(frozen=True, kw_only=True)
 class FoundryHostedMcpTool(FoundryTool):
@@ -50,7 +59,9 @@ class FoundryHostedMcpTool(FoundryTool):
 	name: str
 	configuration: Optional[Mapping[str, Any]] = None
 
-	def __str__(self):
+	@property
+	def id(self) -> str:
+		"""Unique identifier for the tool."""
 		return f"{self.source}:{self.name}"
 
 
@@ -64,7 +75,8 @@ class FoundryConnectedTool(FoundryTool):
 	protocol: str
 	project_connection_id: str
 
-	def __str__(self):
+	@property
+	def id(self):
 		return f"{self.source}:{self.protocol}:{self.project_connection_id}"
 
 
@@ -96,6 +108,10 @@ class ResolvedFoundryTool:
 	definition: FoundryTool
 	details: FoundryToolDetails
 	invoker: Optional[Callable[..., Awaitable[Any]]] = None  # TODO: deprecated
+
+	@property
+	def id(self) -> str:
+		return f"{self.definition.id}:{self.details.name}"
 
 	@property
 	def source(self) -> FoundryToolSource:

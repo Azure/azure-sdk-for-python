@@ -75,7 +75,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 	@staticmethod
 	def _convert_listed_tools(
 			response: ListFoundryHostedMcpToolsResponse,
-			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, FoundryToolDetails]:
+			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, List[FoundryToolDetails]]:
 
 		allowlist = {tool.name: tool for tool in allowed_tools}
 		result = {}
@@ -88,7 +88,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 				description=tool.description,
 				metadata=tool.meta,
 				input_schema=tool.input_schema)
-			result[definition] = details
+			result[definition] = [details]
 
 		return result
 
@@ -131,13 +131,13 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 
 	async def list_tools(
 			self,
-			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, FoundryToolDetails]:
+			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, List[FoundryToolDetails]]:
 		"""List MCP tools.
 
 		:param allowed_tools: List of allowed MCP tools to filter.
 		:type allowed_tools: List[FoundryHostedMcpTool]
 		:return: Details of MCP tools.
-		:rtype: Mapping[FoundryHostedMcpTool, FoundryToolDetails]
+		:rtype: Mapping[FoundryHostedMcpTool, List[FoundryToolDetails]]
 		"""
 		if not allowed_tools:
 			return {}

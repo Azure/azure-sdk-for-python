@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from asyncio import gather
 from collections import defaultdict
-from typing import Any, AsyncContextManager, DefaultDict, Dict, List, Mapping, Optional
+from typing import Any, AsyncContextManager, Collection, DefaultDict, Dict, List, Mapping, Optional
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
@@ -48,22 +48,22 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
 
     @distributed_trace_async
     async def list_tools(self,
-                         tools: List[FoundryTool],
+                         tools: Collection[FoundryTool],
                          agent_name,
-                         user: Optional[UserInfo] = None) -> Mapping[FoundryTool, FoundryToolDetails]:
+                         user: Optional[UserInfo] = None) -> Mapping[FoundryTool, List[FoundryToolDetails]]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
         returning them as ResolvedFoundryTool instances ready for invocation.
-        :param tools: List of FoundryTool instances to resolve.
-        :type tools: List[~FoundryTool]
+        :param tools: Collection of FoundryTool instances to resolve.
+        :type tools: Collection[~FoundryTool]
         :param user: Information about the user requesting the tools.
         :type user: Optional[UserInfo]
         :param agent_name: Name of the agent requesting the tools.
         :type agent_name: str
-        :return: List of available tools from all configured sources.
-        :rtype: List[~FoundryTool]
-        :raises ~azure.ai.agentserver.core.tools._exceptions.ToolInvocationError:
+        :return: A mapping of FoundryTool to their corresponding FoundryToolDetails.
+        :rtype: Mapping[~FoundryTool, List[~FoundryToolDetails]]
+        :raises ~azure.ai.agentserver.core.tools._exceptions.OAuthConsentRequiredError:
             Raised when the service requires user OAuth consent.
         :raises ~azure.core.exceptions.HttpResponseError:
             Raised for HTTP communication failures.
@@ -82,7 +82,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
                                                           user,
                                                           agent_name))
 
-        resolved_tools: Dict[FoundryTool, FoundryToolDetails] = {}
+        resolved_tools: Dict[FoundryTool, List[FoundryToolDetails]] = {}
         if tasks:
             results = await gather(*tasks)
             for result in results:
