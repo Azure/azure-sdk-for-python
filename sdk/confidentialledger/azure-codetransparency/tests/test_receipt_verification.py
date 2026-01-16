@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:ignore reencoded
 """Tests for CCF SCITT receipt verification."""
 
 import json
