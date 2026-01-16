@@ -68,10 +68,7 @@ class TestUtils(unittest.TestCase):
     def test_ticks_since_dot_net_epoch(self, time_mock):
         current_time = time.time()
         shift_time = int(
-            (
-                datetime.datetime(1970, 1, 1, 0, 0, 0)
-                - datetime.datetime(1, 1, 1, 0, 0, 0)
-            ).total_seconds()
+            (datetime.datetime(1970, 1, 1, 0, 0, 0) - datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()
         ) * (10**7)
         time_mock.return_value = current_time
         ticks = _utils._ticks_since_dot_net_epoch()
@@ -92,9 +89,7 @@ class TestUtils(unittest.TestCase):
         )
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
-        self.assertEqual(
-            tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName"
-        )
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
         self.assertEqual(tags.get("ai.internal.nodeName"), "testServiceInstanceId")
         self.assertEqual(tags.get("ai.device.id"), "testDeviceId")
@@ -117,9 +112,7 @@ class TestUtils(unittest.TestCase):
         )
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
-        self.assertEqual(
-            tags.get("ai.cloud.role"), "testServiceNamespace.unknown_servicefoobar"
-        )
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceNamespace.unknown_servicefoobar")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
         self.assertEqual(tags.get("ai.internal.nodeName"), "testServiceInstanceId")
         self.assertEqual(tags.get("ai.device.id"), "testDeviceId")
@@ -133,9 +126,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     def test_populate_part_a_fields_aks(self):
         resource = Resource(
@@ -153,9 +144,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testDeploymentName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     def test_populate_part_a_fields_aks_replica(self):
         resource = Resource(
@@ -172,9 +161,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testReplicaSetName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     def test_populate_part_a_fields_aks_stateful(self):
         resource = Resource(
@@ -190,9 +177,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testStatefulSetName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     def test_populate_part_a_fields_aks_job(self):
         resource = Resource(
@@ -207,9 +192,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testJobName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     def test_populate_part_a_fields_aks_cronjob(self):
         resource = Resource(
@@ -223,9 +206,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testCronJobName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     def test_populate_part_a_fields_aks_daemon(self):
         resource = Resource(
@@ -238,9 +219,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testDaemonSetName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Test that undefined fields are ignored.
     def test_populate_part_a_fields_aks_undefined(self):
@@ -259,9 +238,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testDaemonSetName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     def test_populate_part_a_fields_aks_with_service(self):
         resource = Resource(
@@ -281,9 +258,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Default service.name fields should be ignored when kubernetes values are present
     def test_populate_part_a_fields_aks_with_unknown_service(self):
@@ -303,9 +278,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testDeploymentName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
-        self.assertEqual(
-            tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance")
-        )
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str",
@@ -332,9 +305,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
         return_value=False,
     )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uum_")
@@ -367,9 +338,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
         return_value=True,
     )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_attach(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uui_")
@@ -406,9 +375,7 @@ class TestUtils(unittest.TestCase):
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_app_service(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "aum_")
@@ -447,9 +414,7 @@ class TestUtils(unittest.TestCase):
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_app_service_attach(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "aui_")
@@ -464,9 +429,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Linux",
     )
-    def test_get_sdk_version_prefix_app_service_linux_attach(
-        self, mock_system, mock_isdir
-    ):
+    def test_get_sdk_version_prefix_app_service_linux_attach(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "ali_")
 
@@ -480,9 +443,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Windows",
     )
-    def test_get_sdk_version_prefix_app_service_windows_attach(
-        self, mock_system, mock_isdir
-    ):
+    def test_get_sdk_version_prefix_app_service_windows_attach(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awi_")
 
@@ -496,9 +457,7 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_function(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fum_")
@@ -544,9 +503,7 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_function_attach(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fui_")
@@ -594,9 +551,7 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_aks(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "kum_")
@@ -638,9 +593,7 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.platform.system", return_value=""
-    )
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_aks_attach(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "kui_")
