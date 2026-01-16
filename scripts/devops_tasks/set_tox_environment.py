@@ -43,7 +43,7 @@ def remove_unsupported_values(selected_set: List[str], unsupported_values: List[
 
 
 def process_ci_skips(glob_string: str, service: str) -> None:
-    checks_with_global_skip = ["pylint", "verifywhl", "verifysdist" "bandit", "mypy", "pyright", "verifytypes"]
+    checks_with_global_skip = ["pylint", "verifywhl", "verifysdist", "bandit", "mypy", "pyright", "verifytypes"]
     root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
     if service and service != "auto":

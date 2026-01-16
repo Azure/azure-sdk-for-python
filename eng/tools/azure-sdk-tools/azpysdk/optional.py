@@ -110,7 +110,7 @@ class optional(InstallAndTest):
 
             # install package and testing requirements
             try:
-                install_result = self.install_all_requiremenmts(
+                install_result = self.install_all_requirements(
                     environment_exe, temp_dir, package_name, package_dir, args
                 )
                 if install_result != 0:

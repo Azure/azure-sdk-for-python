@@ -132,7 +132,7 @@ class InstallAndTest(Check):
                 return pytest_result.returncode
         return 0
 
-    def install_all_requiremenmts(
+    def install_all_requirements(
         self, executable: str, staging_directory: str, package_name: str, package_dir: str, args: argparse.Namespace
     ) -> int:
         try:
@@ -158,7 +158,7 @@ class InstallAndTest(Check):
             )
         except CalledProcessError as exc:
             logger.error(f"Failed to build/install {self.package_type} for {package_name}: {exc}")
-            exit(1)
+            return 1
         return 0
 
     def get_env_defaults(self) -> Dict[str, str]:
