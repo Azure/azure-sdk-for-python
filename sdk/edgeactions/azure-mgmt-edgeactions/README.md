@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.edgeactions import CdnClient
+from azure.mgmt.edgeactions import EdgeActionsMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = CdnClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = EdgeActionsMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
