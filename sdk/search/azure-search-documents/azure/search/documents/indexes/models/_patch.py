@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 from ._models import SearchField as _SearchField
 from ._enums import (
     LexicalAnalyzerName,
@@ -57,16 +57,11 @@ class SearchField(_SearchField):
             self.retrievable = not value
 
 
-# Re-export SearchFieldDataType and add Collection helper
-SearchFieldDataType = _SearchFieldDataType
-
-
-# Add Collection method to SearchFieldDataType enum
-def _collection_helper(typ) -> str:
+def _collection_helper(typ: Union[str, _SearchFieldDataType]) -> str:
     """Helper function to create a collection type string.
 
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
-    :type typ: str or Enum
+    :type typ: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :return: A collection type string.
     :rtype: str
     """
@@ -76,15 +71,32 @@ def _collection_helper(typ) -> str:
     return "Collection({})".format(typ)
 
 
-# Monkey-patch the Collection method onto the enum class
-SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore
+if TYPE_CHECKING:
+    # For type checking, create a class that has all enum members plus the Collection method
+    class SearchFieldDataType(_SearchFieldDataType):
+        """Search field data type with Collection helper method."""
+
+        @staticmethod
+        def Collection(typ: Union[str, "SearchFieldDataType"]) -> str:
+            """Create a Collection type string.
+
+            :param typ: The type to wrap in a collection.
+            :type typ: str or SearchFieldDataType
+            :return: A collection type string.
+            :rtype: str
+            """
+            ...
+else:
+    # At runtime, use the original enum with monkey-patched Collection method
+    SearchFieldDataType = _SearchFieldDataType
+    SearchFieldDataType.Collection = staticmethod(_collection_helper)
 
 
-def Collection(typ) -> str:
+def Collection(typ: Union[str, _SearchFieldDataType]) -> str:
     """Helper function to create a collection type string.
 
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
-    :type typ: str or Enum
+    :type typ: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :return: A collection type string.
     :rtype: str
     """
