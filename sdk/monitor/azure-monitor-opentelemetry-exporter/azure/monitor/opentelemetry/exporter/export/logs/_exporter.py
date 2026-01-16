@@ -13,6 +13,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
+
 try:
     from opentelemetry.semconv.logs import (
         LogRecordAttributes as _SemconvLogRecordAttributes,
@@ -294,6 +295,8 @@ _IGNORED_ATTRS = frozenset(
         EXCEPTION_ESCAPED,
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
         _MICROSOFT_CUSTOM_EVENT_NAME,
+        _ENDUSER_ID_ATTRIBUTE,
+        _ENDUSER_PSEUDO_ID_ATTRIBUTE,
     )
 )
 

@@ -2009,6 +2009,31 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             _check_instrumentation_span(azure_sdk_span)
             add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            azure_sdk_span.set_attribute(
+                _AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus"
+            )
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            azure_sdk_span.set_attribute(
+                _AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices"
+            )
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_AI_SDK_NAME)
+
+        other_tracer = self.get_tracer_provider().get_tracer("not-azure-foo-bar")
+        other_span = other_tracer.start_span(name="test")
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(other_span)
+            add.assert_not_called()
+
     def get_tracer_provider(self):
         return trace.TracerProvider()
-

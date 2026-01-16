@@ -473,6 +473,8 @@ class TestAzureLogExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_USER_AUTH_USER_ID), "test-auth"
         )
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "test-user")
+        self.assertNotIn("enduser.id", envelope.data.base_data.properties)
+        self.assertNotIn("enduser.pseudo.id", envelope.data.base_data.properties)
 
     def test_log_to_envelope_log_none(self):
         exporter = self._exporter

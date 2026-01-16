@@ -63,12 +63,24 @@ _logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]
 
-_ENDUSER_ID_ATTRIBUTE = getattr(SpanAttributes, "ENDUSER_ID", None) or getattr(
-    _enduser_attributes, "ENDUSER_ID", "enduser.id"
+_ENDUSER_ID_ATTRIBUTE = (
+    getattr(SpanAttributes, "ENDUSER_ID", None)
+    or (
+        getattr(_enduser_attributes, "ENDUSER_ID", None)
+        if _enduser_attributes is not None
+        else None
+    )
+    or "enduser.id"
 )
-_ENDUSER_PSEUDO_ID_ATTRIBUTE = getattr(
-    SpanAttributes, "ENDUSER_PSEUDO_ID", None
-) or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", "enduser.pseudo.id")
+_ENDUSER_PSEUDO_ID_ATTRIBUTE = (
+    getattr(SpanAttributes, "ENDUSER_PSEUDO_ID", None)
+    or (
+        getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
+        if _enduser_attributes is not None
+        else None
+    )
+    or "enduser.pseudo.id"
+)
 
 _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
     "http.",
@@ -121,11 +133,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
 
-    def export(
-        self,
-        spans: Sequence[ReadableSpan],
-        **_kwargs: Any
-    ) -> SpanExportResult:
+    def export(self, spans: Sequence[ReadableSpan], **_kwargs: Any) -> SpanExportResult:
         """Export span data.
 
         :param spans: Open Telemetry Spans to export.
