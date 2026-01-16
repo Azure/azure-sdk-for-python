@@ -99,9 +99,7 @@ class Check(abc.ABC):
                         f" unable to locate prebuilt azure-sdk-tools within {wheel_dir}"
                     )
             else:
-                install_into_venv(
-                    venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools")], REPO_ROOT
-                )
+                install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools")], REPO_ROOT)
 
             venv_python_exe = get_venv_python(venv_location)
 
