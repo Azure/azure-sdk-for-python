@@ -361,8 +361,11 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
 def _send_attach_warning():
     if _is_attach_enabled() and not _is_on_functions():
         message = (
-            "Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not "
-            "being duplicated. This may impact your cost."
+            "Distro detected that automatic instrumentation may have occurred. Only use autoinstrumentation if you "
+            "aren't using manual instrumentation of OpenTelemetry in your code, such as with "
+            "azure-monitor-opentelemetry or azure-monitor-opentelemetry-exporter. For App Service resources, disable "
+            "autoinstrumentation in the Application Insights experience on your App Service resource or by setting "
+            "the ApplicationInsightsAgent_EXTENSION_VERSION app setting to 'disabled'."
         )
         _logger.warning(message)
         AzureDiagnosticLogging.warning(
