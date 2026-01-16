@@ -18,7 +18,10 @@ from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.models import (
+    ContextTagKeys,
+    TelemetryItem,
+)
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -128,7 +131,10 @@ def _get_sdk_version_prefix():
 
 def _get_sdk_version():
     return "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
+        _get_sdk_version_prefix(),
+        platform.python_version(),
+        opentelemetry_version,
+        ext_version,
     )
 
 
@@ -357,6 +363,7 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
+    max_length = 64 * 1024
     truncated_properties: Dict[str, str] = {}
     if not properties:
         return truncated_properties
@@ -366,10 +373,10 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             if not filter(key, val):
                 continue
         # Apply truncation rules
-        # Max key length is 150, value is 8192
+        # Max key length is 150, value is 64 * 1024
         if not key or len(key) > 150 or val is None:
             continue
-        truncated_properties[key] = str(val)[:8192]
+        truncated_properties[key] = str(val)[:max_length]
     return truncated_properties
 
 

@@ -1,0 +1,54 @@
+{% set name = "azure-appconfiguration-provider" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('PROVIDER_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - python
+    - dnspython>=2.6.1
+    - requests-oauthlib >=0.5.0
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-appconfiguration >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp
+    - pip
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - python
+    - dnspython>=2.6.1
+    - requests-oauthlib >=0.5.0
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-appconfiguration >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp
+
+test:
+  imports:
+    - azure.appconfiguration.provider
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration-provider"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Appconfiguration Provider Client Library for Python"
+  description: |
+    This is the Microsoft Azure Appconfiguration Provider Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/appconfiguration for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99
