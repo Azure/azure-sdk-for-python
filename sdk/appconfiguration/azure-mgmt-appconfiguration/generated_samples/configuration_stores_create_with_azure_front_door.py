@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.appconfiguration import AppConfigurationClient
     pip install azure-identity
     pip install azure-mgmt-appconfiguration
 # USAGE
-    python check_name_not_available.py
+    python configuration_stores_create_with_azure_front_door.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +31,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.check_name_availability(
-        check_name_availability_parameters={
-            "name": "contoso",
-            "type": "Microsoft.AppConfiguration/configurationStores",
+    response = client.configuration_stores.begin_create(
+        resource_group_name="myResourceGroup",
+        config_store_name="contoso",
+        config_store_creation_parameters={
+            "location": "westus",
+            "properties": {
+                "azureFrontDoor": {
+                    "resourceId": "/subscriptions/c80fb759-c965-4c6a-9110-9b2b2d038882/resourceGroups/myResourceGroup/providers/microsoft.cdn/profiles/myAzureFrontDoorProfile"
+                }
+            },
+            "sku": {"name": "Standard"},
+            "tags": {"myTag": "myTagValue"},
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/CheckNameNotAvailable.json
+# x-ms-original-file: 2025-06-01-preview/ConfigurationStoresCreateWithAzureFrontDoor.json
 if __name__ == "__main__":
     main()
