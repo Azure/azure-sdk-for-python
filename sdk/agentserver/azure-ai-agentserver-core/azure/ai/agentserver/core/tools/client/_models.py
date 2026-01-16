@@ -574,7 +574,7 @@ class InvokeConnectedToolsResult(BaseModel):
 
 	:ivar Any value: The result value from the tool invocation.
 	"""
-	value: Any = Field(validation_alias="toolResult", serialization_alias="toolResult")
+	value: Any = Field(validation_alias="toolResult")
 
 
 class InvokeFoundryConnectedToolsResponse(BaseModel):
