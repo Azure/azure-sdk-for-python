@@ -83,4 +83,4 @@ need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
-title = "CdnClient"
+title = "EdgeActionsMgmtClient"
