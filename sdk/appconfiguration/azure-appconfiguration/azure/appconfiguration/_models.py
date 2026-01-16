@@ -686,6 +686,7 @@ class ConfigurationSettingPropertiesPaged(
         :raises StopIteration: If there are no more pages to return.
         :raises AzureError: If the request fails.
         """
+        # Is the exact same method as `PageIterator`, excluding the if statement before the return.
         if self.continuation_token is None and self._did_a_call_already:
             raise StopIteration("End of paging")
         try:
@@ -698,6 +699,8 @@ class ConfigurationSettingPropertiesPaged(
         self._did_a_call_already = True
 
         self.continuation_token, self._current_page = self._extract_data(self._response)
+
+        # App Config's addition to skip empty pages
         if self._current_page is None:
             # We skip over pages that are empty, change from mach conditions
             return self.__next__()
@@ -743,6 +746,7 @@ class ConfigurationSettingPropertiesPagedAsync(
         :raises StopIteration: If there are no more pages to return.
         :raises AzureError: If the request fails.
         """
+        # Is the exact same method as `PageIterator`, excluding the if statement before the return.
         if self.continuation_token is None and self._did_a_call_already:
             raise StopAsyncIteration("End of paging")
         try:
@@ -756,6 +760,7 @@ class ConfigurationSettingPropertiesPagedAsync(
 
         self.continuation_token, self._current_page = await self._extract_data(self._response)
 
+        # App Config's addition to skip empty pages
         if self._current_page is None:
             # We skip over pages that are empty, change from mach conditions
             return await self.__anext__()
