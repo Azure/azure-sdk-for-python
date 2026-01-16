@@ -5,7 +5,9 @@
 # ------------------------------------
 """Tests for CCF SCITT receipt verification."""
 
+import json
 import os
+import responses
 import pytest
 
 from azure.codetransparency.receipt import (
@@ -22,6 +24,7 @@ from azure.codetransparency.receipt._receipt_verification import (
     _verify_receipt,
     _get_receipt_issuer_host,
     _get_receipts_from_transparent_statement,
+    _get_service_certificate_key,
 )
 
 
@@ -258,6 +261,168 @@ class TestReceiptVerification:
         )
 
 
+class TestGetServiceCertificateKey:
+    """Tests for _get_service_certificate_key functionality."""
+
+    def test_get_key_from_offline_keys_success(self):
+        """Test successfully retrieving a key from offline keys."""
+        receipt_bytes = read_file_bytes("receipt.cose")
+
+        # The receipt has KID: 87d64669f1c5988e28f22da4f3526334de860ad2395a71a735de59f9ec3aa662
+        valid_jwk = {
+            "crv": "P-384",
+            "kid": "87d64669f1c5988e28f22da4f3526334de860ad2395a71a735de59f9ec3aa662",
+            "kty": "EC",
+            "x": "9y7Zs09nKjYQHdJ7oAsxftOvSK9RfGWJM3p0_5XXyBuvkUs-kN-YB-EQCCuB_Hsw",
+            "y": "teV4Jkd2zphYJa2gPSm5HEjuvEM9MNu3e5E7z1L_0s0GWKaEqmHpAiXBtLGHC5-A",
+        }
+
+        offline_keys = CodeTransparencyOfflineKeys(
+            by_issuer={"foo.bar.com": {"keys": [valid_jwk]}}
+        )
+
+        result = _get_service_certificate_key(
+            receipt_bytes=receipt_bytes,
+            issuer="foo.bar.com",
+            offline_keys=offline_keys,
+            allow_network_fallback=False,
+        )
+
+        assert result["kid"] == valid_jwk["kid"]
+        assert result["crv"] == "P-384"
+        assert result["kty"] == "EC"
+
+    def test_get_key_no_offline_keys_no_fallback_raises_error(self):
+        """Test that error is raised when no offline keys and network fallback is disabled."""
+        receipt_bytes = read_file_bytes("receipt.cose")
+
+        with pytest.raises(ValueError) as exc_info:
+            _get_service_certificate_key(
+                receipt_bytes=receipt_bytes,
+                issuer="foo.bar.com",
+                offline_keys=None,
+                allow_network_fallback=False,
+            )
+
+        assert "No keys available" in str(exc_info.value)
+
+    def test_get_key_issuer_not_in_offline_keys_no_fallback_raises_error(self):
+        """Test that error is raised when issuer is not in offline keys and fallback is disabled."""
+        receipt_bytes = read_file_bytes("receipt.cose")
+
+        # Offline keys for a different issuer
+        offline_keys = CodeTransparencyOfflineKeys(
+            by_issuer={"different-issuer.com": {"keys": []}}
+        )
+
+        with pytest.raises(ValueError) as exc_info:
+            _get_service_certificate_key(
+                receipt_bytes=receipt_bytes,
+                issuer="foo.bar.com",
+                offline_keys=offline_keys,
+                allow_network_fallback=False,
+            )
+
+        assert "No keys available" in str(exc_info.value)
+
+    def test_get_key_empty_keys_in_jwks_raises_error(self):
+        """Test that error is raised when JWKS document has empty keys array."""
+        receipt_bytes = read_file_bytes("receipt.cose")
+
+        # Offline keys with empty keys array
+        offline_keys = CodeTransparencyOfflineKeys(
+            by_issuer={"foo.bar.com": {"keys": []}}
+        )
+
+        with pytest.raises(ValueError) as exc_info:
+            _get_service_certificate_key(
+                receipt_bytes=receipt_bytes,
+                issuer="foo.bar.com",
+                offline_keys=offline_keys,
+                allow_network_fallback=False,
+            )
+
+        assert "No keys found in JWKS document" in str(exc_info.value)
+
+    def test_get_key_kid_not_found_in_jwks_raises_error(self):
+        """Test that error is raised when KID from receipt is not found in JWKS."""
+        receipt_bytes = read_file_bytes("receipt.cose")
+
+        # JWK with different KID than what's in the receipt
+        wrong_kid_jwk = {
+            "crv": "P-384",
+            "kid": "wrong_kid_that_does_not_match",
+            "kty": "EC",
+            "x": "9y7Zs09nKjYQHdJ7oAsxftOvSK9RfGWJM3p0_5XXyBuvkUs-kN-YB-EQCCuB_Hsw",
+            "y": "teV4Jkd2zphYJa2gPSm5HEjuvEM9MNu3e5E7z1L_0s0GWKaEqmHpAiXBtLGHC5-A",
+        }
+
+        offline_keys = CodeTransparencyOfflineKeys(
+            by_issuer={"foo.bar.com": {"keys": [wrong_kid_jwk]}}
+        )
+
+        with pytest.raises(ValueError) as exc_info:
+            _get_service_certificate_key(
+                receipt_bytes=receipt_bytes,
+                issuer="foo.bar.com",
+                offline_keys=offline_keys,
+                allow_network_fallback=False,
+            )
+
+        assert "not found" in str(exc_info.value).lower()
+
+    def test_get_key_selects_correct_key_from_multiple_keys(self):
+        """Test that the correct key is selected when JWKS contains multiple keys."""
+        receipt_bytes = read_file_bytes("receipt.cose")
+
+        # The receipt has KID: 87d64669f1c5988e28f22da4f3526334de860ad2395a71a735de59f9ec3aa662
+        correct_jwk = {
+            "crv": "P-384",
+            "kid": "87d64669f1c5988e28f22da4f3526334de860ad2395a71a735de59f9ec3aa662",
+            "kty": "EC",
+            "x": "9y7Zs09nKjYQHdJ7oAsxftOvSK9RfGWJM3p0_5XXyBuvkUs-kN-YB-EQCCuB_Hsw",
+            "y": "teV4Jkd2zphYJa2gPSm5HEjuvEM9MNu3e5E7z1L_0s0GWKaEqmHpAiXBtLGHC5-A",
+        }
+
+        other_jwk = {
+            "crv": "P-384",
+            "kid": "another_kid_value",
+            "kty": "EC",
+            "x": "Tv_tP9eJIb5oJY9YB6iAzMfds4v3N84f8pgcPYLaxd_Nj3Nb_dBm6Fc8ViDZQhGR",
+            "y": "xJ7fI2kA8gs11XDc9h2zodU-fZYRrE0UJHpzPfDVJrOpTvPcDoC5EWOBx9Fks0bZ",
+        }
+
+        # Include multiple keys, the correct one should be selected
+        offline_keys = CodeTransparencyOfflineKeys(
+            by_issuer={"foo.bar.com": {"keys": [other_jwk, correct_jwk]}}
+        )
+
+        result = _get_service_certificate_key(
+            receipt_bytes=receipt_bytes,
+            issuer="foo.bar.com",
+            offline_keys=offline_keys,
+            allow_network_fallback=False,
+        )
+
+        assert result["kid"] == correct_jwk["kid"]
+
+    def test_get_key_with_network_fallback_no_client_raises_error(self):
+        """Test that error is raised when network fallback is allowed but no client is provided."""
+        receipt_bytes = read_file_bytes("receipt.cose")
+
+        # No offline keys, network fallback allowed but no client
+        with pytest.raises(ValueError) as exc_info:
+            _get_service_certificate_key(
+                receipt_bytes=receipt_bytes,
+                issuer="foo.bar.com",
+                offline_keys=None,
+                allow_network_fallback=True,
+                client=None,
+            )
+
+        assert "No keys available" in str(exc_info.value)
+
+
 class TestTransparentStatementWithFiles:
     """Tests using the actual test files for transparent statement verification."""
 
@@ -342,3 +507,66 @@ class TestTransparentStatementWithFiles:
 
         # This should succeed - verifying the transparent statement with valid offline keys
         verify_transparent_statement(transparent_statement_bytes, verification_options)
+
+    @responses.activate
+    def test_verify_transparent_statement_with_online_keys_mocked(self, tmp_path):
+        """Test verifying transparent statement with mocked network calls for online key retrieval."""
+        transparent_statement_bytes = read_file_bytes("transparent_statement.cose")
+
+        # Valid JWKS for the issuer foo.bar.com (taken from C# test)
+        valid_jwk = {
+            "crv": "P-384",
+            "kid": "fb29ce6d6b37e7a0b03a5fc94205490e1c37de1f41f68b92e3620021e9981d01",
+            "kty": "EC",
+            "x": "Tv_tP9eJIb5oJY9YB6iAzMfds4v3N84f8pgcPYLaxd_Nj3Nb_dBm6Fc8ViDZQhGR",
+            "y": "xJ7fI2kA8gs11XDc9h2zodU-fZYRrE0UJHpzPfDVJrOpTvPcDoC5EWOBx9Fks0bZ",
+        }
+
+        # Create JWKS document that would be returned from the network
+        jwks_document = {"keys": [valid_jwk]}
+
+        # Mock the ledger identity endpoint
+        responses.add(
+            responses.GET,
+            "https://identity.confidential-ledger.core.azure.com/ledgerIdentity/foo",
+            body=json.dumps(
+                {
+                    "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIB...IDAQAB\n-----END CERTIFICATE-----\n"  # cSpell:disable-line
+                }
+            ),
+            status=200,
+            content_type="application/json",
+        )
+
+        # Mock the JWKS endpoint
+        responses.add(
+            responses.GET,
+            "https://foo.bar.com/jwks",
+            body=json.dumps(jwks_document),
+            status=200,
+            content_type="application/json",
+        )
+
+        # Use FALLBACK_TO_NETWORK to trigger network key retrieval
+        # No offline keys configured for the issuer
+        verification_options = VerificationOptions(
+            authorized_domains=["foo.bar.com"],
+            authorized_receipt_behavior=AuthorizedReceiptBehavior.VERIFY_ALL_MATCHING,
+            unauthorized_receipt_behavior=UnauthorizedReceiptBehavior.FAIL_IF_PRESENT,
+            offline_keys=None,  # No offline keys - force network fallback
+            offline_keys_behavior=OfflineKeysBehavior.FALLBACK_TO_NETWORK,
+        )
+
+        # This should succeed - verifying the transparent statement with mocked online keys
+        verify_transparent_statement(
+            transparent_statement_bytes,
+            verification_options,
+        )
+
+        # Verify that the JWKS endpoint was called
+        assert responses.calls[0].request.url is not None
+        assert responses.calls[0].request.url.startswith("https://identity.confidential-ledger.core.azure.com/ledgerIdentity/foo")
+        assert responses.calls[1].request.url is not None
+        assert responses.calls[1].request.url.startswith("https://foo.bar.com/jwks")
+        assert len(responses.calls) == 2  # 1 identity + 1 JWKS request
+
