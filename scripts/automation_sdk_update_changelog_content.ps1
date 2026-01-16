@@ -50,6 +50,11 @@ else {
     $pythonPath = ".venv/bin/python"
 }
 
+# Validate virtual environment Python, fall back to global python if not found
+if (-not (Test-Path $pythonPath)) {
+    Write-Host "Virtual environment Python not found at '$pythonPath'. Falling back to 'python' on PATH."
+    $pythonPath = "python"
+}
 $command = "$pythonPath -m packaging_tools.sdk_changelog --package-path $absolutePackagePath"
 Write-Host "running command: $command"
 
