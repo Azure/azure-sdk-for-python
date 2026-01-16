@@ -23,7 +23,7 @@
 """
 import asyncio # pylint: disable=do-not-import-asyncio
 import time
-from typing import List, Optional
+from typing import List
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.utils import CaseInsensitiveDict
@@ -136,7 +136,13 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
         return block
 
     def _capture_response_headers(self) -> None:
-        """Capture response headers from the last request."""
+        """Capture response headers from the last request.
+
+        Note: This captures headers from client.last_response_headers immediately after
+        the fetch operation. In concurrent scenarios where multiple operations share the
+        same client, headers may be overwritten. For most single-iterator use cases,
+        this provides accurate header capture.
+        """
         if self._client.last_response_headers:
             headers = self._client.last_response_headers.copy()
             self._response_headers.append(headers)
@@ -166,12 +172,12 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
         """
         return [h.copy() for h in self._response_headers]
 
-    def get_last_response_headers(self) -> Optional[CaseInsensitiveDict]:
+    def get_last_response_headers(self) -> CaseInsensitiveDict:
         """Get the response headers from the most recent page fetch.
 
-        :return: Response headers from the last page, or None if no pages fetched yet.
-        :rtype: ~azure.core.utils.CaseInsensitiveDict or None
+        :return: Response headers from the last page, or empty dict if no pages fetched yet.
+        :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
         if self._response_headers:
             return self._response_headers[-1].copy()
-        return None
+        return CaseInsensitiveDict()

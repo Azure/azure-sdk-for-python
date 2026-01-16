@@ -45,17 +45,17 @@ class CosmosItemPaged(ItemPaged[dict[str, Any]]):
             return self._query_iterable.get_response_headers()
         return []
 
-    def get_last_response_headers(self) -> Optional[CaseInsensitiveDict]:
+    def get_last_response_headers(self) -> CaseInsensitiveDict:
         """Returns the response headers from the most recent page fetch.
 
-        :return: Response headers from the last page, or None if no pages have been fetched
-        :rtype: Optional[~azure.core.utils.CaseInsensitiveDict]
+        :return: Response headers from the last page, or empty dict if no pages have been fetched
+        :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
         if self._query_iterable is None:
-            return None
+            return CaseInsensitiveDict()
         if hasattr(self._query_iterable, 'get_last_response_headers'):
             return self._query_iterable.get_last_response_headers()
-        return None
+        return CaseInsensitiveDict()
 
 
 class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
@@ -95,17 +95,17 @@ class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
             return self._query_iterable.get_response_headers()
         return []
 
-    def get_last_response_headers(self) -> Optional[CaseInsensitiveDict]:
+    def get_last_response_headers(self) -> CaseInsensitiveDict:
         """Returns the response headers from the most recent page fetch.
 
-        :return: Response headers from the last page, or None if no pages have been fetched
-        :rtype: Optional[~azure.core.utils.CaseInsensitiveDict]
+        :return: Response headers from the last page, or empty dict if no pages have been fetched
+        :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
         if self._query_iterable is None:
-            return None
+            return CaseInsensitiveDict()
         if hasattr(self._query_iterable, 'get_last_response_headers'):
             return self._query_iterable.get_last_response_headers()
-        return None
+        return CaseInsensitiveDict()
 
 
 class CosmosDict(dict[str, Any]):

@@ -80,6 +80,11 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert last_headers is not None
             assert "x-ms-request-charge" in last_headers
 
+            # Verify that the last headers match the first page in response_headers
+            # (since this is a single page query, they should be the same)
+            assert last_headers.get("x-ms-activity-id") == first_page_headers.get("x-ms-activity-id")
+            assert last_headers.get("x-ms-request-charge") == first_page_headers.get("x-ms-request-charge")
+
         finally:
             await self.created_db.delete_container(created_collection.id)
 
