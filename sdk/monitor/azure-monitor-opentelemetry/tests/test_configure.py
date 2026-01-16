@@ -114,12 +114,19 @@ class TestConfigure(unittest.TestCase):
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_not_called()
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_logging
+        self.assertLess(call_order.index("metrics"), call_order.index("logging"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -158,12 +165,19 @@ class TestConfigure(unittest.TestCase):
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_not_called()
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_tracing
+        self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -246,12 +260,20 @@ class TestConfigure(unittest.TestCase):
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_logging and setup_tracing
+        self.assertLess(call_order.index("metrics"), call_order.index("logging"))
+        self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -1010,6 +1032,7 @@ class TestConfigure(unittest.TestCase):
         instrumentor_mock.instrument.assert_called_once()
         logger_mock.debug.assert_called_once()
 
+    @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
     @patch("azure.monitor.opentelemetry._configure._is_on_functions")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
@@ -1018,12 +1041,21 @@ class TestConfigure(unittest.TestCase):
         is_attach_enabled_mock,
         is_on_functions_mock,
         mock_diagnostics,
+        mock_logger,
     ):
         is_attach_enabled_mock.return_value = True
         is_on_functions_mock.return_value = False
         _send_attach_warning()
+        message = (
+            "Distro detected that automatic instrumentation may have occurred. Only use autoinstrumentation if you "
+            "are not using manual instrumentation of OpenTelemetry in your code, such as with "
+            "azure-monitor-opentelemetry or azure-monitor-opentelemetry-exporter. For App Service resources, disable "
+            "autoinstrumentation in the Application Insights experience on your App Service resource or by setting "
+            "the ApplicationInsightsAgent_EXTENSION_VERSION app setting to 'disabled'."
+        )
+        mock_logger.warning.assert_called_once_with(message)
         mock_diagnostics.warning.assert_called_once_with(
-            "Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not being duplicated. This may impact your cost.",
+            message,
             _DISTRO_DETECTS_ATTACH,
         )
 
