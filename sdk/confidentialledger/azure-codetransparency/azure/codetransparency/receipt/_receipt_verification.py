@@ -5,6 +5,7 @@
 # ------------------------------------
 """Algorithm implementation for verifying CCF SCITT receipts."""
 
+import json
 from base64 import urlsafe_b64decode
 from dataclasses import dataclass, field
 from enum import Enum
@@ -14,6 +15,7 @@ from typing import Dict, List, Any, Optional, Tuple
 from azure.keyvault.keys.crypto import CryptographyClient, SignatureAlgorithm
 
 from azure.codetransparency.cbor import CBOREncoder, CBORDecoder
+from azure.codetransparency import CodeTransparencyClient
 
 
 # COSE header labels
@@ -509,58 +511,12 @@ def _verify_receipt(
             )
 
 
-def _fetch_jwks_document(issuer: str) -> Dict[str, Any]:
-    """Fetch the JWKS document from the issuer's endpoint.
-
-    :param issuer: The issuer domain.
-    :return: The JWKS document.
-    :raises ValueError: If the JWKS document cannot be fetched.
-    """
-    import json
-    from azure.core.pipeline import Pipeline
-    from azure.core.pipeline.transport import RequestsTransport
-    from azure.core.pipeline.policies import RetryPolicy, UserAgentPolicy
-    from azure.core.rest import HttpRequest
-
-    endpoint = f"https://{issuer}/jwks"
-
-    try:
-        # Create a simple pipeline with retry and user agent policies
-        policies_list = [
-            UserAgentPolicy("azure-codetransparency"),
-            RetryPolicy(),
-        ]
-        transport = RequestsTransport()
-        pipeline = Pipeline(transport=transport, policies=policies_list)
-
-        request = HttpRequest(
-            method="GET", url=endpoint, headers={"Accept": "application/json"}
-        )
-
-        response = pipeline.run(request)
-        http_response = response.http_response
-
-        if http_response.status_code != 200:
-            raise ValueError(
-                f"Failed to fetch JWKS document from {issuer}: "
-                f"HTTP {http_response.status_code}"
-            )
-
-        body = http_response.body()
-        if isinstance(body, bytes):
-            return json.loads(body.decode("utf-8"))
-        else:
-            return json.loads(body)
-
-    except Exception as exc:
-        raise ValueError(f"Failed to fetch JWKS document from {issuer}: {exc}") from exc
-
-
 def _get_service_certificate_key(
     receipt_bytes: bytes,
     issuer: str,
     offline_keys: Optional[CodeTransparencyOfflineKeys],
     allow_network_fallback: bool,
+    client: Optional[CodeTransparencyClient] = None,
 ) -> Dict[str, Any]:
     """Get the service certificate key for verifying a receipt.
 
@@ -568,6 +524,8 @@ def _get_service_certificate_key(
     :param issuer: The issuer domain.
     :param offline_keys: Optional offline keys store.
     :param allow_network_fallback: Whether to allow network fallback if offline keys are not found.
+    :param client: Optional CodeTransparencyClient instance (or compatible object with get_public_keys method)
+        to use for fetching public keys. It is expected to be provided if network fallback is allowed.
     :return: The JWK for verification.
     :raises ValueError: If no matching key is found.
     """
@@ -576,8 +534,18 @@ def _get_service_certificate_key(
     # Check offline keys first
     if offline_keys is not None and issuer in offline_keys.by_issuer:
         jwks_document = offline_keys.by_issuer[issuer]
-    elif allow_network_fallback:
-        jwks_document = _fetch_jwks_document(issuer)
+    elif allow_network_fallback and client is not None:
+        try:
+            response_iter = client.get_public_keys()
+            response_bytes = b"".join(response_iter)
+            if isinstance(response_bytes, bytes):
+                jwks_document = json.loads(response_bytes.decode("utf-8"))
+            else:
+                jwks_document = json.loads(response_bytes)
+        except Exception as exc:
+            raise ValueError(
+                f"Failed to fetch JWKS document from {issuer} using client: {exc}"
+            ) from exc
 
     if jwks_document is None:
         raise ValueError(
@@ -599,19 +567,17 @@ def _get_service_certificate_key(
     # Get KID from receipt
     receipt = CBORDecoder(receipt_bytes).decode_cose_sign1()
     protected_headers = receipt.get("protected_headers", {})
-
     kid = protected_headers.get(COSE_HEADER_KID)
     if kid is None:
         raise ValueError("KID not found in receipt.")
-
     if isinstance(kid, bytes):
         kid_str = kid.decode("utf-8")
     else:
         kid_str = str(kid)
-
     if kid_str not in keys_dict:
         raise ValueError(f"Key with ID '{kid_str}' not found.")
 
+    # Return the matching public key
     return keys_dict[kid_str]
 
 
@@ -636,6 +602,7 @@ def _prepare_signed_statement_for_verification(
 def verify_transparent_statement(
     transparent_statement_bytes: bytes,
     verification_options: Optional[VerificationOptions] = None,
+    **kwargs: Any,
 ) -> None:
     """Verify the receipt integrity against the COSE_Sign1 envelope and enforce issuer domain rules.
 
@@ -716,6 +683,10 @@ def verify_transparent_statement(
         == OfflineKeysBehavior.FALLBACK_TO_NETWORK
     )
 
+    # Cache for client instances per issuer domain
+    # This would deal with multiple receipts from the same issuer
+    client_instances: Dict[str, CodeTransparencyClient] = {}
+
     for issuer, receipt_bytes in receipt_list:
         issuer_lower = issuer.lower()
         is_authorized = issuer_lower in authorized_list_normalized
@@ -751,11 +722,19 @@ def verify_transparent_statement(
             continue
 
         try:
+            if issuer not in client_instances and allow_network_fallback:
+                endpoint = f"https://{issuer}"
+                client_credential = kwargs.get("credential", None)
+                client_instances[issuer] = CodeTransparencyClient(
+                    endpoint, client_credential, **kwargs
+                )
+            client = client_instances.get(issuer, None)
             jwk = _get_service_certificate_key(
                 receipt_bytes,
                 issuer,
                 offline_keys,
                 allow_network_fallback,
+                client=client,
             )
             _verify_receipt(jwk, receipt_bytes, signed_statement_bytes)
 
