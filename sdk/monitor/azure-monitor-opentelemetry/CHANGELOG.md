@@ -5,7 +5,7 @@
 ### Features Added
 
 - In double-instrumentation scenarios, surface in the log stream instead of just in diagnostic logs.
-  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
+  ([#44682](https://github.com/Azure/azure-sdk-for-python/pull/44682))
 
 ### Breaking Changes
 
