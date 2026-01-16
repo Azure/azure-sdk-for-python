@@ -1048,7 +1048,7 @@ class TestConfigure(unittest.TestCase):
         _send_attach_warning()
         message = (
             "Distro detected that automatic instrumentation may have occurred. Only use autoinstrumentation if you "
-            "aren't using manual instrumentation of OpenTelemetry in your code, such as with "
+            "are not using manual instrumentation of OpenTelemetry in your code, such as with "
             "azure-monitor-opentelemetry or azure-monitor-opentelemetry-exporter. For App Service resources, disable "
             "autoinstrumentation in the Application Insights experience on your App Service resource or by setting "
             "the ApplicationInsightsAgent_EXTENSION_VERSION app setting to 'disabled'."
