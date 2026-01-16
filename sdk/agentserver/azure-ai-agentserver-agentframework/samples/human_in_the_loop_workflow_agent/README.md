@@ -20,6 +20,14 @@ AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=<deployment-name>
 
 `main.py` automatically loads the `.env` file before spinning up the server.
 
+## Checkpoint persistence
+
+The adapter uses the `CheckpointRepository` interface to retrieve a `CheckpointStorage` per conversation. The storage keeps serialized workflow state so long-running conversations can resume after the host restarts.
+
+- Use `InMemoryCheckpointRepository()` for quick demos; checkpoints vanish once the Python process exits.
+- `FileCheckpointRepository("<path>")` is implemented to persist checkpoints in files.
+- To back checkpoints with a different store (Redis, Blob, etc.), subclass `CheckpointRepository`, implement `get_or_create`, and pass your repository instance to `from_agent_framework(..., checkpoint_repository=<your repo>)`.
+
 ## Run the hosted workflow agent
 
 For Human-in-the-loop scenario, the `HumanReviewRequest` and `ReviewResponse` are provided by user. User should provide functions for these classes that allow adapter convert the data to request payloads.

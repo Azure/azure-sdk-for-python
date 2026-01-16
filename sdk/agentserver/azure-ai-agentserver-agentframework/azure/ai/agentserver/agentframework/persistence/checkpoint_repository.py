@@ -38,12 +38,13 @@ class InMemoryCheckpointRepository(CheckpointRepository):
             self._inventory[conversation_id] = InMemoryCheckpointStorage()
         return self._inventory[conversation_id]
 
+
 class FileCheckpointRepository(CheckpointRepository):
     """File-based implementation of CheckpointRepository."""
     def __init__(self, storage_path: str) -> None:
         self._storage_path = storage_path
         self._inventory: dict[str, CheckpointStorage] = {}
-        os.makedirs(storage_path, exist_ok=True)
+        os.makedirs(self._storage_path, exist_ok=True)
 
     async def get_or_create(self, conversation_id: str) -> Optional[CheckpointStorage]:
         """Retrieve or create a checkpoint storage by conversation ID.

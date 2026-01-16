@@ -3,13 +3,11 @@
 import asyncio
 from typing import Annotated, Any, Collection
 from dotenv import load_dotenv
-import json
 
 load_dotenv()
 
-from agent_framework import ChatAgent, ChatMessage, ChatMessageStoreProtocol, FunctionResultContent, ai_function
+from agent_framework import ChatAgent, ChatMessage, ChatMessageStoreProtocol, ai_function
 from agent_framework._threads import ChatMessageStoreState
-from agent_framework._types import UserInputRequestContents
 from agent_framework.azure import AzureOpenAIChatClient
 
 from azure.ai.agentserver.agentframework import from_agent_framework
@@ -22,7 +20,6 @@ This sample demonstrates using tool approvals with threads.
 With threads, you don't need to manually pass previous messages -
 the thread stores and retrieves them automatically.
 """
-
 
 class CustomChatMessageStore(ChatMessageStoreProtocol):
     """Implementation of custom chat message store.

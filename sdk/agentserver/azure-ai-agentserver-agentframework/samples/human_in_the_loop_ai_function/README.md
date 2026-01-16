@@ -1,6 +1,6 @@
 # Human-in-the-Loop Agent Framework Sample
 
-This sample shows how to host a Microsoft Agent Framework agent inside Azure AI Agent Server while escalating responses to a real human when ai function requires approval. The sample is created by [agent-framework](https://github.com/microsoft/agent-framework/blob/main/python/samples/getting_started/tools/ai_function_with_approval_and_threads.py).
+This sample demonstrates how to host a Microsoft Agent Framework agent inside Azure AI Agent Server and escalate function-call responses to a human reviewer whenever approval is required. It is adapted from the [agent-framework sample](https://github.com/microsoft/agent-framework/blob/main/python/samples/getting_started/tools/ai_function_with_approval_and_threads.py).
 
 ## Prerequisites
 
@@ -20,7 +20,18 @@ AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=<deployment-name>
 
 `main.py` automatically loads the `.env` file before spinning up the server.
 
-## Run the hosted workflow agent
+## Thread persistence
+
+The sample uses `JsonLocalFileAgentThreadRepository` for `AgentThread` persistence, creating a JSON file per conversation ID under the sample directory. An in-memory alternative, `InMemoryAgentThreadRepository`, lives in the `azure.ai.agentserver.agentframework.persistence` module.
+
+To store thread messages elsewhere, inherit from `SerializedAgentThreadRepository` and override the following methods:
+
+- `read_from_storage(self, conversation_id: str) -> Optional[Any]`
+- `write_to_storage(self, conversation_id: str, serialized_thread: Any)`
+
+These hooks let you plug in any backing store (blob storage, databases, etc.) without changing the rest of the sample.
+
+## Run the hosted agent
 
 From this directory start the adapter host (defaults to `http://0.0.0.0:8088`):
 
@@ -30,7 +41,7 @@ python main.py
 
 ## Send a user request
 
-Send a `POST` request to `http://0.0.0.0:8088/responses`
+Send a `POST` request to `http://0.0.0.0:8088/responses`:
 
 ```json
 {
@@ -40,7 +51,7 @@ Send a `POST` request to `http://0.0.0.0:8088/responses`
 }
 ```
 
-A response with human-review request looks like this (formatted for clarity):
+A response that requires a human decision looks like this (formatted for clarity):
 
 ```json
 {
@@ -58,21 +69,20 @@ A response with human-review request looks like this (formatted for clarity):
 }
 ```
 
-Capture three values from the response:
+Capture these values from the response; you will need them to provide feedback:
 
 - `conversation.id`
-- The `call_id` of the `__hosted_agent_adapter_hitl__` function call
-- The `request_id` inside the serialized `agent_request`
+- The `call_id` associated with `__hosted_agent_adapter_hitl__`
 
 ## Provide human feedback
 
-Respond by sending a `CreateResponse` request with `function_call_output` message that carries your review decision. Replace the placeholders before running the command:
+Send a `CreateResponse` request with a `function_call_output` message that contains your decision (`approve`, `reject`, or additional guidance). Replace the placeholders before running the command:
 
 ```json
 {
   "agent": {"name": "local_agent", "type": "agent_reference"},
   "stream": false,
-  "convseration": {"id": "<conversation_id>"},
+  "conversation": {"id": "<conversation_id>"},
   "input": [
     {
       "call_id": "<call_id>",
@@ -83,4 +93,4 @@ Respond by sending a `CreateResponse` request with `function_call_output` messag
 }
 ```
 
-Once the reviewer accepts the human feedback, the worker emits the approved assistant response and the HTTP call returns the final output.
+When the reviewer response is accepted, the worker emits the approved assistant response and the HTTP call returns the final output.
