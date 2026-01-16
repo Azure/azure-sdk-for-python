@@ -30,22 +30,5 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Add additional pylint disables to the model_base.py file
 powershell -Command "(Get-Content azure\ai\projects\_utils\model_base.py) -replace '# pylint: disable=protected-access, broad-except', '# pylint: disable=protected-access, broad-except, import-error, no-value-for-parameter' | Set-Content azure\ai\projects\_utils\model_base.py"
 
-REM Normalize troublesome docstring field lists to single-line to avoid Sphinx definition list errors
-python -c "import pathlib; p=pathlib.Path(r'azure/ai/projects/models/_models.py'); lines=p.read_text(encoding='utf-8').splitlines(); out=[]; i=0
-while i < len(lines):
-    line=lines[i]; stripped=line.lstrip(); prefix=line[:len(line)-len(stripped)]
-    if stripped.startswith((':ivar ', ':vartype ', ':param ', ':type ')):
-        parts=[stripped]; i+=1
-        while i < len(lines):
-            nxt=lines[i]; nxts=nxt.lstrip()
-            if nxt.startswith(prefix + '    ') and not nxts.startswith(':'):
-                parts.append(nxts); i+=1; continue
-            break
-        field, rest = parts[0].split(':',1)
-        merged=' '.join([rest.strip()]+[p.strip() for p in parts[1:]])
-        out.append(f"{prefix}{field}:{' ' + merged if merged else ''}"); continue
-    out.append(line); i+=1
-p.write_text('\n'.join(out)+'\n', encoding='utf-8')"
-
 echo Now do these additional changes manually, if you want the "Generate docs" job to succeed in PR pipeline
 REM 1. Remove `generate_summary` from class `Reasoning`. It's deprecated but causes two types of errors. Consider removing it from TypeSpec.

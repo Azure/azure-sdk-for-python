@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -47,6 +47,7 @@ from ...operations._operations import (
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_versions_request,
+    build_agents_stream_agent_container_logs_request,
     build_agents_update_from_manifest_request,
     build_agents_update_request,
     build_connections_get_request,
@@ -1781,6 +1782,113 @@ class AgentsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={
+            "2025-11-15-preview": ["api_version", "agent_name", "agent_version", "kind", "replica_name", "tail"]
+        },
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def stream_agent_container_logs(
+        self,
+        agent_name: str,
+        agent_version: str,
+        *,
+        kind: Optional[Union[str, _models.ContainerLogKind]] = None,
+        replica_name: Optional[str] = None,
+        tail: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Container log entry streamed from the container as text chunks.
+        Each chunk is a UTF-8 string that may be either a plain text log line
+        or a JSON-formatted log entry, depending on the type of container log being streamed.
+        Clients should treat each chunk as opaque text and, if needed, attempt
+        to parse it as JSON based on their logging requirements.
+
+        For system logs, the format is JSON with the following structure:
+        {"TimeStamp":"2025-12-15T16:51:33Z","Type":"Normal","ContainerAppName":null,"RevisionName":null,"ReplicaName":null,"Msg":"Connecting
+        to the events
+        collector...","Reason":"StartingGettingEvents","EventSource":"ContainerAppController","Count":1}
+        {"TimeStamp":"2025-12-15T16:51:34Z","Type":"Normal","ContainerAppName":null,"RevisionName":null,"ReplicaName":null,"Msg":"Successfully
+        connected to events
+        server","Reason":"ConnectedToEventsServer","EventSource":"ContainerAppController","Count":1}
+
+        For console logs, the format is plain text as emitted by the container's stdout/stderr.
+        2025-12-15T08:43:48.72656  Connecting to the container 'agent-container'...
+        2025-12-15T08:43:48.75451  Successfully Connected to container: 'agent-container' [Revision:
+        'je90fe655aa742ef9a188b9fd14d6764--7tca06b', Replica:
+        'je90fe655aa742ef9a188b9fd14d6764--7tca06b-6898b9c89f-mpkjc']
+        2025-12-15T08:33:59.0671054Z stdout F INFO:     127.0.0.1:42588 - "GET /readiness HTTP/1.1" 200
+        OK
+        2025-12-15T08:34:29.0649033Z stdout F INFO:     127.0.0.1:60246 - "GET /readiness HTTP/1.1" 200
+        OK
+        2025-12-15T08:34:59.0644467Z stdout F INFO:     127.0.0.1:43994 - "GET /readiness HTTP/1.1" 200
+        OK.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param agent_version: The version of the agent. Required.
+        :type agent_version: str
+        :keyword kind: console returns container stdout/stderr, system returns container app event
+         stream. defaults to console. Known values are: "console" and "system". Default value is None.
+        :paramtype kind: str or ~azure.ai.projects.models.ContainerLogKind
+        :keyword replica_name: When omitted, the server chooses the first replica for console logs.
+         Required to target a specific replica. Default value is None.
+        :paramtype replica_name: str
+        :keyword tail: Number of trailing lines returned. Enforced to 1-300. Defaults to 20. Default
+         value is None.
+        :paramtype tail: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_stream_agent_container_logs_request(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            kind=kind,
+            replica_name=replica_name,
+            tail=tail,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class MemoryStoresOperations:

@@ -2756,7 +2756,7 @@ class CodeBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="code"):
 
 
 class CodeInterpreterContainerAuto(_Model):
-    """CodeInterpreterContainerAuto.
+    """CodeInterpreterToolAuto.
 
     :ivar type: Always ``auto``. Required. Default value is "auto".
     :vartype type: str
@@ -5574,9 +5574,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
 
     @overload

@@ -224,6 +224,15 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Remote tool"""
 
 
+class ContainerLogKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of logs to stream from a container."""
+
+    CONSOLE = "console"
+    """Console logs from the container."""
+    SYSTEM = "system"
+    """System logs from the container."""
+
+
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ContainerMemoryLimit."""
 
