@@ -114,12 +114,19 @@ class TestConfigure(unittest.TestCase):
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_not_called()
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_logging
+        self.assertLess(call_order.index("metrics"), call_order.index("logging"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -158,12 +165,19 @@ class TestConfigure(unittest.TestCase):
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_not_called()
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_tracing
+        self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -246,12 +260,20 @@ class TestConfigure(unittest.TestCase):
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_logging and setup_tracing
+        self.assertLess(call_order.index("metrics"), call_order.index("logging"))
+        self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",

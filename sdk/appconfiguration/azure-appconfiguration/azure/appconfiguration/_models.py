@@ -61,13 +61,13 @@ class ConfigurationSetting(Model):
 
     def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
-        self.key = kwargs.get("key", None)
-        self.label = kwargs.get("label", None)
-        self.value = kwargs.get("value", None)
-        self.etag = kwargs.get("etag", None)
+        self.key = kwargs.get("key", None)  # type: ignore[assignment]
+        self.label = kwargs.get("label", None)  # type: ignore[assignment]
+        self.value = kwargs.get("value", None)  # type: ignore[assignment]
+        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
         self.content_type = kwargs.get("content_type", None)
-        self.last_modified = kwargs.get("last_modified", None)
-        self.read_only = kwargs.get("read_only", None)
+        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
+        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
         self.tags = kwargs.get("tags", {})
 
     @classmethod
@@ -182,14 +182,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.feature_id = feature_id
         self.key = kwargs.get("key", None) or (self._key_prefix + self.feature_id)
-        self.label = kwargs.get("label", None)
-        self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
-        self.last_modified = kwargs.get("last_modified", None)
+        self.label = kwargs.get("label", None)  # type: ignore[assignment]
+        self.content_type = kwargs.get("content_type", self._feature_flag_content_type)  # type: ignore[assignment]
+        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
         self.tags = kwargs.get("tags", {})
-        self.read_only = kwargs.get("read_only", None)
-        self.etag = kwargs.get("etag", None)
-        self.description = kwargs.get("description", None)
-        self.display_name = kwargs.get("display_name", None)
+        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
+        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
+        self.description = kwargs.get("description", None)  # type: ignore[assignment]
+        self.display_name = kwargs.get("display_name", None)  # type: ignore[assignment]
         self.filters = [] if filters is None else filters
         self.enabled = enabled
         self._value = json.dumps(
@@ -326,10 +326,10 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
         self.label = kwargs.pop("label", None)
-        self.content_type = kwargs.get("content_type", self._secret_reference_content_type)
-        self.etag = kwargs.get("etag", None)
-        self.last_modified = kwargs.get("last_modified", None)
-        self.read_only = kwargs.get("read_only", None)
+        self.content_type = kwargs.get("content_type", self._secret_reference_content_type)  # type: ignore[assignment]
+        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
+        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
+        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
         self.tags = kwargs.get("tags", {})
         self.secret_id = secret_id
         self._value = json.dumps({"uri": secret_id})

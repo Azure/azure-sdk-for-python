@@ -84,7 +84,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -129,7 +129,7 @@ class TestStorageCPK(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -173,7 +173,7 @@ class TestStorageCPK(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -215,7 +215,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Act
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -255,7 +255,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -329,7 +329,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -368,7 +368,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -427,7 +427,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -467,7 +467,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -511,7 +511,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -573,7 +573,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Act
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -615,7 +615,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -665,7 +665,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=1024,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
