@@ -80,6 +80,9 @@ jobs:
     - template: ../variables/globals.yml
     - name: InjectedPackages
       value: ${{ parameters.InjectedPackages }}
+    - ${{ if eq(lower(parameters.OSName), 'macos') }}:
+      - name: DOTNET_ROOT
+        value: $(HOME)/.dotnet
 
     steps:
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml

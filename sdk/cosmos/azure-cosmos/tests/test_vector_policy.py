@@ -35,7 +35,6 @@ class TestVectorPolicy(unittest.TestCase):
     def tearDownClass(cls):
         test_config.TestConfig.try_delete_database_with_id(cls.client, cls.test_db.id)
 
-    @unittest.skip
     def test_create_valid_vector_embedding_policy(self):
         # Using valid data types
         data_types = ["float32", "float16", "int8", "uint8"]
