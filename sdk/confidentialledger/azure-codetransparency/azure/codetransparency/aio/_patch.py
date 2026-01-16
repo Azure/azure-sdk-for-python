@@ -10,8 +10,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 from typing import Any, Union
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline import policies
 
 from azure.codetransparency.aio._client import CodeTransparencyClient as GeneratedClient
 from azure.confidentialledger.certificate import (
@@ -51,7 +51,7 @@ class CodeTransparencyClient(GeneratedClient):
     def __init__(
         self,
         endpoint: str,
-        credential: AsyncTokenCredential,
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
         *,
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
@@ -87,9 +87,9 @@ class CodeTransparencyClient(GeneratedClient):
 
         # Increase default retry attempts and backoff factor to better handle transient failures
         # see defaults in azure.core.pipeline.policies.RetryPolicyBase
-        kwargs["retry_status"] = kwargs.pop("retry_status", 5) # some 503 responses may take a while to recover
+        kwargs["retry_status"] = kwargs.pop(
+            "retry_status", 5
+        )  # some 503 responses may take a while to recover
         kwargs["retry_backoff_factor"] = kwargs.pop("retry_backoff_factor", 0.9)
-
-        
 
         super().__init__(endpoint, credential, **kwargs)

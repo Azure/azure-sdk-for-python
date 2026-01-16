@@ -26,6 +26,11 @@ class CBORDecoder:
     """
 
     def __init__(self, data: bytes):
+        """Initialize a CBORDecoder with raw CBOR data.
+
+        :param data: The CBOR-encoded bytes to decode.
+        :type data: bytes
+        """
         self.data = data
         self.pos = 0
 
@@ -48,11 +53,17 @@ class CBORDecoder:
         data = b"".join(response)
         return CBORDecoder(data)
 
-    def decode(self, allow_break: bool = False) -> Any:
+    def decode(  # pylint: disable=too-many-return-statements
+        self, allow_break: bool = False
+    ) -> Any:
         """Decode the next CBOR item.
 
-        :param allow_break: If True, allow "break" stop code and return _CBOR_BREAK.
-        :return: The decoded value.
+        :param allow_break: If True, allow "break" stop code and return the internal
+            _CBOR_BREAK sentinel. Defaults to False.
+        :type allow_break: bool
+        :return: The decoded value. The type depends on the CBOR major type:
+            int, bytes, str, list, dict, bool, None, float, or a dict for tags/simple values.
+        :rtype: Any
         :raises ValueError: If the data is not well-formed CBOR.
         """
         if len(self.data) == 0:
@@ -81,7 +92,7 @@ class CBORDecoder:
 
         # Check for indefinite length (additional info 31) - only valid for types 2-5
         if additional_info == 31:
-            if major_type == 0 or major_type == 1 or major_type == 6:
+            if major_type in (0, 1, 6):
                 raise ValueError(
                     f"Indefinite length not allowed for major type {major_type}"
                 )
@@ -89,26 +100,26 @@ class CBORDecoder:
 
         if major_type == 0:  # Unsigned integer
             return self._decode_unsigned(additional_info)
-        elif major_type == 1:  # Negative integer (-1 - n)
+        if major_type == 1:  # Negative integer (-1 - n)
             return -1 - self._decode_unsigned(additional_info)
-        elif major_type == 2:  # Byte string
+        if major_type == 2:  # Byte string
             length = self._decode_unsigned(additional_info)
             if self.pos + length > len(self.data):
                 raise ValueError("Byte string length exceeds available data")
-            value = self.data[self.pos : self.pos + length]
+            byte_value = self.data[self.pos : self.pos + length]
             self.pos += length
-            return value
-        elif major_type == 3:  # Text string (UTF-8)
+            return byte_value
+        if major_type == 3:  # Text string (UTF-8)
             length = self._decode_unsigned(additional_info)
             if self.pos + length > len(self.data):
                 raise ValueError("Text string length exceeds available data")
-            value = self.data[self.pos : self.pos + length].decode("utf-8")
+            text_value = self.data[self.pos : self.pos + length].decode("utf-8")
             self.pos += length
-            return value
-        elif major_type == 4:  # Array
+            return text_value
+        if major_type == 4:  # Array
             count = self._decode_unsigned(additional_info)
             return [self.decode() for _ in range(count)]
-        elif major_type == 5:  # Map
+        if major_type == 5:  # Map
             count = self._decode_unsigned(additional_info)
             result = {}
             for _ in range(count):
@@ -116,62 +127,70 @@ class CBORDecoder:
                 value = self.decode()
                 result[key] = value
             return result
-        elif major_type == 6:  # Tag
+        if major_type == 6:  # Tag
             tag_number = self._decode_unsigned(additional_info)
             tagged_value = self.decode()
             return {"tag": tag_number, "value": tagged_value}
-        elif major_type == 7:  # Simple values and floats
+        if major_type == 7:  # Simple values and floats
             return self._decode_simple_or_float(additional_info)
-        else:
-            raise ValueError(f"Unknown CBOR major type: {major_type}")
+
+        raise ValueError(f"Unknown CBOR major type: {major_type}")
 
     def _decode_unsigned(self, additional_info: int) -> int:
         """Decode an unsigned integer based on additional info (RFC 8949 Section 3).
 
-        Additional info values:
-        - 0-23: Value is the additional info itself
-        - 24: Next 1 byte is uint8
-        - 25: Next 2 bytes are uint16 (big-endian)
-        - 26: Next 4 bytes are uint32 (big-endian)
-        - 27: Next 8 bytes are uint64 (big-endian)
+        :param additional_info: The 5-bit additional info from the CBOR initial byte.
+            Values 0-23 are the value itself, 24-27 indicate extended byte lengths.
+        :type additional_info: int
+        :return: The decoded unsigned integer value.
+        :rtype: int
+        :raises ValueError: If there is insufficient data or invalid additional info.
         """
         if additional_info < 24:
             return additional_info
-        elif additional_info == 24:
+        if additional_info == 24:
             if self.pos >= len(self.data):
                 raise ValueError("Unexpected end of data reading uint8")
             value = self.data[self.pos]
             self.pos += 1
             return value
-        elif additional_info == 25:
+        if additional_info == 25:
             if self.pos + 2 > len(self.data):
                 raise ValueError("Unexpected end of data reading uint16")
             value = int.from_bytes(self.data[self.pos : self.pos + 2], "big")
             self.pos += 2
             return value
-        elif additional_info == 26:
+        if additional_info == 26:
             if self.pos + 4 > len(self.data):
                 raise ValueError("Unexpected end of data reading uint32")
             value = int.from_bytes(self.data[self.pos : self.pos + 4], "big")
             self.pos += 4
             return value
-        elif additional_info == 27:
+        if additional_info == 27:
             if self.pos + 8 > len(self.data):
                 raise ValueError("Unexpected end of data reading uint64")
             value = int.from_bytes(self.data[self.pos : self.pos + 8], "big")
             self.pos += 8
             return value
-        else:
-            # Should not reach here due to earlier checks
-            raise ValueError(f"Invalid additional info: {additional_info}")
+
+        # Should not reach here due to earlier checks
+        raise ValueError(f"Invalid additional info: {additional_info}")
 
     def _decode_indefinite(self, major_type: int) -> Any:
         """Decode indefinite-length items (RFC 8949 Section 3.2).
 
         Indefinite-length items are terminated by the "break" stop code (0xFF).
+
+        :param major_type: The CBOR major type (2=byte string, 3=text string,
+            4=array, 5=map).
+        :type major_type: int
+        :return: The decoded value: bytes, str, list, or dict depending on major_type.
+        :rtype: Union[bytes, str, list, dict]
+        :raises ValueError: If the major type doesn't support indefinite length or
+            if chunks are not of the correct type.
         """
         if major_type == 2:  # Indefinite-length byte string
-            chunks = []
+            chunks: list[bytes] = []
             while True:
                 item = self.decode(allow_break=True)
                 if item is _CBOR_BREAK:
@@ -182,8 +201,8 @@ class CBORDecoder:
                     )
                 chunks.append(item)
             return b"".join(chunks)
-        elif major_type == 3:  # Indefinite-length text string
-            chunks = []
+        if major_type == 3:  # Indefinite-length text string
+            text_chunks: list[str] = []
             while True:
                 item = self.decode(allow_break=True)
                 if item is _CBOR_BREAK:
@@ -192,9 +211,9 @@ class CBORDecoder:
                     raise ValueError(
                         "Indefinite text string chunk must be definite-length text string"
                     )
-                chunks.append(item)
-            return "".join(chunks)
-        elif major_type == 4:  # Indefinite-length array
+                text_chunks.append(item)
+            return "".join(text_chunks)
+        if major_type == 4:  # Indefinite-length array
             items = []
             while True:
                 item = self.decode(allow_break=True)
@@ -202,7 +221,7 @@ class CBORDecoder:
                     break
                 items.append(item)
             return items
-        elif major_type == 5:  # Indefinite-length map
+        if major_type == 5:  # Indefinite-length map
             result = {}
             while True:
                 key = self.decode(allow_break=True)
@@ -211,37 +230,33 @@ class CBORDecoder:
                 value = self.decode(allow_break=False)  # Value cannot be break
                 result[key] = value
             return result
-        else:
-            raise ValueError(
-                f"Indefinite length not supported for major type {major_type}"
-            )
 
-    def _decode_simple_or_float(self, additional_info: int) -> Any:
+        raise ValueError(f"Indefinite length not supported for major type {major_type}")
+
+    def _decode_simple_or_float(  # pylint: disable=too-many-return-statements
+        self, additional_info: int
+    ) -> Any:  # pylint: disable=too-many-return-statements
         """Decode simple values and floats (RFC 8949 Section 3.3).
 
-        Simple values:
-        - 0-19: Unassigned
-        - 20: false
-        - 21: true
-        - 22: null
-        - 23: undefined
-        - 24: Next byte is simple value (32-255 only)
-        - 25: Half-precision float (16-bit IEEE 754)
-        - 26: Single-precision float (32-bit IEEE 754)
-        - 27: Double-precision float (64-bit IEEE 754)
+        :param additional_info: The 5-bit additional info from the CBOR initial byte.
+        :type additional_info: int
+        :return: The decoded value: False, True, None, float, or a dict
+            for undefined/unassigned simple values (e.g., {"simple": n}).
+        :rtype: Union[bool, None, float, dict]
+        :raises ValueError: If there is insufficient data or invalid encoding.
         """
         if additional_info < 20:
             # Unassigned simple value 0-19
             return {"simple": additional_info}
-        elif additional_info == 20:
+        if additional_info == 20:
             return False
-        elif additional_info == 21:
+        if additional_info == 21:
             return True
-        elif additional_info == 22:
+        if additional_info == 22:
             return None  # null
-        elif additional_info == 23:
+        if additional_info == 23:
             return {"undefined": True}  # undefined (distinct from null)
-        elif additional_info == 24:
+        if additional_info == 24:
             # Two-byte simple value encoding
             if self.pos >= len(self.data):
                 raise ValueError("Unexpected end of data reading simple value")
@@ -253,13 +268,13 @@ class CBORDecoder:
                     f"Invalid two-byte encoding for simple value {simple_val}"
                 )
             return {"simple": simple_val}
-        elif additional_info == 25:  # Half-precision float (16-bit)
+        if additional_info == 25:  # Half-precision float (16-bit)
             if self.pos + 2 > len(self.data):
                 raise ValueError("Unexpected end of data reading half-precision float")
             half = int.from_bytes(self.data[self.pos : self.pos + 2], "big")
             self.pos += 2
             return self._decode_half_float(half)
-        elif additional_info == 26:  # Single-precision float (32-bit)
+        if additional_info == 26:  # Single-precision float (32-bit)
             import struct
 
             if self.pos + 4 > len(self.data):
@@ -269,7 +284,7 @@ class CBORDecoder:
             value = struct.unpack(">f", self.data[self.pos : self.pos + 4])[0]
             self.pos += 4
             return value
-        elif additional_info == 27:  # Double-precision float (64-bit)
+        if additional_info == 27:  # Double-precision float (64-bit)
             import struct
 
             if self.pos + 8 > len(self.data):
@@ -279,17 +294,20 @@ class CBORDecoder:
             value = struct.unpack(">d", self.data[self.pos : self.pos + 8])[0]
             self.pos += 8
             return value
-        else:
-            # Simple values 24-31 without extension byte are unassigned
-            return {"simple": additional_info}
+
+        # Simple values 24-31 without extension byte are unassigned
+        return {"simple": additional_info}
 
     def _decode_half_float(self, half: int) -> float:
         """Decode IEEE 754 half-precision float (binary16).
 
-        Format (16 bits): 1 sign + 5 exponent + 10 mantissa
+        Format (16 bits): 1 sign + 5 exponent + 10 mantissa.
+        Implementation based on RFC 8949 Appendix D.
 
-        Implementation based on RFC 8949 Appendix D (Figure 4: Python Code
-        for a Half-Precision Decoder).
+        :param half: The 16-bit integer representation of the half-precision float.
+        :type half: int
+        :return: The decoded floating-point value.
+        :rtype: float
         """
         import struct
         from math import ldexp
@@ -309,15 +327,18 @@ class CBORDecoder:
         # Infinity or NaN - set exponent to all 1s for single precision
         return decode_single(value | 0x7F800000)
 
-    def decode_cose_sign1(self) -> Any:
+    def decode_cose_sign1(self) -> dict:
         """Decode a COSE_Sign1 structure.
 
         :return: A dictionary representation of the COSE_Sign1 structure with keys:
-            - protected_headers: The decoded protected headers map
-            - unprotected_headers: The unprotected headers map
-            - payload: The payload bytes
-            - signature: The signature bytes
-            - was_tagged: True if the structure was tagged with COSE_Sign1 tag (18)
+
+            - **protected_headers** (*dict*): The decoded protected headers map.
+            - **unprotected_headers** (*dict*): The unprotected headers map.
+            - **payload** (*bytes*): The payload bytes.
+            - **signature** (*bytes*): The signature bytes.
+            - **was_tagged** (*bool*): True if the structure was tagged with COSE_Sign1 tag (18).
+
+        :rtype: dict
         :raises ValueError: If the data is not a well-formed COSE_Sign1 structure.
         """
         cose_structure = self.decode()

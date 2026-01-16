@@ -30,14 +30,36 @@ UNKNOWN_ISSUER_PREFIX = "__unknown-issuer::"
 COSE_HEADER_EMBEDDED_RECEIPTS = 394
 
 
+class AggregateError(Exception):
+    """An exception that contains multiple inner exceptions.
+
+    :param exceptions: The list of exceptions that occurred.
+    :type exceptions: List[Exception]
+    :ivar exceptions: The list of inner exceptions.
+    :vartype exceptions: List[Exception]
+    """
+
+    def __init__(self, exceptions: List[Exception]):
+        """Initialize an AggregateError with a list of exceptions.
+
+        :param exceptions: The list of exceptions that occurred.
+        :type exceptions: List[Exception]
+        """
+        self.exceptions = exceptions
+        messages = [str(exc) for exc in exceptions]
+        super().__init__(f"Multiple verification failures: {'; '.join(messages)}")
+
+
 def _get_receipts_from_transparent_statement(
     transparent_statement_bytes: bytes,
 ) -> List[Tuple[str, bytes]]:
     """Extract receipts from a transparent statement COSE_Sign1 envelope.
 
     :param transparent_statement_bytes: The COSE_Sign1 bytes containing the transparent statement.
+    :type transparent_statement_bytes: bytes
     :return: A list of tuples containing (issuer_host, receipt_bytes).
-    :raises ValueError: If embedded receipts are not found.
+    :rtype: List[Tuple[str, bytes]]
+    :raises ValueError: If embedded receipts are not found or are malformed.
     """
     cose_sign1 = CBORDecoder(transparent_statement_bytes).decode_cose_sign1()
     unprotected_headers = cose_sign1.get("unprotected_headers", {})
@@ -78,13 +100,20 @@ def _get_service_certificate_key(
     """Get the service certificate key for verifying a receipt.
 
     :param receipt_bytes: The receipt COSE_Sign1 bytes.
+    :type receipt_bytes: bytes
     :param issuer: The issuer domain.
+    :type issuer: str
     :param offline_keys: Optional offline keys store.
+    :type offline_keys: Optional[CodeTransparencyOfflineKeys]
     :param allow_network_fallback: Whether to allow network fallback if offline keys are not found.
-    :param client: Optional CodeTransparencyClient instance (or compatible object with get_public_keys method)
-        to use for fetching public keys. It is expected to be provided if network fallback is allowed.
+    :type allow_network_fallback: bool
+    :param client: Optional CodeTransparencyClient instance (or compatible object with
+        get_public_keys method) to use for fetching public keys. It is expected to be
+        provided if network fallback is allowed.
+    :type client: Optional[CodeTransparencyClient]
     :return: The JWK for verification.
-    :raises ValueError: If no matching key is found.
+    :rtype: Dict[str, Any]
+    :raises ValueError: If no matching key is found or if fetching keys fails.
     """
     jwks_document: Optional[Dict[str, Any]] = None
 
@@ -131,7 +160,7 @@ def _get_service_certificate_key(
     return keys_dict[kid_str]
 
 
-def verify_transparent_statement(
+def verify_transparent_statement(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     transparent_statement_bytes: bytes,
     verification_options: Optional[VerificationOptions] = None,
     **kwargs: Any,
@@ -142,7 +171,12 @@ def verify_transparent_statement(
     authorized code transparency service instances.
 
     :param transparent_statement_bytes: The transparent statement COSE_Sign1 bytes.
+    :type transparent_statement_bytes: bytes
     :param verification_options: Optional verification options. If None, default options are used.
+    :type verification_options: Optional[VerificationOptions]
+    :keyword credential: Optional credential for authenticating with code transparency services
+        when network fallback is enabled.
+    :paramtype credential: Optional[TokenCredential]
     :raises ValueError: If verification fails.
     :raises AggregateError: If multiple verification failures occur.
 
@@ -256,7 +290,7 @@ def verify_transparent_statement(
                 endpoint = f"https://{issuer}"
                 client_credential = kwargs.get("credential", None)
                 client_instances[issuer] = CodeTransparencyClient(
-                    endpoint, client_credential, **kwargs
+                    endpoint, client_credential, **kwargs  # type: ignore[arg-type]
                 )
             client = client_instances.get(issuer, None)
             jwk = _get_service_certificate_key(
@@ -277,7 +311,7 @@ def verify_transparent_statement(
             if is_authorized:
                 valid_authorized_domains_encountered.add(issuer_lower)
 
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             if is_authorized:
                 authorized_failures.append(exc)
             else:
@@ -333,18 +367,9 @@ def verify_transparent_statement(
     # Combine failures
     all_failures = authorized_failures + unauthorized_failures
 
+    if len(all_failures) == 1:
+        raise all_failures[0]
+
     if len(all_failures) > 0:
-        if len(all_failures) == 1:
-            raise all_failures[0]
-        else:
-            # Create an aggregate exception
-            raise AggregateError(all_failures)
-
-
-class AggregateError(Exception):
-    """An exception that contains multiple inner exceptions."""
-
-    def __init__(self, exceptions: List[Exception]):
-        self.exceptions = exceptions
-        messages = [str(exc) for exc in exceptions]
-        super().__init__(f"Multiple verification failures: {'; '.join(messages)}")
+        # Create an aggregate exception
+        raise AggregateError(all_failures)
