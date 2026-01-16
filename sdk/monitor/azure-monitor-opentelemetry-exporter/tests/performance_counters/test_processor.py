@@ -32,7 +32,9 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         if _PerformanceCountersManager in Singleton._instances:
             del Singleton._instances[_PerformanceCountersManager]
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager"
+    )
     def test_on_emit_with_manager(self, mock_manager_class):
         """Test on_emit calls manager when available."""
         # Setup mock manager
@@ -48,7 +50,9 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
 
         # Verify manager was called
         mock_manager_class.assert_called_once()
-        mock_manager._record_log_record.assert_called_once_with(mock_readable_log_record)
+        mock_manager._record_log_record.assert_called_once_with(
+            mock_readable_log_record
+        )
 
     def test_emit_calls_on_emit(self):
         """Test emit method calls on_emit."""
@@ -80,7 +84,9 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         processor.force_flush()
         processor.force_flush(timeout_millis=5000)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager"
+    )
     def test_exception_propagation_in_on_emit(self, mock_manager_class):
         """Test that exceptions from manager are propagated."""
         # Setup mock manager to raise exception
@@ -113,7 +119,9 @@ class TestPerformanceCountersSpanProcessor(unittest.TestCase):
         if _PerformanceCountersManager in Singleton._instances:
             del Singleton._instances[_PerformanceCountersManager]
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager"
+    )
     def test_on_end_with_manager(self, mock_manager_class):
         """Test on_end calls manager when available."""
         # Setup mock manager
@@ -131,7 +139,9 @@ class TestPerformanceCountersSpanProcessor(unittest.TestCase):
         mock_manager_class.assert_called_once()
         mock_manager._record_span.assert_called_once_with(mock_span)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._processor._PerformanceCountersManager"
+    )
     def test_exception_propagation_in_on_end(self, mock_manager_class):
         """Test that exceptions from manager are propagated."""
         # Setup mock manager to raise exception
@@ -155,7 +165,9 @@ class TestPerformanceCountersSpanProcessor(unittest.TestCase):
         processor = _PerformanceCountersSpanProcessor()
 
         # Mock the super class method
-        with mock.patch.object(processor.__class__.__bases__[0], "on_end") as mock_super_on_end:
+        with mock.patch.object(
+            processor.__class__.__bases__[0], "on_end"
+        ) as mock_super_on_end:
             mock_span = MagicMock(spec=ReadableSpan)
 
             processor.on_end(mock_span)

@@ -15,7 +15,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._cpu import (
 
 class TestCpu(unittest.TestCase):
     def test_process_memory(self):
-        with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu.PROCESS") as process_mock:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._quickpulse._cpu.PROCESS"
+        ) as process_mock:
             memory = collections.namedtuple("memory", "rss")
             pmem = memory(rss=40)
             process_mock.memory_info.return_value = pmem
@@ -24,7 +26,9 @@ class TestCpu(unittest.TestCase):
             self.assertEqual(obs.value, 40)
 
     def test_process_memory_error(self):
-        with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu.PROCESS") as process_mock:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._quickpulse._cpu.PROCESS"
+        ) as process_mock:
             memory = collections.namedtuple("memory", "rss")
             pmem = memory(rss=40)
             process_mock.memory_info.return_value = pmem
@@ -33,8 +37,12 @@ class TestCpu(unittest.TestCase):
             obs = next(mem)
             self.assertEqual(obs.value, 0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu._get_quickpulse_process_elapsed_time")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu._get_quickpulse_last_process_time")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._cpu._get_quickpulse_process_elapsed_time"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._cpu._get_quickpulse_last_process_time"
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu.PROCESS")
     def test_process_time(self, process_mock, process_time_mock, elapsed_time_mock):
         current = datetime.now()

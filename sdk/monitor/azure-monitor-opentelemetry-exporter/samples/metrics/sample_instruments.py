@@ -16,7 +16,9 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 
-exporter = AzureMonitorMetricExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+exporter = AzureMonitorMetricExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
 # Metrics are reported every 1 minute
 reader = PeriodicExportingMetricReader(exporter, export_interval_millis=60000)
 meter_provider = MeterProvider(metric_readers=[reader])
@@ -46,7 +48,9 @@ counter = meter.create_counter("counter")
 counter.add(1)
 
 # Async Counter
-observable_counter = meter.create_observable_counter("observable_counter", [observable_counter_func])
+observable_counter = meter.create_observable_counter(
+    "observable_counter", [observable_counter_func]
+)
 
 # UpDownCounter
 updown_counter = meter.create_up_down_counter("updown_counter")

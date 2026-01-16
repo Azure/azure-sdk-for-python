@@ -29,7 +29,9 @@ tracer = trace.get_tracer(__name__)
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -52,7 +54,8 @@ container_name = "products"
 with tracer.start_as_current_span(name="CreateContainer"):
     try:
         container = database.create_container(
-            id=container_name, partition_key=PartitionKey(path="/productName")  # Call will be traced
+            id=container_name,
+            partition_key=PartitionKey(path="/productName"),  # Call will be traced
         )
     except exceptions.CosmosResourceExistsError:
         container = database.get_container_client(container_name)

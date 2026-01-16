@@ -125,7 +125,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_metric_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while exporting the data."
+            )  # pylint: disable=C4769
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def force_flush(
@@ -160,7 +162,10 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         scope: Optional[InstrumentationScope] = None,
     ) -> Optional[TelemetryItem]:
         # When Metrics to Log Analytics is disabled, only send Standard metrics and _OTELRESOURCE_
-        if not self._metrics_to_log_analytics and name not in _AUTOCOLLECTED_INSTRUMENT_NAMES:
+        if (
+            not self._metrics_to_log_analytics
+            and name not in _AUTOCOLLECTED_INSTRUMENT_NAMES
+        ):
             return None
 
         # Apply statsbeat metric name mapping if this is a statsbeat exporter
@@ -175,9 +180,14 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
             # Only set SentToAMW on AKS Attach
-            if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
-                if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(
-                    OTEL_METRICS_EXPORTER, ""
+            if (
+                _utils._is_on_aks()
+                and _utils._is_attach_enabled()
+                and not self._is_stats_exporter()
+            ):
+                if (
+                    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
+                    and "otlp" in os.environ.get(OTEL_METRICS_EXPORTER, "")
                 ):
                     envelope.data.base_data.properties["_MS.SentToAMW"] = "True"  # type: ignore
                 else:
@@ -206,7 +216,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorMetricExporter":
+    def from_connection_string(
+        cls, conn_str: str, **kwargs: Any
+    ) -> "AzureMonitorMetricExporter":
         """
         Create an AzureMonitorMetricExporter from a connection string. This is
         the recommended way of instantiation if a connection string is passed in
@@ -226,7 +238,10 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
 
 # pylint: disable=protected-access
 def _convert_point_to_envelope(
-    point: DataPointT, name: str, resource: Optional[Resource] = None, scope: Optional[InstrumentationScope] = None
+    point: DataPointT,
+    name: str,
+    resource: Optional[Resource] = None,
+    scope: Optional[InstrumentationScope] = None,
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
@@ -286,7 +301,9 @@ def _handle_std_metric_envelope(
     tags = envelope.tags
     if not attributes:
         attributes = {}
-    status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+    status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or attributes.get(
+        SpanAttributes.HTTP_STATUS_CODE
+    )
     if status_code:
         try:
             status_code = int(status_code)  # type: ignore
@@ -338,7 +355,10 @@ def _is_status_code_success(status_code: Optional[str]) -> bool:
 
 
 def _is_metric_namespace_opted_in() -> bool:
-    return os.environ.get(_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN, "False").lower() == "true"
+    return (
+        os.environ.get(_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN, "False").lower()
+        == "true"
+    )
 
 
 def _get_metric_export_result(result: ExportResult) -> MetricExportResult:

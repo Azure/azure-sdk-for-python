@@ -74,7 +74,9 @@ class TestUtils(unittest.TestCase):
         documents = [mock.Mock()]
         date_now = datetime.now()
         datetime_mock.now.return_value = date_now
-        mdp = _metric_to_quick_pulse_data_points(metric_data, self.base_mdp, documents)[0]
+        mdp = _metric_to_quick_pulse_data_points(metric_data, self.base_mdp, documents)[
+            0
+        ]
         self.assertEqual(mdp.version, self.base_mdp.version)
         self.assertEqual(mdp.instance, self.base_mdp.instance)
         self.assertEqual(mdp.role_name, self.base_mdp.role_name)
@@ -105,7 +107,9 @@ class TestUtils(unittest.TestCase):
         documents = [mock.Mock()]
         date_now = datetime.now()
         datetime_mock.now.return_value = date_now
-        mdp = _metric_to_quick_pulse_data_points(metric_data, self.base_mdp, documents)[0]
+        mdp = _metric_to_quick_pulse_data_points(metric_data, self.base_mdp, documents)[
+            0
+        ]
         self.assertEqual(mdp.version, self.base_mdp.version)
         self.assertEqual(mdp.instance, self.base_mdp.instance)
         self.assertEqual(mdp.role_name, self.base_mdp.role_name)
@@ -115,7 +119,9 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(mdp.metrics, [metric_point])
         self.assertEqual(mdp.documents, documents)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_metrics_from_projections")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._utils._get_metrics_from_projections"
+    )
     def test_metric_to_qp_data_point_process_filtered_metrics(self, projection_mock):
         metric_data = mock.Mock()
         metric_data.resource_metrics = []
@@ -125,7 +131,9 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(mdp.metrics[0].name, "ID:1234")
         self.assertEqual(mdp.metrics[0].value, 5.0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ms_to_iso8601_string")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._utils._ms_to_iso8601_string"
+    )
     def test_get_span_document_client(self, iso_mock):
         data = _DependencyData(
             custom_dimensions={},
@@ -146,7 +154,9 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(doc.result_code, "200")
         self.assertEqual(doc.duration, "1000")
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ms_to_iso8601_string")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._utils._ms_to_iso8601_string"
+    )
     def test_get_span_document_server(self, iso_mock):
         data = _RequestData(
             custom_dimensions={},
@@ -187,7 +197,9 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(doc.document_type, DocumentType.TRACE)
         self.assertEqual(doc.message, "body")
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map"
+    )
     def test_get_metrics_from_projections(self, projection_map_mock):
         projection_map_mock.return_value = {
             "test-id": (AggregationType.MIN, 3.0, 3),

@@ -64,10 +64,16 @@ class TestAzureTraceExporter(unittest.TestCase):
     def setUpClass(cls):
         os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
         os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
-        os.environ.pop("APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED", None)
-        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ.pop(
+            "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED", None
+        )
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = (
+            "1234abcd-5678-4efa-8abc-1234567890ab"
+        )
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
-        os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = "true"
+        os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = (
+            "true"
+        )
         cls._exporter = AzureMonitorTraceExporter(
             tracer_provider=trace.TracerProvider(),
         )
@@ -297,29 +303,51 @@ class TestAzureTraceExporter(unittest.TestCase):
         test_span.end()
         envelope = exporter._span_to_envelope(test_span)
 
-        self.assertEqual(envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(
+            envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab"
+        )
         self.assertIsNotNone(envelope.tags)
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_ID],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE],
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION),
             azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION],
         )
 
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(context.trace_id))
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE),
+            "testServiceNamespace.testServiceName",
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE),
+            "testServiceInstanceId",
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME),
+            "testServiceInstanceId",
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_ID),
+            "{:032x}".format(context.trace_id),
+        )
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testId")
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(context.span_id))
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True"
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
+            "{:016x}".format(context.span_id),
+        )
 
     def test_span_to_envelope_partA_default(self):
         exporter = self._exporter
@@ -337,8 +365,12 @@ class TestAzureTraceExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         envelope = exporter._span_to_envelope(test_span)
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName"
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node()
+        )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME),
             envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE),
@@ -371,16 +403,22 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
-        self.assertEqual(envelope.data.base_data.data, "https://www.wikipedia.org/wiki/Rabbit")
+        self.assertEqual(
+            envelope.data.base_data.data, "https://www.wikipedia.org/wiki/Rabbit"
+        )
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
+        self.assertEqual(
+            envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit"
+        )
         self.assertEqual(envelope.data.base_data.type, "HTTP")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(
@@ -452,7 +490,10 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.example.com")
 
-        span._attributes = {"http.request.method": "GET", "gen_ai.system": "az.ai.inference"}
+        span._attributes = {
+            "http.request.method": "GET",
+            "gen_ai.system": "az.ai.inference",
+        }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(envelope.data.base_data.name, "GET /")
@@ -476,7 +517,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.target": "/path/12314/?q=ddds#123",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.data, "https://www.wikipedia.org/path/12314/?q=ddds#123")
+        self.assertEqual(
+            envelope.data.base_data.data,
+            "https://www.wikipedia.org/path/12314/?q=ddds#123",
+        )
 
         span._attributes = {
             "http.method": "GET",
@@ -486,7 +530,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.target": "/path/12314/?q=ddds#123",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.data, "https://example.com:8080/path/12314/?q=ddds#123")
+        self.assertEqual(
+            envelope.data.base_data.data,
+            "https://example.com:8080/path/12314/?q=ddds#123",
+        )
 
         span._attributes = {
             "http.method": "GET",
@@ -496,7 +543,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.target": "/path/12314/?q=ddds#123",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.data, "https://192.168.0.1:8080/path/12314/?q=ddds#123")
+        self.assertEqual(
+            envelope.data.base_data.data,
+            "https://192.168.0.1:8080/path/12314/?q=ddds#123",
+        )
 
         # Stable semconv
         span._attributes = {
@@ -504,7 +554,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             "url.full": "https://www.wikipedia.org/path/12314/?q=ddds#124",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.data, "https://www.wikipedia.org/path/12314/?q=ddds#124")
+        self.assertEqual(
+            envelope.data.base_data.data,
+            "https://www.wikipedia.org/path/12314/?q=ddds#124",
+        )
 
         # result_code
         span._attributes = {
@@ -574,7 +627,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -693,7 +748,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -739,7 +796,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -783,7 +842,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.UNSET)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -846,7 +907,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
-        self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
+        self.assertEqual(
+            envelope.data.base_data.target, "test_address/test_destination"
+        )
 
     def test_span_to_envelope_client_azure(self):
         exporter = self._exporter
@@ -873,7 +936,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -884,7 +949,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "Microsoft.EventHub")
-        self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
+        self.assertEqual(
+            envelope.data.base_data.target, "test_address/test_destination"
+        )
         self.assertEqual(len(envelope.data.base_data.properties), 2)
 
         # target
@@ -918,7 +985,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -947,7 +1016,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             "message_bus.destination": "/myeventhub",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.type, "Queue Message | Microsoft.EventHub")
+        self.assertEqual(
+            envelope.data.base_data.type, "Queue Message | Microsoft.EventHub"
+        )
         self.assertEqual(envelope.data.base_data.target, "Test_peer//myeventhub")
         self.assertEqual(len(envelope.data.base_data.properties), 2)
 
@@ -974,7 +1045,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
 
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -1050,7 +1123,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.response_code, "0")
         self.assertTrue(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.source, "Test_peer//myeventhub")
-        self.assertEqual(envelope.data.base_data.measurements["timeSinceEnqueued"], 2000000000000)
+        self.assertEqual(
+            envelope.data.base_data.measurements["timeSinceEnqueued"], 2000000000000
+        )
         self.assertEqual(len(envelope.data.base_data.properties), 3)
 
         # enqueued time
@@ -1131,9 +1206,13 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertEqual(envelope.data.base_data.response_code, "200")
         self.assertTrue(envelope.data.base_data.success)
-        self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
+        self.assertEqual(
+            envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit"
+        )
 
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
+        self.assertEqual(
+            envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit"
+        )
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
@@ -1188,7 +1267,10 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
 
         ## Stable http semconv
-        span._attributes = {"http.request.method": "GET", "client.address": "client_address"}
+        span._attributes = {
+            "http.request.method": "GET",
+            "client.address": "client_address",
+        }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_address")
 
@@ -1208,7 +1290,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             "url.full": "https://www.example.org:80/path?query",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
+        self.assertEqual(
+            envelope.data.base_data.url, "https://www.example.org:80/path?query"
+        )
 
         span._attributes = {
             "http.request.method": "GET",
@@ -1219,7 +1303,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             "server.port": "80",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
+        self.assertEqual(
+            envelope.data.base_data.url, "https://www.example.org:80/path?query"
+        )
 
         span._attributes = {
             "http.method": "GET",
@@ -1247,7 +1333,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.route": "/wiki/Rabbit/test",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(
+            envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test"
+        )
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
         ## Stable http semconv
@@ -1256,7 +1344,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.route": "/wiki/Rabbit/test",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(
+            envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test"
+        )
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
         span._attributes = {
@@ -1264,7 +1354,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(
+            envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test"
+        )
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
         span._attributes = {
@@ -1272,7 +1364,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             "url.full": "https://www.wikipedia.org/wiki/Rabbit/test",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(
+            envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test"
+        )
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
         # Default is span name
@@ -1484,14 +1578,19 @@ class TestAzureTraceExporter(unittest.TestCase):
                 "http.status_code": 200,
             },
             kind=SpanKind.CLIENT,
-            instrumentation_scope=InstrumentationScope("opentelemetry.instrumentation.requests"),
+            instrumentation_scope=InstrumentationScope(
+                "opentelemetry.instrumentation.requests"
+            ),
         )
         span._status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(len(envelope.data.base_data.properties), 1)
-        self.assertEqual(envelope.data.base_data.properties["_MS.ProcessedByMetricExtractors"], "True")
+        self.assertEqual(
+            envelope.data.base_data.properties["_MS.ProcessedByMetricExtractors"],
+            "True",
+        )
 
     def test_span_events_to_envelopes_exception(self):
         exporter = self._exporter
@@ -1526,32 +1625,48 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(len(envelopes), 1)
         envelope = envelopes[0]
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
-        self.assertEqual(envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(
+            envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab"
+        )
         self.assertIsNotNone(envelope.tags)
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_ID],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE],
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION),
             azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION],
         )
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id)
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_ID),
+            "{:032x}".format(span.context.trace_id),
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
+            "{:016x}".format(span.context.span_id),
         )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
-        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
-        self.assertEqual(envelope.data.base_data.exceptions[0].message, "zero division error")
+        self.assertEqual(
+            envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError"
+        )
+        self.assertEqual(
+            envelope.data.base_data.exceptions[0].message, "zero division error"
+        )
         self.assertEqual(envelope.data.base_data.exceptions[0].has_full_stack, True)
-        self.assertEqual(envelope.data.base_data.exceptions[0].stack, "Traceback: ZeroDivisionError, division by zero")
+        self.assertEqual(
+            envelope.data.base_data.exceptions[0].stack,
+            "Traceback: ZeroDivisionError, division by zero",
+        )
         self.assertEqual(envelope.data.base_type, "ExceptionData")
 
     def test_span_events_to_envelopes_message(self):
@@ -1584,24 +1699,33 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(len(envelopes), 1)
         envelope = envelopes[0]
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
-        self.assertEqual(envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(
+            envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab"
+        )
         self.assertIsNotNone(envelope.tags)
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_ID],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE],
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION),
             azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION],
         )
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id)
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_ID),
+            "{:032x}".format(span.context.trace_id),
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
+            "{:016x}".format(span.context.span_id),
         )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
@@ -1644,24 +1768,33 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = envelopes[0]
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.sample_rate, 50)
-        self.assertEqual(envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(
+            envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab"
+        )
         self.assertIsNotNone(envelope.tags)
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_ID],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE],
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE],
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION),
             azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION],
         )
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id)
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_ID),
+            "{:032x}".format(span.context.trace_id),
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
+            "{:016x}".format(span.context.span_id),
         )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
@@ -1669,7 +1802,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.get_tracer_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.trace._exporter.get_tracer_provider"
+    )
     def test_export_otel_resource_metric(self, mock_get_tracer_provider):
         del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
         mock_tracer_provider = mock.Mock()
@@ -1761,7 +1896,9 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
         span = mock.Mock()
         span.attributes = {}
         span.instrumentation_scope.name = "opentelemetry.instrumentation.test"
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
             _check_instrumentation_span(span)
             add.assert_called_once_with("test")
 
@@ -1769,7 +1906,9 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
         span = mock.Mock()
         span.attributes = {}
         span.instrumentation_scope.name = "__main__"
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
             _check_instrumentation_span(span)
             add.assert_not_called()
 
@@ -1778,48 +1917,74 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
         span.attributes = {}
         span.instrumentation_scope.name = "azure.foo.bar.__init__"
 
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
             _check_instrumentation_span(span)
             add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
     @mock.patch("opentelemetry.trace.get_tracer_provider")
-    def test_check_instrumentation_span_azure_sdk_otel_span(self, mock_get_tracer_provider):
+    def test_check_instrumentation_span_azure_sdk_otel_span(
+        self, mock_get_tracer_provider
+    ):
         mock_get_tracer_provider.return_value = self.get_tracer_provider()
 
         with OpenTelemetrySpan() as azure_sdk_span:
-            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+            ) as add:
                 _check_instrumentation_span(azure_sdk_span.span_instance)
                 add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
-            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
-                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+            ) as add:
+                azure_sdk_span.add_attribute(
+                    _AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus"
+                )
                 _check_instrumentation_span(azure_sdk_span.span_instance)
                 add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
-            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
-                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+            ) as add:
+                azure_sdk_span.add_attribute(
+                    _AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices"
+                )
                 _check_instrumentation_span(azure_sdk_span.span_instance)
                 add.assert_called_once_with(_AZURE_AI_SDK_NAME)
 
     @mock.patch("opentelemetry.trace.get_tracer_provider")
-    def test_check_instrumentation_span_azure_sdk_span_impl(self, mock_get_tracer_provider):
+    def test_check_instrumentation_span_azure_sdk_span_impl(
+        self, mock_get_tracer_provider
+    ):
         mock_get_tracer_provider.return_value = self.get_tracer_provider()
 
         settings.tracing_implementation = "opentelemetry"
         try:
             azure_sdk_span = settings.tracing_implementation()(name="test")
 
-            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+            ) as add:
                 _check_instrumentation_span(azure_sdk_span.span_instance)
                 add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
-            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
-                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+            ) as add:
+                azure_sdk_span.add_attribute(
+                    _AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus"
+                )
                 _check_instrumentation_span(azure_sdk_span.span_instance)
                 add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
-            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
-                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+            ) as add:
+                azure_sdk_span.add_attribute(
+                    _AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices"
+                )
                 _check_instrumentation_span(azure_sdk_span.span_instance)
                 add.assert_called_once_with(_AZURE_AI_SDK_NAME)
 
@@ -1827,7 +1992,9 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             settings.tracing_implementation = None
 
     @mock.patch("opentelemetry.trace.get_tracer_provider")
-    def test_check_instrumentation_span_azure_sdk_get_tracer(self, mock_get_tracer_provider):
+    def test_check_instrumentation_span_azure_sdk_get_tracer(
+        self, mock_get_tracer_provider
+    ):
         mock_get_tracer_provider.return_value = self.get_tracer_provider()
 
         if not get_azure_sdk_tracer:
@@ -1836,22 +2003,36 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
         azure_sdk_tracer = get_azure_sdk_tracer(library_name="azure-foo-bar")
         azure_sdk_span = azure_sdk_tracer.start_span(name="test")
 
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
             _check_instrumentation_span(azure_sdk_span)
             add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
-            azure_sdk_span.set_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            azure_sdk_span.set_attribute(
+                _AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus"
+            )
             _check_instrumentation_span(azure_sdk_span)
             add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
-            azure_sdk_span.set_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            azure_sdk_span.set_attribute(
+                _AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices"
+            )
             _check_instrumentation_span(azure_sdk_span)
             add.assert_called_once_with(_AZURE_AI_SDK_NAME)
 
-        not_azure_sdk_span = get_azure_sdk_tracer(library_name="not-azure-foo-bar").start_span(name="test")
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+        not_azure_sdk_span = get_azure_sdk_tracer(
+            library_name="not-azure-foo-bar"
+        ).start_span(name="test")
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
             _check_instrumentation_span(not_azure_sdk_span)
             add.assert_not_called()
 

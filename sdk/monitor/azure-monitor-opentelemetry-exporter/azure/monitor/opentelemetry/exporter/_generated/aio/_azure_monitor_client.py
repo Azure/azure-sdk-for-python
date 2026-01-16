@@ -27,17 +27,25 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
     :type host: str
     """
 
-    def __init__(self, host: str = "https://dc.services.visualstudio.com", **kwargs: Any) -> None:
+    def __init__(
+        self, host: str = "https://dc.services.visualstudio.com", **kwargs: Any
+    ) -> None:
         _base_url = "{Host}/v2.1"
         self._config = AzureMonitorClientConfiguration(host=host, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(
+            base_url=_base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -57,10 +65,14 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
+            "Host": self._serialize.url(
+                "self._config.host", self._config.host, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:

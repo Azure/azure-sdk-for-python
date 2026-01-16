@@ -80,14 +80,19 @@ class TestTelemetryData(unittest.TestCase):
 
 
 class TestRequestData(unittest.TestCase):
-    @patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request"
+    )
     def test_from_span_with_valid_data(self, utils_mock):
         span = Mock(spec=ReadableSpan)
         span.end_time = 2000000000
         span.start_time = 1000000000
         span.name = "test_span"
         span.status.is_ok = True
-        span.attributes = {SpanAttributes.HTTP_STATUS_CODE: 200, "custom_attribute": "value"}
+        span.attributes = {
+            SpanAttributes.HTTP_STATUS_CODE: 200,
+            "custom_attribute": "value",
+        }
         utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
@@ -99,14 +104,19 @@ class TestRequestData(unittest.TestCase):
         self.assertEqual(result.url, "http://example.com")
         self.assertEqual(result.custom_dimensions, span.attributes)
 
-    @patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request"
+    )
     def test_from_span_with_error_status_code(self, utils_mock):
         span = Mock(spec=ReadableSpan)
         span.end_time = 2000000000
         span.start_time = 1000000000
         span.name = "test_span"
         span.status.is_ok = True
-        span.attributes = {SpanAttributes.HTTP_STATUS_CODE: 404, "custom_attribute": "value"}
+        span.attributes = {
+            SpanAttributes.HTTP_STATUS_CODE: 404,
+            "custom_attribute": "value",
+        }
         utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
@@ -118,7 +128,9 @@ class TestRequestData(unittest.TestCase):
         self.assertEqual(result.url, "http://example.com")
         self.assertEqual(result.custom_dimensions, span.attributes)
 
-    @patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request"
+    )
     def test_from_span_http_stable_semconv(self, utils_mock):
         span = Mock(spec=ReadableSpan)
         span.end_time = 2000000000
@@ -162,7 +174,10 @@ class TestDependencyData(unittest.TestCase):
 
     def test_http_dependency(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {SpanAttributes.HTTP_METHOD: "GET", SpanAttributes.HTTP_URL: "http://example.com"}
+        self.span.attributes = {
+            SpanAttributes.HTTP_METHOD: "GET",
+            SpanAttributes.HTTP_URL: "http://example.com",
+        }
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "HTTP")
         self.assertEqual(result.data, "http://example.com")
@@ -170,7 +185,10 @@ class TestDependencyData(unittest.TestCase):
 
     def test_http_dependency_stable_semconv(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {HTTP_REQUEST_METHOD: "GET", SpanAttributes.HTTP_URL: "http://example.com"}
+        self.span.attributes = {
+            HTTP_REQUEST_METHOD: "GET",
+            SpanAttributes.HTTP_URL: "http://example.com",
+        }
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "HTTP")
         self.assertEqual(result.data, "http://example.com")
@@ -178,7 +196,10 @@ class TestDependencyData(unittest.TestCase):
 
     def test_db_dependency(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {SpanAttributes.DB_SYSTEM: "mysql", SpanAttributes.DB_STATEMENT: "SELECT * FROM table"}
+        self.span.attributes = {
+            SpanAttributes.DB_SYSTEM: "mysql",
+            SpanAttributes.DB_STATEMENT: "SELECT * FROM table",
+        }
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "mysql")
         self.assertEqual(result.data, "SELECT * FROM table")

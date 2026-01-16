@@ -24,9 +24,13 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
         """
         super().__init__(log_exporter)
         self._options = options or {}
-        self._enable_trace_based_sampling_for_logs = self._options.get("enable_trace_based_sampling_for_logs")
+        self._enable_trace_based_sampling_for_logs = self._options.get(
+            "enable_trace_based_sampling_for_logs"
+        )
 
-    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # pylint: disable=arguments-renamed
+    def on_emit(
+        self, readable_log_record: ReadableLogRecord
+    ) -> None:  # pylint: disable=arguments-renamed
         # cspell: disable
         """Determines whether the logger should drop log records associated with unsampled traces.
         If `trace_based_sampling` is `true`, log records associated with unsampled traces are dropped by the `Logger`.
@@ -40,7 +44,10 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
 
         # cspell: enable
         if self._enable_trace_based_sampling_for_logs:
-            if hasattr(readable_log_record, "log_record") and readable_log_record.log_record is not None:
+            if (
+                hasattr(readable_log_record, "log_record")
+                and readable_log_record.log_record is not None
+            ):
                 if (
                     hasattr(readable_log_record.log_record, "context")
                     and readable_log_record.log_record.context is not None

@@ -42,7 +42,9 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
         self._config = AzureMonitorClientConfiguration(host=host, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -72,10 +74,14 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
+            "Host": self._serialize.url(
+                "self._config.host", self._config.host, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):

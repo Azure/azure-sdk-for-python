@@ -5,8 +5,12 @@ import threading
 import time
 from unittest.mock import Mock, patch, MagicMock
 
-from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
-from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON_TARGETING
+from azure.monitor.opentelemetry.exporter._configuration._worker import (
+    _ConfigurationWorker,
+)
+from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_PYTHON_TARGETING,
+)
 
 
 class TestConfigurationWorker(unittest.TestCase):
@@ -15,7 +19,9 @@ class TestConfigurationWorker(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         self.mock_configuration_manager = Mock()
-        self.mock_configuration_manager.get_configuration_and_refresh_interval.return_value = 1800
+        self.mock_configuration_manager.get_configuration_and_refresh_interval.return_value = (
+            1800
+        )
 
     def tearDown(self):
         """Clean up after each test."""
@@ -30,7 +36,9 @@ class TestConfigurationWorker(unittest.TestCase):
 
             try:
                 # Verify initial state
-                self.assertEqual(worker._configuration_manager, self.mock_configuration_manager)
+                self.assertEqual(
+                    worker._configuration_manager, self.mock_configuration_manager
+                )
                 self.assertEqual(worker._default_refresh_interval, 3600)
                 self.assertEqual(worker._refresh_interval, 3600)
                 self.assertTrue(worker._running)
@@ -49,7 +57,9 @@ class TestConfigurationWorker(unittest.TestCase):
         custom_interval = 900
 
         with patch("random.uniform", return_value=0.1):
-            worker = _ConfigurationWorker(self.mock_configuration_manager, custom_interval)
+            worker = _ConfigurationWorker(
+                self.mock_configuration_manager, custom_interval
+            )
 
             try:
                 self.assertEqual(worker._refresh_interval, custom_interval)
@@ -100,7 +110,9 @@ class TestConfigurationWorker(unittest.TestCase):
     def test_configuration_refresh_called(self):
         """Test that configuration refresh is called with correct parameters."""
         with patch("random.uniform", return_value=0.001):  # Very short delay
-            worker = _ConfigurationWorker(self.mock_configuration_manager, 0.01)  # Very short interval
+            worker = _ConfigurationWorker(
+                self.mock_configuration_manager, 0.01
+            )  # Very short interval
 
             try:
                 # Wait for at least one refresh cycle with timeout
@@ -108,7 +120,9 @@ class TestConfigurationWorker(unittest.TestCase):
                 start_time = time.time()
 
                 while time.time() - start_time < max_wait:
-                    if self.mock_configuration_manager.get_configuration_and_refresh_interval.called:
+                    if (
+                        self.mock_configuration_manager.get_configuration_and_refresh_interval.called
+                    ):
                         break
                     time.sleep(0.01)
 
@@ -123,7 +137,10 @@ class TestConfigurationWorker(unittest.TestCase):
     def test_refresh_interval_update(self):
         """Test that refresh interval is updated from configuration manager response."""
         # Mock returns different intervals
-        self.mock_configuration_manager.get_configuration_and_refresh_interval.side_effect = [1800, 3600]
+        self.mock_configuration_manager.get_configuration_and_refresh_interval.side_effect = [
+            1800,
+            3600,
+        ]
 
         with patch("random.uniform", return_value=0.001):
             worker = _ConfigurationWorker(self.mock_configuration_manager, 0.01)
@@ -134,13 +151,18 @@ class TestConfigurationWorker(unittest.TestCase):
                 start_time = time.time()
 
                 while time.time() - start_time < max_wait:
-                    if self.mock_configuration_manager.get_configuration_and_refresh_interval.call_count >= 1:
+                    if (
+                        self.mock_configuration_manager.get_configuration_and_refresh_interval.call_count
+                        >= 1
+                    ):
                         break
                     time.sleep(0.01)
 
                 # Should have updated to the new interval
                 current_interval = worker.get_refresh_interval()
-                self.assertIn(current_interval, [1800, 3600])  # Could be either depending on timing
+                self.assertIn(
+                    current_interval, [1800, 3600]
+                )  # Could be either depending on timing
 
             finally:
                 worker.shutdown()
@@ -149,7 +171,9 @@ class TestConfigurationWorker(unittest.TestCase):
     def test_exception_handling_in_refresh_loop(self, mock_logger):
         """Test that exceptions in refresh loop are handled gracefully."""
         # Make the configuration manager raise an exception
-        self.mock_configuration_manager.get_configuration_and_refresh_interval.side_effect = Exception("Test error")
+        self.mock_configuration_manager.get_configuration_and_refresh_interval.side_effect = Exception(
+            "Test error"
+        )
 
         with patch("random.uniform", return_value=0.001):
             worker = _ConfigurationWorker(self.mock_configuration_manager, 0.01)
@@ -233,7 +257,9 @@ class TestConfigurationWorker(unittest.TestCase):
             self.assertFalse(worker._running)
 
             # Shutdown should be reasonably fast (much less than the startup delay)
-            self.assertLess(shutdown_time, 0.5)  # Should be much faster than 1 second startup delay
+            self.assertLess(
+                shutdown_time, 0.5
+            )  # Should be much faster than 1 second startup delay
 
             # Thread should be stopped
             self.assertFalse(worker._refresh_thread.is_alive())
@@ -284,7 +310,9 @@ class TestConfigurationWorker(unittest.TestCase):
     def test_thread_target_and_name(self, mock_thread_class):
         """Test that thread is created with correct target and name."""
         mock_thread_instance = Mock()
-        mock_thread_instance.is_alive.return_value = False  # Simulate thread that doesn't start
+        mock_thread_instance.is_alive.return_value = (
+            False  # Simulate thread that doesn't start
+        )
         mock_thread_class.return_value = mock_thread_instance
 
         with patch("random.uniform", return_value=0.001):
@@ -293,7 +321,9 @@ class TestConfigurationWorker(unittest.TestCase):
             try:
                 # Verify thread was created with correct parameters
                 mock_thread_class.assert_called_once_with(
-                    target=worker._get_configuration, name="ConfigurationWorker", daemon=True
+                    target=worker._get_configuration,
+                    name="ConfigurationWorker",
+                    daemon=True,
                 )
 
                 # Verify thread was started
@@ -314,7 +344,9 @@ class TestConfigurationWorker(unittest.TestCase):
                 start_time = time.time()
 
                 while time.time() - start_time < max_wait:
-                    if self.mock_configuration_manager.get_configuration_and_refresh_interval.called:
+                    if (
+                        self.mock_configuration_manager.get_configuration_and_refresh_interval.called
+                    ):
                         break
                     time.sleep(0.01)
 
@@ -365,13 +397,20 @@ class TestConfigurationWorker(unittest.TestCase):
                 start_time = time.time()
 
                 while time.time() - start_time < max_wait:
-                    if self.mock_configuration_manager.get_configuration_and_refresh_interval.call_count >= 2:
+                    if (
+                        self.mock_configuration_manager.get_configuration_and_refresh_interval.call_count
+                        >= 2
+                    ):
                         break
                     time.sleep(0.01)
 
                 # Should have called multiple times despite exceptions
-                call_count = self.mock_configuration_manager.get_configuration_and_refresh_interval.call_count
-                self.assertGreaterEqual(call_count, 1)  # At least one call should have happened
+                call_count = (
+                    self.mock_configuration_manager.get_configuration_and_refresh_interval.call_count
+                )
+                self.assertGreaterEqual(
+                    call_count, 1
+                )  # At least one call should have happened
 
             finally:
                 worker.shutdown()

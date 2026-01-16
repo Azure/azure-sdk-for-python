@@ -32,7 +32,11 @@ from azure.monitor.opentelemetry.exporter._utils import (
     get_compute_type,
 )
 
-from ._utils import get_customer_sdkstats_export_interval, categorize_status_code, is_customer_sdkstats_enabled
+from ._utils import (
+    get_customer_sdkstats_export_interval,
+    categorize_status_code,
+    is_customer_sdkstats_enabled,
+)
 
 
 class CustomerSdkStatsStatus(Enum):
@@ -51,10 +55,14 @@ class _CustomerSdkStatsTelemetryCounters:
         self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}  # type: ignore
 
 
-class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-instance-attributes
+class CustomerSdkStatsManager(
+    metaclass=Singleton
+):  # pylint: disable=too-many-instance-attributes
     def __init__(self):
         # Initialize instance attributes that remain constant. Called only once due to Singleton metaclass.
-        self._initialization_lock = threading.Lock()  # For initialization/shutdown operations
+        self._initialization_lock = (
+            threading.Lock()
+        )  # For initialization/shutdown operations
         self._counters_lock = threading.Lock()  # For counter operations and callbacks
 
         # Determine initial status based on environment
@@ -157,7 +165,9 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
         """
         try:
             # Use delayed import to avoid circular import
-            from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+            from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
+                AzureMonitorMetricExporter,
+            )
 
             self._customer_sdkstats_exporter = AzureMonitorMetricExporter(
                 connection_string=connection_string,
@@ -165,13 +175,18 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             )
             metric_reader_options = {
                 "exporter": self._customer_sdkstats_exporter,
-                "export_interval_millis": get_customer_sdkstats_export_interval() * 1000,  # Default 15m
+                "export_interval_millis": get_customer_sdkstats_export_interval()
+                * 1000,  # Default 15m
             }
-            self._customer_sdkstats_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
+            self._customer_sdkstats_metric_reader = PeriodicExportingMetricReader(
+                **metric_reader_options
+            )
             self._customer_sdkstats_meter_provider = MeterProvider(
                 metric_readers=[self._customer_sdkstats_metric_reader]
             )
-            self._customer_sdkstats_meter = self._customer_sdkstats_meter_provider.get_meter(__name__)
+            self._customer_sdkstats_meter = (
+                self._customer_sdkstats_meter_provider.get_meter(__name__)
+            )
 
             self._success_gauge = self._customer_sdkstats_meter.create_observable_gauge(
                 name=CustomerSdkStatsMetricName.ITEM_SUCCESS_COUNT.value,
@@ -277,7 +292,11 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             success_map[success_key] = current_count + count
 
     def count_retry_items(
-        self, count: int, telemetry_type: str, retry_code: RetryCodeType, exception_message: Optional[str] = None
+        self,
+        count: int,
+        telemetry_type: str,
+        retry_code: RetryCodeType,
+        exception_message: Optional[str] = None,
     ) -> None:
         if not self.is_initialized or count <= 0:
             return
@@ -296,14 +315,19 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             current_count = reason_map.get(reason, 0)
             reason_map[reason] = current_count + count
 
-    def _item_success_callback(self, _options: CallbackOptions) -> Iterable[Observation]:
+    def _item_success_callback(
+        self, _options: CallbackOptions
+    ) -> Iterable[Observation]:
         if not self.is_initialized or not self._base_attributes:
             return []
 
         observations: List[Observation] = []
 
         with self._counters_lock:
-            for telemetry_type, count in self._counters.total_item_success_count.items():
+            for (
+                telemetry_type,
+                count,
+            ) in self._counters.total_item_success_count.items():
                 if count > 0:
                     # Create attributes by copying base and adding telemetry-specific data
                     attributes = self._base_attributes.copy()
@@ -322,7 +346,10 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
         # pylint: disable=too-many-nested-blocks
 
         with self._counters_lock:
-            for telemetry_type, drop_code_map in self._counters.total_item_drop_count.items():
+            for (
+                telemetry_type,
+                drop_code_map,
+            ) in self._counters.total_item_drop_count.items():
                 for drop_code, reason_map in drop_code_map.items():
                     for reason, success_map in reason_map.items():
                         for success_tracker, count in success_map.items():
@@ -347,7 +374,10 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
         observations: List[Observation] = []
 
         with self._counters_lock:
-            for telemetry_type, retry_code_map in self._counters.total_item_retry_count.items():
+            for (
+                telemetry_type,
+                retry_code_map,
+            ) in self._counters.total_item_retry_count.items():
                 for retry_code, reason_map in retry_code_map.items():
                     for reason, count in reason_map.items():
                         if count > 0:
@@ -363,12 +393,18 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
 
         return observations
 
-    def _get_drop_reason(self, drop_code: DropCodeType, exception_message: Optional[str] = None) -> str:
+    def _get_drop_reason(
+        self, drop_code: DropCodeType, exception_message: Optional[str] = None
+    ) -> str:
         if isinstance(drop_code, int):
             return categorize_status_code(drop_code)
 
         if drop_code == DropCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else _exception_categories.CLIENT_EXCEPTION.value
+            return (
+                exception_message
+                if exception_message
+                else _exception_categories.CLIENT_EXCEPTION.value
+            )
 
         drop_code_reasons = {
             DropCode.CLIENT_READONLY: "Client readonly",
@@ -379,12 +415,18 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
 
         return drop_code_reasons.get(drop_code, DropCode.UNKNOWN)
 
-    def _get_retry_reason(self, retry_code: RetryCodeType, exception_message: Optional[str] = None) -> str:
+    def _get_retry_reason(
+        self, retry_code: RetryCodeType, exception_message: Optional[str] = None
+    ) -> str:
         if isinstance(retry_code, int):
             return categorize_status_code(retry_code)
 
         if retry_code == RetryCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else _exception_categories.CLIENT_EXCEPTION.value
+            return (
+                exception_message
+                if exception_message
+                else _exception_categories.CLIENT_EXCEPTION.value
+            )
 
         retry_code_reasons = {
             RetryCode.CLIENT_TIMEOUT: "Client timeout",

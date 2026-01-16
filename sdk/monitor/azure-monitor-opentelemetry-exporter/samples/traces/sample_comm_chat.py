@@ -29,7 +29,9 @@ tracer = trace.get_tracer(__name__)
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -38,7 +40,9 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 from azure.communication.identity import CommunicationIdentityClient
 
 comm_connection_string = "<connection string of your Communication service>"
-identity_client = CommunicationIdentityClient.from_connection_string(comm_connection_string)
+identity_client = CommunicationIdentityClient.from_connection_string(
+    comm_connection_string
+)
 
 # Telemetry will be sent for creating the user and getting the token as well
 user = identity_client.create_user()
@@ -55,4 +59,6 @@ with tracer.start_as_current_span(name="CreateChatClient"):
     # Create a Chat Thread
     with tracer.start_as_current_span(name="CreateChatThread"):
         create_chat_thread_result = chat_client.create_chat_thread("test topic")
-        chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
+        chat_thread_client = chat_client.get_chat_thread_client(
+            create_chat_thread_result.chat_thread.id
+        )

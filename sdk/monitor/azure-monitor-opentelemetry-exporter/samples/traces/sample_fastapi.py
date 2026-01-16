@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """
 An example to show an application instrumented with the OpenTelemetry flask instrumentation.
-Calls made with the flask library will be automatically tracked and telemetry is exported to 
+Calls made with the flask library will be automatically tracked and telemetry is exported to
 application insights with the AzureMonitorTraceExporter.
 See more info on the flask instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-flask
@@ -26,7 +26,9 @@ app = fastapi.FastAPI()
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 

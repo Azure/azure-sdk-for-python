@@ -29,7 +29,9 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, List, Optional, TypeVar
 
     T = TypeVar("T")
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    ClsType = Optional[
+        Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+    ]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -84,24 +86,31 @@ class AzureMonitorClientOperationsMixin(object):
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             400: lambda response: HttpResponseError(
-                response=response, model=self._deserialize(_models.TrackResponse, response)
+                response=response,
+                model=self._deserialize(_models.TrackResponse, response),
             ),
             402: lambda response: HttpResponseError(
-                response=response, model=self._deserialize(_models.TrackResponse, response)
+                response=response,
+                model=self._deserialize(_models.TrackResponse, response),
             ),
             429: lambda response: HttpResponseError(
-                response=response, model=self._deserialize(_models.TrackResponse, response)
+                response=response,
+                model=self._deserialize(_models.TrackResponse, response),
             ),
             500: lambda response: HttpResponseError(
-                response=response, model=self._deserialize(_models.TrackResponse, response)
+                response=response,
+                model=self._deserialize(_models.TrackResponse, response),
             ),
             503: lambda response: HttpResponseError(
-                response=response, model=self._deserialize(_models.TrackResponse, response)
+                response=response,
+                model=self._deserialize(_models.TrackResponse, response),
             ),
         }
         error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "[TelemetryItem]")
 
@@ -112,17 +121,23 @@ class AzureMonitorClientOperationsMixin(object):
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
+            "Host": self._serialize.url(
+                "self._config.host", self._config.host, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:

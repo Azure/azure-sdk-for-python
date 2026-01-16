@@ -69,7 +69,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
     def _create_test_envelopes(self):
         """Create test telemetry envelopes for various telemetry types."""
         # Event envelope
-        event_data = TelemetryEventData(name="test_event", properties={"test_property": "test_value"})
+        event_data = TelemetryEventData(
+            name="test_event", properties={"test_property": "test_value"}
+        )
         event_monitor_base = MonitorBase(base_type="EventData", base_data=event_data)
         self.event_envelope = TelemetryItem(
             name="test_event_envelope",
@@ -88,7 +90,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
             response_code="200",
             duration="PT0.1S",
         )
-        request_monitor_base = MonitorBase(base_type="RequestData", base_data=request_data)
+        request_monitor_base = MonitorBase(
+            base_type="RequestData", base_data=request_data
+        )
         self.request_envelope_success = TelemetryItem(
             name="test_request_envelope",
             time=datetime.now(),
@@ -106,7 +110,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
             response_code="500",
             duration="PT0.1S",
         )
-        failed_request_monitor_base = MonitorBase(base_type="RequestData", base_data=failed_request_data)
+        failed_request_monitor_base = MonitorBase(
+            base_type="RequestData", base_data=failed_request_data
+        )
         self.request_envelope_failed = TelemetryItem(
             name="test_failed_request_envelope",
             time=datetime.now(),
@@ -124,7 +130,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
             result_code="200",
             duration="PT0.1S",
         )
-        dependency_monitor_base = MonitorBase(base_type="RemoteDependencyData", base_data=dependency_data)
+        dependency_monitor_base = MonitorBase(
+            base_type="RemoteDependencyData", base_data=dependency_data
+        )
         self.dependency_envelope_success = TelemetryItem(
             name="test_dependency_envelope",
             time=datetime.now(),
@@ -142,7 +150,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
             result_code="500",
             duration="PT0.1S",
         )
-        failed_dependency_monitor_base = MonitorBase(base_type="RemoteDependencyData", base_data=failed_dependency_data)
+        failed_dependency_monitor_base = MonitorBase(
+            base_type="RemoteDependencyData", base_data=failed_dependency_data
+        )
         self.dependency_envelope_failed = TelemetryItem(
             name="test_failed_dependency_envelope",
             time=datetime.now(),
@@ -335,7 +345,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
                 retry_code, result_message = _determine_client_retry_code(error)
 
                 self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
-                self.assertEqual(result_message, _exception_categories.TIMEOUT_EXCEPTION.value)
+                self.assertEqual(
+                    result_message, _exception_categories.TIMEOUT_EXCEPTION.value
+                )
 
     def test_determine_client_retry_code_network_errors(self):
         """Test determining retry code for network errors."""
@@ -419,7 +431,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
 
         self.assertIsNone(success_flag)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager"
+    )
     def test_track_successful_items(self, mock_get_manager):
         """Test tracking successful items calls the manager correctly."""
         mock_manager = mock.Mock()
@@ -432,7 +446,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
         # Verify manager was called for each envelope
         self.assertEqual(mock_manager.count_successful_items.call_count, 2)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager"
+    )
     def test_track_dropped_items_without_message(self, mock_get_manager):
         """Test tracking dropped items without error message."""
         mock_manager = mock.Mock()
@@ -445,7 +461,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
         # Verify manager was called for each envelope
         self.assertEqual(mock_manager.count_dropped_items.call_count, 2)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager"
+    )
     def test_track_dropped_items_with_message(self, mock_get_manager):
         """Test tracking dropped items with error message."""
         mock_manager = mock.Mock()
@@ -461,7 +479,9 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
         args = mock_manager.count_dropped_items.call_args
         self.assertEqual(args[1]["exception_message"], error_message)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_stats_manager"
+    )
     def test_track_retry_items(self, mock_get_manager):
         """Test tracking retry items calls the manager correctly."""
         mock_manager = mock.Mock()
@@ -475,16 +495,24 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
         # Verify manager was called for each envelope
         self.assertEqual(mock_manager.count_retry_items.call_count, 2)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items"
+    )
     def test_track_dropped_items_from_storage_disabled(self, mock_track_dropped):
         """Test tracking dropped items from storage when storage is disabled."""
         envelopes = [self.event_envelope]
 
-        track_dropped_items_from_storage(StorageExportResult.CLIENT_STORAGE_DISABLED, envelopes)
+        track_dropped_items_from_storage(
+            StorageExportResult.CLIENT_STORAGE_DISABLED, envelopes
+        )
 
-        mock_track_dropped.assert_called_once_with(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+        mock_track_dropped.assert_called_once_with(
+            envelopes, DropCode.CLIENT_STORAGE_DISABLED
+        )
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items"
+    )
     def test_track_dropped_items_from_storage_readonly(self, mock_track_dropped):
         """Test tracking dropped items from storage when storage is readonly."""
         envelopes = [self.event_envelope]
@@ -493,20 +521,32 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
 
         mock_track_dropped.assert_called_once_with(envelopes, DropCode.CLIENT_READONLY)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items")
-    def test_track_dropped_items_from_storage_capacity_reached(self, mock_track_dropped):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items"
+    )
+    def test_track_dropped_items_from_storage_capacity_reached(
+        self, mock_track_dropped
+    ):
         """Test tracking dropped items from storage when capacity is reached."""
         envelopes = [self.event_envelope]
 
-        track_dropped_items_from_storage(StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED, envelopes)
+        track_dropped_items_from_storage(
+            StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED, envelopes
+        )
 
-        mock_track_dropped.assert_called_once_with(envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+        mock_track_dropped.assert_called_once_with(
+            envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY
+        )
 
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_local_storage_setup_state_exception"
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items")
-    def test_track_dropped_items_from_storage_exception_state(self, mock_track_dropped, mock_get_exception):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items"
+    )
+    def test_track_dropped_items_from_storage_exception_state(
+        self, mock_track_dropped, mock_get_exception
+    ):
         """Test tracking dropped items from storage when exception state is set."""
         mock_get_exception.return_value = "Storage exception occurred"
         envelopes = [self.event_envelope]
@@ -514,14 +554,20 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
         track_dropped_items_from_storage("some_result", envelopes)
 
         mock_track_dropped.assert_called_once_with(
-            envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value
+            envelopes,
+            DropCode.CLIENT_EXCEPTION,
+            _exception_categories.STORAGE_EXCEPTION.value,
         )
 
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_local_storage_setup_state_exception"
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items")
-    def test_track_dropped_items_from_storage_string_result(self, mock_track_dropped, mock_get_exception):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items"
+    )
+    def test_track_dropped_items_from_storage_string_result(
+        self, mock_track_dropped, mock_get_exception
+    ):
         """Test tracking dropped items from storage when result is a string (exception)."""
         mock_get_exception.return_value = ""  # No exception state
         envelopes = [self.event_envelope]
@@ -529,20 +575,28 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
         track_dropped_items_from_storage("Exception string", envelopes)
 
         mock_track_dropped.assert_called_once_with(
-            envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value
+            envelopes,
+            DropCode.CLIENT_EXCEPTION,
+            _exception_categories.STORAGE_EXCEPTION.value,
         )
 
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_local_storage_setup_state_exception"
     )
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items")
-    def test_track_dropped_items_from_storage_success(self, mock_track_dropped, mock_get_exception):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.track_dropped_items"
+    )
+    def test_track_dropped_items_from_storage_success(
+        self, mock_track_dropped, mock_get_exception
+    ):
         """Test tracking dropped items from storage when operation is successful."""
         mock_get_exception.return_value = ""  # No exception state
         envelopes = [self.event_envelope]
 
         # Simulate successful storage operation
-        track_dropped_items_from_storage(StorageExportResult.LOCAL_FILE_BLOB_SUCCESS, envelopes)
+        track_dropped_items_from_storage(
+            StorageExportResult.LOCAL_FILE_BLOB_SUCCESS, envelopes
+        )
 
         # Should not call track_dropped_items for successful operations
         mock_track_dropped.assert_not_called()

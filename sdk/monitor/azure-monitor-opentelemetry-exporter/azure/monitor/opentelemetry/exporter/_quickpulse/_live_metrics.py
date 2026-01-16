@@ -3,13 +3,19 @@
 import logging
 from typing import Any, Dict
 
-from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpulse_manager
+from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    get_quickpulse_manager,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_live_metrics_feature_set,
 )
-from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+from azure.monitor.opentelemetry.exporter._configuration._state import (
+    get_configuration_manager,
+)
 from azure.monitor.opentelemetry.exporter._configuration._utils import evaluate_feature
-from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_FEATURE_LIVE_METRICS
+from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_FEATURE_LIVE_METRICS,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -62,7 +68,9 @@ def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
     manager = get_quickpulse_manager()
 
     # Check if live metrics should be enabled based on configuration
-    live_metrics_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_LIVE_METRICS, settings)
+    live_metrics_enabled = evaluate_feature(
+        _ONE_SETTINGS_FEATURE_LIVE_METRICS, settings
+    )
 
     if live_metrics_enabled and not manager.is_initialized():
         # Enable live metrics if it's not currently enabled

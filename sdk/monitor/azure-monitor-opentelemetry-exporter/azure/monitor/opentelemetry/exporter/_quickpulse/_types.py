@@ -59,7 +59,9 @@ class _RequestData(_TelemetryData):
         if span.attributes:
             attributes = span.attributes
             url = trace_utils._get_url_for_http_request(attributes)
-            status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or attributes.get(
+                SpanAttributes.HTTP_STATUS_CODE
+            )
             if status_code:
                 try:
                     status_code = int(status_code)
@@ -67,7 +69,9 @@ class _RequestData(_TelemetryData):
                     status_code = 0
             else:
                 status_code = 0
-            success = span.status.is_ok and status_code and status_code not in range(400, 500)
+            success = (
+                span.status.is_ok and status_code and status_code not in range(400, 500)
+            )
             response_code = status_code
         return _RequestData(
             duration=duration_ms,
@@ -106,7 +110,10 @@ class _DependencyData(_TelemetryData):
             attributes = span.attributes
             target = trace_utils._get_target_for_dependency_from_peer(attributes)
             if span.kind is SpanKind.CLIENT:
-                if HTTP_REQUEST_METHOD in attributes or SpanAttributes.HTTP_METHOD in attributes:
+                if (
+                    HTTP_REQUEST_METHOD in attributes
+                    or SpanAttributes.HTTP_METHOD in attributes
+                ):
                     dependency_type = "HTTP"
                     url = trace_utils._get_url_for_http_dependency(attributes)
                     target, _ = trace_utils._get_target_and_path_for_http_dependency(
@@ -169,8 +176,12 @@ class _ExceptionData(_TelemetryData):
     @no_type_check
     def _from_log_record(log_record: LogRecord):
         return _ExceptionData(
-            message=str(log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
-            stack_trace=str(log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")),
+            message=str(
+                log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")
+            ),
+            stack_trace=str(
+                log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")
+            ),
             custom_dimensions=log_record.attributes,
         )
 
@@ -178,8 +189,12 @@ class _ExceptionData(_TelemetryData):
     @no_type_check
     def _from_span_event(span_event: LogRecord):
         return _ExceptionData(
-            message=str(span_event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
-            stack_trace=str(span_event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")),
+            message=str(
+                span_event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")
+            ),
+            stack_trace=str(
+                span_event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")
+            ),
             custom_dimensions=span_event.attributes,
         )
 

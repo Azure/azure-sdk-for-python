@@ -4,7 +4,9 @@ import weakref
 import unittest
 from unittest import mock
 
-from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
+from azure.monitor.opentelemetry.exporter._quickpulse._policy import (
+    _QuickpulseRedirectPolicy,
+)
 
 
 class TestQuickpulseRedirectPolicy(unittest.TestCase):
@@ -74,5 +76,8 @@ class TestQuickpulseRedirectPolicy(unittest.TestCase):
         pipeline_resp_mock.http_response = http_resp_mock
         policy = _QuickpulseRedirectPolicy()
         redirect_location = policy.get_redirect_location(pipeline_resp_mock)
-        self.assertEqual(redirect_location, "https://eastus.livediagnostics.monitor.azure.com/QuickPulseService.svc")
+        self.assertEqual(
+            redirect_location,
+            "https://eastus.livediagnostics.monitor.azure.com/QuickPulseService.svc",
+        )
         self.assertIsNone(policy._qp_client_ref)

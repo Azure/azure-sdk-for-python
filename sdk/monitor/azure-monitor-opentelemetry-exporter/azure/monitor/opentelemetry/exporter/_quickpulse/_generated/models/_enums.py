@@ -38,7 +38,9 @@ class CollectionConfigurationErrorType(str, Enum, metaclass=CaseInsensitiveEnumM
     """Document stream duplication ids."""
     DOCUMENT_STREAM_FAILURE_TO_CREATE = "DocumentStreamFailureToCreate"
     """Document stream failed to create."""
-    DOCUMENT_STREAM_FAILURE_TO_CREATE_FILTER_UNEXPECTED = "DocumentStreamFailureToCreateFilterUnexpected"
+    DOCUMENT_STREAM_FAILURE_TO_CREATE_FILTER_UNEXPECTED = (
+        "DocumentStreamFailureToCreateFilterUnexpected"
+    )
     """Document stream failed to create filter unexpectedly."""
     METRIC_DUPLICATE_IDS = "MetricDuplicateIds"
     """Metric duplicate ids."""
@@ -50,7 +52,9 @@ class CollectionConfigurationErrorType(str, Enum, metaclass=CaseInsensitiveEnumM
     """Metric failed to create filter unexpectedly."""
     FILTER_FAILURE_TO_CREATE_UNEXPECTED = "FilterFailureToCreateUnexpected"
     """Filter failed to create unexpectedly."""
-    COLLECTION_CONFIGURATION_FAILURE_TO_CREATE_UNEXPECTED = "CollectionConfigurationFailureToCreateUnexpected"
+    COLLECTION_CONFIGURATION_FAILURE_TO_CREATE_UNEXPECTED = (
+        "CollectionConfigurationFailureToCreateUnexpected"
+    )
     """Collection configuration failed to create unexpectedly."""
 
 

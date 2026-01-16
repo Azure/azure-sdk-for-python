@@ -8,8 +8,12 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
 
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (
+    ConnectionStringParser,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
+    _StatsbeatMetrics,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
     set_statsbeat_shutdown,  # Add this import
@@ -56,7 +60,9 @@ class StatsbeatConfig:
                 ConnectionStringParser(connection_string)
                 self.connection_string = connection_string
             except Exception:  # pylint: disable=broad-except
-                logger.error("Invalid connection string obtained from config. Reverting to default.")
+                logger.error(
+                    "Invalid connection string obtained from config. Reverting to default."
+                )
                 self.connection_string = _get_stats_connection_string(endpoint)
         else:
             self.connection_string = _get_stats_connection_string(endpoint)
@@ -66,7 +72,10 @@ class StatsbeatConfig:
     def from_exporter(cls, exporter: Any) -> Optional["StatsbeatConfig"]:
         # Create configuration from an exporter instance
         # Validate required fields from exporter
-        if not hasattr(exporter, "_instrumentation_key") or not exporter._instrumentation_key:
+        if (
+            not hasattr(exporter, "_instrumentation_key")
+            or not exporter._instrumentation_key
+        ):
             logger.warning("Exporter is missing a valid instrumentation key.")
             return None
         if not hasattr(exporter, "_endpoint") or not exporter._endpoint:
@@ -86,7 +95,9 @@ class StatsbeatConfig:
         )
 
     @classmethod
-    def from_config(cls, base_config: "StatsbeatConfig", config_dict: Dict[str, str]) -> Optional["StatsbeatConfig"]:
+    def from_config(
+        cls, base_config: "StatsbeatConfig", config_dict: Dict[str, str]
+    ) -> Optional["StatsbeatConfig"]:
         """Update configuration from a dictionary. Used in conjunction with OneSettings control plane.
 
         Creates a new StatsbeatConfig instance with the same base configuration but updated
@@ -110,7 +121,9 @@ class StatsbeatConfig:
             logger.warning("Base configuration is missing a valid endpoint.")
             return None
 
-        connection_string = _get_connection_string_for_region_from_config(base_config.region, config_dict)
+        connection_string = _get_connection_string_for_region_from_config(
+            base_config.region, config_dict
+        )
         if connection_string is None:
             # If something went wrong in fetching connection string, fall back to the original
             connection_string = base_config.connection_string
@@ -118,7 +131,8 @@ class StatsbeatConfig:
         # TODO: Add support for disable_offline_storage from config_dict once supported in control plane
         disable_offline_storage = config_dict.get("disable_offline_storage")
         disable_offline_storage_config = (
-            isinstance(disable_offline_storage, str) and disable_offline_storage.lower() == "true"
+            isinstance(disable_offline_storage, str)
+            and disable_offline_storage.lower() == "true"
         )
 
         return cls(
@@ -203,7 +217,9 @@ class StatsbeatManager(metaclass=Singleton):
         try:
             # Create statsbeat exporter
             # Use delayed import to avoid circular import
-            from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+            from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
+                AzureMonitorMetricExporter,
+            )
 
             statsbeat_exporter = AzureMonitorMetricExporter(
                 connection_string=config.connection_string,
@@ -214,7 +230,8 @@ class StatsbeatManager(metaclass=Singleton):
             # Create metric reader
             reader = PeriodicExportingMetricReader(
                 statsbeat_exporter,
-                export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
+                export_interval_millis=_get_stats_short_export_interval()
+                * 1000,  # 15m by default
             )
 
             # Create meter provider
@@ -297,12 +314,16 @@ class StatsbeatManager(metaclass=Singleton):
                 # Force flush before shutdown to ensure data is sent
                 self._meter_provider.force_flush(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Failed to flush meter provider during reconfiguration: %s", e)
+                logger.warning(
+                    "Failed to flush meter provider during reconfiguration: %s", e
+                )
 
             try:
                 self._meter_provider.shutdown(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Failed to shutdown meter provider during reconfiguration: %s", e)
+                logger.warning(
+                    "Failed to shutdown meter provider during reconfiguration: %s", e
+                )
 
         # Reset state but keep initialized=True
         self._meter_provider = None

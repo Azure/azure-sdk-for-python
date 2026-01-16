@@ -22,7 +22,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
 
 logger = logging.getLogger(__name__)
 
-ICACLS_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe")
+ICACLS_PATH = os.path.join(
+    os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe"
+)
 
 
 def _fmt(timestamp: datetime.datetime) -> str:
@@ -63,7 +65,9 @@ class LocalFileBlob:
             pass  # keep silent
         return None
 
-    def put(self, data: List[Any], lease_period: int = 0) -> Union[StorageExportResult, str]:
+    def put(
+        self, data: List[Any], lease_period: int = 0
+    ) -> Union[StorageExportResult, str]:
         try:
             fullpath = self.fullpath + ".tmp"
             with open(fullpath, "w", encoding="utf-8") as file:
@@ -123,7 +127,9 @@ class LocalFileStorage:
             self._maintenance_task.daemon = True
             self._maintenance_task.start()
         else:
-            logger.error("Could not set secure permissions on storage folder, local storage is disabled.")
+            logger.error(
+                "Could not set secure permissions on storage folder, local storage is disabled."
+            )
 
     def close(self) -> None:
         if self._enabled:
@@ -135,7 +141,10 @@ class LocalFileStorage:
 
     # pylint: disable=redefined-builtin
     def __exit__(
-        self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], traceback: Optional[Any]
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[Any],
     ) -> None:
         self.close()
 
@@ -197,7 +206,9 @@ class LocalFileStorage:
             pass
         return None
 
-    def put(self, data: List[Any], lease_period: Optional[int] = None) -> Union[StorageExportResult, str]:
+    def put(
+        self, data: List[Any], lease_period: Optional[int] = None
+    ) -> Union[StorageExportResult, str]:
         try:
             if not self._enabled:
                 if get_local_storage_setup_state_readonly():
@@ -236,7 +247,9 @@ class LocalFileStorage:
             if os.name == "nt":
                 user = self._get_current_user()
                 if not user:
-                    logger.warning("Failed to retrieve current user. Skipping folder permission setup.")
+                    logger.warning(
+                        "Failed to retrieve current user. Skipping folder permission setup."
+                    )
                     return False
                 result = subprocess.run(
                     [
@@ -288,7 +301,9 @@ class LocalFileStorage:
                             "Persistent storage max capacity has been "
                             "reached. Currently at {}KB. Telemetry will be "
                             "lost. Please consider increasing the value of "
-                            "'storage_max_size' in exporter config.".format(str(size / 1024))
+                            "'storage_max_size' in exporter config.".format(
+                                str(size / 1024)
+                            )
                         )
                         return False
         return True

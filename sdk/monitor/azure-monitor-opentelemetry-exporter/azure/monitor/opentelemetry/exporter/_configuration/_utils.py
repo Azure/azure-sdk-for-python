@@ -89,7 +89,9 @@ class OneSettingsResponse:
 
 
 def make_onesettings_request(
-    url: str, query_dict: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None
+    url: str,
+    query_dict: Optional[Dict[str, str]] = None,
+    headers: Optional[Dict[str, str]] = None,
 ) -> OneSettingsResponse:
     """Make an HTTP request to the OneSettings API and parse the response.
 
@@ -180,7 +182,9 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
             if refresh_interval_header:
                 refresh_interval = int(refresh_interval_header) * 60
         except (ValueError, TypeError):
-            logger.warning("Invalid refresh interval format: %s", refresh_interval_header)
+            logger.warning(
+                "Invalid refresh interval format: %s", refresh_interval_header
+            )
             refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
 
     # Handle different status codes
@@ -194,12 +198,19 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
                 decoded_string = response.content.decode("utf-8")
                 config = json.loads(decoded_string)
                 settings = config.get("settings", {})
-                if settings and settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY) is not None:
+                if (
+                    settings
+                    and settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY) is not None
+                ):
                     version = int(settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY))  # type: ignore
             except (UnicodeDecodeError, json.JSONDecodeError) as ex:
-                logger.warning("Failed to decode OneSettings response content: %s", str(ex))
+                logger.warning(
+                    "Failed to decode OneSettings response content: %s", str(ex)
+                )
             except ValueError as ex:
-                logger.warning("Failed to parse OneSettings change version: %s", str(ex))
+                logger.warning(
+                    "Failed to parse OneSettings change version: %s", str(ex)
+                )
     elif status_code == 400:
         logger.warning("Bad request to OneSettings: %s", response.content)
     elif status_code == 404:

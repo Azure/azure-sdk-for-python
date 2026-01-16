@@ -90,7 +90,9 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
 
 
 # mypy: disable-error-code="assignment,union-attr"
-def _get_span_document(data: Union[_DependencyData, _RequestData]) -> Union[RemoteDependencyDocument, RequestDocument]:
+def _get_span_document(
+    data: Union[_DependencyData, _RequestData],
+) -> Union[RemoteDependencyDocument, RequestDocument]:
     if isinstance(data, _DependencyData):
         document = RemoteDependencyDocument(
             document_type=DocumentType.REMOTE_DEPENDENCY,
@@ -137,11 +139,21 @@ def _get_metrics_from_projections() -> List[Tuple[str, float]]:
         metric_value = 0
         aggregation_type = projection[0]
         if aggregation_type == AggregationType.MIN:
-            metric_value = 0 if projection[1] == _QUICKPULSE_PROJECTION_MAX_VALUE else projection[1]
+            metric_value = (
+                0
+                if projection[1] == _QUICKPULSE_PROJECTION_MAX_VALUE
+                else projection[1]
+            )
         elif aggregation_type == AggregationType.MAX:
-            metric_value = 0 if projection[1] == _QUICKPULSE_PROJECTION_MIN_VALUE else projection[1]
+            metric_value = (
+                0
+                if projection[1] == _QUICKPULSE_PROJECTION_MIN_VALUE
+                else projection[1]
+            )
         elif aggregation_type == AggregationType.AVG:
-            metric_value = 0 if projection[2] == 0 else projection[1] / float(projection[2])
+            metric_value = (
+                0 if projection[2] == 0 else projection[1] / float(projection[2])
+            )
         elif aggregation_type == AggregationType.SUM:
             metric_value = projection[1]
         metrics.append((id, metric_value))

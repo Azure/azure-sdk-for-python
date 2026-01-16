@@ -22,7 +22,9 @@ class TestQuickpulseLogRecordProcessor(unittest.TestCase):
         if _QuickpulseManager in _QuickpulseManager._instances:
             del _QuickpulseManager._instances[_QuickpulseManager]
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._processor.get_quickpulse_manager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._processor.get_quickpulse_manager"
+    )
     def test_emit(self, mock_get_manager):
         mock_manager = mock.Mock()
         mock_get_manager.return_value = mock_manager
@@ -47,7 +49,9 @@ class TestQuickpulseSpanProcessor(unittest.TestCase):
         if _QuickpulseManager in _QuickpulseManager._instances:
             del _QuickpulseManager._instances[_QuickpulseManager]
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._processor.get_quickpulse_manager")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._processor.get_quickpulse_manager"
+    )
     def test_on_end(self, mock_get_manager):
         mock_manager = mock.Mock()
         mock_get_manager.return_value = mock_manager

@@ -3,7 +3,9 @@
 
 from typing import TYPE_CHECKING
 
-from azure.monitor.opentelemetry.exporter.statsbeat._state import set_statsbeat_customer_sdkstats_feature_set
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    set_statsbeat_customer_sdkstats_feature_set,
+)
 
 from ._state import get_customer_stats_manager
 

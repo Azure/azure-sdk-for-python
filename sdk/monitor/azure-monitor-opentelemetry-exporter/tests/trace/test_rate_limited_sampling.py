@@ -23,7 +23,9 @@ from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling im
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
 
-def create_parent_span(sampled: bool, sample_rate: Optional[float] = None, is_remote: bool = False):
+def create_parent_span(
+    sampled: bool, sample_rate: Optional[float] = None, is_remote: bool = False
+):
     trace_flags = TraceFlags(0x01) if sampled else TraceFlags(0x00)
 
     span_context = SpanContext(
@@ -68,7 +70,9 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampler = RateLimitedSampler(target_rate)
 
         # Reset initial state to use our controlled time
-        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
+            _State,
+        )
 
         initial_time = self.current_time
         sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
@@ -81,7 +85,9 @@ class TestRateLimitedSampler(unittest.TestCase):
         for i in range(num_spans):
             self.advance_time(nanoseconds_between_spans)
 
-            result = sampler.should_sample(parent_context=None, trace_id=i, name=f"test-span-{i}")
+            result = sampler.should_sample(
+                parent_context=None, trace_id=i, name=f"test-span-{i}"
+            )
 
             self.assertIsInstance(result, SamplingResult)
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
@@ -94,7 +100,9 @@ class TestRateLimitedSampler(unittest.TestCase):
             if result.decision == Decision.RECORD_AND_SAMPLE:
                 sampled_count += 1
 
-        self.assertGreater(sampled_count, 0, "Should sample some spans with high target rate")
+        self.assertGreater(
+            sampled_count, 0, "Should sample some spans with high target rate"
+        )
 
     # Test throttling behavior under high volume of spans with low target rate
     def test_high_volume_sampling(self):
@@ -102,7 +110,9 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampler = RateLimitedSampler(target_rate)
 
         # Reset initial state to use our controlled time
-        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
+            _State,
+        )
 
         initial_time = self.current_time
         sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
@@ -119,13 +129,21 @@ class TestRateLimitedSampler(unittest.TestCase):
         for i in range(num_spans):
             self.advance_time(nanoseconds_between_spans)
 
-            result = sampler.should_sample(parent_context=None, trace_id=trace_ids[i], name=f"high-volume-span-{i}")
+            result = sampler.should_sample(
+                parent_context=None, trace_id=trace_ids[i], name=f"high-volume-span-{i}"
+            )
 
             if result.decision == Decision.RECORD_AND_SAMPLE:
                 sampled_count += 1
 
-        self.assertGreater(sampled_count, 0, "Should sample at least some spans even under high load")
-        self.assertLess(sampled_count, num_spans * 0.1, "Should throttle significantly under high load")
+        self.assertGreater(
+            sampled_count, 0, "Should sample at least some spans even under high load"
+        )
+        self.assertLess(
+            sampled_count,
+            num_spans * 0.1,
+            "Should throttle significantly under high load",
+        )
 
     # Test adaptive sampling when span arrival rate increases over time
     def test_rate_adaptation_increasing_load(self):
@@ -133,7 +151,9 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampler = RateLimitedSampler(target_rate)
 
         # Reset initial state to use our controlled time
-        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
+            _State,
+        )
 
         initial_time = self.current_time
         sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
@@ -171,14 +191,20 @@ class TestRateLimitedSampler(unittest.TestCase):
         phase1_percentage = (sampled_phase1 / phase1_spans) * 100
         phase2_percentage = (sampled_phase2 / phase2_spans) * 100
 
-        self.assertLess(phase2_percentage, phase1_percentage, "Sampling percentage should decrease under high load")
+        self.assertLess(
+            phase2_percentage,
+            phase1_percentage,
+            "Sampling percentage should decrease under high load",
+        )
 
     # Test sampler instantiation with various target rates and description format
     def test_sampler_creation(self):
         for target_rate in [0.1, 0.5, 1.0, 5.0, 100.0]:
             sampler = RateLimitedSampler(target_rate)
             self.assertIsInstance(sampler, RateLimitedSampler)
-            self.assertEqual(sampler.get_description(), f"RateLimitedSampler{{{target_rate}}}")
+            self.assertEqual(
+                sampler.get_description(), f"RateLimitedSampler{{{target_rate}}}"
+            )
 
     # Test that negative target rates raise a ValueError
     def test_negative_rate_raises_error(self):
@@ -190,7 +216,9 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampler = RateLimitedSampler(0.0)
 
         for i in range(100):
-            result = sampler.should_sample(parent_context=None, trace_id=i, name="test-span")
+            result = sampler.should_sample(
+                parent_context=None, trace_id=i, name="test-span"
+            )
 
             self.assertIsInstance(result, SamplingResult)
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
@@ -204,20 +232,26 @@ class TestRateLimitedSampler(unittest.TestCase):
 
         results = []
         for _ in range(10):
-            result = sampler.should_sample(parent_context=None, trace_id=trace_id, name="test-span")
+            result = sampler.should_sample(
+                parent_context=None, trace_id=trace_id, name="test-span"
+            )
             results.append(result)
 
         first_decision = results[0].decision
         for result in results[1:]:
             self.assertEqual(
-                result.decision, first_decision, "Sampling decision should be consistent for same trace ID"
+                result.decision,
+                first_decision,
+                "Sampling decision should be consistent for same trace ID",
             )
 
     # Test that sampling results include valid sample rate attributes
     def test_sampling_attributes(self):
         sampler = RateLimitedSampler(25.0)
 
-        result = sampler.should_sample(parent_context=None, trace_id=123, name="test-span")
+        result = sampler.should_sample(
+            parent_context=None, trace_id=123, name="test-span"
+        )
 
         self.assertIsInstance(result, SamplingResult)
 
@@ -245,10 +279,14 @@ class TestRateLimitedSampler(unittest.TestCase):
 
         for trace_id in extreme_trace_ids:
             with self.subTest(trace_id=trace_id):
-                result = sampler.should_sample(parent_context=None, trace_id=trace_id, name="test-span")
+                result = sampler.should_sample(
+                    parent_context=None, trace_id=trace_id, name="test-span"
+                )
 
                 self.assertIsInstance(result, SamplingResult)
-                self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
+                self.assertIn(
+                    result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP]
+                )
 
                 # Check if _SAMPLE_RATE_KEY is present only when sampling percentage is not 100%
                 sampling_percentage = sampler._sampling_percentage_generator.get()
@@ -298,14 +336,19 @@ class TestRateLimitedSampler(unittest.TestCase):
     def test_parent_span_sampled_with_sample_rate(self):
         sampler = RateLimitedSampler(10.0)
 
-        parent_span = create_parent_span(sampled=True, sample_rate=75.0, is_remote=False)
+        parent_span = create_parent_span(
+            sampled=True, sample_rate=75.0, is_remote=False
+        )
 
         with patch(
-            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
+            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span",
+            return_value=parent_span,
         ):
             context = Mock()
 
-            result = sampler.should_sample(parent_context=context, trace_id=0xABC123, name="test-span")
+            result = sampler.should_sample(
+                parent_context=context, trace_id=0xABC123, name="test-span"
+            )
 
             self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 75.0)
@@ -314,14 +357,19 @@ class TestRateLimitedSampler(unittest.TestCase):
     def test_parent_span_not_sampled_with_sample_rate(self):
         sampler = RateLimitedSampler(10.0)
 
-        parent_span = create_parent_span(sampled=False, sample_rate=25.0, is_remote=False)
+        parent_span = create_parent_span(
+            sampled=False, sample_rate=25.0, is_remote=False
+        )
 
         with patch(
-            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
+            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span",
+            return_value=parent_span,
         ):
             context = Mock()
 
-            result = sampler.should_sample(parent_context=context, trace_id=0xABC123, name="test-span")
+            result = sampler.should_sample(
+                parent_context=context, trace_id=0xABC123, name="test-span"
+            )
 
             self.assertEqual(result.decision, Decision.DROP)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 0.0)
@@ -330,14 +378,19 @@ class TestRateLimitedSampler(unittest.TestCase):
     def test_parent_span_sampled_with_100_percent_sample_rate(self):
         sampler = RateLimitedSampler(5.0)
 
-        parent_span = create_parent_span(sampled=True, sample_rate=100.0, is_remote=False)
+        parent_span = create_parent_span(
+            sampled=True, sample_rate=100.0, is_remote=False
+        )
 
         with patch(
-            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
+            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span",
+            return_value=parent_span,
         ):
             context = Mock()
 
-            result = sampler.should_sample(parent_context=context, trace_id=0xABC123, name="test-span")
+            result = sampler.should_sample(
+                parent_context=context, trace_id=0xABC123, name="test-span"
+            )
 
             self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 100.0)
@@ -349,18 +402,25 @@ class TestRateLimitedSampler(unittest.TestCase):
         parent_span = create_parent_span(sampled=True, sample_rate=80.0, is_remote=True)
 
         with patch(
-            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
+            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span",
+            return_value=parent_span,
         ):
             context = Mock()
 
-            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
+                _State,
+            )
 
             initial_time = self.current_time
-            sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
+            sampler._sampling_percentage_generator._state = _State(
+                0.0, 0.0, initial_time
+            )
 
             self.advance_time(100_000_000)
 
-            result = sampler.should_sample(parent_context=context, trace_id=0xABC123, name="test-span")
+            result = sampler.should_sample(
+                parent_context=context, trace_id=0xABC123, name="test-span"
+            )
 
             self.assertNotEqual(result.attributes[_SAMPLE_RATE_KEY], 80.0)
 
@@ -368,21 +428,30 @@ class TestRateLimitedSampler(unittest.TestCase):
     def test_parent_span_no_sample_rate_attribute(self):
         sampler = RateLimitedSampler(5.0)
 
-        parent_span = create_parent_span(sampled=True, sample_rate=None, is_remote=False)
+        parent_span = create_parent_span(
+            sampled=True, sample_rate=None, is_remote=False
+        )
 
         with patch(
-            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
+            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span",
+            return_value=parent_span,
         ):
             context = Mock()
 
-            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
+                _State,
+            )
 
             initial_time = self.current_time
-            sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
+            sampler._sampling_percentage_generator._state = _State(
+                0.0, 0.0, initial_time
+            )
 
             self.advance_time(100_000_000)
 
-            result = sampler.should_sample(parent_context=context, trace_id=0xABC123, name="test-span")
+            result = sampler.should_sample(
+                parent_context=context, trace_id=0xABC123, name="test-span"
+            )
 
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
             sample_rate = result.attributes[_SAMPLE_RATE_KEY]
@@ -399,18 +468,25 @@ class TestRateLimitedSampler(unittest.TestCase):
         parent_span.get_span_context.return_value = invalid_context
 
         with patch(
-            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
+            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span",
+            return_value=parent_span,
         ):
             context = Mock()
 
-            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
+                _State,
+            )
 
             initial_time = self.current_time
-            sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
+            sampler._sampling_percentage_generator._state = _State(
+                0.0, 0.0, initial_time
+            )
 
             self.advance_time(100_000_000)
 
-            result = sampler.should_sample(parent_context=context, trace_id=0xABC123, name="test-span")
+            result = sampler.should_sample(
+                parent_context=context, trace_id=0xABC123, name="test-span"
+            )
 
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
             sample_rate = result.attributes[_SAMPLE_RATE_KEY]
@@ -420,14 +496,18 @@ class TestRateLimitedSampler(unittest.TestCase):
     def test_no_parent_context_uses_local_sampling(self):
         sampler = RateLimitedSampler(5.0)
 
-        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
+            _State,
+        )
 
         initial_time = self.current_time
         sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
 
         self.advance_time(100_000_000)
 
-        result = sampler.should_sample(parent_context=None, trace_id=0xABC123, name="test-span")
+        result = sampler.should_sample(
+            parent_context=None, trace_id=0xABC123, name="test-span"
+        )
 
         self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
         sample_rate = result.attributes[_SAMPLE_RATE_KEY]
@@ -437,17 +517,26 @@ class TestRateLimitedSampler(unittest.TestCase):
     def test_parent_context_preserves_original_attributes(self):
         sampler = RateLimitedSampler(10.0)
 
-        parent_span = create_parent_span(sampled=True, sample_rate=50.0, is_remote=False)
+        parent_span = create_parent_span(
+            sampled=True, sample_rate=50.0, is_remote=False
+        )
 
         with patch(
-            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
+            "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span",
+            return_value=parent_span,
         ):
             context = Mock()
 
-            original_attributes = {"service.name": "test-service", "operation.name": "test-operation"}
+            original_attributes = {
+                "service.name": "test-service",
+                "operation.name": "test-operation",
+            }
 
             result = sampler.should_sample(
-                parent_context=context, trace_id=0xABC123, name="test-span", attributes=original_attributes
+                parent_context=context,
+                trace_id=0xABC123,
+                name="test-span",
+                attributes=original_attributes,
             )
 
             self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
@@ -459,7 +548,9 @@ class TestRateLimitedSampler(unittest.TestCase):
 class TestUtilityFunctions(unittest.TestCase):
     # Test that DJB2 hash produces consistent results for the same input
     def test_djb2_hash_consistency(self):
-        from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_sample_score
+        from azure.monitor.opentelemetry.exporter.export.trace._utils import (
+            _get_DJB2_sample_score,
+        )
 
         trace_id = "test-trace-id-12345"
 
@@ -469,7 +560,9 @@ class TestUtilityFunctions(unittest.TestCase):
 
     # Test DJB2 hash function with edge case inputs
     def test_djb2_hash_edge_cases(self):
-        from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_sample_score
+        from azure.monitor.opentelemetry.exporter.export.trace._utils import (
+            _get_DJB2_sample_score,
+        )
 
         edge_cases = [
             "",

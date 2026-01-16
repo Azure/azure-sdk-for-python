@@ -56,7 +56,9 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
                 # Duration only supported for Dependency and Requests
                 continue
         elif metric_info.projection.startswith(_QUICKPULSE_PROJECTION_CUSTOM):
-            key = metric_info.projection.split(_QUICKPULSE_PROJECTION_CUSTOM, 1)[1].strip()
+            key = metric_info.projection.split(_QUICKPULSE_PROJECTION_CUSTOM, 1)[
+                1
+            ].strip()
             dim_value = data.custom_dimensions.get(key, 0)
             if dim_value is None:
                 continue
@@ -83,8 +85,12 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
 
 # Calculate aggregation based off of previous projection value, aggregation type of a specific metric filter
 # Return type is a Tuple of (value, count)
-def _calculate_aggregation(aggregation: AggregationType, id: str, value: float) -> Optional[Tuple[float, int]]:
-    projection: Optional[Tuple[AggregationType, float, int]] = _get_quickpulse_projection_map().get(id)
+def _calculate_aggregation(
+    aggregation: AggregationType, id: str, value: float
+) -> Optional[Tuple[float, int]]:
+    projection: Optional[Tuple[AggregationType, float, int]] = (
+        _get_quickpulse_projection_map().get(id)
+    )
     if projection:
         prev_value = projection[1]
         prev_count = projection[2]

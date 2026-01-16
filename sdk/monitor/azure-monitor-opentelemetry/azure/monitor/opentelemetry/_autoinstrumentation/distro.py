@@ -45,12 +45,14 @@ class AzureMonitorDistro(BaseDistro):
             _configure_auto_instrumentation()
             AzureStatusLogger.log_status(True)
             AzureDiagnosticLogging.info(
-                "Azure Monitor OpenTelemetry Distro configured successfully.", _ATTACH_SUCCESS_DISTRO
+                "Azure Monitor OpenTelemetry Distro configured successfully.",
+                _ATTACH_SUCCESS_DISTRO,
             )
         except Exception as e:
             AzureStatusLogger.log_status(False, reason=str(e))
             AzureDiagnosticLogging.error(  # pylint: disable=C
-                "Azure Monitor OpenTelemetry Distro failed during configuration: %s" % str(e),
+                "Azure Monitor OpenTelemetry Distro failed during configuration: %s"
+                % str(e),
                 _ATTACH_FAILURE_DISTRO,
             )
             raise e
@@ -58,7 +60,9 @@ class AzureMonitorDistro(BaseDistro):
 
 def _configure_auto_instrumentation() -> None:
     environ.setdefault(_OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true")
-    environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME)
+    environ.setdefault(
+        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME
+    )
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
     if _AZURE_SDK_INSTRUMENTATION_NAME not in otel_disabled_instrumentations:
         settings.tracing_implementation = OpenTelemetrySpan

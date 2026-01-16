@@ -47,7 +47,10 @@ class CollectionConfigurationError(_serialization.Model):
     }
 
     _attribute_map = {
-        "collection_configuration_error_type": {"key": "CollectionConfigurationErrorType", "type": "str"},
+        "collection_configuration_error_type": {
+            "key": "CollectionConfigurationErrorType",
+            "type": "str",
+        },
         "message": {"key": "Message", "type": "str"},
         "full_exception": {"key": "FullException", "type": "str"},
         "data": {"key": "Data", "type": "[KeyValuePairString]"},
@@ -56,7 +59,9 @@ class CollectionConfigurationError(_serialization.Model):
     def __init__(
         self,
         *,
-        collection_configuration_error_type: Union[str, "_models.CollectionConfigurationErrorType"],
+        collection_configuration_error_type: Union[
+            str, "_models.CollectionConfigurationErrorType"
+        ],
         message: str,
         full_exception: str,
         data: List["_models.KeyValuePairString"],
@@ -178,7 +183,10 @@ class DerivedMetricInfo(_serialization.Model):
     _attribute_map = {
         "id": {"key": "Id", "type": "str"},
         "telemetry_type": {"key": "TelemetryType", "type": "str"},
-        "filter_groups": {"key": "FilterGroups", "type": "[FilterConjunctionGroupInfo]"},
+        "filter_groups": {
+            "key": "FilterGroups",
+            "type": "[FilterConjunctionGroupInfo]",
+        },
         "projection": {"key": "Projection", "type": "str"},
         "aggregation": {"key": "Aggregation", "type": "str"},
         "back_end_aggregation": {"key": "BackEndAggregation", "type": "str"},
@@ -341,7 +349,10 @@ class DocumentStreamInfo(_serialization.Model):
 
     _attribute_map = {
         "id": {"key": "Id", "type": "str"},
-        "document_filter_groups": {"key": "DocumentFilterGroups", "type": "[DocumentFilterConjunctionGroupInfo]"},
+        "document_filter_groups": {
+            "key": "DocumentFilterGroups",
+            "type": "[DocumentFilterConjunctionGroupInfo]",
+        },
     }
 
     def __init__(
@@ -411,7 +422,9 @@ class Event(DocumentIngress):
         :keyword name: Event name.
         :paramtype name: str
         """
-        super().__init__(document_stream_ids=document_stream_ids, properties=properties, **kwargs)
+        super().__init__(
+            document_stream_ids=document_stream_ids, properties=properties, **kwargs
+        )
         self.document_type: str = "Event"
         self.name = name
 
@@ -470,7 +483,9 @@ class Exception(DocumentIngress):
         :keyword exception_message: Exception message.
         :paramtype exception_message: str
         """
-        super().__init__(document_stream_ids=document_stream_ids, properties=properties, **kwargs)
+        super().__init__(
+            document_stream_ids=document_stream_ids, properties=properties, **kwargs
+        )
         self.document_type: str = "Exception"
         self.exception_type = exception_type
         self.exception_message = exception_message
@@ -530,7 +545,12 @@ class FilterInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, field_name: str, predicate: Union[str, "_models.PredicateType"], comparand: str, **kwargs: Any
+        self,
+        *,
+        field_name: str,
+        predicate: Union[str, "_models.PredicateType"],
+        comparand: str,
+        **kwargs: Any
     ) -> None:
         """
         :keyword field_name: dimension name of the filter. Required.
@@ -621,7 +641,9 @@ class MetricPoint(_serialization.Model):
         self.weight = weight
 
 
-class MonitoringDataPoint(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MonitoringDataPoint(
+    _serialization.Model
+):  # pylint: disable=too-many-instance-attributes
     """Monitoring data point coming from the client, which includes metrics, documents and other
     metadata info.
 
@@ -685,7 +707,10 @@ class MonitoringDataPoint(_serialization.Model):  # pylint: disable=too-many-ins
         "timestamp": {"key": "Timestamp", "type": "iso-8601"},
         "transmission_time": {"key": "TransmissionTime", "type": "iso-8601"},
         "is_web_app": {"key": "IsWebApp", "type": "bool"},
-        "performance_collection_supported": {"key": "PerformanceCollectionSupported", "type": "bool"},
+        "performance_collection_supported": {
+            "key": "PerformanceCollectionSupported",
+            "type": "bool",
+        },
         "metrics": {"key": "Metrics", "type": "[MetricPoint]"},
         "documents": {"key": "Documents", "type": "[DocumentIngress]"},
         "top_cpu_processes": {"key": "TopCpuProcesses", "type": "[ProcessCpuData]"},
@@ -711,7 +736,9 @@ class MonitoringDataPoint(_serialization.Model):  # pylint: disable=too-many-ins
         metrics: Optional[List["_models.MetricPoint"]] = None,
         documents: Optional[List["_models.DocumentIngress"]] = None,
         top_cpu_processes: Optional[List["_models.ProcessCpuData"]] = None,
-        collection_configuration_errors: Optional[List["_models.CollectionConfigurationError"]] = None,
+        collection_configuration_errors: Optional[
+            List["_models.CollectionConfigurationError"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -789,7 +816,9 @@ class ProcessCpuData(_serialization.Model):
         "cpu_percentage": {"key": "CpuPercentage", "type": "int"},
     }
 
-    def __init__(self, *, process_name: str, cpu_percentage: int, **kwargs: Any) -> None:
+    def __init__(
+        self, *, process_name: str, cpu_percentage: int, **kwargs: Any
+    ) -> None:
         """
         :keyword process_name: Process name. Required.
         :paramtype process_name: str
@@ -822,7 +851,10 @@ class QuotaConfigurationInfo(_serialization.Model):
     _attribute_map = {
         "initial_quota": {"key": "InitialQuota", "type": "float"},
         "max_quota": {"key": "MaxQuota", "type": "float"},
-        "quota_accrual_rate_per_sec": {"key": "QuotaAccrualRatePerSec", "type": "float"},
+        "quota_accrual_rate_per_sec": {
+            "key": "QuotaAccrualRatePerSec",
+            "type": "float",
+        },
     }
 
     def __init__(
@@ -919,7 +951,9 @@ class RemoteDependency(DocumentIngress):
          P[n]Y[n]M[n]DT[n]H[n]M[n]S or P[n]W.
         :paramtype duration: str
         """
-        super().__init__(document_stream_ids=document_stream_ids, properties=properties, **kwargs)
+        super().__init__(
+            document_stream_ids=document_stream_ids, properties=properties, **kwargs
+        )
         self.document_type: str = "RemoteDependency"
         self.name = name
         self.command_name = command_name
@@ -998,7 +1032,9 @@ class Request(DocumentIngress):
          P[n]Y[n]M[n]DT[n]H[n]M[n]S or P[n]W.
         :paramtype duration: str
         """
-        super().__init__(document_stream_ids=document_stream_ids, properties=properties, **kwargs)
+        super().__init__(
+            document_stream_ids=document_stream_ids, properties=properties, **kwargs
+        )
         self.document_type: str = "Request"
         self.name = name
         self.url = url
@@ -1118,6 +1154,8 @@ class Trace(DocumentIngress):
         :keyword message: Trace message.
         :paramtype message: str
         """
-        super().__init__(document_stream_ids=document_stream_ids, properties=properties, **kwargs)
+        super().__init__(
+            document_stream_ids=document_stream_ids, properties=properties, **kwargs
+        )
         self.document_type: str = "Trace"
         self.message = message

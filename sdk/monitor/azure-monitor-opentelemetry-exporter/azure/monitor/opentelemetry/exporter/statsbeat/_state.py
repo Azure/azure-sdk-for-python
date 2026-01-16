@@ -4,7 +4,9 @@ import os
 import threading
 from typing import TYPE_CHECKING, Dict, Union
 
-from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
+)
 
 if TYPE_CHECKING:
     from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
@@ -37,7 +39,9 @@ def get_statsbeat_manager() -> "StatsbeatManager":
     """
     global _statsbeat_manager  # pylint: disable=global-statement
     if _statsbeat_manager is None:
-        from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
+        from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
+            StatsbeatManager,
+        )
 
         _statsbeat_manager = StatsbeatManager()
     return _statsbeat_manager

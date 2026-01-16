@@ -56,7 +56,9 @@ __all__ = ["AzureMonitorLogExporter"]
 class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:
+    def export(
+        self, batch: Sequence[ReadableLogRecord], **kwargs: Any
+    ) -> LogRecordExportResult:
         # pylint: disable=unused-argument
         """Export log data.
 
@@ -71,7 +73,9 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_log_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while exporting the data."
+            )  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
@@ -89,7 +93,9 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorLogExporter":
+    def from_connection_string(
+        cls, conn_str: str, **kwargs: Any
+    ) -> "AzureMonitorLogExporter":
         """
         Create an AzureMonitorLogExporter from a connection string. This is the
         recommended way of instantiation if a connection string is passed in
@@ -111,7 +117,9 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
     log_record = readable_log_record.log_record
     is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or log_record.attributes.get(
+        is_event = log_record.attributes.get(
+            _MICROSOFT_CUSTOM_EVENT_NAME
+        ) or log_record.attributes.get(
             _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE
         )  # type: ignore
     return is_event is not None
@@ -121,7 +129,11 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 # pylint: disable=too-many-statements
 def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> TelemetryItem:
     log_record = readable_log_record.log_record
-    time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
+    time_stamp = (
+        log_record.timestamp
+        if log_record.timestamp is not None
+        else log_record.observed_timestamp
+    )
     envelope = _utils._create_telemetry_item(time_stamp)
     envelope.tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
@@ -257,5 +269,9 @@ _IGNORED_ATTRS = frozenset(
 
 
 def _set_statsbeat_custom_events_feature():
-    if is_statsbeat_enabled() and not get_statsbeat_shutdown() and not get_statsbeat_custom_events_feature_set():
+    if (
+        is_statsbeat_enabled()
+        and not get_statsbeat_shutdown()
+        and not get_statsbeat_custom_events_feature_set()
+    ):
         set_statsbeat_custom_events_feature_set()

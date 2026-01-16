@@ -61,7 +61,9 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         manager_module._LAST_REQUEST_RATE_TIME = datetime.now()
         manager_module._LAST_EXCEPTION_RATE_TIME = datetime.now()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS"
+    )
     def test_get_process_cpu_success(self, mock_process):
         """Test successful process CPU retrieval."""
         mock_process.cpu_percent.return_value = 25.5
@@ -72,7 +74,9 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         self.assertAlmostEqual(result[0].value, 25.5)
         mock_process.cpu_percent.assert_called_once_with(interval=None)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS"
+    )
     def test_get_process_cpu_error(self, mock_process):
         """Test process CPU retrieval with error."""
         mock_process.cpu_percent.side_effect = psutil.NoSuchProcess(1)
@@ -82,8 +86,13 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].value, 0.0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.NUM_CPUS", 4)
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS_FOR_CPU_NORMALIZED")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.NUM_CPUS",
+        4,
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS_FOR_CPU_NORMALIZED"
+    )
     def test_get_process_cpu_normalized_success(self, mock_process):
         """Test successful normalized process CPU retrieval."""
         mock_process.cpu_percent.return_value = 80.0
@@ -94,7 +103,10 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         self.assertAlmostEqual(result[0].value, 20.0)  # 80 / 4 CPUs
         mock_process.cpu_percent.assert_called_once_with(interval=None)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.NUM_CPUS", 0)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.NUM_CPUS",
+        0,
+    )
     def test_get_process_cpu_normalized_no_cpus(self):
         """Test normalized process CPU with no CPUs."""
         result = list(_get_process_cpu_normalized(None))
@@ -124,7 +136,9 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].value, 0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS"
+    )
     def test_get_process_memory_success(self, mock_process):
         """Test successful process memory retrieval."""
         mock_memory_info = MagicMock()
@@ -136,7 +150,9 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].value, 52428800)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS"
+    )
     def test_get_process_memory_error(self, mock_process):
         """Test process memory retrieval with error."""
         mock_process.memory_info.side_effect = psutil.AccessDenied(1)
@@ -146,8 +162,12 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].value, 0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime")
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS"
+    )
     def test_get_process_io_success(self, mock_process, mock_datetime):
         """Test successful process I/O retrieval."""
         # Setup mock I/O counters
@@ -175,12 +195,18 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         # Expected: (5000 - 3000) / 2 seconds = 1000 bytes/sec
         self.assertAlmostEqual(result[0].value, 1000.0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime")
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS"
+    )
     def test_get_process_io_unavailable(self, mock_process, mock_datetime):
         """Test unavailable process I/O retrieval."""
         # Setup unavailable I/O counters
-        mock_process.io_counters.side_effect = AttributeError("'Process' object has no attribute 'io_counters'")
+        mock_process.io_counters.side_effect = AttributeError(
+            "'Process' object has no attribute 'io_counters'"
+        )
 
         # Setup time mocks
         start_time = datetime(2023, 1, 1, 12, 0, 0)
@@ -204,7 +230,9 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
     def test_get_processor_time_success(self, mock_cpu_times):
         """Test successful processor time retrieval."""
         # Create mock CPU times
-        CpuTimes = collections.namedtuple("CpuTimes", ["user", "system", "idle", "nice"])
+        CpuTimes = collections.namedtuple(
+            "CpuTimes", ["user", "system", "idle", "nice"]
+        )
 
         # First call (stored in _LAST_CPU_TIMES)
         first_times = CpuTimes(user=10.0, system=5.0, idle=80.0, nice=1.0)
@@ -229,15 +257,21 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
 
     def test_get_cpu_times_total(self):
         """Test CPU times total calculation."""
-        CpuTimes = collections.namedtuple("CpuTimes", ["user", "system", "idle", "nice", "iowait", "irq", "softirq"])
-        cpu_times = CpuTimes(user=10.0, system=5.0, idle=80.0, nice=1.0, iowait=2.0, irq=0.5, softirq=0.8)
+        CpuTimes = collections.namedtuple(
+            "CpuTimes", ["user", "system", "idle", "nice", "iowait", "irq", "softirq"]
+        )
+        cpu_times = CpuTimes(
+            user=10.0, system=5.0, idle=80.0, nice=1.0, iowait=2.0, irq=0.5, softirq=0.8
+        )
 
         total = _get_cpu_times_total(cpu_times)
 
         expected = 10.0 + 5.0 + 80.0 + 1.0 + 2.0 + 0.5 + 0.8
         self.assertAlmostEqual(total, expected)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime"
+    )
     def test_get_request_rate_success(self, mock_datetime):
         """Test successful request rate calculation."""
         start_time = datetime(2023, 1, 1, 12, 0, 0)
@@ -260,7 +294,9 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         # Check that globals were reset
         self.assertEqual(manager_module._REQUESTS_COUNT, 0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.datetime"
+    )
     def test_get_exception_rate_success(self, mock_datetime):
         """Test successful exception rate calculation."""
         start_time = datetime(2023, 1, 1, 12, 0, 0)
@@ -297,7 +333,9 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         counter = AvailableMemory(self.meter)
 
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.memoryavailablebytes")
+        self.assertEqual(
+            counter.NAME[0], "azuremonitor.performancecounter.memoryavailablebytes"
+        )
         self.assertEqual(counter.NAME[1], "\\Memory\\Available Bytes")
 
     def test_exception_rate_initialization(self):
@@ -305,16 +343,26 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         counter = ExceptionRate(self.meter)
 
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.exceptionssec")
-        self.assertEqual(counter.NAME[1], "\\.NET CLR Exceptions(??APP_CLR_PROC??)\\# of Exceps Thrown / sec")
+        self.assertEqual(
+            counter.NAME[0], "azuremonitor.performancecounter.exceptionssec"
+        )
+        self.assertEqual(
+            counter.NAME[1],
+            "\\.NET CLR Exceptions(??APP_CLR_PROC??)\\# of Exceps Thrown / sec",
+        )
 
     def test_request_execution_time_initialization(self):
         """Test RequestExecutionTime class initialization."""
         counter = RequestExecutionTime(self.meter)
 
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.requestexecutiontime")
-        self.assertEqual(counter.NAME[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Request Execution Time")
+        self.assertEqual(
+            counter.NAME[0], "azuremonitor.performancecounter.requestexecutiontime"
+        )
+        self.assertEqual(
+            counter.NAME[1],
+            "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Request Execution Time",
+        )
 
     def test_request_rate_initialization(self):
         """Test RequestRate class initialization."""
@@ -322,7 +370,9 @@ class TestPerformanceCounterClasses(unittest.TestCase):
 
         self.assertIsNotNone(counter.gauge)
         self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.requestssec")
-        self.assertEqual(counter.NAME[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Requests/Sec")
+        self.assertEqual(
+            counter.NAME[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Requests/Sec"
+        )
 
     def test_process_cpu_initialization(self):
         """Test ProcessCpu class initialization."""
@@ -330,38 +380,56 @@ class TestPerformanceCounterClasses(unittest.TestCase):
 
         self.assertIsNotNone(counter.gauge)
         self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processtime")
-        self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time")
+        self.assertEqual(
+            counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time"
+        )
 
     def test_process_cpu_normalized_initialization(self):
         """Test ProcessCpuNormalized class initialization."""
         counter = ProcessCpuNormalized(self.meter)
 
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processtimenormalized")
-        self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time Normalized")
+        self.assertEqual(
+            counter.NAME[0], "azuremonitor.performancecounter.processtimenormalized"
+        )
+        self.assertEqual(
+            counter.NAME[1],
+            "\\Process(??APP_WIN32_PROC??)\\% Processor Time Normalized",
+        )
 
     def test_process_io_rate_initialization(self):
         """Test ProcessIORate class initialization."""
         counter = ProcessIORate(self.meter)
 
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processiobytessec")
-        self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec")
+        self.assertEqual(
+            counter.NAME[0], "azuremonitor.performancecounter.processiobytessec"
+        )
+        self.assertEqual(
+            counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec"
+        )
 
     def test_process_private_bytes_initialization(self):
         """Test ProcessPrivateBytes class initialization."""
         counter = ProcessPrivateBytes(self.meter)
 
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processprivatebytes")
-        self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\Private Bytes")
+        self.assertEqual(
+            counter.NAME[0], "azuremonitor.performancecounter.processprivatebytes"
+        )
+        self.assertEqual(
+            counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\Private Bytes"
+        )
 
     def test_processor_time_initialization(self):
         """Test ProcessorTime class initialization."""
         counter = ProcessorTime(self.meter)
 
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processortotalprocessortime")
+        self.assertEqual(
+            counter.NAME[0],
+            "azuremonitor.performancecounter.processortotalprocessortime",
+        )
         self.assertEqual(counter.NAME[1], "\\Processor(_Total)\\% Processor Time")
 
 
@@ -380,8 +448,13 @@ class TestPerformanceCountersManager(unittest.TestCase):
         if _PerformanceCountersManager in Singleton._instances:
             del Singleton._instances[_PerformanceCountersManager]
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._IO_AVAILABLE", True)
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._IO_AVAILABLE",
+        True,
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider"
+    )
     def test_manager_initialization_success(self, mock_get_meter_provider):
         """Test successful manager initialization."""
         mock_meter_provider = MagicMock()
@@ -395,11 +468,18 @@ class TestPerformanceCountersManager(unittest.TestCase):
 
         manager = _PerformanceCountersManager()
 
-        self.assertEqual(len(manager._performance_counters), len(PERFORMANCE_COUNTER_METRICS))
+        self.assertEqual(
+            len(manager._performance_counters), len(PERFORMANCE_COUNTER_METRICS)
+        )
         mock_meter_provider.get_meter.assert_called_once()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._IO_AVAILABLE", False)
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._IO_AVAILABLE",
+        False,
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider"
+    )
     def test_manager_initialization_success_no_io(self, mock_get_meter_provider):
         """Test successful manager initialization."""
         mock_meter_provider = MagicMock()
@@ -414,7 +494,9 @@ class TestPerformanceCountersManager(unittest.TestCase):
         manager = _PerformanceCountersManager()
 
         # TODO: _PROCESS.io_counters() is not available on Mac OS and some Linux distros. Find alternative.
-        self.assertEqual(len(manager._performance_counters), len(PERFORMANCE_COUNTER_METRICS) - 1)
+        self.assertEqual(
+            len(manager._performance_counters), len(PERFORMANCE_COUNTER_METRICS) - 1
+        )
         mock_meter_provider.get_meter.assert_called_once()
 
     def test_manager_initialization_with_custom_meter_provider(self):
@@ -431,7 +513,9 @@ class TestPerformanceCountersManager(unittest.TestCase):
 
         mock_meter_provider.get_meter.assert_called_once()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider"
+    )
     def test_manager_initialization_failure(self, mock_get_meter_provider):
         """Test manager initialization failure."""
         mock_get_meter_provider.side_effect = Exception("Meter provider error")
@@ -448,7 +532,9 @@ class TestPerformanceCountersManager(unittest.TestCase):
 
         self.assertIs(manager1, manager2)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider"
+    )
     def test_record_span_consumer(self, mock_get_meter_provider):
         """Test recording span for requests."""
         mock_meter_provider = MagicMock()
@@ -475,9 +561,13 @@ class TestPerformanceCountersManager(unittest.TestCase):
 
         # Check that request was counted and duration recorded
         self.assertEqual(manager_module._REQUESTS_COUNT, initial_count + 1)
-        manager._request_duration_histogram.record.assert_called_once_with(1.0)  # 1 second duration
+        manager._request_duration_histogram.record.assert_called_once_with(
+            1.0
+        )  # 1 second duration
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider"
+    )
     def test_record_span_request(self, mock_get_meter_provider):
         """Test recording span for requests."""
         mock_meter_provider = MagicMock()
@@ -504,9 +594,13 @@ class TestPerformanceCountersManager(unittest.TestCase):
 
         # Check that request was counted and duration recorded
         self.assertEqual(manager_module._REQUESTS_COUNT, initial_count + 1)
-        manager._request_duration_histogram.record.assert_called_once_with(1.0)  # 1 second duration
+        manager._request_duration_histogram.record.assert_called_once_with(
+            1.0
+        )  # 1 second duration
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider"
+    )
     def test_record_span_with_exception(self, mock_get_meter_provider):
         """Test recording span with exception event."""
         mock_meter_provider = MagicMock()
@@ -555,7 +649,9 @@ class TestPerformanceCountersManager(unittest.TestCase):
         # Request count should not change
         self.assertEqual(manager_module._REQUESTS_COUNT, initial_count)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider"
+    )
     def test_record_log_record_with_exception(self, mock_get_meter_provider):
         """Test recording log record with exception attributes."""
         mock_meter_provider = MagicMock()
@@ -567,7 +663,10 @@ class TestPerformanceCountersManager(unittest.TestCase):
 
         # Create a mock log data with exception attributes
         mock_log_record = MagicMock()
-        mock_log_record.attributes = {EXCEPTION_TYPE: "ValueError", EXCEPTION_MESSAGE: "Test exception"}
+        mock_log_record.attributes = {
+            EXCEPTION_TYPE: "ValueError",
+            EXCEPTION_MESSAGE: "Test exception",
+        }
 
         mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
         mock_readable_log_record.log_record = mock_log_record
@@ -674,7 +773,9 @@ class TestPerformanceCounterMetricsConstants(unittest.TestCase):
             self.assertEqual(len(metric_class.NAME), 2)
             # First element should be the OpenTelemetry metric name
             self.assertIsInstance(metric_class.NAME[0], str)
-            self.assertTrue(metric_class.NAME[0].startswith("azuremonitor.performancecounter."))
+            self.assertTrue(
+                metric_class.NAME[0].startswith("azuremonitor.performancecounter.")
+            )
             # Second element should be the Quickpulse metric name
             self.assertIsInstance(metric_class.NAME[1], str)
 
@@ -712,7 +813,10 @@ class TestPerformanceCountersMetricsIntegration(unittest.TestCase):
             for scope_metrics in resource_metrics.scope_metrics:
                 for metric in scope_metrics.metrics:
                     if metric.name == metric_name:
-                        if hasattr(metric.data, "data_points") and metric.data.data_points:
+                        if (
+                            hasattr(metric.data, "data_points")
+                            and metric.data.data_points
+                        ):
                             return metric.data.data_points[0].value
         return None
 
@@ -730,13 +834,19 @@ class TestPerformanceCountersMetricsIntegration(unittest.TestCase):
 
         # Verify that available memory metric was created
         metric_names = self._get_metric_names(metrics_data)
-        self.assertIn("azuremonitor.performancecounter.memoryavailablebytes", metric_names)
+        self.assertIn(
+            "azuremonitor.performancecounter.memoryavailablebytes", metric_names
+        )
 
         # Verify the metric value
-        memory_value = self._get_metric_value(metrics_data, "azuremonitor.performancecounter.memoryavailablebytes")
+        memory_value = self._get_metric_value(
+            metrics_data, "azuremonitor.performancecounter.memoryavailablebytes"
+        )
         self.assertEqual(memory_value, 2147483648)  # Should match our mocked value
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS"
+    )
     def test_process_memory_metric_generation(self, mock_process):
         """Test that process memory metrics are generated correctly."""
         # Mock process memory
@@ -752,8 +862,12 @@ class TestPerformanceCountersMetricsIntegration(unittest.TestCase):
 
         # Verify that process memory metric was created
         metric_names = self._get_metric_names(metrics_data)
-        self.assertIn("azuremonitor.performancecounter.processprivatebytes", metric_names)
+        self.assertIn(
+            "azuremonitor.performancecounter.processprivatebytes", metric_names
+        )
 
         # Verify the metric value
-        memory_value = self._get_metric_value(metrics_data, "azuremonitor.performancecounter.processprivatebytes")
+        memory_value = self._get_metric_value(
+            metrics_data, "azuremonitor.performancecounter.processprivatebytes"
+        )
         self.assertEqual(memory_value, 104857600)  # Should match our mocked value

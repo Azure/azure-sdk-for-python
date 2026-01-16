@@ -4,7 +4,9 @@
 from opentelemetry.sdk._logs import ReadableLogRecord, LogRecordProcessor
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
-from azure.monitor.opentelemetry.exporter._performance_counters._manager import _PerformanceCountersManager
+from azure.monitor.opentelemetry.exporter._performance_counters._manager import (
+    _PerformanceCountersManager,
+)
 
 
 # pylint: disable=protected-access

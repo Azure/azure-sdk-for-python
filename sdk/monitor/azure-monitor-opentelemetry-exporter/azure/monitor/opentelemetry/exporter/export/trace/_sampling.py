@@ -13,7 +13,9 @@ from opentelemetry.sdk.trace.sampling import (
 from opentelemetry.trace.span import TraceState
 from opentelemetry.util.types import Attributes
 
-from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_sample_score
+from azure.monitor.opentelemetry.exporter.export.trace._utils import (
+    _get_DJB2_sample_score,
+)
 
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
@@ -70,7 +72,9 @@ class ApplicationInsightsSampler(Sampler):
         return "ApplicationInsightsSampler{}".format(self._ratio)
 
 
-def azure_monitor_opentelemetry_sampler_factory(sampler_argument):  # pylint: disable=name-too-long
+def azure_monitor_opentelemetry_sampler_factory(
+    sampler_argument,
+):  # pylint: disable=name-too-long
     try:
         rate = float(sampler_argument)
         return ApplicationInsightsSampler(rate)

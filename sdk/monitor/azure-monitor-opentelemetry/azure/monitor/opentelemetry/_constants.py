@@ -65,7 +65,9 @@ LOGGING_FORMAT_ENV_ARG = "PYTHON_APPLICATIONINSIGHTS_LOGGING_FORMAT"
 
 _LOG_PATH_LINUX = "/var/log/applicationinsights"
 _LOG_PATH_WINDOWS = "\\LogFiles\\ApplicationInsights"
-_PREVIEW_ENTRY_POINT_WARNING = "Autoinstrumentation for the Azure Monitor OpenTelemetry Distro is in preview."
+_PREVIEW_ENTRY_POINT_WARNING = (
+    "Autoinstrumentation for the Azure Monitor OpenTelemetry Distro is in preview."
+)
 
 
 # --------------------Instrumentations------------------------------
@@ -84,7 +86,9 @@ _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
 )
 # Opt-in
 _PREVIEW_INSTRUMENTED_LIBRARIES = ()
-_ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES + _PREVIEW_INSTRUMENTED_LIBRARIES
+_ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = (
+    _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES + _PREVIEW_INSTRUMENTED_LIBRARIES
+)
 
 _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
 _AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"

@@ -18,4 +18,6 @@ class TestFlaskInstrumentation(unittest.TestCase):
             FlaskInstrumentor().instrument(excluded_urls=excluded_urls)
         except Exception as ex:  # pylint: disable=broad-except
             print(ex)
-            self.fail(f"Unexpected exception raised when instrumenting {FlaskInstrumentor.__name__}")
+            self.fail(
+                f"Unexpected exception raised when instrumenting {FlaskInstrumentor.__name__}"
+            )

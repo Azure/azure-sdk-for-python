@@ -8,7 +8,18 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -24,7 +35,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._operations._operations import build_quickpulse_is_subscribed_request, build_quickpulse_publish_request
+from ..._operations._operations import (
+    build_quickpulse_is_subscribed_request,
+    build_quickpulse_publish_request,
+)
 from .._vendor import QuickpulseClientMixinABC
 
 if sys.version_info >= (3, 9):
@@ -32,7 +46,9 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
@@ -154,7 +170,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
     async def is_subscribed(
         self,
         endpoint: str = "https://global.livediagnostics.monitor.azure.com",
-        monitoring_data_point: Optional[Union[_models.MonitoringDataPoint, IO[bytes]]] = None,
+        monitoring_data_point: Optional[
+            Union[_models.MonitoringDataPoint, IO[bytes]]
+        ] = None,
         *,
         ikey: str,
         transmission_time: Optional[int] = None,
@@ -214,7 +232,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.CollectionConfigurationInfo] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -224,7 +244,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
             _content = monitoring_data_point
         else:
             if monitoring_data_point is not None:
-                _json = self._serialize.body(monitoring_data_point, "MonitoringDataPoint")
+                _json = self._serialize.body(
+                    monitoring_data_point, "MonitoringDataPoint"
+                )
             else:
                 _json = None
 
@@ -245,7 +267,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "endpoint", endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -259,8 +283,12 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ServiceError, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ServiceError, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -273,9 +301,13 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         response_headers["x-ms-qps-service-polling-interval-hint"] = self._deserialize(
             "str", response.headers.get("x-ms-qps-service-polling-interval-hint")
         )
-        response_headers["x-ms-qps-subscribed"] = self._deserialize("str", response.headers.get("x-ms-qps-subscribed"))
+        response_headers["x-ms-qps-subscribed"] = self._deserialize(
+            "str", response.headers.get("x-ms-qps-subscribed")
+        )
 
-        deserialized = self._deserialize("CollectionConfigurationInfo", pipeline_response)
+        deserialized = self._deserialize(
+            "CollectionConfigurationInfo", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -364,7 +396,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
     async def publish(
         self,
         endpoint: str = "https://global.livediagnostics.monitor.azure.com",
-        monitoring_data_points: Optional[Union[List[_models.MonitoringDataPoint], IO[bytes]]] = None,
+        monitoring_data_points: Optional[
+            Union[List[_models.MonitoringDataPoint], IO[bytes]]
+        ] = None,
         *,
         ikey: str,
         configuration_etag: Optional[str] = None,
@@ -406,7 +440,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.CollectionConfigurationInfo] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -416,7 +452,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
             _content = monitoring_data_points
         else:
             if monitoring_data_points is not None:
-                _json = self._serialize.body(monitoring_data_points, "[MonitoringDataPoint]")
+                _json = self._serialize.body(
+                    monitoring_data_points, "[MonitoringDataPoint]"
+                )
             else:
                 _json = None
 
@@ -432,7 +470,9 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "endpoint", endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -446,17 +486,25 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ServiceError, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ServiceError, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["x-ms-qps-configuration-etag"] = self._deserialize(
             "str", response.headers.get("x-ms-qps-configuration-etag")
         )
-        response_headers["x-ms-qps-subscribed"] = self._deserialize("str", response.headers.get("x-ms-qps-subscribed"))
+        response_headers["x-ms-qps-subscribed"] = self._deserialize(
+            "str", response.headers.get("x-ms-qps-subscribed")
+        )
 
-        deserialized = self._deserialize("CollectionConfigurationInfo", pipeline_response)
+        deserialized = self._deserialize(
+            "CollectionConfigurationInfo", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

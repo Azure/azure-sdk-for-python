@@ -53,7 +53,9 @@ def throw(exc_type, *args, **kwargs):
 _StatsbeatMetrics_COMMON_ATTRS = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
 _StatsbeatMetrics_NETWORK_ATTRS = dict(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
 _StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-_StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
+_StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(
+    _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES
+)
 
 
 # pylint: disable=protected-access
@@ -90,8 +92,12 @@ class TestStatsbeatMetrics(unittest.TestCase):
 
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(_StatsbeatMetrics_COMMON_ATTRS)
         _StatsbeatMetrics._NETWORK_ATTRIBUTES = dict(_StatsbeatMetrics_NETWORK_ATTRS)
-        _StatsbeatMetrics._FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics_FEATURE_ATTRIBUTES)
-        _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES)
+        _StatsbeatMetrics._FEATURE_ATTRIBUTES = dict(
+            _StatsbeatMetrics_FEATURE_ATTRIBUTES
+        )
+        _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES = dict(
+            _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES
+        )
         _REQUESTS_MAP.clear()
 
     def test_statsbeat_metric_init(self):
@@ -107,11 +113,17 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["attach"], _AttachTypes.MANUAL)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"], _AttachTypes.MANUAL
+        )
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westus-1")
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.UNKNOWN.value)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.UNKNOWN.value
+        )
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 1)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["type"], _FEATURE_TYPES.FEATURE)
+        self.assertEqual(
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["type"], _FEATURE_TYPES.FEATURE
+        )
         self.assertEqual(metric._meter_provider, mp)
         self.assertTrue(isinstance(metric._meter, Meter))
         self.assertEqual(metric._ikey, ikey)
@@ -141,11 +153,17 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["attach"], _AttachTypes.INTEGRATED)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"], _AttachTypes.INTEGRATED
+        )
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westus-1")
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.UNKNOWN.value)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.UNKNOWN.value
+        )
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 1)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["type"], _FEATURE_TYPES.FEATURE)
+        self.assertEqual(
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["type"], _FEATURE_TYPES.FEATURE
+        )
         self.assertEqual(metric._meter_provider, mp)
         self.assertTrue(isinstance(metric._meter, Meter))
         self.assertEqual(metric._ikey, ikey)
@@ -218,7 +236,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.APP_SERVICE.value)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.APP_SERVICE.value
+        )
 
     # pylint: disable=protected-access
     @mock.patch.dict(
@@ -243,7 +263,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.FUNCTIONS.value)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.FUNCTIONS.value
+        )
 
     # pylint: disable=protected-access
     @mock.patch.dict(
@@ -262,7 +284,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value
+        )
 
     # pylint: disable=protected-access
     @mock.patch.dict(
@@ -280,7 +304,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
+        self.assertEqual(
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value
+        )
 
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata"
@@ -380,7 +406,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         with mock.patch("requests.get") as get:
-            get.return_value = MockResponse(200, json.dumps({"vmId": 5, "subscriptionId": 3, "osType": "Linux"}))
+            get.return_value = MockResponse(
+                200, json.dumps({"vmId": 5, "subscriptionId": 3, "osType": "Linux"})
+            )
             vm_result = metric._get_azure_compute_metadata()
             self.assertTrue(vm_result)
             self.assertEqual(metric._vm_data["vmId"], 5)
@@ -524,10 +552,14 @@ class TestStatsbeatMetrics(unittest.TestCase):
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
         metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, True)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
+        self.assertEqual(
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD
+        )
         observations = metric._get_feature_metric(options=None)
         self.assertEqual(len(observations), 1)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
+        self.assertEqual(
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD
+        )
 
     # pylint: disable=protected-access
     @mock.patch(
@@ -580,7 +612,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 2) & 1 == 1)
+        self.assertTrue(
+            (_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 2) & 1 == 1
+        )
         _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
@@ -634,7 +668,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 4) & 1 == 1)
+        self.assertTrue(
+            (_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 4) & 1 == 1
+        )
         _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
@@ -688,7 +724,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 5) & 1 == 1)
+        self.assertTrue(
+            (_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 5) & 1 == 1
+        )
         _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
@@ -697,10 +735,14 @@ class TestStatsbeatMetrics(unittest.TestCase):
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
         metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, False, "1.0.0")
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO)
+        self.assertEqual(
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO
+        )
         observations = metric._get_feature_metric(options=None)
         self.assertEqual(len(observations), 1)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO)
+        self.assertEqual(
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.DISTRO
+        )
 
     # pylint: disable=protected-access
     def test_get_feature_metric_instrumentation(self):
@@ -720,7 +762,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
         self.assertEqual(attributes["type"], _FEATURE_TYPES.INSTRUMENTATION)
         self.assertEqual(attributes["feature"], 0)
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.get_instrumentations"
+        ) as instrumentations:
             instrumentations.return_value = 1026
             observations = metric._get_feature_metric(options=None)
         self.assertEqual(
@@ -748,7 +792,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
         )
         metric._feature = _StatsbeatFeature.NONE
         self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], 0)
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.get_instrumentations"
+        ) as instrumentations:
             instrumentations.return_value = 0
             observations = metric._get_feature_metric(options=None)
         self.assertEqual(len(observations), 0)

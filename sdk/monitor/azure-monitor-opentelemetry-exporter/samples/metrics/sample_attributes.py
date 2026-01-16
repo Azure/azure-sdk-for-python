@@ -13,7 +13,9 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 
-exporter = AzureMonitorMetricExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+exporter = AzureMonitorMetricExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
 # Metrics are reported every 1 minute
 reader = PeriodicExportingMetricReader(exporter)
 metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))

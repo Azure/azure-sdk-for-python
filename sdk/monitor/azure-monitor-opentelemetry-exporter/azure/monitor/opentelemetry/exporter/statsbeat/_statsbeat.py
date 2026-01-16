@@ -7,9 +7,13 @@ from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
     StatsbeatConfig,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import get_statsbeat_manager
-from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+from azure.monitor.opentelemetry.exporter._configuration._state import (
+    get_configuration_manager,
+)
 from azure.monitor.opentelemetry.exporter._configuration._utils import evaluate_feature
-from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_FEATURE_SDK_STATS
+from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_FEATURE_SDK_STATS,
+)
 
 if TYPE_CHECKING:
     from azure.monitor.opentelemetry.exporter.export._base import BaseExporter

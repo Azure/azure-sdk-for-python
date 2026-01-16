@@ -186,7 +186,9 @@ class _QuickpulseManager(metaclass=Singleton):
                 exporter_kwargs["credential"] = self._credential
 
             self._exporter = _QuickpulseExporter(**exporter_kwargs)
-            self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
+            self._reader = _QuickpulseMetricReader(
+                self._exporter, self._base_monitoring_data_point
+            )
             self._meter_provider = MeterProvider(
                 metric_readers=[self._reader],
                 resource=resource,
@@ -216,7 +218,9 @@ class _QuickpulseManager(metaclass=Singleton):
             _REQUEST_DURATION_NAME[0], "ms", "live metrics avg request duration in ms"
         )
         self._dependency_duration = self._meter.create_histogram(
-            _DEPENDENCY_DURATION_NAME[0], "ms", "live metrics avg dependency duration in ms"
+            _DEPENDENCY_DURATION_NAME[0],
+            "ms",
+            "live metrics avg dependency duration in ms",
         )
         # We use a counter to represent rates per second because collection
         # interval is one second so we simply need the number of requests
@@ -225,13 +229,19 @@ class _QuickpulseManager(metaclass=Singleton):
             _REQUEST_RATE_NAME[0], "req/sec", "live metrics request rate per second"
         )
         self._request_failed_rate_counter = self._meter.create_counter(
-            _REQUEST_FAILURE_RATE_NAME[0], "req/sec", "live metrics request failed rate per second"
+            _REQUEST_FAILURE_RATE_NAME[0],
+            "req/sec",
+            "live metrics request failed rate per second",
         )
         self._dependency_rate_counter = self._meter.create_counter(
-            _DEPENDENCY_RATE_NAME[0], "dep/sec", "live metrics dependency rate per second"
+            _DEPENDENCY_RATE_NAME[0],
+            "dep/sec",
+            "live metrics dependency rate per second",
         )
         self._dependency_failure_rate_counter = self._meter.create_counter(
-            _DEPENDENCY_FAILURE_RATE_NAME[0], "dep/sec", "live metrics dependency failure rate per second"
+            _DEPENDENCY_FAILURE_RATE_NAME[0],
+            "dep/sec",
+            "live metrics dependency failure rate per second",
         )
         self._exception_rate_counter = self._meter.create_counter(
             _EXCEPTION_RATE_NAME[0], "exc/sec", "live metrics exception rate per second"
@@ -309,7 +319,9 @@ class _QuickpulseManager(metaclass=Singleton):
 
         # Validate required resources are available
         if not self._validate_recording_resources():
-            _logger.warning("QuickpulseManager: Cannot record span, resources not properly initialized")
+            _logger.warning(
+                "QuickpulseManager: Cannot record span, resources not properly initialized"
+            )
             return
 
         try:
@@ -350,7 +362,9 @@ class _QuickpulseManager(metaclass=Singleton):
                         # Process docs for quickpulse filtering for exception
                         _apply_document_filters_from_telemetry_data(exc_data)
         except Exception as e:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while recording span: %s", e)  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while recording span: %s", e
+            )  # pylint: disable=C4769
 
     def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
         # Only record if in post state and manager is initialized
@@ -359,7 +373,9 @@ class _QuickpulseManager(metaclass=Singleton):
 
         # Validate required resources are available
         if not self._validate_recording_resources():
-            _logger.warning("QuickpulseManager: Cannot record log, resources not properly initialized")
+            _logger.warning(
+                "QuickpulseManager: Cannot record log, resources not properly initialized"
+            )
             return
 
         try:
@@ -368,7 +384,9 @@ class _QuickpulseManager(metaclass=Singleton):
                 log_record = readable_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
-                    exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+                    exc_message = log_record.attributes.get(
+                        SpanAttributes.EXCEPTION_MESSAGE
+                    )
                     if exc_type is not None or exc_message is not None:
                         self._exception_rate_counter.add(1)  # type: ignore
 
@@ -379,7 +397,9 @@ class _QuickpulseManager(metaclass=Singleton):
                 # Process docs for quickpulse filtering
                 _apply_document_filters_from_telemetry_data(data, exc_type)  # type: ignore
         except Exception as e:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while recording log record: %s", e)  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while recording log record: %s", e
+            )  # pylint: disable=C4769
 
     def _validate_recording_resources(self) -> bool:
         """Validate that all required resources for recording are available.
@@ -406,7 +426,9 @@ class _QuickpulseManager(metaclass=Singleton):
 # Called by record_span/record_log when processing a span/log_record for metrics filtering
 # Derives metrics from projections if applicable to current filters in config
 def _derive_metrics_from_telemetry_data(data: _TelemetryData):
-    metric_infos_dict: Dict[TelemetryType, List[DerivedMetricInfo]] = _get_quickpulse_derived_metric_infos()
+    metric_infos_dict: Dict[TelemetryType, List[DerivedMetricInfo]] = (
+        _get_quickpulse_derived_metric_infos()
+    )
     # if empty, filtering was not configured
     if not metric_infos_dict:
         return
@@ -427,10 +449,12 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
 
 # Called by record_span/record_log when processing a span/log_record for docs filtering
 # Finds doc stream Ids and their doc filter configurations
-def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: Optional[str] = None):
-    doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = (
-        _get_quickpulse_doc_stream_infos()
-    )  # pylint: disable=C0301
+def _apply_document_filters_from_telemetry_data(
+    data: _TelemetryData, exc_type: Optional[str] = None
+):
+    doc_config_dict: Dict[
+        TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]
+    ] = _get_quickpulse_doc_stream_infos()  # pylint: disable=C0301
     stream_ids = set()
     doc_config = {}  # type: ignore
     if isinstance(data, _RequestData):

@@ -18,4 +18,6 @@ class TestFastApiInstrumentation(unittest.TestCase):
             FastAPIInstrumentor().instrument(excluded_urls=excluded_urls)
         except Exception as ex:  # pylint: disable=broad-except
             print(ex)
-            self.fail(f"Unexpected exception raised when instrumenting {FastAPIInstrumentor.__name__}")
+            self.fail(
+                f"Unexpected exception raised when instrumenting {FastAPIInstrumentor.__name__}"
+            )

@@ -22,7 +22,9 @@ class MonitorExporterPerfTest(PerfStressTest):
         connection_string = self.get_from_env("APPLICATIONINSIGHTS_CONNECTION_STRING")
 
         # Create clients
-        self.exporter = AzureMonitorTraceExporter.from_connection_string(connection_string)
+        self.exporter = AzureMonitorTraceExporter.from_connection_string(
+            connection_string
+        )
 
         trace.set_tracer_provider(TracerProvider())
         tracer = trace.get_tracer(__name__)
@@ -44,5 +46,10 @@ class MonitorExporterPerfTest(PerfStressTest):
     def add_arguments(parser):
         super(MonitorExporterPerfTest, MonitorExporterPerfTest).add_arguments(parser)
         parser.add_argument(
-            "-n", "--num-spans", nargs="?", type=int, help="Number of spans to be exported. Defaults to 10", default=10
+            "-n",
+            "--num-spans",
+            nargs="?",
+            type=int,
+            help="Number of spans to be exported. Defaults to 10",
+            default=10,
         )

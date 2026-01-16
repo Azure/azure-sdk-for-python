@@ -44,7 +44,9 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
         _set_quickpulse_last_process_time(process_time_s)
         # Find elapsed time in s since last collection
         current_time = datetime.now()
-        elapsed_time_s = (current_time - _get_quickpulse_process_elapsed_time()).total_seconds()
+        elapsed_time_s = (
+            current_time - _get_quickpulse_process_elapsed_time()
+        ).total_seconds()
         _set_quickpulse_process_elapsed_time(current_time)
         # Obtain cpu % by dividing by elapsed time
         cpu_percentage = process_time_s / elapsed_time_s

@@ -84,7 +84,9 @@ class TestLocalFileBlob(unittest.TestCase):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "write_error_blob"))
         test_input = [1, 2, 3]
 
-        with mock.patch("builtins.open", side_effect=PermissionError("Cannot write to file")):
+        with mock.patch(
+            "builtins.open", side_effect=PermissionError("Cannot write to file")
+        ):
             result = blob.put(test_input)
             self.assertIsInstance(result, str)
             self.assertIn("Cannot write to file", result)
@@ -186,7 +188,10 @@ class TestLocalFileBlob(unittest.TestCase):
 
         # Test successful case
         result_success = blob.put(test_input)
-        self.assertTrue(isinstance(result_success, StorageExportResult) or isinstance(result_success, str))
+        self.assertTrue(
+            isinstance(result_success, StorageExportResult)
+            or isinstance(result_success, str)
+        )
 
         # Test error case
         blob2 = LocalFileBlob(os.path.join(TEST_FOLDER, "consistency_blob2"))
@@ -324,7 +329,8 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_put_storage_disabled_readonly(self):
         test_input = (1, 2, 3)
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_readonly", return_value=True
+            "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_readonly",
+            return_value=True,
         ):
             with LocalFileStorage(os.path.join(TEST_FOLDER, "readonly_test")) as stor:
                 stor._enabled = False
@@ -335,13 +341,16 @@ class TestLocalFileStorage(unittest.TestCase):
         test_input = (1, 2, 3)
         exception_message = "Previous storage error occurred"
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_readonly", return_value=False
+            "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_readonly",
+            return_value=False,
         ):
             with mock.patch(
                 "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_exception",
                 return_value=exception_message,
             ):
-                with LocalFileStorage(os.path.join(TEST_FOLDER, "exception_test")) as stor:
+                with LocalFileStorage(
+                    os.path.join(TEST_FOLDER, "exception_test")
+                ) as stor:
                     stor._enabled = False
                     result = stor.put(test_input)
                     self.assertEqual(result, exception_message)
@@ -349,27 +358,37 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_put_storage_disabled_no_exception(self):
         test_input = (1, 2, 3)
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_readonly", return_value=False
+            "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_readonly",
+            return_value=False,
         ):
             with mock.patch(
-                "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_exception", return_value=""
+                "azure.monitor.opentelemetry.exporter._storage.get_local_storage_setup_state_exception",
+                return_value="",
             ):
-                with LocalFileStorage(os.path.join(TEST_FOLDER, "disabled_test")) as stor:
+                with LocalFileStorage(
+                    os.path.join(TEST_FOLDER, "disabled_test")
+                ) as stor:
                     stor._enabled = False
                     result = stor.put(test_input)
-                    self.assertEqual(result, StorageExportResult.CLIENT_STORAGE_DISABLED)
+                    self.assertEqual(
+                        result, StorageExportResult.CLIENT_STORAGE_DISABLED
+                    )
 
     def test_put_persistence_capacity_reached(self):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "capacity_test")) as stor:
             with mock.patch.object(stor, "_check_storage_size", return_value=False):
                 result = stor.put(test_input)
-                self.assertEqual(result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED)
+                self.assertEqual(
+                    result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+                )
 
     def test_put_success_returns_localfileblob(self):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "success_test")) as stor:
-            result = stor.put(test_input, lease_period=0)  # No lease period so file is immediately available
+            result = stor.put(
+                test_input, lease_period=0
+            )  # No lease period so file is immediately available
             self.assertIsInstance(result, StorageExportResult)
             self.assertEqual(stor.get().get(), test_input)
 
@@ -384,9 +403,12 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put_exception_in_method_returns_string(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "method_exception_test")) as stor:
+        with LocalFileStorage(
+            os.path.join(TEST_FOLDER, "method_exception_test")
+        ) as stor:
             with mock.patch(
-                "azure.monitor.opentelemetry.exporter._storage._now", side_effect=RuntimeError("Time error")
+                "azure.monitor.opentelemetry.exporter._storage._now",
+                side_effect=RuntimeError("Time error"),
             ):
                 result = stor.put(test_input)
                 self.assertIsInstance(result, str)
@@ -403,7 +425,9 @@ class TestLocalFileStorage(unittest.TestCase):
 
         for error_name, error_exception in error_scenarios:
             with self.subTest(error=error_name):
-                with LocalFileStorage(os.path.join(TEST_FOLDER, f"error_test_{error_name}")) as stor:
+                with LocalFileStorage(
+                    os.path.join(TEST_FOLDER, f"error_test_{error_name}")
+                ) as stor:
                     # Mock os.rename to fail with specific error
                     with mock.patch("os.rename", side_effect=error_exception):
                         result = stor.put(test_input)
@@ -423,7 +447,9 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_put_default_lease_period(self):
         test_input = (1, 2, 3)
 
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "default_lease_test"), lease_period=90) as stor:
+        with LocalFileStorage(
+            os.path.join(TEST_FOLDER, "default_lease_test"), lease_period=90
+        ) as stor:
             result = stor.put(test_input)
             self.assertIsInstance(result, StorageExportResult)
             # File should be created with lease (since default lease_period > 0)
@@ -461,7 +487,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_generic_exception_sets_exception_state(self):
+    def test_check_and_set_folder_permissions_generic_exception_sets_exception_state(
+        self,
+    ):
         test_input = (1, 2, 3)
         test_error_message = "RuntimeError: Unexpected error during setup"
 
@@ -493,7 +521,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_readonly_filesystem_sets_readonly_state(self):
+    def test_check_and_set_folder_permissions_readonly_filesystem_sets_readonly_state(
+        self,
+    ):
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
@@ -529,7 +559,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up - note: cannot easily reset readonly state, but test isolation should handle this
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_windows_icacls_failure_sets_exception_state(self):
+    def test_check_and_set_folder_permissions_windows_icacls_failure_sets_exception_state(
+        self,
+    ):
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
@@ -544,13 +576,17 @@ class TestLocalFileStorage(unittest.TestCase):
         # Mock Windows environment and icacls failure
         with mock.patch("os.name", "nt"):  # Windows
             with mock.patch("os.makedirs"):  # Allow directory creation
-                with mock.patch.object(LocalFileStorage, "_get_current_user", return_value="DOMAIN\\user"):
+                with mock.patch.object(
+                    LocalFileStorage, "_get_current_user", return_value="DOMAIN\\user"
+                ):
                     # Mock subprocess.run to return failure (non-zero return code)
                     mock_result = mock.MagicMock()
                     mock_result.returncode = 1  # Failure
 
                     with mock.patch("subprocess.run", return_value=mock_result):
-                        stor = LocalFileStorage(os.path.join(TEST_FOLDER, "icacls_failure_test"))
+                        stor = LocalFileStorage(
+                            os.path.join(TEST_FOLDER, "icacls_failure_test")
+                        )
 
                         # Storage should be disabled due to icacls failure
                         self.assertFalse(stor._enabled)
@@ -563,10 +599,14 @@ class TestLocalFileStorage(unittest.TestCase):
                         result = stor.put(test_input)
                         if get_local_storage_setup_state_readonly():
                             # Readonly takes priority - readonly state may be set by previous tests
-                            self.assertEqual(result, StorageExportResult.CLIENT_READONLY)
+                            self.assertEqual(
+                                result, StorageExportResult.CLIENT_READONLY
+                            )
                         else:
                             # If readonly not set, should return CLIENT_STORAGE_DISABLED
-                            self.assertEqual(result, StorageExportResult.CLIENT_STORAGE_DISABLED)
+                            self.assertEqual(
+                                result, StorageExportResult.CLIENT_STORAGE_DISABLED
+                            )
 
                         stor.close()
 
@@ -588,8 +628,12 @@ class TestLocalFileStorage(unittest.TestCase):
         # Mock Windows environment and user retrieval failure
         with mock.patch("os.name", "nt"):  # Windows
             with mock.patch("os.makedirs"):  # Allow directory creation
-                with mock.patch.object(LocalFileStorage, "_get_current_user", return_value=None):
-                    stor = LocalFileStorage(os.path.join(TEST_FOLDER, "user_failure_test"))
+                with mock.patch.object(
+                    LocalFileStorage, "_get_current_user", return_value=None
+                ):
+                    stor = LocalFileStorage(
+                        os.path.join(TEST_FOLDER, "user_failure_test")
+                    )
 
                     # Storage should be disabled due to user retrieval failure
                     self.assertFalse(stor._enabled)
@@ -601,14 +645,18 @@ class TestLocalFileStorage(unittest.TestCase):
                         self.assertEqual(result, StorageExportResult.CLIENT_READONLY)
                     else:
                         # If readonly not set, should return CLIENT_STORAGE_DISABLED
-                        self.assertEqual(result, StorageExportResult.CLIENT_STORAGE_DISABLED)
+                        self.assertEqual(
+                            result, StorageExportResult.CLIENT_STORAGE_DISABLED
+                        )
 
                     stor.close()
 
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_unix_chmod_exception_sets_exception_state(self):
+    def test_check_and_set_folder_permissions_unix_chmod_exception_sets_exception_state(
+        self,
+    ):
         test_input = (1, 2, 3)
         test_error_message = "OSError: Operation not permitted"
 
@@ -625,7 +673,9 @@ class TestLocalFileStorage(unittest.TestCase):
         with mock.patch("os.name", "posix"):  # Unix
             with mock.patch("os.makedirs"):  # Allow directory creation
                 with mock.patch("os.chmod", side_effect=OSError(test_error_message)):
-                    stor = LocalFileStorage(os.path.join(TEST_FOLDER, "chmod_failure_test"))
+                    stor = LocalFileStorage(
+                        os.path.join(TEST_FOLDER, "chmod_failure_test")
+                    )
 
                     # Storage should be disabled due to chmod failure
                     self.assertFalse(stor._enabled)
@@ -662,9 +712,13 @@ class TestLocalFileStorage(unittest.TestCase):
 
         # First storage instance that sets exception state
         with mock.patch("os.makedirs", side_effect=OSError(test_error_message)):
-            stor1 = LocalFileStorage(os.path.join(TEST_FOLDER, "persistent_error_test1"))
+            stor1 = LocalFileStorage(
+                os.path.join(TEST_FOLDER, "persistent_error_test1")
+            )
             self.assertFalse(stor1._enabled)
-            self.assertEqual(get_local_storage_setup_state_exception(), test_error_message)
+            self.assertEqual(
+                get_local_storage_setup_state_exception(), test_error_message
+            )
             stor1.close()
 
         # Second storage instance should also be affected by the exception state
@@ -770,7 +824,9 @@ class TestLocalFileStorage(unittest.TestCase):
         self.assertTrue(get_local_storage_setup_state_readonly())
 
         # Create storage instance with disabled state to test readonly behavior
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "readonly_interaction_test")) as stor:
+        with LocalFileStorage(
+            os.path.join(TEST_FOLDER, "readonly_interaction_test")
+        ) as stor:
             # Manually disable storage to simulate permission failure scenario
             stor._enabled = False
 
@@ -808,10 +864,14 @@ class TestLocalFileStorage(unittest.TestCase):
 
         # Verify both states are set
         self.assertTrue(get_local_storage_setup_state_readonly())
-        self.assertEqual(get_local_storage_setup_state_exception(), test_exception_message)
+        self.assertEqual(
+            get_local_storage_setup_state_exception(), test_exception_message
+        )
 
         # Create storage instance with disabled state
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "readonly_priority_test")) as stor:
+        with LocalFileStorage(
+            os.path.join(TEST_FOLDER, "readonly_priority_test")
+        ) as stor:
             # Manually disable storage
             stor._enabled = False
 
@@ -954,7 +1014,10 @@ class TestLocalFileStorage(unittest.TestCase):
 
             with mock.patch(f"{STORAGE_MODULE}.os.makedirs", side_effect=mock_makedirs):
                 with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
-                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                    with mock.patch(
+                        f"{STORAGE_MODULE}.os.path.abspath",
+                        side_effect=lambda path: path,
+                    ):
                         stor = LocalFileStorage(storage_abs_path)
 
                         self.assertTrue(stor._enabled)
@@ -976,7 +1039,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_unix_multiuser_parent_permission_failure(self):
+    def test_check_and_set_folder_permissions_unix_multiuser_parent_permission_failure(
+        self,
+    ):
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
@@ -994,21 +1059,31 @@ class TestLocalFileStorage(unittest.TestCase):
 
             with mock.patch(f"{STORAGE_MODULE}.os.makedirs", side_effect=mock_makedirs):
                 with mock.patch(f"{STORAGE_MODULE}.os.chmod"):
-                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                    with mock.patch(
+                        f"{STORAGE_MODULE}.os.path.abspath",
+                        side_effect=lambda path: path,
+                    ):
                         stor = LocalFileStorage(storage_abs_path)
 
                         self.assertFalse(stor._enabled)
 
                         exception_state = get_local_storage_setup_state_exception()
-                        self.assertEqual(exception_state, "Operation not permitted on parent directory")
+                        self.assertEqual(
+                            exception_state,
+                            "Operation not permitted on parent directory",
+                        )
 
                         stor.close()
 
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_unix_multiuser_storage_permission_failure(self):
-        test_error_message = "PermissionError: Operation not permitted on storage directory"
+    def test_check_and_set_folder_permissions_unix_multiuser_storage_permission_failure(
+        self,
+    ):
+        test_error_message = (
+            "PermissionError: Operation not permitted on storage directory"
+        )
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
@@ -1029,7 +1104,10 @@ class TestLocalFileStorage(unittest.TestCase):
 
             with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
                 with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
-                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                    with mock.patch(
+                        f"{STORAGE_MODULE}.os.path.abspath",
+                        side_effect=lambda path: path,
+                    ):
                         stor = LocalFileStorage(storage_abs_path)
 
                         self.assertFalse(stor._enabled)

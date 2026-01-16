@@ -42,7 +42,9 @@ class TestCustomerSdkStats(unittest.TestCase):
         """Test collecting customer SDK stats initializes the manager."""
         # Create a mock exporter
         mock_exporter = mock.Mock()
-        mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        mock_exporter._connection_string = (
+            "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        )
 
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)
@@ -55,7 +57,9 @@ class TestCustomerSdkStats(unittest.TestCase):
         """Test that multiple calls to collect_customer_sdkstats don't cause issues."""
         # Create a mock exporter
         mock_exporter = mock.Mock()
-        mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        mock_exporter._connection_string = (
+            "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        )
 
         # Call collect multiple times
         collect_customer_sdkstats(mock_exporter)
@@ -96,7 +100,9 @@ class TestCustomerSdkStats(unittest.TestCase):
         """Test a complete cycle of collect and shutdown operations."""
         # Create a mock exporter
         mock_exporter = mock.Mock()
-        mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        mock_exporter._connection_string = (
+            "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        )
 
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)

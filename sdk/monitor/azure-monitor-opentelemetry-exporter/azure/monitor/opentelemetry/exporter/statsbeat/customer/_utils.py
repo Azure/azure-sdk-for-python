@@ -33,7 +33,9 @@ def get_customer_sdkstats_export_interval() -> int:
     :return: Export interval in seconds
     :rtype: int
     """
-    customer_sdkstats_ei_env = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL)
+    customer_sdkstats_ei_env = os.environ.get(
+        _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL
+    )
     if customer_sdkstats_ei_env:
         try:
             return int(customer_sdkstats_ei_env)
@@ -48,7 +50,10 @@ def is_customer_sdkstats_enabled() -> bool:
     :return: True if enabled, False otherwise
     :rtype: bool
     """
-    return os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() == "true"
+    return (
+        os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower()
+        == "true"
+    )
 
 
 def categorize_status_code(status_code: int) -> str:
@@ -102,21 +107,42 @@ def _determine_client_retry_code(
         ConnectionError,
         OSError,
     )
-    if hasattr(error, "status_code") and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
+    if hasattr(error, "status_code") and error.status_code in [
+        401,
+        403,
+        408,
+        429,
+        500,
+        502,
+        503,
+        504,
+    ]:
         # For specific status codes, preserve the custom message if available
-        error_message = getattr(error, "message", None) if hasattr(error, "message") else None
+        error_message = (
+            getattr(error, "message", None) if hasattr(error, "message") else None
+        )
         return (error.status_code, error_message or _UNKNOWN)
 
     if isinstance(error, timeout_exception_types):
         return (RetryCode.CLIENT_TIMEOUT, _exception_categories.TIMEOUT_EXCEPTION.value)
 
     if hasattr(error, "message"):
-        error_message = getattr(error, "message", None) if hasattr(error, "message") else None
-        if error_message is not None and ("timeout" in error_message.lower() or "timed out" in error_message.lower()):
-            return (RetryCode.CLIENT_TIMEOUT, _exception_categories.TIMEOUT_EXCEPTION.value)
+        error_message = (
+            getattr(error, "message", None) if hasattr(error, "message") else None
+        )
+        if error_message is not None and (
+            "timeout" in error_message.lower() or "timed out" in error_message.lower()
+        ):
+            return (
+                RetryCode.CLIENT_TIMEOUT,
+                _exception_categories.TIMEOUT_EXCEPTION.value,
+            )
 
     if isinstance(error, network_exception_types):
-        return (RetryCode.CLIENT_EXCEPTION, _exception_categories.NETWORK_EXCEPTION.value)
+        return (
+            RetryCode.CLIENT_EXCEPTION,
+            _exception_categories.NETWORK_EXCEPTION.value,
+        )
 
     return (RetryCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
@@ -140,7 +166,9 @@ def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
 
     base_type = envelope.data.base_type
 
-    if base_type in ("RequestData", "RemoteDependencyData") and hasattr(envelope.data.base_data, "success"):
+    if base_type in ("RequestData", "RemoteDependencyData") and hasattr(
+        envelope.data.base_data, "success"
+    ):
         success_value = getattr(envelope.data.base_data, "success", None)
         if isinstance(success_value, bool):
             return success_value
@@ -160,7 +188,11 @@ def track_successful_items(envelopes: List[TelemetryItem]):
         customer_stats.count_successful_items(1, telemetry_type)
 
 
-def track_dropped_items(envelopes: List[TelemetryItem], drop_code: DropCodeType, error_message: Optional[str] = None):
+def track_dropped_items(
+    envelopes: List[TelemetryItem],
+    drop_code: DropCodeType,
+    error_message: Optional[str] = None,
+):
     customer_stats = get_customer_stats_manager()
 
     if error_message is None:
@@ -170,7 +202,11 @@ def track_dropped_items(envelopes: List[TelemetryItem], drop_code: DropCodeType,
                 1,
                 telemetry_type,
                 drop_code,
-                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True,
+                (
+                    _get_telemetry_success_flag(envelope)
+                    if telemetry_type in (_REQUEST, _DEPENDENCY)
+                    else True
+                ),
             )
     else:
         for envelope in envelopes:
@@ -179,7 +215,11 @@ def track_dropped_items(envelopes: List[TelemetryItem], drop_code: DropCodeType,
                 1,
                 telemetry_type,
                 drop_code,
-                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True,
+                (
+                    _get_telemetry_success_flag(envelope)
+                    if telemetry_type in (_REQUEST, _DEPENDENCY)
+                    else True
+                ),
                 exception_message=error_message,
             )
 
@@ -193,11 +233,15 @@ def track_retry_items(envelopes: List[TelemetryItem], error) -> None:
         if isinstance(retry_code, int):
             # For status codes, include the message if available
             if message:
-                customer_stats.count_retry_items(1, telemetry_type, retry_code, str(message))
+                customer_stats.count_retry_items(
+                    1, telemetry_type, retry_code, str(message)
+                )
             else:
                 customer_stats.count_retry_items(1, telemetry_type, retry_code)
         else:
-            customer_stats.count_retry_items(1, telemetry_type, retry_code, str(message))
+            customer_stats.count_retry_items(
+                1, telemetry_type, retry_code, str(message)
+            )
 
 
 def track_dropped_items_from_storage(result_from_storage_put, envelopes):
@@ -210,18 +254,25 @@ def track_dropped_items_from_storage(result_from_storage_put, envelopes):
     elif result_from_storage_put == StorageExportResult.CLIENT_READONLY:
         # If filesystem is readonly, track dropped items in customer sdkstats
         track_dropped_items(envelopes, DropCode.CLIENT_READONLY)
-    elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
+    elif (
+        result_from_storage_put
+        == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+    ):
         # If data has to be dropped due to persistent storage being full, track dropped items
         track_dropped_items(envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
     elif get_local_storage_setup_state_exception() != "":
         # For exceptions caught in _check_and_set_folder_permissions during storage setup
         track_dropped_items(
-            envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value
+            envelopes,
+            DropCode.CLIENT_EXCEPTION,
+            _exception_categories.STORAGE_EXCEPTION.value,
         )  # pylint: disable=line-too-long
     elif isinstance(result_from_storage_put, str):
         # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason # pylint: disable=line-too-long
         track_dropped_items(
-            envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value
+            envelopes,
+            DropCode.CLIENT_EXCEPTION,
+            _exception_categories.STORAGE_EXCEPTION.value,
         )  # pylint: disable=line-too-long
     else:
         # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long

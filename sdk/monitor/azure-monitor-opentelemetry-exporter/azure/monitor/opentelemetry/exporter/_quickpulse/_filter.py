@@ -26,7 +26,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _DATA_FIELD_NAMES,
     _TelemetryData,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._utils import _filter_time_stamp_to_ms
+from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
+    _filter_time_stamp_to_ms,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._validate import (
     _validate_derived_metric_info,
     _validate_document_filter_group_info,
@@ -82,7 +84,9 @@ def _parse_document_filter_configuration(config: Dict[str, Any]) -> None:
                 continue
             # Rename exception fields by parsing out "Exception." portion
             _rename_exception_fields_for_filtering(doc_filter_group.filters)
-            telemetry_type: TelemetryType = TelemetryType(doc_filter_group.telemetry_type)
+            telemetry_type: TelemetryType = TelemetryType(
+                doc_filter_group.telemetry_type
+            )
             if telemetry_type not in doc_infos:
                 doc_infos[telemetry_type] = {}
             if doc_stream.id not in doc_infos[telemetry_type]:
@@ -97,7 +101,9 @@ def _rename_exception_fields_for_filtering(filter_groups: FilterConjunctionGroup
             filter.field_name = filter.field_name.replace("Exception.", "")
 
 
-def _check_metric_filters(metric_infos: List[DerivedMetricInfo], data: _TelemetryData) -> bool:
+def _check_metric_filters(
+    metric_infos: List[DerivedMetricInfo], data: _TelemetryData
+) -> bool:
     match = False
     for metric_info in metric_infos:
         # Should only be a single `FilterConjunctionGroupInfo` in `filter_groups`
@@ -135,7 +141,11 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
                 val = int(val)
             except Exception:  # pylint: disable=broad-exception-caught
                 return False
-            numerical_val = _filter_time_stamp_to_ms(comparand) if name == "Duration" else int(comparand)
+            numerical_val = (
+                _filter_time_stamp_to_ms(comparand)
+                if name == "Duration"
+                else int(comparand)
+            )
             if numerical_val is None:
                 return False
             if predicate == PredicateType.EQUAL:
@@ -174,7 +184,9 @@ def _check_any_field_filter(filter: FilterInfo, data: _TelemetryData) -> bool:
     return False
 
 
-def _check_custom_dim_field_filter(filter: FilterInfo, custom_dimensions: Dict[str, str]) -> bool:
+def _check_custom_dim_field_filter(
+    filter: FilterInfo, custom_dimensions: Dict[str, str]
+) -> bool:
     field = filter.field_name.replace("CustomDimensions.", "")
     value = custom_dimensions.get(field)
     if value is not None:

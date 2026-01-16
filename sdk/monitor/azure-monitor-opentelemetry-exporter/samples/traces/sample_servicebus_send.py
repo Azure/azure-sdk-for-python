@@ -31,7 +31,9 @@ tracer = trace.get_tracer(__name__)
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -49,5 +51,8 @@ with tracer.start_as_current_span(name="MyApplication"):
             sender.send_messages(single_message)
 
             # Sending a list of messages
-            messages = [ServiceBusMessage("First message"), ServiceBusMessage("Second message")]
+            messages = [
+                ServiceBusMessage("First message"),
+                ServiceBusMessage("Second message"),
+            ]
             sender.send_messages(messages)

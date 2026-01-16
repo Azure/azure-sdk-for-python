@@ -12,8 +12,13 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
     _RETRYABLE_STATUS_CODES,
 )
-from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile, OneSettingsResponse
-from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
+from azure.monitor.opentelemetry.exporter._configuration._utils import (
+    _ConfigurationProfile,
+    OneSettingsResponse,
+)
+from azure.monitor.opentelemetry.exporter._configuration._utils import (
+    make_onesettings_request,
+)
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 
@@ -30,7 +35,9 @@ class _ConfigurationState:
     version_cache: int = -1
     settings_cache: Dict[str, str] = field(default_factory=dict)
 
-    def with_updates(self, **kwargs) -> "_ConfigurationState":  # pylint: disable=C4741,C4742
+    def with_updates(
+        self, **kwargs
+    ) -> "_ConfigurationState":  # pylint: disable=C4741,C4742
         """Create a new state object with updated values."""
         return _ConfigurationState(
             etag=kwargs.get("etag", self.etag),
@@ -61,12 +68,16 @@ class _ConfigurationManager(metaclass=Singleton):
             _ConfigurationProfile.fill(**kwargs)
 
             # Lazy import to avoid circular import
-            from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
+            from azure.monitor.opentelemetry.exporter._configuration._worker import (
+                _ConfigurationWorker,
+            )
 
             # Get initial refresh interval from current state
             initial_refresh_interval = self._current_state.refresh_interval
 
-            self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
+            self._configuration_worker = _ConfigurationWorker(
+                self, initial_refresh_interval
+            )
             self._initialized = True
 
     def register_callback(self, callback):
@@ -95,7 +106,9 @@ class _ConfigurationManager(metaclass=Singleton):
         return response.has_exception or response.status_code in _RETRYABLE_STATUS_CODES
 
     # pylint: disable=too-many-statements, too-many-branches
-    def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
+    def get_configuration_and_refresh_interval(
+        self, query_dict: Optional[Dict[str, str]] = None
+    ) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
 
         This method performs a conditional HTTP request to OneSettings using the
@@ -178,14 +191,18 @@ class _ConfigurationManager(metaclass=Singleton):
                 headers["x-ms-onesetinterval"] = str(current_state.refresh_interval)
 
         # Make the OneSettings request
-        response = make_onesettings_request(_ONE_SETTINGS_CHANGE_URL, query_dict, headers)
+        response = make_onesettings_request(
+            _ONE_SETTINGS_CHANGE_URL, query_dict, headers
+        )
 
         # Check for transient errors from CHANGE endpoint - return immediately if found
         if self._is_transient_error(response):
             with self._state_lock:
                 # Double the refresh interval and cap it at 24 hours
                 doubled_interval = self._current_state.refresh_interval * 2
-                current_refresh_interval = min(doubled_interval, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
+                current_refresh_interval = min(
+                    doubled_interval, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS
+                )
 
             # Create appropriate log message based on error type
             if response.has_exception:
@@ -193,7 +210,10 @@ class _ConfigurationManager(metaclass=Singleton):
             else:
                 error_description = f"HTTP {response.status_code}"
 
-            logger.warning("OneSettings CHANGE request failed with transient error (%s). Retrying. ", error_description)
+            logger.warning(
+                "OneSettings CHANGE request failed with transient error (%s). Retrying. ",
+                error_description,
+            )
             return current_refresh_interval  # type: ignore
 
         # Prepare new state updates
@@ -217,7 +237,9 @@ class _ConfigurationManager(metaclass=Singleton):
                     needs_config_fetch = True
                 elif response.version < current_state.version_cache:
                     # Version rollback: Erroneous state
-                    logger.warning("Fetched version is lower than cached version. No configurations updated.")
+                    logger.warning(
+                        "Fetched version is lower than cached version. No configurations updated."
+                    )
                     needs_config_fetch = False
                 else:
                     # Version unchanged: No new config
@@ -225,7 +247,9 @@ class _ConfigurationManager(metaclass=Singleton):
 
             # Fetch config
             if needs_config_fetch:
-                config_response = make_onesettings_request(_ONE_SETTINGS_CONFIG_URL, query_dict)
+                config_response = make_onesettings_request(
+                    _ONE_SETTINGS_CONFIG_URL, query_dict
+                )
                 if config_response.status_code == 200 and config_response.settings:
                     # Validate that the versions from change and config match
                     if config_response.version == response.version:
@@ -242,12 +266,16 @@ class _ConfigurationManager(metaclass=Singleton):
                         # We do not update etag to allow retry on next call
                         new_state_updates.pop("etag", None)
                 else:
-                    logger.warning("Unexpected response status: %d", config_response.status_code)
+                    logger.warning(
+                        "Unexpected response status: %d", config_response.status_code
+                    )
                     # We do not update etag to allow retry on next call
                     new_state_updates.pop("etag", None)
         else:
             # No settings or version provided
-            logger.warning("No settings or version provided in config response. Config not updated.")
+            logger.warning(
+                "No settings or version provided in config response. Config not updated."
+            )
 
         notify_callbacks = False
         current_refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
@@ -263,7 +291,11 @@ class _ConfigurationManager(metaclass=Singleton):
                 state_for_callbacks = self._current_state
 
         # Handle configuration updates throughout the SDK
-        if notify_callbacks and state_for_callbacks is not None and state_for_callbacks.settings_cache:
+        if (
+            notify_callbacks
+            and state_for_callbacks is not None
+            and state_for_callbacks.settings_cache
+        ):
             self._notify_callbacks(state_for_callbacks.settings_cache)
 
         return current_refresh_interval  # type: ignore
@@ -286,5 +318,9 @@ class _ConfigurationManager(metaclass=Singleton):
         self._initialized = False
         self._callbacks.clear()
         # Clear the singleton instance from the metaclass
-        if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
-            del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access
+        if (
+            self.__class__ in _ConfigurationManager._instances
+        ):  # pylint: disable=protected-access
+            del _ConfigurationManager._instances[
+                self.__class__
+            ]  # pylint: disable=protected-access

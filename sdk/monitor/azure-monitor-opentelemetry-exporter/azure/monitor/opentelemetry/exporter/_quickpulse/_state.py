@@ -20,7 +20,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
 )
 
 if TYPE_CHECKING:
-    from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
+    from azure.monitor.opentelemetry.exporter._quickpulse._manager import (
+        _QuickpulseManager,
+    )
 
 
 class _QuickpulseState(Enum):
@@ -43,7 +45,9 @@ _QUICKPULSE_LAST_PROCESS_CPU = 0.0
 _QUICKPULSE_ETAG = ""
 _QUICKPULSE_DERIVED_METRIC_INFOS: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
 _QUICKPULSE_PROJECTION_MAP: Dict[str, Tuple[AggregationType, float, int]] = {}
-_QUICKPULSE_DOC_STREAM_INFOS: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
+_QUICKPULSE_DOC_STREAM_INFOS: Dict[
+    TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]
+] = {}
 
 
 # Global singleton instance for easy access throughout the codebase
@@ -60,7 +64,9 @@ def get_quickpulse_manager() -> "_QuickpulseManager":
     """
     global _quickpulse_manager  # pylint: disable=global-statement
     if _quickpulse_manager is None:
-        from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
+        from azure.monitor.opentelemetry.exporter._quickpulse._manager import (
+            _QuickpulseManager,
+        )
 
         _quickpulse_manager = _QuickpulseManager()
     return _quickpulse_manager
@@ -111,7 +117,10 @@ def is_quickpulse_enabled() -> bool:
 
 
 def _is_ping_state() -> bool:
-    return _get_global_quickpulse_state() in (_QuickpulseState.PING_SHORT, _QuickpulseState.PING_LONG)
+    return _get_global_quickpulse_state() in (
+        _QuickpulseState.PING_SHORT,
+        _QuickpulseState.PING_LONG,
+    )
 
 
 def _is_post_state():
@@ -154,18 +163,24 @@ def _get_quickpulse_etag() -> str:
 
 # Used for updating metric filter configuration when etag has changed
 # Contains filter and projection of metrics to apply for each telemetry type if exists
-def _set_quickpulse_derived_metric_infos(filters: Dict[TelemetryType, List[DerivedMetricInfo]]) -> None:
+def _set_quickpulse_derived_metric_infos(
+    filters: Dict[TelemetryType, List[DerivedMetricInfo]],
+) -> None:
     # pylint: disable=global-statement
     global _QUICKPULSE_DERIVED_METRIC_INFOS
     _QUICKPULSE_DERIVED_METRIC_INFOS = filters
 
 
-def _get_quickpulse_derived_metric_infos() -> Dict[TelemetryType, List[DerivedMetricInfo]]:
+def _get_quickpulse_derived_metric_infos() -> (
+    Dict[TelemetryType, List[DerivedMetricInfo]]
+):
     return _QUICKPULSE_DERIVED_METRIC_INFOS
 
 
 # Used for initializing and setting projections when span/logs are recorded
-def _set_quickpulse_projection_map(metric_id: str, aggregation_type: AggregationType, value: float, count: int):
+def _set_quickpulse_projection_map(
+    metric_id: str, aggregation_type: AggregationType, value: float, count: int
+):
     # pylint: disable=global-variable-not-assigned
     global _QUICKPULSE_PROJECTION_MAP
     _QUICKPULSE_PROJECTION_MAP[metric_id] = (aggregation_type, value, count)
@@ -203,11 +218,15 @@ def _clear_quickpulse_projection_map():
 # Used for updating doc filter configuration when etag has changed
 # Contains filter and projection of docs to apply for each telemetry type if exists
 # Format is Dict[TelemetryType, Dict[stream.id, List[FilterConjunctionGroupInfo]]]
-def _set_quickpulse_doc_stream_infos(filters: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]]) -> None:
+def _set_quickpulse_doc_stream_infos(
+    filters: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]],
+) -> None:
     # pylint: disable=global-statement
     global _QUICKPULSE_DOC_STREAM_INFOS
     _QUICKPULSE_DOC_STREAM_INFOS = filters
 
 
-def _get_quickpulse_doc_stream_infos() -> Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]]:
+def _get_quickpulse_doc_stream_infos() -> (
+    Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]]
+):
     return _QUICKPULSE_DOC_STREAM_INFOS

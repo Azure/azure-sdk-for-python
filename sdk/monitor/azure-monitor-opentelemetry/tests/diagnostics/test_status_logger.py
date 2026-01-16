@@ -8,7 +8,10 @@ import os
 from json import loads
 from unittest.mock import patch
 
-from azure.monitor.opentelemetry._diagnostics.status_logger import AzureStatusLogger, _get_status_logger_file_name
+from azure.monitor.opentelemetry._diagnostics.status_logger import (
+    AzureStatusLogger,
+    _get_status_logger_file_name,
+)
 
 TEST_MACHINE_NAME = "TEST_MACHINE_NAME"
 TEST_PID = 321
@@ -62,7 +65,9 @@ def set_up(file_path, is_diagnostics_enabled=True):
     ).start()
 
 
-def check_file_for_messages(agent_initialized_successfully, file_path, reason=None, sdk_present=None):
+def check_file_for_messages(
+    agent_initialized_successfully, file_path, reason=None, sdk_present=None
+):
     with open(file_path, "r") as f:
         f.seek(0)
         json = loads(f.readline())
@@ -114,7 +119,10 @@ class TestStatusLogger:
         AzureStatusLogger.log_status(True, reason=MESSAGE1)
         AzureStatusLogger.log_status(False, reason=MESSAGE2, sdk_present=True)
         check_file_for_messages(
-            agent_initialized_successfully=False, file_path=temp_file_path, reason=MESSAGE2, sdk_present=True
+            agent_initialized_successfully=False,
+            file_path=temp_file_path,
+            reason=MESSAGE2,
+            sdk_present=True,
         )
 
     def test_disabled_log_status_success(self, temp_file_path):
@@ -146,4 +154,7 @@ class TestStatusLogger:
         TEST_MACHINE_NAME,
     )
     def test_get_status_logger_file_name(self):
-        assert _get_status_logger_file_name(TEST_PID) == f"status_{TEST_MACHINE_NAME}_{TEST_PID}.json"
+        assert (
+            _get_status_logger_file_name(TEST_PID)
+            == f"status_{TEST_MACHINE_NAME}_{TEST_PID}.json"
+        )

@@ -13,7 +13,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _KNOWN_STRING_FIELD_NAMES,
     _REQUEST_DATA_FIELD_NAMES,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._utils import _filter_time_stamp_to_ms
+from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
+    _filter_time_stamp_to_ms,
+)
 
 
 def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
@@ -33,7 +35,9 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
     return True
 
 
-def _validate_document_filter_group_info(doc_filter_group: DocumentFilterConjunctionGroupInfo) -> bool:
+def _validate_document_filter_group_info(
+    doc_filter_group: DocumentFilterConjunctionGroupInfo,
+) -> bool:
     if not _validate_telemetry_type(doc_filter_group.telemetry_type):
         return False
     # Validate filters
@@ -109,7 +113,10 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
         return False
     if not comparand:
         return False
-    if name == "*" and predicate not in (PredicateType.CONTAINS, PredicateType.DOES_NOT_CONTAIN):
+    if name == "*" and predicate not in (
+        PredicateType.CONTAINS,
+        PredicateType.DOES_NOT_CONTAIN,
+    ):
         return False
     if name in ("ResultCode", "ResponseCode", "Duration"):
         if predicate in (PredicateType.CONTAINS, PredicateType.DOES_NOT_CONTAIN):

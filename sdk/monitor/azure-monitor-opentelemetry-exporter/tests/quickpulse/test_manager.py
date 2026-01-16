@@ -94,7 +94,9 @@ class TestQuickpulseManager(unittest.TestCase):
     def tearDownClass(cls):
         _set_global_quickpulse_state(_QuickpulseState.OFFLINE)
 
-    @mock.patch("opentelemetry.sdk.trace.id_generator.RandomIdGenerator.generate_trace_id")
+    @mock.patch(
+        "opentelemetry.sdk.trace.id_generator.RandomIdGenerator.generate_trace_id"
+    )
     def test_init(self, generator_mock):
         generator_mock.return_value = "test_trace_id"
         part_a_fields = _populate_part_a_fields(self.resource)
@@ -119,14 +121,20 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._base_monitoring_data_point.version, _get_sdk_version())
         self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 5)
         self.assertEqual(
-            qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
+            qpm._base_monitoring_data_point.instance,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
         )
-        self.assertEqual(qpm._base_monitoring_data_point.role_name, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""))
+        self.assertEqual(
+            qpm._base_monitoring_data_point.role_name,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
+        )
         self.assertEqual(qpm._base_monitoring_data_point.machine_name, platform.node())
         self.assertEqual(qpm._base_monitoring_data_point.stream_id, "test_trace_id")
         self.assertTrue(isinstance(qpm._reader, _QuickpulseMetricReader))
         self.assertEqual(qpm._reader._exporter, qpm._exporter)
-        self.assertEqual(qpm._reader._base_monitoring_data_point, qpm._base_monitoring_data_point)
+        self.assertEqual(
+            qpm._reader._base_monitoring_data_point, qpm._base_monitoring_data_point
+        )
         self.assertTrue(isinstance(qpm._meter_provider, MeterProvider))
         self.assertEqual(qpm._meter_provider._sdk_config.metric_readers, [qpm._reader])
         self.assertEqual(qpm._meter_provider._sdk_config.resource, self.resource)
@@ -139,22 +147,32 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertTrue(isinstance(qpm._request_rate_counter, Counter))
         self.assertEqual(qpm._request_rate_counter.name, _REQUEST_RATE_NAME[0])
         self.assertTrue(isinstance(qpm._request_failed_rate_counter, Counter))
-        self.assertEqual(qpm._request_failed_rate_counter.name, _REQUEST_FAILURE_RATE_NAME[0])
+        self.assertEqual(
+            qpm._request_failed_rate_counter.name, _REQUEST_FAILURE_RATE_NAME[0]
+        )
         self.assertTrue(isinstance(qpm._dependency_rate_counter, Counter))
         self.assertEqual(qpm._dependency_rate_counter.name, _DEPENDENCY_RATE_NAME[0])
         self.assertTrue(isinstance(qpm._dependency_failure_rate_counter, Counter))
-        self.assertEqual(qpm._dependency_failure_rate_counter.name, _DEPENDENCY_FAILURE_RATE_NAME[0])
+        self.assertEqual(
+            qpm._dependency_failure_rate_counter.name, _DEPENDENCY_FAILURE_RATE_NAME[0]
+        )
         self.assertTrue(isinstance(qpm._exception_rate_counter, Counter))
         self.assertEqual(qpm._exception_rate_counter.name, _EXCEPTION_RATE_NAME[0])
         self.assertTrue(isinstance(qpm._process_memory_gauge, ObservableGauge))
-        self.assertEqual(qpm._process_memory_gauge.name, _PROCESS_PHYSICAL_BYTES_NAME[0])
+        self.assertEqual(
+            qpm._process_memory_gauge.name, _PROCESS_PHYSICAL_BYTES_NAME[0]
+        )
         self.assertEqual(qpm._process_memory_gauge._callbacks, [_get_process_memory])
         self.assertTrue(isinstance(qpm._process_time_gauge, ObservableGauge))
         self.assertEqual(qpm._process_time_gauge.name, _PROCESS_TIME_NORMALIZED_NAME[0])
-        self.assertEqual(qpm._process_time_gauge._callbacks, [_get_process_time_normalized])
+        self.assertEqual(
+            qpm._process_time_gauge._callbacks, [_get_process_time_normalized]
+        )
         self.assertTrue(isinstance(qpm._process_time_gauge_old, ObservableGauge))
         self.assertEqual(qpm._process_time_gauge_old.name, _PROCESSOR_TIME_NAME[0])
-        self.assertEqual(qpm._process_time_gauge_old._callbacks, [_get_process_time_normalized_old])
+        self.assertEqual(
+            qpm._process_time_gauge_old._callbacks, [_get_process_time_normalized_old]
+        )
 
     def test_singleton(self):
         part_a_fields = _populate_part_a_fields(self.resource)
@@ -178,14 +196,20 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm, qpm2)
         # Configuration should be from first initialization since singleton was already initialized
         self.assertEqual(
-            qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
-        )
-        self.assertEqual(qpm._base_monitoring_data_point.role_name, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""))
-        self.assertEqual(
-            qpm2._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
+            qpm._base_monitoring_data_point.instance,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
         )
         self.assertEqual(
-            qpm2._base_monitoring_data_point.role_name, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
+            qpm._base_monitoring_data_point.role_name,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
+        )
+        self.assertEqual(
+            qpm2._base_monitoring_data_point.instance,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
+        )
+        self.assertEqual(
+            qpm2._base_monitoring_data_point.role_name,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
         )
 
     def test_initialize_success(self):
@@ -196,7 +220,9 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertFalse(qpm.is_initialized())
 
         # Initialize should succeed
-        result = qpm.initialize(connection_string=self.connection_string, resource=self.resource)
+        result = qpm.initialize(
+            connection_string=self.connection_string, resource=self.resource
+        )
         self.assertTrue(result)
         self.assertTrue(qpm.is_initialized())
 
@@ -227,7 +253,9 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._QuickpulseExporter")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._QuickpulseExporter"
+    )
     def test_initialize_failure(self, exporter_mock):
         """Test initialization failure handling."""
         exporter_mock.side_effect = Exception("Exporter creation failed")
@@ -294,18 +322,30 @@ class TestQuickpulseManager(unittest.TestCase):
         qpm.initialize(connection_string=self.connection_string)
 
         # Mock meter provider to raise exception on shutdown
-        qpm._meter_provider.shutdown = mock.Mock(side_effect=Exception("Shutdown failed"))
+        qpm._meter_provider.shutdown = mock.Mock(
+            side_effect=Exception("Shutdown failed")
+        )
 
         # Shutdown should handle exception and return False
         result = qpm.shutdown()
         self.assertFalse(result)
         self.assertFalse(qpm.is_initialized())
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_span_server_success(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_span_server_success(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         post_state_mock.return_value = True
         span_mock = mock.Mock()
         span_mock.end_time = 10
@@ -342,11 +382,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_span_server_failure(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_span_server_failure(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         post_state_mock.return_value = True
         span_mock = mock.Mock()
         span_mock.end_time = 10
@@ -383,11 +433,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_span_dep_success(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_span_dep_success(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         post_state_mock.return_value = True
         span_mock = mock.Mock()
         span_mock.end_time = 10
@@ -426,11 +486,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_span_dep_failure(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_span_dep_failure(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         post_state_mock.return_value = True
         span_mock = mock.Mock()
         span_mock.end_time = 10
@@ -469,11 +539,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_span_derive_filter_metrics(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_span_derive_filter_metrics(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         post_state_mock.return_value = True
         span_mock = mock.Mock()
         span_mock.end_time = 10
@@ -501,11 +581,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._ExceptionData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._ExceptionData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_span_span_event_exception(
         self,
         post_state_mock,
@@ -557,10 +647,18 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_log(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
         post_state_mock.return_value = True
         log_record_mock = mock.Mock()
@@ -590,11 +688,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_log_exception(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_log_exception(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         post_state_mock.return_value = True
         log_record_mock = mock.Mock()
         log_data_mock = mock.Mock()
@@ -628,11 +736,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_log_derive_filter_metrics(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_log_derive_filter_metrics(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         post_state_mock.return_value = True
         log_record_mock = mock.Mock()
         log_record_mock.attributes = {}
@@ -656,10 +774,18 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._create_projections")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_metric_filters")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
-    def test_derive_metrics_from_telemetry_data(self, get_derived_mock, filter_mock, projection_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._create_projections"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._check_metric_filters"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos"
+    )
+    def test_derive_metrics_from_telemetry_data(
+        self, get_derived_mock, filter_mock, projection_mock
+    ):
         metric_infos = [mock.Mock()]
         get_derived_mock.return_value = {
             TelemetryType.DEPENDENCY: metric_infos,
@@ -680,10 +806,18 @@ class TestQuickpulseManager(unittest.TestCase):
         filter_mock.assert_called_once_with(metric_infos, data)
         projection_mock.assert_called_once_with(metric_infos, data)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._create_projections")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_metric_filters")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
-    def test_derive_metrics_from_telemetry_data_filter_false(self, get_derived_mock, filter_mock, projection_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._create_projections"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._check_metric_filters"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos"
+    )
+    def test_derive_metrics_from_telemetry_data_filter_false(
+        self, get_derived_mock, filter_mock, projection_mock
+    ):
         metric_infos = [mock.Mock()]
         get_derived_mock.return_value = {
             TelemetryType.DEPENDENCY: metric_infos,
@@ -704,10 +838,18 @@ class TestQuickpulseManager(unittest.TestCase):
         filter_mock.assert_called_once_with(metric_infos, data)
         projection_mock.assert_not_called()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._append_quickpulse_document")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._append_quickpulse_document"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos"
+    )
     def test_apply_doc_filters_from_telemetry_data(
         self,
         get_doc_stream_mock,
@@ -740,10 +882,18 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(doc_mock.document_stream_ids, ["streamId"])
         append_mock.assert_called_once_with(doc_mock)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._append_quickpulse_document")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._append_quickpulse_document"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos"
+    )
     def test_apply_doc_filters_from_telemetry_data_all_streams(
         self,
         get_doc_stream_mock,
@@ -775,10 +925,18 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertIsNone(doc_mock.document_stream_ids)
         append_mock.assert_called_once_with(doc_mock)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._append_quickpulse_document")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._append_quickpulse_document"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos"
+    )
     def test_apply_doc_filters_from_telemetry_data_false_filter(
         self,
         get_doc_stream_mock,
@@ -827,7 +985,9 @@ class TestQuickpulseManager(unittest.TestCase):
         qpm.shutdown()
         self.assertTrue(qpm._validate_recording_resources())
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_span_not_post_state(self, post_state_mock):
         """Test _record_span when not in post state."""
         post_state_mock.return_value = False
@@ -849,7 +1009,9 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_span_not_initialized(self, post_state_mock):
         """Test _record_span when manager is not initialized."""
         post_state_mock.return_value = True
@@ -864,10 +1026,18 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertFalse(qpm.is_initialized())
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._logger")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_span_exception_handling(
         self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock
     ):
@@ -895,7 +1065,9 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_log_record_not_post_state(self, post_state_mock):
         """Test _record_log_record when not in post state."""
         post_state_mock.return_value = False
@@ -915,7 +1087,9 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_log_record_not_initialized(self, post_state_mock):
         """Test _record_log_record when manager is not initialized."""
         post_state_mock.return_value = True
@@ -930,10 +1104,18 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertFalse(qpm.is_initialized())
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._logger")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
     def test_record_log_record_exception_handling(
         self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock
     ):
@@ -958,11 +1140,21 @@ class TestQuickpulseManager(unittest.TestCase):
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_log_record_no_log_record(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData"
+    )
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state"
+    )
+    def test_record_log_record_no_log_record(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock
+    ):
         """Test _record_log_record when readable_log_record.log_record is None."""
         post_state_mock.return_value = True
         log_data_mock = mock.Mock()
@@ -992,7 +1184,9 @@ class TestQuickpulseManager(unittest.TestCase):
 
         self.assertIn("Meter must be initialized", str(context.exception))
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos"
+    )
     def test_derive_metrics_no_config(self, get_derived_mock):
         """Test _derive_metrics_from_telemetry_data when no filtering is configured."""
         get_derived_mock.return_value = {}
@@ -1012,7 +1206,9 @@ class TestQuickpulseManager(unittest.TestCase):
         _derive_metrics_from_telemetry_data(data)
         get_derived_mock.assert_called_once()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos"
+    )
     def test_derive_metrics_unknown_data_type(self, get_derived_mock):
         """Test _derive_metrics_from_telemetry_data with unknown data type."""
         get_derived_mock.return_value = {TelemetryType.DEPENDENCY: [mock.Mock()]}

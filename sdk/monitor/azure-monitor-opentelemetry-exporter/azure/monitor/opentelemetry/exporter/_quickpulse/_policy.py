@@ -7,7 +7,9 @@ from weakref import ReferenceType
 
 from azure.core.pipeline import PipelineResponse, policies
 
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_REDIRECT_HEADER_NAME
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _QUICKPULSE_REDIRECT_HEADER_NAME,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._generated import QuickpulseClient
 
 
@@ -22,7 +24,9 @@ class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
 
     # Gets the redirect location from header
     def get_redirect_location(self, response: PipelineResponse) -> Optional[str]:
-        redirect_location = response.http_response.headers.get(_QUICKPULSE_REDIRECT_HEADER_NAME)
+        redirect_location = response.http_response.headers.get(
+            _QUICKPULSE_REDIRECT_HEADER_NAME
+        )
         qp_client = None
         if redirect_location:
             redirected_url = urlparse(redirect_location)
@@ -31,5 +35,7 @@ class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
                     qp_client = self._qp_client_ref()
                 if qp_client and qp_client._client:
                     # Set new endpoint to redirect location
-                    qp_client._client._base_url = f"{redirected_url.scheme}://{redirected_url.netloc}"
+                    qp_client._client._base_url = (
+                        f"{redirected_url.scheme}://{redirected_url.netloc}"
+                    )
         return redirect_location  # type: ignore

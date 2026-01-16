@@ -29,7 +29,9 @@ DjangoInstrumentor().instrument()
 # Set up Azure Monitor OpenTelemetry Exporter
 trace.set_tracer_provider(TracerProvider())
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)  # type: ignore
 

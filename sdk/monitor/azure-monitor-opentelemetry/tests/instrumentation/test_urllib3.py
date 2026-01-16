@@ -17,4 +17,6 @@ class TestUrllib3Instrumentation(unittest.TestCase):
             URLLib3Instrumentor().instrument()
         except Exception as ex:  # pylint: disable=broad-except
             print(ex)
-            self.fail(f"Unexpected exception raised when instrumenting {URLLib3Instrumentor.__name__}")
+            self.fail(
+                f"Unexpected exception raised when instrumenting {URLLib3Instrumentor.__name__}"
+            )

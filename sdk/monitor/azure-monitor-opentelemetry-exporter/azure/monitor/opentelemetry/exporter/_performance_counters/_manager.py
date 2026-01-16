@@ -78,8 +78,14 @@ def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
         # Get CPU percent for the current process
         cpu_percent = _PROCESS.cpu_percent(interval=None)
         yield Observation(cpu_percent, {})
-    except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting process CPU usage: %s", e)  # pylint: disable=logging-not-lazy
+    except (
+        psutil.NoSuchProcess,
+        psutil.AccessDenied,
+        Exception,
+    ) as e:  # pylint: disable=broad-except
+        _logger.exception(
+            "Error getting process CPU usage: %s", e
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0.0, {})
 
 
@@ -109,8 +115,14 @@ def _get_process_cpu_normalized(options: CallbackOptions) -> Iterable[Observatio
         normalized_cpu_percent = cpu_percent / NUM_CPUS
 
         yield Observation(normalized_cpu_percent, {})
-    except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting normalized process CPU usage: %s", e)  # pylint: disable=logging-not-lazy
+    except (
+        psutil.NoSuchProcess,
+        psutil.AccessDenied,
+        Exception,
+    ) as e:  # pylint: disable=broad-except
+        _logger.exception(
+            "Error getting normalized process CPU usage: %s", e
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0.0, {})
 
 
@@ -131,7 +143,9 @@ def _get_available_memory(options: CallbackOptions) -> Iterable[Observation]:
         available_memory = psutil.virtual_memory().available
         yield Observation(available_memory, {})
     except Exception as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting available memory: %s", e)  # pylint: disable=logging-not-lazy
+        _logger.exception(
+            "Error getting available memory: %s", e
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0, {})
 
 
@@ -151,8 +165,14 @@ def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
         # RSS is non-swapped physical memory a process has used
         private_bytes = _PROCESS.memory_info().rss
         yield Observation(private_bytes, {})
-    except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting process memory: %s", e)  # pylint: disable=logging-not-lazy
+    except (
+        psutil.NoSuchProcess,
+        psutil.AccessDenied,
+        Exception,
+    ) as e:  # pylint: disable=broad-except
+        _logger.exception(
+            "Error getting process memory: %s", e
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0, {})
 
 
@@ -185,7 +205,11 @@ def _get_process_io(options: CallbackOptions) -> Iterable[Observation]:
         _IO_LAST_TIME = current_time
         io_rate = rw_diff / elapsed_time_s
         yield Observation(io_rate, {})
-    except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
+    except (
+        psutil.NoSuchProcess,
+        psutil.AccessDenied,
+        Exception,
+    ) as e:  # pylint: disable=broad-except
         _logger.exception("Error getting process I/O rate: %s", e)
         yield Observation(0, {})
 
@@ -590,21 +614,29 @@ class _PerformanceCountersManager(metaclass=Singleton):
             if meter_provider is None:
                 meter_provider = metrics.get_meter_provider()
 
-            self._meter = meter_provider.get_meter("azure.monitor.opentelemetry.performance_counters")
+            self._meter = meter_provider.get_meter(
+                "azure.monitor.opentelemetry.performance_counters"
+            )
 
             # Initialize all performance counter metrics
             for metric_class in PERFORMANCE_COUNTER_METRICS:
                 try:
                     # Note: ProcessIORate may not be available on all platforms
                     if metric_class == ProcessIORate and not _IO_AVAILABLE:
-                        _logger.warning("Process I/O Rate performance counter is not available on this platform.")
+                        _logger.warning(
+                            "Process I/O Rate performance counter is not available on this platform."
+                        )
                         continue
                     performance_counter = metric_class(self._meter)
                     self._performance_counters.append(performance_counter)
                     if metric_class == RequestExecutionTime:
                         self._request_duration_histogram = performance_counter.gauge
                 except Exception as e:  # pylint: disable=broad-except
-                    _logger.warning("Failed to initialize performance counter %s: %s", metric_class.NAME[0], e)
+                    _logger.warning(
+                        "Failed to initialize performance counter %s: %s",
+                        metric_class.NAME[0],
+                        e,
+                    )
 
         except Exception as e:  # pylint: disable=broad-except
             _logger.warning("Failed to setup performance counters: %s", e)
@@ -629,7 +661,9 @@ class _PerformanceCountersManager(metaclass=Singleton):
                     if event.name == "exception":
                         _EXCEPTIONS_COUNT += 1
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while recording span.")  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while recording span."
+            )  # pylint: disable=C4769
 
     def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
         try:
@@ -644,7 +678,9 @@ class _PerformanceCountersManager(metaclass=Singleton):
                     if exc_type is not None or exc_message is not None:
                         _EXCEPTIONS_COUNT += 1  # type: ignore
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while recording log record.")  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while recording log record."
+            )  # pylint: disable=C4769
 
 
 def enable_performance_counters(meter_provider=None):

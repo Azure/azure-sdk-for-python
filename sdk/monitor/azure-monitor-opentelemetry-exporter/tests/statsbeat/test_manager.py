@@ -5,8 +5,13 @@ import unittest
 from unittest import mock
 from unittest.mock import Mock, patch, MagicMock
 
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
-from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatConfig, StatsbeatManager
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (
+    ConnectionStringParser,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
+    StatsbeatConfig,
+    StatsbeatManager,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
     _STATSBEAT_STATE_LOCK,
@@ -32,7 +37,9 @@ class TestStatsbeatConfig(unittest.TestCase):
             instrumentation_key="test-key",
         )
 
-        self.assertEqual(config.endpoint, "https://westus-1.in.applicationinsights.azure.com/")
+        self.assertEqual(
+            config.endpoint, "https://westus-1.in.applicationinsights.azure.com/"
+        )
         self.assertEqual(config.region, "westus")
         self.assertEqual(config.instrumentation_key, "test-key")
         self.assertFalse(config.disable_offline_storage)
@@ -52,7 +59,9 @@ class TestStatsbeatConfig(unittest.TestCase):
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
         )
 
-        self.assertEqual(config.endpoint, "https://westus-1.in.applicationinsights.azure.com/")
+        self.assertEqual(
+            config.endpoint, "https://westus-1.in.applicationinsights.azure.com/"
+        )
         self.assertEqual(config.region, "westus")
         self.assertEqual(config.instrumentation_key, "test-key")
         self.assertTrue(config.disable_offline_storage)
@@ -63,10 +72,14 @@ class TestStatsbeatConfig(unittest.TestCase):
             "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
         )
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_stats_connection_string")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager._get_stats_connection_string"
+    )
     def test_init_invalid_connection_string_fallback(self, mock_get_stats_cs):
         """Test that invalid connection string falls back to default."""
-        mock_get_stats_cs.return_value = "InstrumentationKey=fallback;IngestionEndpoint=https://fallback.com/"
+        mock_get_stats_cs.return_value = (
+            "InstrumentationKey=fallback;IngestionEndpoint=https://fallback.com/"
+        )
 
         config = StatsbeatConfig(
             endpoint="https://westus-1.in.applicationinsights.azure.com/",
@@ -76,7 +89,8 @@ class TestStatsbeatConfig(unittest.TestCase):
         )
 
         self.assertEqual(
-            config.connection_string, "InstrumentationKey=fallback;IngestionEndpoint=https://fallback.com/"
+            config.connection_string,
+            "InstrumentationKey=fallback;IngestionEndpoint=https://fallback.com/",
         )
         mock_get_stats_cs.assert_called_once()
 
@@ -94,7 +108,9 @@ class TestStatsbeatConfig(unittest.TestCase):
 
         self.assertIsNotNone(config)
         if config:
-            self.assertEqual(config.endpoint, "https://westus-1.in.applicationinsights.azure.com/")
+            self.assertEqual(
+                config.endpoint, "https://westus-1.in.applicationinsights.azure.com/"
+            )
             self.assertEqual(config.region, "westus")
             self.assertEqual(config.instrumentation_key, "test-key")
             self.assertTrue(config.disable_offline_storage)
@@ -131,7 +147,9 @@ class TestStatsbeatConfig(unittest.TestCase):
         config = StatsbeatConfig.from_exporter(exporter)
         self.assertIsNone(config)
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config"
+    )
     def test_from_config_valid(self, mock_get_cs_for_region):
         """Test creating config from base config and dictionary."""
         mock_get_cs_for_region.return_value = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
@@ -153,7 +171,9 @@ class TestStatsbeatConfig(unittest.TestCase):
         if new_config:
             self.assertEqual(new_config.endpoint, base_config.endpoint)
             self.assertEqual(new_config.region, base_config.region)
-            self.assertEqual(new_config.instrumentation_key, base_config.instrumentation_key)
+            self.assertEqual(
+                new_config.instrumentation_key, base_config.instrumentation_key
+            )
             self.assertTrue(new_config.disable_offline_storage)
             self.assertEqual(new_config.credential, "test_credential")
             self.assertEqual(new_config.distro_version, "1.0.0")
@@ -162,7 +182,9 @@ class TestStatsbeatConfig(unittest.TestCase):
                 "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             )
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config"
+    )
     def test_from_config_fallback_connection_string(self, mock_get_cs_for_region):
         """Test that from_config falls back to base config connection string when needed."""
         mock_get_cs_for_region.return_value = None
@@ -180,12 +202,16 @@ class TestStatsbeatConfig(unittest.TestCase):
 
         self.assertIsNotNone(new_config)
         if new_config:
-            self.assertEqual(new_config.connection_string, base_config.connection_string)
+            self.assertEqual(
+                new_config.connection_string, base_config.connection_string
+            )
 
     def test_from_config_missing_instrumentation_key(self):
         """Test from_config with missing instrumentation key."""
         base_config = StatsbeatConfig(
-            endpoint="https://westus-1.in.applicationinsights.azure.com/", region="westus", instrumentation_key=""
+            endpoint="https://westus-1.in.applicationinsights.azure.com/",
+            region="westus",
+            instrumentation_key="",
         )
 
         result = StatsbeatConfig.from_config(base_config, {})
@@ -316,19 +342,25 @@ class TestStatsbeatManager(unittest.TestCase):
     def test_validate_config_missing_instrumentation_key(self):
         """Test _validate_config with missing instrumentation key."""
         config = StatsbeatConfig(
-            endpoint="https://westus-1.in.applicationinsights.azure.com/", region="westus", instrumentation_key=""
+            endpoint="https://westus-1.in.applicationinsights.azure.com/",
+            region="westus",
+            instrumentation_key="",
         )
         self.assertFalse(StatsbeatManager._validate_config(config))
 
     def test_validate_config_missing_endpoint(self):
         """Test _validate_config with missing endpoint."""
-        config = StatsbeatConfig(endpoint="", region="westus", instrumentation_key="test-key")
+        config = StatsbeatConfig(
+            endpoint="", region="westus", instrumentation_key="test-key"
+        )
         self.assertFalse(StatsbeatManager._validate_config(config))
 
     def test_validate_config_missing_region(self):
         """Test _validate_config with missing region."""
         config = StatsbeatConfig(
-            endpoint="https://westus-1.in.applicationinsights.azure.com/", region="", instrumentation_key="test-key"
+            endpoint="https://westus-1.in.applicationinsights.azure.com/",
+            region="",
+            instrumentation_key="test-key",
         )
         self.assertFalse(StatsbeatManager._validate_config(config))
 
@@ -342,7 +374,9 @@ class TestStatsbeatManager(unittest.TestCase):
         config.connection_string = ""
         self.assertFalse(StatsbeatManager._validate_config(config))
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled"
+    )
     def test_initialize_statsbeat_disabled(self, mock_is_enabled):
         """Test initialize when statsbeat is disabled."""
         mock_is_enabled.return_value = False
@@ -364,12 +398,21 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader"
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter"
+    )
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
     def test_initialize_success(
-        self, mock_is_enabled, mock_statsbeat_metrics, mock_exporter_class, mock_reader_class, mock_meter_provider_class
+        self,
+        mock_is_enabled,
+        mock_statsbeat_metrics,
+        mock_exporter_class,
+        mock_reader_class,
+        mock_meter_provider_class,
     ):
         """Test successful initialization."""
         mock_is_enabled.return_value = True
@@ -409,11 +452,19 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_metrics.init_non_initial_metrics.assert_called_once()
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader"
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter"
+    )
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
     def test_initialize_failure_exception(
-        self, mock_is_enabled, mock_exporter_class, mock_reader_class, mock_meter_provider_class
+        self,
+        mock_is_enabled,
+        mock_exporter_class,
+        mock_reader_class,
+        mock_meter_provider_class,
     ):
         """Test initialization failure due to exception."""
         mock_is_enabled.return_value = True
@@ -440,7 +491,9 @@ class TestStatsbeatManager(unittest.TestCase):
 
         self.assertTrue(result)
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled"
+    )
     def test_initialize_already_initialized_different_config_cs(self, mock_is_enabled):
         """Test initialize when already initialized with different config."""
         mock_is_enabled.return_value = True
@@ -464,8 +517,12 @@ class TestStatsbeatManager(unittest.TestCase):
             self.assertTrue(result)
             mock_reconfigure.assert_called_once_with(new_config)
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled")
-    def test_initialize_already_initialized_different_config_storage(self, mock_is_enabled):
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled"
+    )
+    def test_initialize_already_initialized_different_config_storage(
+        self, mock_is_enabled
+    ):
         """Test initialize when already initialized with different config."""
         mock_is_enabled.return_value = True
 
@@ -493,7 +550,9 @@ class TestStatsbeatManager(unittest.TestCase):
         result = self.manager.shutdown()
         self.assertFalse(result)
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.set_statsbeat_shutdown")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager.set_statsbeat_shutdown"
+    )
     def test_shutdown_success(self, mock_set_shutdown):
         """Test successful shutdown."""
         # Mock initialized state
@@ -515,7 +574,9 @@ class TestStatsbeatManager(unittest.TestCase):
         manager2 = StatsbeatManager()
         self.assertIs(self.manager, manager2)
 
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.set_statsbeat_shutdown")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._state.set_statsbeat_shutdown"
+    )
     def test_shutdown_meter_provider_exception(self, mock_set_shutdown):
         """Test shutdown when meter provider raises exception."""
         # Mock initialized state
@@ -536,11 +597,19 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_set_shutdown.assert_not_called()
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader"
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter"
+    )
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     def test_reconfigure_success(
-        self, mock_statsbeat_metrics, mock_exporter_class, mock_reader_class, mock_meter_provider_class
+        self,
+        mock_statsbeat_metrics,
+        mock_exporter_class,
+        mock_reader_class,
+        mock_meter_provider_class,
     ):
         """Test successful reconfiguration."""
         # Mock initialized state with old config
@@ -587,7 +656,9 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_old_meter_provider = Mock()
         self.manager._meter_provider = mock_old_meter_provider
 
-        mock_meter_provider_class.force_flush.side_effect = Exception("Reconfigure error")
+        mock_meter_provider_class.force_flush.side_effect = Exception(
+            "Reconfigure error"
+        )
 
         new_config = StatsbeatConfig(
             endpoint="https://eastus-1.in.applicationinsights.azure.com/",
@@ -620,7 +691,9 @@ class TestStatsbeatManager(unittest.TestCase):
             self.assertIsNot(result, original_config)
             self.assertEqual(result.endpoint, original_config.endpoint)
             self.assertEqual(result.region, original_config.region)
-            self.assertEqual(result.instrumentation_key, original_config.instrumentation_key)
+            self.assertEqual(
+                result.instrumentation_key, original_config.instrumentation_key
+            )
 
     def test_cleanup_with_shutdown(self):
         """Test internal cleanup method with meter provider shutdown."""

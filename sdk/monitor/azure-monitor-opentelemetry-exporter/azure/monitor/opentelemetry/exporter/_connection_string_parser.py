@@ -12,7 +12,9 @@ AAD_AUDIENCE = "aadaudience"
 
 # Validate UUID format
 # Specs taken from https://tools.ietf.org/html/rfc4122
-uuid_regex_pattern = re.compile("^[0-9a-f]{8}-" "[0-9a-f]{4}-" + "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{12}$")
+uuid_regex_pattern = re.compile(
+    "^[0-9a-f]{8}-" "[0-9a-f]{4}-" + "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{12}$"
+)
 
 # Pattern to extract region from ingestion endpoint URL
 # Examples:
@@ -20,7 +22,9 @@ uuid_regex_pattern = re.compile("^[0-9a-f]{8}-" "[0-9a-f]{4}-" + "[0-9a-f]{4}-" 
 # - https://westeurope.in.applicationinsights.azure.com/ -> westeurope
 # - https://eastus-1.in.applicationinsights.azure.com/ -> eastus
 # - https://dc.services.visualstudio.com -> None (global endpoint)
-region_from_endpoint_pattern = re.compile(r"https://([a-z0-9]+)(?:-\d+)?\.in\.applicationinsights\.azure\.com")
+region_from_endpoint_pattern = re.compile(
+    r"https://([a-z0-9]+)(?:-\d+)?\.in\.applicationinsights\.azure\.com"
+)
 
 
 class ConnectionStringParser:
@@ -45,7 +49,9 @@ class ConnectionStringParser:
         # connection string and ikey
         code_cs = self._parse_connection_string(self._connection_string)
         code_ikey = self.instrumentation_key
-        env_cs = self._parse_connection_string(os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
+        env_cs = self._parse_connection_string(
+            os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+        )
         env_ikey = os.getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
 
         # The priority of which value takes on the instrumentation key is:
@@ -61,10 +67,14 @@ class ConnectionStringParser:
         # 2. The endpoint from the connection string in environment variable
         # 3. The default breeze endpoint
         self.endpoint = (
-            code_cs.get(INGESTION_ENDPOINT) or env_cs.get(INGESTION_ENDPOINT) or "https://dc.services.visualstudio.com"
+            code_cs.get(INGESTION_ENDPOINT)
+            or env_cs.get(INGESTION_ENDPOINT)
+            or "https://dc.services.visualstudio.com"
         )
         self.live_endpoint = (
-            code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or "https://rt.services.visualstudio.com"
+            code_cs.get(LIVE_ENDPOINT)
+            or env_cs.get(LIVE_ENDPOINT)
+            or "https://rt.services.visualstudio.com"
         )
         # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud
         # (For example: "https://monitor.azure.com/").
@@ -130,13 +140,17 @@ class ConnectionStringParser:
         # Construct the endpoints if not passed in explicitly
         if result.get(INGESTION_ENDPOINT) is None:
             if endpoint_suffix:
-                result[INGESTION_ENDPOINT] = "https://{0}dc.{1}".format(location_prefix, endpoint_suffix)
+                result[INGESTION_ENDPOINT] = "https://{0}dc.{1}".format(
+                    location_prefix, endpoint_suffix
+                )
             else:
                 # Default to None if cannot construct
                 result[INGESTION_ENDPOINT] = None
         if result.get(LIVE_ENDPOINT) is None:
             if endpoint_suffix:
-                result[LIVE_ENDPOINT] = "https://{0}live.{1}".format(location_prefix, endpoint_suffix)
+                result[LIVE_ENDPOINT] = "https://{0}live.{1}".format(
+                    location_prefix, endpoint_suffix
+                )
             else:
                 result[LIVE_ENDPOINT] = None
 

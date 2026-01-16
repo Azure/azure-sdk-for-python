@@ -7,10 +7,14 @@ This module provides global access functions for the Configuration Manager singl
 import os
 from typing import Optional, TYPE_CHECKING
 
-from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED,
+)
 
 if TYPE_CHECKING:
-    from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+    from azure.monitor.opentelemetry.exporter._configuration import (
+        _ConfigurationManager,
+    )
 
 # Global singleton instance for easy access throughout the codebase
 _configuration_manager = None
@@ -30,7 +34,9 @@ def get_configuration_manager() -> Optional["_ConfigurationManager"]:
         return None
     global _configuration_manager  # pylint: disable=global-statement
     if _configuration_manager is None:
-        from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+        from azure.monitor.opentelemetry.exporter._configuration import (
+            _ConfigurationManager,
+        )
 
         _configuration_manager = _ConfigurationManager()
     return _configuration_manager

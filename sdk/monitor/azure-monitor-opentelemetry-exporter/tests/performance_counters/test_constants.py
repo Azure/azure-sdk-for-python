@@ -15,7 +15,9 @@ from azure.monitor.opentelemetry.exporter._performance_counters._constants impor
     _PROCESSOR_TIME,
     _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_METRIC_NAME_MAPPINGS
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _QUICKPULSE_METRIC_NAME_MAPPINGS,
+)
 
 
 class TestPerformanceCounterConstants(unittest.TestCase):
@@ -25,65 +27,100 @@ class TestPerformanceCounterConstants(unittest.TestCase):
         """Test available memory constant values."""
         self.assertIsInstance(_AVAILABLE_MEMORY, tuple)
         self.assertEqual(len(_AVAILABLE_MEMORY), 2)
-        self.assertEqual(_AVAILABLE_MEMORY[0], "azuremonitor.performancecounter.memoryavailablebytes")
+        self.assertEqual(
+            _AVAILABLE_MEMORY[0], "azuremonitor.performancecounter.memoryavailablebytes"
+        )
         self.assertEqual(_AVAILABLE_MEMORY[1], "\\Memory\\Available Bytes")
 
     def test_exception_rate_constant(self):
         """Test exception rate constant values."""
         self.assertIsInstance(_EXCEPTION_RATE, tuple)
         self.assertEqual(len(_EXCEPTION_RATE), 2)
-        self.assertEqual(_EXCEPTION_RATE[0], "azuremonitor.performancecounter.exceptionssec")
-        self.assertEqual(_EXCEPTION_RATE[1], "\\.NET CLR Exceptions(??APP_CLR_PROC??)\\# of Exceps Thrown / sec")
+        self.assertEqual(
+            _EXCEPTION_RATE[0], "azuremonitor.performancecounter.exceptionssec"
+        )
+        self.assertEqual(
+            _EXCEPTION_RATE[1],
+            "\\.NET CLR Exceptions(??APP_CLR_PROC??)\\# of Exceps Thrown / sec",
+        )
 
     def test_request_execution_time_constant(self):
         """Test request execution time constant values."""
         self.assertIsInstance(_REQUEST_EXECUTION_TIME, tuple)
         self.assertEqual(len(_REQUEST_EXECUTION_TIME), 2)
-        self.assertEqual(_REQUEST_EXECUTION_TIME[0], "azuremonitor.performancecounter.requestexecutiontime")
         self.assertEqual(
-            _REQUEST_EXECUTION_TIME[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Request Execution Time"
+            _REQUEST_EXECUTION_TIME[0],
+            "azuremonitor.performancecounter.requestexecutiontime",
+        )
+        self.assertEqual(
+            _REQUEST_EXECUTION_TIME[1],
+            "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Request Execution Time",
         )
 
     def test_request_rate_constant(self):
         """Test request rate constant values."""
         self.assertIsInstance(_REQUEST_RATE, tuple)
         self.assertEqual(len(_REQUEST_RATE), 2)
-        self.assertEqual(_REQUEST_RATE[0], "azuremonitor.performancecounter.requestssec")
-        self.assertEqual(_REQUEST_RATE[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Requests/Sec")
+        self.assertEqual(
+            _REQUEST_RATE[0], "azuremonitor.performancecounter.requestssec"
+        )
+        self.assertEqual(
+            _REQUEST_RATE[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Requests/Sec"
+        )
 
     def test_process_cpu_constant(self):
         """Test process CPU constant values."""
         self.assertIsInstance(_PROCESS_CPU, tuple)
         self.assertEqual(len(_PROCESS_CPU), 2)
         self.assertEqual(_PROCESS_CPU[0], "azuremonitor.performancecounter.processtime")
-        self.assertEqual(_PROCESS_CPU[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time")
+        self.assertEqual(
+            _PROCESS_CPU[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time"
+        )
 
     def test_process_cpu_normalized_constant(self):
         """Test process CPU normalized constant values."""
         self.assertIsInstance(_PROCESS_CPU_NORMALIZED, tuple)
         self.assertEqual(len(_PROCESS_CPU_NORMALIZED), 2)
-        self.assertEqual(_PROCESS_CPU_NORMALIZED[0], "azuremonitor.performancecounter.processtimenormalized")
-        self.assertEqual(_PROCESS_CPU_NORMALIZED[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time Normalized")
+        self.assertEqual(
+            _PROCESS_CPU_NORMALIZED[0],
+            "azuremonitor.performancecounter.processtimenormalized",
+        )
+        self.assertEqual(
+            _PROCESS_CPU_NORMALIZED[1],
+            "\\Process(??APP_WIN32_PROC??)\\% Processor Time Normalized",
+        )
 
     def test_process_io_rate_constant(self):
         """Test process I/O rate constant values."""
         self.assertIsInstance(_PROCESS_IO_RATE, tuple)
         self.assertEqual(len(_PROCESS_IO_RATE), 2)
-        self.assertEqual(_PROCESS_IO_RATE[0], "azuremonitor.performancecounter.processiobytessec")
-        self.assertEqual(_PROCESS_IO_RATE[1], "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec")
+        self.assertEqual(
+            _PROCESS_IO_RATE[0], "azuremonitor.performancecounter.processiobytessec"
+        )
+        self.assertEqual(
+            _PROCESS_IO_RATE[1], "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec"
+        )
 
     def test_process_private_bytes_constant(self):
         """Test process private bytes constant values."""
         self.assertIsInstance(_PROCESS_PRIVATE_BYTES, tuple)
         self.assertEqual(len(_PROCESS_PRIVATE_BYTES), 2)
-        self.assertEqual(_PROCESS_PRIVATE_BYTES[0], "azuremonitor.performancecounter.processprivatebytes")
-        self.assertEqual(_PROCESS_PRIVATE_BYTES[1], "\\Process(??APP_WIN32_PROC??)\\Private Bytes")
+        self.assertEqual(
+            _PROCESS_PRIVATE_BYTES[0],
+            "azuremonitor.performancecounter.processprivatebytes",
+        )
+        self.assertEqual(
+            _PROCESS_PRIVATE_BYTES[1], "\\Process(??APP_WIN32_PROC??)\\Private Bytes"
+        )
 
     def test_processor_time_constant(self):
         """Test processor time constant values."""
         self.assertIsInstance(_PROCESSOR_TIME, tuple)
         self.assertEqual(len(_PROCESSOR_TIME), 2)
-        self.assertEqual(_PROCESSOR_TIME[0], "azuremonitor.performancecounter.processortotalprocessortime")
+        self.assertEqual(
+            _PROCESSOR_TIME[0],
+            "azuremonitor.performancecounter.processortotalprocessortime",
+        )
         self.assertEqual(_PROCESSOR_TIME[1], "\\Processor(_Total)\\% Processor Time")
 
     def test_performance_counter_metric_name_mappings(self):
@@ -101,12 +138,16 @@ class TestPerformanceCounterConstants(unittest.TestCase):
         ]
 
         self.assertIsInstance(_PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS, dict)
-        self.assertEqual(len(_PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS), len(expected_mappings))
+        self.assertEqual(
+            len(_PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS), len(expected_mappings)
+        )
 
         for metric_tuple in expected_mappings:
             otel_name, quickpulse_name = metric_tuple
             self.assertIn(otel_name, _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS)
-            self.assertEqual(_PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS[otel_name], quickpulse_name)
+            self.assertEqual(
+                _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS[otel_name], quickpulse_name
+            )
 
     def test_all_constants_are_tuples_with_two_elements(self):
         """Test that all metric constants are tuples with exactly two elements."""
@@ -146,7 +187,11 @@ class TestPerformanceCounterConstants(unittest.TestCase):
         otel_names = [constant[0] for constant in constants]
         unique_names = set(otel_names)
 
-        self.assertEqual(len(otel_names), len(unique_names), "Duplicate OpenTelemetry metric names found")
+        self.assertEqual(
+            len(otel_names),
+            len(unique_names),
+            "Duplicate OpenTelemetry metric names found",
+        )
 
     def test_quickpulse_perf_counters_unique_otel(self):
         """Test that all Quickpulse and Performance Counters metric names are unique."""
@@ -178,7 +223,11 @@ class TestPerformanceCounterConstants(unittest.TestCase):
                     f"Metric name '{otel_name}' does not start with '{expected_prefix}'",
                 )
                 # Check that it doesn't end with the prefix (i.e., has additional content)
-                self.assertGreater(len(otel_name), len(expected_prefix), f"Metric name '{otel_name}' is too short")
+                self.assertGreater(
+                    len(otel_name),
+                    len(expected_prefix),
+                    f"Metric name '{otel_name}' is too short",
+                )
 
     def test_quickpulse_metric_names_follow_convention(self):
         """Test that all Quickpulse metric names follow the expected Windows performance counter convention."""
@@ -199,10 +248,13 @@ class TestPerformanceCounterConstants(unittest.TestCase):
             with self.subTest(metric_name=quickpulse_name):
                 # All should start with backslash (Windows performance counter format)
                 self.assertTrue(
-                    quickpulse_name.startswith("\\"), f"Quickpulse name '{quickpulse_name}' does not start with '\\'"
+                    quickpulse_name.startswith("\\"),
+                    f"Quickpulse name '{quickpulse_name}' does not start with '\\'",
                 )
                 # Should contain at least one more backslash (category\\counter format)
                 backslash_count = quickpulse_name.count("\\")
                 self.assertGreaterEqual(
-                    backslash_count, 2, f"Quickpulse name '{quickpulse_name}' doesn't follow \\Category\\Counter format"
+                    backslash_count,
+                    2,
+                    f"Quickpulse name '{quickpulse_name}' doesn't follow \\Category\\Counter format",
                 )

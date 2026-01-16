@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """
 An example to show an application instrumented with the OpenTelemetry requests instrumentation.
-Calls made with the requests library will be automatically tracked and telemetry is exported to 
+Calls made with the requests library will be automatically tracked and telemetry is exported to
 application insights with the AzureMonitorTraceExporter.
 See more info on the requests instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-requests
@@ -24,7 +24,9 @@ RequestsInstrumentor().instrument()
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)  # type: ignore
 

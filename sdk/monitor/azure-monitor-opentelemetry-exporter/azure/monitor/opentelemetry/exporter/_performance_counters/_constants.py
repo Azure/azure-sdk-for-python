@@ -2,7 +2,10 @@
 # Licensed under the MIT License.
 
 # (OpenTelemetry metric name, Breeze metric name)
-_AVAILABLE_MEMORY = ("azuremonitor.performancecounter.memoryavailablebytes", "\\Memory\\Available Bytes")
+_AVAILABLE_MEMORY = (
+    "azuremonitor.performancecounter.memoryavailablebytes",
+    "\\Memory\\Available Bytes",
+)
 _EXCEPTION_RATE = (
     "azuremonitor.performancecounter.exceptionssec",
     "\\.NET CLR Exceptions(??APP_CLR_PROC??)\\# of Exceps Thrown / sec",
@@ -15,7 +18,10 @@ _REQUEST_RATE = (
     "azuremonitor.performancecounter.requestssec",
     "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Requests/Sec",
 )
-_PROCESS_CPU = ("azuremonitor.performancecounter.processtime", "\\Process(??APP_WIN32_PROC??)\\% Processor Time")
+_PROCESS_CPU = (
+    "azuremonitor.performancecounter.processtime",
+    "\\Process(??APP_WIN32_PROC??)\\% Processor Time",
+)
 _PROCESS_CPU_NORMALIZED = (
     "azuremonitor.performancecounter.processtimenormalized",
     "\\Process(??APP_WIN32_PROC??)\\% Processor Time Normalized",

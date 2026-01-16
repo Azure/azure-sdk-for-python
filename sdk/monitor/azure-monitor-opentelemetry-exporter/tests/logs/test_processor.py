@@ -6,7 +6,12 @@ from opentelemetry.sdk import _logs
 from opentelemetry._logs import LogRecord
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry._logs.severity import SeverityNumber
-from opentelemetry.trace import TraceFlags, set_span_in_context, SpanContext, NonRecordingSpan
+from opentelemetry.trace import (
+    TraceFlags,
+    set_span_in_context,
+    SpanContext,
+    NonRecordingSpan,
+)
 
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
     AzureMonitorLogExporter,
@@ -24,7 +29,9 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
     def setUpClass(cls):
         os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
         os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
-        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = (
+            "1234abcd-5678-4efa-8abc-1234567890ab"
+        )
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorLogExporter()
 
@@ -77,12 +84,16 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         )
 
         # Mock the parent class's on_emit method through super
-        with mock.patch("opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit") as parent_on_emit_mock:
+        with mock.patch(
+            "opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit"
+        ) as parent_on_emit_mock:
             processor.on_emit(log_record)
             # Parent on_emit should be called because trace-based sampling is disabled
             parent_on_emit_mock.assert_called_once()
 
-    def test_on_emit_with_trace_based_sampling_enabled_and_unsampled_trace(self):  # cspell:disable-line
+    def test_on_emit_with_trace_based_sampling_enabled_and_unsampled_trace(
+        self,
+    ):  # cspell:disable-line
         """Test on_emit filters logs when trace-based sampling is enabled and trace is unsampled."""  # cspell:disable-line
         processor = _AzureBatchLogRecordProcessor(
             self._exporter, options={"enable_trace_based_sampling_for_logs": True}
@@ -116,10 +127,13 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         )
         # Mock get_current_span to return our mock span with proper get_span_context method
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span", return_value=mock_span
+            "azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span",
+            return_value=mock_span,
         ):
             # Mock only the parent class's on_emit method
-            with mock.patch("opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit") as parent_on_emit_mock:
+            with mock.patch(
+                "opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit"
+            ) as parent_on_emit_mock:
                 processor.on_emit(log_record)
                 # Parent on_emit should NOT be called because trace is unsampled and filtering is enabled # cspell:disable-line
                 parent_on_emit_mock.assert_not_called()
@@ -158,9 +172,12 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         )
 
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span", return_value=mock_span
+            "azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span",
+            return_value=mock_span,
         ):
-            with mock.patch("opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit") as parent_on_emit_mock:
+            with mock.patch(
+                "opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit"
+            ) as parent_on_emit_mock:
                 processor.on_emit(log_record)
                 # Parent on_emit should be called because trace is sampled
                 parent_on_emit_mock.assert_called_once()
@@ -198,9 +215,12 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         )
 
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span", return_value=mock_span
+            "azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span",
+            return_value=mock_span,
         ):
-            with mock.patch("opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit") as parent_on_emit_mock:
+            with mock.patch(
+                "opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit"
+            ) as parent_on_emit_mock:
                 processor.on_emit(log_record)
                 # Parent on_emit should be called because span context is invalid
                 parent_on_emit_mock.assert_called_once()
@@ -222,7 +242,9 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             InstrumentationScope("test_name"),
         )
 
-        with mock.patch("opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit") as parent_on_emit_mock:
+        with mock.patch(
+            "opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit"
+        ) as parent_on_emit_mock:
             processor.on_emit(log_record)
             # Parent on_emit should be called because there's no context
             parent_on_emit_mock.assert_called_once()
@@ -239,7 +261,9 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         mock_span_context_unsampled.trace_flags.sampled = False  # cspell:disable-line
 
         mock_span_unsampled = mock.Mock()  # cspell:disable-line
-        mock_span_unsampled.get_span_context.return_value = mock_span_context_unsampled  # cspell:disable-line
+        mock_span_unsampled.get_span_context.return_value = (
+            mock_span_context_unsampled  # cspell:disable-line
+        )
 
         # Create sampled span context
         mock_span_context_sampled = mock.Mock()
@@ -292,7 +316,9 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         with mock.patch(
             "azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span"
         ) as get_span_mock:
-            with mock.patch("opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit") as parent_on_emit_mock:
+            with mock.patch(
+                "opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit"
+            ) as parent_on_emit_mock:
                 # Test unsampled log is filtered # cspell:disable-line
                 get_span_mock.return_value = mock_span_unsampled  # cspell:disable-line
                 processor.on_emit(log_record_unsampled)  # cspell:disable-line

@@ -4,7 +4,9 @@
 from opentelemetry.sdk._logs import ReadableLogRecord, LogRecordProcessor
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
-from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpulse_manager
+from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    get_quickpulse_manager,
+)
 
 
 # pylint: disable=protected-access
@@ -23,7 +25,9 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
             # this method was removed in opentelemetry-sdk and replaced with on_emit
             super().emit(readable_log_record)  # type: ignore[safe-super,misc] # pylint: disable=no-member
 
-    def emit(self, readable_log_record: ReadableLogRecord) -> None:  # pylint: disable=arguments-renamed
+    def emit(
+        self, readable_log_record: ReadableLogRecord
+    ) -> None:  # pylint: disable=arguments-renamed
         self.on_emit(readable_log_record)
 
     def shutdown(self):

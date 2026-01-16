@@ -31,7 +31,9 @@ tracer = trace.get_tracer(__name__)
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -48,7 +50,9 @@ with tracer.start_as_current_span(name="MyApplication2"):
             single_message = ServiceBusMessage("Single message")
             sender.send_messages(single_message)
         # continually receives new messages until it doesn't receive any new messages for 5 (max_wait_time) seconds.
-        with client.get_queue_receiver(queue_name=queue_name, max_wait_time=5) as receiver:
+        with client.get_queue_receiver(
+            queue_name=queue_name, max_wait_time=5
+        ) as receiver:
             # Receive all messages
             for msg in receiver:
                 print("Received: " + str(msg))

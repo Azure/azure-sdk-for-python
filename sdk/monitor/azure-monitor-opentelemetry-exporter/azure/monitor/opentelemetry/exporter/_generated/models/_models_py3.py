@@ -36,7 +36,13 @@ class MonitorDomain(msrest.serialization.Model):
         "version": {"key": "ver", "type": "int"},
     }
 
-    def __init__(self, *, version: int = 2, additional_properties: Optional[Dict[str, Any]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        version: int = 2,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        **kwargs
+    ):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -141,7 +147,9 @@ class AvailabilityData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(AvailabilityData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(AvailabilityData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.id = id
         self.name = name
         self.duration = duration
@@ -214,7 +222,9 @@ class MessageData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(MessageData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(MessageData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.message = message
         self.severity_level = severity_level
         self.properties = properties
@@ -361,7 +371,9 @@ class MetricsData(MonitorDomain):
         :keyword properties: Collection of custom properties.
         :paramtype properties: dict[str, str]
         """
-        super(MetricsData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(MetricsData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.metrics = metrics
         self.properties = properties
 
@@ -381,7 +393,13 @@ class MonitorBase(msrest.serialization.Model):
         "base_data": {"key": "baseData", "type": "MonitorDomain"},
     }
 
-    def __init__(self, *, base_type: Optional[str] = None, base_data: Optional["MonitorDomain"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        base_type: Optional[str] = None,
+        base_data: Optional["MonitorDomain"] = None,
+        **kwargs
+    ):
         """
         :keyword base_type: Name of item (B section) if any. If telemetry data is derived straight from
          this, this should be null.
@@ -485,7 +503,9 @@ class PageViewData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(PageViewData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(PageViewData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.id = id
         self.name = name
         self.url = url
@@ -616,7 +636,9 @@ class PageViewPerfData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(PageViewPerfData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(PageViewPerfData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.id = id
         self.name = name
         self.url = url
@@ -869,7 +891,9 @@ class RequestData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(RequestData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(RequestData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.id = id
         self.name = name
         self.duration = duration
@@ -961,7 +985,12 @@ class TelemetryErrorDetails(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, index: Optional[int] = None, status_code: Optional[int] = None, message: Optional[str] = None, **kwargs
+        self,
+        *,
+        index: Optional[int] = None,
+        status_code: Optional[int] = None,
+        message: Optional[str] = None,
+        **kwargs
     ):
         """
         :keyword index: The index in the original payload of the item.
@@ -1033,7 +1062,9 @@ class TelemetryEventData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(TelemetryEventData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(TelemetryEventData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.name = name
         self.properties = properties
         self.measurements = measurements

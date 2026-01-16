@@ -6,20 +6,41 @@ import sys
 
 # (OpenTelemetry metric name, Quickpulse metric name)
 # Memory
-_COMMITTED_BYTES_NAME = ("azuremonitor.quickpulse.memorycommittedbytes", "\\Memory\\Committed Bytes")
-_PROCESS_PHYSICAL_BYTES_NAME = ("azuremonitor.quickpulse.processphysicalbytes", "\\Process\\Physical Bytes")
+_COMMITTED_BYTES_NAME = (
+    "azuremonitor.quickpulse.memorycommittedbytes",
+    "\\Memory\\Committed Bytes",
+)
+_PROCESS_PHYSICAL_BYTES_NAME = (
+    "azuremonitor.quickpulse.processphysicalbytes",
+    "\\Process\\Physical Bytes",
+)
 # CPU
-_PROCESSOR_TIME_NAME = ("azuremonitor.quickpulse.processortotalprocessortime", "\\Processor(_Total)\\% Processor Time")
+_PROCESSOR_TIME_NAME = (
+    "azuremonitor.quickpulse.processortotalprocessortime",
+    "\\Processor(_Total)\\% Processor Time",
+)
 _PROCESS_TIME_NORMALIZED_NAME = (
     "azuremonitor.quickpulse.processtimenormalized",
     "\\% Process\\Processor Time Normalized",
 )
 # Request
-_REQUEST_RATE_NAME = ("azuremonitor.quickpulse.requestssec", "\\ApplicationInsights\\Requests/Sec")
-_REQUEST_FAILURE_RATE_NAME = ("azuremonitor.quickpulse.requestsfailedsec", "\\ApplicationInsights\\Requests Failed/Sec")
-_REQUEST_DURATION_NAME = ("azuremonitor.quickpulse.requestduration", "\\ApplicationInsights\\Request Duration")
+_REQUEST_RATE_NAME = (
+    "azuremonitor.quickpulse.requestssec",
+    "\\ApplicationInsights\\Requests/Sec",
+)
+_REQUEST_FAILURE_RATE_NAME = (
+    "azuremonitor.quickpulse.requestsfailedsec",
+    "\\ApplicationInsights\\Requests Failed/Sec",
+)
+_REQUEST_DURATION_NAME = (
+    "azuremonitor.quickpulse.requestduration",
+    "\\ApplicationInsights\\Request Duration",
+)
 # Dependency
-_DEPENDENCY_RATE_NAME = ("azuremonitor.quickpulse.dependencycallssec", "\\ApplicationInsights\\Dependency Calls/Sec")
+_DEPENDENCY_RATE_NAME = (
+    "azuremonitor.quickpulse.dependencycallssec",
+    "\\ApplicationInsights\\Dependency Calls/Sec",
+)
 _DEPENDENCY_FAILURE_RATE_NAME = (
     "azuremonitor.quickpulse.dependencycallsfailedsec",
     "\\ApplicationInsights\\Dependency Calls Failed/Sec",
@@ -29,7 +50,10 @@ _DEPENDENCY_DURATION_NAME = (
     "\\ApplicationInsights\\Dependency Call Duration",
 )
 # Exception
-_EXCEPTION_RATE_NAME = ("azuremonitor.quickpulse.exceptionssec", "\\ApplicationInsights\\Exceptions/Sec")
+_EXCEPTION_RATE_NAME = (
+    "azuremonitor.quickpulse.exceptionssec",
+    "\\ApplicationInsights\\Exceptions/Sec",
+)
 
 _QUICKPULSE_METRIC_NAME_MAPPINGS = dict(
     [

@@ -85,9 +85,13 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     if attributes:
         # New semconv attributes: https://github.com/Azure/azure-sdk-for-python/pull/29203
         peer_address = (
-            attributes.get("server.address") or attributes.get("net.peer.name") or attributes.get("peer.address")
+            attributes.get("server.address")
+            or attributes.get("net.peer.name")
+            or attributes.get("peer.address")
         )
-        destination = attributes.get("messaging.destination.name") or attributes.get("message_bus.destination")
+        destination = attributes.get("messaging.destination.name") or attributes.get(
+            "message_bus.destination"
+        )
         if peer_address and destination:
             return str(peer_address) + "/" + str(destination)
     return None
@@ -95,7 +99,9 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
 
 def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     if attributes:
-        scheme = attributes.get(url_attributes.URL_SCHEME) or attributes.get(SpanAttributes.HTTP_SCHEME)
+        scheme = attributes.get(url_attributes.URL_SCHEME) or attributes.get(
+            SpanAttributes.HTTP_SCHEME
+        )
         if scheme:
             return str(scheme)
     return None
@@ -159,7 +165,9 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                if port != _get_default_port_http(attributes) and port != _get_default_port_db(
+                if port != _get_default_port_http(
+                    attributes
+                ) and port != _get_default_port_db(
                     str(attributes.get(SpanAttributes.DB_SYSTEM))
                 ):
                     target = "{}:{}".format(target, port)
@@ -243,7 +251,9 @@ def _get_target_for_db_dependency(
 
 
 @no_type_check
-def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
+def _get_target_for_messaging_dependency(
+    target: Optional[str], attributes: Attributes
+) -> Optional[str]:
     if attributes:
         if not target:
             if SpanAttributes.MESSAGING_DESTINATION in attributes:
@@ -254,7 +264,9 @@ def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attr
 
 
 @no_type_check
-def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
+def _get_target_for_rpc_dependency(
+    target: Optional[str], attributes: Attributes
+) -> Optional[str]:
     if attributes:
         if not target:
             if SpanAttributes.RPC_SYSTEM in attributes:
@@ -276,7 +288,9 @@ def _get_location_ip(attributes: Attributes) -> Optional[str]:
 
 @no_type_check
 def _get_user_agent(attributes: Attributes) -> Optional[str]:
-    return attributes.get(user_agent_attributes.USER_AGENT_ORIGINAL) or attributes.get(SpanAttributes.HTTP_USER_AGENT)
+    return attributes.get(user_agent_attributes.USER_AGENT_ORIGINAL) or attributes.get(
+        SpanAttributes.HTTP_USER_AGENT
+    )
 
 
 @no_type_check
@@ -295,7 +309,9 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         if url_attributes.URL_PATH in attributes:
             http_target = attributes.get(url_attributes.URL_PATH, "")
             if http_target and url_attributes.URL_QUERY in attributes:
-                http_target = "{}?{}".format(http_target, attributes.get(url_attributes.URL_QUERY, ""))
+                http_target = "{}?{}".format(
+                    http_target, attributes.get(url_attributes.URL_QUERY, "")
+                )
         elif SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes.get(SpanAttributes.HTTP_TARGET)
         if scheme and http_target:
@@ -304,7 +320,9 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
             if server_attributes.SERVER_ADDRESS in attributes:
                 http_host = attributes.get(server_attributes.SERVER_ADDRESS, "")
                 if http_host and server_attributes.SERVER_PORT in attributes:
-                    http_host = "{}:{}".format(http_host, attributes.get(server_attributes.SERVER_PORT, ""))
+                    http_host = "{}:{}".format(
+                        http_host, attributes.get(server_attributes.SERVER_PORT, "")
+                    )
             elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
             if http_host:

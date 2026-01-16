@@ -162,7 +162,9 @@ class _StatsbeatMetrics:
 
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
-        _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
+        _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = (
+            _utils.get_instrumentations()
+        )
 
         self._vm_retry = True  # True if we want to attempt to find if in VM
         self._vm_data: Dict[str, str] = {}
@@ -203,7 +205,10 @@ class _StatsbeatMetrics:
         elif _utils._is_on_app_service():
             # Web apps
             rp = _RP_Names.APP_SERVICE.value
-            rpId = "{}/{}".format(os.environ.get(_WEBSITE_SITE_NAME), os.environ.get(_WEBSITE_HOME_STAMPNAME, ""))
+            rpId = "{}/{}".format(
+                os.environ.get(_WEBSITE_SITE_NAME),
+                os.environ.get(_WEBSITE_HOME_STAMPNAME, ""),
+            )
         elif _utils._is_on_aks():
             # AKS
             rp = _RP_Names.AKS.value
@@ -214,7 +219,9 @@ class _StatsbeatMetrics:
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value
-            rpId = "{}/{}".format(self._vm_data.get("vmId", ""), self._vm_data.get("subscriptionId", ""))
+            rpId = "{}/{}".format(
+                self._vm_data.get("vmId", ""), self._vm_data.get("subscriptionId", "")
+            )
             os_type = self._vm_data.get("osType", "")
         else:
             # Not in any rp or VM metadata failed
@@ -230,8 +237,12 @@ class _StatsbeatMetrics:
 
     def _get_azure_compute_metadata(self) -> bool:
         try:
-            request_url = "{0}?{1}&{2}".format(_AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT)
-            response = requests.get(request_url, headers={"MetaData": "True"}, timeout=0.2)
+            request_url = "{0}?{1}&{2}".format(
+                _AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT
+            )
+            response = requests.get(
+                request_url, headers={"MetaData": "True"}, timeout=0.2
+            )
         except (requests.exceptions.ConnectionError, requests.Timeout):
             # Not in VM
             self._vm_retry = False
@@ -280,7 +291,9 @@ class _StatsbeatMetrics:
         # Don't send observation if no instrumentations enabled
         instrumentation_bits = _utils.get_instrumentations()
         if instrumentation_bits != 0:
-            _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentation_bits
+            _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = (
+                instrumentation_bits
+            )
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
             attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)  # type: ignore
             observations.append(Observation(1, dict(attributes)))  # type: ignore
