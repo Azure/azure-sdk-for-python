@@ -35,6 +35,24 @@ class TestUtils(unittest.TestCase):
     def setUp(self):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
+    def test_filter_custom_properties_truncates_and_drops_invalid_entries(self):
+        oversized_value = "v" * 9000
+        properties = {
+            "valid_key": oversized_value,
+            "k" * 151: "should_be_dropped",
+            "": "missing_key",
+            "short": "ok",
+            "none_value": None,
+        }
+
+        filtered = _utils._filter_custom_properties(properties)
+
+        self.assertEqual(len(filtered), 2)
+        self.assertIn("valid_key", filtered)
+        self.assertEqual(len(filtered["valid_key"]), 8192)
+        self.assertEqual(filtered["short"], "ok")
+        self.assertNotIn("k" * 151, filtered)
+
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
         self.assertEqual(ns_to_duration(0), "0.00:00:00.000")
