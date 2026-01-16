@@ -64,6 +64,9 @@ servicePreparer = functools.partial(
     azure_resource_group="sanitized-resource-group",
     ai_search_user_input="What is Azure AI Projects?",
     sharepoint_user_input="What is SharePoint?",
+    fabric_user_input="List all customers!",
+    a2a_user_input="What can the secondary agent do?",
+    bing_custom_user_input="Tell me more about foundry agent service",
     memory_store_chat_model_deployment_name="gpt-4.1-mini",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
