@@ -4,7 +4,7 @@ import json
 import unittest
 from unittest import mock
 
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     TelemetryType,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._types import (
@@ -38,92 +38,105 @@ class TestFilter(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._set_quickpulse_derived_metric_infos")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._init_derived_metric_projection")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_derived_metric_info")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DerivedMetricInfo")
-    def test_parse_metric_filter_configuration(
-        self, dict_mock, validate_mock, rename_mock, init_projection_mock, set_metric_info_mock
-    ):
-        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
-        test_config_dict = json.loads(test_config_bytes.decode())
-        metric_info_mock = mock.Mock()
-        filter_group_mock = mock.Mock()
-        metric_info_mock.filter_groups = [filter_group_mock]
-        metric_info_mock.telemetry_type = TelemetryType.REQUEST
-        dict_mock.from_dict.return_value = metric_info_mock
-        validate_mock.return_value = True
+    def test_parse_metric_filter_configuration(self, init_projection_mock, set_metric_info_mock):
+        test_config_dict = {
+            "Metrics": [
+                {
+                    "Id": "94.e4b85108",
+                    "TelemetryType": "Request",
+                    "FilterGroups": [{"Filters": []}],
+                    "Projection": "Count()",
+                    "Aggregation": "Sum",
+                    "BackEndAggregation": "Sum",
+                }
+            ]
+        }
         _parse_metric_filter_configuration(test_config_dict)
-        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("Metrics")[0])
-        validate_mock.assert_called_once_with(metric_info_mock)
-        rename_mock.assert_called_once_with(filter_group_mock)
-        init_projection_mock.assert_called_once_with(metric_info_mock)
-        metric_infos = {}
-        metric_infos[TelemetryType.REQUEST] = [metric_info_mock]
-        set_metric_info_mock.assert_called_once_with(metric_infos)
+
+        # Verify projection was initialized
+        init_projection_mock.assert_called_once()
+        metric_info = init_projection_mock.call_args[0][0]
+        self.assertEqual(metric_info.id, "94.e4b85108")
+        self.assertEqual(metric_info.telemetry_type, TelemetryType.REQUEST)
+
+        # Verify metric infos were set correctly
+        set_metric_info_mock.assert_called_once()
+        metric_infos = set_metric_info_mock.call_args[0][0]
+        self.assertIn(TelemetryType.REQUEST, metric_infos)
+        self.assertEqual(len(metric_infos[TelemetryType.REQUEST]), 1)
+        self.assertEqual(metric_infos[TelemetryType.REQUEST][0].id, "94.e4b85108")
+
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._set_quickpulse_derived_metric_infos")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._init_derived_metric_projection")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_derived_metric_info")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DerivedMetricInfo")
-    def test_parse_metric_filter_configuration_invalid(
-        self, dict_mock, validate_mock, rename_mock, init_projection_mock, set_metric_info_mock
-    ):
-        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
-        test_config_dict = json.loads(test_config_bytes.decode())
-        metric_info_mock = mock.Mock()
-        metric_info_mock.telemetry_type = TelemetryType.REQUEST
-        dict_mock.from_dict.return_value = metric_info_mock
-        validate_mock.return_value = False
+    def test_parse_metric_filter_configuration_invalid(self, init_projection_mock, set_metric_info_mock):
+        # Config with invalid projection (CustomMetrics prefix is not supported)
+        test_config_dict = {
+            "Metrics": [
+                {
+                    "Id": "94.e4b85108",
+                    "TelemetryType": "Request",
+                    "FilterGroups": [{"Filters": []}],
+                    "Projection": "CustomMetrics.InvalidProjection",
+                    "Aggregation": "Sum",
+                    "BackEndAggregation": "Sum",
+                }
+            ]
+        }
         _parse_metric_filter_configuration(test_config_dict)
-        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("Metrics")[0])
-        validate_mock.assert_called_once_with(metric_info_mock)
-        rename_mock.assert_not_called()
+
+        # Invalid metrics should not have projection initialized
         init_projection_mock.assert_not_called()
-        metric_infos = {}
-        set_metric_info_mock.assert_called_once_with(metric_infos)
+        # Metric infos should be set with empty dict
+        set_metric_info_mock.assert_called_once_with({})
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._set_quickpulse_doc_stream_infos")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_document_filter_group_info")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DocumentStreamInfo")
-    def test_parse_doc_filter_configuration(self, dict_mock, validate_mock, rename_mock, set_doc_info_mock):
-        test_config_bytes = '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, { "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, { "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, { "TelemetryType": "Exception", "Filters": { "Filters": [] } }, { "TelemetryType": "Event", "Filters": { "Filters": [] } }, { "TelemetryType": "Trace", "Filters": { "Filters": [] } }, { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}'.encode()
-        test_config_dict = json.loads(test_config_bytes.decode())
-        doc_stream_mock = mock.Mock()
-        doc_stream_mock.id = "26a.7cf471b0"
-        filter_group_mock = mock.Mock()
-        filter_group_mock.telemetry_type = "Request"
-        doc_stream_mock.document_filter_groups = [filter_group_mock]
-        dict_mock.from_dict.return_value = doc_stream_mock
-        validate_mock.return_value = True
+    def test_parse_doc_filter_configuration(self, set_doc_info_mock):
+        test_config_dict = {
+            "DocumentStreams": [
+                {
+                    "Id": "26a.7cf471b0",
+                    "DocumentFilterGroups": [
+                        {
+                            "TelemetryType": "Request",
+                            "Filters": {
+                                "Filters": [
+                                    {"FieldName": "Success", "Predicate": "Equal", "Comparand": "true"}
+                                ]
+                            },
+                        }
+                    ],
+                }
+            ]
+        }
         _parse_document_filter_configuration(test_config_dict)
-        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("DocumentStreams")[0])
-        validate_mock.assert_called_once_with(filter_group_mock)
-        rename_mock.assert_called_once_with(filter_group_mock.filters)
-        doc_infos = {}
-        doc_infos_inner = {"26a.7cf471b0": [filter_group_mock.filters]}
-        doc_infos[TelemetryType.REQUEST] = doc_infos_inner
-        set_doc_info_mock.assert_called_once_with(doc_infos)
+
+        # Verify doc infos were set correctly
+        set_doc_info_mock.assert_called_once()
+        doc_infos = set_doc_info_mock.call_args[0][0]
+        self.assertIn(TelemetryType.REQUEST, doc_infos)
+        self.assertIn("26a.7cf471b0", doc_infos[TelemetryType.REQUEST])
+        self.assertEqual(len(doc_infos[TelemetryType.REQUEST]["26a.7cf471b0"]), 1)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._set_quickpulse_doc_stream_infos")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_document_filter_group_info")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DocumentStreamInfo")
-    def test_parse_doc_filter_configuration_invalid(self, dict_mock, validate_mock, rename_mock, set_doc_info_mock):
-        test_config_bytes = '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, { "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, { "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, { "TelemetryType": "Exception", "Filters": { "Filters": [] } }, { "TelemetryType": "Event", "Filters": { "Filters": [] } }, { "TelemetryType": "Trace", "Filters": { "Filters": [] } }, { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}'.encode()
-        test_config_dict = json.loads(test_config_bytes.decode())
-        doc_stream_mock = mock.Mock()
-        doc_stream_mock.id = "26a.7cf471b0"
-        filter_group_mock = mock.Mock()
-        filter_group_mock.telemetry_type = "Request"
-        doc_stream_mock.document_filter_groups = [filter_group_mock]
-        dict_mock.from_dict.return_value = doc_stream_mock
-        validate_mock.return_value = False
+    def test_parse_doc_filter_configuration_invalid(self, set_doc_info_mock):
+        # Config with invalid telemetry type (Event is not supported)
+        test_config_dict = {
+            "DocumentStreams": [
+                {
+                    "Id": "26a.7cf471b0",
+                    "DocumentFilterGroups": [
+                        {
+                            "TelemetryType": "Event",
+                            "Filters": {"Filters": []},
+                        }
+                    ],
+                }
+            ]
+        }
         _parse_document_filter_configuration(test_config_dict)
-        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("DocumentStreams")[0])
-        validate_mock.assert_called_once_with(filter_group_mock)
-        rename_mock.assert_not_called()
+
+        # Invalid filter groups should result in empty doc infos
         set_doc_info_mock.assert_called_once_with({})
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._check_filters")

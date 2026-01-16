@@ -31,9 +31,11 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_ETAG_HEADER_NAME,
     _QUICKPULSE_SUBSCRIBED_HEADER_NAME,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
-from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._configuration import (
+    LiveMetricsClientConfiguration,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import LiveMetricsClient
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import MonitoringDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._filter import _update_filter_configuration
 from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
@@ -96,7 +98,7 @@ class _QuickpulseExporter(MetricExporter):
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._credential = kwargs.get("credential")
         self.aad_audience = parsed_connection_string.aad_audience
-        config = QuickpulseClientConfiguration(credential=self._credential)  # type: ignore
+        config = LiveMetricsClientConfiguration(credential=self._credential)  # type: ignore
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
             # Custom redirect policy for QP
@@ -110,7 +112,7 @@ class _QuickpulseExporter(MetricExporter):
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),
         ]
-        self._client = QuickpulseClient(
+        self._client = LiveMetricsClient(
             credential=self._credential, endpoint=self._live_endpoint, policies=policies  # type: ignore
         )
         # Create a weakref of the client to the redirect policy so the endpoint can be

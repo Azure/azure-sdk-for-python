@@ -14,10 +14,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_PROJECTION_MAX_VALUE,
     _QUICKPULSE_PROJECTION_MIN_VALUE,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     AggregationType,
     DocumentIngress,
-    DocumentType,
     Exception as ExceptionDocument,
     MetricPoint,
     MonitoringDataPoint,
@@ -89,11 +88,9 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
     ]
 
 
-# mypy: disable-error-code="assignment,union-attr"
 def _get_span_document(data: Union[_DependencyData, _RequestData]) -> Union[RemoteDependencyDocument, RequestDocument]:
     if isinstance(data, _DependencyData):
-        document = RemoteDependencyDocument(
-            document_type=DocumentType.REMOTE_DEPENDENCY,
+        document: Union[RemoteDependencyDocument, RequestDocument] = RemoteDependencyDocument(
             name=data.name,
             command_name=data.data,
             result_code=str(data.result_code),
@@ -101,7 +98,6 @@ def _get_span_document(data: Union[_DependencyData, _RequestData]) -> Union[Remo
         )
     else:
         document = RequestDocument(
-            document_type=DocumentType.REQUEST,
             name=data.name,
             url=data.url,
             response_code=str(data.response_code),
@@ -110,19 +106,16 @@ def _get_span_document(data: Union[_DependencyData, _RequestData]) -> Union[Remo
     return document
 
 
-# mypy: disable-error-code="assignment"
 def _get_log_record_document(
     data: Union[_ExceptionData, _TraceData], exc_type: Optional[str] = None
-) -> Union[ExceptionDocument, TraceDocument]:  # pylint: disable=C0301
+) -> Union[ExceptionDocument, TraceDocument]:
     if isinstance(data, _ExceptionData):
-        document = ExceptionDocument(
-            document_type=DocumentType.EXCEPTION,
+        document: Union[ExceptionDocument, TraceDocument] = ExceptionDocument(
             exception_type=exc_type or "",
             exception_message=data.message,
         )
     else:
         document = TraceDocument(
-            document_type=DocumentType.TRACE,
             message=data.message,
         )
     return document
