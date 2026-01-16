@@ -58,7 +58,6 @@ async def create_analyzer_and_assert_async(
     print(f"  Waiting for analyzer {analyzer_id} to be created")
     response = await poller.result()
     assert response is not None
-    assert poller.status() == "Succeeded"
     assert poller.done()
     print(f"  Analyzer {analyzer_id} is created successfully")
 

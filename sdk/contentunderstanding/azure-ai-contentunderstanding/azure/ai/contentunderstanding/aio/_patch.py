@@ -217,13 +217,8 @@ class ContentUnderstandingClient(GeneratedClient):
                 **kwargs,
             )
 
-        # Wrap in custom poller with .operation_id property
-        return AnalyzeAsyncLROPoller(  # pyright: ignore[reportInvalidTypeArguments]
-            self._client,
-            poller._polling_method._initial_response,  # type: ignore # pylint: disable=protected-access
-            poller._polling_method._deserialization_callback,  # type: ignore # pylint: disable=protected-access
-            poller._polling_method,  # pylint: disable=protected-access
-        )
+        # Wrap in custom poller with .operation_id property (without re-initializing)
+        return AnalyzeAsyncLROPoller.from_poller(poller)  # pyright: ignore[reportReturnType]
 
     @distributed_trace_async
     async def begin_analyze_binary(
@@ -274,13 +269,8 @@ class ContentUnderstandingClient(GeneratedClient):
             **kwargs,
         )
 
-        # Wrap in custom poller with .operation_id property
-        return AnalyzeAsyncLROPoller(  # pyright: ignore[reportInvalidTypeArguments]
-            self._client,
-            poller._polling_method._initial_response,  # type: ignore # pylint: disable=protected-access
-            poller._polling_method._deserialization_callback,  # type: ignore # pylint: disable=protected-access
-            poller._polling_method,  # pylint: disable=protected-access
-        )
+        # Wrap in custom poller with .operation_id property (without re-initializing)
+        return AnalyzeAsyncLROPoller.from_poller(poller)  # pyright: ignore[reportReturnType]
 
 
 def patch_sdk():

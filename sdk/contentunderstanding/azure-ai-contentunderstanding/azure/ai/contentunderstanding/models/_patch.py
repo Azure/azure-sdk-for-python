@@ -91,6 +91,24 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
+    def from_poller(cls, poller: LROPoller[PollingReturnType_co]) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]
+        """Wrap an existing LROPoller without re-initializing the polling method.
+
+        This avoids duplicate HTTP requests that would occur if we created a new
+        LROPoller instance (which calls polling_method.initialize() again).
+
+        :param poller: The existing LROPoller to wrap
+        :type poller: ~azure.core.polling.LROPoller
+        :return: An AnalyzeLROPoller wrapping the same polling state
+        :rtype: AnalyzeLROPoller
+        """
+        # Create instance without calling __init__ to avoid re-initialization
+        instance: AnalyzeLROPoller[PollingReturnType_co] = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]
+        # Copy all attributes from the original poller
+        instance.__dict__.update(poller.__dict__)
+        return instance
+
+    @classmethod
     def from_continuation_token(
         cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "AnalyzeLROPoller":
