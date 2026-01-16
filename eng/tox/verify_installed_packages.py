@@ -58,6 +58,7 @@ def verify_packages(package_file_path):
         [package, version] = p.split("==")
         expected[normalize_package_name(package)] = version
 
+    breakpoint()
     missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]
 
     if missing_packages:

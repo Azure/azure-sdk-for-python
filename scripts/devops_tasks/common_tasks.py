@@ -17,6 +17,7 @@ import logging
 from subprocess import check_call, CalledProcessError, Popen
 from argparse import Namespace
 from typing import Iterable
+from sys import executable
 
 # Modern packaging imports
 try:
@@ -31,7 +32,7 @@ from packaging.requirements import Requirement
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
 
-from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool
+from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool, run_pip_freeze
 from ci_tools.parsing import parse_require, ParsedSetup
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -267,7 +268,5 @@ def get_installed_packages(paths=None):
                     sys.path[:] = original_path
         return packages
     else:
-        # Get all distributions from default paths
-        distributions = importlib_metadata.distributions()
-        return ["{0}=={1}".format(dist.metadata['Name'], dist.version) for dist in distributions]
+        return run_pip_freeze()
 
