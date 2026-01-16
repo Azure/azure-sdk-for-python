@@ -47,9 +47,8 @@ class AgentFrameworkInputConverter:
         if self._hitl_helper:
             # load pending requests from checkpoint and thread messages if available
             thread_messages = []
-            if agent_thread:
+            if agent_thread and agent_thread.message_store:
                 thread_messages = await agent_thread.message_store.list_messages()
-            logger.info(f"Thread messages count: {len(thread_messages)}")
             pending_hitl_requests = self._hitl_helper.get_pending_hitl_request(thread_messages, checkpoint)
             logger.info(f"Pending HitL requests: {list(pending_hitl_requests.keys())}")
             hitl_response = self._hitl_helper.validate_and_convert_hitl_response(
