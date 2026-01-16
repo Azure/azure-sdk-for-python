@@ -138,7 +138,13 @@ class FoundryToolsChatMiddleware(ChatMiddleware):
         next: Callable[[ChatContext], Awaitable[None]],
     ) -> None:
         tools = await self._foundry_tool_client.list_tools()
-        base = context.chat_options or ChatOptions()
-        base_tools = base.tools or []
-        context.chat_options.tools = base_tools + tools
+        base_chat_options = context.chat_options
+        if not base_chat_options:
+            logger.debug("No existing ChatOptions found, creating new one with Foundry tools.")
+            base_chat_options = ChatOptions(tools=tools)
+            context.chat_options = base_chat_options
+        else:
+            logger.debug("Adding Foundry tools to existing ChatOptions.")
+            base_tools = base_chat_options.tools or []
+            context.chat_options.tools = base_tools + tools
         await next(context)

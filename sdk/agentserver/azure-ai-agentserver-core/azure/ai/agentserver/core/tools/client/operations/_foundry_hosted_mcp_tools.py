@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-import json
 from typing import Any, ClassVar, Dict, List, Mapping, TYPE_CHECKING, cast
 
 from azure.core.rest import HttpRequest
@@ -146,13 +145,8 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		request = self._build_list_tools_request()
 		response = await self._send_request(request)
 		async with response:
-			try:
-				payload_text = response.text()
-				payload_json = json.loads(payload_text) if payload_text else {}
-			except AttributeError as e:
-				payload_bytes = response.body()
-				payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
-			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(payload_json)
+			json_response = self._extract_response_json(response)
+			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(json_response)
 		return self._convert_listed_tools(tools_response, allowed_tools)
 
 	async def invoke_tool(
@@ -172,11 +166,6 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		request = self._build_invoke_tool_request(tool, arguments)
 		response = await self._send_request(request)
 		async with response:
-			try:
-				payload_text = response.text()
-				payload_json = json.loads(payload_text) if payload_text else {}
-			except AttributeError as e:
-				payload_bytes = response.body()
-				payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
-			invoke_response = payload_json
+			json_response = self._extract_response_json(response)
+			invoke_response = json_response
 		return invoke_response

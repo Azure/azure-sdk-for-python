@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from abc import ABC
+import json
 from typing import Any, ClassVar, MutableMapping, Type
 
 from azure.core import AsyncPipelineClient
@@ -61,3 +62,12 @@ class BaseOperations(ABC):
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self._error_map)
             raise HttpResponseError(response=response)
+        
+    def _extract_response_json(self, response: AsyncHttpResponse) -> Any:
+        try:
+            payload_text = response.text()
+            payload_json = json.loads(payload_text) if payload_text else {}
+        except AttributeError as e:
+            payload_bytes = response.body()
+            payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
+        return payload_json
