@@ -100,7 +100,7 @@ class Check(abc.ABC):
                     )
             else:
                 install_into_venv(
-                    venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT
+                    venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools")], REPO_ROOT
                 )
 
             venv_python_exe = get_venv_python(venv_location)

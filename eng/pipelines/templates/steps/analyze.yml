@@ -48,7 +48,7 @@ steps:
             Condition: succeededOrFailed()
 
   - script: |
-      $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
+      $(PIP_EXE) install "./eng/tools/azure-sdk-tools"
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()

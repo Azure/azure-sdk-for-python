@@ -161,7 +161,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   $allPkgPropLines = $null
   try
   {
-    $pathToBuild = (Join-Path $RepoRoot "eng" "tools" "azure-sdk-tools[build]")
+    $pathToBuild = (Join-Path $RepoRoot "eng" "tools" "azure-sdk-tools")
     # Use ‘uv pip install’ if uv is on PATH, otherwise fall back to python -m pip
     if (Get-Command uv -ErrorAction SilentlyContinue) {
       Write-Host "Using uv pip install"
@@ -419,9 +419,9 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
   if (Get-Command uv -ErrorAction SilentlyContinue) {
-    uv pip install "$RepoRoot/eng/tools/azure-sdk-tools[build]"
+    uv pip install "$RepoRoot/eng/tools/azure-sdk-tools"
   } else {
-    python -m pip install "$RepoRoot/eng/tools/azure-sdk-tools[build]" -q -I
+    python -m pip install "$RepoRoot/eng/tools/azure-sdk-tools" -q -I
   }
   sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
