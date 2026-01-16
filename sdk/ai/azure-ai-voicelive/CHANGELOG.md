@@ -1,5 +1,17 @@
 # Release History
 
+## 1.2.0b3 (Unreleased)
+
+### Features Added
+
+- **Support for Explicit Null Values**: Enhanced `RequestSession` to properly serialize explicitly set `None` values (e.g., `turn_detection=None` now correctly sends `"turn_detection": null` in the WebSocket message)
+
+### Other Changes
+
+- **Dependency Update**: Updated minimum `azure-core` version from 1.35.0 to 1.36.0
+
+### Bug Fixes
+
 ## 1.2.0b2 (2025-11-20)
 
 ### Features Added

@@ -4,6 +4,11 @@
 
 ### Features Added
 
+## 12.15.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.15.0b1
+
 ## 12.15.0b1 (2025-12-04)
 
 ### Features Added

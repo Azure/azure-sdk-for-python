@@ -11,25 +11,26 @@ import os
 import tempfile
 from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
 from azure.ai.projects.models import (
+    ApiKeyCredentials,
+    AzureAISearchIndex,
     Connection,
     ConnectionType,
-    CustomCredential,
     CredentialType,
-    ApiKeyCredentials,
+    CustomCredential,
+    DatasetCredential,
+    DatasetType,
+    DatasetVersion,
     Deployment,
     DeploymentType,
-    ModelDeployment,
     Index,
     IndexType,
-    AzureAISearchIndex,
-    DatasetVersion,
-    DatasetType,
-    DatasetCredential,
+    ItemContentType,
     ItemResource,
     ItemType,
+    ModelDeployment,
     ResponsesMessageRole,
-    ItemContentType,
 )
+from openai.types.responses import Response
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
@@ -42,19 +43,32 @@ _BUILTIN_OPEN = open
 # Load secrets from environment variables
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_tests",
-    azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_agents_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
-    azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
-    azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
-    azure_ai_projects_tests_ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
-    azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
-    azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
-    azure_ai_projects_tests_sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
-    azure_ai_projects_tests_ai_search_user_input="What is Azure AI Projects?",
-    azure_ai_projects_tests_sharepoint_user_input="What is SharePoint?",
+    "",
+    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_model_deployment_name="gpt-4o",
+    image_generation_model_deployment_name="gpt-image-1-mini",
+    container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
+    container_ingress_subdomain_suffix="00000",
+    bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
+    ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    ai_search_index_name="sanitized-index-name",
+    mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
+    completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
+    completed_oss_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    running_fine_tuning_job_id="sanitized-ftjob-id",
+    paused_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_resource_group="sanitized-resource-group",
+    ai_search_user_input="What is Azure AI Projects?",
+    sharepoint_user_input="What is SharePoint?",
+    fabric_user_input="List all customers!",
+    a2a_user_input="What can the secondary agent do?",
+    bing_custom_user_input="Tell me more about foundry agent service",
+    memory_store_chat_model_deployment_name="gpt-4.1-mini",
+    memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
 
 # Fine-tuning job type constants
@@ -153,12 +167,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
-    }
-
-    test_agents_tools_params = {
-        "image_generation_model_deployment_name": "gpt-image-1-mini",
     }
 
     test_inference_params = {
@@ -279,13 +288,10 @@ class TestBase(AzureRecordedTestCase):
     # helper function: create projects client using environment variables
     def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:
         # fetch environment variables
-        project_endpoint_env_variable = (
-            f"azure_ai_projects_tests_{operation_group}_project_endpoint"
-            if operation_group
-            else "azure_ai_projects_tests_project_endpoint"
-        )
-        endpoint = kwargs.pop(project_endpoint_env_variable)
+        endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AIProjectClient, is_async=False)
+
+        print(f"Creating AIProjectClient with endpoint: {endpoint}")
 
         # create and return client
         client = AIProjectClient(
@@ -298,13 +304,10 @@ class TestBase(AzureRecordedTestCase):
     # helper function: create async projects client using environment variables
     def create_async_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AsyncAIProjectClient:
         # fetch environment variables
-        project_endpoint_env_variable = (
-            f"azure_ai_projects_tests_{operation_group}_project_endpoint"
-            if operation_group
-            else "azure_ai_projects_tests_project_endpoint"
-        )
-        endpoint = kwargs.pop(project_endpoint_env_variable)
+        endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+
+        print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 
         # create and return async client
         client = AsyncAIProjectClient(
@@ -357,8 +360,18 @@ class TestBase(AzureRecordedTestCase):
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
     @classmethod
+    def validate_response(cls, response: Response, *, print_message: Optional[str] = None):
+        assert response.id
+        assert response.output is not None
+        assert len(response.output) > 0
+        if print_message:
+            print(f"{print_message} (id: {response.id})")
+        else:
+            print(f"Response completed (id: {response.id})")
+
+    @classmethod
     def validate_red_team_response(
-        cls, response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
+        cls, response: Response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
     ):
         """Assert basic red team scan response properties."""
         assert response is not None

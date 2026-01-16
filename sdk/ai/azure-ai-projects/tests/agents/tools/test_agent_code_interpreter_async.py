@@ -27,7 +27,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
         without any file uploads or downloads - just pure code execution.
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
         agent_name = "code-interpreter-simple-agent-async"
 
         async with (
@@ -55,11 +55,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
                 input="Calculate this using Python: First, find the sum of cubes from 1 to 50 (1³ + 2³ + ... + 50³). Then add 12 factorial divided by 8 factorial (12!/8!). What is the final result?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
-
-            print(f"Response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Get the response text
             last_message = response.output[-1]

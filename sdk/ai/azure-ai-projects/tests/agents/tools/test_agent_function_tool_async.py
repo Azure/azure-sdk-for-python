@@ -27,7 +27,7 @@ class TestAgentFunctionToolAsync(TestBase):
         3. Receive function results and incorporate them into responses
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
         agent_name = "function-tool-agent-async"
 
         # Setup
@@ -73,9 +73,7 @@ class TestAgentFunctionToolAsync(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
+            self.validate_response(response, print_message="Initial response completed")
 
             # Check for function calls in the response
             function_calls_found = 0
@@ -128,8 +126,7 @@ class TestAgentFunctionToolAsync(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response, print_message="Final response completed")
 
             # Get the final response text
             response_text = response.output_text
@@ -162,7 +159,7 @@ class TestAgentFunctionToolAsync(TestBase):
         - Ability to use previous function results in subsequent queries
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -372,7 +369,7 @@ class TestAgentFunctionToolAsync(TestBase):
         remembering parameters from the first query.
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         async with (

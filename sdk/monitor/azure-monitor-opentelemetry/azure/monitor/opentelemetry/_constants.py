@@ -24,12 +24,32 @@ INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 SPAN_PROCESSORS_ARG = "span_processors"
+LOG_RECORD_PROCESSORS_ARG = "log_record_processors"
+METRIC_READERS_ARG = "metric_readers"
 VIEWS_ARG = "views"
 RATE_LIMITED_SAMPLER = "microsoft.rate_limited"
-FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed.percentage"
+FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed_percentage"
 SAMPLING_TRACES_PER_SECOND_ARG = "traces_per_second"
 ENABLE_TRACE_BASED_SAMPLING_ARG = "enable_trace_based_sampling_for_logs"
 BROWSER_SDK_LOADER_CONFIG_ARG = "browser_sdk_loader_config"
+SAMPLER_TYPE = "sampler_type"
+SAMPLING_ARG = "sampling_arg"
+ALWAYS_ON_SAMPLER = "always_on"
+ALWAYS_OFF_SAMPLER = "always_off"
+TRACE_ID_RATIO_SAMPLER = "trace_id_ratio"
+PARENT_BASED_ALWAYS_ON_SAMPLER = "parentbased_always_on"
+PARENT_BASED_ALWAYS_OFF_SAMPLER = "parentbased_always_off"
+PARENT_BASED_TRACE_ID_RATIO_SAMPLER = "parentbased_trace_id_ratio"
+SUPPORTED_OTEL_SAMPLERS = (
+    RATE_LIMITED_SAMPLER,
+    FIXED_PERCENTAGE_SAMPLER,
+    ALWAYS_ON_SAMPLER,
+    ALWAYS_OFF_SAMPLER,
+    TRACE_ID_RATIO_SAMPLER,
+    PARENT_BASED_ALWAYS_ON_SAMPLER,
+    PARENT_BASED_ALWAYS_OFF_SAMPLER,
+    PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
+)
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 

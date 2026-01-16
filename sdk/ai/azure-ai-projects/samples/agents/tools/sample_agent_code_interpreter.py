@@ -108,7 +108,6 @@ with (
         file_path = os.path.join(tempfile.gettempdir(), filename)
         with open(file_path, "wb") as f:
             f.write(file_content.read())
-        # Print result (should contain "file")
-        print(f"==> Result: file, {file_path} downloaded successfully.")
+        print(f"File downloaded successfully: {file_path}")
     else:
         print("No file generated in response")

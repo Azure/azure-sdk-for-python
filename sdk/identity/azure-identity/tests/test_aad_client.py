@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+from unittest import mock
 from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
@@ -49,6 +50,29 @@ def test_error_reporting():
         assert error_name in message and error_description in message
         assert transport.send.call_count == 1
         transport.send.reset_mock()
+
+
+def test_none_content_handling():
+    """Test that _process_response handles None content without raising TypeError"""
+    http_response = mock_response(status_code=200)
+    http_response.text = Mock(return_value="")
+
+    # Create a mock PipelineResponse with empty context
+    mock_pipeline_response = Mock()
+    mock_pipeline_response.context = {}
+    mock_pipeline_response.http_response = http_response
+    mock_pipeline_response.http_request = Mock()
+    mock_pipeline_response.http_request.body = {}
+
+    with patch("azure.identity._internal.aad_client_base.ContentDecodePolicy") as mock_policy:
+        mock_policy.CONTEXT_NAME = "content_decode_policy"
+        mock_policy.deserialize_from_http_generics = Mock(return_value=None)
+
+        transport = Mock()
+        client = AadClient("tenant id", "client id", transport=transport)
+
+        with pytest.raises(ClientAuthenticationError):
+            client._process_response(mock_pipeline_response, int(1234567890))
 
 
 @pytest.mark.skip(reason="Adding body to HttpResponseError str. Not an issue bc we don't automatically log errors")
@@ -111,6 +135,105 @@ def test_request_url(authority):
         client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
     client.obtain_token_by_authorization_code("scope", "code", "uri")
     client.obtain_token_by_refresh_token("scope", "refresh token")
+
+
+def test_request_url_with_regional_authority():
+
+    def send(request, **_):
+        assert urlparse(request.url).netloc == "centralus.login.microsoft.com"
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus"}, clear=True):
+        client = AadClient("tenant-id", "client id", transport=Mock(send=send))
+
+        client.obtain_token_by_authorization_code("scope", "code", "uri")
+        client.obtain_token_by_refresh_token("scope", "refresh token")
+
+        # obtain_token_by_refresh_token is client_secret safe
+        client.obtain_token_by_refresh_token("scope", "refresh token", client_secret="secret")
+
+
+def test_regional_authority_initialized_once():
+    """The client should lazily initialize its regional authority only once."""
+
+    def send(request, **_):
+        assert urlparse(request.url).netloc == "centralus.login.microsoft.com"
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
+
+    with patch("azure.identity._internal.aad_client.AadClient._get_regional_authority_from_env") as mock_env:
+        mock_env.return_value = "centralus"
+        transport = Mock(send=Mock(wraps=send))
+        client = AadClient("tenant-id", "client id", transport=transport)
+
+        # The first token request should trigger initialization.
+        client.obtain_token_by_authorization_code("scope", "code", "uri")
+        # Subsequent requests shouldn't.
+        client.obtain_token_by_refresh_token("scope", "refresh token")
+        client.obtain_token_by_refresh_token("scope", "refresh token", client_secret="secret")
+
+        # Env should be checked only once.
+        assert mock_env.call_count == 1
+
+
+def test_initialize_regional_authority():
+    client = AadClient("tenant-id", "client-id")
+    # The initial state should be False (uninitialized)
+    assert client._regional_authority is False
+
+    client._initialize_regional_authority()
+    assert client._regional_authority is None
+
+    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus"}, clear=True):
+        client = AadClient("tenant-id", "client-id")
+        client._initialize_regional_authority()
+        assert client._regional_authority == "https://centralus.login.microsoft.com"
+
+    # Test with non-Microsoft authority host
+    with patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://custom.authority.com",
+            EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus",
+        },
+        clear=True,
+    ):
+        client = AadClient("tenant-id", "client-id")
+        client._initialize_regional_authority()
+        assert client._regional_authority == "https://centralus.custom.authority.com"
+
+    # Test with usage of region auto-discovery env var
+    # Test with AZURE_REGIONAL_AUTHORITY_NAME set to "True" (auto-discovery)
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "True"}, clear=True):
+        with patch.dict("os.environ", {"REGION_NAME": "southcentralus"}):
+            client = AadClient("tenant-id", "client-id")
+            client._initialize_regional_authority()
+            assert client._regional_authority == "https://southcentralus.login.microsoft.com"
+
+    # Test with usage of region auto-discovery env var
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
+        with patch.dict("os.environ", {"REGION_NAME": "eastus"}):
+            client = AadClient("tenant-id", "client-id")
+            client._initialize_regional_authority()
+            assert client._regional_authority == "https://eastus.login.microsoft.com"
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
+        response = Mock(
+            status_code=200,
+            headers={"Content-Type": "text/plain"},
+            content_type="text/plain",
+            text=lambda encoding=None: "westus2",
+        )
+        transport = mock.Mock(send=mock.Mock(return_value=response))
+
+        client = AadClient("tenant-id", "client-id", transport=transport)
+        client._initialize_regional_authority()
+        assert client._regional_authority == "https://westus2.login.microsoft.com"
+
+    with patch.dict("os.environ", {"MSAL_FORCE_REGION": "westus3"}, clear=True):
+        client = AadClient("tenant-id", "client-id")
+        client._initialize_regional_authority()
+        assert client._regional_authority == "https://westus3.login.microsoft.com"
 
 
 @pytest.mark.parametrize("secret", (None, "client secret"))
@@ -351,3 +474,36 @@ def test_claims(method, args):
         assert post_mock.call_count == 2
         data, _ = post_mock.call_args
         assert data[0]["claims"] == cae_merged_claims
+
+
+def test_get_cached_access_token_with_claims():
+    """When claims are provided, get_cached_access_token should return None even if a token is cached"""
+
+    client_id = "client-id"
+    scope = "scope"
+    cached_token = "cached-access-token"
+    tenant_id = "tenant"
+    authority = "https://localhost/" + tenant_id
+    claims = '{"access_token": {"nbf": {"essential": true, "value": "1234567890"}}}'
+
+    # Add a valid token to the cache
+    cache = TokenCache()
+    cache.add(
+        {
+            "response": build_aad_response(access_token=cached_token, expires_in=3600),
+            "client_id": client_id,
+            "scope": [scope],
+            "token_endpoint": "/".join((authority, tenant_id, "oauth2/v2.0/token")),
+        }
+    )
+
+    client = AadClient(tenant_id=tenant_id, client_id=client_id, authority=authority, cache=cache)
+
+    # Without claims, the cached token should be returned
+    token = client.get_cached_access_token([scope])
+    assert token is not None
+    assert token.token == cached_token
+
+    # With claims, should return None even though a valid token is cached
+    token_with_claims = client.get_cached_access_token([scope], claims=claims)
+    assert token_with_claims is None
