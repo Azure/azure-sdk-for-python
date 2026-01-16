@@ -6,7 +6,7 @@ tests/testserver_tests/coretestserver
 # random comment that should be ignored
 ../azure-mgmt-core
 -e ../azure-mgmt-core
-../../../eng/tools/azure-sdk-tools
--e ../../../eng/tools/azure-sdk-tools
+../../../eng/tools/azure-sdk-tools[conda]
+-e ../../../eng/tools/azure-sdk-tools[conda]
 -e .
 .
