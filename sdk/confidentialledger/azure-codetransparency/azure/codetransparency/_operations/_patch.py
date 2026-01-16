@@ -137,14 +137,6 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         if http_response.status_code not in expected_status_codes:
             raise self.error_from_response(http_response, body)
 
-    # Methods it patch:
-    # get_transparency_config_cbor - only 200 is considered success
-    # get_public_keys - only 200 is considered success
-    # create_entry
-    # get_operation
-    # get_entry
-    # get_entry_statement
-
     def get_transparency_config_cbor(self, **kwargs: Any) -> Iterator[bytes]:
         kwargs["cls"] = lambda pipeline, body, headers: [
             pipeline.http_response,
