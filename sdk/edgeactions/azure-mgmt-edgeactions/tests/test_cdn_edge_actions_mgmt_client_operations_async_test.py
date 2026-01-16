@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.edgeactions.aio import CdnClient
+from azure.mgmt.edgeactions.aio import EdgeActionsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -17,12 +17,12 @@ AZURE_LOCATION = "eastus"
 @pytest.mark.live_test_only
 class TestCdnEdgeActionsMgmtClientOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(CdnClient, is_async=True)
+        self.client = self.create_mgmt_client(EdgeActionsMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_mgmt_client_list_by_resource_group(self, resource_group):
-        response = self.client.edge_actions_mgmt_client.list_by_resource_group(
+    async def test_edge_actions_list_by_resource_group(self, resource_group):
+        response = self.client.edge_actions.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
@@ -30,7 +30,7 @@ class TestCdnEdgeActionsMgmtClientOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_edge_actions_mgmt_client_list_by_subscription(self, resource_group):
-        response = self.client.edge_actions_mgmt_client.list_by_subscription()
+    async def test_edge_actions_list_by_subscription(self, resource_group):
+        response = self.client.edge_actions.list_by_subscription()
         result = [r async for r in response]
         assert response
