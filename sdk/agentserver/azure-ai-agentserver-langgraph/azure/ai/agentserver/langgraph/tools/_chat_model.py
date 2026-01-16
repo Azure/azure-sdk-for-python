@@ -17,6 +17,7 @@ from langchain_core.tools import BaseTool
 
 from ._context import FoundryToolContext
 from ._tool_node import FoundryToolCallWrapper, FoundryToolNodeWrappers
+from .. import LanggraphRunContext
 
 
 class FoundryToolLateBindingChatModel(BaseChatModel):
@@ -78,10 +79,7 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         return self
 
     def _bound_delegate_for_call(self) -> Runnable[LanguageModelInput, AIMessage]:
-        foundry_tools = (FoundryToolContext
-                         .get_current()
-                         .resolved__foundry__langchain__tools
-                         .get(self._foundry_tools_to_bind))
+        foundry_tools = LanggraphRunContext.get_current().tools.resolved_tools.get(self._foundry_tools_to_bind)
         all_tools = self._bound_tools.copy()
         all_tools.extend(foundry_tools)
 

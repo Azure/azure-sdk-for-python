@@ -3,8 +3,6 @@
 # ---------------------------------------------------------
 from dataclasses import dataclass, field
 
-from langgraph.runtime import get_runtime
-
 from ._resolver import ResolvedTools
 
 
@@ -12,12 +10,7 @@ from ._resolver import ResolvedTools
 class FoundryToolContext:
     """Context for tool resolution.
 
-    :param resolved__foundry__langchain__tools: The resolved tools of all registered foundry tools.
-    :type resolved__foundry__langchain__tools: ResolvedTools
+    :param resolved_tools: The resolved tools of all registered foundry tools.
+    :type resolved_tools: ResolvedTools
     """
-    resolved__foundry__langchain__tools: ResolvedTools = field(default_factory=lambda: ResolvedTools([]))
-
-    @classmethod
-    def get_current(cls) -> "FoundryToolContext":
-        lg_runtime = get_runtime(cls)
-        return lg_runtime.context
+    resolved_tools: ResolvedTools = field(default_factory=lambda: ResolvedTools([]))
