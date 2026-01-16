@@ -60,7 +60,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
-    def from_poller(cls, poller: AsyncLROPoller[PollingReturnType_co]) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":
+    def from_poller(cls, poller: AsyncLROPoller[PollingReturnType_co]) -> "AnalyzeAsyncLROPoller":
         """Wrap an existing AsyncLROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new
@@ -72,7 +72,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: AnalyzeAsyncLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: AnalyzeAsyncLROPoller[PollingReturnType_co] = object.__new__(cls)
+        instance: AnalyzeAsyncLROPoller = object.__new__(cls)
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance
