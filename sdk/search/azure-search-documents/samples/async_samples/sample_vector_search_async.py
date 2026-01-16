@@ -52,7 +52,6 @@ def get_embeddings(text: str):
 
 def get_hotel_index(name: str):
     from azure.search.documents.indexes.models import (
-        Collection,
         SearchIndex,
         SearchField,
         SearchFieldDataType,
@@ -69,7 +68,7 @@ def get_hotel_index(name: str):
         SearchableField(name="description", type=SearchFieldDataType.STRING),
         SearchField(
             name="descriptionVector",
-            type=Collection(SearchFieldDataType.SINGLE),
+            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),  # type: ignore[operator]
             searchable=True,
             vector_search_dimensions=1536,
             vector_search_profile_name="my-vector-config",
