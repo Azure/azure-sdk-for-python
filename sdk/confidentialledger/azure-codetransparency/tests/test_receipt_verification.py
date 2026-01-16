@@ -18,11 +18,12 @@ from azure.codetransparency.receipt import (
     CodeTransparencyOfflineKeys,
     OfflineKeysBehavior,
     AggregateError,
+    verify_receipt,
+    get_receipt_issuer_host,
+
 )
 from azure.codetransparency.cbor import CBORDecoder, CBOREncoder
-from azure.codetransparency.receipt._receipt_verification import (
-    _verify_receipt,
-    _get_receipt_issuer_host,
+from azure.codetransparency.receipt._transparent_statement import (
     _get_receipts_from_transparent_statement,
     _get_service_certificate_key,
 )
@@ -57,7 +58,7 @@ class TestReceiptVerification:
         input_signed_payload_bytes = read_file_bytes("statement.cose")
 
         with pytest.raises(ValueError) as exc_info:
-            _verify_receipt(wrong_kid_jwk, receipt_bytes, input_signed_payload_bytes)
+            verify_receipt(wrong_kid_jwk, receipt_bytes, input_signed_payload_bytes)
 
         assert "KID mismatch" in str(exc_info.value)
 
@@ -78,7 +79,7 @@ class TestReceiptVerification:
         input_signed_payload_bytes = read_file_bytes("statement.cose")
 
         with pytest.raises(ValueError) as exc_info:
-            _verify_receipt(correct_kid_jwk, receipt_bytes, input_signed_payload_bytes)
+            verify_receipt(correct_kid_jwk, receipt_bytes, input_signed_payload_bytes)
 
         error_message = str(exc_info.value)
         assert "statement digest does not match the leaf digest in the receipt" in error_message.lower()
@@ -440,7 +441,7 @@ class TestTransparentStatementWithFiles:
         receipt_cose = CBORDecoder(receipt_bytes).decode_cose_sign1()
         assert "protected_headers" in receipt_cose
 
-        receipt_issuer = _get_receipt_issuer_host(receipt_bytes)
+        receipt_issuer = get_receipt_issuer_host(receipt_bytes)
         assert receipt_issuer == issuer
 
     def test_verify_transparent_statement_requires_all_domains_fails_when_domain_missing(

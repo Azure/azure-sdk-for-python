@@ -2,10 +2,7 @@
 import pytest
 import responses
 import json
-import tempfile
 import os
-from unittest import TestCase
-from unittest.mock import AsyncMock, Mock
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
