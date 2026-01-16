@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class CdnClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for CdnClient.
+class EdgeActionsMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for EdgeActionsMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

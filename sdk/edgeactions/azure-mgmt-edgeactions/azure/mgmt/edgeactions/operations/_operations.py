@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import CdnClientConfiguration
+from .._configuration import EdgeActionsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -45,7 +45,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_edge_actions_mgmt_client_get_request(  # pylint: disable=name-too-long
+def build_edge_actions_get_request(
     resource_group_name: str, edge_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -73,7 +73,7 @@ def build_edge_actions_mgmt_client_get_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_edge_actions_mgmt_client_create_request(  # pylint: disable=name-too-long
+def build_edge_actions_create_request(
     resource_group_name: str, edge_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -104,7 +104,7 @@ def build_edge_actions_mgmt_client_create_request(  # pylint: disable=name-too-l
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_edge_actions_mgmt_client_update_request(  # pylint: disable=name-too-long
+def build_edge_actions_update_request(
     resource_group_name: str, edge_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -135,7 +135,7 @@ def build_edge_actions_mgmt_client_update_request(  # pylint: disable=name-too-l
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_edge_actions_mgmt_client_delete_request(  # pylint: disable=name-too-long
+def build_edge_actions_delete_request(
     resource_group_name: str, edge_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -157,7 +157,7 @@ def build_edge_actions_mgmt_client_delete_request(  # pylint: disable=name-too-l
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_edge_actions_mgmt_client_list_by_resource_group_request(  # pylint: disable=name-too-long
+def build_edge_actions_list_by_resource_group_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -184,7 +184,7 @@ def build_edge_actions_mgmt_client_list_by_resource_group_request(  # pylint: di
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_edge_actions_mgmt_client_list_by_subscription_request(  # pylint: disable=name-too-long
+def build_edge_actions_list_by_subscription_request(  # pylint: disable=name-too-long
     subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -582,20 +582,20 @@ def build_edge_action_execution_filters_list_by_edge_action_request(  # pylint: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class EdgeActionsMgmtClientOperations:
+class EdgeActionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgeactions.CdnClient`'s
-        :attr:`edge_actions_mgmt_client` attribute.
+        :class:`~azure.mgmt.edgeactions.EdgeActionsMgmtClient`'s
+        :attr:`edge_actions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeActionsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -625,7 +625,7 @@ class EdgeActionsMgmtClientOperations:
 
         cls: ClsType[_models.EdgeAction] = kwargs.pop("cls", None)
 
-        _request = build_edge_actions_mgmt_client_get_request(
+        _request = build_edge_actions_get_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -696,7 +696,7 @@ class EdgeActionsMgmtClientOperations:
         else:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_edge_actions_mgmt_client_create_request(
+        _request = build_edge_actions_create_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -931,7 +931,7 @@ class EdgeActionsMgmtClientOperations:
         else:
             _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_edge_actions_mgmt_client_update_request(
+        _request = build_edge_actions_update_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -1150,7 +1150,7 @@ class EdgeActionsMgmtClientOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_edge_actions_mgmt_client_delete_request(
+        _request = build_edge_actions_delete_request(
             resource_group_name=resource_group_name,
             edge_action_name=edge_action_name,
             subscription_id=self._config.subscription_id,
@@ -1278,7 +1278,7 @@ class EdgeActionsMgmtClientOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_edge_actions_mgmt_client_list_by_resource_group_request(
+                _request = build_edge_actions_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
@@ -1366,7 +1366,7 @@ class EdgeActionsMgmtClientOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_edge_actions_mgmt_client_list_by_subscription_request(
+                _request = build_edge_actions_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -1436,14 +1436,14 @@ class EdgeActionVersionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgeactions.CdnClient`'s
+        :class:`~azure.mgmt.edgeactions.EdgeActionsMgmtClient`'s
         :attr:`edge_action_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeActionsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2757,14 +2757,14 @@ class EdgeActionExecutionFiltersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgeactions.CdnClient`'s
+        :class:`~azure.mgmt.edgeactions.EdgeActionsMgmtClient`'s
         :attr:`edge_action_execution_filters` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeActionsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

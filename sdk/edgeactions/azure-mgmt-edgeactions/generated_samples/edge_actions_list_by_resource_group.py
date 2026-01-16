@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.edgeactions import CdnClient
+from azure.mgmt.edgeactions import EdgeActionsMgmtClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,12 @@ from azure.mgmt.edgeactions import CdnClient
 
 
 def main():
-    client = CdnClient(
+    client = EdgeActionsMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.edge_actions_mgmt_client.list_by_resource_group(
+    response = client.edge_actions.list_by_resource_group(
         resource_group_name="testrg",
     )
     for item in response:

@@ -18,24 +18,19 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import CdnClientConfiguration
-from .operations import (
-    EdgeActionExecutionFiltersOperations,
-    EdgeActionVersionsOperations,
-    EdgeActionsMgmtClientOperations,
-)
+from ._configuration import EdgeActionsMgmtClientConfiguration
+from .operations import EdgeActionExecutionFiltersOperations, EdgeActionVersionsOperations, EdgeActionsOperations
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class CdnClient:
-    """CdnClient.
+class EdgeActionsMgmtClient:
+    """EdgeActionsMgmtClient.
 
-    :ivar edge_actions_mgmt_client: EdgeActionsMgmtClientOperations operations
-    :vartype edge_actions_mgmt_client:
-     azure.mgmt.edgeactions.aio.operations.EdgeActionsMgmtClientOperations
+    :ivar edge_actions: EdgeActionsOperations operations
+    :vartype edge_actions: azure.mgmt.edgeactions.aio.operations.EdgeActionsOperations
     :ivar edge_action_versions: EdgeActionVersionsOperations operations
     :vartype edge_action_versions:
      azure.mgmt.edgeactions.aio.operations.EdgeActionVersionsOperations
@@ -74,7 +69,7 @@ class CdnClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = CdnClientConfiguration(
+        self._config = EdgeActionsMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
@@ -108,9 +103,7 @@ class CdnClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.edge_actions_mgmt_client = EdgeActionsMgmtClientOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.edge_actions = EdgeActionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.edge_action_versions = EdgeActionVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

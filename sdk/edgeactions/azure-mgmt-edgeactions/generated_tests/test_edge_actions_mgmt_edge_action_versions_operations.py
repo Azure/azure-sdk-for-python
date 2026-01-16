@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.edgeactions import CdnClient
+from azure.mgmt.edgeactions import EdgeActionsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestCdnEdgeActionExecutionFiltersOperations(AzureMgmtRecordedTestCase):
+class TestEdgeActionsMgmtEdgeActionVersionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(CdnClient)
+        self.client = self.create_mgmt_client(EdgeActionsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_edge_action_execution_filters_get(self, resource_group):
-        response = self.client.edge_action_execution_filters.get(
+    def test_edge_action_versions_get(self, resource_group):
+        response = self.client.edge_action_versions.get(
             resource_group_name=resource_group.name,
             edge_action_name="str",
-            execution_filter="str",
+            version="str",
         )
 
         # please add some check logic here by yourself
@@ -32,21 +32,21 @@ class TestCdnEdgeActionExecutionFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_edge_action_execution_filters_begin_create(self, resource_group):
-        response = self.client.edge_action_execution_filters.begin_create(
+    def test_edge_action_versions_begin_create(self, resource_group):
+        response = self.client.edge_action_versions.begin_create(
             resource_group_name=resource_group.name,
             edge_action_name="str",
-            execution_filter="str",
+            version="str",
             resource={
                 "location": "str",
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "executionFilterIdentifierHeaderName": "str",
-                    "executionFilterIdentifierHeaderValue": "str",
-                    "versionId": "str",
-                    "lastUpdateTime": "2020-02-20 00:00:00",
+                    "deploymentType": "str",
+                    "isDefaultVersion": "str",
+                    "lastPackageUpdateTime": "2020-02-20 00:00:00",
                     "provisioningState": "str",
+                    "validationStatus": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -66,19 +66,12 @@ class TestCdnEdgeActionExecutionFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_edge_action_execution_filters_begin_update(self, resource_group):
-        response = self.client.edge_action_execution_filters.begin_update(
+    def test_edge_action_versions_begin_update(self, resource_group):
+        response = self.client.edge_action_versions.begin_update(
             resource_group_name=resource_group.name,
             edge_action_name="str",
-            execution_filter="str",
-            properties={
-                "properties": {
-                    "executionFilterIdentifierHeaderName": "str",
-                    "executionFilterIdentifierHeaderValue": "str",
-                    "versionId": "str",
-                },
-                "tags": {"str": "str"},
-            },
+            version="str",
+            properties={"properties": {"deploymentType": "str", "isDefaultVersion": "str"}, "tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,11 +79,11 @@ class TestCdnEdgeActionExecutionFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_edge_action_execution_filters_begin_delete(self, resource_group):
-        response = self.client.edge_action_execution_filters.begin_delete(
+    def test_edge_action_versions_begin_delete(self, resource_group):
+        response = self.client.edge_action_versions.begin_delete(
             resource_group_name=resource_group.name,
             edge_action_name="str",
-            execution_filter="str",
+            version="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,11 +91,48 @@ class TestCdnEdgeActionExecutionFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_edge_action_execution_filters_list_by_edge_action(self, resource_group):
-        response = self.client.edge_action_execution_filters.list_by_edge_action(
+    def test_edge_action_versions_list_by_edge_action(self, resource_group):
+        response = self.client.edge_action_versions.list_by_edge_action(
             resource_group_name=resource_group.name,
             edge_action_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_edge_action_versions_begin_deploy_version_code(self, resource_group):
+        response = self.client.edge_action_versions.begin_deploy_version_code(
+            resource_group_name=resource_group.name,
+            edge_action_name="str",
+            version="str",
+            body={"content": "str", "name": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_edge_action_versions_begin_get_version_code(self, resource_group):
+        response = self.client.edge_action_versions.begin_get_version_code(
+            resource_group_name=resource_group.name,
+            edge_action_name="str",
+            version="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_edge_action_versions_begin_swap_default(self, resource_group):
+        response = self.client.edge_action_versions.begin_swap_default(
+            resource_group_name=resource_group.name,
+            edge_action_name="str",
+            version="str",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
