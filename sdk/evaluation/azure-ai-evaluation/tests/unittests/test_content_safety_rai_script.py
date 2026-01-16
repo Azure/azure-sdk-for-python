@@ -543,16 +543,18 @@ class TestParseEvalResult:
                 return self._data[key]
 
         # Mock a sync_evals response with Model-like result objects
-        result_item = ModelLikeObject({
-            "type": "azure_ai_evaluator",
-            "name": "violence",
-            "metric": "violence",
-            "score": 2,
-            "label": "pass",
-            "reason": "Low violence detected.",
-            "threshold": 3,
-            "passed": True,
-        })
+        result_item = ModelLikeObject(
+            {
+                "type": "azure_ai_evaluator",
+                "name": "violence",
+                "metric": "violence",
+                "score": 2,
+                "label": "pass",
+                "reason": "Low violence detected.",
+                "threshold": 3,
+                "passed": True,
+            }
+        )
 
         # Create a mock eval_result with Model-like results attribute
         class MockEvalRunOutputItem:
@@ -616,7 +618,7 @@ class TestParseEvalResult:
                     "properties": {
                         "outcome": "pass",
                         "metrics": {"promptTokens": "15", "completionTokens": "55"},
-                    }
+                    },
                 }
             ]
         }

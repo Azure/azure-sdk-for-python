@@ -967,7 +967,7 @@ def _build_sync_eval_payload(
     }
 
     # Convert metric_name to string value if it's an enum
-    metric_name_str = metric_name.value if hasattr(metric_name, 'value') else metric_name
+    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
 
     # Create the sync eval input payload
     # Structure: Uses QueryResponseInlineMessage format with azure_ai_evaluator type

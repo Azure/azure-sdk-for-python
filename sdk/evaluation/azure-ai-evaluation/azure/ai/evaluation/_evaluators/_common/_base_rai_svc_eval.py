@@ -245,10 +245,12 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                 # Check if this result matches our evaluator's metric
                 # Handle both exact match ("violence") and prefixed format ("builtin.violence")
-                expected_metric = self._eval_metric.value if hasattr(self._eval_metric, 'value') else self._eval_metric
-                if (metric_name == expected_metric or
-                    metric_name == f"builtin.{expected_metric}" or
-                    metric_name == self._eval_metric):
+                expected_metric = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
+                if (
+                    metric_name == expected_metric
+                    or metric_name == f"builtin.{expected_metric}"
+                    or metric_name == self._eval_metric
+                ):
                     # Extract common fields
                     score = result_dict.get("score", 0)
                     reason = result_dict.get("reason", "")
