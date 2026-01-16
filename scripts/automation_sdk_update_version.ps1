@@ -64,12 +64,19 @@ Write-Host "absolutePackagePath: $absolutePackagePath"
 
 # Determine the correct Python path based on OS
 if ($IsWindows -or ($PSVersionTable.PSEdition -eq 'Desktop')) {
-    $pythonPath = ".venv\Scripts\python.exe"
+    $venvPythonPath = ".venv\Scripts\python.exe"
 }
 else {
-    $pythonPath = ".venv/bin/python"
+    $venvPythonPath = ".venv/bin/python"
 }
 
+if (Test-Path $venvPythonPath) {
+    $pythonPath = $venvPythonPath
+}
+else {
+    Write-Host "Virtual environment Python not found at '$venvPythonPath'. Falling back to 'python' on PATH."
+    $pythonPath = "python"
+}
 # Build the command with required parameter
 $command = "$pythonPath -m packaging_tools.sdk_update_version --package-path $absolutePackagePath"
 
