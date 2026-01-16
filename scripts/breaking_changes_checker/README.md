@@ -11,7 +11,7 @@ Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https:
 
 **1) Install azpysdk:**
 
-`pip install -e eng/tools/azure-sdk-tools[build]`
+`pip install -e eng/tools/azure-sdk-tools`
 
 **2) Run the `breaking` check.**
 
