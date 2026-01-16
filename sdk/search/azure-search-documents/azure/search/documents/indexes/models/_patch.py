@@ -8,12 +8,24 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
 from ._models import SearchField as _SearchField
+from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
 )
+
+if TYPE_CHECKING:
+    from ._models import (
+        DataChangeDetectionPolicy,
+        DataDeletionDetectionPolicy,
+        DataSourceCredentials,
+        SearchIndexerDataContainer,
+        SearchIndexerDataIdentity,
+        SearchResourceEncryptionKey,
+    )
+    from ._enums import IndexerPermissionOption,SearchIndexerDataSourceType
 
 
 class SearchField(_SearchField):
@@ -55,6 +67,58 @@ class SearchField(_SearchField):
             self.retrievable = None
         else:
             self.retrievable = not value
+
+
+class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
+    """Represents a datasource definition, which can be used to configure an indexer.
+
+    This class adds an additional overload to support passing connection_string directly
+    instead of credentials.
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        type: Union[str, "SearchIndexerDataSourceType"],
+        credentials: "DataSourceCredentials",
+        container: "SearchIndexerDataContainer",
+        description: Optional[str] = None,
+        identity: Optional["SearchIndexerDataIdentity"] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
+        data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
+        data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
+        e_tag: Optional[str] = None,
+        encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        type: Union[str, "SearchIndexerDataSourceType"],
+        connection_string: str,
+        container: "SearchIndexerDataContainer",
+        description: Optional[str] = None,
+        identity: Optional["SearchIndexerDataIdentity"] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
+        data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
+        data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
+        e_tag: Optional[str] = None,
+        encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 def _collection_helper(typ: Any) -> str:
@@ -344,6 +408,7 @@ def ComplexField(
 __all__: list[str] = [
     "SearchField",
     "SearchFieldDataType",
+    "SearchIndexerDataSourceConnection",
     "SimpleField",
     "SearchableField",
     "ComplexField",
