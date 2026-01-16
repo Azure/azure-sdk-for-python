@@ -20,6 +20,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
     add_body_regex_sanitizer,
+    add_header_regex_sanitizer,
 )
 
 if not load_dotenv(find_dotenv(), override=True):
@@ -163,6 +164,9 @@ def add_sanitizers(test_proxy, sanitized_values):
     #  - AZSDK3430: $..id
     remove_batch_sanitizers(["AZSDK3493"])
     remove_batch_sanitizers(["AZSDK3430"])
+
+    # Sanitize User-Agent header
+    add_header_regex_sanitizer(key="User-Agent", value="sanitized-user-agent")
 
     # Sanitize ARM operation headers that contain certificates and identifiers
     add_general_regex_sanitizer(regex=r"[?&]t=[0-9]+", value="&t=sanitized-timestamp")

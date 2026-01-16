@@ -16,6 +16,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from ._version import VERSION
 
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ def _patch_user_agent(user_agent: Optional[str]) -> str:
     # All authenticated external clients exposed by this client will have this application id
     # set on their user-agent. For more info on user-agent HTTP header, see:
     # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
-    USER_AGENT_APP_ID = "AIProjectClient/Python"
+    USER_AGENT_APP_ID = f"AIProjectClient/Python-{VERSION}"
 
     if user_agent:
         # If the calling application has set "user_agent" when constructing the AIProjectClient,
@@ -120,7 +121,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai" appended.
         * ``api-version`` set to "2025-05-15-preview" by default, unless overridden by the ``api_version`` keyword argument.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient constructor, with scope "https://ai.azure.com/.default".
-        * ``default_headers`` will automatically include a User-Agent header with the default value "AIProjectClient/Python".
+        * ``default_headers`` will automatically include a User-Agent header with the default value "AIProjectClient/Python-{version}".
 
         .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
 
