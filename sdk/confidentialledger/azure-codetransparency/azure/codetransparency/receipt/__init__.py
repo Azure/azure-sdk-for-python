@@ -4,14 +4,23 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from ._receipt_verification import (
+from ._transparent_statement import (
     verify_transparent_statement,
+    AggregateError,
+)
+
+from ._receipt import (
+    verify_receipt,
+    get_receipt_kid,
+    get_receipt_issuer_host,
+)
+
+from ._transparent_statement_verifier_options import (
     VerificationOptions,
     AuthorizedReceiptBehavior,
     UnauthorizedReceiptBehavior,
     OfflineKeysBehavior,
     CodeTransparencyOfflineKeys,
-    AggregateError,
 )
 
 __all__ = [
@@ -22,4 +31,7 @@ __all__ = [
     "OfflineKeysBehavior",
     "CodeTransparencyOfflineKeys",
     "AggregateError",
+    "verify_receipt",
+    "get_receipt_kid",
+    "get_receipt_issuer_host",
 ]
