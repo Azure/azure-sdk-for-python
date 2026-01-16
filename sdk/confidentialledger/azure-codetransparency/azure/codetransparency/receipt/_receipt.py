@@ -52,12 +52,24 @@ class _Leaf:
 
 
 def _combine_byte_arrays(*arrays: bytes) -> bytes:
-    """Merge multiple byte arrays."""
+    """Merge multiple byte arrays into a single byte array.
+
+    :param arrays: Variable number of byte arrays to combine.
+    :type arrays: bytes
+    :return: The concatenated byte array.
+    :rtype: bytes
+    """
     return b"".join(arrays)
 
 
 def _base64url_decode(data: str) -> bytes:
-    """Decode base64url encoded string with padding."""
+    """Decode base64url encoded string with padding.
+
+    :param data: The base64url encoded string.
+    :type data: str
+    :return: The decoded bytes.
+    :rtype: bytes
+    """
     # Add padding if needed
     padding = 4 - len(data) % 4
     if padding != 4:
@@ -69,7 +81,9 @@ def get_receipt_issuer_host(receipt_bytes: bytes) -> Optional[str]:
     """Extract the issuer host from a receipt.
 
     :param receipt_bytes: The COSE_Sign1 bytes of the receipt.
-    :return: The issuer host string if found.
+    :type receipt_bytes: bytes
+    :return: The issuer host string if found, or None if not present.
+    :rtype: Optional[str]
     """
     cose_sign1 = CBORDecoder(receipt_bytes).decode_cose_sign1()
     protected_headers = cose_sign1.get("protected_headers", {})
@@ -83,7 +97,7 @@ def get_receipt_issuer_host(receipt_bytes: bytes) -> Optional[str]:
         decoder = CBORDecoder(cwt_map)
         try:
             cwt_map = decoder.decode()
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             return None
 
     if not isinstance(cwt_map, dict):
@@ -97,6 +111,13 @@ def get_receipt_issuer_host(receipt_bytes: bytes) -> Optional[str]:
 
 
 def get_receipt_kid(receipt_bytes: bytes) -> Optional[str]:
+    """Extract the key ID (KID) from a receipt's protected headers.
+
+    :param receipt_bytes: The COSE_Sign1 bytes of the receipt.
+    :type receipt_bytes: bytes
+    :return: The key ID as a string if found, or None if not present.
+    :rtype: Optional[str]
+    """
     receipt = CBORDecoder(receipt_bytes).decode_cose_sign1()
     protected_headers = receipt.get("protected_headers", {})
     kid = protected_headers.get(COSE_HEADER_KID)
@@ -110,11 +131,19 @@ def get_receipt_kid(receipt_bytes: bytes) -> Optional[str]:
 def _get_leaf(leaf_bytes: bytes) -> _Leaf:
     """Deserialize the leaf content from CBOR bytes.
 
-    ccf-leaf = [
-      internal-transaction-digest: bstr.size 32
-      internal-evidence: tstr.size(1..1024)
-      data-digest: bstr.size 32
-    ]
+    The CCF leaf structure is defined as::
+
+        ccf-leaf = [
+            internal-transaction-digest: bstr.size 32
+            internal-evidence: tstr.size(1..1024)
+            data-digest: bstr.size 32
+        ]
+
+    :param leaf_bytes: The CBOR-encoded leaf bytes.
+    :type leaf_bytes: bytes
+    :return: The deserialized leaf structure.
+    :rtype: _Leaf
+    :raises ValueError: If the leaf structure is invalid.
     """
     decoder = CBORDecoder(leaf_bytes)
     leaf_array = decoder.decode()
@@ -132,10 +161,18 @@ def _get_leaf(leaf_bytes: bytes) -> _Leaf:
 def _get_proof_elements(proof_paths_bytes: bytes) -> List[_ProofElement]:
     """Deserialize a list of ProofElements from the inclusion proof path CBOR bytes.
 
-    ccf-proof-element = [
-        left: bool
-        digest: bstr.size 32
-    ]
+    The CCF proof element structure is defined as::
+
+        ccf-proof-element = [
+            left: bool
+            digest: bstr.size 32
+        ]
+
+    :param proof_paths_bytes: The CBOR-encoded proof paths bytes.
+    :type proof_paths_bytes: bytes
+    :return: A list of proof elements.
+    :rtype: List[_ProofElement]
+    :raises ValueError: If the proof paths structure is invalid.
     """
     decoder = CBORDecoder(proof_paths_bytes)
     proof_paths = decoder.decode()
@@ -155,19 +192,23 @@ def _get_proof_elements(proof_paths_bytes: bytes) -> List[_ProofElement]:
 def _get_expected_algorithm(crv: str) -> int:
     """Get the expected COSE algorithm value for a given curve.
 
-    :param crv: The curve name (P-256, P-384, P-521).
-    :return: The COSE algorithm value.
+    :param crv: The curve name (P-256, P-384, or P-521).
+    :type crv: str
+    :return: The COSE algorithm value (-7 for ES256, -35 for ES384, -36 for ES512).
+    :rtype: int
     :raises ValueError: If the curve is not supported.
     """
     # COSE algorithm values from https://www.iana.org/assignments/cose/cose.xhtml#algorithms
-    if crv == "P-256":
-        return -7  # ES256
-    elif crv == "P-384":
-        return -35  # ES384
-    elif crv == "P-521":
-        return -36  # ES512
-    else:
-        raise ValueError(f"Unsupported curve: {crv}")
+    curve_to_algorithm = {
+        "P-256": -7,  # ES256
+        "P-384": -35,  # ES384
+        "P-521": -36,  # ES512
+    }
+
+    try:
+        return curve_to_algorithm[crv]
+    except KeyError as exc:
+        raise ValueError(f"Unsupported curve: {crv}") from exc
 
 
 def _encode_cose_sign1_to_be_signed(
@@ -176,16 +217,21 @@ def _encode_cose_sign1_to_be_signed(
 ) -> bytes:
     """Create the Sig_structure for COSE_Sign1 verification.
 
-    Sig_structure = [
-        context : "Signature1",
-        body_protected : protected_headers_bytes,
-        external_aad : bstr (empty),
-        payload : bstr
-    ]
+    The Sig_structure is defined as::
+
+        Sig_structure = [
+            context : "Signature1",
+            body_protected : protected_headers_bytes,
+            external_aad : bstr (empty),
+            payload : bstr
+        ]
 
     :param protected_headers_bytes: The protected headers as encoded bytes.
+    :type protected_headers_bytes: bytes
     :param payload: The payload bytes.
+    :type payload: bytes
     :return: The CBOR-encoded Sig_structure.
+    :rtype: bytes
     """
     # Sig_structure is a 4-element array:
     # ["Signature1", protected_headers_bytes, b"", payload]
@@ -202,7 +248,10 @@ def _get_protected_headers_bytes_from_cose(data: bytes) -> bytes:
     """Extract the raw protected headers bytes from a COSE_Sign1 message.
 
     :param data: The COSE_Sign1 bytes.
+    :type data: bytes
     :return: The raw protected headers bytes.
+    :rtype: bytes
+    :raises ValueError: If the COSE_Sign1 structure is invalid.
     """
     decoder = CBORDecoder(data)
     cose_structure = decoder.decode()
@@ -222,8 +271,10 @@ def _trim_unprotected_headers(
 ) -> bytes:
     """Prepare the signed statement for verification by clearing unprotected headers.
 
-    :param transparent_statement_bytes: The transparent statement COSE_Sign1 bytes.
+    :param signed_statement_bytes: The signed statement COSE_Sign1 bytes.
+    :type signed_statement_bytes: bytes
     :return: The encoded signed statement with cleared unprotected headers.
+    :rtype: bytes
     """
     cose_sign1 = CBORDecoder(signed_statement_bytes).decode_cose_sign1()
     return CBOREncoder().encode_cose_sign1(
@@ -235,7 +286,7 @@ def _trim_unprotected_headers(
     )
 
 
-def verify_receipt(
+def verify_receipt(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     jwk: Dict[str, Any],
     receipt_bytes: bytes,
     signed_statement_bytes: bytes,
@@ -244,8 +295,14 @@ def verify_receipt(
     """Verify a CCF SCITT receipt.
 
     :param jwk: The service certificate key (JWK).
+    :type jwk: Dict[str, Any]
     :param receipt_bytes: Receipt in COSE_Sign1 CBOR bytes.
+    :type receipt_bytes: bytes
     :param signed_statement_bytes: The input signed statement in COSE_Sign1 CBOR bytes.
+    :type signed_statement_bytes: bytes
+    :param trim_unprotected_headers: Whether to clear unprotected headers before
+        computing the digest. Defaults to True.
+    :type trim_unprotected_headers: bool
     :raises ValueError: If the verification fails.
     """
     # Compute the digest of the signed statement

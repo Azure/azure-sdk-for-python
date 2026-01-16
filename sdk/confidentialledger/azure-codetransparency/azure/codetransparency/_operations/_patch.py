@@ -120,7 +120,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
                 response=http_response,
                 error=error_details,
             )
-        elif http_response.headers.get("Content-Type", "") == "application/json":
+        if http_response.headers.get("Content-Type", "") == "application/json":
             return HttpResponseError(
                 message="Error response received",
                 response=http_response,
@@ -239,9 +239,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         polling = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", 0.8)
 
-        operation_body = self.create_entry(
-            entry, **kwargs
-        )
+        operation_body = self.create_entry(entry, **kwargs)
 
         operation_body_bytes = b"".join(operation_body)
 
@@ -273,7 +271,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop("polling", True)
+        _ = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", 0.8)
 
         def operation() -> Optional[bytes]:

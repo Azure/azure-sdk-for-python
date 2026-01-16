@@ -11,10 +11,9 @@ import os
 import re
 import tempfile
 import random
-from typing import Any, Iterator, List, Union
+from typing import Any, Union
 
-from azure.core.credentials import TokenCredential
-from azure.core.pipeline import policies
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 from azure.codetransparency._client import CodeTransparencyClient as GeneratedClient
 from azure.confidentialledger.certificate import (
@@ -54,12 +53,12 @@ class CodeTransparencyClient(GeneratedClient):
     def __init__(
         self,
         endpoint: str,
-        credential: TokenCredential,
+        credential: Union[TokenCredential, AzureKeyCredential],
         *,
         ledger_certificate_path: Union[bytes, str, os.PathLike, None] = None,
         **kwargs: Any,
     ) -> None:
-        
+
         if ledger_certificate_path is None:
             # Create a temporary file path for the ledger certificate based on the endpoint.
             # Use the ledger id from the endpoint to create a deterministic filename
@@ -68,9 +67,12 @@ class CodeTransparencyClient(GeneratedClient):
             # Normalize the ledger_id to ensure it's a valid filename on any OS
             # by replacing any non-alphanumeric characters (except hyphen) with underscore
             normalized_ledger_id = re.sub(r"[^a-zA-Z0-9\-]", "_", ledger_id)
-            suffix_random = ''.join(random.Random().choices('abcdefghijklmnopqrstuvwxyz0123456789', k=8))
+            suffix_random = "".join(
+                random.Random().choices("abcdefghijklmnopqrstuvwxyz0123456789", k=8)
+            )
             ledger_certificate_path = os.path.join(
-                tempfile.gettempdir(), f"{normalized_ledger_id}_ledger_cert_{suffix_random}.pem"
+                tempfile.gettempdir(),
+                f"{normalized_ledger_id}_ledger_cert_{suffix_random}.pem",
             )
 
         if not os.path.isfile(ledger_certificate_path):
@@ -104,10 +106,9 @@ class CodeTransparencyClient(GeneratedClient):
 
         # Increase default retry attempts and backoff factor to better handle transient failures
         # see defaults in azure.core.pipeline.policies.RetryPolicyBase
-        kwargs["retry_status"] = kwargs.pop("retry_status", 5) # some 503 responses may take a while to recover
+        kwargs["retry_status"] = kwargs.pop(
+            "retry_status", 5
+        )  # some 503 responses may take a while to recover
         kwargs["retry_backoff_factor"] = kwargs.pop("retry_backoff_factor", 0.9)
 
-        
-
         super().__init__(endpoint, credential, **kwargs)
-
