@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:ignore PHDR, tstr
 """Algorithm implementation for verifying CCF SCITT receipts."""
 
 from base64 import urlsafe_b64decode
