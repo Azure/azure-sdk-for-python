@@ -48,7 +48,7 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
     def __init__(self, user_provider: UserProvider):
         super().__init__(user_provider)
-        self._cache: MutableMapping[FoundryTool, Awaitable[List[FoundryToolDetails]]] = self._create_cache()
+        self._cache: MutableMapping[Any, Awaitable[List[FoundryToolDetails]]] = self._create_cache()
 
     def _create_cache(self) -> MutableMapping[Any, Awaitable[List[FoundryToolDetails]]]:
         return TTLCache(maxsize=1024, ttl=600)

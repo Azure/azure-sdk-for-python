@@ -98,8 +98,7 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
 class FoundryCBAgent:
     def __init__(self,
                  credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
-                 project_endpoint: Optional[str] = None,
-                 **kwargs: Any) -> None:
+                 project_endpoint: Optional[str] = None) -> None:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
         project_endpoint = get_project_endpoint() or project_endpoint
         if not project_endpoint:
