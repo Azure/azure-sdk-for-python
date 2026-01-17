@@ -1,11 +1,11 @@
-{% set name = "azure-ai-metricsadvisor" %}
+{% set name = "azure-monitor-opentelemetry" %}
 
 package:
   name: "{{ name|lower }}"
   version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
-  url: {{ environ.get('COGNITIVELANGUAGE_SOURCE_DISTRIBUTION', '') }}
+  url: {{ environ.get('OPENTELEMETRY_SOURCE_DISTRIBUTION', '') }}
 
 build:
   noarch: python
@@ -16,38 +16,33 @@ requirements:
   host:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
-    - six
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
     - python
-    - six
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
 
 test:
   imports:
-    - azure.ai.metricsadvisor
-    - azure.ai.metricsadvisor.aio
-    - azure.ai.metricsadvisor.models
+    - azure.monitor.opentelemetry
 
 about:
-  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/metricsadvisor/azure-ai-metricsadvisor"
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry"
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Microsoft Azure Metrics Advisor Client Library for Python"
+  summary: "Microsoft Azure Monitor Opentelemetry Client Library for Python"
   description: |
-    Metrics Advisor is a scalable real-time time series monitoring, alerting, and root cause analysis platform.
-    Please see https://aka.ms/azsdk/conda/releases/metricsadvisor for version details.
+    This is the Microsoft Azure Monitor Opentelemetry Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/monitor for version details.
   doc_url: 
   dev_url: 
 
