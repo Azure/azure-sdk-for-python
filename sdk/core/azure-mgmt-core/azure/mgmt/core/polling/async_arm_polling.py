@@ -28,8 +28,7 @@ from typing import Optional, Dict, Any, Sequence, Mapping
 from azure.core.polling.base_polling import LocationPolling, StatusCheckPolling, LongRunningOperation
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from .arm_polling import AzureAsyncOperationPolling, BodyContentPolling, HttpRequestTypeVar, AllHttpResponseTypeVar
-from ._utils import _filter_arm_headers
+from .arm_polling import AzureAsyncOperationPolling, BodyContentPolling, HttpRequestTypeVar, AllHttpResponseTypeVar, _add_arm_headers
 
 
 class AsyncARMPolling(AsyncLROBasePolling):
@@ -65,7 +64,7 @@ class AsyncARMPolling(AsyncLROBasePolling):
         :return: A filtered dictionary of headers to include in the continuation token.
         :rtype: dict[str, str]
         """
-        return _filter_arm_headers(headers)
+        return _add_arm_headers(super()._filter_headers_for_continuation_token(headers), headers)
 
 
 __all__ = ["AsyncARMPolling"]

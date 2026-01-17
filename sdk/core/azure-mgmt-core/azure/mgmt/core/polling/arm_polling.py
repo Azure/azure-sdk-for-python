@@ -47,7 +47,23 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
 
-from ._utils import _filter_arm_headers
+# ARM-specific LRO headers - azure-asyncoperation is ARM-specific
+_ARM_LRO_HEADERS = frozenset(["azure-asyncoperation"])
+
+
+def _add_arm_headers(filtered: Dict[str, str], headers: Mapping[str, str]) -> Dict[str, str]:
+    """Add ARM-specific headers to the filtered headers dict.
+
+    :param filtered: The base filtered headers from parent class.
+    :type filtered: dict[str, str]
+    :param headers: The original response headers.
+    :type headers: Mapping[str, str]
+    :return: Updated filtered dictionary with ARM headers included.
+    :rtype: dict[str, str]
+    """
+    filtered.update({k: v for k, v in headers.items() if k.lower() in _ARM_LRO_HEADERS})
+    return filtered
+
 
 ResponseType = Union[HttpResponse, AsyncHttpResponse]
 PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
@@ -220,7 +236,7 @@ class ARMPolling(LROBasePolling):
         :return: A filtered dictionary of headers to include in the continuation token.
         :rtype: dict[str, str]
         """
-        return _filter_arm_headers(headers)
+        return _add_arm_headers(super()._filter_headers_for_continuation_token(headers), headers)
 
 
 __all__ = [
