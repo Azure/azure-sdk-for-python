@@ -109,7 +109,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 				"tenantId": user.tenant_id,
 			}
 		return self._client.post(
-			self._list_tools_path(agent_name),
+			self._invoke_tool_path(agent_name),
 			params=self._QUERY_PARAMS,
 			headers=self._HEADERS,
 			content=payload)
@@ -146,7 +146,8 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		request = self._build_list_tools_request(tools, user, agent_name)
 		response = await self._send_request(request)
 		async with response:
-			tools_response = ListFoundryConnectedToolsResponse.model_validate(response.json())
+			json_response = self._extract_response_json(response)
+			tools_response = ListFoundryConnectedToolsResponse.model_validate(json_response)
 		return self._convert_listed_tools(tools_response, tools)
 
 
@@ -172,5 +173,7 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		request = self._build_invoke_tool_request(tool, arguments, user, agent_name)
 		response = await self._send_request(request)
 		async with response:
-			invoke_response = InvokeFoundryConnectedToolsResponse.model_validate(response.json())
+			json_response = self._extract_response_json(response)
+			invoke_response = InvokeFoundryConnectedToolsResponse.model_validate(json_response)
 		return self._convert_invoke_result(invoke_response)
+	

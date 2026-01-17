@@ -59,8 +59,7 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
                 logger.error(f"Invalid JSON payload: {e}")
                 return JSONResponse({"error": f"Invalid JSON payload: {e}"}, status_code=400)
             try:
-                agent_tools = self.agent.tools if self.agent else []
-                request.state.agent_run_context = AgentRunContext(payload, agent_tools=agent_tools)
+                request.state.agent_run_context = AgentRunContext(payload)
                 self.set_run_context_to_context_var(request.state.agent_run_context)
             except Exception as e:
                 logger.error(f"Context build failed: {e}.", exc_info=True)

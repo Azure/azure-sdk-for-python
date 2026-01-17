@@ -46,9 +46,17 @@ class FoundryTool(ABC):
 
 	def __str__(self):
 		return self.id
+	
+	def __eq__(self, other: object) -> bool:
+		if not isinstance(other, FoundryTool):
+			return False
+		return self.id == other.id
+	
+	def __hash__(self) -> int:
+		return hash(self.id)
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True, kw_only=True, eq=False)
 class FoundryHostedMcpTool(FoundryTool):
 	"""Foundry MCP tool definition.
 
@@ -65,7 +73,7 @@ class FoundryHostedMcpTool(FoundryTool):
 		return f"{self.source}:{self.name}"
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True, kw_only=True, eq=False)
 class FoundryConnectedTool(FoundryTool):
 	"""Foundry connected tool definition.
 
@@ -76,7 +84,7 @@ class FoundryConnectedTool(FoundryTool):
 	project_connection_id: str
 
 	@property
-	def id(self):
+	def id(self) -> str:
 		return f"{self.source}:{self.protocol}:{self.project_connection_id}"
 
 
@@ -566,7 +574,7 @@ class InvokeConnectedToolsResult(BaseModel):
 
 	:ivar Any value: The result value from the tool invocation.
 	"""
-	value: Any = Field(serialization_alias="toolResult")
+	value: Any = Field(validation_alias="toolResult")
 
 
 class InvokeFoundryConnectedToolsResponse(BaseModel):
@@ -592,7 +600,10 @@ class InvokeFoundryConnectedToolsResponse(BaseModel):
 				Annotated[InvokeConnectedToolsResult, Tag("ResultType")],
 			],
 			Discriminator(
-				lambda payload: "ErrorType" if isinstance(payload, dict) and "type" in payload else "ResultType"
+				lambda payload: "ErrorType" if isinstance(payload, dict) and
+				# handle other error types in the future
+				payload.get("type") == "OAuthConsentRequired"
+				else "ResultType"
 			),
 		])
 

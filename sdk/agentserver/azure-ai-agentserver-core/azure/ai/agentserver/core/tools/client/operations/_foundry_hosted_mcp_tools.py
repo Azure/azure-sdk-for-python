@@ -6,9 +6,14 @@ from typing import Any, ClassVar, Dict, List, Mapping, TYPE_CHECKING, cast
 
 from azure.core.rest import HttpRequest
 
-from azure.ai.agentserver.core.tools import FoundryHostedMcpTool, FoundryToolSource, ResolvedFoundryTool, \
-	ToolInvocationError
-from azure.ai.agentserver.core.tools.client._models import FoundryToolDetails, ListFoundryHostedMcpToolsResponse
+from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
+from azure.ai.agentserver.core.tools.client._models import (
+    FoundryHostedMcpTool,
+    FoundryToolSource,
+    ResolvedFoundryTool,
+    FoundryToolDetails,
+    ListFoundryHostedMcpToolsResponse,
+)
 from azure.ai.agentserver.core.tools.client.operations._base import BaseOperations
 
 
@@ -88,7 +93,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 		return result
 
 	def _build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
-		if tool.definition.source != FoundryToolSource.FOUNDRY_HOSTED_MCP:
+		if tool.definition.source != FoundryToolSource.HOSTED_MCP:
 			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry-hosted MCP tool.", tool=tool)
 		definition = cast(FoundryHostedMcpTool, tool.definition) if TYPE_CHECKING else tool.definition
 
@@ -140,7 +145,8 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		request = self._build_list_tools_request()
 		response = await self._send_request(request)
 		async with response:
-			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(response.json())
+			json_response = self._extract_response_json(response)
+			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(json_response)
 		return self._convert_listed_tools(tools_response, allowed_tools)
 
 	async def invoke_tool(
@@ -160,4 +166,6 @@ class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 		request = self._build_invoke_tool_request(tool, arguments)
 		response = await self._send_request(request)
 		async with response:
-			return response.json().get("result")
+			json_response = self._extract_response_json(response)
+			invoke_response = json_response
+		return invoke_response
