@@ -8,8 +8,6 @@ from langchain_core.messages import ToolMessage
 from langgraph.prebuilt.tool_node import AsyncToolCallWrapper, ToolCallRequest, ToolCallWrapper
 from langgraph.types import Command
 
-from .._context import LanggraphRunContext
-
 ToolInvocationResult = Union[ToolMessage, Command]
 ToolInvocation = Callable[[ToolCallRequest], ToolInvocationResult]
 AsyncToolInvocation = Callable[[ToolCallRequest], Awaitable[ToolInvocationResult]]
@@ -34,7 +32,7 @@ class FoundryToolNodeWrappers(TypedDict):
     awrap_tool_call: AsyncToolCallWrapper
 
 
-class FoundryToolCallWrapper(ToolCallWrapper, AsyncToolCallWrapper):
+class FoundryToolCallWrapper:
     """A ToolCallWrapper that tries to resolve invokable foundry tools from context if tool is not resolved yet."""
     def __init__(self, foundry_tools: List[FoundryToolLike]):
         self._allowed_foundry_tools = foundry_tools
@@ -75,9 +73,12 @@ class FoundryToolCallWrapper(ToolCallWrapper, AsyncToolCallWrapper):
         return await invocation(self._maybe_calling_foundry_tool(request))
 
     def _maybe_calling_foundry_tool(self, request: ToolCallRequest) -> ToolCallRequest:
-        if not request.tool:
+        if request.tool or not self._allowed_foundry_tools:
             # tool is already resolved
             return request
+
+        from .._context import LanggraphRunContext
+
         tool_name = request.tool_call["name"]
         for t in LanggraphRunContext.get_current().tools.resolved_tools.get(self._allowed_foundry_tools):
             if t.name == tool_name:

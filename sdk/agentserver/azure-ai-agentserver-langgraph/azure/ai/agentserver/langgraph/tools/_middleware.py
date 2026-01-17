@@ -5,6 +5,9 @@ from __future__ import annotations
 
 from typing import Awaitable, Callable, List
 
+from langchain_core.tools import BaseTool, Tool
+from langgraph.typing import ContextT, StateT_co
+
 from azure.ai.agentserver.core.tools import FoundryToolLike
 from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
 from langchain.agents.middleware.types import ModelCallResult
@@ -16,7 +19,7 @@ from ._chat_model import FoundryToolLateBindingChatModel
 from ._tool_node import FoundryToolCallWrapper
 
 
-class FoundryToolBindingMiddleware(AgentMiddleware):
+class FoundryToolBindingMiddleware(AgentMiddleware[StateT_co, ContextT]):
     """Middleware that binds foundry tools to tool calls in the agent.
 
     :param foundry_tools: A list of foundry tools to bind.
@@ -25,7 +28,19 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
 
     def __init__(self, foundry_tools: List[FoundryToolLike]):
         super().__init__()
+
+        # to ensure `create_agent()` will create a tool node when there are foundry tools to bind
+        # this tool will never be bound to model and called
+        self.tools = [self._dummy_tool()] if foundry_tools else []
+
         self._foundry_tools_to_bind = foundry_tools
+        self._tool_call_wrapper = FoundryToolCallWrapper(self._foundry_tools_to_bind)
+
+    @staticmethod
+    def _dummy_tool() -> BaseTool:
+        return Tool(name="__dummy_tool_by_foundry_middleware__",
+                    func=lambda x: None,
+                    description="__dummy_tool_by_foundry_middleware__")
 
     def wrap_model_call(self, request: ModelRequest,
                         handler: Callable[[ModelRequest], ModelResponse]) -> ModelCallResult:
@@ -38,7 +53,7 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
         :return: The model call result.
         :rtype: ModelCallResult
         """
-        return super().wrap_model_call(self._wrap_model(request), handler)
+        return handler(self._wrap_model(request))
 
     async def awrap_model_call(self, request: ModelRequest,
                                handler: Callable[[ModelRequest], Awaitable[ModelResponse]]) -> ModelCallResult:
@@ -51,7 +66,7 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
         :return: The model call result.
         :rtype: ModelCallResult
         """
-        return await super().awrap_model_call(self._wrap_model(request), handler)
+        return await handler(self._wrap_model(request))
 
     def _wrap_model(self, request: ModelRequest) -> ModelRequest:
         """Wrap the model in the request with a FoundryToolBindingChatModel.
@@ -61,6 +76,8 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
         :return: The modified model request.
         :rtype: ModelRequest
         """
+        if not self._foundry_tools_to_bind:
+            return request
         wrapper = FoundryToolLateBindingChatModel(request.model, self._foundry_tools_to_bind)
         return request.override(model=wrapper)
 
@@ -75,7 +92,7 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
         :return: The tool call result.
         :rtype: ToolMessage | Command
         """
-        return FoundryToolCallWrapper(self._foundry_tools_to_bind).call_tool(request, handler)
+        return self._tool_call_wrapper.call_tool(request, handler)
 
     async def awrap_tool_call(
             self,
@@ -90,4 +107,4 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
         :return: The tool call result.
         :rtype: ToolMessage | Command
         """
-        return await FoundryToolCallWrapper(self._foundry_tools_to_bind).call_tool_async(request, handler)
+        return await self._tool_call_wrapper.call_tool_async(request, handler)

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from langgraph.runtime import get_runtime
 

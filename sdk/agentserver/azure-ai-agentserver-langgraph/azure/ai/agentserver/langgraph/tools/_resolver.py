@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from collections import defaultdict
-from typing import Any, Iterable, List, Optional, Tuple, Union, overload
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union, overload
 
 from langchain_core.tools import BaseTool, StructuredTool
 from pydantic import BaseModel, Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
-from azure.ai.agentserver.core.tools import FoundryToolLike, ResolvedFoundryTool, SchemaDefinition, ensure_foundry_tool
+from azure.ai.agentserver.core.tools import FoundryTool, FoundryToolLike, ResolvedFoundryTool, SchemaDefinition, ensure_foundry_tool
 from azure.ai.agentserver.core.tools.utils import ToolNameResolver
 
 
@@ -19,12 +19,12 @@ class ResolvedTools(Iterable[BaseTool]):
     :type tools: Iterable[Tuple[ResolvedFoundryTool, BaseTool]]
     """
     def __init__(self, tools: Iterable[Tuple[ResolvedFoundryTool, BaseTool]]):
-        self._by_source_id = defaultdict(list)
+        self._by_source_id: Dict[FoundryTool, List[BaseTool]] = defaultdict(list)
         for rt, t in tools:
-            self._by_source_id[rt.definition.id].append(rt)
+            self._by_source_id[rt.definition].append(t)
 
     @overload
-    def get(self, tool: FoundryToolLike) -> Iterable[BaseTool]:
+    def get(self, tool: FoundryToolLike, /) -> Iterable[BaseTool]:
         """Get the LangChain tools for the given foundry tool.
 
         :param tool: The foundry tool to get the LangChain tools for.
@@ -35,7 +35,7 @@ class ResolvedTools(Iterable[BaseTool]):
         ...
 
     @overload
-    def get(self, tools: Iterable[FoundryToolLike]) -> Iterable[BaseTool]:
+    def get(self, tools: Iterable[FoundryToolLike], /) -> Iterable[BaseTool]:
         """Get the LangChain tools for the given foundry tools.
 
         :param tools: The foundry tools to get the LangChain tools for.
@@ -69,7 +69,7 @@ class ResolvedTools(Iterable[BaseTool]):
         tool_list = [tool] if not isinstance(tool, Iterable) else tool
         for t in tool_list:
             ft = ensure_foundry_tool(t)
-            yield from self._by_source_id.get(ft.id, [])
+            yield from self._by_source_id.get(ft, [])
 
     def __iter__(self):
         for tool_list in self._by_source_id.values():
@@ -103,7 +103,7 @@ class FoundryLangChainToolResolver:
         """
         context = AgentServerContext.get()
         resolved_foundry_tools = await context.tools.catalog.list(foundry_tools)
-        return ResolvedTools(tools=(tool, self._create_structured_tool(tool) for tool in resolved_foundry_tools))
+        return ResolvedTools(tools=((tool, self._create_structured_tool(tool)) for tool in resolved_foundry_tools))
 
     def _create_structured_tool(self, resolved_tool: ResolvedFoundryTool) -> StructuredTool:
         name = self._name_resolver.resolve(resolved_tool)

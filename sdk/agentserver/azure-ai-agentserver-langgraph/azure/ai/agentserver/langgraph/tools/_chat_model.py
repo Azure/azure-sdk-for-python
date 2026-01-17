@@ -5,19 +5,16 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
-from langgraph.prebuilt import ToolNode
-
-from azure.ai.agentserver.core.tools import FoundryToolLike
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models import BaseChatModel, LanguageModelInput
 from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.outputs import ChatResult
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.tools import BaseTool
+from langgraph.prebuilt import ToolNode
 
-from ._context import FoundryToolContext
+from azure.ai.agentserver.core.tools import FoundryToolLike
 from ._tool_node import FoundryToolCallWrapper, FoundryToolNodeWrappers
-from .. import LanggraphRunContext
 
 
 class FoundryToolLateBindingChatModel(BaseChatModel):
@@ -79,15 +76,17 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         return self
 
     def _bound_delegate_for_call(self) -> Runnable[LanguageModelInput, AIMessage]:
+        from .._context import LanggraphRunContext
+
         foundry_tools = LanggraphRunContext.get_current().tools.resolved_tools.get(self._foundry_tools_to_bind)
         all_tools = self._bound_tools.copy()
         all_tools.extend(foundry_tools)
 
         if not all_tools:
-            return self.delegate
+            return self._delegate
 
-        bind_kwargs = self._bind_kwargs or {}
-        return self.delegate.bind_tools(all_tools, **bind_kwargs)
+        bound_kwargs = self._bound_kwargs or {}
+        return self._delegate.bind_tools(all_tools, **bound_kwargs)
 
     def invoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:
         return self._bound_delegate_for_call().invoke(input, config=config, **kwargs)

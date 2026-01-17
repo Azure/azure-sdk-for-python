@@ -55,8 +55,8 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
     def _get_key(self, user: Optional[UserInfo], tool: FoundryTool) -> Any:
         if tool.source is FoundryToolSource.HOSTED_MCP:
-            return tool.id
-        return user, tool.id
+            return tool
+        return user, tool
 
     async def list(self, tools: List[FoundryToolLike]) -> List[ResolvedFoundryTool]:
         user = await self._user_provider.get_user()

@@ -56,7 +56,7 @@ class FoundryTool(ABC):
 		return hash(self.id)
 
 
-@dataclass(frozen=True, kw_only=True, eq=False)
+@dataclass(frozen=True, kw_only=True)
 class FoundryHostedMcpTool(FoundryTool):
 	"""Foundry MCP tool definition.
 
@@ -65,7 +65,7 @@ class FoundryHostedMcpTool(FoundryTool):
 	"""
 	source: Literal[FoundryToolSource.HOSTED_MCP] = field(init=False, default=FoundryToolSource.HOSTED_MCP)
 	name: str
-	configuration: Optional[Mapping[str, Any]] = None
+	configuration: Optional[Mapping[str, Any]] = field(default=None, compare=False, hash=False)
 
 	@property
 	def id(self) -> str:
@@ -73,7 +73,7 @@ class FoundryHostedMcpTool(FoundryTool):
 		return f"{self.source}:{self.name}"
 
 
-@dataclass(frozen=True, kw_only=True, eq=False)
+@dataclass(frozen=True, kw_only=True)
 class FoundryConnectedTool(FoundryTool):
 	"""Foundry connected tool definition.
 
@@ -145,65 +145,6 @@ class ResolvedFoundryTool:
 	def metadata(self) -> Optional["SchemaDefinition"]:
 		"""Metadata schema of the tool, if any."""
 		return self.details.metadata
-
-	def invoke(self, *args: Any, **kwargs: Any) -> Any:
-		"""Invoke the tool synchronously.
-
-		:param args: Positional arguments to pass to the tool.
-		:type args: Any
-		:return: The result from the tool invocation.
-		:rtype: Any
-		"""
-
-		if not self.invoker:
-			raise NotImplementedError("No invoker function defined for this tool.")
-		if inspect.iscoroutinefunction(self.invoker):
-			# If the invoker is async, check if we're already in an event loop
-			try:
-				asyncio.get_running_loop()
-				# We're in a running loop, can't use asyncio.run()
-				raise RuntimeError(
-					"Cannot call invoke() on an async tool from within an async context. "
-					"Use 'await tool.ainvoke(...)' or 'await tool(...)' instead."
-				)
-			except RuntimeError as e:
-				if "no running event loop" in str(e).lower():
-					# No running loop, safe to use asyncio.run()
-					return asyncio.run(self.invoker(*args, **kwargs))
-				# Re-raise our custom error
-				raise
-		else:
-			return self.invoker(*args, **kwargs)
-
-	async def ainvoke(self, *args: Any, **kwargs: Any) -> Any:
-		"""Invoke the tool asynchronously.
-
-		:param args: Positional arguments to pass to the tool.
-		:type args: Any
-		:return: The result from the tool invocation.
-		:rtype: Any
-		"""
-
-		if not self.invoker:
-			raise NotImplementedError("No invoker function defined for this tool.")
-		if inspect.iscoroutinefunction(self.invoker):
-			return await self.invoker(*args, **kwargs)
-
-		result = self.invoker(*args, **kwargs)
-		# If the result is awaitable (e.g., a coroutine), await it
-		if inspect.iscoroutine(result) or hasattr(result, '__await__'):
-			return await result
-		return result
-
-	def __call__(self, *args: Any, **kwargs: Any) -> Any:
-
-		# Check if the invoker is async
-		if self.invoker and inspect.iscoroutinefunction(self.invoker):
-			# Return coroutine for async context
-			return self.ainvoke(*args, **kwargs)
-
-		# Use sync invoke
-		return self.invoke(*args, **kwargs)
 
 
 @dataclass(frozen=True)
