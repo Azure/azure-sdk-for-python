@@ -102,11 +102,7 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
         for key, tool in foundry_tools.items():
             # this acts like a lock - every task of the same tool waits for the same underlying fetch
             task_or_value = self._cache[key]
-            if isinstance(task_or_value, Awaitable):
-                details_list = await task_or_value
-            else:
-                details_list = task_or_value
-
+            details_list = (await task_or_value) if isinstance(task_or_value, Awaitable) else task_or_value
             for details in details_list:
                 resolved_tools.append(
                     ResolvedFoundryTool(
