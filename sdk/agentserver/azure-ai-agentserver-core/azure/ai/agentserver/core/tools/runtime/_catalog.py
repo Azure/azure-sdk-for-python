@@ -66,12 +66,15 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
         user = await self._user_provider.get_user()
         foundry_tools = {}
         tools_to_fetch = {}
+        fetching_tasks = []
         for t in tools:
             tool = ensure_foundry_tool(t)
             key = self._get_key(user, tool)
             foundry_tools[key] = tool
             if key not in self._cache:
                 tools_to_fetch[key] = tool
+            elif (task := self._cache[key]) and isinstance(task, Awaitable):
+                fetching_tasks.append(task)
 
         # for tools that are not being listed, create a batch task, convert to per-tool resolving tasks, and cache them
         if tools_to_fetch:
@@ -80,16 +83,14 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
             for k in tools_to_fetch.keys():
                 # safe to write cache since it's the only runner in this event loop
-                self._cache[k] = asyncio.create_task(self._as_resolving_task(k, fetched_tools))
+                task = asyncio.create_task(self._as_resolving_task(k, fetched_tools))
+                self._cache[k] = task
+                fetching_tasks.append(task)
 
         try:
             # now we have every tool associated with a task
-            tasks = [
-                task_or_value
-                for key, tool in foundry_tools.items()
-                if (task_or_value := self._cache[key]) and isinstance(task_or_value, Awaitable)
-            ]
-            await asyncio.gather(*tasks)
+            if fetching_tasks:
+                await asyncio.gather(*fetching_tasks)
         except:
             # exception can only be caused by fetching tasks, remove them from cache
             for k in tools_to_fetch.keys():
