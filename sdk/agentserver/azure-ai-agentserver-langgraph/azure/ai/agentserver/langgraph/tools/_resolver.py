@@ -19,9 +19,9 @@ class ResolvedTools(Iterable[BaseTool]):
     :type tools: Iterable[Tuple[ResolvedFoundryTool, BaseTool]]
     """
     def __init__(self, tools: Iterable[Tuple[ResolvedFoundryTool, BaseTool]]):
-        self._by_source_id: Dict[FoundryTool, List[BaseTool]] = defaultdict(list)
+        self._by_source_id: Dict[str, List[BaseTool]] = defaultdict(list)
         for rt, t in tools:
-            self._by_source_id[rt.definition].append(t)
+            self._by_source_id[rt.definition.id].append(t)
 
     @overload
     def get(self, tool: FoundryToolLike, /) -> Iterable[BaseTool]:
@@ -69,7 +69,7 @@ class ResolvedTools(Iterable[BaseTool]):
         tool_list = [tool] if not isinstance(tool, Iterable) else tool
         for t in tool_list:
             ft = ensure_foundry_tool(t)
-            yield from self._by_source_id.get(ft, [])
+            yield from self._by_source_id.get(ft.id, [])
 
     def __iter__(self):
         for tool_list in self._by_source_id.values():

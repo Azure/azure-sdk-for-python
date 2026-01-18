@@ -70,7 +70,7 @@ async def quickstart():
     
     # List all available tools and convert to LangChain format
     print("Fetching tools from Azure AI Tool Client...")
-    tools = await client.list_tools()
+    tools = await client.list_tools_details()
     print(f"Found {len(tools)} tools:")
     for tool in tools:
         print(f"  - {tool.name}: {tool.description}")

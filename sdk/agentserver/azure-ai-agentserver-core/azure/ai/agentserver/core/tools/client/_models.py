@@ -33,7 +33,7 @@ class FoundryToolProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 	A2A = "a2a"
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True, kw_only=True, eq=False)
 class FoundryTool(ABC):
 	"""Definition of a foundry tool including its parameters."""
 	source: FoundryToolSource = field(init=False)
@@ -46,17 +46,9 @@ class FoundryTool(ABC):
 
 	def __str__(self):
 		return self.id
-	
-	def __eq__(self, other: object) -> bool:
-		if not isinstance(other, FoundryTool):
-			return False
-		return self.id == other.id
-	
-	def __hash__(self) -> int:
-		return hash(self.id)
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True, kw_only=True, eq=False)
 class FoundryHostedMcpTool(FoundryTool):
 	"""Foundry MCP tool definition.
 
@@ -65,7 +57,7 @@ class FoundryHostedMcpTool(FoundryTool):
 	"""
 	source: Literal[FoundryToolSource.HOSTED_MCP] = field(init=False, default=FoundryToolSource.HOSTED_MCP)
 	name: str
-	configuration: Optional[Mapping[str, Any]] = field(default=None, compare=False, hash=False)
+	configuration: Optional[Mapping[str, Any]] = None
 
 	@property
 	def id(self) -> str:
@@ -73,7 +65,7 @@ class FoundryHostedMcpTool(FoundryTool):
 		return f"{self.source}:{self.name}"
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True, kw_only=True, eq=False)
 class FoundryConnectedTool(FoundryTool):
 	"""Foundry connected tool definition.
 

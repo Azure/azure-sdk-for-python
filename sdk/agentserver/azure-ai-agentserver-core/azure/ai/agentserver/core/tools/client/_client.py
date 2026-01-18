@@ -1,19 +1,23 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from asyncio import gather
+import asyncio
+import itertools
 from collections import defaultdict
-from typing import Any, AsyncContextManager, Collection, DefaultDict, Dict, List, Mapping, Optional
+from typing import Any, AsyncContextManager, AsyncIterable, Awaitable, Callable, Collection, Coroutine, DefaultDict, Dict, \
+    Iterable, List, \
+    Mapping, Optional, \
+    Tuple
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._models import FoundryTool, FoundryToolDetails, FoundryToolSource, ResolvedFoundryTool, UserInfo
 from ._configuration import FoundryToolClientConfiguration
-from .._exceptions import ToolInvocationError
+from ._models import FoundryTool, FoundryToolDetails, FoundryToolSource, ResolvedFoundryTool, UserInfo
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
+from .._exceptions import ToolInvocationError
 
 
 class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
@@ -50,7 +54,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
     async def list_tools(self,
                          tools: Collection[FoundryTool],
                          agent_name,
-                         user: Optional[UserInfo] = None) -> Mapping[FoundryTool, List[FoundryToolDetails]]:
+                         user: Optional[UserInfo] = None) -> List[ResolvedFoundryTool]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
@@ -61,34 +65,70 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :type user: Optional[UserInfo]
         :param agent_name: Name of the agent requesting the tools.
         :type agent_name: str
-        :return: A mapping of FoundryTool to their corresponding FoundryToolDetails.
-        :rtype: Mapping[~FoundryTool, List[~FoundryToolDetails]]
+        :return: List of resolved Foundry tools.
+        :rtype: List[ResolvedFoundryTool]
         :raises ~azure.ai.agentserver.core.tools._exceptions.OAuthConsentRequiredError:
             Raised when the service requires user OAuth consent.
         :raises ~azure.core.exceptions.HttpResponseError:
             Raised for HTTP communication failures.
         """
+        resolved_tools: List[ResolvedFoundryTool] = []
+        results = await self._list_tools_details_internal(tools, agent_name, user)
+        for definition, details in results:
+            resolved_tools.append(ResolvedFoundryTool(definition=definition, details=details))
+        return resolved_tools
+
+    @distributed_trace_async
+    async def list_tools_details(self,
+                                 tools: Collection[FoundryTool],
+                                 agent_name,
+                                 user: Optional[UserInfo] = None) -> Mapping[str, List[FoundryToolDetails]]:
+        """List all available tools from configured sources.
+
+        Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
+        returning them as ResolvedFoundryTool instances ready for invocation.
+        :param tools: Collection of FoundryTool instances to resolve.
+        :type tools: Collection[~FoundryTool]
+        :param user: Information about the user requesting the tools.
+        :type user: Optional[UserInfo]
+        :param agent_name: Name of the agent requesting the tools.
+        :type agent_name: str
+        :return: Mapping of tool IDs to lists of FoundryToolDetails.
+        :rtype: Mapping[str, List[FoundryToolDetails]]
+        :raises ~azure.ai.agentserver.core.tools._exceptions.OAuthConsentRequiredError:
+            Raised when the service requires user OAuth consent.
+        :raises ~azure.core.exceptions.HttpResponseError:
+            Raised for HTTP communication failures.
+        """
+        resolved_tools: Dict[str, List[FoundryToolDetails]] = defaultdict(list)
+        results = await self._list_tools_details_internal(tools, agent_name, user)
+        for definition, details in results:
+            resolved_tools[definition.id].append(details)
+        return resolved_tools
+
+    async def _list_tools_details_internal(
+            self,
+            tools: Collection[FoundryTool],
+            agent_name,
+            user: Optional[UserInfo] = None,
+    ) -> Iterable[Tuple[FoundryTool, FoundryToolDetails]]:
         tools_by_source: DefaultDict[FoundryToolSource, List[FoundryTool]] = defaultdict(list)
         for t in tools:
             tools_by_source[t.source].append(t)
 
-        tasks = []
+        listing_tools = []
         if FoundryToolSource.HOSTED_MCP in tools_by_source:
             # noinspection PyTypeChecker
-            tasks.append(self._hosted_mcp_tools.list_tools(tools_by_source[FoundryToolSource.HOSTED_MCP]))
+            listing_tools.append(asyncio.create_task(
+                self._hosted_mcp_tools.list_tools(tools_by_source[FoundryToolSource.HOSTED_MCP])
+            ))
         if FoundryToolSource.CONNECTED in tools_by_source:
             # noinspection PyTypeChecker
-            tasks.append(self._connected_tools.list_tools(tools_by_source[FoundryToolSource.CONNECTED],
-                                                          user,
-                                                          agent_name))
-
-        resolved_tools: Dict[FoundryTool, List[FoundryToolDetails]] = {}
-        if tasks:
-            results = await gather(*tasks)
-            for result in results:
-                resolved_tools.update(result)
-
-        return resolved_tools
+            listing_tools.append(asyncio.create_task(
+                self._connected_tools.list_tools(tools_by_source[FoundryToolSource.CONNECTED], user, agent_name)
+            ))
+        iters = await asyncio.gather(*listing_tools)
+        return itertools.chain.from_iterable(iters)
 
     @distributed_trace_async
     async def invoke_tool(self,

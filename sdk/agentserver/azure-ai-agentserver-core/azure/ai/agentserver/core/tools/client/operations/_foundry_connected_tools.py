@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List, Mapping, Optional, cast
+from typing import Any, AsyncIterable, ClassVar, Dict, Iterable, List, Mapping, Optional, Tuple, cast
 
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._base import BaseOperations
 from .._models import FoundryConnectedTool, FoundryToolDetails, FoundryToolSource, InvokeFoundryConnectedToolsResponse, \
@@ -62,14 +63,13 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 	def _convert_listed_tools(
 			cls,
 			resp: ListFoundryConnectedToolsResponse,
-			input_tools: List[FoundryConnectedTool]) -> Mapping[FoundryConnectedTool, List[FoundryToolDetails]]:
+			input_tools: List[FoundryConnectedTool]) -> Iterable[Tuple[FoundryConnectedTool, FoundryToolDetails]]:
 		if resp.error:
 			raise resp.error.as_exception()
 		if not resp.result:
-			return {}
+			return
 
 		tool_map = {(tool.project_connection_id, tool.protocol): tool for tool in input_tools}
-		result: Dict[FoundryConnectedTool, List[FoundryToolDetails]] = {}
 		for server in resp.result.servers:
 			input_tool = tool_map.get((server.project_connection_id, server.protocol))
 			if not input_tool:
@@ -81,9 +81,7 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 					description=tool.description,
 					input_schema=tool.input_schema,
 				)
-				result.setdefault(input_tool, []).append(details)
-
-		return result
+				yield input_tool, details
 
 	def _build_invoke_tool_request(
 			self,
@@ -126,10 +124,11 @@ class BaseFoundryConnectedToolsOperations(BaseOperations, ABC):
 class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 	"""Operations for managing Foundry connected tools."""
 
+	@distributed_trace_async
 	async def list_tools(self,
 						 tools: List[FoundryConnectedTool],
 						 user: Optional[UserInfo],
-						 agent_name: str) -> Mapping[FoundryConnectedTool, List[FoundryToolDetails]]:
+						 agent_name: str) -> Iterable[Tuple[FoundryConnectedTool, FoundryToolDetails]]:
 		"""List connected tools.
 
 		:param tools: List of connected tool definitions.
@@ -138,11 +137,12 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		:type user: Optional[UserInfo]
 		:param agent_name: Name of the agent.
 		:type agent_name: str
-		:return: Details of connected tools.
-		:rtype: Mapping[FoundryConnectedTool, List[FoundryToolDetails]]
+		:return: An async iterable of tuples containing the tool definition and its details.
+		:rtype: AsyncIterable[Tuple[FoundryConnectedTool, FoundryToolDetails]]
 		"""
 		if not tools:
-			return {}
+			return []
+
 		request = self._build_list_tools_request(tools, user, agent_name)
 		response = await self._send_request(request)
 		async with response:
@@ -151,6 +151,7 @@ class FoundryConnectedToolsOperations(BaseFoundryConnectedToolsOperations):
 		return self._convert_listed_tools(tools_response, tools)
 
 
+	@distributed_trace_async
 	async def invoke_tool(
 		self,
 		tool: ResolvedFoundryTool,

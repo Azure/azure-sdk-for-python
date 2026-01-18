@@ -2,19 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, ClassVar, Dict, List, Mapping, TYPE_CHECKING, cast
+from typing import Any, AsyncIterable, ClassVar, Dict, Iterable, List, Mapping, TYPE_CHECKING, Tuple, cast
 
 from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
-from azure.ai.agentserver.core.tools.client._models import (
-    FoundryHostedMcpTool,
-    FoundryToolSource,
-    ResolvedFoundryTool,
-    FoundryToolDetails,
-    ListFoundryHostedMcpToolsResponse,
-)
-from azure.ai.agentserver.core.tools.client.operations._base import BaseOperations
+from ._base import BaseOperations
+from .._models import FoundryHostedMcpTool, FoundryToolDetails, FoundryToolSource, ListFoundryHostedMcpToolsResponse, \
+	ResolvedFoundryTool
+from ..._exceptions import ToolInvocationError
 
 
 class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
@@ -75,10 +71,9 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 	@staticmethod
 	def _convert_listed_tools(
 			response: ListFoundryHostedMcpToolsResponse,
-			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, List[FoundryToolDetails]]:
+			allowed_tools: List[FoundryHostedMcpTool]) -> Iterable[Tuple[FoundryHostedMcpTool, FoundryToolDetails]]:
 
 		allowlist = {tool.name: tool for tool in allowed_tools}
-		result = {}
 		for tool in response.result.tools:
 			definition = allowlist.get(tool.name)
 			if not definition:
@@ -88,9 +83,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 				description=tool.description,
 				metadata=tool.meta,
 				input_schema=tool.input_schema)
-			result[definition] = [details]
-
-		return result
+			yield definition, details
 
 	def _build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
 		if tool.definition.source != FoundryToolSource.HOSTED_MCP:
@@ -129,26 +122,30 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 class FoundryMcpToolsOperations(BaseFoundryHostedMcpToolsOperations):
 	"""Operations for Foundry-hosted MCP tools."""
 
+	@distributed_trace_async
 	async def list_tools(
 			self,
-			allowed_tools: List[FoundryHostedMcpTool]) -> Mapping[FoundryHostedMcpTool, List[FoundryToolDetails]]:
+			allowed_tools: List[FoundryHostedMcpTool]
+	) -> Iterable[Tuple[FoundryHostedMcpTool, FoundryToolDetails]]:
 		"""List MCP tools.
 
 		:param allowed_tools: List of allowed MCP tools to filter.
 		:type allowed_tools: List[FoundryHostedMcpTool]
-		:return: Details of MCP tools.
-		:rtype: Mapping[FoundryHostedMcpTool, List[FoundryToolDetails]]
+		:return: An async iterable of tuples containing tool definitions and their details.
+		:rtype: AsyncIterable[Tuple[FoundryHostedMcpTool, FoundryToolDetails]]
 		"""
 		if not allowed_tools:
-			return {}
+			return []
 
 		request = self._build_list_tools_request()
 		response = await self._send_request(request)
 		async with response:
 			json_response = self._extract_response_json(response)
 			tools_response = ListFoundryHostedMcpToolsResponse.model_validate(json_response)
+
 		return self._convert_listed_tools(tools_response, allowed_tools)
 
+	@distributed_trace_async
 	async def invoke_tool(
 		self,
 		tool: ResolvedFoundryTool,

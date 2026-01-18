@@ -72,7 +72,7 @@ async def agent_run(context: AgentRunContext):
             "I am mock agent with no intelligence in stream mode.", context
         )
 
-    tool = await my_agent.get_tool_client().list_tools()
+    tool = await my_agent.get_tool_client().list_tools_details()
     tool_list = [t.name for t in tool]
     # Build assistant output content
     output_content = [
