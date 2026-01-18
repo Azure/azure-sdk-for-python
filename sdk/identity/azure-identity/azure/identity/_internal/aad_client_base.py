@@ -5,11 +5,8 @@
 import abc
 import base64
 import json
-import logging
-import os
 import time
 from uuid import uuid4
-from urllib.parse import urlparse
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict, cast
 
 from msal import TokenCache
@@ -22,7 +19,6 @@ from azure.core.exceptions import ClientAuthenticationError
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
-from .._constants import EnvironmentVariables
 
 
 if TYPE_CHECKING:
@@ -34,12 +30,10 @@ if TYPE_CHECKING:
     PolicyType = Union[AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy]
     TransportType = Union[AsyncHttpTransport, HttpTransport]
 
-_LOGGER = logging.getLogger(__name__)
-
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
 
-class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
+class AadClientBase(abc.ABC):
     _POST = ["POST"]
 
     def __init__(
@@ -51,12 +45,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         cae_cache: Optional[TokenCache] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
-
-        # False indicates uninitialized. Actual value is str or None.
-        self._regional_authority: Optional[Union[str, bool]] = False
 
         self._tenant_id = tenant_id
         self._client_id = client_id
@@ -310,7 +301,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         user_assertion: str,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> HttpRequest:
         data = {
             "assertion": user_assertion,
@@ -365,7 +356,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         refresh_token: str,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
@@ -392,43 +383,11 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         request = self._post(data, **kwargs)
         return request
 
-    def _get_region_discovery_request(self) -> HttpRequest:
-        url = "http://169.254.169.254/metadata/instance/compute/location?format=text&api-version=2021-01-01"
-        request = HttpRequest("GET", url, headers={"Metadata": "true"})
-        return request
-
-    def _process_region_discovery_response(self, response: PipelineResponse) -> Optional[str]:
-        if response.http_response.status_code == 200:
-            region = response.http_response.text().strip()
-            if region:
-                return region
-        _LOGGER.warning("IMDS returned empty region")
-        return None
-
-    def _build_regional_authority_url(self, regional_authority: str) -> Optional[str]:
-        central_host = urlparse(self._authority).hostname
-        if not central_host:
-            return None
-
-        # This mirrors the regional authority logic in MSAL.
-        if central_host in ("login.microsoftonline.com", "login.microsoft.com", "login.windows.net", "sts.windows.net"):
-            regional_host = f"{regional_authority}.login.microsoft.com"
-        else:
-            regional_host = f"{regional_authority}.{central_host}"
-        return f"https://{regional_host}"
-
-    def _get_regional_authority_from_env(self) -> Optional[str]:
-        regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME) or os.environ.get(
-            "MSAL_FORCE_REGION"
-        )  # For parity with creds that rely on MSAL, we check this var too.
-        return regional_authority.lower() if regional_authority else None
-
     def _get_token_url(self, **kwargs: Any) -> str:
         tenant = resolve_tenant(
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
-        authority = cast(str, self._regional_authority) if self._regional_authority else self._authority
-        return "/".join((authority, tenant, "oauth2/v2.0/token"))
+        return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
     def _post(self, data: Dict, **kwargs: Any) -> HttpRequest:
         url = self._get_token_url(**kwargs)

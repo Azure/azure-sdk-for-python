@@ -32,6 +32,7 @@ from .._generated.models import (
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPagedAsync,
+    ConfigurationSettingPagedAsync,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
@@ -248,7 +249,7 @@ class AzureAppConfigurationClient:
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
         command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
-        return AsyncItemPaged(
+        return ConfigurationSettingPagedAsync(
             command,
             key=key_filter,
             label=label_filter,
