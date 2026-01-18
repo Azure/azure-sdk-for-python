@@ -81,9 +81,9 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
             # Awaitable[Mapping[str, List[FoundryToolDetails]]]
             fetched_tools = asyncio.create_task(self._fetch_tools(tools_to_fetch.values(), user))
 
-            for k in tools_to_fetch.keys():
+            for k, t in tools_to_fetch.items():
                 # safe to write cache since it's the only runner in this event loop
-                task = asyncio.create_task(self._as_resolving_task(k, fetched_tools))
+                task = asyncio.create_task(self._per_tool_fetching_task(k, t, fetched_tools))
                 self._cache[k] = task
                 fetching_tasks.append(task)
 
@@ -113,15 +113,16 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
 
         return resolved_tools
 
-    async def _as_resolving_task(
+    async def _per_tool_fetching_task(
             self,
-            tool_id: str,
+            cache_key: Any,
+            tool: FoundryTool,
             fetching: Awaitable[Mapping[str, List[FoundryToolDetails]]]
     ) -> List[FoundryToolDetails]:
         details = await fetching
-        details_list = details.get(tool_id, [])
+        details_list = details.get(tool.id, [])
         # replace the task in cache with the actual value to optimize memory usage
-        self._cache[tool_id] = details_list
+        self._cache[cache_key] = details_list
         return details_list
 
     @abstractmethod
