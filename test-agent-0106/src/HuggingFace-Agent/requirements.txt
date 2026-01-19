@@ -1,0 +1,15 @@
+# Core dependencies for Azure AI Agent Server
+azure-ai-agentserver-agentframework>=1.0.0b7
+azure-ai-agentserver-core>=1.0.0b7
+agent-framework-azure-ai>=1.0.0b251112
+agent-framework-core>=1.0.0b251112
+
+# Azure dependencies
+azure-identity>=1.25.1
+azure-ai-projects>=1.1.0b4
+
+# Utilities
+python-dotenv==1.1.1
+
+# OpenTelemetry (for monitoring)
+opentelemetry-exporter-otlp-proto-grpc>=1.36.0
