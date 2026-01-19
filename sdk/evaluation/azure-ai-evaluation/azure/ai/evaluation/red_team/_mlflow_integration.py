@@ -36,6 +36,7 @@ from ._red_team_result import (
     OutputItemsList,
 )
 from ._utils.logging_utils import log_error
+from ._utils.retry_utils import create_standard_retry_manager
 
 
 class MLflowIntegration:
@@ -60,6 +61,8 @@ class MLflowIntegration:
         self._run_id_override: Optional[str] = None
         self._eval_id_override: Optional[str] = None
         self._created_at_override: Optional[int] = None
+        # Initialize retry manager for handling transient failures
+        self.retry_manager = create_standard_retry_manager(logger=logger)
 
     def set_run_identity_overrides(
         self,
@@ -350,31 +353,44 @@ class MLflowIntegration:
 
             if self._one_dp_project:
                 try:
-                    create_evaluation_result_response = (
-                        self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
+                    # Create evaluation result with retry logic to handle transient failures
+                    @self.retry_manager.create_retry_decorator(context="create_evaluation_result")
+                    def create_result_with_retry():
+                        return self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
                             name=str(uuid.uuid4()),
                             path=tmpdir,
                             metrics=metrics,
                             result_type=ResultType.REDTEAM,
                         )
-                    )
 
-                    update_run_response = self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
-                        name=eval_run.id,
-                        red_team=RedTeamUpload(
-                            id=eval_run.id,
-                            display_name=eval_run.display_name
-                            or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
-                            status="Completed",
-                            outputs={
-                                "evaluationResultId": create_evaluation_result_response.id,
-                            },
-                            properties=properties,
-                        ),
-                    )
+                    create_evaluation_result_response = create_result_with_retry()
+                    self.logger.debug(f"Created evaluation result: {create_evaluation_result_response.id}")
+
+                    # Update run with retry logic to handle race conditions and transient failures
+                    # The update may fail if called too quickly after create_evaluation_result
+                    @self.retry_manager.create_retry_decorator(context="update_red_team_run")
+                    def update_run_with_retry():
+                        return self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
+                            name=eval_run.id,
+                            red_team=RedTeamUpload(
+                                id=eval_run.id,
+                                display_name=eval_run.display_name
+                                or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                                status="Completed",
+                                outputs={
+                                    "evaluationResultId": create_evaluation_result_response.id,
+                                },
+                                properties=properties,
+                            ),
+                        )
+
+                    update_run_response = update_run_with_retry()
                     self.logger.debug(f"Updated UploadRun: {update_run_response.id}")
                 except Exception as e:
-                    self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
+                    self.logger.error(
+                        f"Failed to upload red team results to AI Foundry after retries: {str(e)}. "
+                        "The run may remain in 'starting' state."
+                    )
             else:
                 # Log the entire directory to MLFlow
                 try:
