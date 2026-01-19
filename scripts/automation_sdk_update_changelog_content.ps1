@@ -11,11 +11,11 @@
     Absolute path string where SDK code is. Optional.
 #>
 param(
-    [Parameter(Mandatory=$true, HelpMessage="Path to the package")]
+    [Parameter(Mandatory = $true, HelpMessage = "Path to the package")]
     [string]
     $PackagePath,
 
-    [Parameter(Mandatory=$false, HelpMessage="Absolute path string where SDK code is")]
+    [Parameter(Mandatory = $false, HelpMessage = "Absolute path string where SDK code is")]
     [string]
     $SdkRepoPath
 )
@@ -42,7 +42,20 @@ if (-not (Test-Path $PackagePath)) {
 $absolutePackagePath = Resolve-Path -Path $PackagePath
 Write-Host "absolutePackagePath: $absolutePackagePath"
 
-$command = "python -m packaging_tools.sdk_changelog --package-path $absolutePackagePath"
+# Determine the correct Python path based on OS
+if ($IsWindows -or ($PSVersionTable.PSEdition -eq 'Desktop')) {
+    $pythonPath = ".venv\Scripts\python.exe"
+}
+else {
+    $pythonPath = ".venv/bin/python"
+}
+
+# Validate virtual environment Python, fall back to global python if not found
+if (-not (Test-Path $pythonPath)) {
+    Write-Host "Virtual environment Python not found at '$pythonPath'. Falling back to 'python' on PATH."
+    $pythonPath = "python"
+}
+$command = "$pythonPath -m packaging_tools.sdk_changelog --package-path $absolutePackagePath"
 Write-Host "running command: $command"
 
 # Capture output first
@@ -56,7 +69,8 @@ $outputString = $output | Out-String
 
 if ($outputString -match "\[ERROR\]") {
     exit 1
-} else {
+}
+else {
     exit 0
 }
 

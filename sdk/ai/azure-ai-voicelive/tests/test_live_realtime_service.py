@@ -867,7 +867,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
-            session = RequestSession(turn_detection={"type": "none"})
+            session = RequestSession(turn_detection=None)
 
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
