@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.edgemarketplace import EdgeMarketplaceClient
+from azure.mgmt.edgemarketplace import EdgeMarketplaceMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = EdgeMarketplaceClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = EdgeMarketplaceMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

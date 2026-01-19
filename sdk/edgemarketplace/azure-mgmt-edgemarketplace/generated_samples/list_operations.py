@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.edgemarketplace import EdgeMarketplaceClient
+from azure.mgmt.edgemarketplace import EdgeMarketplaceMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.edgemarketplace import EdgeMarketplaceClient
 
 
 def main():
-    client = EdgeMarketplaceClient(
+    client = EdgeMarketplaceMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

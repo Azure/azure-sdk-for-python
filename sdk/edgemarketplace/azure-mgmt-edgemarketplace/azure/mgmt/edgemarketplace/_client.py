@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import EdgeMarketplaceClientConfiguration
+from ._configuration import EdgeMarketplaceMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import OffersOperations, Operations, PublishersOperations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EdgeMarketplaceClient:
+class EdgeMarketplaceMgmtClient:
     """Edge marketplace extensions.
 
     :ivar operations: Operations operations
@@ -67,7 +67,7 @@ class EdgeMarketplaceClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = EdgeMarketplaceClientConfiguration(
+        self._config = EdgeMarketplaceMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

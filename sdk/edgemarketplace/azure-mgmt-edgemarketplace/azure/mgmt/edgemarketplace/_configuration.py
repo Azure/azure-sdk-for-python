@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EdgeMarketplaceClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for EdgeMarketplaceClient.
+class EdgeMarketplaceMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for EdgeMarketplaceMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

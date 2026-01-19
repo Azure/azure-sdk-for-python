@@ -47,7 +47,7 @@ from ...operations._operations import (
     build_publishers_list_by_subscription_request,
     build_publishers_list_request,
 )
-from .._configuration import EdgeMarketplaceClientConfiguration
+from .._configuration import EdgeMarketplaceMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -61,14 +61,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgemarketplace.aio.EdgeMarketplaceClient`'s
+        :class:`~azure.mgmt.edgemarketplace.aio.EdgeMarketplaceMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeMarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeMarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -165,14 +165,14 @@ class OffersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgemarketplace.aio.EdgeMarketplaceClient`'s
+        :class:`~azure.mgmt.edgemarketplace.aio.EdgeMarketplaceMgmtClient`'s
         :attr:`offers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeMarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeMarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -835,14 +835,14 @@ class PublishersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgemarketplace.aio.EdgeMarketplaceClient`'s
+        :class:`~azure.mgmt.edgemarketplace.aio.EdgeMarketplaceMgmtClient`'s
         :attr:`publishers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeMarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeMarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
