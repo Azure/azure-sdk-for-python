@@ -17,11 +17,11 @@ if TYPE_CHECKING:  # pragma: no cover
 def from_langgraph(
     agent,
     credentials: Optional["AsyncTokenCredential"] = None,
-    state_converter: Optional["models.LanggraphStateConverter"] = None,
+    converter: Optional["models.response_api_converter.ResponseAPIConverter"] = None,
     **kwargs: Any
 ) -> "LangGraphAdapter":
 
-    return LangGraphAdapter(agent, credentials=credentials, state_converter=state_converter, **kwargs)
+    return LangGraphAdapter(agent, credentials=credentials, converter=converter, **kwargs)
 
 
 __all__ = ["from_langgraph", "ToolClient"]
