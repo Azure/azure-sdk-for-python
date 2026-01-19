@@ -28,6 +28,10 @@ logger = logging.getLogger(__name__)
 class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     """Base class for custom async polling methods."""
 
+    _status: Optional[str]
+    _termination_statuses: List[str]
+    _polling_interval: int
+
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
@@ -214,8 +218,13 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
+        # Convert IO to bytes if needed
+        if isinstance(body, bytes):
+            body_bytes = body
+        else:
+            body_bytes = body.read()  # type: ignore[union-attr]
         upload_test_file_operation = await super()._begin_upload_test_file(
-            test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs
+            test_id=test_id, file_name=file_name, body=body_bytes, file_type=file_type, **kwargs
         )
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
