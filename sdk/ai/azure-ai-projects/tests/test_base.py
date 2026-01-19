@@ -46,6 +46,7 @@ servicePreparer = functools.partial(
     "",
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_model_deployment_name="gpt-4o",
+    azure_ai_agent_name="sanitized-agent-name",
     image_generation_model_deployment_name="gpt-image-1-mini",
     container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     container_ingress_subdomain_suffix="00000",
