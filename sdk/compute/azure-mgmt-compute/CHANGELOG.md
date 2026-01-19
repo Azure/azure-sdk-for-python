@@ -2,7 +2,13 @@
 
 ## 37.2.0 (2026-01-19)
 
-change log generation was timeout!!! You need to write it manually!!!
+### Features Added
+
+  - Added operation group GalleryScriptVersionsOperations
+  - Added operation group GalleryScriptsOperations
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter storage_account_strategy
+  - Model GalleryArtifactPublishingProfileBase has a new parameter storage_account_strategy
+  - Model GalleryImageVersionPublishingProfile has a new parameter storage_account_strategy
 
 ## 37.1.0 (2025-11-17)
 
