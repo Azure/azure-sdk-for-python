@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import io
 import logging
+import uuid
 from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.evaluation._common.onedp import ProjectsClient as RestEvaluationServiceClient
@@ -17,6 +19,7 @@ from azure.ai.evaluation._common.onedp.models import (
     RedTeamUpload,
 )
 from azure.storage.blob import ContainerClient
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from .utils import upload
 
 LOGGER = logging.getLogger(__name__)
@@ -167,3 +170,63 @@ class EvaluationServiceOneDPClient:
         update_run_response = self.rest_client.red_teams.upload_update_run(name=name, redteam=red_team, **kwargs)
 
         return update_run_response
+
+    def test_storage_upload(self, **kwargs) -> bool:
+        """Test storage account connectivity by performing a minimal upload operation.
+
+        This method validates that the storage account is accessible and the credentials
+        have the necessary permissions before proceeding with the full evaluation workflow.
+
+        :param kwargs: Additional keyword arguments to pass to the underlying API calls
+        :return: True if the test upload succeeds
+        :rtype: bool
+        :raises EvaluationException: If the storage account is inaccessible or lacks permissions
+        """
+        LOGGER.debug("Testing storage account connectivity...")
+
+        try:
+            # Create a unique test identifier to avoid conflicts
+            test_id = str(uuid.uuid4())[:8]
+            test_name = f"connectivity-test-{test_id}"
+            test_version = "1"
+
+            # Start a pending upload to get storage credentials
+            start_pending_upload_response = self.rest_client.evaluation_results.start_pending_upload(
+                name=test_name,
+                version=test_version,
+                body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
+                **kwargs,
+            )
+
+            # Attempt to upload a minimal test blob directly (no temp files needed)
+            with ContainerClient.from_container_url(
+                start_pending_upload_response.blob_reference_for_consumption.credential.sas_uri
+            ) as container_client:
+                # Use BytesIO for efficient in-memory test data
+                test_data = io.BytesIO(b"connectivity test")
+                container_client.upload_blob(data=test_data, name="test.txt", overwrite=True)
+                container_client.delete_blob(name="test.txt")
+
+            LOGGER.debug("Storage account connectivity test successful")
+            return True
+
+        except Exception as e:
+            LOGGER.error(f"Storage account connectivity test failed: {str(e)}")
+
+            # Re-raise with helpful context
+            error_msg = (
+                f"Failed to connect to Azure Blob Storage. Error: {str(e)}. "
+                "Please verify that:\n"
+                "  1. The storage account exists and is accessible\n"
+                "  2. Your credentials have the necessary permissions (Storage Blob Data Contributor role)\n"
+                "  3. Network access to the storage account is not blocked by firewall rules\n"
+                "  4. The Azure AI project is properly configured"
+            )
+
+            raise EvaluationException(
+                message=error_msg,
+                internal_message=f"Storage connectivity test failed: {e}",
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.UPLOAD_ERROR,
+                blame=ErrorBlame.SYSTEM_ERROR,
+            )

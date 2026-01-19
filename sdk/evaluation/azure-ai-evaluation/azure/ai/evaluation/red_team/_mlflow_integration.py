@@ -163,6 +163,26 @@ class MLflowIntegration:
 
             return eval_run
 
+    def test_storage_upload(self) -> bool:
+        """Test storage account connectivity before starting the scan.
+
+        This method validates that storage upload will work by testing with the
+        appropriate client (OneDP or MLFlow) depending on project configuration.
+
+        :return: True if the test upload succeeds
+        :rtype: bool
+        :raises EvaluationException: If the storage account is inaccessible or lacks permissions
+        """
+        if self._one_dp_project:
+            # For OneDP projects, test using the evaluation client
+            return self.generated_rai_client._evaluation_onedp_client.test_storage_upload()
+        else:
+            # For non-OneDP projects (MLFlow), we don't have a direct upload test
+            # Storage is tested when we create artifacts during log_artifact
+            # So we just return True here and let the actual upload fail if there are issues
+            self.logger.debug("Storage upload test skipped for non-OneDP project (will be tested during actual upload)")
+            return True
+
     async def log_redteam_results_to_mlflow(
         self,
         redteam_result: RedTeamResult,
