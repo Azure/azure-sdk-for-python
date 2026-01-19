@@ -7,7 +7,8 @@ from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
 from .id_generator.foundry_id_generator import FoundryIdGenerator
 from .id_generator.id_generator import IdGenerator
-from ...client.tools._model_base import UserInfo
+from ...tools import UserInfo
+
 logger = get_logger()
 
 
@@ -65,12 +66,14 @@ class AgentRunContext:
 
     def get_tools(self) -> list:
         # request tools take precedence over agent tools
+        # TODO: remove this method
         request_tools = self.request.get("tools", [])
         if not request_tools:
             return self._agent_tools
         return request_tools
 
     def get_user_info(self) -> UserInfo:
+        # TODO: remove this method
         return self._user_info
 
 

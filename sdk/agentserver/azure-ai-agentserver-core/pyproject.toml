@@ -30,6 +30,7 @@ dependencies = [
     "starlette>=0.45.0",
     "uvicorn>=0.31.0",
     "aiohttp>=3.13.0", # used by azure-identity aio
+    "cachetools"
 ]
 
 [build-system]

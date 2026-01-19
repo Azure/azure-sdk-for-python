@@ -12,6 +12,8 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
@@ -25,17 +27,19 @@ from starlette.types import ASGIApp
 
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 
+from ._context import AgentServerContext
 from  ..models import projects as project_models
 from ..constants import Constants
-from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, request_context
+from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
 from ..models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
 from .common.agent_run_context import AgentRunContext
 
-from ..client.tools.aio._client import AzureAIToolClient
-from ..client.tools._utils._model_base import ToolDefinition, UserInfo
+from ..tools import DefaultFoundryToolRuntime, FoundryTool, FoundryToolClient, FoundryToolRuntime, UserInfo, \
+    UserInfoContextMiddleware
+from ..utils._credential import AsyncTokenCredentialAdapter
 
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"
@@ -47,18 +51,15 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         self.agent = agent
 
     async def dispatch(self, request: Request, call_next):
-        user_info: Optional[UserInfo] = None
         if request.url.path in ("/runs", "/responses"):
             try:
-                user_info = self.set_user_info_to_context_var(request)
                 self.set_request_id_to_context_var(request)
                 payload = await request.json()
             except Exception as e:
                 logger.error(f"Invalid JSON payload: {e}")
                 return JSONResponse({"error": f"Invalid JSON payload: {e}"}, status_code=400)
             try:
-                agent_tools = self.agent.tools if self.agent else []
-                request.state.agent_run_context = AgentRunContext(payload, user_info=user_info, agent_tools=agent_tools)
+                request.state.agent_run_context = AgentRunContext(payload)
                 self.set_run_context_to_context_var(request.state.agent_run_context)
             except Exception as e:
                 logger.error(f"Context build failed: {e}.", exc_info=True)
@@ -93,37 +94,16 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         ctx.update(res)
         request_context.set(ctx)
 
-    def set_user_info_to_context_var(self, request) -> Optional[UserInfo]:
-        user_info: Optional[UserInfo] = None
-        try:
-            object_id_header = request.headers.get("x-aml-oid", None)
-            tenant_id_header = request.headers.get("x-aml-tid", None)
-            if not object_id_header and not tenant_id_header:
-                return None
-            user_info = UserInfo(
-                objectId=object_id_header,
-                tenantId=tenant_id_header
-            )
-
-        except Exception as e:
-            logger.error(f"Failed to parse X-User-Info header: {e}", exc_info=True)
-        if user_info:
-            ctx = request_context.get() or {}
-            for key, value in user_info.to_dict().items():
-                if key == "objectId":
-                    continue  # skip user objectId
-                ctx[f"azure.ai.agentserver.user.{key}"] = str(value)
-            request_context.set(ctx)
-        return user_info
-
 
 class FoundryCBAgent:
-    _cached_tools_endpoint: Optional[str] = None
-    _cached_agent_name: Optional[str] = None
-
-    def __init__(self, credentials: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
-        self.credentials = credentials or AsyncDefaultTokenCredential()
-        self.tools = kwargs.get("tools", [])
+    def __init__(self,
+                 credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
+                 project_endpoint: Optional[str] = None) -> None:
+        self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
+        project_endpoint = get_project_endpoint() or project_endpoint
+        if not project_endpoint:
+            raise ValueError("Project endpoint is required.")
+        AgentServerContext(DefaultFoundryToolRuntime(project_endpoint, self.credentials))
 
         async def runs_endpoint(request):
             # Set up tracing context and span
@@ -202,6 +182,7 @@ class FoundryCBAgent:
         ]
 
         self.app = Starlette(routes=routes)
+        UserInfoContextMiddleware.install(self.app)
         self.app.add_middleware(
             CORSMiddleware,
             allow_origins=["*"],
@@ -424,91 +405,17 @@ class FoundryCBAgent:
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
 
-    @staticmethod
-    def _configure_endpoint() -> tuple[str, Optional[str]]:
-        """Configure and return the tools endpoint and agent name from environment variables.
-
-        :return: A tuple of (tools_endpoint, agent_name).
-        :rtype: tuple[str, Optional[str]]
-        """
-        if not FoundryCBAgent._cached_tools_endpoint:
-            project_endpoint_format: str = "https://{account_name}.services.ai.azure.com/api/projects/{project_name}"
-            workspace_endpoint = os.getenv(Constants.AZURE_AI_WORKSPACE_ENDPOINT)
-            tools_endpoint = os.getenv(Constants.AZURE_AI_TOOLS_ENDPOINT)
-            project_endpoint = os.getenv(Constants.AZURE_AI_PROJECT_ENDPOINT)
-
-            if not tools_endpoint:
-                # project endpoint corrupted could have been an overridden environment variable
-                # try to reconstruct tools endpoint from workspace endpoint
-                # Robustly reconstruct project_endpoint from workspace_endpoint if needed.
-
-                if workspace_endpoint:
-                    # Expected format:
-                    # "https://<region>.api.azureml.ms/subscriptions/<subscription>/resourceGroups/<region>/
-                    # providers/Microsoft.MachineLearningServices/workspaces/<account_name>@<project_name>@AML"
-                    from urllib.parse import urlparse
-                    parsed_url = urlparse(workspace_endpoint)
-                    path_parts = [p for p in parsed_url.path.split('/') if p]
-                    # Find the 'workspaces' part and extract account_name@project_name@AML
-                    try:
-                        workspaces_idx = path_parts.index("workspaces")
-                        if workspaces_idx + 1 >= len(path_parts):
-                            raise ValueError(
-                                f"Workspace endpoint path does not contain workspace info "
-                                f"after 'workspaces': {workspace_endpoint}"
-                            )
-                        workspace_info = path_parts[workspaces_idx + 1]
-                        workspace_parts = workspace_info.split('@')
-                        if len(workspace_parts) < 2:
-                            raise ValueError(
-                                f"Workspace info '{workspace_info}' does not contain both account_name "
-                                f"and project_name separated by '@'."
-                            )
-                        account_name = workspace_parts[0]
-                        project_name = workspace_parts[1]
-                        # Documented expected format for PROJECT_ENDPOINT_FORMAT:
-                        # "https://<account_name>.api.azureml.ms/api/projects/{project_name}"
-                        project_endpoint = project_endpoint_format.format(
-                            account_name=account_name, project_name=project_name
-                        )
-                    except (ValueError, IndexError) as e:
-                        raise ValueError(
-                            f"Failed to reconstruct project endpoint from workspace endpoint "
-                            f"'{workspace_endpoint}': {e}"
-                        ) from e
-                    # should never reach here
-                    logger.info("Reconstructed tools endpoint from project endpoint %s", project_endpoint)
-                    tools_endpoint = project_endpoint
-
-                tools_endpoint = project_endpoint
-
-            if not tools_endpoint:
-                raise ValueError(
-                    "Project endpoint needed for Azure AI tools endpoint is not found. "
-                )
-            FoundryCBAgent._cached_tools_endpoint = tools_endpoint
-
-            agent_name = os.getenv(Constants.AGENT_NAME)
-            if agent_name is None:
-                if os.getenv("CONTAINER_APP_NAME"):
-                    raise ValueError(
-                        "Agent name needed for Azure AI hosted agents is not found. "
-                    )
-                agent_name = "$default"
-            FoundryCBAgent._cached_agent_name = agent_name
-
-        return FoundryCBAgent._cached_tools_endpoint, FoundryCBAgent._cached_agent_name
-
     def get_tool_client(
-            self, tools: Optional[list[ToolDefinition]], user_info: Optional[UserInfo]
-        ) -> AzureAIToolClient:
+            self, tools: Optional[list[FoundryTool]], user_info: Optional[UserInfo]
+        ) -> FoundryToolClient:
+        # TODO: remove this method
         logger.debug("Creating AzureAIToolClient with tools: %s", tools)
         if not self.credentials:
             raise ValueError("Credentials are required to create Tool Client.")
 
         tools_endpoint, agent_name = self._configure_endpoint()
 
-        return AzureAIToolClient(
+        return FoundryToolClient(
             endpoint=tools_endpoint,
             credential=self.credentials,
             tools=tools,

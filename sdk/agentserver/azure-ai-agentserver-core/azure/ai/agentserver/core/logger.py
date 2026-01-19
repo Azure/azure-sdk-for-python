@@ -43,6 +43,9 @@ def get_dimensions():
 
 
 def get_project_endpoint():
+    project_endpoint = os.environ.get(Constants.AZURE_AI_PROJECT_ENDPOINT)
+    if project_endpoint:
+        return project_endpoint
     project_resource_id = os.environ.get(Constants.AGENT_PROJECT_RESOURCE_ID)
     if project_resource_id:
         last_part = project_resource_id.split("/")[-1]

@@ -3,26 +3,28 @@
 # ---------------------------------------------------------
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from typing import TYPE_CHECKING, Optional, Any
+from typing import Optional, TYPE_CHECKING
 
+from azure.ai.agentserver.core.application import PackageMetadata, set_current_app
+from ._context import LanggraphRunContext
 from ._version import VERSION
-from .tool_client import ToolClient
 from .langgraph import LangGraphAdapter
 
 if TYPE_CHECKING:  # pragma: no cover
-    from . import models
+    from .models.response_api_converter import ResponseAPIConverter
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 def from_langgraph(
     agent,
     credentials: Optional["AsyncTokenCredential"] = None,
-    converter: Optional["models.response_api_converter.ResponseAPIConverter"] = None,
-    **kwargs: Any
+    converter: Optional["ResponseAPIConverter"] = None
 ) -> "LangGraphAdapter":
 
-    return LangGraphAdapter(agent, credentials=credentials, converter=converter, **kwargs)
+    return LangGraphAdapter(agent, credentials=credentials, converter=converter)
 
 
-__all__ = ["from_langgraph", "ToolClient"]
+__all__ = ["from_langgraph", "LanggraphRunContext"]
 __version__ = VERSION
+
+set_current_app(PackageMetadata.from_dist("azure-ai-agentserver-langgraph"))
