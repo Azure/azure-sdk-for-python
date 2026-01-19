@@ -297,7 +297,7 @@ class TestToolCallAccuracyEvaluator:
 
         assert "Invalid score value" in str(exc_info.value)
 
-    def test_evaluate_tools_some_not_applicable(self, mock_model_config):
+    def test_evaluate_tools_some_missing_tool_definitions(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
@@ -331,21 +331,7 @@ class TestToolCallAccuracyEvaluator:
                         }
                     },
                 },
-            },
-            {
-                "name": "buy_jacket",
-                "type": "another_built_in",  # This tool will be filtered out
-                "description": "Buy a jacket of the given type.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "type": {
-                            "type": "string",
-                            "description": "The type of jacket to buy.",
-                        }
-                    },
-                },
-            },
+            }
         ]
         
         # Should throw an exception because buy_jacket definition has invalid type (not "function")
@@ -372,15 +358,15 @@ class TestToolCallAccuracyEvaluator:
         ]
         tool_definitions = [
             {
-                "name": "fetch_weather",
-                "type": "some_built_in",  # Not a 'function' type
-                "description": "Fetches the weather information for the specified location.",
+                "name": "buy_jacket",
+                "type": "another_built_in",
+                "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "location": {
+                        "type": {
                             "type": "string",
-                            "description": "The location to fetch weather for.",
+                            "description": "The type of jacket to buy.",
                         }
                     },
                 },

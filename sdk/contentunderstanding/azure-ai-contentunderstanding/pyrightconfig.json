@@ -1,0 +1,12 @@
+{
+  "reportTypeCommentUsage": true,
+  "reportMissingImports": false,
+  "reportAttributeAccessIssue": "none",
+  "reportGeneralTypeIssues": "warning",
+  "reportOverlappingOverload": "none",
+  "exclude": [
+    "**/azure/ai/contentunderstanding/_operations/_operations.py",
+    "**/azure/ai/contentunderstanding/aio/_operations/_operations.py"
+  ]
+}
+
