@@ -87,7 +87,6 @@ class CodegenTestPR:
         self.next_version = ""
         self.test_result = ""
         self.pr_number = 0
-        self.tag_is_stable = False
         self.has_test = False
         self.version_suggestion = ""  # if can't calculate next version, give a suggestion
 
@@ -147,7 +146,6 @@ class CodegenTestPR:
             "specFolder": self.spec_repo,
             file_name: [self.readme_local_folder()],
             "targetReleaseDate": self.target_release_date,
-            "allowInvalidNextVersion": True,
             "runMode": "auto-release",
         }
         log(str(input_data))
@@ -164,8 +162,6 @@ class CodegenTestPR:
         print_check(f"sdk_generator {self.autorest_result} {self.autorest_result}")
 
         generate_result = self.get_autorest_result()
-        self.tag_is_stable = generate_result["packages"][0]["tagIsStable"]
-        log(f"tag_is_stable is {self.tag_is_stable}")
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
@@ -220,6 +216,8 @@ class CodegenTestPR:
             "azure-mgmt-resource-deploymentscripts",
             "azure-mgmt-resource-deployments",
             "azure-mgmt-recoveryservicesbackup-passivestamp",
+            "azure-mgmt-certificateregistration",
+            "azure-mgmt-domainregistration",
         ]:
             return
         if self.from_swagger:

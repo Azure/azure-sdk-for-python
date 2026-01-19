@@ -222,7 +222,6 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-
     def test_populate_part_a_fields_aks_with_service(self):
         resource = Resource(
             {
@@ -554,17 +553,25 @@ class TestUtils(unittest.TestCase):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
 
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {
-        "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
-        "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
-    }, clear=True)
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
+        },
+        clear=True,
+    )
     def test_attach_aks(self):
         # This is not an expected scenario and just tests the default
         self.assertTrue(_utils._is_attach_enabled())
 
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {
-        "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
-    }, clear=True)
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+        },
+        clear=True,
+    )
     def test_aks_no_attach(self):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
@@ -616,10 +623,7 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(_utils._is_any_synthetic_source(properties))
 
     def test_is_any_synthetic_source_both(self):
-        properties = {
-            "user_agent.synthetic.type": "bot",
-            "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"
-        }
+        properties = {"user_agent.synthetic.type": "bot", "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"}
         self.assertTrue(_utils._is_any_synthetic_source(properties))
 
     def test_is_any_synthetic_source_none(self):

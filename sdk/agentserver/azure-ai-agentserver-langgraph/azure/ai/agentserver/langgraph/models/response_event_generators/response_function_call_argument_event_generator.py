@@ -3,25 +3,37 @@
 # ---------------------------------------------------------
 # pylint: disable=unused-argument,name-too-long
 # mypy: ignore-errors
-from typing import List
+from typing import List, Union
 
 from langchain_core import messages as langgraph_messages
 from langchain_core.messages import AnyMessage
+from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
+from ..human_in_the_loop_helper import HumanInTheLoopHelper
 from ..utils import extract_function_call
 from . import ResponseEventGenerator, StreamEventState
 
 
 class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
-    def __init__(self, logger, parent: ResponseEventGenerator, item_id, message_id, output_index: int):
+    def __init__(
+        self,
+        logger,
+        parent: ResponseEventGenerator,
+        item_id,
+        message_id,
+        output_index: int,
+        *,
+        hitl_helper: HumanInTheLoopHelper = None,
+    ):
         super().__init__(logger, parent)
         self.item_id = item_id
         self.output_index = output_index
         self.aggregated_content = ""
         self.message_id = message_id
+        self.hitl_helper = hitl_helper
 
     def try_process_message(
         self, message, context: AgentRunContext, stream_state: StreamEventState
@@ -55,21 +67,28 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         return True, []
 
     def process(
-        self, message: AnyMessage, run_details, stream_state: StreamEventState
+        self, message: Union[langgraph_messages.AnyMessage, Interrupt], run_details, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
-        tool_call = self.get_tool_call_info(message)
-        if tool_call:
-            _, _, argument = extract_function_call(tool_call)
-            if argument:
-                argument_delta_event = project_models.ResponseFunctionCallArgumentsDeltaEvent(
-                    item_id=self.item_id,
-                    output_index=self.output_index,
-                    delta=argument,
-                    sequence_number=stream_state.sequence_number,
-                )
-                stream_state.sequence_number += 1
-                self.aggregated_content += argument
-                return True, self, [argument_delta_event]
+        if self.should_end(message):
+            return False, self, []
+
+        argument = None
+        if isinstance(message, Interrupt):
+            _, _, argument = self.hitl_helper.interrupt_to_function_call(message) if self.hitl_helper else (None, None, None)
+        else:
+            tool_call = self.get_tool_call_info(message)
+            if tool_call:
+                _, _, argument = extract_function_call(tool_call)
+        if argument:
+            argument_delta_event = project_models.ResponseFunctionCallArgumentsDeltaEvent(
+                item_id=self.item_id,
+                output_index=self.output_index,
+                delta=argument,
+                sequence_number=stream_state.sequence_number,
+            )
+            stream_state.sequence_number += 1
+            self.aggregated_content += argument
+            return True, self, [argument_delta_event]
         return False, self, []
 
     def has_finish_reason(self, message: AnyMessage) -> bool:
@@ -106,7 +125,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         self.parent.aggregate_content(self.aggregated_content)  # pass aggregated content to parent
         return [done_event]
 
-    def get_tool_call_info(self, message: langgraph_messages.AnyMessage):
+    def get_tool_call_info(self, message: Union[langgraph_messages.AnyMessage, Interrupt]):
         if isinstance(message, langgraph_messages.AIMessageChunk):
             if message.tool_call_chunks:
                 if len(message.tool_call_chunks) > 1:

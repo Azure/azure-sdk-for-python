@@ -141,8 +141,8 @@ class TestStorageFile(StorageRecordedTestCase):
             properties = file_client.get_file_properties()
         assert properties.copy.status == 'success'
 
-    def assertFileEqual(self, file_client, expected_data):
-        actual_data = file_client.download_file().readall()
+    def assertFileEqual(self, file_client, expected_data, **kwargs):
+        actual_data = file_client.download_file(**kwargs).readall()
         assert actual_data == expected_data
 
     class NonSeekableFile(object):
@@ -471,6 +471,45 @@ class TestStorageFile(StorageRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             file_name.create_file(1024, file_permission="abcde")
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_file_semantics(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+
+        file1 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file1",
+            credential=storage_account_key
+        )
+        file1.create_file(1024, file_property_semantics=None)
+        props = file1.get_file_properties()
+        assert props is not None
+
+        file2 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file2",
+            credential=storage_account_key
+        )
+        file2.create_file(1024, file_property_semantics="New")
+        props = file2.get_file_properties()
+        assert props is not None
+
+        file3 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file2",
+            credential=storage_account_key
+        )
+        file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
+        props = file3.get_file_properties()
+        assert props is not None
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -3926,5 +3965,54 @@ class TestStorageFile(StorageRecordedTestCase):
             assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
         finally:
             self.fsc.delete_share(self.share_name)
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_download_file_decompress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=4 * 1024
+        )
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        file_client.upload_file(data=compressed_data, content_settings=content_settings)
+        self.assertFileEqual(file_client, decompressed_data, decompress=True)
+        self.assertFileEqual(file_client, compressed_data, decompress=False)
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_download_file_no_decompress_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_chunk_get_size=4,
+            max_single_get_size=4,
+        )
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        file_client.upload_file(data=compressed_data, content_settings=content_settings)
+
+        result = file_client.download_file(decompress=False).readall()
+        assert result == compressed_data
 
 # ------------------------------------------------------------------------------

@@ -5,15 +5,17 @@
 # mypy: disable-error-code="call-overload,assignment,arg-type,override"
 from __future__ import annotations
 
+from ast import arguments
 import datetime
 import json
-from typing import Any, AsyncIterable, List
+from typing import Any, AsyncIterable, List, Union
 
 from agent_framework import AgentRunResponseUpdate, BaseContent, FunctionApprovalRequestContent, FunctionResultContent
 from agent_framework._types import (
     ErrorContent,
     FunctionCallContent,
     TextContent,
+    UserInputRequestContents,
 )
 
 from azure.ai.agentserver.core import AgentRunContext
@@ -43,6 +45,7 @@ from azure.ai.agentserver.core.models.projects import (
 )
 
 from .agent_id_generator import AgentIdGenerator
+from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .utils.async_iter import chunk_on_change, peek
 
 
@@ -130,46 +133,56 @@ class _TextContentStreamingState(_BaseStreamingState):
 class _FunctionCallStreamingState(_BaseStreamingState):
     """State handler for function_call content during streaming."""
 
-    def __init__(self, parent: AgentFrameworkOutputStreamingConverter):
+    def __init__(self,
+            parent: AgentFrameworkOutputStreamingConverter,
+            hitl_helper: HumanInTheLoopHelper):
         self._parent = parent
+        self._hitl_helper = hitl_helper
 
     async def convert_contents(
-            self, contents: AsyncIterable[FunctionCallContent], author_name: str
+            self, contents: AsyncIterable[Union[FunctionCallContent, UserInputRequestContents]], author_name: str
         ) -> AsyncIterable[ResponseStreamEvent]:
         content_by_call_id = {}
         ids_by_call_id = {}
+        hitl_contents = []
 
         async for content in contents:
-            if content.call_id not in content_by_call_id:
-                item_id = self._parent.context.id_generator.generate_function_call_id()
-                output_index = self._parent.next_output_index()
+            if isinstance(content, FunctionCallContent):
+                if content.call_id not in content_by_call_id:
+                    item_id = self._parent.context.id_generator.generate_function_call_id()
+                    output_index = self._parent.next_output_index()
 
-                content_by_call_id[content.call_id] = content
-                ids_by_call_id[content.call_id] = (item_id, output_index)
+                    content_by_call_id[content.call_id] = content
+                    ids_by_call_id[content.call_id] = (item_id, output_index)
 
-                yield ResponseOutputItemAddedEvent(
-                    sequence_number=self._parent.next_sequence(),
-                    output_index=output_index,
-                    item=FunctionToolCallItemResource(
-                        id=item_id,
-                        status="in_progress",
-                        call_id=content.call_id,
-                        name=content.name,
-                        arguments="",
-                        created_by=self._parent._build_created_by(author_name),
-                    ),
-                )
-            else:
-                content_by_call_id[content.call_id] = content_by_call_id[content.call_id] + content
-                item_id, output_index = ids_by_call_id[content.call_id]
+                    yield ResponseOutputItemAddedEvent(
+                        sequence_number=self._parent.next_sequence(),
+                        output_index=output_index,
+                        item=FunctionToolCallItemResource(
+                            id=item_id,
+                            status="in_progress",
+                            call_id=content.call_id,
+                            name=content.name,
+                            arguments="",
+                            created_by=self._parent._build_created_by(author_name),
+                        ),
+                    )
+                else:
+                    content_by_call_id[content.call_id] = content_by_call_id[content.call_id] + content
+                    item_id, output_index = ids_by_call_id[content.call_id]
 
-                args_delta = content.arguments if isinstance(content.arguments, str) else ""
-                yield ResponseFunctionCallArgumentsDeltaEvent(
-                    sequence_number=self._parent.next_sequence(),
-                    item_id=item_id,
-                    output_index=output_index,
-                    delta=args_delta,
-                )
+                    args_delta = content.arguments if isinstance(content.arguments, str) else ""
+                    yield ResponseFunctionCallArgumentsDeltaEvent(
+                        sequence_number=self._parent.next_sequence(),
+                        item_id=item_id,
+                        output_index=output_index,
+                        delta=args_delta,
+                    )
+
+            elif isinstance(content, UserInputRequestContents):
+                converted_hitl = self._hitl_helper.convert_user_input_request_content(content)
+                if converted_hitl:
+                    hitl_contents.append(converted_hitl)
 
         for call_id, content in content_by_call_id.items():
             item_id, output_index = ids_by_call_id[call_id]
@@ -196,6 +209,51 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             )
 
             self._parent.add_completed_output_item(item)  # pylint: disable=protected-access
+        
+        # process HITL contents after function calls
+        for content in hitl_contents:
+            item_id = self._parent.context.id_generator.generate_function_call_id()
+            output_index = self._parent.next_output_index()
+
+            yield ResponseOutputItemAddedEvent(
+                sequence_number=self._parent.next_sequence(),
+                output_index=output_index,
+                item=FunctionToolCallItemResource(
+                    id=item_id,
+                    status="in_progress",
+                    call_id=content["call_id"],
+                    name=content["name"],
+                    arguments="",
+                    created_by=self._parent._build_created_by(author_name),
+                ),
+            )
+            yield ResponseFunctionCallArgumentsDeltaEvent(
+                sequence_number=self._parent.next_sequence(),
+                item_id=item_id,
+                output_index=output_index,
+                delta=content["arguments"],
+            )
+
+            yield ResponseFunctionCallArgumentsDoneEvent(
+                sequence_number=self._parent.next_sequence(),
+                item_id=item_id,
+                output_index=output_index,
+                arguments=content["arguments"],
+            )
+            item = FunctionToolCallItemResource(
+                id=item_id,
+                status="in_progress",
+                call_id=content["call_id"],
+                name=content["name"],
+                arguments=content["arguments"],
+                created_by=self._parent._build_created_by(author_name),
+            )
+            yield ResponseOutputItemDoneEvent(
+                sequence_number=self._parent.next_sequence(),
+                output_index=output_index,
+                item=item,
+            )
+            self._parent.add_completed_output_item(item)
 
 
 class _FunctionCallOutputStreamingState(_BaseStreamingState):
@@ -255,7 +313,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
 class AgentFrameworkOutputStreamingConverter:
     """Streaming converter using content-type-specific state handlers."""
 
-    def __init__(self, context: AgentRunContext) -> None:
+    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper=None) -> None:
         self._context = context
         # sequence numbers must start at 0 for first emitted event
         self._sequence = -1
@@ -263,6 +321,7 @@ class AgentFrameworkOutputStreamingConverter:
         self._response_id = self._context.response_id
         self._response_created_at = None
         self._completed_output_items: List[ItemResource] = []
+        self._hitl_helper = hitl_helper
 
     def next_sequence(self) -> int:
         self._sequence += 1
@@ -294,8 +353,12 @@ class AgentFrameworkOutputStreamingConverter:
         )
 
         is_changed = (
-            lambda a, b: a is not None and b is not None and a.message_id != b.message_id  # pylint: disable=unnecessary-lambda-assignment
+            lambda a, b: a is not None \
+                and b is not None \
+                and (a.message_id != b.message_id \
+                or type(a.content[0]) != type(b.content[0]))  # pylint: disable=unnecessary-lambda-assignment
         )
+
         async for group in chunk_on_change(updates, is_changed):
             has_value, first_tuple, contents_with_author = await peek(self._read_updates(group))
             if not has_value or first_tuple is None:
@@ -306,8 +369,8 @@ class AgentFrameworkOutputStreamingConverter:
             state = None
             if isinstance(first, TextContent):
                 state = _TextContentStreamingState(self)
-            elif isinstance(first, (FunctionCallContent, FunctionApprovalRequestContent)):
-                state = _FunctionCallStreamingState(self)
+            elif isinstance(first, (FunctionCallContent, UserInputRequestContents)):
+                state = _FunctionCallStreamingState(self, self._hitl_helper)
             elif isinstance(first, FunctionResultContent):
                 state = _FunctionCallOutputStreamingState(self)
             elif isinstance(first, ErrorContent):
@@ -350,7 +413,7 @@ class AgentFrameworkOutputStreamingConverter:
 
             accepted_types = (TextContent,
                               FunctionCallContent,
-                              FunctionApprovalRequestContent,
+                              UserInputRequestContents,
                               FunctionResultContent,
                               ErrorContent)
             for content in update.contents:

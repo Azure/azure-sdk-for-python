@@ -16,12 +16,13 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) AZURE_AI_AGENT_NAME - The name of the AI agent to use for evaluation.
+    3) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -38,20 +39,19 @@ from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
-
-    openai_client = project_client.get_openai_client()
-
+# [START agent_evaluation_basic]
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
     agent = project_client.agents.create_version(
         agent_name=os.environ["AZURE_AI_AGENT_NAME"],
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=model_deployment_name,
             instructions="You are a helpful assistant that answers general questions",
         ),
     )
@@ -62,13 +62,30 @@ with project_client:
         item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
         include_sample_schema=True,
     )
+    # Notes: for data_mapping:
+    # sample.output_text is the string output of the agent
+    # sample.output_items is the structured JSON output of the agent, including tool calls information
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
             "name": "violence_detection",
             "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-        }
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        },
+        {
+            "type": "azure_ai_evaluator",
+            "name": "fluency",
+            "evaluator_name": "builtin.fluency",
+            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        },
+        {
+            "type": "azure_ai_evaluator",
+            "name": "task_adherence",
+            "evaluator_name": "builtin.task_adherence",
+            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
+        },
     ]
     eval_object = openai_client.evals.create(
         name="Agent Evaluation",
@@ -103,6 +120,7 @@ with project_client:
         eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
+    # [END agent_evaluation_basic]
 
     while agent_eval_run.status not in ["completed", "failed"]:
         agent_eval_run = openai_client.evals.runs.retrieve(run_id=agent_eval_run.id, eval_id=eval_object.id)

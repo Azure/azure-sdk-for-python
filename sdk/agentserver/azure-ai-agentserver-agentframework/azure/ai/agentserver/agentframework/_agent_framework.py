@@ -7,11 +7,12 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
 
-from agent_framework import AgentProtocol, AIFunction
+from agent_framework import AgentProtocol, AIFunction, CheckpointStorage, InMemoryCheckpointStorage, WorkflowCheckpoint
 from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
+from agent_framework._workflows import get_checkpoint_summary
 from opentelemetry import trace
 
-from ..core.tools._exceptions import OAuthConsentRequiredError
+from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
 from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
@@ -27,7 +28,9 @@ from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
+from .models.human_in_the_loop_helper import HumanInTheLoopHelper
 from .models.constants import Constants
+from .persistence import AgentThreadRepository, CheckpointRepository
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -72,7 +75,11 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def __init__(self, agent: AgentProtocol,
                  credentials: "Optional[AsyncTokenCredential]" = None,
-                 **kwargs: Any):
+                 *,
+                 thread_repository: AgentThreadRepository = None,
+                 checkpoint_repository: CheckpointRepository = None,
+                 **kwargs: Any,
+                ):
         """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
 
         :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient
@@ -80,16 +87,21 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         :type agent: Union[AgentProtocol, AgentFactory]
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
+        :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
+        :type thread_repository: Optional[AgentThreadRepository]
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         self._agent: AgentProtocol = agent
+        self._hitl_helper = HumanInTheLoopHelper()
+        self._checkpoint_repository = checkpoint_repository
+        self._thread_repository = thread_repository
 
     @property
-    def agent(self) -> "Optional[AgentProtocol]":
+    def agent(self) -> "AgentProtocol":
         """Get the resolved agent. This property provides backward compatibility.
 
         :return: The resolved AgentProtocol if available, None otherwise.
-        :rtype: Optional[AgentProtocol]
+        :rtype: AgentProtocol
         """
         return self._agent
 
@@ -115,30 +127,91 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def init_tracing(self):
         try:
-            exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
+            otel_exporter_endpoint = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
+            otel_exporter_protocol = os.environ.get(AdapterConstants.OTEL_EXPORTER_OTLP_PROTOCOL)
             app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
             project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
-            if exporter or app_insights_conn_str:
-                from agent_framework.observability import setup_observability
+            exporters = []
+            if otel_exporter_endpoint:
+                otel_exporter = self._create_otlp_exporter(otel_exporter_endpoint, protocol=otel_exporter_protocol)
+                if otel_exporter:
+                    exporters.append(otel_exporter)
+            if app_insights_conn_str:
+                appinsight_exporter = self._create_application_insights_exporter(app_insights_conn_str)
+                if appinsight_exporter:
+                    exporters.append(appinsight_exporter)
 
-                setup_observability(
-                    enable_sensitive_data=True,
-                    otlp_endpoint=exporter,
-                    applicationinsights_connection_string=app_insights_conn_str,
-                )
+            if exporters and self._setup_observability(exporters):
+                logger.info("Observability setup completed with provided exporters.")
             elif project_endpoint:
-                self.setup_tracing_with_azure_ai_client(project_endpoint)
+                self._setup_tracing_with_azure_ai_client(project_endpoint)
         except Exception as e:
             logger.warning(f"Failed to initialize tracing: {e}", exc_info=True)
         self.tracer = trace.get_tracer(__name__)
 
-    def setup_tracing_with_azure_ai_client(self, project_endpoint: str):
+    def _create_application_insights_exporter(self, connection_string):
+        try:
+            from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
+            return AzureMonitorTraceExporter.from_connection_string(connection_string)
+        except Exception as e:
+            logger.error(f"Failed to create Application Insights exporter: {e}", exc_info=True)
+            return None
+
+    def _create_otlp_exporter(self, endpoint, protocol=None):
+        try:
+            if protocol and protocol.lower() in ("http", "http/protobuf", "http/json"):
+                    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
+                    return OTLPSpanExporter(endpoint=endpoint)
+            else:
+                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+
+                return OTLPSpanExporter(endpoint=endpoint)
+        except Exception as e:
+            logger.error(f"Failed to create OTLP exporter: {e}", exc_info=True)
+            return None
+
+    def _setup_observability(self, exporters) -> bool:
+        setup_function = self._try_import_configure_otel_providers()
+        if not setup_function: # fallback to early version with setup_observability
+            setup_function = self._try_import_setup_observability()
+        if setup_function:
+            setup_function(
+                enable_sensitive_data=True,
+                exporters=exporters,
+            )
+            return True
+        return False
+
+    def _try_import_setup_observability(self):
+        try:
+            from agent_framework.observability import setup_observability
+            return setup_observability
+        except ImportError as e:
+            logger.warning(f"Failed to import setup_observability: {e}")
+            return None
+
+    def _try_import_configure_otel_providers(self):
+        try:
+            from agent_framework.observability import configure_otel_providers
+            return configure_otel_providers
+        except ImportError as e:
+            logger.warning(f"Failed to import configure_otel_providers: {e}")
+            return None
+
+    def _setup_tracing_with_azure_ai_client(self, project_endpoint: str):
         async def setup_async():
             async with AzureAIClient(
-                project_endpoint=project_endpoint, async_credential=self.credentials
+                project_endpoint=project_endpoint,
+                async_credential=self.credentials,
+                credential=self.credentials, # Af breaking change, keep both for compatibility
                 ) as agent_client:
-                await agent_client.setup_azure_ai_observability()
+                try:
+                    await agent_client.configure_azure_monitor()
+                except AttributeError:
+                    await agent_client.setup_azure_ai_observability()
 
         import asyncio
 
@@ -160,23 +233,56 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
 
-            input_converter = AgentFrameworkInputConverter()
-            message = input_converter.transform_input(request_input)
+            agent_thread = None
+            checkpoint_storage = None
+            last_checkpoint = None
+            if self._thread_repository:
+                agent_thread = await self._thread_repository.get(context.conversation_id)
+                if agent_thread:
+                    logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
+                else:
+                    agent_thread = self.agent.get_new_thread()
+
+            if self._checkpoint_repository:
+                checkpoint_storage = await self._checkpoint_repository.get_or_create(context.conversation_id)
+                last_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
+                if last_checkpoint:
+                    summary = get_checkpoint_summary(last_checkpoint)
+                    if summary.status == "completed":
+                        logger.warning("Last checkpoint is completed. Will not resume from it.")
+                        last_checkpoint = None  # Do not resume from completed checkpoints
+                if last_checkpoint:
+                    await self._load_checkpoint(self.agent, last_checkpoint, checkpoint_storage)
+                    logger.info(f"Loaded checkpoint with ID: {last_checkpoint.checkpoint_id}")
+
+            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
+            message = await input_converter.transform_input(
+                request_input,
+                agent_thread=agent_thread,
+                checkpoint=last_checkpoint)
             logger.debug(f"Transformed input message type: {type(message)}")
 
             # Use split converters
             if context.stream:
                 logger.info("Running agent in streaming mode")
-                streaming_converter = AgentFrameworkOutputStreamingConverter(context)
+                streaming_converter = AgentFrameworkOutputStreamingConverter(context, hitl_helper=self._hitl_helper)
 
                 async def stream_updates():
                     try:
                         update_count = 0
                         try:
-                            updates = self.agent.run_stream(message)
+                            updates = self.agent.run_stream(
+                                message,
+                                thread=agent_thread,
+                                checkpoint_storage=checkpoint_storage,
+                            )
                             async for event in streaming_converter.convert(updates):
                                 update_count += 1
                                 yield event
+
+                            if agent_thread and self._thread_repository:
+                                await self._thread_repository.set(context.conversation_id, agent_thread, checkpoint_storage)
+                                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
 
                             logger.info("Streaming completed with %d updates", update_count)
                         except OAuthConsentRequiredError as e:
@@ -221,8 +327,16 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
             non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context)
-            result = await self.agent.run(message)
+            result = await self.agent.run(
+                message,
+                thread=agent_thread,
+                checkpoint_storage=checkpoint_storage)
             logger.debug(f"Agent run completed, result type: {type(result)}")
+
+            if agent_thread and self._thread_repository:
+                await self._thread_repository.set(context.conversation_id, agent_thread)
+                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
             return transformed_result
@@ -238,3 +352,30 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             return await self.respond_with_oauth_consent(context, e)
         finally:
             pass
+
+    async def _get_latest_checkpoint(self,
+                checkpoint_storage: CheckpointStorage) -> Optional[Any]:
+        """Load the latest checkpoint from the given storage.
+
+        :param checkpoint_storage: The checkpoint storage to load from.
+        :type checkpoint_storage: CheckpointStorage
+
+        :return: The latest checkpoint if available, None otherwise.
+        :rtype: Optional[Any]
+        """
+        checkpoints = await checkpoint_storage.list_checkpoints()
+        if checkpoints:
+            latest_checkpoint = max(checkpoints, key=lambda cp: cp.timestamp)
+            return latest_checkpoint
+        return None
+
+    async def _load_checkpoint(self, agent: AgentProtocol,
+                              checkpoint: WorkflowCheckpoint,
+                              checkpoint_storage: CheckpointStorage) -> None:
+        """Load the checkpoint data from the given WorkflowCheckpoint.
+
+        :param checkpoint: The WorkflowCheckpoint to load data from.
+        :type checkpoint: WorkflowCheckpoint
+        """
+        await agent.run(checkpoint_id=checkpoint.checkpoint_id,
+                        checkpoint_storage=checkpoint_storage)

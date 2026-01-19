@@ -27,7 +27,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
             await self.client.virtual_network_taps.begin_delete(
                 resource_group_name=resource_group.name,
                 tap_name="str",
-                api_version="2024-10-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.virtual_network_taps.get(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -208,6 +208,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
+                                                "recordTypes": "str",
                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                 "storageId": "str",
                                                 "tags": {"str": "str"},
@@ -391,6 +392,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -434,6 +436,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "type": "str",
                                                 },
                                                 "privateLinkService": {
+                                                    "accessMode": "str",
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
                                                     "destinationIPAddress": "str",
@@ -496,6 +499,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -654,6 +658,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -888,6 +893,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -957,6 +963,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -1354,6 +1361,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         "location": "str",
                                         "name": "str",
                                         "provisioningState": "str",
+                                        "recordTypes": "str",
                                         "retentionPolicy": {"days": 0, "enabled": False},
                                         "storageId": "str",
                                         "tags": {"str": "str"},
@@ -1592,6 +1600,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -1635,6 +1644,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             "type": "str",
                                         },
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -1695,6 +1705,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "ipVersionType": "IPv4",
                                                         "location": "str",
                                                         "manualPrivateLinkServiceConnections": [
                                                             {
@@ -1853,6 +1864,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             "type": "str",
                                         }
                                     ],
+                                    "ipVersionType": "IPv4",
                                     "location": "str",
                                     "manualPrivateLinkServiceConnections": [
                                         {
@@ -2144,6 +2156,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -2213,6 +2226,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -2630,6 +2644,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
+                                                "recordTypes": "str",
                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                 "storageId": "str",
                                                 "tags": {"str": "str"},
@@ -2698,6 +2713,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -2741,6 +2757,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "type": "str",
                                                 },
                                                 "privateLinkService": {
+                                                    "accessMode": "str",
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
                                                     "destinationIPAddress": "str",
@@ -2823,6 +2840,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -2981,6 +2999,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -3100,6 +3119,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -3169,6 +3189,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -3585,6 +3606,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         "location": "str",
                                         "name": "str",
                                         "provisioningState": "str",
+                                        "recordTypes": "str",
                                         "retentionPolicy": {"days": 0, "enabled": False},
                                         "storageId": "str",
                                         "tags": {"str": "str"},
@@ -3653,6 +3675,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -3696,6 +3719,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             "type": "str",
                                         },
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -3837,6 +3861,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "ipVersionType": "IPv4",
                                                         "location": "str",
                                                         "manualPrivateLinkServiceConnections": [
                                                             {
@@ -3995,6 +4020,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             "type": "str",
                                         }
                                     ],
+                                    "ipVersionType": "IPv4",
                                     "location": "str",
                                     "manualPrivateLinkServiceConnections": [
                                         {
@@ -4114,6 +4140,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -4183,6 +4210,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -4468,7 +4496,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-10-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -4482,7 +4510,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             tap_name="str",
             tap_parameters={"tags": {"str": "str"}},
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4492,7 +4520,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_virtual_network_taps_list_all(self, resource_group):
         response = self.client.virtual_network_taps.list_all(
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -4503,7 +4531,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
     async def test_virtual_network_taps_list_by_resource_group(self, resource_group):
         response = self.client.virtual_network_taps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

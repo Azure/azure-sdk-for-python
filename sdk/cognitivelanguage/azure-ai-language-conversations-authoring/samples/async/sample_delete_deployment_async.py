@@ -30,7 +30,7 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_delete_deployment_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
@@ -46,9 +46,7 @@ async def sample_delete_deployment_async():
         project_client = client.get_project_client(project_name)
 
         # start delete (async long-running operation)
-        poller = await project_client.deployment.begin_delete_deployment(
-            deployment_name=deployment_name
-        )
+        poller = await project_client.deployment.begin_delete_deployment(deployment_name=deployment_name)
 
         try:
             await poller.result()
@@ -59,7 +57,9 @@ async def sample_delete_deployment_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END conversation_authoring_delete_deployment_async]
+
 
 async def main():
     await sample_delete_deployment_async()
