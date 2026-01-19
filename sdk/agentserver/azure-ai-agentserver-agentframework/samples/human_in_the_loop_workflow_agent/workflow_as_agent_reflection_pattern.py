@@ -123,3 +123,17 @@ class Worker(Executor):
 
         # Track new request for further evaluation.
         self._pending_requests[new_request.request_id] = (new_request, messages)
+
+    async def on_checkpoint_save(self) -> dict:
+        """
+        Persist pending requests during checkpointing.
+        In memory implementation for demonstration purposes.
+        """
+        return {"pending_requests": self._pending_requests}
+
+    async def on_checkpoint_restore(self, data: dict) -> None:
+        """
+        Load pending requests from checkpoint data.
+        In memory implementation for demonstration purposes.
+        """
+        self._pending_requests = data.get("pending_requests", {})

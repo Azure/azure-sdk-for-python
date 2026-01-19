@@ -3,7 +3,6 @@
 import asyncio
 import json
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from agent_framework.azure import AzureOpenAIChatClient
@@ -12,8 +11,6 @@ from dotenv import load_dotenv
 
 from agent_framework import (  # noqa: E402
     Executor,
-    InMemoryCheckpointStorage,
-    WorkflowAgent,
     WorkflowBuilder,
     WorkflowContext,
     handler,
@@ -26,6 +23,7 @@ from workflow_as_agent_reflection_pattern import (  # noqa: E402
 )
 
 from azure.ai.agentserver.agentframework import from_agent_framework
+from azure.ai.agentserver.agentframework.persistence import InMemoryCheckpointRepository
 
 load_dotenv()
 
@@ -86,8 +84,7 @@ class ReviewerWithHumanInTheLoop(Executor):
         print("Reviewer: Forwarding human review back to worker...")
         await ctx.send_message(response, target_id=self._worker_id)
 
-
-def build_agent():
+def build_agent(tools):
     # Build a workflow with bidirectional communication between Worker and Reviewer,
     # and escalation paths for human review.
     agent = (
@@ -114,8 +111,10 @@ def build_agent():
 
 async def run_agent() -> None:
     """Run the workflow inside the agent server adapter."""
-    agent = build_agent()
-    await from_agent_framework(agent).run_async()
+    await from_agent_framework(
+        build_agent,  # pass WorkflowAgent factory to adapter, build a new instance per request
+        checkpoint_repository=InMemoryCheckpointRepository(),  # for checkpoint storage
+    ).run_async()
 
 if __name__ == "__main__":
     asyncio.run(run_agent())
