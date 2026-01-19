@@ -28,12 +28,12 @@ logger = logging.getLogger(__name__)
 class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     """Base class for custom async polling methods."""
 
-    _status: Optional[str]
+    _status: str
     _termination_statuses: List[str]
     _polling_interval: int
-    _resource: Optional[JSON]
-    _command: Optional[Any]
-    _initial_response: Optional[JSON]
+    _resource: JSON
+    _command: Any
+    _initial_response: JSON
 
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
