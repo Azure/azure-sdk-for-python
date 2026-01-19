@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import AppConfigurationClientConfiguration
+from .._configuration import AppConfigurationManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -894,14 +894,16 @@ class ConfigurationStoresOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.appconfiguration.AppConfigurationClient`'s
+        :class:`~azure.mgmt.appconfiguration.AppConfigurationManagementClient`'s
         :attr:`configuration_stores` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AppConfigurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AppConfigurationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2309,14 +2311,16 @@ class PrivateEndpointConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.appconfiguration.AppConfigurationClient`'s
+        :class:`~azure.mgmt.appconfiguration.AppConfigurationManagementClient`'s
         :attr:`private_endpoint_connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AppConfigurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AppConfigurationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2884,14 +2888,16 @@ class PrivateLinkResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.appconfiguration.AppConfigurationClient`'s
+        :class:`~azure.mgmt.appconfiguration.AppConfigurationManagementClient`'s
         :attr:`private_link_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AppConfigurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AppConfigurationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3072,14 +3078,16 @@ class KeyValuesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.appconfiguration.AppConfigurationClient`'s
+        :class:`~azure.mgmt.appconfiguration.AppConfigurationManagementClient`'s
         :attr:`key_values` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AppConfigurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AppConfigurationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3487,14 +3495,16 @@ class ReplicasOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.appconfiguration.AppConfigurationClient`'s
+        :class:`~azure.mgmt.appconfiguration.AppConfigurationManagementClient`'s
         :attr:`replicas` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AppConfigurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AppConfigurationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4057,14 +4067,16 @@ class SnapshotsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.appconfiguration.AppConfigurationClient`'s
+        :class:`~azure.mgmt.appconfiguration.AppConfigurationManagementClient`'s
         :attr:`snapshots` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AppConfigurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AppConfigurationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4409,14 +4421,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.appconfiguration.AppConfigurationClient`'s
+        :class:`~azure.mgmt.appconfiguration.AppConfigurationManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AppConfigurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AppConfigurationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

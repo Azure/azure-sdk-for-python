@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.appconfiguration import AppConfigurationClient
+from azure.mgmt.appconfiguration import AppConfigurationManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAppConfigurationPrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCase):
+class TestAppConfigurationManagementReplicasOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AppConfigurationClient)
+        self.client = self.create_mgmt_client(AppConfigurationManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_get(self, resource_group):
-        response = self.client.private_endpoint_connections.get(
+    def test_replicas_get(self, resource_group):
+        response = self.client.replicas.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            private_endpoint_connection_name="str",
+            replica_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,23 +32,16 @@ class TestAppConfigurationPrivateEndpointConnectionsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_begin_create_or_update(self, resource_group):
-        response = self.client.private_endpoint_connections.begin_create_or_update(
+    def test_replicas_begin_create(self, resource_group):
+        response = self.client.replicas.begin_create(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            private_endpoint_connection_name="str",
-            private_endpoint_connection={
+            replica_name="str",
+            replica_creation_parameters={
                 "id": "str",
+                "location": "str",
                 "name": "str",
-                "properties": {
-                    "privateLinkServiceConnectionState": {
-                        "actionsRequired": "str",
-                        "description": "str",
-                        "status": "str",
-                    },
-                    "privateEndpoint": {"id": "str"},
-                    "provisioningState": "str",
-                },
+                "properties": {"endpoint": "str", "provisioningState": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -66,11 +59,11 @@ class TestAppConfigurationPrivateEndpointConnectionsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_begin_delete(self, resource_group):
-        response = self.client.private_endpoint_connections.begin_delete(
+    def test_replicas_begin_delete(self, resource_group):
+        response = self.client.replicas.begin_delete(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            private_endpoint_connection_name="str",
+            replica_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,8 +71,8 @@ class TestAppConfigurationPrivateEndpointConnectionsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_list_by_configuration_store(self, resource_group):
-        response = self.client.private_endpoint_connections.list_by_configuration_store(
+    def test_replicas_list_by_configuration_store(self, resource_group):
+        response = self.client.replicas.list_by_configuration_store(
             resource_group_name=resource_group.name,
             config_store_name="str",
         )

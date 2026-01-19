@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.appconfiguration import AppConfigurationClient
+from azure.mgmt.appconfiguration.aio import AppConfigurationManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAppConfigurationKeyValuesOperations(AzureMgmtRecordedTestCase):
+class TestAppConfigurationManagementKeyValuesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AppConfigurationClient)
+        self.client = self.create_mgmt_client(AppConfigurationManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_key_values_get(self, resource_group):
-        response = self.client.key_values.get(
+    @recorded_by_proxy_async
+    async def test_key_values_get(self, resource_group):
+        response = await self.client.key_values.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
             key_value_name="str",
@@ -31,9 +32,9 @@ class TestAppConfigurationKeyValuesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_key_values_create_or_update(self, resource_group):
-        response = self.client.key_values.create_or_update(
+    @recorded_by_proxy_async
+    async def test_key_values_create_or_update(self, resource_group):
+        response = await self.client.key_values.create_or_update(
             resource_group_name=resource_group.name,
             config_store_name="str",
             key_value_name="str",
@@ -66,12 +67,14 @@ class TestAppConfigurationKeyValuesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_key_values_begin_delete(self, resource_group):
-        response = self.client.key_values.begin_delete(
-            resource_group_name=resource_group.name,
-            config_store_name="str",
-            key_value_name="str",
+    @recorded_by_proxy_async
+    async def test_key_values_begin_delete(self, resource_group):
+        response = await (
+            await self.client.key_values.begin_delete(
+                resource_group_name=resource_group.name,
+                config_store_name="str",
+                key_value_name="str",
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.appconfiguration import AppConfigurationClient
+from azure.mgmt.appconfiguration import AppConfigurationManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAppConfigurationSnapshotsOperations(AzureMgmtRecordedTestCase):
+class TestAppConfigurationManagementKeyValuesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AppConfigurationClient)
+        self.client = self.create_mgmt_client(AppConfigurationManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_snapshots_get(self, resource_group):
-        response = self.client.snapshots.get(
+    def test_key_values_get(self, resource_group):
+        response = self.client.key_values.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            snapshot_name="str",
+            key_value_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,26 +32,23 @@ class TestAppConfigurationSnapshotsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_snapshots_begin_create(self, resource_group):
-        response = self.client.snapshots.begin_create(
+    def test_key_values_create_or_update(self, resource_group):
+        response = self.client.key_values.create_or_update(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            snapshot_name="str",
-            body={
+            key_value_name="str",
+            key_value_parameters={
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "filters": [{"key": "str", "label": "str"}],
-                    "compositionType": "str",
-                    "created": "2020-02-20 00:00:00",
-                    "etag": "str",
-                    "expires": "2020-02-20 00:00:00",
-                    "itemsCount": 0,
-                    "provisioningState": "str",
-                    "retentionPeriod": 0,
-                    "size": 0,
-                    "status": "str",
+                    "contentType": "str",
+                    "eTag": "str",
+                    "key": "str",
+                    "label": "str",
+                    "lastModified": "2020-02-20 00:00:00",
+                    "locked": bool,
                     "tags": {"str": "str"},
+                    "value": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -63,6 +60,18 @@ class TestAppConfigurationSnapshotsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_key_values_begin_delete(self, resource_group):
+        response = self.client.key_values.begin_delete(
+            resource_group_name=resource_group.name,
+            config_store_name="str",
+            key_value_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

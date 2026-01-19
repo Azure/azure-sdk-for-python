@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.appconfiguration import AppConfigurationClient
+from azure.mgmt.appconfiguration.aio import AppConfigurationManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAppConfigurationPrivateLinkResourcesOperations(AzureMgmtRecordedTestCase):
+class TestAppConfigurationManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AppConfigurationClient)
+        self.client = self.create_mgmt_client(AppConfigurationManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_private_link_resources_get(self, resource_group):
-        response = self.client.private_link_resources.get(
+    @recorded_by_proxy_async
+    async def test_private_link_resources_get(self, resource_group):
+        response = await self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
             group_name="str",
@@ -31,12 +32,12 @@ class TestAppConfigurationPrivateLinkResourcesOperations(AzureMgmtRecordedTestCa
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_private_link_resources_list_by_configuration_store(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_private_link_resources_list_by_configuration_store(self, resource_group):
         response = self.client.private_link_resources.list_by_configuration_store(
             resource_group_name=resource_group.name,
             config_store_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

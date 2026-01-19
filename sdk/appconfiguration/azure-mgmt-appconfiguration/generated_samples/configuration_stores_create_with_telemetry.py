@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.appconfiguration import AppConfigurationClient
+from azure.mgmt.appconfiguration import AppConfigurationManagementClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.appconfiguration import AppConfigurationClient
 
 
 def main():
-    client = AppConfigurationClient(
+    client = AppConfigurationManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

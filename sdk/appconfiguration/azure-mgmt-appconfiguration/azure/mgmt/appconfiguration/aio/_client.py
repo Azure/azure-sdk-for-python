@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import AppConfigurationClientConfiguration
+from ._configuration import AppConfigurationManagementClientConfiguration
 from .operations import (
     ConfigurationStoresOperations,
     KeyValuesOperations,
@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AppConfigurationClient:  # pylint: disable=too-many-instance-attributes
+class AppConfigurationManagementClient:  # pylint: disable=too-many-instance-attributes
     """// (missing-service-description) Add service description.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
@@ -86,7 +86,7 @@ class AppConfigurationClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = AppConfigurationClientConfiguration(
+        self._config = AppConfigurationManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
