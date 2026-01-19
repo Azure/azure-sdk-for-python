@@ -33,9 +33,7 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy_async
     async def test_search_index_client(self, endpoint, index_name):
-        client = SearchIndexClient(
-            endpoint, get_credential(is_async=True), retry_backoff_factor=60
-        )
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
         index_name = "hotels"
         async with client:
             await self._test_get_service_statistics(client)
@@ -125,9 +123,7 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.delete_index(
-                index, match_condition=MatchConditions.IfNotModified
-            )
+            await client.delete_index(index, match_condition=MatchConditions.IfNotModified)
 
     async def _test_create_or_update_index(self, client):
         name = "hotels-cou"
@@ -187,14 +183,10 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.create_or_update_index(
-                index, match_condition=MatchConditions.IfNotModified
-            )
+            await client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
 
     async def _test_analyze_text(self, client, index_name):
-        analyze_request = AnalyzeTextOptions(
-            text="One's <two/>", analyzer_name="standard.lucene"
-        )
+        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
         result = await client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 
@@ -205,14 +197,10 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     @SearchEnvVarPreparer()
     @recorded_by_proxy_async
-    async def test_purview_enabled_index(
-        self, search_service_endpoint, search_service_name
-    ):
+    async def test_purview_enabled_index(self, search_service_endpoint, search_service_name):
         del search_service_name  # unused
         endpoint = search_service_endpoint
-        client = SearchIndexClient(
-            endpoint, get_credential(is_async=True), retry_backoff_factor=60
-        )
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
 
         index_name = self.get_resource_name("purview-index")
         fields = [
@@ -241,9 +229,7 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
                         assert field.sensitivity_label is True
                         break
                 else:
-                    raise AssertionError(
-                        "Expected sensitivityLabel field to be present"
-                    )
+                    raise AssertionError("Expected sensitivityLabel field to be present")
 
                 fetched = await client.get_index(index_name)
                 assert fetched.purview_enabled is True
@@ -252,9 +238,7 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
                         assert field.sensitivity_label is True
                         break
                 else:
-                    raise AssertionError(
-                        "Expected sensitivityLabel field to be present"
-                    )
+                    raise AssertionError("Expected sensitivityLabel field to be present")
             finally:
                 try:
                     await client.delete_index(index_name)
@@ -263,14 +247,10 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     @SearchEnvVarPreparer()
     @recorded_by_proxy_async
-    async def test_scoring_profile_product_aggregation(
-        self, search_service_endpoint, search_service_name
-    ):
+    async def test_scoring_profile_product_aggregation(self, search_service_endpoint, search_service_name):
         del search_service_name  # unused
         endpoint = search_service_endpoint
-        client = SearchIndexClient(
-            endpoint, get_credential(is_async=True), retry_backoff_factor=60
-        )
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
 
         index_name = self.get_resource_name("agg-product")
         fields = [
@@ -288,40 +268,25 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
                 FreshnessScoringFunction(
                     field_name="lastUpdated",
                     boost=2.5,
-                    parameters=FreshnessScoringParameters(
-                        boosting_duration=timedelta(days=7)
-                    ),
+                    parameters=FreshnessScoringParameters(boosting_duration=timedelta(days=7)),
                 )
             ],
         )
-        index = SearchIndex(
-            name=index_name, fields=fields, scoring_profiles=[scoring_profile]
-        )
+        index = SearchIndex(name=index_name, fields=fields, scoring_profiles=[scoring_profile])
 
         async with client:
             created = await client.create_index(index)
             try:
-                assert (
-                    created.scoring_profiles[0].function_aggregation
-                    == ScoringFunctionAggregation.PRODUCT
-                )
+                assert created.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
 
                 fetched = await client.get_index(index_name)
-                assert (
-                    fetched.scoring_profiles[0].function_aggregation
-                    == ScoringFunctionAggregation.PRODUCT
-                )
+                assert fetched.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
 
-                fetched.scoring_profiles[0].function_aggregation = (
-                    ScoringFunctionAggregation.SUM
-                )
+                fetched.scoring_profiles[0].function_aggregation = ScoringFunctionAggregation.SUM
                 await client.create_or_update_index(index=fetched)
 
                 updated = await client.get_index(index_name)
-                assert (
-                    updated.scoring_profiles[0].function_aggregation
-                    == ScoringFunctionAggregation.SUM
-                )
+                assert updated.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.SUM
             finally:
                 try:
                     await client.delete_index(index_name)

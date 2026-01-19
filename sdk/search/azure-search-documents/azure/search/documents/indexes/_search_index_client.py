@@ -676,9 +676,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             knowledge_base_name = knowledge_base.name  # type: ignore
         except AttributeError:
             knowledge_base_name = knowledge_base
-        self._client.knowledge_bases.delete(
-            knowledge_base_name=knowledge_base_name, error_map=error_map, **kwargs
-        )
+        self._client.knowledge_bases.delete(knowledge_base_name=knowledge_base_name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def create_knowledge_base(self, knowledge_base: KnowledgeBase, **kwargs: Any) -> KnowledgeBase:
