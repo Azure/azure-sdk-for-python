@@ -27,17 +27,18 @@ logger = logging.getLogger(__name__)
 class LoadTestingPollingMethod(PollingMethod):
     """Base class for custom sync polling methods."""
 
-    _status: str
+    _status: Optional[str]
     _termination_statuses: List[str]
     _polling_interval: int
-    _resource: JSON
-    _command: Any
-    _initial_response: JSON
+    _resource: Optional[JSON]
+    _command: Optional[Any]
+    _initial_response: Optional[JSON]
 
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
     def _update_resource(self) -> None:
+        assert self._command is not None
         self._resource = self._command()
 
     def initialize(self, client, initial_response, deserialization_callback) -> None:
@@ -46,12 +47,15 @@ class LoadTestingPollingMethod(PollingMethod):
         self._resource = initial_response
 
     def status(self) -> str:
+        assert self._status is not None
         return self._status
 
     def finished(self) -> bool:
+        assert self._status is not None
         return self._status in self._termination_statuses
 
     def resource(self) -> JSON:
+        assert self._resource is not None
         return self._resource
 
     def run(self) -> None:
@@ -84,6 +88,7 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
         ]
 
     def _update_status(self) -> None:
+        assert self._resource is not None
         self._status = self._resource["validationStatus"]
 
 
@@ -99,6 +104,7 @@ class TestRunStatusPoller(LoadTestingPollingMethod):
         self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
 
     def _update_status(self) -> None:
+        assert self._resource is not None
         self._status = self._resource["status"]
 
 
@@ -114,6 +120,7 @@ class TestProfileRunStatusPoller(LoadTestingPollingMethod):
         self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
 
     def _update_status(self):
+        assert self._resource is not None
         self._status = self._resource["status"]
 
 
