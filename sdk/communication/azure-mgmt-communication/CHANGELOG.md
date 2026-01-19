@@ -21,9 +21,9 @@
   - Added model `SuppressionListAddressResourceCollection`
   - Added model `SuppressionListResource`
   - Added model `SuppressionListResourceCollection`
-  - Added model `SmtpUsernamesOperations`
-  - Added model `SuppressionListAddressesOperations`
-  - Added model `SuppressionListsOperations`
+  - Added operation group `SmtpUsernamesOperations`
+  - Added operation group `SuppressionListAddressesOperations`
+  - Added operation group `SuppressionListsOperations`
 
 ## 2.1.0 (2024-03-18)
 
