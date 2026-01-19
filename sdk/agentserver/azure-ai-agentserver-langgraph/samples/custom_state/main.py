@@ -13,9 +13,8 @@ from openai import OpenAI, OpenAIError
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
 from azure.ai.agentserver.langgraph import from_langgraph
-from azure.ai.agentserver.langgraph.models import (
-    LanggraphStateConverter,
-)
+from azure.ai.agentserver.langgraph.models.response_api_default_converter import ResponseAPIDefaultConverter
+from azure.ai.agentserver.langgraph.models.response_api_request_converter import ResponseAPIRequestConverter
 
 load_dotenv()
 
@@ -99,16 +98,14 @@ def retrieve_docs(question: str, k: int = 2) -> List[Dict[str, Any]]:
 # ---------------------------------------------------------------------------
 # Custom Converter
 # ---------------------------------------------------------------------------
-class RAGStateConverter(LanggraphStateConverter):
-    """Converter implementing mini RAG logic (non‑streaming only)."""
+class RAGRequestConverter(ResponseAPIRequestConverter):
+    """Converter implementing mini RAG logic."""
 
-    def get_stream_mode(self, context: AgentRunContext) -> str:  # noqa: D401
-        if context.request.get("stream", False):  # type: ignore[attr-defined]
-            raise NotImplementedError("Streaming not supported in this sample.")
-        return "values"
+    def __init__(self, context: AgentRunContext):
+        self.context = context
 
-    def request_to_state(self, context: AgentRunContext) -> Dict[str, Any]:  # noqa: D401
-        req = context.request
+    def convert(self) -> dict:
+        req = self.context.request
         user_input = req.get("input")
         if isinstance(user_input, list):
             for item in user_input:
@@ -136,10 +133,20 @@ class RAGStateConverter(LanggraphStateConverter):
         }
         print("initial state:", res)
         return res
+    
 
-    def state_to_response(
-        self, state: Dict[str, Any], context: AgentRunContext
-    ) -> Response:  # noqa: D401
+class RAGStateConverter(ResponseAPIDefaultConverter):
+    """Converter implementing mini RAG logic (non‑streaming only)."""
+    def __init__(self, graph: StateGraph):
+        super().__init__(graph=graph,
+                         create_request_converter=lambda context: RAGRequestConverter(context))
+
+    def get_stream_mode(self, context: AgentRunContext) -> str:  # noqa: D401
+        if context.request.get("stream", False):  # type: ignore[attr-defined]
+            raise NotImplementedError("Streaming not supported in this sample.")
+        return "values"
+
+    async def convert_response_non_stream(self, state: Any, context: AgentRunContext) -> Response:
         final_answer = state.get("final_answer") or "(no answer generated)"
         print(f"convert state to response, state: {state}")
         citations = state.get("retrieved", [])
@@ -172,7 +179,7 @@ class RAGStateConverter(LanggraphStateConverter):
         }
         return Response(**base)
 
-    async def state_to_response_stream(  # noqa: D401
+    async def convert_response_stream(  # noqa: D401
         self,
         stream_state: AsyncIterator[Dict[str, Any] | Any],
         context: AgentRunContext,
@@ -289,5 +296,6 @@ def _build_graph():
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     graph = _build_graph()
-    converter = RAGStateConverter()
-    from_langgraph(graph, converter).run()
+
+    converter = RAGStateConverter(graph=graph)
+    from_langgraph(graph, converter=converter).run()

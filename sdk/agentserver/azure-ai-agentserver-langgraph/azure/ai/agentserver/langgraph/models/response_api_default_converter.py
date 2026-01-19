@@ -1,5 +1,5 @@
 import time
-from typing import Any, AsyncGenerator, AsyncIterator, Dict, TypedDict, Union
+from typing import Any, AsyncGenerator, AsyncIterator, Dict, Optional, TypedDict, Union
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.types import Command, Interrupt, StateSnapshot
@@ -111,17 +111,20 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         :rtype: Union[Dict[str, Any], Command]
         """
         hitl_helper = self._create_human_in_the_loop_helper(context)
-        command = hitl_helper.validate_and_convert_human_feedback(
-            prev_state, context.request.get("input")
-        )
-        if command is not None:
-            return command
+        if hitl_helper:
+            command = hitl_helper.validate_and_convert_human_feedback(
+                prev_state, context.request.get("input")
+            )
+            if command is not None:
+                return command
         converter = self._create_request_converter(context)
         return converter.convert()
     
-    async def _aget_state(self, context: AgentRunContext) -> StateSnapshot:
+    async def _aget_state(self, context: AgentRunContext) -> Optional[StateSnapshot]:
         config = RunnableConfig(
             configurable={"thread_id": context.conversation_id},
         )
-        state = await self._graph.aget_state(config=config)
-        return state
+        if self._graph.checkpointer:
+            state = await self._graph.aget_state(config=config)
+            return state
+        return None

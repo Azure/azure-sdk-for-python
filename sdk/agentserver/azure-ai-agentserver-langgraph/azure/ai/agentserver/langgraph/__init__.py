@@ -11,17 +11,17 @@ from ._version import VERSION
 from .langgraph import LangGraphAdapter
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .models.response_api_converter import ResponseAPIConverter
     from azure.core.credentials_async import AsyncTokenCredential
-    from .models import LanggraphStateConverter
 
 
 def from_langgraph(
     agent,
     credentials: Optional["AsyncTokenCredential"] = None,
-    state_converter: Optional["LanggraphStateConverter"] = None
+    converter: Optional["ResponseAPIConverter"] = None
 ) -> "LangGraphAdapter":
 
-    return LangGraphAdapter(agent, credentials=credentials, state_converter=state_converter)
+    return LangGraphAdapter(agent, credentials=credentials, converter=converter)
 
 
 __all__ = ["from_langgraph", "LanggraphRunContext"]
