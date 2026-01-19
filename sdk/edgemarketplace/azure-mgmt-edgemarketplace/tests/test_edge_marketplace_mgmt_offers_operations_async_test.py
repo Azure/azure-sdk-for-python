@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.edgemarketplace.aio import EdgeMarketplaceClient
+from azure.mgmt.edgemarketplace.aio import EdgeMarketplaceMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -14,15 +14,14 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestEdgeMarketplaceOperationsAsync(AzureMgmtRecordedTestCase):
+@pytest.mark.live_test_only
+class TestEdgeMarketplaceMgmtOffersOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(EdgeMarketplaceClient, is_async=True)
+        self.client = self.create_mgmt_client(EdgeMarketplaceMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
+    async def test_offers_list_by_subscription(self, resource_group):
+        response = self.client.offers.list_by_subscription()
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
+        assert response
