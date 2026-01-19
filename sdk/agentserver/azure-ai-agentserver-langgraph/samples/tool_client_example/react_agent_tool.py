@@ -24,13 +24,19 @@ deployment_name = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME", "gpt-4o")
 model = AzureChatOpenAI(model=deployment_name, azure_ad_token_provider=token_provider)
 
 foundry_tools = use_foundry_tools([
-  {
-      "type": "code_interpreter"
-  },
-  # {
-  #     "type": "mcp",
-  #     "project_connection_id": "github_connection_id"
-  # }
+    {
+        # use the python tool to calculate what is 4 * 3.82. and then find its square root and then find the square root of that result
+        "type": "code_interpreter"
+    },
+    {
+        # Give me the Azure CLI commands to create an Azure Container App with a managed identity. search Microsoft Learn
+        "type": "mcp",
+        "project_connection_id": "MicrosoftLearn"
+    },
+    # {
+    #     "type": "mcp",
+    #     "project_connection_id": "FoundryMCPServerpreview"
+    # }
 ])
 
 
