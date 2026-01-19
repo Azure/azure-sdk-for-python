@@ -31,6 +31,9 @@ class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     _status: Optional[str]
     _termination_statuses: List[str]
     _polling_interval: int
+    _resource: Optional[JSON]
+    _command: Optional[Any]
+    _initial_response: Optional[JSON]
 
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
