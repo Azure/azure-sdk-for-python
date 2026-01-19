@@ -1,4 +1,4 @@
 directory: specification/edgemarketplace/Microsoft.EdgeMarketPlace.Management
-commit: 1c8d781d78c1f7b727f44b488980186ff84dd6cf
+commit: bb45a2b056a8d45e2329c8b2cd823a203fa10285
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
