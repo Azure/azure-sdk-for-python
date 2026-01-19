@@ -52,7 +52,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_agent_evaluation.py",
                 "sample_model_evaluation.py",
                 "sample_agent_response_evaluation.py",
-                "sample_evaluations_builtin_with_dataset_id.py",
+                # sample_evaluations_builtin_with_dataset_id.py requires blob storage upload which doesn't work in playback mode
                 "sample_evaluations_builtin_with_inline_data.py",
             ],
         ),
