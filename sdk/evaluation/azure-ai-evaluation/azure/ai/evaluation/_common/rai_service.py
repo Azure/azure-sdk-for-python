@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import asyncio
+import copy
 import importlib.metadata
+import logging
 import math
 import re
 import time
@@ -13,14 +15,15 @@ from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
-from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage
+from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage, EvaluatorMessage
+from azure.ai.evaluation._common.onedp._utils.model_base import SdkJSONEncoder
 from azure.core.exceptions import HttpResponseError
 
 import jwt
 
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._common.utils import is_onedp_project
@@ -37,6 +40,8 @@ from .constants import (
 )
 from .utils import get_harm_severity_level, retrieve_content_type
 
+
+LOGGER = logging.getLogger(__name__)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
@@ -252,7 +257,7 @@ async def submit_request(
         http_response = await client.post(url, json=payload, headers=headers)
 
     if http_response.status_code != 202:
-        print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], http_response.text()))
+        LOGGER.error("Fail evaluating '%s' with error message: %s", payload["UserTextList"], http_response.text())
         http_response.raise_for_status()
     result = http_response.json()
     operation_id = result["location"].split("/")[-1]
@@ -745,7 +750,7 @@ async def evaluate_with_rai_service(
     evaluator_name=None,
     scan_session_id: Optional[str] = None,
 ) -> Dict[str, Union[str, float]]:
-    """Evaluate the content safety of the response using Responsible AI service
+    """Evaluate the content safety of the response using Responsible AI service (legacy endpoint)
 
     :param data: The data to evaluate.
     :type data: dict
@@ -933,11 +938,22 @@ def _build_sync_eval_payload(
     # Prepare context if available
     context = None
     if data.get("context") is not None:
-        context = " ".join(c["content"] for c in data["context"]["contexts"])
+        # Handle both string context and dict with contexts list
+        context_data = data["context"]
+        if isinstance(context_data, str):
+            # Context is already a string
+            context = context_data
+        elif isinstance(context_data, dict) and "contexts" in context_data:
+            # Context is a dict with contexts list
+            context = " ".join(c["content"] for c in context_data["contexts"])
+        elif isinstance(context_data, dict):
+            # Context is a dict but might be in a different format
+            # Try to get content directly or convert to string
+            context = context_data.get("content", str(context_data))
 
     # Build QueryResponseInlineMessage object
     item_content = QueryResponseInlineMessage(
-        query=data.get("query", ""),
+        query=data.get("query", "query"),  # TODO: remove default query once sync evals supports no query
         response=data.get("response", ""),
         context=context,
         tools=data.get("tool_calls"),
@@ -950,10 +966,13 @@ def _build_sync_eval_payload(
         "response": "{{item.response}}",
     }
 
+    # Convert metric_name to string value if it's an enum
+    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+
     # Create the sync eval input payload
     # Structure: Uses QueryResponseInlineMessage format with azure_ai_evaluator type
     sync_eval_payload = {
-        "name": f"Safety Eval - {metric_name}",
+        "name": f"Safety Eval - {metric_name_str}",
         "data_source": {
             "type": "jsonl",
             "source": {"type": "file_content", "content": {"item": item_content}},
@@ -961,82 +980,14 @@ def _build_sync_eval_payload(
         "testing_criteria": [
             {
                 "type": "azure_ai_evaluator",
-                "name": metric_name,
-                "evaluator_name": metric_name,
+                "name": metric_name_str,
+                "evaluator_name": f"builtin.{metric_name_str}",
                 "data_mapping": data_mapping,
             }
         ],
     }
 
     return sync_eval_payload
-
-
-def _parse_sync_eval_result(
-    eval_result, metric_name: str, metric_display_name: Optional[str] = None
-) -> Dict[str, Union[str, float]]:
-    """Parse the result from sync_evals response (EvalRunOutputItem) into the standard format.
-
-    :param eval_result: The result from sync_evals.create() call (EvalRunOutputItem).
-    :param metric_name: The evaluation metric name.
-    :type metric_name: str
-    :param metric_display_name: The display name for the metric.
-    :type metric_display_name: Optional[str]
-    :return: The parsed result in standard format compatible with parse_response.
-    :rtype: Dict[str, Union[str, float]]
-    """
-    # Handle EvalRunOutputItem structure
-    # Expected structure: {'results': [{'name': 'violence', 'score': 0.0, 'reason': '...', ...}]}
-
-    display_name = metric_display_name or metric_name
-
-    # Handle both dict and object formats
-    if hasattr(eval_result, "results"):
-        results = eval_result.results
-    elif isinstance(eval_result, dict) and "results" in eval_result:
-        results = eval_result["results"]
-    else:
-        return {}
-
-    if not results or len(results) == 0:
-        return {}
-
-    # Find the result for our specific metric
-    target_result = None
-    for result_item in results:
-        if isinstance(result_item, dict):
-            if result_item.get("name") == metric_name or result_item.get("metric") == metric_name:
-                target_result = result_item
-                break
-        elif hasattr(result_item, "name") and result_item.name == metric_name:
-            target_result = result_item
-            break
-
-    if not target_result:
-        return {}
-
-    # Extract values from the result item
-    if isinstance(target_result, dict):
-        score = target_result.get("score", math.nan)
-        reason = target_result.get("reason", "")
-        # Also check properties.reasoning for additional reason text
-        if not reason and "properties" in target_result:
-            props = target_result["properties"]
-            if isinstance(props, dict):
-                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
-    else:
-        score = getattr(target_result, "score", math.nan)
-        reason = getattr(target_result, "reason", "")
-        if not reason and hasattr(target_result, "properties"):
-            props = target_result.properties
-            if isinstance(props, dict):
-                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
-
-    # Convert score to severity level using existing logic
-    harm_score = score if not math.isnan(score) else math.nan
-    severity_level = get_harm_severity_level(harm_score) if not math.isnan(harm_score) else math.nan
-
-    # Return in the standard format expected by the red team processor
-    return {display_name: severity_level, f"{display_name}_score": harm_score, f"{display_name}_reason": reason}
 
 
 async def evaluate_with_rai_service_sync(
@@ -1048,12 +999,12 @@ async def evaluate_with_rai_service_sync(
     metric_display_name=None,
     evaluator_name=None,
     scan_session_id: Optional[str] = None,
+    use_legacy_endpoint: bool = False,
 ):
-    """Evaluate the content safety of the response using sync_evals endpoint (OneDP only).
+    """Evaluate the content safety of the response using Responsible AI service.
 
-    This function uses the sync_evals.create() API instead of the legacy evaluations.submit_annotation()
-    approach. It's specifically designed for OneDP projects and provides better integration with
-    the newer evaluation infrastructure. Returns the raw EvalRunOutputItem for direct use.
+    This is the main entry point for RAI service evaluation. By default, uses the sync_evals endpoint.
+    Set use_legacy_endpoint=True to use the legacy polling-based annotation endpoint.
 
     :param data: The data to evaluate.
     :type data: dict
@@ -1072,19 +1023,47 @@ async def evaluate_with_rai_service_sync(
     :type evaluator_name: str
     :param scan_session_id: The scan session ID to use for the evaluation.
     :type scan_session_id: Optional[str]
-    :return: The EvalRunOutputItem containing the evaluation results.
-    :rtype: EvalRunOutputItem
-    :raises: EvaluationException if project_scope is not a OneDP project
+    :param use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+    :type use_legacy_endpoint: bool
+    :return: The EvalRunOutputItem containing the evaluation results (or parsed dict if legacy).
+    :rtype: Union[EvalRunOutputItem, Dict[str, Union[str, float]]]
     """
-    if not is_onedp_project(project_scope):
-        msg = "evaluate_with_rai_service_sync only supports OneDP projects. Use evaluate_with_rai_service for legacy projects."
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.INVALID_VALUE,
-            blame=ErrorBlame.USER_ERROR,
+    # Route to legacy endpoint if requested
+    if use_legacy_endpoint:
+        return await evaluate_with_rai_service(
+            data=data,
+            metric_name=metric_name,
+            project_scope=project_scope,
+            credential=credential,
+            annotation_task=annotation_task,
+            metric_display_name=metric_display_name,
+            evaluator_name=evaluator_name,
+            scan_session_id=scan_session_id,
         )
+
+    # Sync evals endpoint implementation (default)
+    api_version = "2025-10-15-preview"
+    if not is_onedp_project(project_scope):
+        # Get RAI service URL from discovery service and check service availability
+        token = await fetch_or_reuse_token(credential)
+        rai_svc_url = await get_rai_svc_url(project_scope, token)
+        await ensure_service_availability(rai_svc_url, token, annotation_task)
+
+        # Submit annotation request and fetch result
+        url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
+        headers = {"aml-user-token": token, "Authorization": "Bearer " + token, "Content-Type": "application/json"}
+        sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
+        sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
+
+        with get_http_client() as client:
+            http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
+
+        if http_response.status_code != 200:
+            LOGGER.error("Fail evaluating with error message: %s", http_response.text())
+            http_response.raise_for_status()
+        result = http_response.json()
+
+        return result
 
     client = AIProjectClient(
         endpoint=project_scope,
@@ -1092,7 +1071,6 @@ async def evaluate_with_rai_service_sync(
         user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
     )
 
-    # Build the sync eval payload
     sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
     # Call sync_evals.create() with the JSON payload
     eval_result = client.sync_evals.create(eval=sync_eval_payload)
@@ -1101,10 +1079,229 @@ async def evaluate_with_rai_service_sync(
     return eval_result
 
 
-async def evaluate_with_rai_service_multimodal(
-    messages, metric_name: str, project_scope: Union[str, AzureAIProject], credential: TokenCredential
+def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
+    """Build the sync_evals payload for multimodal evaluations.
+
+    :param messages: The conversation messages to evaluate.
+    :type messages: list
+    :param metric_name: The evaluation metric name.
+    :type metric_name: str
+    :return: The payload formatted for sync_evals requests.
+    :rtype: Dict
+    """
+
+    def _coerce_messages(raw_messages):
+        if not raw_messages:
+            return []
+        if isinstance(raw_messages[0], dict):
+            return [copy.deepcopy(message) for message in raw_messages]
+        try:
+            from azure.ai.inference.models import ChatRequestMessage
+        except ImportError as ex:
+            error_message = (
+                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
+            )
+            raise MissingRequiredPackage(message=error_message) from ex
+        if isinstance(raw_messages[0], ChatRequestMessage):
+            return [message.as_dict() for message in raw_messages]
+        return [copy.deepcopy(message) for message in raw_messages]
+
+    def _normalize_message(message):
+        normalized = copy.deepcopy(message)
+        content = normalized.get("content")
+        if content is None:
+            normalized["content"] = []
+        elif isinstance(content, list):
+            normalized["content"] = [
+                copy.deepcopy(part) if isinstance(part, dict) else {"type": "text", "text": str(part)}
+                for part in content
+            ]
+        elif isinstance(content, dict):
+            normalized["content"] = [copy.deepcopy(content)]
+        else:
+            normalized["content"] = [{"type": "text", "text": str(content)}]
+        return normalized
+
+    def _content_to_text(parts):
+        text_parts = []
+        for part in parts:
+            if not isinstance(part, dict):
+                text_parts.append(str(part))
+            elif part.get("text"):
+                text_parts.append(part["text"])
+            elif part.get("type") in {"image_url", "input_image"}:
+                image_part = part.get("image_url") or part.get("image")
+                text_parts.append(json.dumps(image_part))
+            elif part.get("type") == "input_text" and part.get("text"):
+                text_parts.append(part["text"])
+            else:
+                text_parts.append(json.dumps(part))
+        return "\n".join(filter(None, text_parts))
+
+    normalized_messages = [_normalize_message(message) for message in _coerce_messages(messages)]
+    filtered_messages = [message for message in normalized_messages if message.get("role") != "system"]
+
+    assistant_messages = [message for message in normalized_messages if message.get("role") == "assistant"]
+    user_messages = [message for message in normalized_messages if message.get("role") == "user"]
+    content_type = retrieve_content_type(assistant_messages, metric_name)
+
+    last_assistant_text = _content_to_text(assistant_messages[-1]["content"]) if assistant_messages else ""
+    last_user_text = _content_to_text(user_messages[-1]["content"]) if user_messages else ""
+
+    if filtered_messages and filtered_messages[-1].get("role") == "assistant":
+        response_messages = [filtered_messages[-1]]
+        query_messages = filtered_messages[:-1]
+    else:
+        response_messages = []
+        query_messages = filtered_messages
+
+    properties = {}
+    if last_user_text:
+        properties["query_text"] = last_user_text
+    if last_assistant_text:
+        properties["response_text"] = last_assistant_text
+    if content_type:
+        properties["content_type"] = content_type
+
+    item_content = {
+        "type": "azure_ai_evaluator_messages",
+        "query": query_messages,
+        "response": response_messages,
+    }
+    if properties:
+        item_content["properties"] = properties
+
+    template = []
+    if "query_text" in properties:
+        template.append(
+            {
+                "type": "message",
+                "role": "user",
+                "content": {"text": "{{item.properties.query_text}}"},
+            }
+        )
+    if "response_text" in properties:
+        template.append(
+            {
+                "type": "message",
+                "role": "assistant",
+                "content": {"text": "{{item.properties.response_text}}"},
+            }
+        )
+
+    data_source = {
+        "type": "jsonl",
+        "source": {"type": "file_content", "content": {"item": item_content}},
+    }
+    if template:
+        data_source["input_messages"] = {"type": "template", "template": template}
+
+    data_mapping = {
+        "query": "{{item.query}}",
+        "response": "{{item.response}}",
+    }
+    if "content_type" in properties:
+        data_mapping["content_type"] = "{{item.properties.content_type}}"
+
+    return {
+        "name": f"Safety Eval - {metric_name}",
+        "data_source": data_source,
+        "testing_criteria": [
+            {
+                "type": "azure_ai_evaluator",
+                "name": metric_name,
+                "evaluator_name": f"builtin.{metric_name}",
+                "data_mapping": data_mapping,
+            }
+        ],
+    }
+
+
+async def evaluate_with_rai_service_sync_multimodal(
+    messages,
+    metric_name: str,
+    project_scope: Union[str, AzureAIProject],
+    credential: TokenCredential,
+    scan_session_id: Optional[str] = None,
+    use_legacy_endpoint: bool = False,
 ):
-    """ "Evaluate the content safety of the response using Responsible AI service
+    """Evaluate multimodal content using Responsible AI service.
+
+    This is the main entry point for multimodal RAI service evaluation. By default, uses the sync_evals endpoint.
+    Set use_legacy_endpoint=True to use the legacy polling-based annotation endpoint.
+
+    :param messages: The normalized list of conversation messages.
+    :type messages: list
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param project_scope: Azure AI project scope or endpoint.
+    :type project_scope: Union[str, AzureAIProject]
+    :param credential: Azure authentication credential.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param scan_session_id: Optional scan session identifier for correlation.
+    :type scan_session_id: Optional[str]
+    :param use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+    :type use_legacy_endpoint: bool
+    :return: The EvalRunOutputItem or legacy response payload.
+    :rtype: Union[Dict, EvalRunOutputItem]
+    """
+    # Route to legacy endpoint if requested
+    if use_legacy_endpoint:
+        return await evaluate_with_rai_service_multimodal(
+            messages=messages,
+            metric_name=metric_name,
+            project_scope=project_scope,
+            credential=credential,
+        )
+
+    # Sync evals endpoint implementation (default)
+    api_version = "2025-10-15-preview"
+    sync_eval_payload = _build_sync_eval_multimodal_payload(messages, metric_name)
+
+    if is_onedp_project(project_scope):
+        client = AIProjectClient(
+            endpoint=project_scope,
+            credential=credential,
+            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+        )
+
+        headers = {"x-ms-client-request-id": scan_session_id} if scan_session_id else None
+        if headers:
+            return client.sync_evals.create(eval=sync_eval_payload, headers=headers)
+        return client.sync_evals.create(eval=sync_eval_payload)
+
+    token = await fetch_or_reuse_token(credential)
+    rai_svc_url = await get_rai_svc_url(project_scope, token)
+    await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
+
+    url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
+    headers = {
+        "aml-user-token": token,
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json",
+    }
+    if scan_session_id:
+        headers["x-ms-client-request-id"] = scan_session_id
+
+    sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
+
+    with get_http_client() as client:
+        http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
+
+    if http_response.status_code != 200:
+        LOGGER.error("Fail evaluating with error message: %s", http_response.text())
+        http_response.raise_for_status()
+
+    return http_response.json()
+
+
+async def evaluate_with_rai_service_multimodal(
+    messages,
+    metric_name: str,
+    project_scope: Union[str, AzureAIProject],
+    credential: TokenCredential,
+):
+    """Evaluate the content safety of the response using Responsible AI service (legacy endpoint)
     :param messages: The normalized list of messages.
     :type messages: str
     :param metric_name: The evaluation metric to use.

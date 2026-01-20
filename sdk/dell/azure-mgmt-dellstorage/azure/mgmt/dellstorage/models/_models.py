@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -274,17 +274,16 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
 class ErrorResponse(_Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.dellstorage.models.ErrorDetail
@@ -312,7 +311,7 @@ class ErrorResponse(_Model):
 
 
 class Resource(_Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -340,8 +339,7 @@ class Resource(_Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -360,7 +358,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -370,7 +368,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -423,7 +421,7 @@ class FileSystemResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FileSystemResourceProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -546,7 +544,7 @@ class FileSystemResourceUpdate(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.FileSystemResourceUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -558,7 +556,7 @@ class FileSystemResourceUpdate(_Model):
         self,
         *,
         identity: Optional["_models.ManagedServiceIdentityUpdate"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FileSystemResourceUpdateProperties"] = None,
     ) -> None: ...
 
@@ -643,7 +641,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -653,7 +651,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -683,7 +681,7 @@ class ManagedServiceIdentityUpdate(_Model):
     )
     """The type of managed identity assigned to this resource. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -693,7 +691,7 @@ class ManagedServiceIdentityUpdate(_Model):
         self,
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -786,7 +784,7 @@ class MarketplaceDetails(_Model):
 
 
 class Operation(_Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -943,16 +941,16 @@ class SystemData(_Model):
 class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
     """
 
-    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
-    """The client ID of the assigned identity."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
     """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
 
 
 class UserDetails(_Model):
