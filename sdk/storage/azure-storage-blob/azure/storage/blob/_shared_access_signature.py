@@ -176,8 +176,14 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_info_for_hns_account(**kwargs)
         sas.add_request_headers(request_headers)
         sas.add_request_query_params(request_query_params)
-        sas.add_resource_signature(self.account_name, self.account_key, resource_path,
-                                   user_delegation_key=self.user_delegation_key)
+        sas.add_resource_signature(
+            self.account_name,
+            self.account_key,
+            resource_path,
+            user_delegation_key=self.user_delegation_key,
+            request_headers=request_headers,
+            request_query_params=request_query_params
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -288,8 +294,14 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_info_for_hns_account(**kwargs)
         sas.add_request_headers(request_headers)
         sas.add_request_query_params(request_query_params)
-        sas.add_resource_signature(self.account_name, self.account_key, container_name,
-                                   user_delegation_key=self.user_delegation_key)
+        sas.add_resource_signature(
+            self.account_name,
+            self.account_key,
+            container_name,
+            user_delegation_key=self.user_delegation_key,
+            request_headers=request_headers,
+            request_query_params=request_query_params
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -309,14 +321,19 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop('correlation_id', None))
 
     def get_value_to_append(self, query):
-        if query == QueryStringConstants.SIGNED_REQUEST_HEADERS:
-            return (self._sts_srh + "\n") if self._sts_srh else ""
-        if query == QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS:
-            return (self._sts_srq + "\n") if self._sts_srq else ""
         return_value = self.query_dict.get(query) or ''
         return return_value + '\n'
 
-    def add_resource_signature(self, account_name, account_key, path, user_delegation_key=None):
+    def add_resource_signature(
+        self,
+        account_name,
+        account_key,
+        path,
+        user_delegation_key=None,
+        *,
+        request_headers=None,
+        request_query_params=None
+    ):
         if path[0] != '/':
             path = '/' + path
 
@@ -341,6 +358,8 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
                 QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
                 user_delegation_key.signed_delegated_user_tid
             )
+            self.add_request_headers(request_headers)
+            self.add_request_query_params(request_query_params)
 
             string_to_sign += \
                 (self.get_value_to_append(QueryStringConstants.SIGNED_OID) +
@@ -369,9 +388,6 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         if user_delegation_key is not None:
             string_to_sign += (self._sts_srh + "\n") if self._sts_srh else "\n"
             string_to_sign += (self._sts_srq + "\n") if self._sts_srq else "\n"
-        else:
-            string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_HEADERS)
-            string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS)
 
         string_to_sign += (
              self.get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
