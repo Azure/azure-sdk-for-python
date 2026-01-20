@@ -4158,8 +4158,8 @@ class ResponseSession(_Model):
     output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16_8000hz\",
-     \"pcm16_16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
+    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16-8000hz\",
+     \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     turn_detection: Optional["_models.TurnDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
