@@ -66,7 +66,6 @@ class TestFilter(unittest.TestCase):
         self.assertEqual(len(metric_infos[TelemetryType.REQUEST]), 1)
         self.assertEqual(metric_infos[TelemetryType.REQUEST][0].id, "94.e4b85108")
 
-
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._set_quickpulse_derived_metric_infos")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._init_derived_metric_projection")
     def test_parse_metric_filter_configuration_invalid(self, init_projection_mock, set_metric_info_mock):
@@ -100,9 +99,7 @@ class TestFilter(unittest.TestCase):
                         {
                             "TelemetryType": "Request",
                             "Filters": {
-                                "Filters": [
-                                    {"FieldName": "Success", "Predicate": "Equal", "Comparand": "true"}
-                                ]
+                                "Filters": [{"FieldName": "Success", "Predicate": "Equal", "Comparand": "true"}]
                             },
                         }
                     ],

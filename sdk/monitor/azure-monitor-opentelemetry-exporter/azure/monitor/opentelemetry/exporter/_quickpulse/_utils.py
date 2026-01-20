@@ -127,18 +127,18 @@ def _get_metrics_from_projections() -> List[Tuple[str, float]]:
     metrics = []
     projection_map = _get_quickpulse_projection_map()
     for id, projection in projection_map.items():
-        metric_value = 0
+        metric_value = 0.0
         aggregation_type = projection[0]
         if aggregation_type == AggregationType.MIN:
-            metric_value = 0 if projection[1] == _QUICKPULSE_PROJECTION_MAX_VALUE else projection[1]
+            metric_value = 0.0 if projection[1] == _QUICKPULSE_PROJECTION_MAX_VALUE else projection[1]
         elif aggregation_type == AggregationType.MAX:
-            metric_value = 0 if projection[1] == _QUICKPULSE_PROJECTION_MIN_VALUE else projection[1]
+            metric_value = 0.0 if projection[1] == _QUICKPULSE_PROJECTION_MIN_VALUE else projection[1]
         elif aggregation_type == AggregationType.AVG:
-            metric_value = 0 if projection[2] == 0 else projection[1] / float(projection[2])
+            metric_value = 0.0 if projection[2] == 0 else projection[1] / float(projection[2])
         elif aggregation_type == AggregationType.SUM:
             metric_value = projection[1]
         metrics.append((id, metric_value))
-    return metrics  # type: ignore
+    return metrics
 
 
 # Time
