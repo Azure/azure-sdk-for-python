@@ -23,7 +23,6 @@ from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
-from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models.projects import (
     AgentId,
     CreatedBy,
@@ -49,7 +48,6 @@ from .agent_id_generator import AgentIdGenerator
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .utils.async_iter import chunk_on_change, peek
 
-logger = get_logger()
 
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
@@ -410,8 +408,7 @@ class AgentFrameworkOutputStreamingConverter:
 
     async def _read_updates(self, updates: AsyncIterable[AgentRunResponseUpdate]) -> AsyncIterable[tuple[BaseContent, str]]:
         async for update in updates:
-            logger.info(f"Processing update: {update.to_dict()}")
-            if not hasattr(update, "contents") or not update.contents:
+            if not update.contents:
                 continue
 
             # Extract author_name from each update
