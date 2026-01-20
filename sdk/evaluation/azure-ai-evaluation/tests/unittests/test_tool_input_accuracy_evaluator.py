@@ -454,7 +454,7 @@ class TestToolInputAccuracyEvaluator:
         # Expect an exception to be raised
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, response=response, tool_definitions=tool_definitions)
-        
+
         # The error message should mention the specific tool that's missing
         assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
         assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
@@ -483,7 +483,7 @@ class TestToolInputAccuracyEvaluator:
         # Expect an exception to be raised
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, response=response, tool_definitions=tool_definitions)
-        
+
         # The error should mention the specific tool that's missing
         assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
         assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
@@ -535,7 +535,7 @@ class TestToolInputAccuracyEvaluator:
         # Expect an exception to be raised
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, response=None, tool_definitions=tool_definitions)
-        
+
         # The error message should mention the specific tool that's missing
         assert "response is required" in str(exc_info.value).lower()
         assert exc_info.value.category is ErrorCategory.MISSING_FIELD
@@ -704,15 +704,15 @@ class TestToolInputAccuracyEvaluator:
         # Response with tool call missing the 'arguments' field
         response = [
             {
-                'role': 'assistant',
-                'content': [
+                "role": "assistant",
+                "content": [
                     {
-                        'type': 'tool_call',
-                        'tool_call_id': 'call_123',
-                        'name': 'get_weather',
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "get_weather",
                         # Missing 'arguments' field here
                     }
-                ]
+                ],
             }
         ]
         tool_definitions = [

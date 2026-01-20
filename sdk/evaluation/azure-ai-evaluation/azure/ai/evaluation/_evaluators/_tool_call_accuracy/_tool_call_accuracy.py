@@ -187,7 +187,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
-        
+
         # Validate that all tool calls have the "arguments" key
         for tool_call in tool_calls:
             if isinstance(tool_call, dict):
@@ -198,7 +198,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                         blame=ErrorBlame.USER_ERROR,
                     )
-        
+
         if not isinstance(tool_definitions, list):
             tool_definitions = [tool_definitions] if tool_definitions else []
 

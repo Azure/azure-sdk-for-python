@@ -119,10 +119,10 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_calls = self._parse_tools_from_response(response, ensure_arguments=True)
         except EvaluationException as e:
             raise EvaluationException(
-                    message=e.message,
-                    category=e.category,
-                    target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
-                    blame=ErrorBlame.USER_ERROR,
+                message=e.message,
+                category=e.category,
+                target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+                blame=ErrorBlame.USER_ERROR,
             ) from e
 
         if not tool_calls:

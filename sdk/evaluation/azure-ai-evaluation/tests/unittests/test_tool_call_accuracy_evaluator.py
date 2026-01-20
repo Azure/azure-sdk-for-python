@@ -333,11 +333,11 @@ class TestToolCallAccuracyEvaluator:
                 },
             }
         ]
-        
+
         # Should throw an exception because buy_jacket definition has invalid type (not "function")
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-        
+
         # The error should mention the specific tool that's missing
         # because "another_built_in" is not a valid type (not "function")
         assert "buy_jacket" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
@@ -372,11 +372,11 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        
+
         # Expect an exception to be raised
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-        
+
         # The error should mention the specific tool that's missing
         assert "fetch_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
         assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
@@ -404,7 +404,7 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        
+
         # Expect an exception to be raised
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
@@ -592,7 +592,7 @@ class TestToolCallAccuracyEvaluator:
         # So calling without tool_definitions should throw an exception
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-        
+
         assert "openapi" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
         assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
@@ -720,15 +720,15 @@ class TestToolCallAccuracyEvaluator:
         # Response with tool call missing the 'arguments' field
         response = [
             {
-                'role': 'assistant',
-                'content': [
+                "role": "assistant",
+                "content": [
                     {
-                        'type': 'tool_call',
-                        'tool_call_id': 'call_123',
-                        'name': 'fetch_weather',
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "fetch_weather",
                         # Missing 'arguments' field here
                     }
-                ]
+                ],
             }
         ]
         tool_definitions = [
@@ -763,9 +763,9 @@ class TestToolCallAccuracyEvaluator:
         # Tool calls parameter with missing 'arguments' field
         tool_calls = [
             {
-                'type': 'tool_call',
-                'tool_call_id': 'call_123',
-                'name': 'fetch_weather',
+                "type": "tool_call",
+                "tool_call_id": "call_123",
+                "name": "fetch_weather",
                 # Missing 'arguments' field here
             }
         ]
