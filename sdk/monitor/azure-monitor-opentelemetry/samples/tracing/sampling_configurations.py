@@ -32,7 +32,7 @@ from opentelemetry import trace
 # Set the OTEL_TRACES_SAMPLER_ARG environment variable to the desired rate limit (e.g., 0.5 means one trace every two seconds, while 5.0 means five traces per second)
 
 # Using fixed percentage sampler
-# Set the OTEL_TRACES_SAMPLER environment variable to "microsoft.fixed.percentage"
+# Set the OTEL_TRACES_SAMPLER environment variable to "microsoft.fixed_percentage"
 # Set the OTEL_TRACES_SAMPLER_ARG environment variable to 0.2, it has to be a number between 0 and 1, else it will throw an error and default to 1.0
 
 # Using trace_based_sampling configuration # cspell: ignore unsampled
