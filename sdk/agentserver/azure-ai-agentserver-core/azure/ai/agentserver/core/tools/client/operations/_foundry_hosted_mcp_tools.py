@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, AsyncIterable, ClassVar, Dict, Iterable, List, Mapping, TYPE_CHECKING, Tuple, cast
+from typing import Any, AsyncIterable, ClassVar, Dict, Iterable, List, Tuple, cast
 
-from azure.core.rest import HttpRequest
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._base import BaseOperations
@@ -88,7 +88,7 @@ class BaseFoundryHostedMcpToolsOperations(BaseOperations, ABC):
 	def _build_invoke_tool_request(self, tool: ResolvedFoundryTool, arguments: Dict[str, Any]) -> HttpRequest:
 		if tool.definition.source != FoundryToolSource.HOSTED_MCP:
 			raise ToolInvocationError(f"Tool {tool.name} is not a Foundry-hosted MCP tool.", tool=tool)
-		definition = cast(FoundryHostedMcpTool, tool.definition) if TYPE_CHECKING else tool.definition
+		definition = cast(FoundryHostedMcpTool, tool.definition)
 
 		payload = dict(self._INVOKE_TOOL_REQUEST_BODY_TEMPLATE)
 		payload["params"] = {

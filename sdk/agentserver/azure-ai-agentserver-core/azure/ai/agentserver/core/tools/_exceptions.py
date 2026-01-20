@@ -72,5 +72,3 @@ class InvalidToolFacadeError(RuntimeError):
     This exception is raised when a tool facade does not conform
     to the expected structure or contains invalid data.
     """
-    pass
-

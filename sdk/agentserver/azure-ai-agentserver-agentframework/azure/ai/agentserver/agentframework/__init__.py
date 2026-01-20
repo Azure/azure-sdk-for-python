@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Optional, Union
 from agent_framework import AgentProtocol, WorkflowBuilder
 
 from azure.ai.agentserver.agentframework._version import VERSION
-from azure.ai.agentserver.agentframework._agent_framework import AgentFrameworkCBAgent
+from azure.ai.agentserver.agentframework._agent_framework import AgentFrameworkAgent
 from azure.ai.agentserver.agentframework._ai_agent_adapter import AgentFrameworkAIAgentAdapter
 from azure.ai.agentserver.agentframework._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
 from azure.ai.agentserver.agentframework._foundry_tools import FoundryToolsChatMiddleware
@@ -22,7 +22,7 @@ def from_agent_framework(
     agent: Union[AgentProtocol, WorkflowBuilder],
     credentials: Optional["AsyncTokenCredential"] = None,
     **kwargs: Any,
-) -> "AgentFrameworkCBAgent":
+) -> "AgentFrameworkAgent":
 
     if isinstance(agent, WorkflowBuilder):
         return AgentFrameworkWorkflowAdapter(workflow_builder=agent, credentials=credentials, **kwargs)

@@ -71,12 +71,18 @@ class DefaultFoundryToolRuntime(FoundryToolRuntime):
 
     @property
     def catalog(self) -> FoundryToolCatalog:
-        """The tool catalog."""
+        """The tool catalog.
+
+        :rtype: FoundryToolCatalog
+        """
         return self._catalog
 
     @property
     def invocation(self) -> FoundryToolInvocationResolver:
-        """The tool invocation resolver."""
+        """The tool invocation resolver.
+
+        :rtype: FoundryToolInvocationResolver
+        """
         return self._invocation
 
     async def __aenter__(self) -> "DefaultFoundryToolRuntime":
