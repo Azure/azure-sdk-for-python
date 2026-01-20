@@ -25,6 +25,7 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `ConfigurationStoreUpdateParameters` moved instance variable `encryption`, `disable_local_auth`, `public_network_access`, `enable_purge_protection`, `data_plane_proxy` and `default_key_value_revision_retention_period_in_seconds` under property `properties`
   - Model `PrivateEndpointConnectionReference` moved instance variable `provisioning_state`, `private_endpoint` and `private_link_service_connection_state` under property `properties`
   - Method `ConfigurationStoresOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
