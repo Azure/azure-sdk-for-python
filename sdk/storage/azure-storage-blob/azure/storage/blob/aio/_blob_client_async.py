@@ -489,7 +489,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
-        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
+        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]]
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:
@@ -2040,7 +2040,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
     @distributed_trace_async
     async def stage_block(
         self, block_id: str,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2050,8 +2050,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-        :param int length: Size of the block.
+        :type data: Union[bytes, str, Iterable[bytes], IO[bytes]]
+        :param int length:
+            Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
+            length is not provided and cannot be determined, all data will be read into memory.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
@@ -3199,9 +3201,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         :param data:
             Content of the block.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]],
         :param int length:
-            Size of the block in bytes.
+            Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
+            length is not provided and cannot be determined, all data will be read into memory.
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the block content. The storage
             service checks the hash of the content that has arrived

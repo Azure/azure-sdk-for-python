@@ -94,7 +94,7 @@ def _flush_data_options(
 
 
 def _upload_options(
-    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
     scheme: str,
     config: "StorageConfiguration",
     path: "PathOperations",

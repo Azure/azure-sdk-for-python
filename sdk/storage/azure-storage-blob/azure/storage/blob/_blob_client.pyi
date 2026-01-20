@@ -483,7 +483,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def stage_block(
         self,
         block_id: str,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
         validate_content: Optional[bool] = None,
@@ -738,7 +738,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     @distributed_trace
     def append_block(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
         validate_content: Optional[bool] = None,
