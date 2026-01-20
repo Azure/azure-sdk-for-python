@@ -7,7 +7,7 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
 
-from agent_framework import AgentProtocol, AIFunction
+from agent_framework import AgentProtocol, AIFunction, AgentThread, WorkflowAgent
 from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
@@ -224,3 +224,34 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         AsyncGenerator[ResponseStreamEvent, Any],
     ]:
         raise NotImplementedError("This method is implemented in the base class.")
+    
+    async def _load_agent_thread(self, context: AgentRunContext, agent: Union[AgentProtocol, WorkflowAgent]) -> Optional[AgentThread]:
+        """Load the agent thread for a given conversation ID.
+
+        :param context: The agent run context.
+        :type context: AgentRunContext
+        :param agent: The agent instance.
+        :type agent: AgentProtocol | WorkflowAgent
+
+        :return: The loaded AgentThread if available, None otherwise.
+        :rtype: Optional[AgentThread]
+        """
+        if self._thread_repository:
+            agent_thread = await self._thread_repository.get(context.conversation_id)
+            if agent_thread:
+                logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
+                return agent_thread
+            return agent.get_new_thread()
+        return None
+
+    async def _save_agent_thread(self, context: AgentRunContext, agent_thread: AgentThread) -> None:
+        """Save the agent thread for a given conversation ID.
+
+        :param context: The agent run context.
+        :type context: AgentRunContext
+        :param agent_thread: The agent thread to save.
+        :type agent_thread: AgentThread
+        """
+        if agent_thread and self._thread_repository:
+            await self._thread_repository.set(context.conversation_id, agent_thread)
+            logger.info(f"Saved agent thread for conversation: {context.conversation_id}")

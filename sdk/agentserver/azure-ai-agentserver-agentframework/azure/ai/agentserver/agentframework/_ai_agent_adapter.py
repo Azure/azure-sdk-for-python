@@ -47,14 +47,8 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkCBAgent):
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
 
-            agent_thread = None
-            if self._thread_repository:
-                agent_thread = await self._thread_repository.get(context.conversation_id)
-                if agent_thread:
-                    logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
-                else:
-                    agent_thread = self.agent.get_new_thread()
-
+            agent_thread = self._load_agent_thread(context, self._agent)
+            
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
                 request_input,
@@ -78,9 +72,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkCBAgent):
                                 update_count += 1
                                 yield event
 
-                            if agent_thread and self._thread_repository:
-                                await self._thread_repository.set(context.conversation_id, agent_thread)
-                                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+                            await self._save_agent_thread(context, agent_thread)
 
                             logger.info("Streaming completed with %d updates", update_count)
                         except OAuthConsentRequiredError as e:
@@ -124,16 +116,13 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkCBAgent):
 
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
-            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
             result = await self.agent.run(
                 message,
                 thread=agent_thread)
             logger.debug(f"Agent run completed, result type: {type(result)}")
+            await self._save_agent_thread(context, agent_thread)
 
-            if agent_thread and self._thread_repository:
-                await self._thread_repository.set(context.conversation_id, agent_thread)
-                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
-
+            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
             return transformed_result

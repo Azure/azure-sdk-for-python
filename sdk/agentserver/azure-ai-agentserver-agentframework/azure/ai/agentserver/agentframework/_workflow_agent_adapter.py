@@ -50,23 +50,17 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkCBAgent):
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
 
-            agent_thread = None
+            agent_thread = self._load_agent_thread(context, agent)
+
             checkpoint_storage = None
             last_checkpoint = None
-            if self._thread_repository:
-                agent_thread = await self._thread_repository.get(context.conversation_id, agent=agent)
-                if agent_thread:
-                    logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
-                else:
-                    agent_thread = agent.get_new_thread()
-
             if self._checkpoint_repository:
                 checkpoint_storage = await self._checkpoint_repository.get_or_create(context.conversation_id)
                 last_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
                 if last_checkpoint:
                     summary = get_checkpoint_summary(last_checkpoint)
                     if summary.status == "completed":
-                        logger.warning("Last checkpoint is completed. Will not resume from it.")
+                        logger.warning(f"Lastest checkpoint {last_checkpoint.checkpoint_id} is completed. Will not resume from it.")
                         last_checkpoint = None  # Do not resume from completed checkpoints
                 if last_checkpoint:
                     await self._load_checkpoint(agent, last_checkpoint, checkpoint_storage)
@@ -97,9 +91,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkCBAgent):
                                 update_count += 1
                                 yield event
 
-                            if agent_thread and self._thread_repository:
-                                await self._thread_repository.set(context.conversation_id, agent_thread)
-                                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+                            await self._save_agent_thread(context, agent_thread)
 
                             logger.info("Streaming completed with %d updates", update_count)
                         except OAuthConsentRequiredError as e:
@@ -142,18 +134,16 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkCBAgent):
                 return stream_updates()
 
             # Non-streaming path
-            logger.info("Running agent in non-streaming mode")
-            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
+            logger.info("Running WorkflowAgent in non-streaming mode")
             result = await agent.run(
                 message,
                 thread=agent_thread,
                 checkpoint_storage=checkpoint_storage)
-            logger.debug(f"Agent run completed, result type: {type(result)}")
+            logger.debug(f"WorkflowAgent run completed, result type: {type(result)}")
 
-            if agent_thread and self._thread_repository:
-                await self._thread_repository.set(context.conversation_id, agent_thread)
-                logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+            await self._save_agent_thread(context, agent_thread)
 
+            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
             return transformed_result
