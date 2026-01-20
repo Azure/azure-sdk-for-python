@@ -16,6 +16,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from ._version import VERSION
 
 
 logger = logging.getLogger(__name__)
@@ -141,6 +142,11 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             base_url,
         )
 
+        default_headers = kwargs.get("default_headers", {})
+        user_agent = default_headers.get("User-Agent", "")
+        default_headers["User-Agent"] = ", ".join([str(user_agent), f"AzureAIProjects/{VERSION}"]).lstrip(", ")
+        kwargs["default_headers"] = default_headers
+
         http_client = None
 
         if self._console_logging_enabled:
@@ -179,6 +185,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
                     print(f"\n==> Request:\n{request.method} {request.url}")
                     headers = dict(request.headers)
+                    if "user-agent" in headers:
+                        headers["user-agent"] += f", AzureAIProjects/{VERSION}"
                     self._sanitize_auth_header(headers)
                     print("Headers:")
                     for key, value in sorted(headers.items()):

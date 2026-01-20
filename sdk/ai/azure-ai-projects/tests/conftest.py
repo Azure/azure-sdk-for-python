@@ -20,6 +20,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
     add_body_regex_sanitizer,
+    add_header_regex_sanitizer,
 )
 
 if not load_dotenv(find_dotenv(), override=True):
@@ -157,6 +158,9 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_remove_header_sanitizer(
         headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
     )
+
+    # Sanitize User-Agent header to avoid platform-specific information in recordings
+    add_header_regex_sanitizer(key="User-Agent", value="sanitized-user-agent")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
