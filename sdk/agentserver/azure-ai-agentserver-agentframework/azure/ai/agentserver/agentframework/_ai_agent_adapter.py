@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation,no-name-in-module,no-member,do-not-import-asyncio
 from __future__ import annotations
 
 from typing import Any, AsyncGenerator, Optional, Union
@@ -20,12 +19,12 @@ from .models.agent_framework_input_converters import AgentFrameworkInputConverte
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
-from ._agent_framework import AgentFrameworkCBAgent
+from ._agent_framework import AgentFrameworkAgent
 from .persistence import AgentThreadRepository
 
 logger = get_logger()
 
-class AgentFrameworkAIAgentAdapter(AgentFrameworkCBAgent):
+class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
     def __init__(self, agent: AgentProtocol,
                  *,
                  thread_repository: Optional[AgentThreadRepository]=None,
@@ -41,7 +40,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkCBAgent):
         AsyncGenerator[ResponseStreamEvent, Any],
     ]:
         try:
-            logger.info(f"Starting agent_run with stream={context.stream}")
+            logger.info(f"Starting AIAgent agent_run with stream={context.stream}")
             request_input = context.request.get("input")
 
             agent_thread = await self._load_agent_thread(context, self._agent)

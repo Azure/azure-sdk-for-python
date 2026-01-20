@@ -1,4 +1,6 @@
-
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
 
 from agent_framework import WorkflowBuilder, CheckpointStorage, WorkflowAgent, WorkflowCheckpoint
@@ -8,12 +10,11 @@ from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
-    CreateResponse,
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
 
-from ._agent_framework import AgentFrameworkCBAgent
+from ._agent_framework import AgentFrameworkAgent
 from .models.agent_framework_input_converters import AgentFrameworkInputConverter
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
@@ -23,7 +24,7 @@ from .persistence.checkpoint_repository import CheckpointRepository
 
 logger = get_logger()
 
-class AgentFrameworkWorkflowAdapter(AgentFrameworkCBAgent):
+class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
     """Adapter to run WorkflowBuilder agents within the Agent Framework CBAgent structure."""
     def __init__(self,
                 workflow_builder: WorkflowBuilder,
@@ -45,30 +46,30 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkCBAgent):
         try:
             agent = self._build_agent()
 
-            logger.info(f"Starting agent_run with stream={context.stream}")
+            logger.info(f"Starting WorkflowAgent agent_run with stream={context.stream}")
             request_input = context.request.get("input")
 
             agent_thread = await self._load_agent_thread(context, agent)
 
             checkpoint_storage = None
-            last_checkpoint = None
+            selected_checkpoint = None
             if self._checkpoint_repository:
                 checkpoint_storage = await self._checkpoint_repository.get_or_create(context.conversation_id)
-                last_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
-                if last_checkpoint:
-                    summary = get_checkpoint_summary(last_checkpoint)
-                    if summary.status == "completed":
-                        logger.warning(f"Lastest checkpoint {last_checkpoint.checkpoint_id} is completed. Will not resume from it.")
-                        last_checkpoint = None  # Do not resume from completed checkpoints
-                if last_checkpoint:
-                    await self._load_checkpoint(agent, last_checkpoint, checkpoint_storage)
-                    logger.info(f"Loaded checkpoint with ID: {last_checkpoint.checkpoint_id}")
+                selected_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
+            if selected_checkpoint:
+                summary = get_checkpoint_summary(selected_checkpoint)
+                if summary.status == "completed":
+                    logger.warning(f"Selected checkpoint {selected_checkpoint.checkpoint_id} is completed. Will not resume from it.")
+                    selected_checkpoint = None  # Do not resume from completed checkpoints
+                else:
+                    await self._load_checkpoint(agent, selected_checkpoint, checkpoint_storage)
+                    logger.info(f"Loaded checkpoint with ID: {selected_checkpoint.checkpoint_id}")
 
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
                 request_input,
                 agent_thread=agent_thread,
-                checkpoint=last_checkpoint)
+                checkpoint=selected_checkpoint)
             logger.debug(f"Transformed input message type: {type(message)}")
 
             # Use split converters
@@ -137,6 +138,5 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkCBAgent):
         :param checkpoint: The WorkflowCheckpoint to load data from.
         :type checkpoint: WorkflowCheckpoint
         """
-        logger.info(f"Loading checkpoint ID: {checkpoint.to_dict()} into agent.")
         await agent.run(checkpoint_id=checkpoint.checkpoint_id,
                         checkpoint_storage=checkpoint_storage)

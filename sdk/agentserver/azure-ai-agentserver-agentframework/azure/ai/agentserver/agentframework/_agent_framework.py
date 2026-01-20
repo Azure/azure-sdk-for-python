@@ -55,7 +55,7 @@ class AgentFactory(Protocol):
         ...
 
 
-class AgentFrameworkCBAgent(FoundryCBAgent):
+class AgentFrameworkAgent(FoundryCBAgent):
     """
     Adapter class for integrating Agent Framework agents with the FoundryCB agent interface.
 

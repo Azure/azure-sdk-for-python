@@ -48,9 +48,6 @@ from .agent_id_generator import AgentIdGenerator
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .utils.async_iter import chunk_on_change, peek
 
-from azure.ai.agentserver.core.logger import get_logger
-logger = get_logger()
-
 
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
@@ -150,7 +147,6 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         hitl_contents = []
 
         async for content in contents:
-            logger.info("Processing content %s: %s", type(content).__name__, content.to_dict())
             if isinstance(content, FunctionCallContent):
                 if content.call_id not in content_by_call_id:
                     item_id = self._parent.context.id_generator.generate_function_call_id()
@@ -262,12 +258,9 @@ class _FunctionCallStreamingState(_BaseStreamingState):
     def _serialize_arguments(self, arguments: Any) -> str:
         if isinstance(arguments, str):
             return arguments
-        if hasattr(arguments, "to_dict"):
-            arguments = arguments.to_dict()
         try:
             return json.dumps(arguments)
         except Exception as e:
-            logger.error(f"Failed to serialize function call arguments: {e}")
             return str(arguments)
 
 
