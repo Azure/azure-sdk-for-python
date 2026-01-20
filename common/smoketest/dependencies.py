@@ -1,11 +1,6 @@
 import argparse
 
-# Modern packaging imports
-try:
-    import importlib.metadata as importlib_metadata
-except ImportError:
-    # Python < 3.8 fallback
-    import importlib_metadata
+import importlib.metadata as importlib_metadata
 
 from packaging.requirements import Requirement
 
@@ -17,6 +12,7 @@ except:
     # pip >= 20
     from pip._internal.req import parse_requirements
     from pip._internal.network.session import PipSession
+
 
 def combine_requirements(requirements):
     name = requirements[0].name  # packaging.requirements.Requirement uses 'name' instead of 'project_name'
@@ -30,19 +26,20 @@ def combine_requirements(requirements):
 
     return name + ",".join(specs)
 
+
 def get_dependencies(packages):
     requirements = []
     for package in packages:
         try:
             # Get the distribution for this package
             package_info = importlib_metadata.distribution(package)
-            
+
             # Get requirements and process them like pkg_resources did
             if package_info.requires:
                 for req_str in package_info.requires:
                     # Parse the requirement string
                     req = Requirement(req_str)
-                    
+
                     # Apply the same filtering as the original code:
                     # include requirements where marker is None or evaluates to True
                     if req.marker is None or req.marker.evaluate():
@@ -56,27 +53,26 @@ def get_dependencies(packages):
 
     return requirements
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="List dependencies for a given requirements.txt file"
-    )
+    parser = argparse.ArgumentParser(description="List dependencies for a given requirements.txt file")
 
     parser.add_argument(
         "-r",
         "--requirements",
         dest="requirements_file",
         help="File containing list of packages for which to find dependencies",
-        required=True
+        required=True,
     )
 
     args = parser.parse_args()
     # Get package names from requirements.txt
     requirements = parse_requirements(args.requirements_file, session=PipSession())
-    
+
     # Handle different pip versions - extract package names
     package_names = []
     for item in requirements:
-        if hasattr(item, 'requirement'):
+        if hasattr(item, "requirement"):
             # Parse the requirement string to get the name
             req_str = item.requirement
             if isinstance(req_str, str):
@@ -86,11 +82,11 @@ if __name__ == "__main__":
                     package_names.append(req.name)
                 except Exception:
                     # If parsing fails, try to extract name directly
-                    name = req_str.split('==')[0].split('>=')[0].split('<=')[0].split('>')[0].split('<')[0].strip()
+                    name = req_str.split("==")[0].split(">=")[0].split("<=")[0].split(">")[0].split("<")[0].strip()
                     package_names.append(name)
             else:
                 package_names.append(req_str.name)
-        elif hasattr(item, 'req'):
+        elif hasattr(item, "req"):
             # Older pip versions
             package_names.append(item.req.name)
         else:
