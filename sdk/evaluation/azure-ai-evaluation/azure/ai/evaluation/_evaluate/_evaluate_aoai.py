@@ -192,8 +192,8 @@ def _begin_single_aoai_evaluation(
     azure_ai_project = kwargs.get("azure_ai_project")
     if azure_ai_project is not None:
         try:
-            from azure.ai.projects import AIProjectClient
-            from azure.identity import DefaultAzureCredential
+            from azure.ai.projects import AIProjectClient  # type: ignore
+            from azure.identity import DefaultAzureCredential  # type: ignore
             
             # If azure_ai_project is a string (OneDP endpoint), use it directly
             # Otherwise, construct the endpoint from the AzureAIProject dict
@@ -212,19 +212,20 @@ def _begin_single_aoai_evaluation(
                 )
             
             # Get credential from the first grader if available, otherwise use DefaultAzureCredential
-            credential = list(graders.values())[0]._credential if list(graders.values())[0]._credential else DefaultAzureCredential()
+            first_grader = list(graders.values())[0]
+            credential = first_grader._credential if first_grader._credential else DefaultAzureCredential()
             
             # Create AIProjectClient and get OpenAI client configured for Foundry
             project_client = AIProjectClient(endpoint=endpoint, credential=credential)
             client = project_client.get_openai_client()
             LOGGER.info(f"AOAI: Using Foundry client for evaluation (endpoint: {endpoint})")
-        except ImportError:
+        except ImportError as import_err:
             raise EvaluationException(
                 message="azure-ai-projects package is required when using azure_ai_project with AOAI graders. Install it with: pip install azure-ai-projects",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_PACKAGE,
                 target=ErrorTarget.AOAI_GRADER,
-            )
+            ) from import_err
         except Exception as e:
             raise EvaluationException(
                 message=f"Failed to create Foundry client: {str(e)}",
