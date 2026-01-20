@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 
 def _append_data_options(
-    data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
     offset: int,
     scheme: str,
     length: Optional[int] = None,
@@ -94,7 +94,7 @@ def _flush_data_options(
 
 
 def _upload_options(
-    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
     scheme: str,
     config: "StorageConfiguration",
     path: "PathOperations",
