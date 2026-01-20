@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2026-01-01-preview",
+  "commit": "74fd6c09ef3546c7997e174cb67002b5b273f381",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/postgresql/DBforPostgreSQL.Management",
+  "emitterVersion": "0.57.1"
+}
