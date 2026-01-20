@@ -18,6 +18,8 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import is_onedp_project
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
@@ -184,9 +186,57 @@ def _begin_single_aoai_evaluation(
     if kwargs.get("data_source") is not None:
         data_source = kwargs.get("data_source", {})
 
-    # It's expected that all graders supplied for a single eval run use the same credentials
-    # so grab a client from the first grader.
-    client = list(graders.values())[0].get_client()
+    # Determine which client to use based on whether azure_ai_project is provided.
+    # If azure_ai_project is provided, we need to use the Foundry client (AIProjectClient.get_openai_client())
+    # instead of the grader's Azure OpenAI client, as evals.create() requires the Foundry endpoint.
+    azure_ai_project = kwargs.get("azure_ai_project")
+    if azure_ai_project is not None:
+        try:
+            from azure.ai.projects import AIProjectClient
+            from azure.identity import DefaultAzureCredential
+            
+            # If azure_ai_project is a string (OneDP endpoint), use it directly
+            # Otherwise, construct the endpoint from the AzureAIProject dict
+            if is_onedp_project(azure_ai_project):
+                endpoint = azure_ai_project
+            else:
+                # Construct endpoint from AzureAIProject dict
+                # Format: https://{account}.services.ai.azure.com/api/projects/{project_name}
+                # For now, we'll need the user to provide the endpoint or construct it
+                # This is a fallback - ideally azure_ai_project should be the endpoint string
+                raise EvaluationException(
+                    message="When using Azure AI Foundry with AOAI graders, azure_ai_project must be provided as a string endpoint (e.g., 'https://<account>.services.ai.azure.com/api/projects/<project_name>').",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.AOAI_GRADER,
+                )
+            
+            # Get credential from the first grader if available, otherwise use DefaultAzureCredential
+            credential = list(graders.values())[0]._credential if list(graders.values())[0]._credential else DefaultAzureCredential()
+            
+            # Create AIProjectClient and get OpenAI client configured for Foundry
+            project_client = AIProjectClient(endpoint=endpoint, credential=credential)
+            client = project_client.get_openai_client()
+            LOGGER.info(f"AOAI: Using Foundry client for evaluation (endpoint: {endpoint})")
+        except ImportError:
+            raise EvaluationException(
+                message="azure-ai-projects package is required when using azure_ai_project with AOAI graders. Install it with: pip install azure-ai-projects",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_PACKAGE,
+                target=ErrorTarget.AOAI_GRADER,
+            )
+        except Exception as e:
+            raise EvaluationException(
+                message=f"Failed to create Foundry client: {str(e)}",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.AOAI_GRADER,
+            ) from e
+    else:
+        # It's expected that all graders supplied for a single eval run use the same credentials
+        # so grab a client from the first grader.
+        client = list(graders.values())[0].get_client()
+        LOGGER.info("AOAI: Using grader's Azure OpenAI client for evaluation")
 
     for name, grader in graders.items():
         grader_name_list.append(name)
