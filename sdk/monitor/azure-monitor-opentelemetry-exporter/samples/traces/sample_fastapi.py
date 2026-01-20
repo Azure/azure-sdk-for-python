@@ -12,11 +12,11 @@ import os
 import fastapi
 import uvicorn
 
-from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 # This method instruments all of the FastAPI module.
 # You can also use FastAPIInstrumentor().instrument_app(app) to instrument a specific app after it is created.
@@ -40,8 +40,7 @@ async def test():
 # Exceptions that are raised within the request are automatically captured
 @app.get("/exception")
 async def exception():
-    raise Exception("Hit an exception")
-
+    raise Exception("Hit an exception") # pylint: disable=broad-exception-raised
 
 # Set the OTEL_PYTHON_EXCLUDED_URLS environment variable to "http://127.0.0.1:8000/exclude"
 # Telemetry from this endpoint will not be captured due to excluded_urls config above

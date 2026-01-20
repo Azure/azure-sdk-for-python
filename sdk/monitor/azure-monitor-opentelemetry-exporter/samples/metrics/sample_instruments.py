@@ -27,17 +27,17 @@ meter = metrics.get_meter_provider().get_meter("sample")
 
 
 # Callback functions for observable instruments
-def observable_counter_func(options: CallbackOptions) -> Iterable[Observation]:
+def observable_counter_func(_options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(1, {})
 
 
 def observable_up_down_counter_func(
-    options: CallbackOptions,
+    _options: CallbackOptions,
 ) -> Iterable[Observation]:
     yield Observation(-10, {})
 
 
-def observable_gauge_func(options: CallbackOptions) -> Iterable[Observation]:
+def observable_gauge_func(_options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(9, {})
 
 

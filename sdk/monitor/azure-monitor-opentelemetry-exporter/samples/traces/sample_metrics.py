@@ -2,15 +2,17 @@
 # Licensed under the MIT License.
 """
 An example to show an application instrumented with the OpenTelemetry instrumentations that collect metrics.
-Only certain instrumentations support metrics collection, refer to https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/instrumentation/README.md
+Only certain instrumentations support metrics collection, refer to -
+https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/instrumentation/README.md
 for the full list. Calls made with the underlying instrumented libraries will track metrics information in the
 metrics explorer view in Application Insights.
 """
 # mypy: disable-error-code="attr-defined"
 # mypy: disable-error-code="import-untyped"
-import flask
 import os
-import requests
+import flask
+
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
 from opentelemetry import metrics, trace
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
@@ -50,8 +52,8 @@ trace.get_tracer_provider().add_span_processor(span_processor)  # type: ignore
 
 @app.route("/")
 def test():
-    success_response = requests.get("https://httpstat.us/200", timeout=5)
-    failure_response = requests.get("https://httpstat.us/404", timeout=5)
+    _success_response = requests.get("https://httpstat.us/200", timeout=5)
+    _failure_response = requests.get("https://httpstat.us/404", timeout=5)
     return "Test flask request"
 
 

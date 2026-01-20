@@ -27,6 +27,6 @@ with tracer.start_as_current_span("hello") as span:
 # Exception events
 try:
     with tracer.start_as_current_span("hello") as span:
-        raise Exception("Custom exception message.")
-except Exception:
+        raise Exception("Custom exception message.")  # pylint: disable=broad-exception-raised
+except Exception: # pylint: disable=broad-except
     print("Exception raised")

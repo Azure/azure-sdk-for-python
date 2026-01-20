@@ -10,7 +10,8 @@ https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrum
 # mypy: disable-error-code="attr-defined"
 # mypy: disable-error-code="import-untyped"
 import os
-import requests
+
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
 from opentelemetry import trace
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
