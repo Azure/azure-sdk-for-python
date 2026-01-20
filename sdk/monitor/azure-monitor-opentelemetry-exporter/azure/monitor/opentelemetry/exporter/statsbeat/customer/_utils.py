@@ -4,7 +4,7 @@ import os
 from typing import Optional, List, Tuple, Union, Any
 
 # mypy: disable-error-code="import-untyped"
-from requests import ReadTimeout, Timeout
+from requests import ReadTimeout, Timeout # pylint: disable=networking-import-outside-azure-core-transport
 from azure.core.exceptions import ServiceRequestTimeoutError
 from azure.monitor.opentelemetry.exporter._constants import (
     _REQUEST,

@@ -156,8 +156,8 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
             return None
         return default_connection_string
     except (ValueError, TypeError, KeyError) as ex:
-        logger.warning("Error parsing configuration for region '%s': %s", target_region, str(ex))
+        logger.warning("Error parsing configuration for region '%s': %s", target_region, str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
         return None
     except Exception as ex:  # pylint: disable=broad-exception-caught
-        logger.warning("Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex))
+        logger.warning("Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
         return None

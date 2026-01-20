@@ -6,7 +6,7 @@ import json
 import logging
 
 # mypy: disable-error-code="import-untyped"
-import requests
+import requests # pylint: disable=networking-import-outside-azure-core-transport
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
@@ -124,16 +124,16 @@ def make_onesettings_request(
 
         return _parse_onesettings_response(result)
     except requests.exceptions.Timeout as ex:
-        logger.warning("OneSettings request timed out: %s", str(ex))
+        logger.warning("OneSettings request timed out: %s", str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
         return OneSettingsResponse(has_exception=True)
     except requests.exceptions.RequestException as ex:
-        logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
+        logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
         return OneSettingsResponse(has_exception=True)
     except json.JSONDecodeError as ex:
-        logger.warning("Failed to parse OneSettings response: %s", str(ex))
+        logger.warning("Failed to parse OneSettings response: %s", str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
         return OneSettingsResponse(has_exception=True)
     except Exception as ex:  # pylint: disable=broad-exception-caught
-        logger.warning("Unexpected error while fetching configuration: %s", str(ex))
+        logger.warning("Unexpected error while fetching configuration: %s", str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
         return OneSettingsResponse(has_exception=True)
 
 
@@ -197,9 +197,9 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
                 if settings and settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY) is not None:
                     version = int(settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY))  # type: ignore
             except (UnicodeDecodeError, json.JSONDecodeError) as ex:
-                logger.warning("Failed to decode OneSettings response content: %s", str(ex))
+                logger.warning("Failed to decode OneSettings response content: %s", str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
             except ValueError as ex:
-                logger.warning("Failed to parse OneSettings change version: %s", str(ex))
+                logger.warning("Failed to parse OneSettings change version: %s", str(ex)) # pylint: disable=do-not-log-exceptions-if-not-debug
     elif status_code == 400:
         logger.warning("Bad request to OneSettings: %s", response.content)
     elif status_code == 404:
