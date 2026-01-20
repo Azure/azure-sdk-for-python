@@ -100,6 +100,33 @@ class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Default sensitivity threshold level."""
 
 
+class FillerResponseConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Filler response configuration types."""
+
+    STATIC_FILLER = "static_filler"
+    """Static filler configuration type."""
+    LLM_FILLER = "llm_filler"
+    """LLM-based filler configuration type."""
+
+
+class FillerTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Triggers that can activate filler response generation."""
+
+    LATENCY = "latency"
+    """Trigger filler when response latency exceeds threshold."""
+    TOOL = "tool"
+    """Trigger filler when a tool call is being executed."""
+
+
+class FoundryAgentContextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The available set of Foundry agent context types."""
+
+    NO_CONTEXT = "no_context"
+    """Only the current user input is sent, no context maintained."""
+    AGENT_CONTEXT = "agent_context"
+    """Agent maintains its own context (thread), only current input sent per call."""
+
+
 class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Input audio format types supported."""
 
@@ -130,6 +157,7 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MCP_CALL = "mcp_call"
     MCP_APPROVAL_REQUEST = "mcp_approval_request"
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    FOUNDRY_AGENT_CALL = "foundry_agent_call"
 
 
 class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -220,6 +248,27 @@ class PhotoAvatarBaseModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VASA-1 model"""
 
 
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning models. Check model documentation for supported
+    values for each model.
+    Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
+    a response.
+    """
+
+    NONE = "none"
+    """No reasoning effort."""
+    MINIMAL = "minimal"
+    """Minimal reasoning effort."""
+    LOW = "low"
+    """Low reasoning effort - faster responses with less reasoning."""
+    MEDIUM = "medium"
+    """Medium reasoning effort - balanced between speed and reasoning depth."""
+    HIGH = "high"
+    """High reasoning effort - more thorough reasoning, may take longer."""
+    XHIGH = "xhigh"
+    """Extra high reasoning effort - maximum reasoning depth."""
+
+
 class RequestImageContentPartDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
 
@@ -300,6 +349,11 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
     RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
     RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
+    RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DELTA = "response.foundry_agent_call_arguments.delta"
+    RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DONE = "response.foundry_agent_call_arguments.done"
+    RESPONSE_FOUNDRY_AGENT_CALL_IN_PROGRESS = "response.foundry_agent_call.in_progress"
+    RESPONSE_FOUNDRY_AGENT_CALL_COMPLETED = "response.foundry_agent_call.completed"
+    RESPONSE_FOUNDRY_AGENT_CALL_FAILED = "response.foundry_agent_call.failed"
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -320,6 +374,7 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FUNCTION = "function"
     MCP = "mcp"
+    FOUNDRY_AGENT = "foundry_agent"
 
 
 class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

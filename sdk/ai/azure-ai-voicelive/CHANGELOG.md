@@ -5,10 +5,25 @@
 ### Features Added
 
 - **Support for Explicit Null Values**: Enhanced `RequestSession` to properly serialize explicitly set `None` values (e.g., `turn_detection=None` now correctly sends `"turn_detection": null` in the WebSocket message)
+- **Filler Response Configuration**: Added support for filler response generation during latency or tool calls:
+  - `BasicFillerResponseConfig` for static filler texts that are randomly selected
+  - `LlmFillerResponseConfig` for LLM-generated context-aware filler responses
+  - `FillerTrigger` enum with `latency` and `tool` triggers
+  - `filler_response` field in `RequestSession` and `ResponseSession`
+- **Foundry Agent Integration**: Added support for Azure AI Foundry agents:
+  - `FoundryAgentTool` for defining Foundry agent configurations
+  - `ResponseFoundryAgentCallItem` for Foundry agent call responses
+  - `FoundryAgentContextType` enum for context management (`no_context`, `agent_context`)
+  - Server events for Foundry agent call lifecycle: `ServerEventResponseFoundryAgentCallArgumentsDelta`, `ServerEventResponseFoundryAgentCallArgumentsDone`, `ServerEventResponseFoundryAgentCallInProgress`, `ServerEventResponseFoundryAgentCallCompleted`, `ServerEventResponseFoundryAgentCallFailed`
+- **Reasoning Effort Control**: Added `reasoning_effort` field to `RequestSession`, `ResponseSession`, and `ResponseCreateParams` for controlling reasoning models effort levels with `ReasoningEffort` enum (`none`, `minimal`, `low`, `medium`, `high`, `xhigh`)
+- **Response Metadata**: Added `metadata` field to `Response` and `ResponseCreateParams` for attaching up to 16 key-value pairs (max 64 chars for keys, 512 chars for values)
+- **Array Encoding Support**: Enhanced serialization to support pipe, space, comma, and newline-delimited array encoding formats
 
 ### Other Changes
 
-- **Dependency Update**: Updated minimum `azure-core` version from 1.35.0 to 1.36.0
+- **Dependency Update**: Updated minimum `azure-core` version from 1.36.0 to 1.37.0
+- **Security Enhancement**: Removed `eval()` usage in serialization utilities, replaced with explicit type checking for improved security
+- **Serialization Improvements**: Enhanced model_base deserialization for mutable types and array-encoded strings
 
 ### Bug Fixes
 
