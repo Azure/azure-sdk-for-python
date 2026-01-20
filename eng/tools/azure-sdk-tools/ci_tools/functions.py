@@ -592,6 +592,7 @@ def uninstall_from_venv(venv_path_or_executable: str, requirements: List[str], w
 def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
     return pip_install(["-r", requirements_file], True, python_executable)
 
+
 def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
     """Uses the invoking python executable to get the output from pip freeze."""
     exe = python_executable or sys.executable
@@ -617,6 +618,7 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
 
     return collected_output
 
+
 def get_pip_list_output(python_executable: Optional[str] = None):
     """Uses the invoking python executable to get the output from pip list."""
     pip_output = run_pip_freeze(python_executable)
@@ -628,6 +630,7 @@ def get_pip_list_output(python_executable: Optional[str] = None):
             collected_output[package] = version
 
     return collected_output
+
 
 def pytest(args: list, cwd: Optional[str] = None, python_executable: Optional[str] = None) -> bool:
     """
