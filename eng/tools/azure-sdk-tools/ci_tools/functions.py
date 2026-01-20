@@ -599,7 +599,7 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
     pip_cmd = get_pip_command(exe)
 
     out = subprocess.Popen(
-        pip_cmd + ["freeze", "--disable-pip-version-check"],
+        pip_cmd + ["list", "--disable-pip-version-check", "--format", "freeze"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
