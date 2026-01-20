@@ -3458,7 +3458,7 @@ class ResponseCreateParams(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or ``g711_alaw``. Known
-     values are: \"pcm16\", \"pcm16_8000hz\", \"pcm16_16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
+     values are: \"pcm16\", \"pcm16-8000hz\", \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tools (functions) available to the model."""
     tool_choice: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
