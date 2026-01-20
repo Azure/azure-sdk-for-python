@@ -23,7 +23,7 @@ from workflow_as_agent_reflection_pattern import (  # noqa: E402
 )
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-from azure.ai.agentserver.agentframework.persistence import InMemoryCheckpointRepository
+from azure.ai.agentserver.agentframework.persistence import FileCheckpointRepository
 
 load_dotenv()
 
@@ -84,10 +84,10 @@ class ReviewerWithHumanInTheLoop(Executor):
         print("Reviewer: Forwarding human review back to worker...")
         await ctx.send_message(response, target_id=self._worker_id)
 
-def build_agent(tools):
+def create_builder():
     # Build a workflow with bidirectional communication between Worker and Reviewer,
     # and escalation paths for human review.
-    agent = (
+    builder = (
         WorkflowBuilder()
         .register_executor(
             lambda: Worker(
@@ -103,17 +103,16 @@ def build_agent(tools):
         .add_edge("worker", "reviewer")  # Worker sends requests to Reviewer
         .add_edge("reviewer", "worker")  # Reviewer sends feedback to Worker
         .set_start_executor("worker")
-        .build()
-        .as_agent()  # Convert workflow into an agent interface
     )
-    return agent
+    return builder
 
 
 async def run_agent() -> None:
     """Run the workflow inside the agent server adapter."""
+    builder = create_builder()
     await from_agent_framework(
-        build_agent,  # pass WorkflowAgent factory to adapter, build a new instance per request
-        checkpoint_repository=InMemoryCheckpointRepository(),  # for checkpoint storage
+        builder,  # pass workflow builder to adapter
+        checkpoint_repository=FileCheckpointRepository(storage_path="./checkpoints"),  # for checkpoint storage
     ).run_async()
 
 if __name__ == "__main__":

@@ -23,6 +23,7 @@ from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
+from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models.projects import (
     AgentId,
     CreatedBy,
@@ -48,6 +49,7 @@ from .agent_id_generator import AgentIdGenerator
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .utils.async_iter import chunk_on_change, peek
 
+logger = get_logger()
 
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
@@ -356,7 +358,10 @@ class AgentFrameworkOutputStreamingConverter:
             lambda a, b: a is not None \
                 and b is not None \
                 and (a.message_id != b.message_id \
-                or type(a.content[0]) != type(b.content[0]))  # pylint: disable=unnecessary-lambda-assignment
+                or (
+                    a.contents and b.contents \
+                     and type(a.contents[0]) != type(b.contents[0]))
+                )  # pylint: disable=unnecessary-lambda-assignment
         )
 
         async for group in chunk_on_change(updates, is_changed):
@@ -405,7 +410,8 @@ class AgentFrameworkOutputStreamingConverter:
 
     async def _read_updates(self, updates: AsyncIterable[AgentRunResponseUpdate]) -> AsyncIterable[tuple[BaseContent, str]]:
         async for update in updates:
-            if not update.contents:
+            logger.info(f"Processing update: {update.to_dict()}")
+            if not hasattr(update, "contents") or not update.contents:
                 continue
 
             # Extract author_name from each update

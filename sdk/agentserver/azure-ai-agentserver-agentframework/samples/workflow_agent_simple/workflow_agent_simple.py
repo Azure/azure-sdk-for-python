@@ -264,7 +264,7 @@ class Worker(Executor):
         self._pending_requests[new_request.request_id] = (new_request, messages)
 
 
-def build_agent(chat_client: BaseChatClient):
+def create_builder(chat_client: BaseChatClient):
     reviewer = Reviewer(chat_client=chat_client)
     worker = Worker(chat_client=chat_client)
     return (
@@ -276,16 +276,14 @@ def build_agent(chat_client: BaseChatClient):
             reviewer, worker
         )  # <--- This edge allows the reviewer to send feedback back to the worker
         .set_start_executor(worker)
-        .build()
-        .as_agent()  # Convert the workflow to an agent.
     )
 
 
 async def main() -> None:
     async with DefaultAzureCredential() as credential:
         async with AzureAIAgentClient(async_credential=credential) as chat_client:
-            agent = build_agent(chat_client)
-            await from_agent_framework(agent).run_async()
+            builder = create_builder(chat_client)
+            await from_agent_framework(builder).run_async()
 
 
 if __name__ == "__main__":
