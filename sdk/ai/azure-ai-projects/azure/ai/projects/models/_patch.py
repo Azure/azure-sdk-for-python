@@ -283,7 +283,7 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-# Patched in order to set of type of "schema" to dict[str, Any] instead of ResponseFormatJsonSchemaSchema
+# Patched in order to set the type of "schema" to dict[str, Any] instead of ResponseFormatJsonSchemaSchema
 class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminator="json_schema"):
     """JSON schema.
 
@@ -296,7 +296,7 @@ class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminato
        underscores and dashes, with a maximum length of 64. Required.
     :vartype name: str
     :ivar schema: Required.
-    :vartype schema: ~azure.ai.projects.models.ResponseFormatJsonSchemaSchema
+    :vartype schema: dict[str, any]
     :ivar strict:
     :vartype strict: bool
     """
