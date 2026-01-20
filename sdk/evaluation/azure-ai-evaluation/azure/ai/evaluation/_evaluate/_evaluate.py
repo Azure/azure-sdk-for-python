@@ -359,7 +359,8 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     # Content safety metrics
     content_safety_cols, cs_defect_rates = _aggregate_content_safety_metrics(df, evaluators)
     other_renamed_cols, renamed_cols = _aggregate_other_metrics(df)
-    handled_columns.extend(content_safety_cols)
+    # Note: content_safety_cols are NOT added to handled_columns because we want to calculate
+    # both defect rates (already done above) AND average scores (done via mean() below)
     handled_columns.extend(other_renamed_cols)
     defect_rates.update(cs_defect_rates)
     defect_rates.update(renamed_cols)
@@ -372,6 +373,11 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     token_count_cols = _get_token_count_columns_to_exclude(df)
     handled_columns.extend(token_count_cols)
 
+    # Exclude threshold and result columns from aggregation
+    # These are per-row metadata, not metrics to be averaged
+    threshold_and_result_cols = [col for col in df.columns if col.endswith("_threshold") or col.endswith("_result")]
+    handled_columns.extend(threshold_and_result_cols)
+
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
 
@@ -383,13 +389,17 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     # This is different from label-based known evaluators, which have special handling.
     mean_value = df.mean(numeric_only=True)
     metrics = mean_value.to_dict()
+
+    # Filter out NaN values from the metrics dict
+    filtered_metrics = {k: v for k, v in metrics.items() if pd.notna(v)}
+
     # Add defect rates back into metrics
-    metrics.update(defect_rates)
+    filtered_metrics.update(defect_rates)
 
     # Add binary threshold metrics based on pass/fail results
-    metrics.update(binary_metrics)
+    filtered_metrics.update(binary_metrics)
 
-    return metrics
+    return filtered_metrics
 
 
 def _validate_columns_for_target(
@@ -1708,6 +1718,8 @@ def _run_callable_evaluators(
             inplace=True,
         )
 
+        evaluator_result_df = _flatten_evaluation_per_turn_columns(evaluator_result_df)
+
         evaluators_result_df = (
             pd.concat([evaluators_result_df, evaluator_result_df], axis=1, verify_integrity=True)
             if evaluators_result_df is not None
@@ -1726,6 +1738,49 @@ def _run_callable_evaluators(
     eval_metrics.update(evaluators_metric)
 
     return eval_result_df, eval_metrics, per_evaluator_results
+
+
+def _flatten_evaluation_per_turn_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Flatten columns containing evaluation_per_turn dictionaries.
+
+    Converts columns like:
+        'outputs. evaluator. evaluation_per_turn':  {'metric1': [... ], 'metric2': [...]}
+
+    Into separate columns:
+        'outputs.evaluator. evaluation_per_turn.metric1':  [...]
+        'outputs.evaluator.evaluation_per_turn.metric2': [...]
+
+    : param df: DataFrame with potential evaluation_per_turn columns
+    : type df: pd.DataFrame
+    : return: DataFrame with flattened evaluation_per_turn columns
+    : rtype: pd.DataFrame
+    """
+    import pandas as pd
+
+    # Find columns that contain "evaluation_per_turn"
+    ept_columns = [col for col in df.columns if "evaluation_per_turn" in str(col)]
+
+    if not ept_columns:
+        return df
+
+    for col in ept_columns:
+        # Check if this column contains dicts (check first non-null value)
+        sample_values = df[col].dropna()
+        if len(sample_values) > 0 and isinstance(sample_values.iloc[0], dict):
+            # Use pandas json_normalize to flatten the dicts
+            flattened = pd.json_normalize(df[col])
+
+            # Rename columns to include the original column name as prefix
+            flattened.columns = [f"{col}.{subcol}" for subcol in flattened.columns]
+
+            # Reset index to match original df
+            flattened.index = df.index
+
+            # Drop the original column and add flattened columns
+            df = df.drop(columns=[col])
+            df = pd.concat([df, flattened], axis=1)
+
+    return df
 
 
 def _map_names_to_builtins(
