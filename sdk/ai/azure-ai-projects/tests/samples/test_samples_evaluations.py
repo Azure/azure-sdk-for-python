@@ -40,6 +40,49 @@ Respond with true if:
 Always respond with `reason` indicating the reason for the response."""
 
 class TestSamplesEvaluations(AzureRecordedTestCase):
+    """
+    Tests for evaluation samples.
+
+    Included samples (9):
+    - sample_agent_evaluation.py
+    - sample_model_evaluation.py
+    - sample_agent_response_evaluation.py
+    - sample_agent_response_evaluation_with_function_tool.py
+    - sample_evaluations_builtin_with_inline_data.py
+    - sample_eval_catalog.py
+    - sample_eval_catalog_code_based_evaluators.py
+    - sample_eval_catalog_prompt_based_evaluators.py
+    - sample_evaluation_compare_insight.py
+
+    More samples will be added in the future.
+
+    Excluded samples and reasons:
+
+    Blob Storage / Dataset Upload (incompatible with test proxy playback):
+    - sample_evaluations_builtin_with_dataset_id.py: Uploads data to Azure Blob Storage
+      before creating the evaluation.
+    - sample_evaluations_ai_assisted.py: Creates a Dataset with file upload.
+    - sample_evaluations_graders.py: Creates a Dataset with file upload.
+    - sample_evaluations_score_model_grader_with_image.py: Uses image data which may
+      involve file upload.
+    - sample_evaluation_cluster_insight.py: Creates a Dataset with file upload.
+
+    Authentication incompatibility (mock credentials don't work):
+    - sample_evaluations_builtin_with_inline_data_oai.py: Uses OpenAI client directly with
+      get_bearer_token_provider() which is incompatible with mock credentials.
+
+    External service dependencies (require additional Azure services):
+    - sample_evaluations_builtin_with_traces.py: Requires Azure Application Insights and
+      uses azure-monitor-query to fetch traces.
+    - sample_scheduled_evaluations.py: Requires Azure RBAC assignment via
+      azure-mgmt-authorization and azure-mgmt-resource.
+
+    Complex prerequisites (require manual portal setup):
+    - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
+      Portal to enable continuous evaluation.
+    - sample_redteam_evaluations.py: Red team evaluations may require special
+      permissions or setup.
+    """
 
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_evaluation_samples[sample_agent_evaluation]
@@ -52,10 +95,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_agent_evaluation.py",
                 "sample_model_evaluation.py",
                 "sample_agent_response_evaluation.py",
-                # sample_evaluations_builtin_with_dataset_id.py requires blob storage upload which doesn't work in playback mode
                 "sample_evaluations_builtin_with_inline_data.py",
                 "sample_eval_catalog.py",
-                # sample_evaluations_builtin_with_inline_data_oai.py uses direct OpenAI client with get_bearer_token_provider which doesn't work with mock credentials
                 "sample_eval_catalog_code_based_evaluators.py",
                 "sample_eval_catalog_prompt_based_evaluators.py",
                 "sample_evaluation_compare_insight.py",
