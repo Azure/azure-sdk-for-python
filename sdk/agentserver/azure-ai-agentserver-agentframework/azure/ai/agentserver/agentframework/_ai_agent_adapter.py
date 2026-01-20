@@ -4,8 +4,7 @@
 # pylint: disable=logging-fstring-interpolation,no-name-in-module,no-member,do-not-import-asyncio
 from __future__ import annotations
 
-import os
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Optional, Union
 
 from agent_framework import AgentProtocol
 
@@ -16,13 +15,11 @@ from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
-from azure.ai.agentserver.core.models.projects import ResponseErrorEvent, ResponseFailedEvent
 
 from .models.agent_framework_input_converters import AgentFrameworkInputConverter
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
-from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from ._agent_framework import AgentFrameworkCBAgent
 from .persistence import AgentThreadRepository
 
@@ -47,8 +44,8 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkCBAgent):
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
 
-            agent_thread = self._load_agent_thread(context, self._agent)
-            
+            agent_thread = await self._load_agent_thread(context, self._agent)
+
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
                 request_input,
@@ -57,62 +54,14 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkCBAgent):
 
             # Use split converters
             if context.stream:
-                logger.info("Running agent in streaming mode")
-                streaming_converter = AgentFrameworkOutputStreamingConverter(context, hitl_helper=self._hitl_helper)
-
-                async def stream_updates():
-                    try:
-                        update_count = 0
-                        try:
-                            updates = self.agent.run_stream(
-                                message,
-                                thread=agent_thread,
-                            )
-                            async for event in streaming_converter.convert(updates):
-                                update_count += 1
-                                yield event
-
-                            await self._save_agent_thread(context, agent_thread)
-
-                            logger.info("Streaming completed with %d updates", update_count)
-                        except OAuthConsentRequiredError as e:
-                            logger.info("OAuth consent required during streaming updates")
-                            if update_count == 0:
-                                async for event in self.respond_with_oauth_consent_astream(context, e):
-                                    yield event
-                            else:
-                                # If we've already emitted events, we cannot safely restart a new
-                                # OAuth-consent stream (it would reset sequence numbers).
-                                yield ResponseErrorEvent(
-                                    sequence_number=streaming_converter.next_sequence(),
-                                    code="server_error",
-                                    message=f"OAuth consent required: {e.consent_url}",
-                                    param="agent_run",
-                                )
-                                yield ResponseFailedEvent(
-                                    sequence_number=streaming_converter.next_sequence(),
-                                    response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
-                                )
-                        except Exception as e:  # pylint: disable=broad-exception-caught
-                            logger.error("Unhandled exception during streaming updates: %s", e, exc_info=True)
-
-                            # Emit well-formed error events instead of terminating the stream.
-                            yield ResponseErrorEvent(
-                                sequence_number=streaming_converter.next_sequence(),
-                                code="server_error",
-                                message=str(e),
-                                param="agent_run",
-                            )
-                            yield ResponseFailedEvent(
-                                sequence_number=streaming_converter.next_sequence(),
-                                response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
-                            )
-                    finally:
-                        # No request-scoped resources to clean up here today.
-                        # Keep this block as a hook for future request-scoped cleanup.
-                        pass
-
-                return stream_updates()
+                return self._run_streaming_updates(
+                    context=context,
+                    run_stream=lambda: self.agent.run_stream(
+                        message,
+                        thread=agent_thread,
+                    ),
+                    agent_thread=agent_thread,
+                )
 
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")

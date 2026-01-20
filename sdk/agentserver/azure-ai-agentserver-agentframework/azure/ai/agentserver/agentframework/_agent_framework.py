@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List, Callable
 
 from agent_framework import AgentProtocol, AIFunction, AgentThread, WorkflowAgent
 from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
@@ -255,3 +255,59 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         if agent_thread and self._thread_repository:
             await self._thread_repository.set(context.conversation_id, agent_thread)
             logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+
+    def _run_streaming_updates(
+        self,
+        *,
+        context: AgentRunContext,
+        run_stream: Callable[[], AsyncGenerator[Any, None]],
+        agent_thread: Optional[AgentThread] = None,
+    ) -> AsyncGenerator[ResponseStreamEvent, Any]:
+        """Execute a streaming run with shared OAuth/error handling."""
+        logger.info("Running agent in streaming mode")
+        streaming_converter = AgentFrameworkOutputStreamingConverter(context, hitl_helper=self._hitl_helper)
+
+        async def stream_updates():
+            try:
+                update_count = 0
+                try:
+                    updates = run_stream()
+                    async for event in streaming_converter.convert(updates):
+                        update_count += 1
+                        yield event
+
+                    await self._save_agent_thread(context, agent_thread)
+                    logger.info("Streaming completed with %d updates", update_count)
+                except OAuthConsentRequiredError as e:
+                    logger.info("OAuth consent required during streaming updates")
+                    if update_count == 0:
+                        async for event in self.respond_with_oauth_consent_astream(context, e):
+                            yield event
+                    else:
+                        yield ResponseErrorEvent(
+                            sequence_number=streaming_converter.next_sequence(),
+                            code="server_error",
+                            message=f"OAuth consent required: {e.consent_url}",
+                            param="agent_run",
+                        )
+                        yield ResponseFailedEvent(
+                            sequence_number=streaming_converter.next_sequence(),
+                            response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
+                        )
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.error("Unhandled exception during streaming updates: %s", e, exc_info=True)
+                    yield ResponseErrorEvent(
+                        sequence_number=streaming_converter.next_sequence(),
+                        code="server_error",
+                        message=str(e),
+                        param="agent_run",
+                    )
+                    yield ResponseFailedEvent(
+                        sequence_number=streaming_converter.next_sequence(),
+                        response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
+                    )
+            finally:
+                # No request-scoped resources to clean up today, but keep hook for future use.
+                pass
+
+        return stream_updates()

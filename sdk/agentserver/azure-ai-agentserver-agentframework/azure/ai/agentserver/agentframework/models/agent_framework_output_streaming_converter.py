@@ -48,6 +48,9 @@ from .agent_id_generator import AgentIdGenerator
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .utils.async_iter import chunk_on_change, peek
 
+from azure.ai.agentserver.core.logger import get_logger
+logger = get_logger()
+
 
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
@@ -147,6 +150,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         hitl_contents = []
 
         async for content in contents:
+            logger.info("Processing content %s: %s", type(content).__name__, content.to_dict())
             if isinstance(content, FunctionCallContent):
                 if content.call_id not in content_by_call_id:
                     item_id = self._parent.context.id_generator.generate_function_call_id()
@@ -186,7 +190,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
 
         for call_id, content in content_by_call_id.items():
             item_id, output_index = ids_by_call_id[call_id]
-            args = content.arguments if isinstance(content.arguments, str) else json.dumps(content.arguments)
+            args = self._serialize_arguments(content.arguments)
             yield ResponseFunctionCallArgumentsDoneEvent(
                 sequence_number=self._parent.next_sequence(),
                 item_id=item_id,
@@ -254,6 +258,17 @@ class _FunctionCallStreamingState(_BaseStreamingState):
                 item=item,
             )
             self._parent.add_completed_output_item(item)
+
+    def _serialize_arguments(self, arguments: Any) -> str:
+        if isinstance(arguments, str):
+            return arguments
+        if hasattr(arguments, "to_dict"):
+            arguments = arguments.to_dict()
+        try:
+            return json.dumps(arguments)
+        except Exception as e:
+            logger.error(f"Failed to serialize function call arguments: {e}")
+            return str(arguments)
 
 
 class _FunctionCallOutputStreamingState(_BaseStreamingState):
@@ -355,11 +370,7 @@ class AgentFrameworkOutputStreamingConverter:
         is_changed = (
             lambda a, b: a is not None \
                 and b is not None \
-                and (a.message_id != b.message_id \
-                or (
-                    a.contents and b.contents \
-                     and type(a.contents[0]) != type(b.contents[0]))
-                )  # pylint: disable=unnecessary-lambda-assignment
+                and a.message_id != b.message_id  # pylint: disable=unnecessary-lambda-assignment
         )
 
         async for group in chunk_on_change(updates, is_changed):
