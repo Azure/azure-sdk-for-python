@@ -13,7 +13,11 @@ class UserProvider(ABC):
 
     @abstractmethod
     async def get_user(self) -> Optional[UserInfo]:
-        """Get the user information."""
+        """Get the user information.
+
+        :return: The user information or None if not found.
+        :rtype: Optional[UserInfo]
+        """
         raise NotImplementedError
 
 
@@ -25,7 +29,11 @@ class ContextVarUserProvider(UserProvider):
         self.context = context or self.default_user_info_context
 
     async def get_user(self) -> Optional[UserInfo]:
-        """Get the user information from the context variable."""
+        """Get the user information from the context variable.
+
+        :return: The user information or None if not found.
+        :rtype: Optional[UserInfo]
+        """
         return self.context.get(None)
 
 

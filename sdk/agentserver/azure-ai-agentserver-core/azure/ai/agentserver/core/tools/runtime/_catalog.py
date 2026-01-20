@@ -1,14 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import asyncio
-import threading
+import asyncio  # pylint: disable=C4763
 from abc import ABC, abstractmethod
-from collections import defaultdict
-from concurrent.futures import Future
-from typing import Any, Awaitable, Collection, Dict, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Any, Awaitable, Collection, List, Mapping, MutableMapping, Optional, Union
 
-from cachetools import TTLCache
+from cachetools import TTLCache  # type: ignore[import-untyped]
 
 from ._facade import FoundryToolLike, ensure_foundry_tool
 from ._user import UserProvider
@@ -93,7 +90,7 @@ class CachedFoundryToolCatalog(FoundryToolCatalog, ABC):
                 await asyncio.gather(*fetching_tasks)
         except:
             # exception can only be caused by fetching tasks, remove them from cache
-            for k in tools_to_fetch.keys():
+            for k, _ in tools_to_fetch.items():
                 if k in self._cache:
                     del self._cache[k]
             raise

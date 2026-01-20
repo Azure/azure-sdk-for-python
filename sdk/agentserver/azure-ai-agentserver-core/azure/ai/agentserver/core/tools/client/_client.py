@@ -1,26 +1,43 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import asyncio
+import asyncio  # pylint: disable=C4763
 import itertools
 from collections import defaultdict
-from typing import Any, AsyncContextManager, AsyncIterable, Awaitable, Callable, Collection, Coroutine, DefaultDict, Dict, \
-    Iterable, List, \
-    Mapping, Optional, \
-    Tuple
+from typing import (
+    Any,
+    AsyncContextManager,
+    Awaitable, Collection,
+    DefaultDict,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    cast,
+)
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._configuration import FoundryToolClientConfiguration
-from ._models import FoundryTool, FoundryToolDetails, FoundryToolSource, ResolvedFoundryTool, UserInfo
+from ._models import (
+    FoundryConnectedTool,
+    FoundryHostedMcpTool,
+    FoundryTool,
+    FoundryToolDetails,
+    FoundryToolSource,
+    ResolvedFoundryTool,
+    UserInfo,
+)
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
 from .._exceptions import ToolInvocationError
 
 
-class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
+class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: disable=C4748
     """Asynchronous client for aggregating tools from Azure AI MCP and Tools APIs.
 
     This client provides access to tools from both MCP (Model Context Protocol) servers
@@ -33,15 +50,23 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         Credential for authenticating requests to the service.
         Use credentials from azure-identity like DefaultAzureCredential.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param api_version: The API version to use for this operation.
+    :type api_version: str or None
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential"):
+    def __init__(  # pylint: disable=C4718
+        self,
+        endpoint: str,
+        credential: "AsyncTokenCredential",
+    ) -> None:
         """Initialize the asynchronous Azure AI Tool Client.
 
         :param endpoint: The service endpoint URL.
         :type endpoint: str
         :param credential: Credentials for authenticating requests.
         :type credential: ~azure.core.credentials.TokenCredential
+        :param api_version: The API version to use for this operation.
+        :type api_version: str or None
         """
         # noinspection PyTypeChecker
         config = FoundryToolClientConfiguration(credential)
@@ -51,10 +76,13 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         self._connected_tools = FoundryConnectedToolsOperations(self._client)
 
     @distributed_trace_async
-    async def list_tools(self,
-                         tools: Collection[FoundryTool],
-                         agent_name,
-                         user: Optional[UserInfo] = None) -> List[ResolvedFoundryTool]:
+    async def list_tools(
+        self,
+        tools: Collection[FoundryTool],
+        agent_name: str,
+        user: Optional[UserInfo] = None,
+        **kwargs: Any
+    ) -> List[ResolvedFoundryTool]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
@@ -72,6 +100,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :raises ~azure.core.exceptions.HttpResponseError:
             Raised for HTTP communication failures.
         """
+        _ = kwargs  # Reserved for future use
         resolved_tools: List[ResolvedFoundryTool] = []
         results = await self._list_tools_details_internal(tools, agent_name, user)
         for definition, details in results:
@@ -79,10 +108,13 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         return resolved_tools
 
     @distributed_trace_async
-    async def list_tools_details(self,
-                                 tools: Collection[FoundryTool],
-                                 agent_name,
-                                 user: Optional[UserInfo] = None) -> Mapping[str, List[FoundryToolDetails]]:
+    async def list_tools_details(
+        self,
+        tools: Collection[FoundryTool],
+        agent_name: str,
+        user: Optional[UserInfo] = None,
+        **kwargs: Any
+    ) -> Mapping[str, List[FoundryToolDetails]]:
         """List all available tools from configured sources.
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
@@ -100,6 +132,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :raises ~azure.core.exceptions.HttpResponseError:
             Raised for HTTP communication failures.
         """
+        _ = kwargs  # Reserved for future use
         resolved_tools: Dict[str, List[FoundryToolDetails]] = defaultdict(list)
         results = await self._list_tools_details_internal(tools, agent_name, user)
         for definition, details in results:
@@ -109,33 +142,32 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
     async def _list_tools_details_internal(
             self,
             tools: Collection[FoundryTool],
-            agent_name,
+            agent_name: str,
             user: Optional[UserInfo] = None,
     ) -> Iterable[Tuple[FoundryTool, FoundryToolDetails]]:
         tools_by_source: DefaultDict[FoundryToolSource, List[FoundryTool]] = defaultdict(list)
         for t in tools:
             tools_by_source[t.source].append(t)
 
-        listing_tools = []
+        listing_tools: List[Awaitable[Iterable[Tuple[FoundryTool, FoundryToolDetails]]]] = []
         if FoundryToolSource.HOSTED_MCP in tools_by_source:
-            # noinspection PyTypeChecker
-            listing_tools.append(asyncio.create_task(
-                self._hosted_mcp_tools.list_tools(tools_by_source[FoundryToolSource.HOSTED_MCP])
-            ))
+            hosted_mcp_tools = cast(List[FoundryHostedMcpTool], tools_by_source[FoundryToolSource.HOSTED_MCP])
+            listing_tools.append(self._hosted_mcp_tools.list_tools(hosted_mcp_tools))
         if FoundryToolSource.CONNECTED in tools_by_source:
-            # noinspection PyTypeChecker
-            listing_tools.append(asyncio.create_task(
-                self._connected_tools.list_tools(tools_by_source[FoundryToolSource.CONNECTED], user, agent_name)
-            ))
+            connected_tools = cast(List[FoundryConnectedTool], tools_by_source[FoundryToolSource.CONNECTED])
+            listing_tools.append(self._connected_tools.list_tools(connected_tools, user, agent_name))
         iters = await asyncio.gather(*listing_tools)
         return itertools.chain.from_iterable(iters)
 
     @distributed_trace_async
-    async def invoke_tool(self,
-                          tool: ResolvedFoundryTool,
-                          arguments: Dict[str, Any],
-                          agent_name: str,
-                          user: Optional[UserInfo] = None) -> Any:
+    async def invoke_tool(
+        self,
+        tool: ResolvedFoundryTool,
+        arguments: Dict[str, Any],
+        agent_name: str,
+        user: Optional[UserInfo] = None,
+        **kwargs: Any
+    ) -> Any:
         """Invoke a tool by instance, name, or descriptor.
 
         :param tool: Tool to invoke, specified as an AzureAITool instance,
@@ -156,6 +188,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):
         :raises ~ToolInvocationError:
             Raised when the tool invocation fails or source is not supported.
         """
+        _ = kwargs  # Reserved for future use
         if tool.source is FoundryToolSource.HOSTED_MCP:
             return await self._hosted_mcp_tools.invoke_tool(tool, arguments)
         if tool.source is FoundryToolSource.CONNECTED:

@@ -8,8 +8,8 @@ class ToolNameResolver:
     """Utility class for resolving tool names to be registered to model."""
 
     def __init__(self):
-        self._count_by_name = dict()
-        self._stable_names = dict()
+        self._count_by_name = {}
+        self._stable_names = {}
 
     def resolve(self, tool: ResolvedFoundryTool) -> str:
         """Resolve a stable name for the given tool.

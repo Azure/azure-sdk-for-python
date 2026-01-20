@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Literal, NotRequired, TypedDict, Union
+from typing import Literal, TypedDict, Union
+
+from typing_extensions import NotRequired
 
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -41,4 +43,3 @@ class ToolsOptions(TypedDict):
     """
     catalog_cache_ttl: NotRequired[int]
     catalog_cache_max_size: NotRequired[int]
-

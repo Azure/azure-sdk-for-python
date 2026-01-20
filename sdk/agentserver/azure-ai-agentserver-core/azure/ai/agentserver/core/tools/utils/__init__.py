@@ -4,4 +4,8 @@
 
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
-from ._name_resolver import *
+from ._name_resolver import ToolNameResolver
+
+__all__ = [
+    "ToolNameResolver",
+]
