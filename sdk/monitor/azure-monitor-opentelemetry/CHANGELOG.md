@@ -5,11 +5,13 @@
 ### Features Added
 
 - Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
-
+- In double-instrumentation scenarios, surface in the log stream instead of just in diagnostic logs.
+  ([#44682](https://github.com/Azure/azure-sdk-for-python/pull/44682))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
 - Fix the format of the fixed percentage sampler constant and ensure backward compatability
   ([#44656](https://github.com/Azure/azure-sdk-for-python/pull/44656))
 - Only add PerformanceCounter Processors after PerformanceCounter setup to avoid circular dependency.
@@ -23,6 +25,7 @@
 ## 1.8.4 (2026-01-13)
 
 ### Features Added
+
 - Added support for OTEL_TRACES_SAMPLER
   ([#44535](https://github.com/Azure/azure-sdk-for-python/pull/44535))
 - Added ability to add additional Log Record Processors and Metric Readers via configure_azure_monitor
@@ -31,10 +34,12 @@
 ## 1.8.3 (2025-12-04)
 
 ### Breaking Changes
+
 - Pin OpenTelemetry versions to guard against upstream logging breaking changes
   ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
 
 ### Bugs Fixed
+
 - Fix default value overriding user-configured sampling ratio in distro
   ([#44162](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
@@ -61,6 +66,7 @@
 ## 1.8.1 (2025-09-17)
 
 ### Bugs Fixed
+
 - Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
   ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
 - Modified ordering of dependencies in setup.py to avoid dependency conflicts in future.
@@ -69,12 +75,14 @@
 ## 1.8.0 (2025-09-08)
 
 ### Features Added
+
 - Added configuration changes for RateLimited Sampler
   ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ## 1.7.0 (2025-08-21)
 
 ### Features Added
+
 - Updated README to specify the python version supported by the distro.
   ([#42464](https://github.com/Azure/azure-sdk-for-python/pull/42464))
 
