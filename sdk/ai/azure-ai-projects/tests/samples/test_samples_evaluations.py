@@ -54,6 +54,12 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_agent_response_evaluation.py",
                 # sample_evaluations_builtin_with_dataset_id.py requires blob storage upload which doesn't work in playback mode
                 "sample_evaluations_builtin_with_inline_data.py",
+                "sample_eval_catalog.py",
+                # sample_evaluations_builtin_with_inline_data_oai.py uses direct OpenAI client with get_bearer_token_provider which doesn't work with mock credentials
+                "sample_eval_catalog_code_based_evaluators.py",
+                "sample_eval_catalog_prompt_based_evaluators.py",
+                "sample_evaluation_compare_insight.py",
+                "sample_agent_response_evaluation_with_function_tool.py",
             ],
         ),
     )
