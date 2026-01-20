@@ -12,7 +12,7 @@ from ._resolver import get_registry
 
 
 @overload
-def use_foundry_tools(tools: List[FoundryToolLike], /) -> FoundryToolBindingMiddleware:
+def use_foundry_tools(tools: List[FoundryToolLike], /) -> FoundryToolBindingMiddleware:  # pylint: disable=C4743
     """Use foundry tools as middleware.
 
     :param tools: A list of foundry tools to bind.
@@ -24,7 +24,7 @@ def use_foundry_tools(tools: List[FoundryToolLike], /) -> FoundryToolBindingMidd
 
 
 @overload
-def use_foundry_tools(model: BaseChatModel, tools: List[FoundryToolLike], /) -> FoundryToolLateBindingChatModel:
+def use_foundry_tools(model: BaseChatModel, tools: List[FoundryToolLike], /) -> FoundryToolLateBindingChatModel:  # pylint: disable=C4743
     """Use foundry tools with a chat model.
 
     :param model: The chat model to bind the tools to.
@@ -37,7 +37,7 @@ def use_foundry_tools(model: BaseChatModel, tools: List[FoundryToolLike], /) -> 
     ...
 
 
-def use_foundry_tools(
+def use_foundry_tools(  # pylint: disable=C4743
         model_or_tools: Union[BaseChatModel, List[FoundryToolLike]],
         tools: Optional[List[FoundryToolLike]] = None,
         /,
@@ -56,6 +56,5 @@ def use_foundry_tools(
             raise ValueError("Tools must be provided when a model is given.")
         get_registry().extend(tools)
         return FoundryToolLateBindingChatModel(model_or_tools, foundry_tools=tools)
-    else:
-        get_registry().extend(model_or_tools)
-        return FoundryToolBindingMiddleware(model_or_tools)
+    get_registry().extend(model_or_tools)
+    return FoundryToolBindingMiddleware(model_or_tools)

@@ -8,7 +8,7 @@ from langchain_core.tools import BaseTool, StructuredTool
 from pydantic import BaseModel, Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
-from azure.ai.agentserver.core.tools import FoundryTool, FoundryToolLike, ResolvedFoundryTool, SchemaDefinition, ensure_foundry_tool
+from azure.ai.agentserver.core.tools import FoundryToolLike, ResolvedFoundryTool, SchemaDefinition, ensure_foundry_tool
 from azure.ai.agentserver.core.tools.utils import ToolNameResolver
 
 
@@ -24,7 +24,7 @@ class ResolvedTools(Iterable[BaseTool]):
             self._by_source_id[rt.definition.id].append(t)
 
     @overload
-    def get(self, tool: FoundryToolLike, /) -> Iterable[BaseTool]:
+    def get(self, tool: FoundryToolLike, /) -> Iterable[BaseTool]:  # pylint: disable=C4743
         """Get the LangChain tools for the given foundry tool.
 
         :param tool: The foundry tool to get the LangChain tools for.
@@ -35,7 +35,7 @@ class ResolvedTools(Iterable[BaseTool]):
         ...
 
     @overload
-    def get(self, tools: Iterable[FoundryToolLike], /) -> Iterable[BaseTool]:
+    def get(self, tools: Iterable[FoundryToolLike], /) -> Iterable[BaseTool]:  # pylint: disable=C4743
         """Get the LangChain tools for the given foundry tools.
 
         :param tools: The foundry tools to get the LangChain tools for.
@@ -66,9 +66,9 @@ class ResolvedTools(Iterable[BaseTool]):
             yield from self
             return
 
-        tool_list = [tool] if not isinstance(tool, Iterable) else tool
+        tool_list = [tool] if not isinstance(tool, Iterable) else tool  # type: ignore[assignment]
         for t in tool_list:
-            ft = ensure_foundry_tool(t)
+            ft = ensure_foundry_tool(t)  # type: ignore[arg-type]
             yield from self._by_source_id.get(ft.id, [])
 
     def __iter__(self):
@@ -125,15 +125,15 @@ class FoundryLangChainToolResolver:
 
     @classmethod
     def _create_pydantic_model(cls, tool_name: str, input_schema: SchemaDefinition) -> type[BaseModel]:
-        field_definitions = {}
-        required_fields = input_schema.required
+        field_definitions: Dict[str, Any] = {}
+        required_fields = input_schema.required or set()
         for prop_name, prop in input_schema.properties.items():
             py_type = prop.type.py_type
             default = ... if prop_name in required_fields else None
             field_definitions[prop_name] = (py_type, Field(default, description=prop.description))
 
         model_name = f"{tool_name.replace('-', '_').replace(' ', '_').title()}-Input"
-        return create_model(model_name, **field_definitions)
+        return create_model(model_name, **field_definitions)  # type: ignore[call-overload]
 
 
 _tool_registry: List[FoundryToolLike] = []

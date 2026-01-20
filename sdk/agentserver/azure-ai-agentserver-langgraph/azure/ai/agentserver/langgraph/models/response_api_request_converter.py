@@ -50,7 +50,7 @@ class ResponseAPIRequestConverter(ABC):
         :return: The converted LangGraph request.
         :rtype: dict
         """
-        pass
+        raise NotImplementedError
 
 
 class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):

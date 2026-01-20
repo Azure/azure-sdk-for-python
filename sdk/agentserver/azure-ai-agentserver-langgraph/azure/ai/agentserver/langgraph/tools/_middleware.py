@@ -5,21 +5,20 @@ from __future__ import annotations
 
 from typing import Awaitable, Callable, List
 
-from langchain_core.tools import BaseTool, Tool
-from langgraph.typing import ContextT, StateT_co
-
-from azure.ai.agentserver.core.tools import FoundryToolLike
 from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
 from langchain.agents.middleware.types import ModelCallResult
 from langchain_core.messages import ToolMessage
+from langchain_core.tools import BaseTool, Tool
 from langgraph.prebuilt.tool_node import ToolCallRequest
 from langgraph.types import Command
+
+from azure.ai.agentserver.core.tools import FoundryToolLike
 
 from ._chat_model import FoundryToolLateBindingChatModel
 from ._tool_node import FoundryToolCallWrapper
 
 
-class FoundryToolBindingMiddleware(AgentMiddleware[StateT_co, ContextT]):
+class FoundryToolBindingMiddleware(AgentMiddleware):
     """Middleware that binds foundry tools to tool calls in the agent.
 
     :param foundry_tools: A list of foundry tools to bind.

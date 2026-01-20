@@ -3,18 +3,16 @@
 # ---------------------------------------------------------
 
 import json
-from typing import Union
+from typing import Optional, Union
 
 from langgraph.types import (
     Command,
     Interrupt,
-    StateSnapshot,
 )
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.models.openai import (
-    ResponseInputParam,
     ResponseInputItemParam,
 )
 from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
@@ -32,19 +30,19 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
     All values are serialized as JSON strings.
     """
 
-    def convert_interrupt(self, interrupt_info: Interrupt) -> project_models.ItemResource:
+    def convert_interrupt(self, interrupt_info: Interrupt) -> Optional[project_models.ItemResource]:
         if not isinstance(interrupt_info, Interrupt):
-            logger.warning(f"Interrupt is not of type Interrupt: {interrupt_info}")
+            logger.warning("Interrupt is not of type Interrupt: %s", interrupt_info)
             return None
         name, call_id, arguments = self.interrupt_to_function_call(interrupt_info)
         return project_models.FunctionToolCallItemResource(
             call_id=call_id,
             name=name,
             arguments=arguments,
-            id=self.context.id_generator.generate_function_call_id(),
-            status="inprogress",
+            id=self.context.agent_run.id_generator.generate_function_call_id(),
+            status="in_progress",
         )
-    
+
     def interrupt_to_function_call(self, interrupt: Interrupt) :
         """
         Convert an Interrupt to a function call tuple.
@@ -61,22 +59,25 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
             try:
                 arguments = json.dumps(interrupt.value)
             except Exception as e:  # pragma: no cover - fallback # pylint: disable=broad-exception-caught
-                logger.error(f"Failed to serialize interrupt value to JSON: {interrupt.value}, error: {e}")
+                logger.error("Failed to serialize interrupt value to JSON: %s, error: %s", interrupt.value, e)
                 arguments = str(interrupt.value)
         return HUMAN_IN_THE_LOOP_FUNCTION_NAME, interrupt.id, arguments
 
-    def convert_input_item_to_command(self, input: ResponseInputItemParam) -> Union[Command, None]:
-        output_str = input.get("output")
+    def convert_input_item_to_command(self, input_item: ResponseInputItemParam) -> Union[Command, None]:
+        output_str = input_item.get("output")
+        if not isinstance(output_str, str):
+            logger.error("Invalid output type in function call output: %s", input_item)
+            return None
         try:
             output = json.loads(output_str)
-        except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON in function call output: {input}")
+        except json.JSONDecodeError:
+            logger.error("Invalid JSON in function call output: %s", input_item)
             return None
         resume = output.get("resume", None)
         update = output.get("update", None)
         goto = output.get("goto", None)
         if resume is None and update is None and goto is None:
-            logger.warning(f"No valid Command fields found in function call output: {input}")
+            logger.warning("No valid Command fields found in function call output: %s", input_item)
             return None
         return Command(
             resume=resume,
