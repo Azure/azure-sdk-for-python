@@ -9,7 +9,7 @@ from typing import Any, AsyncIterable, AsyncIterator, Dict, Optional, Union
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph
-from langgraph.types import Command, StateSnapshot
+from langgraph.types import Command, StateSnapshot, StreamMode
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
 from .human_in_the_loop_helper import HumanInTheLoopHelper
@@ -90,7 +90,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         for event in finalized_output:
             yield event
 
-    def get_stream_mode(self, context: LanggraphRunContext) -> str:
+    def get_stream_mode(self, context: LanggraphRunContext) -> StreamMode:
         if context.agent_run.stream:
             return "messages"
         return "updates"

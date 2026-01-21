@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from __future__ import annotations
 
-from typing import Awaitable, Callable, List
+from typing import Awaitable, Callable, ClassVar, List
 
 from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
 from langchain.agents.middleware.types import ModelCallResult
@@ -24,6 +24,7 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
     :param foundry_tools: A list of foundry tools to bind.
     :type foundry_tools: List[FoundryToolLike]
     """
+    _DummyToolName: ClassVar[str] = "__dummy_tool_by_foundry_middleware__"
 
     def __init__(self, foundry_tools: List[FoundryToolLike]):
         super().__init__()
@@ -35,9 +36,9 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
         self._foundry_tools_to_bind = foundry_tools
         self._tool_call_wrapper = FoundryToolCallWrapper(self._foundry_tools_to_bind)
 
-    @staticmethod
-    def _dummy_tool() -> BaseTool:
-        return Tool(name="__dummy_tool_by_foundry_middleware__",
+    @classmethod
+    def _dummy_tool(cls) -> BaseTool:
+        return Tool(name=cls._DummyToolName,
                     func=lambda x: None,
                     description="__dummy_tool_by_foundry_middleware__")
 
@@ -77,8 +78,20 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
         """
         if not self._foundry_tools_to_bind:
             return request
-        wrapper = FoundryToolLateBindingChatModel(request.model, self._foundry_tools_to_bind)
-        return request.override(model=wrapper)
+        wrapper = FoundryToolLateBindingChatModel(request.model, request.runtime, self._foundry_tools_to_bind)
+        return request.override(model=wrapper, tools=self._remove_dummy_tool(request))
+
+    def _remove_dummy_tool(self, request: ModelRequest) -> list:
+        """Remove the dummy tool from the request's tools if present.
+
+        :param request: The model request.
+        :type request: ModelRequest
+        :return: The list of tools without the dummy tool.
+        :rtype: list
+        """
+        if not request.tools:
+            return []
+        return [tool for tool in request.tools if not isinstance(tool, Tool) or tool.name != self._DummyToolName]
 
     def wrap_tool_call(self, request: ToolCallRequest,
                        handler: Callable[[ToolCallRequest], ToolMessage | Command]) -> ToolMessage | Command:

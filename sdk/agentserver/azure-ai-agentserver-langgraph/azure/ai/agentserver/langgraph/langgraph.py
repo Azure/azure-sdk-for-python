@@ -68,7 +68,7 @@ class LangGraphAdapter(FoundryCBAgent):
         try:
             lg_run_context = await self.setup_lg_run_context(context)
             input_arguments = await self.converter.convert_request(lg_run_context)
-            self.ensure_runnable_config(input_arguments)
+            self.ensure_runnable_config(input_arguments, lg_run_context)
 
             if not context.stream:
                 response = await self.agent_run_non_stream(input_arguments)
@@ -156,17 +156,19 @@ class LangGraphAdapter(FoundryCBAgent):
             logger.error(f"Error during streaming agent run: {e}", exc_info=True)
             raise e
 
-    def ensure_runnable_config(self, input_arguments: GraphInputArguments):
+    def ensure_runnable_config(self, input_arguments: GraphInputArguments, context: LanggraphRunContext):
         """
         Ensure the RunnableConfig is set in the input arguments.
 
         :param input_arguments: The input arguments for the agent run.
         :type input_arguments: GraphInputArguments
+        :param context: The Langgraph run context.
+        :type context: LanggraphRunContext
         """
         config = input_arguments.get("config", {})
         configurable = config.get("configurable", {})
-        configurable["thread_id"] = input_arguments["context"].agent_run.conversation_id
         config["configurable"] = configurable
+        configurable["thread_id"] = input_arguments["context"].agent_run.conversation_id
 
         callbacks = config.get("callbacks", [])
         if self.azure_ai_tracer and self.azure_ai_tracer not in callbacks:
