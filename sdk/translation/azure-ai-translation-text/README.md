@@ -1,18 +1,16 @@
 # Azure Text Translation client library for Python
 
-Text Translation is a cloud-based REST API feature of the Translator service that uses neural machine translation technology to enable quick and accurate source-to-target text translation in real time across all supported languages.
+Azure text translation is a cloud-based REST API provided by the Azure Translator service. It utilizes neural machine translation technology to deliver precise, contextually relevant, and semantically accurate real-time text translations across all supported languages.
 
 Use the Text Translation client library for Python to:
 
-* Return a list of languages supported by Translate, Transliterate, and Dictionary operations.
+- Retrieve the list of languages supported for translation and transliteration operations, as well as LLM models available for translations.
 
-* Render single source-language text to multiple target-language texts with a single request.
+- Perform deterministic text translation from a specified source language to a target language, with configurable parameters to ensure precision and maintain contextual integrity.
 
-* Convert text of a source language in letters of a different script.
+- Execute transliteration by converting text from the original script to an alternative script representation.
 
-* Return equivalent words for the source term in the target language.
-
-* Return grammatical structure and context examples for the source term and target term pair.
+- Use LLM models to produce translation output variants that are tone-specific and gender-aware.
 
 [Source code][python-dt-src]
 | [Package (PyPI)][python-dt-pypi]
@@ -77,7 +75,7 @@ A `TextTranslationClient` is the primary interface for developers using the Text
 
 ### Input
 
-A **text element** (`string`), is a single unit of input to be processed by the translation models in the Translator service. Operations on `TextTranslationClient` may take a single text element or a collection of text elements.
+A **TranslateInputItem** is a single unit of input to be processed by the translation models in the Translator service. Each `TranslateInputItem` defines both the input string to translate and the output specifications for the translation.
 For text element length limits, maximum requests size, and supported text encoding see [here][translator_limits].
 
 ## Examples
@@ -101,7 +99,7 @@ try:
         f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
     )
     print(
-        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+        f"Number of supported models for translation: {len(response.models) if response.models is not None else 0}"
     )
 
     if response.translation is not None:
@@ -114,10 +112,8 @@ try:
         for key, value in response.transliteration.items():
             print(f"{key} -- name: {value.name}, supported script count: {len(value.scripts)}")
 
-    if response.dictionary is not None:
-        print("Dictionary Languages:")
-        for key, value in response.dictionary.items():
-            print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
+    if response.models is not None:
+        print(f"Models: {', '.join(response.models)}")
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -153,7 +149,9 @@ try:
                 f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
-            print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
+            print(
+                f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+            )
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -162,7 +160,6 @@ except HttpResponseError as exception:
 ```
 
 <!-- END SNIPPET -->
-
 
 For samples on using the `translate` endpoint refer to more samples [here][translate_sample].
 
@@ -202,130 +199,17 @@ except HttpResponseError as exception:
 ```
 
 <!-- END SNIPPET -->
+
 For samples on using the `transliterate` endpoint refer to more samples [here][transliterate_sample].
 
 Please refer to the service documentation for a conceptual discussion of [transliterate][transliterate_doc].
 
-### Break Sentence
-
-Identifies the positioning of sentence boundaries in a piece of text.
-
-<!-- SNIPPET: sample_text_translation_translate.get_text_translation_sentence_length -->
-
-```python
-try:
-    include_sentence_length = True
-    to_language = ["cs"]
-    input_text_elements = ["The answer lies in machine translation. This is a test."]
-
-    response = text_translator.translate(
-        body=input_text_elements, to_language=to_language, include_sentence_length=include_sentence_length
-    )
-    translation = response[0] if response else None
-
-    if translation:
-        detected_language = translation.detected_language
-        if detected_language:
-            print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
-            )
-        for translated_text in translation.translations:
-            print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.sent_len:
-                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
-                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-```
-
-<!-- END SNIPPET -->
-
-For samples on using the `break sentence` endpoint refer to more samples [here][breaksentence_sample].
-
-Please refer to the service documentation for a conceptual discussion of [break sentence][breaksentence_doc].
-
-### Dictionary Lookup
-
-Returns equivalent words for the source term in the target language.
-
-<!-- SNIPPET: sample_text_translation_dictionary_lookup.get_text_translation_dictionary_lookup -->
-
-```python
-try:
-    from_language = "en"
-    to_language = "es"
-    input_text_elements = ["fly"]
-
-    response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, from_language=from_language, to_language=to_language
-    )
-    dictionary_entry = response[0] if response else None
-
-    if dictionary_entry:
-        print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
-        print(
-            f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}."
-        )
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-    raise
-```
-
-<!-- END SNIPPET -->
-
-For samples on using the `dictionary lookup` endpoint refer to more samples [here][dictionarylookup_sample].
-
-Please refer to the service documentation for a conceptual discussion of [dictionary lookup][dictionarylookup_doc].
-
-### Dictionary Examples
-
-Returns grammatical structure and context examples for the source term and target term pair.
-
-<!-- SNIPPET: sample_text_translation_dictionary_examples.get_text_translation_dictionary_examples -->
-
-```python
-try:
-    from_language = "en"
-    to_language = "es"
-    input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
-
-    response = text_translator.lookup_dictionary_examples(
-        body=input_text_elements, from_language=from_language, to_language=to_language
-    )
-    dictionary_entry = response[0] if response else None
-
-    if dictionary_entry:
-        print(f"For the given input {len(dictionary_entry.examples)} entries were found in the dictionary.")
-        print(
-            f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'."
-        )
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-raise
-```
-
-<!-- END SNIPPET -->
-
-For samples on using the `dictionary examples` endpoint refer to more samples [here][dictionaryexamples_sample].
-
-Please refer to the service documentation for a conceptual discussion of [dictionary examples][dictionaryexamples_doc].
 
 ## Troubleshooting
 
 When you interact with the Translator Service using the TextTranslator client library, errors returned by the Translator service correspond to the same HTTP status codes returned for REST API requests.
 
 For example, if you submit a translation request without a target translate language, a `400` error is returned, indicating "Bad Request".
-
-You can find the different error codes returned by the service in the [Service Documentation][service_errors].
 
 ## Provide Feedback
 
@@ -350,7 +234,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-dt-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/azure/ai/translation/text
 [python-dt-pypi]: https://aka.ms/azsdk/python/texttranslation/pypi
 [python-dt-product-docs]: https://learn.microsoft.com/azure/cognitive-services/translator/
-[python-dt-ref-docs]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference
+[python-dt-ref-docs]: https://learn.microsoft.com/azure/ai-services/translator/text-translation/preview/rest-api-guide
 [python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples
 
 [pip]: https://pypi.org/project/pip/
@@ -361,24 +245,17 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [translator_client_class]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_client.py
 
-[translator_auth]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference#authentication
+[translator_auth]: https://learn.microsoft.com/azure/ai-services/translator/text-translation/reference/authentication
 [translator_limits]: https://learn.microsoft.com/azure/cognitive-services/translator/request-limits
-[service_errors]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference#errors
 
-[languages_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-languages
-[translate_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-translate
-[transliterate_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-transliterate
-[breaksentence_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-break-sentence
-[dictionarylookup_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-dictionary-lookup
-[dictionaryexamples_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-dictionary-examples
+[languages_doc]: https://learn.microsoft.com/azure/ai-services/translator/text-translation/preview/get-languages
+[translate_doc]: https://learn.microsoft.com/azure/ai-services/translator/text-translation/preview/translate-api
+[transliterate_doc]: https://learn.microsoft.com/azure/ai-services/translator/text-translation/preview/transliterate-api
 
 [client_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_client.py
 [languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_languages.py
 [translate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_translate.py
 [transliterate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_transliterate.py
-[breaksentence_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_break_sentence.py
-[dictionarylookup_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_dictionary_lookup.py
-[dictionaryexamples_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_dictionary_examples.py
 
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples
 

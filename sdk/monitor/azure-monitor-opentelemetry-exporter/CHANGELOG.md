@@ -1,14 +1,48 @@
 # Release History
 
-## 1.0.0b45 (Unreleased)
+## 1.0.0b47 (Unreleased)
 
 ### Features Added
+- Add support for user id and authId
+([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Update maximum size of custom properties
+([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
+- Declare support for Python 3.13 and 3.14
+([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
+
+## 1.0.0b46 (2025-12-04)
+
+### Breaking Changes
+- Fix to accommodate breaking log changes from Otel
+  ([#43626](https://github.com/Azure/azure-sdk-for-python/pull/43626))
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
+
+### Bugs Fixed
+- Fixes LogDeprecated warnings - `LogDeprecatedInitWarning: LogRecord init with trace_id, span_id, and/or trace_flags is deprecated since 1.35.0. Use context instead`
+  ([#44090](https://github.com/Azure/azure-sdk-for-python/pull/44090))
+- Fixes issue #43442: SyntaxWarning: 'return' in a 'finally' block in azure-monitor-opentelemetry-exporter with Python 3.14
+  ([#44053](https://github.com/Azure/azure-sdk-for-python/pull/44053))
+
+### Other Changes
+- Commented OneSettings configuration manager temporarily to avoid user impact during feature testing.
+  ([#44179](https://github.com/Azure/azure-sdk-for-python/pull/44179))
+
+## 1.0.0b45 (2025-11-14)
+
+### Features Added
+- Added new log record processor to support Trace Based Sampling
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
 - Added Operation Name Propagation for Dependencies and Logs
   ([#43588](https://github.com/Azure/azure-sdk-for-python/pull/43588))
 - Added local storage support for multiple users on the same Linux system
   ([#43483](https://github.com/Azure/azure-sdk-for-python/pull/43483))
-
-### Breaking Changes
 
 ### Bugs Fixed
 - Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs

@@ -199,16 +199,21 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Union[Dict[Tuple[str, str], str], None]
         """
         updated_watched_settings = dict(watched_settings)
+        trigger_refresh = False
         for (key, label), etag in watched_settings.items():
             changed, updated_watched_setting = self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
             if changed and updated_watched_setting is not None:
                 updated_watched_settings[(key, label)] = updated_watched_setting.etag
+                trigger_refresh = True
             elif changed:
                 # The key was deleted
                 updated_watched_settings[(key, label)] = None
-        return updated_watched_settings
+                trigger_refresh = True
+        if trigger_refresh:
+            return updated_watched_settings
+        return {}
 
     @distributed_trace
     def try_check_feature_flags(

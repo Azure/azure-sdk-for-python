@@ -33,7 +33,7 @@
 # ServiceLabel: %AI
 
 # PRLabel: %AI
-/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @trrwilson
 
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
@@ -67,7 +67,7 @@
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99
+/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99 @jimmyca15
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
@@ -79,6 +79,12 @@
 
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @lmazuel
+
+# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
+# ServiceLabel: %Speech Transcription
+
+# PRLabel: %Speech Transcription
+/sdk/cognitiveservices/azure-ai-transcription/                       @amber-yujueWang @rhurey @xitzhang
 
 # ServiceLabel: %Communication
 # PRLabel: %Communication
@@ -185,11 +191,11 @@
 
 # ServiceLabel: %Monitor - Distro
 # PRLabel: %Monitor - Distro
-/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @MSNev @JacksonWeber
 
 # ServiceLabel: %Monitor - Exporter
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
+/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @MSNev @JacksonWeber
 
 # ServiceLabel: %Consumption
 # PRLabel: %Consumption
@@ -243,19 +249,19 @@
 
 # PRLabel: %AI Model Inference
 # ServiceLabel: %AI Model Inference %Service Attention
-/sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @jhakulin
+/sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @trrwilson
 
 # PRLabel: %AI Agents
 # ServiceLabel: %AI Agents %Service Attention
-/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
+/sdk/ai/azure-ai-agents/                                             @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
-/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
+/sdk/ai/azure-ai-projects/                                           @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung @kingernupur
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
 
 
 # PRLabel: %HDInsight
@@ -383,19 +389,22 @@
 # PRLabel: %Health Deidentification
 /sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
-# AzureSdkOwners: @yungshinlintw @vkurpad
+# AzureSdkOwners: @yungshinlintw @bojunehsu
 # ServiceLabel: %Cognitive - Form Recognizer
-# ServiceOwners: @yungshinlintw @vkurpad
+# ServiceOwners: @yungshinlintw @bojunehsu
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @yungshinlintw @vkurpad
+/sdk/formrecognizer/                                                 @yungshinlintw @bojunehsu
 
-# AzureSdkOwners: @yungshinlintw @vkurpad
+# AzureSdkOwners: @yungshinlintw @bojunehsu
 # ServiceLabel: %Document Intelligence
-# ServiceOwners: @yungshinlintw @vkurpad
+# ServiceOwners: @yungshinlintw @bojunehsu
+
+# PRLabel: %Cognitive - Content Understanding
+/sdk/contentunderstanding/                                           @yungshinlintw @bojunehsu
 
 # PRLabel: %Document Intelligence
-/sdk/documentintelligence/                                           @yungshinlintw @vkurpad
+/sdk/documentintelligence/                                           @yungshinlintw @bojunehsu
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Cognitive - Metrics Advisor
@@ -406,15 +415,14 @@
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
-# ServiceOwners: @MikeyMCZ @Han-msft
 # ServiceLabel: %Cognitive - Translator
+# ServiceOwners: @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/azure-ai-translation-document/                      @Han-msft
-/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
+/sdk/translation/                                                    @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @quentinRobinson @wangyuantao
+/sdk/cognitivelanguage/                                              @quentinRobinson @bidisha-c @mikaelsitruk @sarkar-rajarshi @ahmedaashour
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
@@ -838,6 +846,7 @@
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
+/eng/tools/                                                          @scbedd @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
@@ -847,7 +856,6 @@
 /.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
 /.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
 
-/tools/                                                              @scbedd @mccoyp
 /scripts/                                                            @scbedd @mccoyp
 /scripts/breaking_changes_checker/                                   @catalinaperalta
 /doc/                                                                @scbedd @mccoyp

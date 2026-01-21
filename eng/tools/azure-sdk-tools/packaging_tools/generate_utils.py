@@ -51,10 +51,15 @@ def del_outdated_generated_files(tsp: str):
         content = yaml.safe_load(file_in)
     # tspconfig.yaml example: https://github.com/Azure/azure-rest-api-specs/pull/29080/files
     typespec_python_config = content.get("options", {}).get("@azure-tools/typespec-python", {})
-    service_dir = typespec_python_config.get("service-dir") or content.get("parameters", {}).get("service-dir", {}).get(
-        "default", ""
-    )
-    package_dir = typespec_python_config.get("emitter-output-dir", "").split("/")[-1]
+    emitter_output_dir = typespec_python_config.get("emitter-output-dir", "")
+    emitter_output_dir_parts = emitter_output_dir.split("/")
+    if "service-dir" in emitter_output_dir:
+        service_dir = typespec_python_config.get("service-dir") or content.get("parameters", {}).get(
+            "service-dir", {}
+        ).get("default", "")
+    else:
+        service_dir = emitter_output_dir_parts[-2] if len(emitter_output_dir_parts) >= 2 else ""
+    package_dir = emitter_output_dir_parts[-1]
     if not service_dir or not package_dir:
         _LOGGER.info(f"do not find service-dir or emitter-output-dir in tspconfig.yaml: {tspconfig}")
         return
@@ -113,11 +118,10 @@ def call_build_config(package_name: str, folder_name: str):
     # )
 
 
-def generate_packaging_files(package_name, folder_name):
+def generate_packaging_and_ci_files(package_path: Path):
     # replace sdk_packaging.toml with pyproject.toml
-    output_path = Path(folder_name) / package_name
-    pyproject_toml = output_path / CONF_NAME
-    sdk_packaging_toml = output_path / OLD_CONF_NAME
+    pyproject_toml = package_path / CONF_NAME
+    sdk_packaging_toml = package_path / OLD_CONF_NAME
     if sdk_packaging_toml.exists():
         if pyproject_toml.exists():
             # update related items in pyproject.toml then delete sdk_packaging.toml
@@ -147,9 +151,10 @@ def generate_packaging_files(package_name, folder_name):
             _LOGGER.info(f"rename {sdk_packaging_toml} to {pyproject_toml}")
             sdk_packaging_toml.rename(pyproject_toml)
 
+    package_name = package_path.name
     if "azure-mgmt-" in package_name:
         # if codegen generate pyproject.toml instead of setup.py, we delete existing setup.py
-        setup_py = output_path / "setup.py"
+        setup_py = package_path / "setup.py"
         if setup_py.exists():
             _LOGGER.info(f"delete {setup_py} since codegen generate pyproject.toml")
             with open(pyproject_toml, "rb") as f:
@@ -157,45 +162,32 @@ def generate_packaging_files(package_name, folder_name):
             if pyproject_content.get("project"):
                 setup_py.unlink()
 
-        call_build_config(package_name, folder_name)
-
-        # load pyproject.toml and replace "azure-core" with "azure-mgmt" (after codegen fix bug, we could remove this logic)
-        if pyproject_toml.exists():
-            with open(pyproject_toml, "rb") as f:
-                pyproject_content = toml.load(f)
-            if pyproject_content.get("project"):
-                for idx in range(len(pyproject_content["project"].get("dependencies", []))):
-                    if pyproject_content["project"]["dependencies"][idx].startswith("azure-core"):
-                        pyproject_content["project"]["dependencies"][idx] = "azure-mgmt-core>=1.6.0"
-
-            with open(pyproject_toml, "wb") as f:
-                tomlw.dump(pyproject_content, f)
+        call_build_config(package_name, str(package_path.parent))
     else:
         if not pyproject_toml.exists():
             with open(pyproject_toml, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
 
-    # add ci.yaml
+    # add ci.yml
     generate_ci(
         template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
-        folder_path=Path(folder_name),
+        folder_path=package_path.parent,
         package_name=package_name,
     )
 
 
-def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
-    package_folder = Path(sdk_folder, folder_name, package_name)
-    if not package_folder.exists():
-        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
+def update_metadata_json(package_path: Path, pipeline_input, codegen_config, spec_folder, input_readme):
+    if not package_path.exists():
+        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_path}")
         return
-    for_swagger_gen = "meta" in config
+    for_swagger_gen = "meta" in codegen_config
     # remove old _meta.json
-    old_metadata_folder = package_folder / "_meta.json"
+    old_metadata_folder = package_path / "_meta.json"
     if old_metadata_folder.exists():
         os.remove(old_metadata_folder)
         _LOGGER.info(f"Remove old metadata file: {old_metadata_folder}")
 
-    metadata_folder = package_folder / "_metadata.json"
+    metadata_folder = package_path / "_metadata.json"
     if metadata_folder.exists():
         with open(metadata_folder, "r") as file_in:
             metadata = json.load(file_in)
@@ -204,14 +196,14 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 
     metadata.update(
         {
-            "commit": data["headSha"],
-            "repository_url": data["repoHttpsUrl"],
+            "commit": pipeline_input["headSha"],
+            "repository_url": pipeline_input["repoHttpsUrl"],
         }
     )
     if for_swagger_gen:
         readme_file = str(Path(spec_folder, input_readme))
-        global_conf = config["meta"]
-        local_conf = config.get("projects", {}).get(readme_file, {})
+        global_conf = codegen_config["meta"]
+        local_conf = codegen_config.get("projects", {}).get(readme_file, {})
 
         if "resource-manager" in input_readme:
             cmd = ["autorest", input_readme]
@@ -231,11 +223,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         )
     else:
         metadata["typespec_src"] = input_readme
-        metadata.update(config)
+        metadata.update(codegen_config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
 
-    metadata_file_path = package_folder / "_metadata.json"
+    metadata_file_path = package_path / "_metadata.json"
     with metadata_file_path.open("w") as writer:
         json.dump(metadata, writer, indent=2)
     _LOGGER.info(f"Saved metadata to {metadata_file_path}")
@@ -514,10 +506,10 @@ def gen_typespec(
                         content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
-            cmd = f"{tsp_client} init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+            cmd = f"{tsp_client} init --update-if-exists --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         else:
             tsp_config_url = f"{rest_repo_url}/blob/{head_sha}/{typespec_relative_path}/tspconfig.yaml"
-            cmd = f"{tsp_client} init -c {tsp_config_url}"
+            cmd = f"{tsp_client} init --update-if-exists -c {tsp_config_url}"
         if run_in_pipeline:
             emitter_name = "@azure-tools/typespec-python"
             if not os.path.exists(f"node_modules/{emitter_name}"):

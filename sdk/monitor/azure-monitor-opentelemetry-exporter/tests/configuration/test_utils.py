@@ -36,15 +36,8 @@ class TestConfigurationProfile(unittest.TestCase):
 
     def test_fill_empty_profile(self):
         """Test filling an empty profile with all parameters."""
-        _ConfigurationProfile.fill(
-            os="w",
-            rp="f",
-            attach="m",
-            version="1.0.0",
-            component="ext",
-            region="westus"
-        )
-        
+        _ConfigurationProfile.fill(os="w", rp="f", attach="m", version="1.0.0", component="ext", region="westus")
+
         self.assertEqual(_ConfigurationProfile.os, "w")
         self.assertEqual(_ConfigurationProfile.rp, "f")
         self.assertEqual(_ConfigurationProfile.attach, "m")
@@ -55,7 +48,7 @@ class TestConfigurationProfile(unittest.TestCase):
     def test_fill_partial_profile(self):
         """Test filling profile with only some parameters."""
         _ConfigurationProfile.fill(os="l", version="2.0.0")
-        
+
         self.assertEqual(_ConfigurationProfile.os, "l")
         self.assertEqual(_ConfigurationProfile.version, "2.0.0")
         self.assertEqual(_ConfigurationProfile.rp, "")
@@ -68,10 +61,10 @@ class TestConfigurationProfile(unittest.TestCase):
         # Set initial values
         _ConfigurationProfile.os = "w"
         _ConfigurationProfile.version = "1.0.0"
-        
+
         # Try to overwrite - should be ignored
         _ConfigurationProfile.fill(os="l", version="2.0.0", rp="f")
-        
+
         # Original values should be preserved
         self.assertEqual(_ConfigurationProfile.os, "w")
         self.assertEqual(_ConfigurationProfile.version, "1.0.0")
@@ -85,7 +78,7 @@ class TestOneSettingsResponse(unittest.TestCase):
     def test_default_initialization(self):
         """Test OneSettingsResponse with default values."""
         response = OneSettingsResponse()
-        
+
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
@@ -97,13 +90,9 @@ class TestOneSettingsResponse(unittest.TestCase):
         """Test OneSettingsResponse with custom values."""
         settings = {"key": "value"}
         response = OneSettingsResponse(
-            etag="test-etag",
-            refresh_interval=3600,
-            settings=settings,
-            version=5,
-            status_code=304
+            etag="test-etag", refresh_interval=3600, settings=settings, version=5, status_code=304
         )
-        
+
         self.assertEqual(response.etag, "test-etag")
         self.assertEqual(response.refresh_interval, 3600)
         self.assertEqual(response.settings, settings)
@@ -113,11 +102,8 @@ class TestOneSettingsResponse(unittest.TestCase):
 
     def test_exception_initialization(self):
         """Test OneSettingsResponse with exception indicator."""
-        response = OneSettingsResponse(
-            has_exception=True,
-            status_code=500
-        )
-        
+        response = OneSettingsResponse(has_exception=True, status_code=500)
+
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
@@ -127,10 +113,8 @@ class TestOneSettingsResponse(unittest.TestCase):
 
     def test_timeout_initialization(self):
         """Test OneSettingsResponse with timeout indicator."""
-        response = OneSettingsResponse(
-            has_exception=True
-        )
-        
+        response = OneSettingsResponse(has_exception=True)
+
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
@@ -144,7 +128,7 @@ class TestOneSettingsResponse(unittest.TestCase):
             status_code=408,
             has_exception=True,
         )
-        
+
         self.assertEqual(response.status_code, 408)
         self.assertTrue(response.has_exception)
 
@@ -152,32 +136,26 @@ class TestOneSettingsResponse(unittest.TestCase):
 class TestMakeOneSettingsRequest(unittest.TestCase):
     """Test cases for make_onesettings_request function."""
 
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_successful_request(self, mock_get):
         """Test successful OneSettings request."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.headers = {
-            "ETag": "test-etag",
-            "x-ms-onesetinterval": "30"
-        }
-        mock_response.content = json.dumps({
-            "settings": {"key": "value", _ONE_SETTINGS_CHANGE_VERSION_KEY: "5"}
-        }).encode('utf-8')
+        mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "30"}
+        mock_response.content = json.dumps(
+            {"settings": {"key": "value", _ONE_SETTINGS_CHANGE_VERSION_KEY: "5"}}
+        ).encode("utf-8")
         mock_get.return_value = mock_response
-        
+
         # Make request
         result = make_onesettings_request("http://test.com", {"param": "value"}, {"header": "value"})
-        
+
         # Verify request was made correctly
         mock_get.assert_called_once_with(
-            "http://test.com",
-            params={"param": "value"},
-            headers={"header": "value"},
-            timeout=10
+            "http://test.com", params={"param": "value"}, headers={"header": "value"}, timeout=10
         )
-        
+
         # Verify response
         self.assertEqual(result.etag, "test-etag")
         self.assertEqual(result.refresh_interval, 1800)  # 30 minutes * 60
@@ -186,13 +164,13 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertFalse(result.has_exception)
 
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_timeout_exception(self, mock_get):
         """Test OneSettings request with timeout exception."""
         mock_get.side_effect = requests.exceptions.Timeout("Request timed out")
-        
+
         result = make_onesettings_request("http://test.com")
-        
+
         # Should return response with timeout and exception indicators
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
@@ -201,13 +179,13 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_connection_exception(self, mock_get):
         """Test OneSettings request with connection exception."""
         mock_get.side_effect = requests.exceptions.ConnectionError("Connection failed")
-        
+
         result = make_onesettings_request("http://test.com")
-        
+
         # Should return response with exception indicator but no timeout
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
@@ -216,13 +194,13 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_http_exception(self, mock_get):
         """Test OneSettings request with HTTP exception."""
         mock_get.side_effect = requests.exceptions.HTTPError("HTTP 500 Error")
-        
+
         result = make_onesettings_request("http://test.com")
-        
+
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
@@ -231,13 +209,13 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_generic_exception(self, mock_get):
         """Test OneSettings request with generic exception."""
         mock_get.side_effect = Exception("Unexpected error")
-        
+
         result = make_onesettings_request("http://test.com")
-        
+
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
@@ -246,8 +224,8 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils._parse_onesettings_response')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils._parse_onesettings_response")
     def test_json_decode_exception(self, mock_parse, mock_get):
         """Test OneSettings request with JSON decode exception."""
         # Setup mock response
@@ -256,13 +234,14 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         mock_response.headers = {"ETag": "test-etag"}
         mock_response.content = b"invalid json content"
         mock_get.return_value = mock_response
-        
+
         # Mock _parse_onesettings_response to raise JSONDecodeError
         from json import JSONDecodeError
+
         mock_parse.side_effect = JSONDecodeError("Expecting value", "invalid json content", 0)
-        
+
         result = make_onesettings_request("http://test.com")
-        
+
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
@@ -271,33 +250,32 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
-
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_http_error_status_codes(self, mock_get):
         """Test OneSettings request with various HTTP error status codes."""
         # Test different HTTP error codes
         error_codes = [400, 401, 403, 404, 429, 500, 502, 503, 504]
-        
+
         for status_code in error_codes:
             with self.subTest(status_code=status_code):
                 mock_response = Mock()
                 mock_response.status_code = status_code
                 mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(f"HTTP {status_code}")
                 mock_get.return_value = mock_response
-                
+
                 result = make_onesettings_request("http://test.com")
-                
+
                 # Should return response with exception indicator
                 self.assertTrue(result.has_exception)
                 self.assertEqual(result.status_code, 200)  # Default status when exception occurs
 
-    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_exception_legacy(self, mock_get):
         """Test OneSettings request with network exception (legacy behavior test)."""
         mock_get.side_effect = requests.exceptions.RequestException("Network error")
-        
+
         result = make_onesettings_request("http://test.com")
-        
+
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
@@ -314,16 +292,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         """Test parsing successful 200 response."""
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.headers = {
-            "ETag": "test-etag",
-            "x-ms-onesetinterval": "45"
-        }
-        mock_response.content = json.dumps({
-            "settings": {"feature": "enabled", _ONE_SETTINGS_CHANGE_VERSION_KEY: "10"}
-        }).encode('utf-8')
-        
+        mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "45"}
+        mock_response.content = json.dumps(
+            {"settings": {"feature": "enabled", _ONE_SETTINGS_CHANGE_VERSION_KEY: "10"}}
+        ).encode("utf-8")
+
         result = _parse_onesettings_response(mock_response)
-        
+
         self.assertEqual(result.etag, "test-etag")
         self.assertEqual(result.refresh_interval, 2700)  # 45 minutes * 60
         self.assertEqual(result.settings, {"feature": "enabled", _ONE_SETTINGS_CHANGE_VERSION_KEY: "10"})
@@ -334,14 +309,11 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         """Test parsing 304 Not Modified response."""
         mock_response = Mock()
         mock_response.status_code = 304
-        mock_response.headers = {
-            "ETag": "cached-etag",
-            "x-ms-onesetinterval": "60"
-        }
+        mock_response.headers = {"ETag": "cached-etag", "x-ms-onesetinterval": "60"}
         mock_response.content = b""
-        
+
         result = _parse_onesettings_response(mock_response)
-        
+
         self.assertEqual(result.etag, "cached-etag")
         self.assertEqual(result.refresh_interval, 3600)  # 60 minutes * 60
         self.assertEqual(result.settings, {})
@@ -354,9 +326,9 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         mock_response.status_code = 200
         mock_response.headers = {}
         mock_response.content = b"invalid json"
-        
+
         result = _parse_onesettings_response(mock_response)
-        
+
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
@@ -387,51 +359,29 @@ class TestEvaluateFeature(unittest.TestCase):
 
     def test_feature_enabled_by_default(self):
         """Test feature that is enabled by default with no overrides."""
-        settings = {
-            "test_feature": {
-                "default": "enabled"
-            }
-        }
-        
+        settings = {"test_feature": {"default": "enabled"}}
+
         result = evaluate_feature("test_feature", settings)
         self.assertTrue(result)
 
     def test_feature_disabled_by_default(self):
         """Test feature that is disabled by default with no overrides."""
-        settings = {
-            "test_feature": {
-                "default": "disabled"
-            }
-        }
-        
+        settings = {"test_feature": {"default": "disabled"}}
+
         result = evaluate_feature("test_feature", settings)
         self.assertFalse(result)
 
     def test_feature_override_matches(self):
         """Test feature override that matches current profile."""
-        settings = {
-            "test_feature": {
-                "default": "disabled",
-                "override": [
-                    {"os": "w", "component": "ext"}
-                ]
-            }
-        }
-        
+        settings = {"test_feature": {"default": "disabled", "override": [{"os": "w", "component": "ext"}]}}
+
         result = evaluate_feature("test_feature", settings)
         self.assertTrue(result)  # Override flips disabled to enabled
 
     def test_feature_override_no_match(self):
         """Test feature override that doesn't match current profile."""
-        settings = {
-            "test_feature": {
-                "default": "enabled",
-                "override": [
-                    {"os": "l", "component": "dst"}
-                ]
-            }
-        }
-        
+        settings = {"test_feature": {"default": "enabled", "override": [{"os": "l", "component": "dst"}]}}
+
         result = evaluate_feature("test_feature", settings)
         self.assertTrue(result)  # No override, stays default
 
@@ -443,11 +393,11 @@ class TestEvaluateFeature(unittest.TestCase):
                 "override": [
                     {"os": "l"},  # Doesn't match
                     {"component": "ext", "rp": "f"},  # Matches
-                    {"region": "eastus"}  # Doesn't match
-                ]
+                    {"region": "eastus"},  # Doesn't match
+                ],
             }
         }
-        
+
         result = evaluate_feature("test_feature", settings)
         self.assertTrue(result)  # Second override matches
 
@@ -455,13 +405,13 @@ class TestEvaluateFeature(unittest.TestCase):
         """Test evaluate_feature with invalid inputs."""
         # Empty feature key
         self.assertIsNone(evaluate_feature("", {}))
-        
+
         # None settings
         self.assertIsNone(evaluate_feature("test", None))
-        
+
         # Feature not in settings
         self.assertIsNone(evaluate_feature("missing", {}))
-        
+
         # Invalid feature config
         self.assertIsNone(evaluate_feature("test", {"test": "invalid"}))
 
@@ -586,11 +536,11 @@ class TestCompareVersions(unittest.TestCase):
         # Greater than
         self.assertTrue(_compare_versions("2.0.0", "1.0.0", ">="))
         self.assertTrue(_compare_versions("1.1.0", "1.0.0", ">"))
-        
+
         # Less than
         self.assertTrue(_compare_versions("1.0.0", "2.0.0", "<="))
         self.assertTrue(_compare_versions("1.0.0", "1.1.0", "<"))
-        
+
         # Equal
         self.assertTrue(_compare_versions("1.0.0", "1.0.0", "=="))
         self.assertTrue(_compare_versions("1.0.0", "1.0.0", ">="))
@@ -601,7 +551,7 @@ class TestCompareVersions(unittest.TestCase):
         # Beta vs beta
         self.assertTrue(_compare_versions("1.0.0b2", "1.0.0b1", ">"))
         self.assertTrue(_compare_versions("1.0.0b1", "1.0.0b2", "<"))
-        
+
         # Beta vs release
         self.assertTrue(_compare_versions("1.0.0", "1.0.0b1", ">"))
         self.assertTrue(_compare_versions("1.0.0b1", "1.0.0", "<"))
@@ -619,7 +569,7 @@ class TestParseVersionWithBeta(unittest.TestCase):
     def test_release_version(self):
         """Test parsing release version."""
         result = _parse_version_with_beta("1.2.3")
-        self.assertEqual(result, (1, 2, 3, float('inf')))
+        self.assertEqual(result, (1, 2, 3, float("inf")))
 
     def test_beta_version(self):
         """Test parsing beta version."""
@@ -638,11 +588,8 @@ class TestOneSettingsResponseErrorHandling(unittest.TestCase):
     def test_response_with_timeout_only(self):
         """Test response that indicates timeout but not general exception."""
         # This scenario shouldn't normally happen but test for completeness
-        response = OneSettingsResponse(
-            has_exception=False,
-            status_code=408
-        )
-        
+        response = OneSettingsResponse(has_exception=False, status_code=408)
+
         self.assertFalse(response.has_exception)
         self.assertEqual(response.status_code, 408)
 
@@ -655,13 +602,10 @@ class TestOneSettingsResponseErrorHandling(unittest.TestCase):
             (True, False, 408, "timeout without exception flag"),
             (False, False, 429, "no error flags but error status"),
         ]
-        
+
         for has_timeout, has_exception, status_code, description in test_cases:
             with self.subTest(description=description):
-                response = OneSettingsResponse(
-                    has_exception=has_exception,
-                    status_code=status_code
-                )
+                response = OneSettingsResponse(has_exception=has_exception, status_code=status_code)
                 self.assertEqual(response.has_exception, has_exception)
                 self.assertEqual(response.status_code, status_code)
 
@@ -695,33 +639,33 @@ class TestFeatureEvaluationIntegration(unittest.TestCase):
                 "override": [
                     {"os": "w"},  # This should match
                     {"os": "l", "ver": {"min": "1.0.0b20"}},
-                    {"component": "dst", "rp": "f"}
-                ]
+                    {"component": "dst", "rp": "f"},
+                ],
             },
             "sampling": {
                 "default": "enabled",
                 "override": [
                     {"os": ["w", "l"]},  # This should match and disable
-                ]
+                ],
             },
             "profiling": {
                 "default": "disabled",
                 "override": [
                     {"os": "w", "ver": {"min": "2.0.0", "max": "3.0.0"}},  # Version doesn't match
-                    {"component": "ext", "rp": ["f", "a"], "region": ["westus", "eastus"]}  # All match
-                ]
-            }
+                    {"component": "ext", "rp": ["f", "a"], "region": ["westus", "eastus"]},  # All match
+                ],
+            },
         }
-        
+
         # live_metrics: disabled by default, but Windows override matches
         self.assertTrue(evaluate_feature("live_metrics", settings))
-        
+
         # sampling: enabled by default, but OS override matches to disable
         self.assertFalse(evaluate_feature("sampling", settings))
-        
+
         # profiling: disabled by default, second override matches to enable
         self.assertTrue(evaluate_feature("profiling", settings))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

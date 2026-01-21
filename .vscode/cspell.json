@@ -103,6 +103,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
+    "sdk/storage/azure-storage-file-datalake/tests/**",
     "sdk/projects/azure-projects/tests/test_infra/**",
     "sdk/projects/azure-projects/samples/**/*.html",
     "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
@@ -155,6 +156,7 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "qnas",
     "msedge",
     "spinup",
     "cibuildwheel",
@@ -356,6 +358,7 @@
     "nbsp",
     "noarch",
     "NOPERM",
+    "norecursedirs",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -529,7 +532,7 @@
     "logprobs",
     "pyaudio",
     "PyAudio",
-	"libasound",
+    "libasound",
     "ingraph"
   ],
   "overrides": [
@@ -907,12 +910,12 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
-      "words": [ "unassigning" ],
+      "words": [ "unassigning", "unassignment" ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
       "caseSensitive": false
     },
     {
@@ -2185,7 +2188,7 @@
     },
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
-      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound"]
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     }
   ],
   "allowCompoundWords": true

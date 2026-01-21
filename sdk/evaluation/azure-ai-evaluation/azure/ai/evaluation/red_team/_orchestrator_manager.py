@@ -58,6 +58,7 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
     def decorator(func):
         @retry(**retry_config["network_retry"])
         async def wrapper(*args, **kwargs):
+            prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
             try:
                 return await func(*args, **kwargs)
             except (
@@ -72,11 +73,58 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
                 httpcore.ReadTimeout,
                 httpx.HTTPStatusError,
             ) as e:
-                prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
                 logger.warning(
-                    f"Network error{prompt_detail} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
+                    f"Retrying network error{prompt_detail} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
                 )
                 await asyncio.sleep(2)
+                raise
+            except ValueError as e:
+                # Treat missing converted prompt text as a transient transport issue so tenacity will retry.
+                if "Converted prompt text is None" in str(e):
+                    logger.warning(
+                        f"Endpoint produced empty converted prompt{prompt_detail} for {strategy_name}/{risk_category_name}; retrying."
+                    )
+                    await asyncio.sleep(2)
+                    raise httpx.HTTPError(
+                        "Converted prompt text is None; treating as transient endpoint failure"
+                    ) from e
+                raise
+            except Exception as e:
+                message = str(e)
+                cause = e.__cause__
+
+                def _is_network_cause(exc: BaseException) -> bool:
+                    return isinstance(
+                        exc,
+                        (
+                            httpx.HTTPError,
+                            httpx.ConnectTimeout,
+                            httpx.ReadTimeout,
+                            httpcore.ReadTimeout,
+                            asyncio.TimeoutError,
+                            ConnectionError,
+                            TimeoutError,
+                            OSError,
+                        ),
+                    )
+
+                def _is_converted_prompt_error(exc: BaseException) -> bool:
+                    return isinstance(exc, ValueError) and "Converted prompt text is None" in str(exc)
+
+                if (
+                    "Error sending prompt with conversation ID" in message
+                    and cause
+                    and (_is_network_cause(cause) or _is_converted_prompt_error(cause))
+                ):
+                    logger.warning(
+                        f"Wrapped network error{prompt_detail} for {strategy_name}/{risk_category_name}: {message}. Retrying."
+                    )
+                    await asyncio.sleep(2)
+                    if _is_converted_prompt_error(cause):
+                        raise httpx.HTTPError(
+                            "Converted prompt text is None; treating as transient endpoint failure"
+                        ) from cause
+                    raise httpx.HTTPError(message) from cause
                 raise
 
         return wrapper
@@ -97,6 +145,7 @@ class OrchestratorManager:
         retry_config,
         scan_output_dir=None,
         red_team=None,
+        _use_legacy_endpoint=False,
     ):
         """Initialize the orchestrator manager.
 
@@ -108,6 +157,7 @@ class OrchestratorManager:
         :param retry_config: Retry configuration for network errors
         :param scan_output_dir: Directory for scan outputs
         :param red_team: Reference to RedTeam instance for accessing prompt mappings
+        :param _use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
         """
         self.logger = logger
         self.generated_rai_client = generated_rai_client
@@ -117,6 +167,7 @@ class OrchestratorManager:
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
         self.red_team = red_team
+        self._use_legacy_endpoint = _use_legacy_endpoint
 
     def _calculate_timeout(self, base_timeout: int, orchestrator_type: str) -> int:
         """Calculate appropriate timeout based on orchestrator type.
@@ -693,6 +744,7 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
+                    _use_legacy_endpoint=self._use_legacy_endpoint,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -723,6 +775,7 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
+                    _use_legacy_endpoint=self._use_legacy_endpoint,
                 )
 
                 try:

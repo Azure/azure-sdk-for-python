@@ -14,7 +14,7 @@ from unittest import mock
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobType
+from azure.storage.blob import BlobType, ContentSettings
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
@@ -40,7 +40,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
     async def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=key)
+            credential=key.secret)
         self.container_name = self.get_resource_name('utcontainer')
 
         if self.is_live:
@@ -67,7 +67,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
 
@@ -135,7 +135,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
             kek = KeyWrapper('key1')
             bsc = BlobServiceClient(
                 self.account_url(storage_account_name, "blob"),
-                credential=storage_account_key,
+                credential=storage_account_key.secret,
                 max_single_put_size=1024,
                 max_block_size=1024,
                 require_encryption=True,
@@ -198,6 +198,26 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Assert
         assert content == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_decompression_with_encryption(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        result = await (await blob.download_blob(decompress=False)).readall()
+        assert result == compressed_data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -457,7 +477,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             max_block_size=1024,
             require_encryption=True,
@@ -485,7 +505,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             max_block_size=4 * MiB,
             require_encryption=True,
@@ -512,7 +532,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             max_block_size=4 * MiB,
             require_encryption=True,
@@ -539,7 +559,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             max_block_size=2 * MiB,
             require_encryption=True,
@@ -566,7 +586,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             max_block_size=6 * MiB,
             require_encryption=True,
@@ -593,7 +613,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
@@ -640,7 +660,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
@@ -865,7 +885,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=4 * MiB,
             require_encryption=True,
@@ -892,7 +912,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=4 * MiB,
             require_encryption=True,
@@ -920,7 +940,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=4 * MiB,
             require_encryption=True,
@@ -947,7 +967,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=2 * MiB,
             require_encryption=True,
@@ -974,7 +994,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=6 * MiB,
             require_encryption=True,
@@ -1001,7 +1021,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=4 * MiB,
             require_encryption=True,
@@ -1033,7 +1053,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=4 * MiB,
             require_encryption=True,
@@ -1070,7 +1090,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=4 * MiB,
             max_chunk_get_size=4 * MiB,
             require_encryption=True,
@@ -1120,7 +1140,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024,
             require_encryption=True,
@@ -1214,7 +1234,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         # Test client constructor level keyword
         bsc = BlobServiceClient(
             self.bsc.url,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek,

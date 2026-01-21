@@ -14,6 +14,13 @@ from opentelemetry.semconv.attributes.http_attributes import (
 )
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
+
+try:
+    from opentelemetry.semconv._incubating.attributes import (
+        enduser_attributes as _enduser_attributes,
+    )
+except ImportError:
+    _enduser_attributes = None
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
@@ -55,6 +62,17 @@ from . import _utils as trace_utils
 _logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]
+
+_ENDUSER_ID_ATTRIBUTE = (
+    getattr(SpanAttributes, "ENDUSER_ID", None)
+    or (getattr(_enduser_attributes, "ENDUSER_ID", None) if _enduser_attributes is not None else None)
+    or "enduser.id"
+)
+_ENDUSER_PSEUDO_ID_ATTRIBUTE = (
+    getattr(SpanAttributes, "ENDUSER_PSEUDO_ID", None)
+    or (getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None) if _enduser_attributes is not None else None)
+    or "enduser.pseudo.id"
+)
 
 _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
     "http.",
@@ -107,9 +125,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
 
-    def export(
-        self, spans: Sequence[ReadableSpan], **kwargs: Any  # pylint: disable=unused-argument
-    ) -> SpanExportResult:
+    def export(self, spans: Sequence[ReadableSpan], **_kwargs: Any) -> SpanExportResult:
         """Export span data.
 
         :param spans: Open Telemetry Spans to export.
@@ -222,8 +238,10 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(start_time)
     envelope.tags.update(_utils._populate_part_a_fields(span.resource))
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
-    if SpanAttributes.ENDUSER_ID in span.attributes:
-        envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
+    if _ENDUSER_ID_ATTRIBUTE in span.attributes:
+        envelope.tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = span.attributes[_ENDUSER_ID_ATTRIBUTE]
+    if _ENDUSER_PSEUDO_ID_ATTRIBUTE in span.attributes:
+        envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[_ENDUSER_PSEUDO_ID_ATTRIBUTE]
     if _utils._is_any_synthetic_source(span.attributes):
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"
     if span.parent and span.parent.span_id:
@@ -283,8 +301,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     )
                 except Exception:  # pylint: disable=broad-except
                     pass
-            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) \
-                or span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or span.attributes.get(
+                SpanAttributes.HTTP_STATUS_CODE
+            )
             if status_code:
                 try:
                     status_code = int(status_code)  # type: ignore
@@ -356,7 +375,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
                         span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         span.attributes[SpanAttributes.HTTP_ROUTE],
-                )
+                    )
                 # data
                 if url:
                     data.data = url
@@ -367,16 +386,16 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # http specific logic for name
                 if path:
                     data.name = "{} {}".format(
-                        span.attributes.get(HTTP_REQUEST_METHOD) or \
-                            span.attributes.get(SpanAttributes.HTTP_METHOD),
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
                     envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
                         span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
-                status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
-                    span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+                status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or span.attributes.get(
+                    SpanAttributes.HTTP_STATUS_CODE
+                )
                 if status_code:
                     try:
                         status_code = int(status_code)  # type: ignore
@@ -579,8 +598,7 @@ def _is_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
-    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or \
-        key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
+    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:

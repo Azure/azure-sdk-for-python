@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.9"
 keywords = ["azure", "azure sdk"]
@@ -33,17 +34,16 @@ keywords = ["azure", "azure sdk"]
 dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.35.0",
-    "typing-extensions>=4.6.0",
+    "azure-identity>=1.15.0",
+    "openai>=2.8.0",
     "azure-storage-blob>=12.15.0",
-    "azure-ai-agents>=1.2.0b3",
 ]
 dynamic = [
-    "version",
-    "readme"
+"version", "readme"
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+repository = "https://aka.ms/azsdk/azure-ai-projects-v2/python/code"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.projects._version.VERSION"}
@@ -65,3 +65,4 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 verifytypes = false
+

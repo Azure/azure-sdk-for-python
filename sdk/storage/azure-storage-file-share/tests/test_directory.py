@@ -32,7 +32,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
-        self.fsc = ShareServiceClient(url, credential=credential)
+        self.fsc = ShareServiceClient(url, credential=credential.secret)
         self.share_name = self.get_resource_name('utshare')
 
         if not self.is_playback():
@@ -163,7 +163,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, directory_name + '.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
 
         # Act
@@ -385,7 +385,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
 
         # Act
@@ -676,7 +676,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
         directory_client.create_directory()
 
@@ -793,7 +793,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
         directory.create_directory()
         directory.create_subdirectory("subdir1.")
@@ -1072,7 +1072,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
 
         # Act
@@ -1350,7 +1350,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True,
             allow_source_trailing_dot=True)
 
@@ -1373,7 +1373,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         directory_client.exists()
 
@@ -1403,7 +1403,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         directory_client.exists()
 
@@ -1476,29 +1476,6 @@ class TestStorageDirectory(StorageRecordedTestCase):
         assert server_returned_permission == user_given_permission_binary
 
         new_directory_client.delete_directory()
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_create_directory_semantics(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        share_client = self.fsc.get_share_client(self.share_name)
-
-        directory = share_client.create_directory('dir1', file_property_semantics=None)
-        props = directory.get_directory_properties()
-        assert props is not None
-
-        directory = share_client.create_directory('dir2', file_property_semantics='New')
-        props = directory.get_directory_properties()
-        assert props is not None
-
-        directory = share_client.create_directory(
-            'dir3', file_property_semantics='Restore', file_permission=TEST_FILE_PERMISSIONS
-        )
-        props = directory.get_directory_properties()
-        assert props is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

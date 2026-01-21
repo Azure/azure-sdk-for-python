@@ -83,6 +83,9 @@ class AadClientBase(abc.ABC):
         return cast(TokenCache, self._cae_cache if is_cae else self._cache)
 
     def get_cached_access_token(self, scopes: Iterable[str], **kwargs: Any) -> Optional[AccessTokenInfo]:
+        # Do not return a cached token if claims are provided.
+        if kwargs.get("claims"):
+            return None
         tenant = resolve_tenant(
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
@@ -138,6 +141,11 @@ class AadClientBase(abc.ABC):
         content = response.context.get(
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
+
+        if not content:
+            raise ClientAuthenticationError(
+                message="No response content from Microsoft Entra ID", response=response.http_response
+            )
 
         cache = self._get_cache(**kwargs)
         if response.http_request.body.get("grant_type") == "refresh_token":

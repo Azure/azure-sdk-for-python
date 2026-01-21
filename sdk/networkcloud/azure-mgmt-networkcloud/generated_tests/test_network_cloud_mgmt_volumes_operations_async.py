@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_volumes_list_by_subscription(self, resource_group):
         response = self.client.volumes.list_by_subscription(
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_volumes_list_by_resource_group(self, resource_group):
         response = self.client.volumes.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.volumes.get(
             resource_group_name=resource_group.name,
             volume_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -63,6 +63,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     "extendedLocation": {"name": "str", "type": "str"},
                     "location": "str",
                     "sizeMiB": 0,
+                    "allocatedSizeMiB": 0,
                     "attachedTo": ["str"],
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
@@ -71,6 +72,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     "name": "str",
                     "provisioningState": "str",
                     "serialNumber": "str",
+                    "storageApplianceId": "str",
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -82,7 +84,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,7 +98,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.volumes.begin_delete(
                 resource_group_name=resource_group.name,
                 volume_name="str",
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -109,7 +111,7 @@ class TestNetworkCloudMgmtVolumesOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.volumes.update(
             resource_group_name=resource_group.name,
             volume_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself

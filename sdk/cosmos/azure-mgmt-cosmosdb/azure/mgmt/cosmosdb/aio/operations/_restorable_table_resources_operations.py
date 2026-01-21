@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -31,7 +31,8 @@ from ...operations._restorable_table_resources_operations import build_list_requ
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RestorableTableResourcesOperations:
@@ -61,7 +62,7 @@ class RestorableTableResourcesOperations:
         restore_location: Optional[str] = None,
         restore_timestamp_in_utc: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RestorableTableResourcesGetResult"]:
+    ) -> AsyncItemPaged["_models.RestorableTableResourcesGetResult"]:
         """Return a list of tables that exist on the account at the given timestamp and location. This
         helps in scenarios to validate what resources exist at given timestamp and location. This API
         requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.

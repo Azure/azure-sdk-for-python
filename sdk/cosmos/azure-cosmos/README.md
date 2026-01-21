@@ -816,11 +816,6 @@ Or if you'd like to add the optional parameters to the vector distance, you coul
 The `embeddings_string` above would be your string made from your vector embeddings.
 You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well to help yourself out.
 
-*Note: For a limited time, if your query operates against a region or emulator that has not yet been updated the client might run into some issues
-not being able to recognize the new NonStreamingOrderBy capability that makes vector search possible.
-If this happens, you can set the `AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY` environment variable to `"True"` to opt out of this
-functionality and continue operating as usual.*
-
 ### Public Preview - Full Text Policy and Full Text Indexes
 We have added new capabilities to utilize full text policies and full text indexing for users to leverage full text search
 utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
@@ -939,6 +934,89 @@ requests to another region:
     - After a partition has encountered 5 consecutive errors for write requests, the SDK will send requests routed to that partition to another region.
 - `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED`: Default is a `90` percent failure rate.
   - After a partition reaches a 90 percent failure rate for all requests, the SDK will send requests routed to that partition to another region.
+
+### Per Partition Automatic Failover (Public Preview)
+Per partition automatic failover enables the SDK to automatically redirect write requests at the partition level to another region based on service-side signals. This feature is available 
+only for single write region accounts that have at least one read-only region. When per partition automatic failover is enabled, per partition circuit breaker and cross-region hedging is enabled by default, meaning 
+all its configurable options also apply to per partition automatic failover. To enable this feature, follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover).
+
+### Cross Region Hedging Availability Strategy
+
+Cross region hedging availability strategy improves availability and reduces latency by sending duplicate requests to secondary regions if the primary region is slow or unavailable. The SDK uses the first successful response, helping to mitigate regional outages or high latency.
+
+#### Key Concepts
+
+- **Hedged Requests**: The SDK sends a parallel request to another region if the primary region does not respond within a configured delay.
+- **Configurable**: Hedging can be enabled or disabled, and the delay before sending a hedged request is tunable.
+- **ThreadPoolExecutor**: The sync CosmosClient instance will use a ThreadPoolExecutor under the hood for parallelizing requests. Users can choose whether to use the default ThreadPoolExecutor the SDK uses, or to pass in their own instance. *The async client does not need the executor since it uses asynchronous logic to parallelize requests.*
+
+#### Enabling Cross Region Hedging
+
+You can enable cross region hedging by passing the `availability_strategy_config` parameter as a dictionary to the `CosmosClient` or per-request. The most common configuration keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests).
+
+#### Client-level configuration
+
+```python
+from azure.cosmos import CosmosClient
+
+client = CosmosClient(
+    "<account-uri>",
+    "<account-key>",
+    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50}
+)
+```
+
+#### Request-level configuration
+
+```python
+# Override or provide the strategy per request
+container.read_item(
+    item="item_id",
+    partition_key="pk_value",
+    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50}
+)
+```
+
+#### Disable availability strategy on request level
+
+```python
+# Disable cross region hedging for a specific request, even if enabled at client level
+container.read_item(
+    item="item_id",
+    partition_key="pk_value",
+    availability_strategy_config=None
+)
+```
+
+#### Customized executor for hedging for sync client
+
+```python
+# Pass in your own custom TheadPoolExecutor to use with the sync client
+from concurrent.futures import ThreadPoolExecutor
+from azure.cosmos import CosmosClient
+
+executor = ThreadPoolExecutor(max_workers=2)
+client = CosmosClient(
+    "<account-uri>",
+    "<account-key>",
+    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50},
+    availability_strategy_executor=executor
+)
+```
+
+#### Customized max concurrency for hedging for async client
+
+```python
+# Customize the max concurrency on the default ThreadPoolExecutor for the sync client
+from azure.cosmos import CosmosClient
+
+client = CosmosClient(
+    "<account-uri>",
+    "<account-key>",
+    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50},
+    availability_strategy_max_concurrency=2
+)
+```
 
 ## Troubleshooting
 
@@ -1104,7 +1182,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [virtualenv]: https://virtualenv.pypa.io
 [telemetry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py
 [timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
-[cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/nosql/transactional-batch
+[cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/transactional-batch
 [cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
 [cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
 [cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py

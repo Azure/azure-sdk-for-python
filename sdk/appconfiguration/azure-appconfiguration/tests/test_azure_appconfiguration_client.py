@@ -7,6 +7,7 @@ import pytest
 import copy
 import json
 import re
+import time
 from datetime import datetime, timezone
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -81,7 +82,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
     # method: set_configuration_setting
     @app_config_decorator
     @recorded_by_proxy
-    def test_set_configuration_setting(self, appconfiguration_connection_string):
+    def test_set_existing_configuration_setting_label_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_set_kv = self.create_config_setting()
         to_set_kv.value = to_set_kv.value + "a"
@@ -125,6 +126,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert fetched_kv.label is None
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
+    # method: get_configuration_setting
     @app_config_decorator
     @recorded_by_proxy
     def test_get_configuration_setting(self, appconfiguration_connection_string):
@@ -226,9 +228,9 @@ class TestAppConfigurationClient(AppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        items = list(self.client.list_configuration_settings(KEY, LABEL))
+        items = list(self.client.list_configuration_settings(key_filter=KEY, label_filter=LABEL))
         assert len(items) == 1
-        assert all(x.label == LABEL and x.label == LABEL for x in items)
+        assert all(x.key == KEY and x.label == LABEL for x in items)
 
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("MyKey1", key_filter="MyKey2")
@@ -274,7 +276,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        items = list(self.client.list_configuration_settings(KEY))
+        items = list(self.client.list_configuration_settings(key_filter=KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
         self.tear_down()
@@ -396,7 +398,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         recorded_variables = kwargs.pop("variables", {})
-        recorded_variables.setdefault("timestamp", str(datetime.utcnow()))
+        recorded_variables.setdefault("timestamp", str(datetime.now(timezone.utc)))
 
         with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
@@ -421,10 +423,10 @@ class TestAppConfigurationClient(AppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        to_list1 = self.create_config_setting()
-        items = list(self.client.list_revisions(label_filter=to_list1.label, key_filter=to_list1.key))
+        to_list = self.create_config_setting()
+        items = list(self.client.list_revisions(label_filter=to_list.label, key_filter=to_list.key))
         assert len(items) >= 2
-        assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
+        assert all(x.key == to_list.key and x.label == to_list.label for x in items)
         self.tear_down()
 
     @app_config_decorator
@@ -678,6 +680,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         set_flag = client.set_configuration_setting(secret_reference)
         self._assert_same_keys(secret_reference, set_flag)
 
+        set_flag.secret_id = "https://test-test.vault.azure.net/new_secrets/connectionString"
         updated_flag = client.set_configuration_setting(set_flag)
         self._assert_same_keys(set_flag, updated_flag)
 
@@ -977,16 +980,22 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_create_snapshot(self, appconfiguration_connection_string):
+    def test_create_snapshot(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = response.result()
         assert created_snapshot.name == snapshot_name
         assert created_snapshot.status == "ready"
+        assert created_snapshot.retention_period == 3600
         assert len(created_snapshot.filters) == 1
         assert created_snapshot.filters[0].key == KEY
         assert created_snapshot.filters[0].label == LABEL
@@ -995,16 +1004,22 @@ class TestAppConfigurationClient(AppConfigTestCase):
         self._assert_snapshots(received_snapshot, created_snapshot)
 
         self.tear_down()
+        return variables
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_update_snapshot_status(self, appconfiguration_connection_string):
+    def test_update_snapshot_status(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = response.result()
         assert created_snapshot.status == "ready"
 
@@ -1015,16 +1030,22 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert recovered_snapshot.status == "ready"
 
         self.tear_down()
+        return variables
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string):
+    def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = response.result()
 
         # test update with wrong etag
@@ -1037,10 +1058,11 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert archived_snapshot.status == "archived"
 
         self.tear_down()
+        return variables
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_list_snapshots(self, appconfiguration_connection_string):
+    def test_list_snapshots(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
@@ -1048,14 +1070,18 @@ class TestAppConfigurationClient(AppConfigTestCase):
         result = self.client.list_snapshots()
         initial_snapshots = len(list(result))
 
-        snapshot_name1 = self.get_resource_name("snapshot1")
-        snapshot_name2 = self.get_resource_name("snapshot2")
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
+        snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
+
         filters1 = [ConfigurationSettingsFilter(key=KEY)]
-        response1 = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
+        response1 = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1, retention_period=3600)
         created_snapshot1 = response1.result()
         assert created_snapshot1.status == "ready"
         filters2 = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response2 = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
+        response2 = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2, retention_period=3600)
         created_snapshot2 = response2.result()
         assert created_snapshot2.status == "ready"
 
@@ -1063,25 +1089,32 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert len(list(result)) == initial_snapshots + 2
 
         self.tear_down()
+        return variables
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+    def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
-        snapshot_name1 = self.get_resource_name("snapshot1")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters)
+        response = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters, retention_period=3600)
         created_snapshot = response.result()
         assert created_snapshot.status == "ready"
 
         items = self.client.list_configuration_settings(snapshot_name=snapshot_name1)
         assert len(list(items)) == 1
 
-        snapshot_name2 = self.get_resource_name("snapshot2")
+        snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
-        response = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
+        response = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters, retention_period=3600)
         created_snapshot = response.result()
         assert created_snapshot.status == "ready"
 
@@ -1089,6 +1122,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert len(list(items)) == 0
 
         self.tear_down()
+        return variables
 
     @app_config_decorator
     @recorded_by_proxy
@@ -1096,9 +1130,10 @@ class TestAppConfigurationClient(AppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            self.client = client
             # prepare 200 configuration settings
             for i in range(200):
-                client.add_configuration_setting(
+                self.client.set_configuration_setting(
                     ConfigurationSetting(
                         key=f"sample_key_{str(i)}",
                         label=f"sample_label_{str(i)}",
@@ -1107,43 +1142,23 @@ class TestAppConfigurationClient(AppConfigTestCase):
             # there will have 2 pages while listing, there are 100 configuration settings per page.
 
             # get page etags
-            page_etags = []
-            items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            match_conditions = []
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
-            for page in iterator:
+            for _ in iterator:
                 etag = iterator.etag
-                page_etags.append(etag)
+                match_conditions.append(etag)
 
-            # monitor page updates without changes
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
-            )
-            first_page_response = client.send_request(request)
-            assert first_page_response.status_code == 304
+            # monitor page updates without changes - only changed pages will be yielded
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            iterator = items.by_page(match_conditions=match_conditions)
+            changed_pages = list(iterator)
 
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = client.send_request(request)
-                assert response.status_code == 304
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            # No pages should be yielded since nothing changed
+            assert len(changed_pages) == 0
 
             # do some changes
-            client.add_configuration_setting(
+            self.client.set_configuration_setting(
                 ConfigurationSetting(
                     key="sample_key_201",
                     label="sample_label_202",
@@ -1152,55 +1167,27 @@ class TestAppConfigurationClient(AppConfigTestCase):
             # now we have three pages, 100 settings in first two pages and 1 setting in the last page
 
             # get page etags after updates
-            new_page_etags = []
-            items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            new_match_conditions = []
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
-            for page in iterator:
+            for _ in iterator:
                 etag = iterator.etag
-                new_page_etags.append(etag)
+                new_match_conditions.append(etag)
 
-            assert page_etags[0] == new_page_etags[0]
-            assert page_etags[1] != new_page_etags[1]
-            assert page_etags[2] != new_page_etags[2]
+            assert match_conditions[0] == new_match_conditions[0]
+            assert match_conditions[1] != new_match_conditions[1]
+            assert match_conditions[2] != new_match_conditions[2]
+            assert len(new_match_conditions) == 3
 
-            # monitor page after updates
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
-            )
-            first_page_response = client.send_request(request)
-            # 304 means the page doesn't have changes.
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = client.send_request(request)
-
-                # 200 means the page has changes.
-                assert response.status_code == 200
-                items = response.json()["items"]
-                for item in items:
-                    print(f"Key: {item['key']}, Label: {item['label']}")
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            # monitor pages after updates - only changed pages will be yielded
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            iterator = items.by_page(match_conditions=new_match_conditions)
+            changed_pages = list(iterator)
+            # Should yield 0 pages
+            assert len(changed_pages) == 0
 
             # clean up
-            config_settings = client.list_configuration_settings()
-            for config_setting in config_settings:
-                client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+            self.tear_down()
 
     @app_config_decorator
     @recorded_by_proxy

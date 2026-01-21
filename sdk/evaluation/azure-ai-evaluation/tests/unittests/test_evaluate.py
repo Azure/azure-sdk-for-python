@@ -37,6 +37,8 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _apply_target_to_data,
     _rename_columns_conditionally,
     _convert_results_to_aoai_evaluation_results,
+    _process_rows,
+    _aggregate_label_defect_metrics,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -93,6 +95,11 @@ def evaluate_test_data_for_groundedness():
 @pytest.fixture
 def questions_file():
     return _get_file("questions.jsonl")
+
+
+@pytest.fixture
+def quotation_fix_test_data():
+    return _get_file("quotation_fix_test_data.jsonl")
 
 
 @pytest.fixture
@@ -645,7 +652,7 @@ class TestEvaluate:
         }
         aggregation = _aggregate_metrics(data_df, evaluators)
 
-        assert len(aggregation) == 4
+        assert len(aggregation) == 8  # 4 defect rates + 4 average scores
         assert aggregation["content_safety.violence_defect_rate"] == 0.5
         assert aggregation["content_safety.sexual_defect_rate"] == 0.25
         assert aggregation["content_safety.self_harm_defect_rate"] == 0.0
@@ -719,7 +726,58 @@ class TestEvaluate:
         assert "bad_thing.boolean_with_nan" not in aggregation
         assert "bad_thing.boolean_with_none" not in aggregation
 
-    @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
+    def test_aggregate_label_defect_metrics_with_nan_in_details(self):
+        """Test that NaN/None values in details column are properly ignored during aggregation."""
+        data = {
+            "evaluator.protected_material_label": [True, False, True, False],
+            "evaluator.protected_material_details": [
+                {"detail1": 1, "detail2": 0},
+                np.nan,  # Failed evaluation
+                {"detail1": 0, "detail2": 1},
+                None,  # Another failure case
+            ],
+        }
+        df = pd.DataFrame(data)
+
+        label_cols, defect_rates = _aggregate_label_defect_metrics(df)
+
+        # Should calculate defect rate for label column (all 4 rows)
+        assert "evaluator.protected_material_defect_rate" in defect_rates
+        assert defect_rates["evaluator.protected_material_defect_rate"] == 0.5
+
+        # Should calculate defect rates for detail keys (only from 2 valid dict rows)
+        assert "evaluator.protected_material_details.detail1_defect_rate" in defect_rates
+        assert "evaluator.protected_material_details.detail2_defect_rate" in defect_rates
+        assert defect_rates["evaluator.protected_material_details.detail1_defect_rate"] == 0.5
+        assert defect_rates["evaluator.protected_material_details.detail2_defect_rate"] == 0.5
+
+    def test_quotation_fix_test_data(self, quotation_fix_test_data):
+        from test_evaluators.test_inputs_evaluators import QuotationFixEval
+
+        result = evaluate(
+            data=quotation_fix_test_data,
+            evaluators={
+                "test_evaluator": QuotationFixEval(),
+            },
+        )
+
+        print(result)
+        assert result is not None
+        assert result["rows"] is not None
+        assert result["rows"][0] is not None
+        assert result["rows"][0]["inputs.query"] == '"test"'
+        assert result["rows"][0]["inputs.response"] == "test"
+        assert result["rows"][0]["inputs.ground_truth"] == '"test"'
+        assert result["rows"][0]["outputs.test_evaluator.score"] == 2
+        assert result["rows"][0]["outputs.test_evaluator.reason"] == "ne"
+
+        assert result["rows"][1] is not None
+        assert result["rows"][1]["inputs.query"] == '"test"'
+        assert result["rows"][1]["inputs.response"] == '"test"'
+        assert result["rows"][1]["inputs.ground_truth"] == '"test"'
+        assert result["rows"][1]["outputs.test_evaluator.score"] == 1
+        assert result["rows"][1]["outputs.test_evaluator.reason"] == "eq"
+
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file):
         from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
@@ -1093,6 +1151,7 @@ class TestEvaluate:
         parent = pathlib.Path(__file__).parent.resolve()
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
         test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_util_convert_eval_meta_data.json")
+        test_input_eval_config_path = os.path.join(parent, "data", "evaluation_util_convert_eval_config.json")
         test_input_eval_error_summary_path = os.path.join(parent, "data", "evaluation_util_convert_error_summary.json")
         test_expected_output_path = os.path.join(parent, "data", "evaluation_util_convert_expected_output.json")
 
@@ -1132,6 +1191,9 @@ class TestEvaluate:
         test_eval_input_metadata = {}
         with open(test_input_eval_metadata_path, "r") as f:
             test_eval_input_metadata = json.load(f)
+        test_eval_input_config = {}
+        with open(test_input_eval_config_path, "r") as f:
+            test_eval_input_config = json.load(f)
         test_eval_error_summary = {}
         with open(test_input_eval_error_summary_path, "r") as f:
             test_eval_error_summary = json.load(f)
@@ -1151,6 +1213,7 @@ class TestEvaluate:
                 evaluators=evaluators,
                 eval_run_summary=test_eval_error_summary,
                 eval_meta_data=test_eval_input_metadata,
+                evaluator_config=test_eval_input_config,
             )
 
         # Run the async function
