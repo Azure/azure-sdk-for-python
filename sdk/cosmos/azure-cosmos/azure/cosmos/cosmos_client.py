@@ -93,6 +93,14 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
         policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
     else:
         policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
+
+    # Check if read_timeout is explicitly provided in kwargs (client-level)
+    if 'read_timeout' in kwargs:
+        policy.ReadTimeout = kwargs.pop('read_timeout')
+    # Otherwise, check if policy has the new read_timeout property
+    elif hasattr(policy, 'read_timeout') and policy.read_timeout is not None:
+        policy.ReadTimeout = policy.read_timeout
+
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
