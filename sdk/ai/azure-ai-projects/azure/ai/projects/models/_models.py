@@ -14651,10 +14651,6 @@ class ResponseFileSearchCallSearchingEvent(_Model):
         self.type: Literal["response.file_search_call.searching"] = "response.file_search_call.searching"
 
 
-class ResponseFormatJsonSchemaSchema(_Model):
-    """JSON schema."""
-
-
 class ResponseFunctionCallArgumentsDeltaEvent(_Model):
     """Emitted when there is a partial function-call arguments delta.
 
@@ -17468,7 +17464,7 @@ class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminato
        underscores and dashes, with a maximum length of 64. Required.
     :vartype name: str
     :ivar schema: Required.
-    :vartype schema: ~azure.ai.projects.models.ResponseFormatJsonSchemaSchema
+    :vartype schema: dict[str, any]
     :ivar strict:
     :vartype strict: bool
     """
@@ -17481,9 +17477,7 @@ class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminato
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the response format. Must be a-z, A-Z, 0-9, or contain
        underscores and dashes, with a maximum length of 64. Required."""
-    schema: "_models.ResponseFormatJsonSchemaSchema" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    schema: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
@@ -17492,7 +17486,7 @@ class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminato
         self,
         *,
         name: str,
-        schema: "_models.ResponseFormatJsonSchemaSchema",
+        schema: dict[str, Any],
         description: Optional[str] = None,
         strict: Optional[bool] = None,
     ) -> None: ...
