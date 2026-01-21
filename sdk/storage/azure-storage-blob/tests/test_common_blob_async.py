@@ -3670,7 +3670,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             extra = urlencode(request_query_params, quote_via=quote, safe="")
             request.http_request.url = request.http_request.url + "&" + extra
 
-        identity_blob = BlobClient.from_blob_url(f"{blob.url}?{blob_token}", credential=token_credential)
+        identity_blob = BlobClient.from_blob_url(f"{blob.url}?{blob_token}")
         props = await identity_blob.get_blob_properties(raw_request_hook=callback)
         assert props is not None
 
