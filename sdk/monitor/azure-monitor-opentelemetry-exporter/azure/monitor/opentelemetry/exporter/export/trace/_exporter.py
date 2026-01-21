@@ -148,9 +148,11 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
     # pylint: disable=protected-access
     def _get_otel_resource_envelope(self, resource: Resource) -> TelemetryItem:
+        # Convert resource attributes to a plain, serializable dict; BoundedAttributes
+        # coming from the SDK are not JSON-serializable as-is.
         attributes: Dict[str, str] = {}
         if resource:
-            attributes = resource.attributes
+            attributes = _utils._filter_custom_properties(dict(resource.attributes))  # type: ignore[arg-type]
         envelope = _utils._create_telemetry_item(time_ns())
         envelope.name = _METRIC_ENVELOPE_NAME
         envelope.tags.update(_utils._populate_part_a_fields(resource))  # pylint: disable=W0212

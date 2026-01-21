@@ -47,6 +47,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_AI_SDK_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._generated.exporter._utils.model_base import SdkJSONEncoder
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
@@ -1745,6 +1746,20 @@ class TestAzureTraceExporter(unittest.TestCase):
         metrics = metrics_data.metrics
         self.assertEqual(len(metrics), 1)
         self.assertEqual(metrics[0].name, "_OTELRESOURCE_")
+
+    def test_get_otel_resource_envelope_serializes_bounded_attributes(self):
+        exporter = self._exporter
+        test_resource = resources.Resource(
+            attributes={
+                "svc": "demo",
+                "num": 1,
+            }
+        )
+        envelope = exporter._get_otel_resource_envelope(test_resource)
+
+        # Ensure the envelope can be JSON serialized with the generated encoder
+        serialized = json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True)
+        self.assertIn("_OTELRESOURCE_", serialized)
 
 
 class TestAzureTraceExporterUtils(unittest.TestCase):
