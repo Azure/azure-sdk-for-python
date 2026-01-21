@@ -441,16 +441,22 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if use_rust:
             print("[CosmosClient.create_database] Using RUST SDK")
             # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
-            # Rust now returns (DatabaseClient, headers_dict) tuple
-            rust_db, headers_dict = self._rust_client.create_database(id)
+            # Rust now returns (properties_dict, headers_dict) tuple with full response body
+            properties_dict, headers_dict = self._rust_client.create_database(id)
 
             from azure.core.utils import CaseInsensitiveDict
             response_headers = CaseInsensitiveDict(dict(headers_dict))
 
+            # Get database id from properties (should match what we passed)
+            db_id = properties_dict.get("id", id)
+
+            # Get rust database client for the proxy
+            rust_db = self._rust_client.get_database_client(db_id)
+
             # Create DatabaseProxy with Rust client
             db_proxy = DatabaseProxy(
                 client_connection=self.client_connection,
-                id=id,
+                id=db_id,
                 rust_database=rust_db
             )
 
@@ -460,10 +466,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             if not return_properties:
                 return db_proxy
 
-            # For return_properties=True, get properties
-            # Rust read() now returns (properties, headers) tuple
-            properties, props_headers = rust_db.read()
-            return db_proxy, CosmosDict(dict(properties), response_headers=CaseInsensitiveDict(dict(props_headers)))
+            # For return_properties=True, return properties from create response
+            return db_proxy, CosmosDict(dict(properties_dict), response_headers=response_headers)
 
         # PYTHON PATH: Use existing Python implementation
         print("[CosmosClient.create_database] Using PURE PYTHON")
@@ -693,10 +697,26 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        # NOTE: list_databases Rust integration is disabled for now
-        # The Rust facade's list_databases returns malformed data (debug format instead of proper dict)
-        # This will be fixed later when proper serialization is implemented
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
 
+        if use_rust and hasattr(self, '_rust_client') and self._rust_client is not None:
+            print("[CosmosClient.list_databases] Using RUST SDK")
+            # RUST PATH: Call Rust SDK
+            databases_list, headers_dict = self._rust_client.list_databases(**kwargs)
+
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+            if response_hook:
+                response_hook(response_headers)
+
+            # Return list wrapped in ItemPaged-like iterator
+            return iter(databases_list)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[CosmosClient.list_databases] Using PURE PYTHON")
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -753,6 +773,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+
+        if use_rust and hasattr(self, '_rust_client') and self._rust_client is not None and query:
+            print("[CosmosClient.query_databases] Using RUST SDK")
+            # RUST PATH: Call Rust SDK (only supports simple queries, no parameters yet)
+            # Note: Parameterized queries not yet supported in Rust facade
+            query_str = query if parameters is None else query
+            databases_list, headers_dict = self._rust_client.query_databases(query_str, **kwargs)
+
+            from azure.core.utils import CaseInsensitiveDict
+            response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+            if response_hook:
+                response_hook(response_headers)
+
+            # Return list wrapped in iterator
+            return iter(databases_list)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[CosmosClient.query_databases] Using PURE PYTHON")
         if query:
             result = self.client_connection.QueryDatabases(
                 query=query if parameters is None else {'query': query, 'parameters': parameters},

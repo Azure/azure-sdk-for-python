@@ -8,7 +8,7 @@ use azure_core::http::headers::{HeaderName, HeaderValue};
 
 /// Convert Python object (dict or string) to serde_json::Value
 /// Hybrid approach: accepts both PyDict (PyO3 native serialization) and String (direct serde parsing)
-pub fn py_object_to_json(py: Python, obj: &PyAny) -> PyResult<Value> {
+pub fn py_object_to_json(_py: Python, obj: &PyAny) -> PyResult<Value> {
     // Fast path: if it's already a JSON string, parse directly with serde
     if let Ok(json_str) = obj.extract::<String>() {
         return serde_json::from_str(&json_str)
@@ -33,7 +33,7 @@ pub fn py_object_to_json(py: Python, obj: &PyAny) -> PyResult<Value> {
 }
 
 /// Convert Python dict to serde_json::Value (legacy function, kept for compatibility)
-pub fn py_dict_to_json(py: Python, dict: &PyDict) -> PyResult<Value> {
+pub fn py_dict_to_json(_py: Python, dict: &PyDict) -> PyResult<Value> {
     depythonize(dict)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Invalid JSON: {}", e)))
 }

@@ -8,6 +8,7 @@ use crate::exceptions::map_error;
 use crate::utils::empty_headers_dict;
 use once_cell::sync::Lazy;
 use tokio::runtime::Runtime;
+use serde_json;
 
 static TOKIO_RUNTIME: Lazy<Runtime> = Lazy::new(|| {
     tokio::runtime::Builder::new_multi_thread()
@@ -57,18 +58,18 @@ impl CosmosClient {
     }
 
     /// Create a new database
-    /// Returns tuple of (DatabaseClient, headers_dict)
+    /// Returns tuple of (properties_dict, headers_dict)
     #[pyo3(signature = (id, **_kwargs))]
     pub fn create_database<'py>(
         &self,
         py: Python<'py>,
         id: String,
         _kwargs: Option<&PyDict>,
-    ) -> PyResult<(DatabaseClient, &'py PyDict)> {
+    ) -> PyResult<(&'py PyDict, &'py PyDict)> {
         let client = self.inner.clone();
         let id_clone = id.clone();
         
-        let header_map = TOKIO_RUNTIME.block_on(async move {
+        let (header_map, body_value) = TOKIO_RUNTIME.block_on(async move {
             let response = client.create_database(&id_clone, None)
                 .await
                 .map_err(map_error)?;
@@ -79,7 +80,11 @@ impl CosmosClient {
                 headers.insert(name.as_str().to_string(), value.as_str().to_string());
             }
 
-            Ok::<_, PyErr>(headers)
+            // Get the body as JSON - this contains _self, _rid, _etag, _ts
+            let body = response.into_body().json::<serde_json::Value>()
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
+
+            Ok::<_, PyErr>((headers, body))
         })?;
 
         // Convert headers to Python dict
@@ -87,7 +92,14 @@ impl CosmosClient {
         for (key, value) in header_map.iter() {
             headers.set_item(key, value)?;
         }
-        Ok((DatabaseClient::new(self.inner.clone(), id), headers))
+
+        // Convert body to Python dict
+        let json_str = serde_json::to_string(&body_value)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+        let json_module = py.import("json")?;
+        let properties: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+
+        Ok((properties, headers))
     }
 
     /// Get a database client
@@ -145,7 +157,10 @@ impl CosmosClient {
             use futures::StreamExt;
             while let Some(response) = stream.next().await {
                 match response {
-                    Ok(db) => result.push(db),
+                    Ok(db) => {
+                        // ItemIterator yields individual items (DatabaseProperties) directly
+                        result.push(db);
+                    },
                     Err(e) => return Err(map_error(e)),
                 }
             }
@@ -154,10 +169,57 @@ impl CosmosClient {
         })?;
 
         let mut py_databases = Vec::new();
+        let json_module = py.import("json")?;
+
         for db in databases {
-            let dict = PyDict::new(py);
-            dict.set_item("id", format!("{:?}", db))?;
-            py_databases.push(dict);
+            // Serialize DatabaseProperties to JSON using serde
+            let json_str = serde_json::to_string(&db)
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+            let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+            py_databases.push(py_dict);
+        }
+
+        let headers = empty_headers_dict(py);
+        Ok((py_databases, headers))
+    }
+
+    /// Query databases with SQL
+    /// Returns tuple of (list_of_dicts, headers_dict)
+    #[pyo3(signature = (query, **kwargs))]
+    pub fn query_databases<'py>(
+        &self,
+        py: Python<'py>,
+        query: String,
+        kwargs: Option<&PyDict>,
+    ) -> PyResult<(Vec<&'py PyDict>, &'py PyDict)> {
+        let _ = kwargs;  // Mark as used
+        let client = self.inner.clone();
+
+        let databases = TOKIO_RUNTIME.block_on(async move {
+            let mut result = Vec::new();
+            let mut stream = client.query_databases(&query, None).map_err(map_error)?;
+
+            use futures::StreamExt;
+            while let Some(response) = stream.next().await {
+                match response {
+                    Ok(db) => {
+                        result.push(db);
+                    },
+                    Err(e) => return Err(map_error(e)),
+                }
+            }
+
+            Ok::<_, PyErr>(result)
+        })?;
+
+        let mut py_databases = Vec::new();
+        let json_module = py.import("json")?;
+
+        for db in databases {
+            let json_str = serde_json::to_string(&db)
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+            let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+            py_databases.push(py_dict);
         }
 
         let headers = empty_headers_dict(py);

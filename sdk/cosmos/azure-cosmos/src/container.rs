@@ -2,7 +2,8 @@ use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use azure_data_cosmos::CosmosClient as RustCosmosClient;
 use azure_data_cosmos::PartitionKey as RustPartitionKey;
-use azure_data_cosmos::ItemOptions;
+use azure_data_cosmos::{ItemOptions, IndexingDirective, PriorityLevel};
+use azure_core::http::Etag;
 use std::sync::Arc;
 use std::collections::HashMap;
 use serde_json::Value;
@@ -18,6 +19,93 @@ static TOKIO_RUNTIME: Lazy<Runtime> = Lazy::new(|| {
         .build()
         .expect("Failed to create Tokio runtime")
 });
+
+/// Build ItemOptions from Python kwargs dictionary
+fn build_item_options<'a>(py: Python, kwargs: Option<&PyDict>) -> PyResult<ItemOptions<'a>> {
+    let mut options = ItemOptions::default();
+
+    // Default to returning content on write operations
+    options.enable_content_response_on_write = true;
+
+    if let Some(kw) = kwargs {
+        // session_token
+        if let Ok(Some(val)) = kw.get_item("session_token") {
+            if let Ok(token_str) = val.extract::<String>() {
+                options.session_token = Some(token_str.into());
+            }
+        }
+
+        // etag / if_match
+        if let Ok(Some(val)) = kw.get_item("etag") {
+            if let Ok(etag_str) = val.extract::<String>() {
+                options.if_match_etag = Some(Etag::from(etag_str));
+            }
+        }
+        if let Ok(Some(val)) = kw.get_item("if_match") {
+            if let Ok(etag_str) = val.extract::<String>() {
+                options.if_match_etag = Some(Etag::from(etag_str));
+            }
+        }
+
+        // pre_trigger_include
+        if let Ok(Some(val)) = kw.get_item("pre_trigger_include") {
+            if let Ok(trigger) = val.extract::<String>() {
+                options.pre_triggers = Some(vec![trigger]);
+            } else if let Ok(triggers) = val.extract::<Vec<String>>() {
+                options.pre_triggers = Some(triggers);
+            }
+        }
+
+        // post_trigger_include
+        if let Ok(Some(val)) = kw.get_item("post_trigger_include") {
+            if let Ok(trigger) = val.extract::<String>() {
+                options.post_triggers = Some(vec![trigger]);
+            } else if let Ok(triggers) = val.extract::<Vec<String>>() {
+                options.post_triggers = Some(triggers);
+            }
+        }
+
+        // indexing_directive
+        if let Ok(Some(val)) = kw.get_item("indexing_directive") {
+            if let Ok(directive) = val.extract::<i32>() {
+                options.indexing_directive = match directive {
+                    0 => Some(IndexingDirective::Default),
+                    1 => Some(IndexingDirective::Exclude),
+                    2 => Some(IndexingDirective::Include),
+                    _ => None,
+                };
+            }
+        }
+
+        // priority
+        if let Ok(Some(val)) = kw.get_item("priority") {
+            if let Ok(priority_str) = val.extract::<String>() {
+                options.priority = match priority_str.to_lowercase().as_str() {
+                    "high" => Some(PriorityLevel::High),
+                    "low" => Some(PriorityLevel::Low),
+                    _ => None,
+                };
+            }
+        }
+
+        // no_response - controls enable_content_response_on_write
+        if let Ok(Some(val)) = kw.get_item("no_response") {
+            if let Ok(no_resp) = val.extract::<bool>() {
+                // no_response=True means DON'T return content
+                options.enable_content_response_on_write = !no_resp;
+            }
+        }
+
+        // throughput_bucket
+        if let Ok(Some(val)) = kw.get_item("throughput_bucket") {
+            if let Ok(bucket) = val.extract::<usize>() {
+                options.throughput_bucket = Some(bucket);
+            }
+        }
+    }
+
+    Ok(options)
+}
 
 #[pyclass(subclass)]
 pub struct ContainerClient {
@@ -52,12 +140,12 @@ impl ContainerClient {
     /// Create a new item
     /// Accepts either a dict or a JSON string for the body
     /// Returns tuple of (item_dict, headers_dict)
-    #[pyo3(signature = (body, **_kwargs))]
+    #[pyo3(signature = (body, **kwargs))]
     pub fn create_item<'py>(
         &self,
         py: Python<'py>,
         body: &'py PyAny,
-        _kwargs: Option<&PyDict>,
+        kwargs: Option<&PyDict>,
     ) -> PyResult<(&'py PyDict, &'py PyDict)> {
         let container = self.cosmos_client
             .database_client(&self.database_id)
@@ -68,19 +156,21 @@ impl ContainerClient {
         
         // Extract partition key from body or kwargs
         let partition_key = if let Ok(dict) = body.downcast::<PyDict>() {
-            self.extract_partition_key(py, dict, _kwargs)?
+            self.extract_partition_key(py, dict, kwargs)?
         } else {
             // If body is a string, partition key must come from kwargs
-            self.extract_partition_key_from_kwargs(_kwargs)?
+            self.extract_partition_key_from_kwargs(kwargs)?
         };
-        
+
+        // Build ItemOptions from kwargs
+        let options = build_item_options(py, kwargs)?;
+        let _no_response = kwargs
+            .and_then(|kw| kw.get_item("no_response").ok().flatten())
+            .and_then(|v| v.extract::<bool>().ok())
+            .unwrap_or(false);
+
         // Execute and get both headers and body
         let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
-            // Enable content response on write to get the created item back
-            let options = ItemOptions {
-                enable_content_response_on_write: true,
-                ..Default::default()
-            };
 
             let response = container.create_item(partition_key, item_value, Some(options))
                 .await
@@ -115,13 +205,13 @@ impl ContainerClient {
 
     /// Read an item by ID and partition key
     /// Returns tuple of (item_dict, headers_dict)
-    #[pyo3(signature = (item, partition_key, **_kwargs))]
+    #[pyo3(signature = (item, partition_key, **kwargs))]
     pub fn read_item<'py>(
         &self,
         py: Python<'py>,
         item: String,
         partition_key: PyObject,
-        _kwargs: Option<&PyDict>,
+        kwargs: Option<&PyDict>,
     ) -> PyResult<(&'py PyDict, &'py PyDict)> {
         let container = self.cosmos_client
             .database_client(&self.database_id)
@@ -130,9 +220,12 @@ impl ContainerClient {
         let pk = self.python_to_partition_key(py, partition_key)?;
         let item_id = item.clone();
         
+        // Build ItemOptions from kwargs
+        let options = build_item_options(py, kwargs)?;
+
         // Execute and get both headers and body
         let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
-            let response = container.read_item::<Value>(pk, &item_id, None)
+            let response = container.read_item::<Value>(pk, &item_id, Some(options))
                 .await
                 .map_err(map_error)?;
 
@@ -165,12 +258,12 @@ impl ContainerClient {
 
     /// Upsert an item (create or replace)
     /// Returns tuple of (item_dict, headers_dict)
-    #[pyo3(signature = (body, **_kwargs))]
+    #[pyo3(signature = (body, **kwargs))]
     pub fn upsert_item<'py>(
         &self,
         py: Python<'py>,
         body: &'py PyAny,
-        _kwargs: Option<&PyDict>,
+        kwargs: Option<&PyDict>,
     ) -> PyResult<(&'py PyDict, &'py PyDict)> {
         let container = self.cosmos_client
             .database_client(&self.database_id)
@@ -181,18 +274,16 @@ impl ContainerClient {
         
         // Extract partition key from body or kwargs
         let partition_key = if let Ok(dict) = body.downcast::<PyDict>() {
-            self.extract_partition_key(py, dict, _kwargs)?
+            self.extract_partition_key(py, dict, kwargs)?
         } else {
-            self.extract_partition_key_from_kwargs(_kwargs)?
+            self.extract_partition_key_from_kwargs(kwargs)?
         };
-        
+
+        // Build ItemOptions from kwargs
+        let options = build_item_options(py, kwargs)?;
+
         // Execute and get both headers and body
         let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
-            // Enable content response on write to get the upserted item back
-            let options = ItemOptions {
-                enable_content_response_on_write: true,
-                ..Default::default()
-            };
 
             let response = container.upsert_item(partition_key, item_value, Some(options))
                 .await
@@ -227,13 +318,13 @@ impl ContainerClient {
 
     /// Replace an item
     /// Returns tuple of (item_dict, headers_dict)
-    #[pyo3(signature = (item, body, **_kwargs))]
+    #[pyo3(signature = (item, body, **kwargs))]
     pub fn replace_item<'py>(
         &self,
         py: Python<'py>,
         item: String,
         body: &'py PyAny,
-        _kwargs: Option<&PyDict>,
+        kwargs: Option<&PyDict>,
     ) -> PyResult<(&'py PyDict, &'py PyDict)> {
         let container = self.cosmos_client
             .database_client(&self.database_id)
@@ -244,19 +335,17 @@ impl ContainerClient {
         
         // Extract partition key from body or kwargs
         let partition_key = if let Ok(dict) = body.downcast::<PyDict>() {
-            self.extract_partition_key(py, dict, _kwargs)?
+            self.extract_partition_key(py, dict, kwargs)?
         } else {
-            self.extract_partition_key_from_kwargs(_kwargs)?
+            self.extract_partition_key_from_kwargs(kwargs)?
         };
         let item_id = item.clone();
         
+        // Build ItemOptions from kwargs
+        let options = build_item_options(py, kwargs)?;
+
         // Execute and get both headers and body
         let (header_map, value) = TOKIO_RUNTIME.block_on(async move {
-            // Enable content response on write to get the replaced item back
-            let options = ItemOptions {
-                enable_content_response_on_write: true,
-                ..Default::default()
-            };
 
             let response = container.replace_item(partition_key, &item_id, item_value, Some(options))
                 .await
@@ -291,13 +380,13 @@ impl ContainerClient {
 
     /// Delete an item
     /// Returns headers_dict
-    #[pyo3(signature = (item, partition_key, **_kwargs))]
+    #[pyo3(signature = (item, partition_key, **kwargs))]
     pub fn delete_item<'py>(
         &self,
         py: Python<'py>,
         item: String,
         partition_key: PyObject,
-        _kwargs: Option<&PyDict>,
+        kwargs: Option<&PyDict>,
     ) -> PyResult<&'py PyDict> {
         let container = self.cosmos_client
             .database_client(&self.database_id)
@@ -306,8 +395,11 @@ impl ContainerClient {
         let pk = self.python_to_partition_key(py, partition_key)?;
         let item_id = item.clone();
         
+        // Build ItemOptions from kwargs
+        let options = build_item_options(py, kwargs)?;
+
         let header_map = TOKIO_RUNTIME.block_on(async move {
-            let response = container.delete_item(pk, &item_id, None)
+            let response = container.delete_item(pk, &item_id, Some(options))
                 .await
                 .map_err(map_error)?;
 

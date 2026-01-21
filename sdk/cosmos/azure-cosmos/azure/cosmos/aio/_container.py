@@ -314,6 +314,10 @@ class ContainerProxy:
         response_hook = kwargs.get('response_hook')
         if use_rust:
             print("[async ContainerProxy.create_item] Using RUST SDK")
+            # Handle enable_automatic_id_generation - generate ID before sending to Rust
+            import uuid
+            if enable_automatic_id_generation and "id" not in body:
+                body["id"] = str(uuid.uuid4())
             # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
             result_dict, headers_dict = await asyncio.to_thread(
                 self._rust_container.create_item, body

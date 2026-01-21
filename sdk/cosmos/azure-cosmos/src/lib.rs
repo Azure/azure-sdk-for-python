@@ -19,8 +19,8 @@ fn _rust(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<DatabaseClient>()?;
     m.add_class::<ContainerClient>()?;
     
-    // Register exceptions
-    exceptions::register_exceptions(m)?;
-    
+    // Note: We use the existing Python exception classes from azure.cosmos.exceptions
+    // instead of registering our own. See exceptions.rs for the mapping logic.
+
     Ok(())
 }

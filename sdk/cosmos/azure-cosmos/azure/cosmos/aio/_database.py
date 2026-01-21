@@ -468,26 +468,30 @@ class DatabaseProxy(object):
             # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
             # Build partition_key dict for Rust
             pk_dict = {"paths": partition_key["paths"]} if partition_key else {}
-            rust_container, headers_dict = await asyncio.to_thread(
+            # Rust now returns (properties_dict, headers_dict) with full response body
+            properties_dict, headers_dict = await asyncio.to_thread(
                 self._rust_database.create_container, id, pk_dict
             )
             from azure.core.utils import CaseInsensitiveDict
             response_headers = CaseInsensitiveDict(dict(headers_dict))
 
-            result = {"id": id}
-            result.update(definition)
+            # Get container id from properties
+            container_id = properties_dict.get("id", id)
+
+            # Get rust container client for the proxy
+            rust_container = self._rust_database.get_container_client(container_id)
 
             container_proxy = ContainerProxy(
                 self.client_connection,
                 self.database_link,
-                id,
-                properties=result,
+                container_id,
+                properties=dict(properties_dict),
                 rust_container=rust_container
             )
 
             if not return_properties:
                 return container_proxy
-            return container_proxy, CosmosDict(result, response_headers=response_headers)
+            return container_proxy, CosmosDict(dict(properties_dict), response_headers=response_headers)
 
         # PYTHON PATH: Use existing Python implementation
         print("[async DatabaseProxy.create_container] Using PURE PYTHON")
@@ -812,6 +816,34 @@ class DatabaseProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        import asyncio
+        from azure.core.utils import CaseInsensitiveDict
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+
+        if use_rust and self._rust_database is not None:
+            print("[async DatabaseProxy.list_containers] Using RUST SDK")
+            # RUST PATH: Call Rust SDK via asyncio.to_thread
+            async def _list_with_rust():
+                containers_list, headers_dict = await asyncio.to_thread(
+                    self._rust_database.list_containers, **kwargs
+                )
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+                if response_hook:
+                    response_hook(response_headers, iter(containers_list))
+                return containers_list
+
+            # Return an async generator that yields from the list
+            async def _async_iter():
+                items = await _list_with_rust()
+                for item in items:
+                    yield item
+
+            return _async_iter()
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async DatabaseProxy.list_containers] Using PURE PYTHON")
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
         )
@@ -855,6 +887,36 @@ class DatabaseProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        import asyncio
+        from azure.core.utils import CaseInsensitiveDict
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+
+        if use_rust and self._rust_database is not None:
+            print("[async DatabaseProxy.query_containers] Using RUST SDK")
+            # RUST PATH: Call Rust SDK via asyncio.to_thread
+            query_str = query if parameters is None else query
+
+            async def _query_with_rust():
+                containers_list, headers_dict = await asyncio.to_thread(
+                    self._rust_database.query_containers, query_str, **kwargs
+                )
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+                if response_hook:
+                    response_hook(response_headers, iter(containers_list))
+                return containers_list
+
+            # Return an async generator that yields from the list
+            async def _async_iter():
+                items = await _query_with_rust()
+                for item in items:
+                    yield item
+
+            return _async_iter()
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async DatabaseProxy.query_containers] Using PURE PYTHON")
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},

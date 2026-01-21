@@ -1057,6 +1057,35 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        import os
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+
+        # RUST PATH: Use Rust SDK for simple single-partition queries
+        if (use_rust and self._rust_container is not None and
+            partition_key is not None and query is not None and
+            "prefix_partition_key_value" not in kwargs and
+            "feed_range" not in feed_options):
+            print("[ContainerProxy.query_items] Using RUST SDK")
+            try:
+                # Call Rust SDK with query and partition_key
+                rust_kwargs = {"partition_key": partition_key}
+                items_list, headers_dict = self._rust_container.query_items(query, **rust_kwargs)
+
+                from azure.core.utils import CaseInsensitiveDict
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+
+                if response_hook:
+                    response_hook(response_headers, items_list)
+
+                # Return list wrapped in iterator
+                return iter(items_list)
+            except Exception as e:
+                # Fall back to Python if Rust fails
+                print(f"[ContainerProxy.query_items] Rust failed, falling back to Python: {e}")
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[ContainerProxy.query_items] Using PURE PYTHON")
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query,
@@ -1460,6 +1489,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
         if use_rust:
             print("[ContainerProxy.create_item] Using RUST SDK")
+            # Handle enable_automatic_id_generation - generate ID before sending to Rust
+            import uuid
+            if enable_automatic_id_generation and "id" not in body:
+                body["id"] = str(uuid.uuid4())
             # RUST PATH: Call Rust SDK - no fallback, fail if Rust fails
             # Rust returns (item_dict, headers_dict) tuple
             result_dict, headers_dict = self._rust_container.create_item(body)

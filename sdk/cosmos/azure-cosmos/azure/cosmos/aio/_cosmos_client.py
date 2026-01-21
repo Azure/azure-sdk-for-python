@@ -425,8 +425,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             # Rust SDK uses TOKIO_RUNTIME.block_on() internally which blocks the thread.
             # Use asyncio.to_thread() to run the blocking Rust call in a thread pool,
             # avoiding blocking the async event loop.
-            rust_db, headers_dict = await asyncio.to_thread(
-                self._rust_client.create_database, id, **request_options
+            # Rust now returns (properties_dict, headers_dict) tuple with full response body
+            properties_dict, headers_dict = await asyncio.to_thread(
+                self._rust_client.create_database, id
             )
 
             response_headers = CaseInsensitiveDict(dict(headers_dict))
@@ -434,19 +435,33 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             if response_hook:
                 response_hook(response_headers)
 
+            # Get database id from properties
+            db_id = properties_dict.get("id", id)
+
+            # Get rust database client for the proxy
+            rust_db = self._rust_client.get_database_client(db_id)
+
             db_proxy = DatabaseProxy(
                 self.client_connection,
-                id=id,
-                properties={"id": id},
+                id=db_id,
+                properties=dict(properties_dict),
                 rust_database=rust_db
             )
 
             if not return_properties:
                 return db_proxy
 
-            # Get full properties using Rust
-            properties, props_headers = await asyncio.to_thread(rust_db.read)
-            return db_proxy, CosmosDict(dict(properties), response_headers=CaseInsensitiveDict(dict(props_headers)))
+            # Return properties from create response
+            return db_proxy, CosmosDict(dict(properties_dict), response_headers=response_headers)
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async CosmosClient.create_database] Using PURE PYTHON")
+        result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        if not return_properties:
+            return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
 
         # PYTHON PATH: Use existing Python implementation
         print("[async CosmosClient.create_database] Using PURE PYTHON")
@@ -661,10 +676,32 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        # NOTE: list_databases Rust integration is disabled for new
-        # The Rust facade's list_databases returns malformed data (debug format instead of proper dict)
-        # This will be fixed later when proper serialization is implemented
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
 
+        if use_rust and hasattr(self, '_rust_client') and self._rust_client is not None:
+            print("[async CosmosClient.list_databases] Using RUST SDK")
+            # RUST PATH: Call Rust SDK via asyncio.to_thread
+            async def _list_with_rust():
+                databases_list, headers_dict = await asyncio.to_thread(
+                    self._rust_client.list_databases, **kwargs
+                )
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+                if response_hook:
+                    response_hook(response_headers)
+                return databases_list
+
+            # Return an async generator that yields from the list
+            async def _async_iter():
+                items = await _list_with_rust()
+                for item in items:
+                    yield item
+
+            # Wrap in AsyncItemPaged-compatible object
+            return _async_iter()
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async CosmosClient.list_databases] Using PURE PYTHON")
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -711,6 +748,33 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        # Environment variable to toggle backend (for testing/comparison purposes)
+        use_rust = os.environ.get("COSMOS_USE_RUST_BACKEND", "false").lower() == "true"
+
+        if use_rust and hasattr(self, '_rust_client') and self._rust_client is not None:
+            print("[async CosmosClient.query_databases] Using RUST SDK")
+            # RUST PATH: Call Rust SDK via asyncio.to_thread
+            query_str = query if parameters is None else query
+
+            async def _query_with_rust():
+                databases_list, headers_dict = await asyncio.to_thread(
+                    self._rust_client.query_databases, query_str, **kwargs
+                )
+                response_headers = CaseInsensitiveDict(dict(headers_dict))
+                if response_hook:
+                    response_hook(response_headers)
+                return databases_list
+
+            # Return an async generator that yields from the list
+            async def _async_iter():
+                items = await _query_with_rust()
+                for item in items:
+                    yield item
+
+            return _async_iter()
+
+        # PYTHON PATH: Use existing Python implementation
+        print("[async CosmosClient.query_databases] Using PURE PYTHON")
         result = self.client_connection.QueryDatabases(
             query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,

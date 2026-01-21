@@ -35,7 +35,7 @@ impl DatabaseClient {
 #[pymethods]
 impl DatabaseClient {
     /// Create a new container
-    /// Returns tuple of (ContainerClient, headers_dict)
+    /// Returns tuple of (properties_dict, headers_dict)
     #[pyo3(signature = (id, partition_key, **_kwargs))]
     pub fn create_container<'py>(
         &self,
@@ -43,7 +43,7 @@ impl DatabaseClient {
         id: String,
         partition_key: &PyDict,
         _kwargs: Option<&PyDict>,
-    ) -> PyResult<(ContainerClient, &'py PyDict)> {
+    ) -> PyResult<(&'py PyDict, &'py PyDict)> {
         let db_client = self.cosmos_client.database_client(&self.database_id);
         
         // Extract partition key path
@@ -57,7 +57,7 @@ impl DatabaseClient {
         let container_id = id.clone();
         let pk_path_clone = partition_key_path.clone();
         
-        let header_map = TOKIO_RUNTIME.block_on(async move {
+        let (header_map, body_value) = TOKIO_RUNTIME.block_on(async move {
             let props = ContainerProperties {
                 id: container_id.into(),
                 partition_key: PartitionKeyDefinition::from(pk_path_clone),
@@ -73,7 +73,11 @@ impl DatabaseClient {
                 headers.insert(name.as_str().to_string(), value.as_str().to_string());
             }
             
-            Ok::<_, PyErr>(headers)
+            // Get the body as JSON - this contains full container properties including indexing policy
+            let body = response.into_body().json::<Value>()
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to deserialize response: {}", e)))?;
+
+            Ok::<_, PyErr>((headers, body))
         })?;
 
         // Convert headers to Python dict
@@ -82,13 +86,13 @@ impl DatabaseClient {
             headers.set_item(key, value)?;
         }
         
-        // Use with_partition_key_path to pass the partition key path to the container client
-        Ok((ContainerClient::with_partition_key_path(
-            self.cosmos_client.clone(),
-            self.database_id.clone(),
-            id,
-            partition_key_path,
-        ), headers))
+        // Convert body to Python dict
+        let json_str = serde_json::to_string(&body_value)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+        let json_module = py.import("json")?;
+        let properties: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+
+        Ok((properties, headers))
     }
 
     /// Get a container client
@@ -193,7 +197,10 @@ impl DatabaseClient {
             use futures::StreamExt;
             while let Some(response) = stream.next().await {
                 match response {
-                    Ok(container) => result.push(container),
+                    Ok(container) => {
+                        // ItemIterator yields individual items (ContainerProperties) directly
+                        result.push(container);
+                    },
                     Err(e) => return Err(map_error(e)),
                 }
             }
@@ -202,10 +209,57 @@ impl DatabaseClient {
         })?;
 
         let mut py_containers = Vec::new();
+        let json_module = py.import("json")?;
+
         for container in containers {
-            let dict = PyDict::new(py);
-            dict.set_item("id", format!("{:?}", container))?;
-            py_containers.push(dict);
+            // Serialize ContainerProperties to JSON using serde
+            let json_str = serde_json::to_string(&container)
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+            let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+            py_containers.push(py_dict);
+        }
+
+        let headers = empty_headers_dict(py);
+        Ok((py_containers, headers))
+    }
+
+    /// Query containers with SQL
+    /// Returns tuple of (list_of_dicts, headers_dict)
+    #[pyo3(signature = (query, **kwargs))]
+    pub fn query_containers<'py>(
+        &self,
+        py: Python<'py>,
+        query: String,
+        kwargs: Option<&PyDict>,
+    ) -> PyResult<(Vec<&'py PyDict>, &'py PyDict)> {
+        let _ = kwargs;  // Mark as used
+        let db_client = self.cosmos_client.database_client(&self.database_id);
+
+        let containers = TOKIO_RUNTIME.block_on(async move {
+            let mut result = Vec::new();
+            let mut stream = db_client.query_containers(&query, None).map_err(map_error)?;
+
+            use futures::StreamExt;
+            while let Some(response) = stream.next().await {
+                match response {
+                    Ok(container) => {
+                        result.push(container);
+                    },
+                    Err(e) => return Err(map_error(e)),
+                }
+            }
+
+            Ok::<_, PyErr>(result)
+        })?;
+
+        let mut py_containers = Vec::new();
+        let json_module = py.import("json")?;
+
+        for container in containers {
+            let json_str = serde_json::to_string(&container)
+                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("JSON error: {}", e)))?;
+            let py_dict: &PyDict = json_module.call_method1("loads", (json_str,))?.extract()?;
+            py_containers.push(py_dict);
         }
 
         let headers = empty_headers_dict(py);
