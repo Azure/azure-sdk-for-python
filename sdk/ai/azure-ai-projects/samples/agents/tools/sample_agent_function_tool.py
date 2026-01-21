@@ -44,7 +44,7 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, user_agent="MyApp/1.0") as project_client,
-    project_client.get_openai_client() as openai_client,
+    project_client.get_openai_client(user_agent="MyAppOpenai/2.0") as openai_client,
 ):
 
     # [START tool_declaration]

@@ -22,22 +22,6 @@ from .operations import TelemetryOperations
 logger = logging.getLogger(__name__)
 
 
-def _patch_user_agent(user_agent: Optional[str]) -> str:
-    # All authenticated external clients exposed by this client will have this application id
-    # set on their user-agent. For more info on user-agent HTTP header, see:
-    # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
-    USER_AGENT_APP_ID = "AIProjectClient"
-
-    if user_agent:
-        # If the calling application has set "user_agent" when constructing the AIProjectClient,
-        # take that value and prepend it to USER_AGENT_APP_ID.
-        patched_user_agent = f"{user_agent}-{USER_AGENT_APP_ID}"
-    else:
-        patched_user_agent = USER_AGENT_APP_ID
-
-    return patched_user_agent
-
-
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
@@ -104,7 +88,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
         self._kwargs = kwargs.copy()
-        self._patched_user_agent = _patch_user_agent(self._kwargs.pop("user_agent", None))
+        self._custom_user_agent = self._kwargs.get("user_agent", None)
 
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
@@ -245,6 +229,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         user_headers = kwargs.pop("default_headers", None)
 
+        openai_custom_user_agent = kwargs.pop("user_agent", None)
+
         def _create_openai_client(default_headers=None) -> OpenAI:
             return OpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
@@ -260,13 +246,13 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         dummy_client = _create_openai_client()
 
-        ua_value = getattr(dummy_client, "user_agent", None)
-        patched_ua = f"{self._patched_user_agent}-{ua_value}"
+        openai_default_user_agent = dummy_client.user_agent
+        final_user_agent = " ".join(ua for ua in ["AIProjectClient", self._custom_user_agent, openai_default_user_agent, openai_custom_user_agent] if ua)
 
         merged_headers = dict(dummy_client.default_headers)
         if user_headers:
             merged_headers.update(user_headers)
-        merged_headers["User-Agent"] = patched_ua
+        merged_headers["User-Agent"] = final_user_agent
 
         client = _create_openai_client(default_headers=merged_headers)
 
