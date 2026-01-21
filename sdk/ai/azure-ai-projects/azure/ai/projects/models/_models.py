@@ -752,7 +752,7 @@ class AISearchIndexResource(_Model):
 
 
 class Annotation(_Model):
-    """Annotation.
+    """An annotation that applies to a span of output text.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ContainerFileCitationBody, FileCitationBody, FilePath, UrlCitationBody
@@ -2909,7 +2909,7 @@ class CompactionSummaryItemParam(Item, discriminator="compaction"):
     :vartype id: str
     :ivar type: The type of the item. Always ``compaction``. Required.
     :vartype type: str or ~azure.ai.projects.models.COMPACTION
-    :ivar encrypted_content: Required.
+    :ivar encrypted_content: The encrypted content of the compaction summary. Required.
     :vartype encrypted_content: str
     """
 
@@ -2917,7 +2917,7 @@ class CompactionSummaryItemParam(Item, discriminator="compaction"):
     type: Literal[ItemType.COMPACTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the item. Always ``compaction``. Required."""
     encrypted_content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The encrypted content of the compaction summary. Required."""
 
     @overload
     def __init__(
@@ -3453,12 +3453,12 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
 class ConversationReference(_Model):
     """Conversation.
 
-    :ivar id: The unique ID of the conversation. Required.
+    :ivar id: The unique ID of the conversation that this response was associated with. Required.
     :vartype id: str
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique ID of the conversation. Required."""
+    """The unique ID of the conversation that this response was associated with. Required."""
 
     @overload
     def __init__(
@@ -6061,27 +6061,28 @@ class FunctionShellCallItemParam(Item, discriminator="shell_call"):
 class FunctionShellCallOutputContent(_Model):
     """Shell call output content.
 
-    :ivar stdout: Required.
+    :ivar stdout: The standard output that was captured. Required.
     :vartype stdout: str
-    :ivar stderr: Required.
+    :ivar stderr: The standard error output that was captured. Required.
     :vartype stderr: str
     :ivar outcome: Represents either an exit outcome (with an exit code) or a timeout outcome for a
      shell call output chunk. Required.
     :vartype outcome: ~azure.ai.projects.models.FunctionShellCallOutputOutcome
-    :ivar created_by:
+    :ivar created_by: The identifier of the actor that created the item.
     :vartype created_by: str
     """
 
     stdout: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The standard output that was captured. Required."""
     stderr: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The standard error output that was captured. Required."""
     outcome: "_models.FunctionShellCallOutputOutcome" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents either an exit outcome (with an exit code) or a timeout outcome for a shell call
      output chunk. Required."""
     created_by: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the actor that created the item."""
 
     @overload
     def __init__(
@@ -8936,7 +8937,7 @@ class ItemResourceFunctionShellCallOutput(ItemResource, discriminator="shell_cal
     :vartype output: list[~azure.ai.projects.models.FunctionShellCallOutputContent]
     :ivar max_output_length: Required.
     :vartype max_output_length: int
-    :ivar created_by:
+    :ivar created_by: The identifier of the actor that created the item.
     :vartype created_by: str
     """
 
@@ -8953,6 +8954,7 @@ class ItemResourceFunctionShellCallOutput(ItemResource, discriminator="shell_cal
     max_output_length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     created_by: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the actor that created the item."""
 
     @overload
     def __init__(
@@ -11849,9 +11851,9 @@ class OutputItemCompactionBody(OutputItem, discriminator="compaction"):
     :vartype type: str or ~azure.ai.projects.models.COMPACTION
     :ivar id: The unique ID of the compaction item. Required.
     :vartype id: str
-    :ivar encrypted_content: Required.
+    :ivar encrypted_content: The encrypted content that was produced by compaction. Required.
     :vartype encrypted_content: str
-    :ivar created_by:
+    :ivar created_by: The identifier of the actor that created the item.
     :vartype created_by: str
     """
 
@@ -11860,8 +11862,9 @@ class OutputItemCompactionBody(OutputItem, discriminator="compaction"):
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique ID of the compaction item. Required."""
     encrypted_content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The encrypted content that was produced by compaction. Required."""
     created_by: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the actor that created the item."""
 
     @overload
     def __init__(
@@ -12122,7 +12125,7 @@ class OutputItemFunctionShellCallOutput(OutputItem, discriminator="shell_call_ou
     :vartype output: list[~azure.ai.projects.models.FunctionShellCallOutputContent]
     :ivar max_output_length: Required.
     :vartype max_output_length: int
-    :ivar created_by:
+    :ivar created_by: The identifier of the actor that created the item.
     :vartype created_by: str
     """
 
@@ -12139,6 +12142,7 @@ class OutputItemFunctionShellCallOutput(OutputItem, discriminator="shell_call_ou
     max_output_length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     created_by: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the actor that created the item."""
 
     @overload
     def __init__(
@@ -13478,6 +13482,8 @@ class Response(_Model):
     :vartype status: str or str or str or str or str or str
     :ivar created_at: Unix timestamp (in seconds) of when this Response was created. Required.
     :vartype created_at: ~datetime.datetime
+    :ivar completed_at:
+    :vartype completed_at: ~datetime.datetime
     :ivar error: Required.
     :vartype error: ~azure.ai.projects.models.ResponseError
     :ivar incomplete_details: Required.
@@ -13572,6 +13578,9 @@ class Response(_Model):
         visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
     """Unix timestamp (in seconds) of when this Response was created. Required."""
+    completed_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     error: "_models.ResponseError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     incomplete_details: "_models.ResponseIncompleteDetails" = rest_field(
@@ -13636,6 +13645,7 @@ class Response(_Model):
         prompt: Optional["_models.Prompt"] = None,
         truncation: Optional[Literal["auto", "disabled"]] = None,
         status: Optional[Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]] = None,
+        completed_at: Optional[datetime.datetime] = None,
         output_text: Optional[str] = None,
         usage: Optional["_models.ResponseUsage"] = None,
         conversation: Optional["_models.ConversationReference"] = None,
@@ -18103,7 +18113,7 @@ class Wait(ComputerAction, discriminator="wait"):
 class WebSearchActionFind(_Model):
     """Find action.
 
-    :ivar type: The action type. Required. Default value is "find".
+    :ivar type: The action type. Required. Default value is "find_in_page".
     :vartype type: str
     :ivar url: The URL of the page searched for the pattern. Required.
     :vartype url: str
@@ -18111,8 +18121,8 @@ class WebSearchActionFind(_Model):
     :vartype pattern: str
     """
 
-    type: Literal["find"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The action type. Required. Default value is \"find\"."""
+    type: Literal["find_in_page"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action type. Required. Default value is \"find_in_page\"."""
     url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the page searched for the pattern. Required."""
     pattern: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -18135,7 +18145,7 @@ class WebSearchActionFind(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["find"] = "find"
+        self.type: Literal["find_in_page"] = "find_in_page"
 
 
 class WebSearchActionOpenPage(_Model):
@@ -18176,8 +18186,10 @@ class WebSearchActionSearch(_Model):
 
     :ivar type: The action type. Required. Default value is "search".
     :vartype type: str
-    :ivar query: The search query. Required.
+    :ivar query: [DEPRECATED] The search query. Required.
     :vartype query: str
+    :ivar queries: Search queries.
+    :vartype queries: list[str]
     :ivar sources: Web search sources.
     :vartype sources: list[~azure.ai.projects.models.WebSearchActionSearchSources]
     """
@@ -18185,7 +18197,9 @@ class WebSearchActionSearch(_Model):
     type: Literal["search"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The action type. Required. Default value is \"search\"."""
     query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The search query. Required."""
+    """[DEPRECATED] The search query. Required."""
+    queries: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Search queries."""
     sources: Optional[list["_models.WebSearchActionSearchSources"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18196,6 +18210,7 @@ class WebSearchActionSearch(_Model):
         self,
         *,
         query: str,
+        queries: Optional[list[str]] = None,
         sources: Optional[list["_models.WebSearchActionSearchSources"]] = None,
     ) -> None: ...
 
