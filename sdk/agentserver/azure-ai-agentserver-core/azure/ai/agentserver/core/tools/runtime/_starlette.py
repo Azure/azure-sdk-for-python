@@ -39,7 +39,7 @@ class UserInfoContextMiddleware(BaseHTTPMiddleware):
                               If not provided, a default resolver will be used.
         :type user_resolver: Optional[Callable[[Request], Awaitable[Optional[UserInfo]]]]
         """
-        app.add_middleware(UserInfoContextMiddleware,
+        app.add_middleware(UserInfoContextMiddleware,  # type: ignore[arg-type]
                            user_info_var=user_context or ContextVarUserProvider.default_user_info_context,
                            user_resolver=user_resolver or cls._default_user_resolver)
 

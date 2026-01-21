@@ -5,55 +5,34 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
+from typing import Any, AsyncGenerator, Optional, TYPE_CHECKING, Union
 
-from agent_framework import AgentProtocol, AIFunction, CheckpointStorage, InMemoryCheckpointStorage, WorkflowCheckpoint
-from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
+from agent_framework import AgentProtocol, CheckpointStorage, WorkflowCheckpoint
 from agent_framework._workflows import get_checkpoint_summary
+from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
-from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
 from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
 from azure.ai.agentserver.core.models import (
-    CreateResponse,
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
 from azure.ai.agentserver.core.models.projects import ResponseErrorEvent, ResponseFailedEvent
-
+from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
 from .models.agent_framework_input_converters import AgentFrameworkInputConverter
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
-from .models.constants import Constants
 from .persistence import AgentThreadRepository, CheckpointRepository
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 logger = get_logger()
-
-
-class AgentFactory(Protocol):
-    """Protocol for agent factory functions.
-
-    An agent factory is a callable that takes a list of tools and returns
-    an AgentProtocol, either synchronously or asynchronously.
-    """
-
-    def __call__(self, tools: List[AIFunction]) -> Union[AgentProtocol, Awaitable[AgentProtocol]]:
-        """Create an AgentProtocol using the provided tools.
-
-        :param tools: The list of AIFunction tools available to the agent.
-        :type tools: List[AIFunction]
-        :return: An Agent Framework agent, or an awaitable that resolves to one.
-        :rtype: Union[AgentProtocol, Awaitable[AgentProtocol]]
-        """
-        ...
 
 
 class AgentFrameworkCBAgent(FoundryCBAgent):
@@ -84,7 +63,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
         :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient
             and returns AgentProtocol (sync or async).
-        :type agent: Union[AgentProtocol, AgentFactory]
+        :type agent: AgentProtocol
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
         :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
@@ -104,26 +83,6 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         :rtype: AgentProtocol
         """
         return self._agent
-
-    def _resolve_stream_timeout(self, request_body: CreateResponse) -> float:
-        """Resolve idle timeout for streaming updates.
-
-        Order of precedence:
-        1) request_body.stream_timeout_s (if provided)
-        2) env var Constants.AGENTS_ADAPTER_STREAM_TIMEOUT_S
-        3) Constants.DEFAULT_STREAM_TIMEOUT_S
-
-        :param request_body: The CreateResponse request body.
-        :type request_body: CreateResponse
-
-        :return: The resolved stream timeout in seconds.
-        :rtype: float
-        """
-        override = request_body.get("stream_timeout_s", None)
-        if override is not None:
-            return float(override)
-        env_val = os.getenv(Constants.AGENTS_ADAPTER_STREAM_TIMEOUT_S)
-        return float(env_val) if env_val is not None else float(Constants.DEFAULT_STREAM_TIMEOUT_S)
 
     def init_tracing(self):
         try:

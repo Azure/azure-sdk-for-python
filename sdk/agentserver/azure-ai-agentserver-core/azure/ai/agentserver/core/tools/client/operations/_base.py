@@ -10,7 +10,7 @@ from typing import Any, ClassVar, MutableMapping, Type
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, \
     ResourceNotFoundError, ResourceNotModifiedError, map_error
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
 ErrorMapping = MutableMapping[int, Type[HttpResponseError]]
 
@@ -67,7 +67,7 @@ class BaseOperations(ABC):
         try:
             payload_text = response.text()
             payload_json = json.loads(payload_text) if payload_text else {}
-        except AttributeError as e:
+        except AttributeError:
             payload_bytes = response.body()
             payload_json = json.loads(payload_bytes.decode("utf-8")) if payload_bytes else {}
         return payload_json

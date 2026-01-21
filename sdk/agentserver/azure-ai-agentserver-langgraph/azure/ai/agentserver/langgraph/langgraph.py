@@ -5,7 +5,7 @@
 # mypy: disable-error-code="assignment,arg-type"
 import os
 import re
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING
 
 from langgraph.graph.state import CompiledStateGraph
 
@@ -66,27 +66,26 @@ class LangGraphAdapter(FoundryCBAgent):
         # Resolve graph - always resolve if it's a factory function to get fresh graph each time
         # For factories, get a new graph instance per request to avoid concurrency issues
         try:
-            input_arguments = await self.converter.convert_request(context)
-            self.ensure_runnable_config(context, input_arguments)
+            lg_run_context = await self.setup_lg_run_context(context)
+            input_arguments = await self.converter.convert_request(lg_run_context)
+            self.ensure_runnable_config(input_arguments)
 
-            lg_run_context = await self.setup_lg_run_context()
             if not context.stream:
-                response = await self.agent_run_non_stream(input_arguments, context, lg_run_context)
+                response = await self.agent_run_non_stream(input_arguments)
                 return response
 
-            # For streaming, pass tool_client to be closed after streaming completes
-            return self.agent_run_astream(input_arguments, context, lg_run_context)
+            return self.agent_run_astream(input_arguments)
         except OAuthConsentRequiredError as e:
             if not context.stream:
                 response = await self.respond_with_oauth_consent(context, e)
                 return response
             return self.respond_with_oauth_consent_astream(context, e)
-        except Exception:
-            raise
 
-    async def setup_lg_run_context(self):
+    async def setup_lg_run_context(self, agent_run_context: AgentRunContext) -> LanggraphRunContext:
         resolved = await self._tool_resolver.resolve_from_registry()
-        return LanggraphRunContext(FoundryToolContext(resolved))
+        return LanggraphRunContext(
+            agent_run_context,
+            FoundryToolContext(resolved))
 
     def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
         # set env vars for langsmith
@@ -116,68 +115,57 @@ class LangGraphAdapter(FoundryCBAgent):
         attrs["service.namespace"] = "azure.ai.agentserver.langgraph"
         return attrs
 
-    async def agent_run_non_stream(self, input_arguments: GraphInputArguments, context: AgentRunContext,
-                                   lg_run_context: LanggraphRunContext):
+    async def agent_run_non_stream(self, input_arguments: GraphInputArguments):
         """
         Run the agent with non-streaming response.
 
         :param input_arguments: The input data to run the agent with.
         :type input_arguments: GraphInputArguments
-        :param context: The context for the agent run.
-        :type context: AgentRunContext
-        :param lg_run_context: The tool context for the agent run.
-        :type lg_run_context: FoundryToolContext
 
         :return: The response of the agent run.
         :rtype: dict
         """
 
         try:
-            result = await self._graph.ainvoke(**input_arguments, context=lg_run_context)
-            output = self.converter.convert_response_non_stream(result, context)
+            result = await self._graph.ainvoke(**input_arguments)
+            output = self.converter.convert_response_non_stream(result, input_arguments["context"])
             return output
         except Exception as e:
             logger.error(f"Error during agent run: {e}", exc_info=True)
             raise e
 
     async def agent_run_astream(self,
-                                input_arguments: GraphInputArguments,
-                                context: AgentRunContext,
-                                lg_run_context: LanggraphRunContext):
+                                input_arguments: GraphInputArguments):
         """
         Run the agent with streaming response.
 
         :param input_arguments: The input data to run the agent with.
         :type input_arguments: GraphInputArguments
-        :param context: The context for the agent run.
-        :type context: AgentRunContext
-        :param lg_run_context: The tool context for the agent run.
-        :type lg_run_context: FoundryToolContext
 
         :return: An async generator yielding the response stream events.
         :rtype: AsyncGenerator[dict]
         """
         try:
-            logger.info(f"Starting streaming agent run {context.response_id}")
-            stream = self._graph.astream(**input_arguments, context=lg_run_context)
-            async for output_event in self.converter.convert_response_stream(stream, context):
+            logger.info(f"Starting streaming agent run {input_arguments['context'].agent_run.response_id}")
+            stream = self._graph.astream(**input_arguments)
+            async for output_event in self.converter.convert_response_stream(
+                    stream,
+                    input_arguments["context"]):
                 yield output_event
         except Exception as e:
             logger.error(f"Error during streaming agent run: {e}", exc_info=True)
             raise e
 
-    def ensure_runnable_config(self, context: AgentRunContext, input_arguments: GraphInputArguments):
+    def ensure_runnable_config(self, input_arguments: GraphInputArguments):
         """
         Ensure the RunnableConfig is set in the input arguments.
 
-        :param context: The context for the agent run.
-        :type context: AgentRunContext
         :param input_arguments: The input arguments for the agent run.
         :type input_arguments: GraphInputArguments
         """
         config = input_arguments.get("config", {})
         configurable = config.get("configurable", {})
-        configurable["thread_id"] = context.conversation_id
+        configurable["thread_id"] = input_arguments["context"].agent_run.conversation_id
         config["configurable"] = configurable
 
         callbacks = config.get("callbacks", [])

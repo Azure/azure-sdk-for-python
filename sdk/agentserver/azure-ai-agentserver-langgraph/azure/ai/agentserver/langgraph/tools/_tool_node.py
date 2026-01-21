@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 from typing import Awaitable, Callable, List, TypedDict, Union
 
-from azure.ai.agentserver.core.tools import FoundryToolLike
 from langchain_core.messages import ToolMessage
 from langgraph.prebuilt.tool_node import AsyncToolCallWrapper, ToolCallRequest, ToolCallWrapper
 from langgraph.types import Command
+
+from azure.ai.agentserver.core.tools import FoundryToolLike
 
 ToolInvocationResult = Union[ToolMessage, Command]
 ToolInvocation = Callable[[ToolCallRequest], ToolInvocationResult]
@@ -27,9 +28,9 @@ class FoundryToolNodeWrappers(TypedDict):
     :type awrap_tool_call: AsyncToolCallWrapper
     """
 
-    wrap_tool_call: ToolCallWrapper
+    wrap_tool_call: ToolCallWrapper  # type: ignore[valid-type]
 
-    awrap_tool_call: AsyncToolCallWrapper
+    awrap_tool_call: AsyncToolCallWrapper  # type: ignore[valid-type]
 
 
 class FoundryToolCallWrapper:

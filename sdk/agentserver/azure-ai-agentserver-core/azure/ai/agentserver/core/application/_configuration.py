@@ -31,12 +31,12 @@ class ToolsConfiguration:
     catalog_cache_max_size: int = 1024
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True)
 class AgentServerConfiguration:
     """Resolved configuration for the Agent Server application."""
 
-    agent_name: str = "$default"
     project_endpoint: str
     credential: AsyncTokenCredential
+    agent_name: str = "$default"
     http: HttpServerConfiguration = field(default_factory=HttpServerConfiguration)
     tools: ToolsConfiguration = field(default_factory=ToolsConfiguration)

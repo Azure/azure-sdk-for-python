@@ -13,7 +13,8 @@ from ..client._models import FoundryTool, FoundryToolProtocol
 #   Required:
 #     - "type": str            Discriminator, e.g. "mcp" | "a2a" | "code_interpreter" | ...
 #   Optional:
-#     - "project_connection_id": str     Project connection id of Foundry connected tools, required with "type" is "mcp" or a2a.
+#     - "project_connection_id": str     Project connection id of Foundry connected tools,
+#                                        required when "type" is "mcp" or "a2a".
 #
 # Custom keys:
 #   - Allowed, but MUST NOT shadow reserved keys.
@@ -45,5 +46,5 @@ def ensure_foundry_tool(tool: FoundryToolLike) -> FoundryTool:
             raise InvalidToolFacadeError(f"project_connection_id is required for tool protocol {protocol}.")
 
         return FoundryConnectedTool(protocol=protocol, project_connection_id=project_connection_id)
-    except:
+    except ValueError:
         return FoundryHostedMcpTool(name=tool_type, configuration=tool)

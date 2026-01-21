@@ -41,10 +41,10 @@ _app: PackageMetadata = _default
 
 
 def set_current_app(app: PackageMetadata) -> None:
-    global _app
+    global _app  # pylint: disable=W0603
     _app = app
 
 
 def get_current_app() -> PackageMetadata:
-    global _app
+    global _app  # pylint: disable=W0602
     return _app

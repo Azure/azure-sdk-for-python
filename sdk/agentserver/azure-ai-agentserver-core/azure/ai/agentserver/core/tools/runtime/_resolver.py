@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC, abstractmethod
-from typing import Awaitable, Union, overload
+from typing import Optional, Union
 
 from ._catalog import FoundryToolCatalog
 from ._facade import FoundryToolLike, ensure_foundry_tool
@@ -49,9 +49,12 @@ class DefaultFoundryToolInvocationResolver(FoundryToolInvocationResolver):
         :return: The resolved Foundry tool invoker.
         :rtype: FoundryToolInvoker
         """
-        resolved_tool = (tool
-                         if isinstance(tool, ResolvedFoundryTool)
-                         else await self._catalog.get(ensure_foundry_tool(tool)))
-        if not resolved_tool:
-            raise UnableToResolveToolInvocationError(f"Unable to resolve tool {tool} from catalog", tool)
+        if isinstance(tool, ResolvedFoundryTool):
+            resolved_tool = tool
+        else:
+            foundry_tool = ensure_foundry_tool(tool)
+            resolved_tool = await self._catalog.get(foundry_tool)  # type: ignore[assignment]
+            if not resolved_tool:
+                raise UnableToResolveToolInvocationError(f"Unable to resolve tool {foundry_tool} from catalog",
+                                                         foundry_tool)
         return DefaultFoundryToolInvoker(resolved_tool, self._client, self._user_provider, self._agent_name)

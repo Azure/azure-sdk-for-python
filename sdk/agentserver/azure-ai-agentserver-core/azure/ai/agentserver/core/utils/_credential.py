@@ -3,17 +3,27 @@
 # ---------------------------------------------------------
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=C4763
 import inspect
 from types import TracebackType
-from typing import Any, Optional, Sequence, Type, Union
+from typing import Any, Type, cast
 
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 
-async def _to_thread(func, *args, **kwargs):
-    """Compatibility wrapper for asyncio.to_thread (Python 3.8+)."""
+async def _to_thread(func, *args, **kwargs):  # pylint: disable=C4743
+    """Compatibility wrapper for asyncio.to_thread (Python 3.8+).
+
+    :param func: The function to run in a thread.
+    :type func: Callable
+    :param args: Positional arguments to pass to the function.
+    :type args: Any
+    :param kwargs: Keyword arguments to pass to the function.
+    :type kwargs: Any
+    :return: The result of the function call.
+    :rtype: Any
+    """
     if hasattr(asyncio, "to_thread"):
         return await asyncio.to_thread(func, *args, **kwargs)  # py>=3.9
     loop = asyncio.get_running_loop()
@@ -27,7 +37,7 @@ class AsyncTokenCredentialAdapter(AsyncTokenCredential):
       - azure.core.credentials_async.AsyncTokenCredential (async)
     """
 
-    def __init__(self, credential: TokenCredential |AsyncTokenCredential) -> None:
+    def __init__(self, credential: TokenCredential | AsyncTokenCredential) -> None:
         if not hasattr(credential, "get_token"):
             raise TypeError("credential must have a get_token method")
         self._credential = credential
@@ -44,11 +54,12 @@ class AsyncTokenCredentialAdapter(AsyncTokenCredential):
             **kwargs: Any,
     ) -> AccessToken:
         if self._is_async:
-            return await self._credential.get_token(*scopes,
-                                                    claims=claims,
-                                                    tenant_id=tenant_id,
-                                                    enable_cae=enable_cae,
-                                                    **kwargs)
+            cred = cast(AsyncTokenCredential, self._credential)
+            return await cred.get_token(*scopes,
+                                        claims=claims,
+                                        tenant_id=tenant_id,
+                                        enable_cae=enable_cae,
+                                        **kwargs)
         return await _to_thread(self._credential.get_token,
                                 *scopes,
                                 claims=claims,

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
 # mypy: ignore-errors
-import asyncio
+import asyncio  # pylint: disable=C4763
 import inspect
 import json
 import os
@@ -12,8 +12,6 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
@@ -25,10 +23,12 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp
 
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 
 from ._context import AgentServerContext
-from  ..models import projects as project_models
+from ..models import projects as project_models
 from ..constants import Constants
 from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
 from ..models import (
@@ -37,8 +37,7 @@ from ..models import (
 )
 from .common.agent_run_context import AgentRunContext
 
-from ..tools import DefaultFoundryToolRuntime, FoundryTool, FoundryToolClient, FoundryToolRuntime, UserInfo, \
-    UserInfoContextMiddleware
+from ..tools import DefaultFoundryToolRuntime, UserInfoContextMiddleware
 from ..utils._credential import AsyncTokenCredentialAdapter
 
 logger = get_logger()
@@ -405,24 +404,6 @@ class FoundryCBAgent:
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
 
-    def get_tool_client(
-            self, tools: Optional[list[FoundryTool]], user_info: Optional[UserInfo]
-        ) -> FoundryToolClient:
-        # TODO: remove this method
-        logger.debug("Creating AzureAIToolClient with tools: %s", tools)
-        if not self.credentials:
-            raise ValueError("Credentials are required to create Tool Client.")
-
-        tools_endpoint, agent_name = self._configure_endpoint()
-
-        return FoundryToolClient(
-            endpoint=tools_endpoint,
-            credential=self.credentials,
-            tools=tools,
-            user=user_info,
-            agent_name=agent_name,
-        )
-
 
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
     event_data = json.dumps(event.as_dict())
@@ -432,7 +413,11 @@ def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
 
 
 def _keep_alive_comment() -> str:
-    """Generate a keep-alive SSE comment to maintain connection."""
+    """Generate a keep-alive SSE comment to maintain connection.
+
+    :return: The keep-alive comment string.
+    :rtype: str
+    """
     return ": keep-alive\n\n"
 
 
@@ -440,15 +425,20 @@ async def _iter_with_keep_alive(
     it: AsyncGenerator[ResponseStreamEvent, None]
 ) -> AsyncGenerator[Optional[ResponseStreamEvent], None]:
     """Wrap an async iterator with keep-alive mechanism.
-    
+
     If no event is received within KEEP_ALIVE_INTERVAL seconds,
     yields None as a signal to send a keep-alive comment.
     The original iterator is protected with asyncio.shield to ensure
     it continues running even when timeout occurs.
+
+    :param it: The async generator to wrap.
+    :type it: AsyncGenerator[ResponseStreamEvent, None]
+    :return: An async generator that yields events or None for keep-alive.
+    :rtype: AsyncGenerator[Optional[ResponseStreamEvent], None]
     """
     it_anext = it.__anext__
     pending_task: Optional[asyncio.Task] = None
-    
+
     while True:
         try:
             # If there's a pending task from previous timeout, wait for it first
@@ -457,14 +447,14 @@ async def _iter_with_keep_alive(
                 pending_task = None
                 yield event
                 continue
-            
+
             # Create a task for the next event
             next_event_task = asyncio.create_task(it_anext())
-            
+
             try:
                 # Shield the task and wait with timeout
                 event = await asyncio.wait_for(
-                    asyncio.shield(next_event_task), 
+                    asyncio.shield(next_event_task),
                     timeout=KEEP_ALIVE_INTERVAL
                 )
                 yield event
@@ -473,7 +463,7 @@ async def _iter_with_keep_alive(
                 # Save task to check in next iteration
                 pending_task = next_event_task
                 yield None
-                
+
         except StopAsyncIteration:
             # Iterator exhausted
             break
