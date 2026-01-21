@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import os
-from typing import Any, Optional
+from typing import Optional
 
 from agent_framework import (
     CheckpointStorage,

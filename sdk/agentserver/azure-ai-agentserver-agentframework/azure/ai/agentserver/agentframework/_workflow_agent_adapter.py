@@ -1,7 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Callable, Optional, Protocol, Union, List
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncGenerator,
+    Callable,
+    List,
+    Optional,
+    Protocol,
+    Union,
+)
 
 from agent_framework import Workflow, CheckpointStorage, WorkflowAgent, WorkflowCheckpoint
 from agent_framework._workflows import get_checkpoint_summary
@@ -59,7 +68,10 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             if selected_checkpoint:
                 summary = get_checkpoint_summary(selected_checkpoint)
                 if summary.status == "completed":
-                    logger.warning(f"Selected checkpoint {selected_checkpoint.checkpoint_id} is completed. Will not resume from it.")
+                    logger.warning(
+                        "Selected checkpoint %s is completed. Will not resume from it.",
+                        selected_checkpoint.checkpoint_id,
+                    )
                     selected_checkpoint = None  # Do not resume from completed checkpoints
                 else:
                     await self._load_checkpoint(agent, selected_checkpoint, checkpoint_storage)

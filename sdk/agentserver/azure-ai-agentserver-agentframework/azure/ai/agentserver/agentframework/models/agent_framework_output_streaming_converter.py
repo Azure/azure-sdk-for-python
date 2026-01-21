@@ -5,12 +5,15 @@
 # mypy: disable-error-code="call-overload,assignment,arg-type,override"
 from __future__ import annotations
 
-from ast import arguments
 import datetime
 import json
 from typing import Any, AsyncIterable, List, Union
 
-from agent_framework import AgentRunResponseUpdate, BaseContent, FunctionApprovalRequestContent, FunctionResultContent
+from agent_framework import (
+    AgentRunResponseUpdate,
+    BaseContent,
+    FunctionResultContent,
+)
 from agent_framework._types import (
     ErrorContent,
     FunctionCallContent,
@@ -24,8 +27,6 @@ from azure.ai.agentserver.core.models import (
     ResponseStreamEvent,
 )
 from azure.ai.agentserver.core.models.projects import (
-    AgentId,
-    CreatedBy,
     FunctionToolCallItemResource,
     FunctionToolCallOutputItemResource,
     ItemContentOutputText,
@@ -52,7 +53,12 @@ from .utils.async_iter import chunk_on_change, peek
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
 
-    async def convert_contents(self, contents: AsyncIterable[BaseContent], author_name: str) -> AsyncIterable[ResponseStreamEvent]:  # pylint: disable=unused-argument
+    async def convert_contents(
+        self,
+        contents: AsyncIterable[BaseContent],
+        author_name: str,
+    ) -> AsyncIterable[ResponseStreamEvent]:
+        # pylint: disable=unused-argument
         raise NotImplementedError
 
 
@@ -62,7 +68,11 @@ class _TextContentStreamingState(_BaseStreamingState):
     def __init__(self, parent: AgentFrameworkOutputStreamingConverter):
         self._parent = parent
 
-    async def convert_contents(self, contents: AsyncIterable[TextContent], author_name: str) -> AsyncIterable[ResponseStreamEvent]:
+    async def convert_contents(
+        self,
+        contents: AsyncIterable[TextContent],
+        author_name: str,
+    ) -> AsyncIterable[ResponseStreamEvent]:
         item_id = self._parent.context.id_generator.generate_message_id()
         output_index = self._parent.next_output_index()
 
@@ -381,7 +391,11 @@ class AgentFrameworkOutputStreamingConverter:
             elif isinstance(first, FunctionResultContent):
                 state = _FunctionCallOutputStreamingState(self)
             elif isinstance(first, ErrorContent):
-                raise ValueError(f"ErrorContent received: code={first.error_code}, message={first.message}")
+                error_msg = (
+                    f"ErrorContent received: code={first.error_code}, "
+                    f"message={first.message}"
+                )
+                raise ValueError(error_msg)
             if not state:
                 continue
 
@@ -410,7 +424,10 @@ class AgentFrameworkOutputStreamingConverter:
             "response_id": self._response_id,
         }
 
-    async def _read_updates(self, updates: AsyncIterable[AgentRunResponseUpdate]) -> AsyncIterable[tuple[BaseContent, str]]:
+    async def _read_updates(
+        self,
+        updates: AsyncIterable[AgentRunResponseUpdate],
+    ) -> AsyncIterable[tuple[BaseContent, str]]:
         async for update in updates:
             if not update.contents:
                 continue

@@ -38,7 +38,11 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
     def __init__(self) -> None:
         self._inventory: dict[str, AgentThread] = {}
 
-    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
+    async def get(
+        self,
+        conversation_id: str,
+        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
+    ) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
@@ -75,7 +79,11 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         """
         self._agent = agent
 
-    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
+    async def get(
+        self,
+        conversation_id: str,
+        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
+    ) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.

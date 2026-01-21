@@ -183,7 +183,11 @@ class AgentFrameworkAgent(FoundryCBAgent):
     ]:
         raise NotImplementedError("This method is implemented in the base class.")
 
-    async def _load_agent_thread(self, context: AgentRunContext, agent: Union[AgentProtocol, WorkflowAgent]) -> Optional[AgentThread]:
+    async def _load_agent_thread(
+        self,
+        context: AgentRunContext,
+        agent: Union[AgentProtocol, WorkflowAgent],
+    ) -> Optional[AgentThread]:
         """Load the agent thread for a given conversation ID.
 
         :param context: The agent run context.
@@ -223,7 +227,10 @@ class AgentFrameworkAgent(FoundryCBAgent):
     ) -> AsyncGenerator[ResponseStreamEvent, Any]:
         """Execute a streaming run with shared OAuth/error handling."""
         logger.info("Running agent in streaming mode")
-        streaming_converter = AgentFrameworkOutputStreamingConverter(context, hitl_helper=self._hitl_helper)
+        streaming_converter = AgentFrameworkOutputStreamingConverter(
+            context,
+            hitl_helper=self._hitl_helper,
+        )
 
         async def stream_updates():
             try:
@@ -250,7 +257,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
                         )
                         yield ResponseFailedEvent(
                             sequence_number=streaming_converter.next_sequence(),
-                            response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
+                            response=streaming_converter._build_response(
+                                status="failed"
+                            ),  # pylint: disable=protected-access
                         )
                 except Exception as e:  # pylint: disable=broad-exception-caught
                     logger.error("Unhandled exception during streaming updates: %s", e, exc_info=True)
@@ -262,7 +271,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
                     )
                     yield ResponseFailedEvent(
                         sequence_number=streaming_converter.next_sequence(),
-                        response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
+                        response=streaming_converter._build_response(
+                            status="failed"
+                        ),  # pylint: disable=protected-access
                     )
             finally:
                 # No request-scoped resources to clean up today, but keep hook for future use.
