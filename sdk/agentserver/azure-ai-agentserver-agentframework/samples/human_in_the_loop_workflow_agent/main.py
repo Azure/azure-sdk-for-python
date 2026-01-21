@@ -111,7 +111,7 @@ async def run_agent() -> None:
     """Run the workflow inside the agent server adapter."""
     builder = create_builder()
     await from_agent_framework(
-        builder,  # pass workflow builder to adapter
+        workflow=builder,  # pass workflow builder to adapter
         checkpoint_repository=FileCheckpointRepository(storage_path="./checkpoints"),  # for checkpoint storage
     ).run_async()
 
