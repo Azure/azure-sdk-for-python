@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-from typing import List, Any, Optional
+from typing import List, Any
 from openai import OpenAI
 from openai._base_client import BaseClient as _OpenAIBaseClient
 from azure.core.tracing.decorator import distributed_trace
@@ -128,6 +128,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         http_client = None
 
+        kwargs = kwargs.copy() if kwargs else {}
+
         if self._console_logging_enabled:
             try:
                 import httpx
@@ -226,12 +228,11 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
             http_client = httpx.Client(transport=OpenAILoggingTransport())
 
+        default_headers = dict[str, Any](kwargs.pop("default_headers", None) or {})
 
-        user_headers = kwargs.pop("default_headers", None)
+        openai_custom_user_agent = default_headers.get("User-Agent", None)
 
-        openai_custom_user_agent = kwargs.pop("user_agent", None)
-
-        def _create_openai_client(default_headers=None) -> OpenAI:
+        def _create_openai_client(**kwargs) -> OpenAI:
             return OpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 api_key=get_bearer_token_provider(
@@ -240,21 +241,21 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 ),
                 base_url=base_url,
                 http_client=http_client,
-                default_headers=default_headers,
                 **kwargs,
             )
 
         dummy_client = _create_openai_client()
 
         openai_default_user_agent = dummy_client.user_agent
-        final_user_agent = " ".join(ua for ua in ["AIProjectClient", self._custom_user_agent, openai_default_user_agent, openai_custom_user_agent] if ua)
+        final_user_agent = " ".join(
+            ua
+            for ua in ["AIProjectClient", self._custom_user_agent, openai_default_user_agent, openai_custom_user_agent]
+            if ua
+        )
 
-        merged_headers = dict(dummy_client.default_headers)
-        if user_headers:
-            merged_headers.update(user_headers)
-        merged_headers["User-Agent"] = final_user_agent
+        default_headers["User-Agent"] = final_user_agent
 
-        client = _create_openai_client(default_headers=merged_headers)
+        client = _create_openai_client(default_headers=default_headers, **kwargs)
 
         return client
 

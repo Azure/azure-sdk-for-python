@@ -3,24 +3,19 @@ from typing import Any, Dict, Optional
 
 import pytest
 import httpx
-from openai import OpenAI
-from azure.core.credentials import TokenCredential
+from openai import AsyncOpenAI
+from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 
-from azure.ai.projects import AIProjectClient
-
-
-BASE_OPENAI_UA = OpenAI(api_key="dummy").user_agent
+from azure.ai.projects.aio import AIProjectClient
 
 
-class DummyTokenCredential(TokenCredential):
-    def get_token(self, *scopes: str, **kwargs: Any):  # type: ignore[override]
-        return None
+BASE_OPENAI_UA = AsyncOpenAI(api_key="dummy").user_agent
 
 
-@pytest.fixture(autouse=True)
-def patch_openai(monkeypatch):
-    # Ensure no real network/token calls are made during the test.
-    monkeypatch.setattr("azure.ai.projects._patch.get_bearer_token_provider", lambda *_, **__: "token-provider")
+class DummyAsyncTokenCredential(AsyncTokenCredential):
+    async def get_token(self, *scopes: str, **kwargs: Any):  # type: ignore[override]
+        return AccessToken("token", 0)
 
 
 def _build_client(
@@ -29,7 +24,7 @@ def _build_client(
 ):
     project_client = AIProjectClient(
         "https://example.com/api/projects/test",
-        DummyTokenCredential(),
+        DummyAsyncTokenCredential(),
         user_agent=project_user_agent,
     )
     kwargs: Dict[str, Any] = {"default_headers": default_headers}
@@ -65,12 +60,13 @@ def _build_client(
         ),
     ],
 )
-def test_user_agent_patching_via_response_create(project_ua, openai_default_header, expected_ua):
+@pytest.mark.asyncio
+async def test_user_agent_patching_via_response_create(project_ua, openai_default_header, expected_ua):
     client = _build_client(project_ua, openai_default_header)
 
     calls = []
 
-    def fake_send(request: httpx.Request, *args: Any, **kwargs: Any):
+    async def fake_send(request: httpx.Request, *args: Any, **kwargs: Any):
         # Capture headers that would be sent over the wire.
         calls.append(dict(request.headers))
         return httpx.Response(
@@ -89,7 +85,7 @@ def test_user_agent_patching_via_response_create(project_ua, openai_default_head
     client._client.send = fake_send  # type: ignore[attr-defined]
 
     # Act through the actual call surface
-    client.responses.create(model="gpt-4o")
+    await client.responses.create(model="gpt-4o")
 
     # Assert
     assert calls, "Expected a responses.create call to be captured"

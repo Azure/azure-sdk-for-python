@@ -19,7 +19,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
-    add_body_regex_sanitizer,
+    add_header_regex_sanitizer,
 )
 
 if not load_dotenv(find_dotenv(), override=True):
@@ -121,10 +121,7 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
 
     # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
-    add_general_regex_sanitizer(
-        regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC",
-        value="eval-data-sanitized-timestamp"
-    )
+    add_general_regex_sanitizer(regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC", value="eval-data-sanitized-timestamp")
 
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
@@ -163,6 +160,9 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_remove_header_sanitizer(
         headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
     )
+
+    # Sanitize User-Agent header to avoid platform-specific information in recordings
+    add_header_regex_sanitizer(key="User-Agent", value="sanitized-user-agent")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
