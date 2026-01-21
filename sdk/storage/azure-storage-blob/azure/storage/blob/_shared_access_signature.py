@@ -174,8 +174,6 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                                           content_type)
         sas.add_encryption_scope(**kwargs)
         sas.add_info_for_hns_account(**kwargs)
-        sas.add_request_headers(request_headers)
-        sas.add_request_query_params(request_query_params)
         sas.add_resource_signature(
             self.account_name,
             self.account_key,
@@ -292,8 +290,6 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                                           content_type)
         sas.add_encryption_scope(**kwargs)
         sas.add_info_for_hns_account(**kwargs)
-        sas.add_request_headers(request_headers)
-        sas.add_request_query_params(request_query_params)
         sas.add_resource_signature(
             self.account_name,
             self.account_key,
