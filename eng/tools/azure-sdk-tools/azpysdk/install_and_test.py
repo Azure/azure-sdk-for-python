@@ -116,8 +116,14 @@ class InstallAndTest(Check):
         cwd: Optional[str] = None,
     ) -> int:
         pytest_command = ["-m", "pytest", *pytest_args]
+        environment = {"PYTHONPYCACHEPREFIX": staging_directory}
+
         pytest_result = self.run_venv_command(
-            executable, pytest_command, cwd=(cwd or staging_directory), immediately_dump=True
+            executable,
+            pytest_command,
+            cwd=(cwd or staging_directory),
+            immediately_dump=True,
+            additional_environment_settings=environment,
         )
         if pytest_result.returncode != 0:
             if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):

@@ -127,6 +127,7 @@ class Check(abc.ABC):
         check: bool = False,
         append_executable: bool = True,
         immediately_dump: bool = False,
+        additional_environment_settings: Optional[dict] = None,
     ) -> subprocess.CompletedProcess[str]:
         """Run a command in the given virtual environment.
         - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
@@ -140,6 +141,8 @@ class Check(abc.ABC):
             )
 
         env = os.environ.copy()
+        if additional_environment_settings:
+            env.update(additional_environment_settings)
 
         python_exec = pathlib.Path(executable)
         if python_exec.exists():
