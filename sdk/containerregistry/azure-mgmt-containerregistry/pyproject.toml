@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Containerregistry Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -79,7 +79,7 @@ verifytypes = false
 package_name = "azure-mgmt-containerregistry"
 package_pprint_name = "Container Registry"
 package_doc_id = "container-registry"
-is_stable = false
+is_stable = true
 is_arm = true
 sample_link = ""
 title = "ContainerRegistryManagementClient"
