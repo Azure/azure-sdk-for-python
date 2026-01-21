@@ -505,7 +505,7 @@ class DataLakeFileClient(PathClient):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
+        :type data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]]
         :param int offset: start position of the data to be appended to.
         :param length: 
             Size of the data to append. Optional if the length of data can be determined. For Iterable and IO,

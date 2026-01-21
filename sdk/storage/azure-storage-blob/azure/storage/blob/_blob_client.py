@@ -478,7 +478,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:
@@ -2004,7 +2004,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
-        :type data: Union[bytes, str, Iterable[bytes], IO[bytes]]
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
         :param int length:
             Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
             length is not provided and cannot be determined, all data will be read into memory.
@@ -3152,7 +3152,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         :param data:
             Content of the block.
-        :type data: Union[bytes, Iterable[bytes], IO[bytes]],
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
         :param int length:
             Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
             length is not provided and cannot be determined, all data will be read into memory.

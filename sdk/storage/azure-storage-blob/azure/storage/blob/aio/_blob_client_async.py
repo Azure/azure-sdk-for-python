@@ -3193,7 +3193,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
     @distributed_trace_async
     async def append_block(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]:
@@ -3201,7 +3201,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         :param data:
             Content of the block.
-        :type data: Union[bytes, Iterable[bytes], IO[bytes]],
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
         :param int length:
             Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
             length is not provided and cannot be determined, all data will be read into memory.
