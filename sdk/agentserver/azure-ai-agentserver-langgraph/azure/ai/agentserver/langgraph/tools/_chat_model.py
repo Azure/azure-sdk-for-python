@@ -59,14 +59,24 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         """
         return FoundryToolCallWrapper(self._foundry_tools_to_bind).as_wrappers()
 
-    def bind_tools(self,
+    def bind_tools(self,  # pylint: disable=C4758
                    tools: Sequence[
                        Dict[str, Any] | type | Callable | BaseTool  # noqa: UP006
                    ],
                    *,
                    tool_choice: str | None = None,
                    **kwargs: Any) -> Runnable[LanguageModelInput, AIMessage]:
-        """Record tools to be bound later during invocation."""
+        """Record tools to be bound later during invocation.
+
+        :param tools: A sequence of tools to bind.
+        :type tools: Sequence[Dict[str, Any] | type | Callable | BaseTool]
+        :keyword tool_choice: Optional tool choice strategy.
+        :type tool_choice: str | None
+        :keyword kwargs: Additional keyword arguments for tool binding.
+        :type kwargs: Any
+        :return: A Runnable with the tools bound for later invocation.
+        :rtype: Runnable[LanguageModelInput, AIMessage]
+        """
 
         self._bound_tools.extend(tools)
         if tool_choice is not None:
@@ -103,10 +113,9 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
 
     @property
     def _llm_type(self) -> str:
-        return f"foundry_tool_binding_model({getattr(self.delegate, '_llm_type', type(self.delegate).__name__)})"
+        return f"foundry_tool_binding_model({getattr(self._delegate, '_llm_type', type(self._delegate).__name__)})"
 
     def _generate(self, messages: list[BaseMessage], stop: list[str] | None = None,
                   run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> ChatResult:
         # should never be called as invoke/ainvoke/stream/astream are redirected to delegate
         raise NotImplementedError()
-

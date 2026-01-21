@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from agent_framework import ChatAgent, WorkflowBuilder
+from agent_framework import ChatAgent, Workflow, WorkflowBuilder
 from agent_framework.azure import AzureAIAgentClient
 from azure.identity.aio import AzureCliCredential
 
@@ -40,12 +40,12 @@ async def main() -> None:
         )
         
         # Pass the WorkflowBuilder to the adapter and run it
-        await from_agent_framework(workflow=builder).run_async()
+        # await from_agent_framework(workflow=builder).run_async()
 
         # Or create a factory function for the workflow pass the workflow factory to the adapter 
-        # def workflow_factory() -> Workflow:
-        #     return builder.build()
-        # await from_agent_framework(workflow=workflow_factory).run_async()
+        def workflow_factory() -> Workflow:
+            return builder.build()
+        await from_agent_framework(workflow=workflow_factory).run_async()
 
 
 if __name__ == "__main__":
