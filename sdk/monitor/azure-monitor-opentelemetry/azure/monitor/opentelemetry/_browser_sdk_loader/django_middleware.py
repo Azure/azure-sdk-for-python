@@ -10,6 +10,7 @@ from logging import getLogger
 try:
     from django.http import HttpRequest, HttpResponse  # type: ignore
     from django.utils.deprecation import MiddlewareMixin  # type: ignore
+
     DJANGO_AVAILABLE = True
 except ImportError:
     # Define stub classes when Django is not available
@@ -76,32 +77,26 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
             return response
         try:
             # Get response details
-            content_type = response.get('Content-Type', '')
-            content_encoding = response.get('Content-Encoding')
+            content_type = response.get("Content-Type", "")
+            content_encoding = response.get("Content-Encoding")
             # Check if we should inject the snippet
-            if not self._injector.should_inject(
-                request.method,
-                content_type,
-                response.content,
-                content_encoding
-            ):
+            if not self._injector.should_inject(request.method, content_type, response.content, content_encoding):
                 return response
             # Inject the snippet with compression handling
-            modified_content, new_encoding = self._injector.inject_with_compression(
-                response.content,
-                content_encoding
-            )
+            modified_content, new_encoding = self._injector.inject_with_compression(response.content, content_encoding)
             # Update response with modified content
             response.content = modified_content
             if new_encoding and new_encoding != content_encoding:
-                response['Content-Encoding'] = new_encoding
+                response["Content-Encoding"] = new_encoding
             # Update content length if it changed
-            response['Content-Length'] = str(len(modified_content))
+            response["Content-Length"] = str(len(modified_content))
         except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning("Failed to inject Application Insights snippet: %s", ex, exc_info=True)
         return response
 
-    def configure(self, config: Union[BrowserSDKConfig, dict, str], legacy_config: Optional[dict] = None) -> None:  # pylint: disable=unused-argument
+    def configure(
+        self, config: Union[BrowserSDKConfig, dict, str], legacy_config: Optional[dict] = None
+    ) -> None:
         """Configure the middleware with Application Insights settings.
 
         :param config: Configuration object, dict, or connection string.
@@ -110,6 +105,9 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
         :type legacy_config: dict or None
         :rtype: None
         """
+        if legacy_config:
+            _logger.debug("legacy_config provided to configure(); parameter retained for backward compatibility")
+
         try:
             if isinstance(config, BrowserSDKConfig):
                 # Use BrowserSDKConfig object directly
@@ -117,10 +115,10 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
             elif isinstance(config, dict):
                 # Create BrowserSDKConfig from dictionary
                 snippet_kwargs = {}
-                if 'enabled' in config:
-                    snippet_kwargs['enabled'] = config['enabled']
-                if 'connection_string' in config:
-                    snippet_kwargs['connection_string'] = config['connection_string']
+                if "enabled" in config:
+                    snippet_kwargs["enabled"] = config["enabled"]
+                if "connection_string" in config:
+                    snippet_kwargs["connection_string"] = config["connection_string"]
                 snippet_config = BrowserSDKConfig(**snippet_kwargs)
             elif isinstance(config, str):
                 # Legacy mode: config is connection string
@@ -139,10 +137,10 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
         :rtype: None
         """
         try:
-            from django.conf import settings
+            from django.conf import settings  # pylint: disable=import-error
 
             # Look for configuration in Django settings
-            if hasattr(settings, 'AZURE_MONITOR_WEB_SNIPPET_CONFIG'):
+            if hasattr(settings, "AZURE_MONITOR_WEB_SNIPPET_CONFIG"):
                 config = settings.AZURE_MONITOR_WEB_SNIPPET_CONFIG
 
                 if isinstance(config, (dict, BrowserSDKConfig)):

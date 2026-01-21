@@ -21,11 +21,7 @@ class BrowserSDKConfig:
     :type config: Dict[str, Any]
     """
 
-    def __init__(
-        self,
-        enabled: bool = True,
-        connection_string: Optional[str] = None
-    ) -> None:
+    def __init__(self, enabled: bool = True, connection_string: Optional[str] = None) -> None:
         """Initialize the BrowserSDKConfig.
 
         :param enabled: Whether snippet injection is enabled.

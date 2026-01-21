@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License in the project root for
@@ -10,6 +9,7 @@ from logging import getLogger
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 
 _logger = getLogger(__name__)
+
 
 def setup_snippet_injection(config: BrowserSDKConfig) -> None:
     """Setup snippet injection for supported frameworks.
@@ -25,6 +25,7 @@ def setup_snippet_injection(config: BrowserSDKConfig) -> None:
     except Exception as ex:  # pylint: disable=broad-exception-caught
         _logger.debug("Failed to setup snippet injection: %s", ex, exc_info=True)
 
+
 def _setup_django_injection(config: BrowserSDKConfig) -> None:
     """Setup Django middleware injection if Django is available and configured.
 
@@ -38,13 +39,14 @@ def _setup_django_injection(config: BrowserSDKConfig) -> None:
     try:
         # Check if Django is available
         try:
-            from django.conf import settings  # noqa: F401
+            from django.conf import settings  # noqa: F401  # pylint: disable=import-error
         except ImportError:
             _logger.debug("Django not available - skipping Django middleware setup")
             return
         # Check if Django is configured
         try:
-            from django.conf import settings
+            from django.conf import settings  # pylint: disable=import-error
+
             if not settings.configured:
                 _logger.debug("Django not configured - skipping middleware registration")
                 return
@@ -56,6 +58,7 @@ def _setup_django_injection(config: BrowserSDKConfig) -> None:
     except Exception as ex:  # pylint: disable=broad-exception-caught
         _logger.debug("Failed to setup Django middleware: %s", ex, exc_info=True)
 
+
 def _register_django_middleware(config: BrowserSDKConfig) -> None:
     """Register the Application Insights middleware with Django.
 
@@ -64,18 +67,18 @@ def _register_django_middleware(config: BrowserSDKConfig) -> None:
     :rtype: None
     """
     try:
-        from django.conf import settings
+        from django.conf import settings  # pylint: disable=import-error
 
         # Check if our middleware is already in the middleware list
         middleware_path = f"{__name__}.django_middleware.ApplicationInsightsWebSnippetMiddleware"
-        if hasattr(settings, 'MIDDLEWARE'):
+        if hasattr(settings, "MIDDLEWARE"):
             middleware_list = list(settings.MIDDLEWARE)
             if middleware_path not in middleware_list:
                 # Add our middleware to the end of the list
                 middleware_list.append(middleware_path)
                 settings.MIDDLEWARE = middleware_list
                 _logger.debug("Added Application Insights middleware to Django MIDDLEWARE")
-        elif hasattr(settings, 'MIDDLEWARE_CLASSES'):  # Legacy Django support
+        elif hasattr(settings, "MIDDLEWARE_CLASSES"):  # Legacy Django support
             middleware_list = list(settings.MIDDLEWARE_CLASSES)
             if middleware_path not in middleware_list:
                 middleware_list.append(middleware_path)
@@ -86,6 +89,7 @@ def _register_django_middleware(config: BrowserSDKConfig) -> None:
     except Exception as ex:  # pylint: disable=broad-exception-caught
         _logger.warning("Failed to register Django middleware: %s", ex, exc_info=True)
 
+
 def _store_django_config(config: BrowserSDKConfig) -> None:
     """Store the Application Insights configuration for Django middleware access.
 
@@ -94,10 +98,10 @@ def _store_django_config(config: BrowserSDKConfig) -> None:
     :rtype: None
     """
     try:
-        from django.conf import settings
+        from django.conf import settings  # pylint: disable=import-error
 
         # Store config in Django settings for middleware to access
-        if not hasattr(settings, 'AZURE_MONITOR_WEB_SNIPPET_CONFIG'):
+        if not hasattr(settings, "AZURE_MONITOR_WEB_SNIPPET_CONFIG"):
             settings.AZURE_MONITOR_WEB_SNIPPET_CONFIG = config
             _logger.debug("Stored Application Insights configuration in Django settings")
     except Exception as ex:  # pylint: disable=broad-exception-caught

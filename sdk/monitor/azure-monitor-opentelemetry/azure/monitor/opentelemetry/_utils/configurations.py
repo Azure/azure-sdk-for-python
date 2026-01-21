@@ -13,9 +13,12 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
-from opentelemetry.instrumentation.environment_variables import (
-    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
-)
+try:
+    from opentelemetry.instrumentation.environment_variables import (  # type: ignore
+        OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
+    )
+except ImportError:  # pragma: no cover
+    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS = ""
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
     OTEL_TRACES_SAMPLER_ARG,
@@ -335,6 +338,7 @@ def _default_browser_sdk_loader(configurations):
     """
     # Use cast to Dict[str, Any] to avoid MyPy ConfigurationValue Union type issues
     from typing import cast, Any
+
     configurations.setdefault(BROWSER_SDK_LOADER_CONFIG_ARG, cast(Dict[str, Any], {}))
 
 

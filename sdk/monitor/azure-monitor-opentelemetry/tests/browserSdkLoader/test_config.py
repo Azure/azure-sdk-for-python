@@ -16,39 +16,30 @@ class TestBrowserSDKConfig(unittest.TestCase):
     def test_browser_sdk_config_default_values(self):
         """Test BrowserSDKConfig initialization with default values."""
         config = BrowserSDKConfig()
-        
+
         self.assertTrue(config.enabled)
         self.assertIsNone(config.connection_string)
 
     def test_browser_sdk_config_custom_values(self):
         """Test BrowserSDKConfig initialization with custom values."""
         connection_string = "InstrumentationKey=12345678-1234-1234-1234-123456789012;IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
-        
-        config = BrowserSDKConfig(
-            enabled=False,
-            connection_string=connection_string
-        )
-        
+
+        config = BrowserSDKConfig(enabled=False, connection_string=connection_string)
+
         self.assertFalse(config.enabled)
         self.assertEqual(config.connection_string, connection_string)
 
     def test_browser_sdk_config_none_connection_string(self):
         """Test BrowserSDKConfig with None connection string."""
-        config = BrowserSDKConfig(
-            enabled=True,
-            connection_string=None
-        )
-        
+        config = BrowserSDKConfig(enabled=True, connection_string=None)
+
         self.assertTrue(config.enabled)
         self.assertIsNone(config.connection_string)
 
     def test_browser_sdk_config_empty_connection_string(self):
         """Test BrowserSDKConfig with empty connection string."""
-        config = BrowserSDKConfig(
-            enabled=True,
-            connection_string=""
-        )
-        
+        config = BrowserSDKConfig(enabled=True, connection_string="")
+
         self.assertTrue(config.enabled)
         self.assertEqual(config.connection_string, "")
 

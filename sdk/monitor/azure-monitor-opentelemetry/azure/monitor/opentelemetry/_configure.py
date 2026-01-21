@@ -5,11 +5,7 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, Optional, cast, Any
-
-from opentelemetry.instrumentation.instrumentor import (  # type: ignore
-    BaseInstrumentor,
-)
+from typing import Any, Dict, List, Optional, cast
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, MetricReader
@@ -18,15 +14,13 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
-from opentelemetry.util._importlib_metadata import (
+from opentelemetry.util._importlib_metadata import (  # pylint: disable=import-error
     EntryPoint,
     distributions,
     entry_points,
 )
 
-from azure.monitor.opentelemetry._browser_sdk_loader import (
-    setup_snippet_injection
-)
+from azure.monitor.opentelemetry._browser_sdk_loader import setup_snippet_injection
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
@@ -357,7 +351,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 )
                 continue
             # Load the instrumentor via entrypoint
-            instrumentor: BaseInstrumentor = entry_point.load()
+            instrumentor: Any = entry_point.load()
             # tell instrumentation to not run dep checks again as we already did it above
             instrumentor().instrument(skip_dep_check=True)
         except Exception as ex:  # pylint: disable=broad-except
@@ -424,6 +418,7 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
                     exc_info=ex,
                 )
 
+
 def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
     """Setup browser SDK loader for supported frameworks.
 
@@ -446,17 +441,15 @@ def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
             return
 
         # Get connection string (use browser SDK config first, then main config)
-        connection_string = (browser_sdk_loader_config.get("connection_string") or
-                           cast(str, configurations.get("connection_string", "")))
+        connection_string = browser_sdk_loader_config.get("connection_string") or cast(
+            str, configurations.get("connection_string", "")
+        )
         if not connection_string or not isinstance(connection_string, str):
             _logger.debug("No valid connection string - skipping browser SDK loader setup")
             return
 
         # Create BrowserSDKConfig object
-        browser_config = BrowserSDKConfig(
-            enabled=enabled,
-            connection_string=connection_string
-        )
+        browser_config = BrowserSDKConfig(enabled=enabled, connection_string=connection_string)
 
         # Setup snippet injection for supported frameworks
         setup_snippet_injection(browser_config)
