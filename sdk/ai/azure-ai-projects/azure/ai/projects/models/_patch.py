@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Dict, Optional, Any, Tuple, overload, Mapping, Literal
+from typing import List, Dict, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -15,10 +15,8 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from ._enums import TextResponseFormatConfigurationType
-from ._models import TextResponseFormatConfiguration, CustomCredential as CustomCredentialGenerated
+from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
-from .._utils.model_base import rest_discriminator, rest_field
 
 
 class CustomCredential(CustomCredentialGenerated):
