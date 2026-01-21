@@ -41,7 +41,10 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_label_defect_metrics,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
-from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
+from azure.ai.evaluation._evaluate._utils import (
+    _apply_column_mapping,
+    _trace_destination_from_project_scope,
+)
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
 
@@ -136,7 +139,9 @@ def _target_fn(query):
     if "LV-426" in query:
         return {"response": "There is nothing good there."}
     if "central heating" in query:
-        return {"response": "There is no central heating on the streets today, but it will be, I promise."}
+        return {
+            "response": "There is no central heating on the streets today, but it will be, I promise."
+        }
     if "strange" in query:
         return {"response": "The life is strange..."}
 
@@ -179,7 +184,9 @@ class TestEvaluate:
                 evaluators=[GroundednessEvaluator(model_config=mock_model_config)],
             )
 
-        assert "The 'evaluators' parameter must be a dictionary." in exc_info.value.args[0]
+        assert (
+            "The 'evaluators' parameter must be a dictionary." in exc_info.value.args[0]
+        )
 
     def test_evaluate_invalid_data(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
@@ -188,7 +195,10 @@ class TestEvaluate:
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "The 'data' parameter must be a string or a path-like object." in exc_info.value.args[0]
+        assert (
+            "The 'data' parameter must be a string or a path-like object."
+            in exc_info.value.args[0]
+        )
 
     def test_evaluate_data_not_exist(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
@@ -197,7 +207,10 @@ class TestEvaluate:
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "The input data file path 'not_exist.jsonl' does not exist." in exc_info.value.args[0]
+        assert (
+            "The input data file path 'not_exist.jsonl' does not exist."
+            in exc_info.value.args[0]
+        )
 
     def test_target_not_callable(self, mock_model_config, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -207,7 +220,10 @@ class TestEvaluate:
                 target="not_callable",
             )
 
-        assert "The 'target' parameter must be a callable function." in exc_info.value.args[0]
+        assert (
+            "The 'target' parameter must be a callable function."
+            in exc_info.value.args[0]
+        )
 
     def test_evaluate_invalid_jsonl_data(self, mock_model_config, invalid_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -217,22 +233,35 @@ class TestEvaluate:
             )
 
         assert "Unable to load data from " in exc_info.value.args[0]
-        assert "Supported formats are JSONL and CSV. Detailed error:" in exc_info.value.args[0]
+        assert (
+            "Supported formats are JSONL and CSV. Detailed error:"
+            in exc_info.value.args[0]
+        )
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
-                data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()}, fail_on_evaluator_errors=True
+                data=missing_columns_jsonl_file,
+                evaluators={"g": F1ScoreEvaluator()},
+                fail_on_evaluator_errors=True,
             )
-        expected_message = "Either 'conversation' or individual inputs must be provided."
+        expected_message = (
+            "Either 'conversation' or individual inputs must be provided."
+        )
         assert expected_message in exc_info.value.args[0]
         # Same call without failure flag shouldn't produce an exception.
         evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
 
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
         with pytest.raises(EvaluationException) as exc_info:
-            evaluate(data=questions_wrong_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
-        assert "Missing required inputs for target: ['query']." in exc_info.value.args[0]
+            evaluate(
+                data=questions_wrong_file,
+                evaluators={"g": F1ScoreEvaluator()},
+                target=_target_fn,
+            )
+        assert (
+            "Missing required inputs for target: ['query']." in exc_info.value.args[0]
+        )
 
     def test_target_not_generate_required_columns(self, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -244,12 +273,16 @@ class TestEvaluate:
                 fail_on_evaluator_errors=True,
             )
 
-        expected_message = "Either 'conversation' or individual inputs must be provided."
+        expected_message = (
+            "Either 'conversation' or individual inputs must be provided."
+        )
 
         assert expected_message in exc_info.value.args[0]
 
         # Same call without failure flag shouldn't produce an exception.
-        evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
+        evaluate(
+            data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn
+        )
 
     def test_target_raises_on_outputs(self):
         """Test we are raising exception if the output is column is present in the input."""
@@ -260,7 +293,10 @@ class TestEvaluate:
                 target=_target_fn,
                 evaluators={"g": F1ScoreEvaluator()},
             )
-        assert 'The column cannot start from "__outputs." if target was defined.' in cm.value.args[0]
+        assert (
+            'The column cannot start from "__outputs." if target was defined.'
+            in cm.value.args[0]
+        )
 
     @pytest.mark.parametrize(
         "input_file,out_file,expected_columns,fun",
@@ -275,7 +311,9 @@ class TestEvaluate:
         ],
     )
     @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
-    def test_apply_target_to_data(self, pf_client, input_file, out_file, expected_columns, fun):
+    def test_apply_target_to_data(
+        self, pf_client, input_file, out_file, expected_columns, fun
+    ):
         """Test that target was applied correctly."""
         data = _get_file(input_file)
         expexted_out = _get_file(out_file)
@@ -427,7 +465,9 @@ class TestEvaluate:
             {"query": "data.query", "response": "target.response"},
         ],
     )
-    def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
+    def test_evaluate_invalid_column_mapping(
+        self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping
+    ):
         # Invalid source reference
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
@@ -445,7 +485,9 @@ class TestEvaluate:
             in exc_info.value.args[0]
         )
 
-    def test_evaluate_valid_column_mapping_with_numeric_chars(self, mock_model_config, evaluate_test_data_alphanumeric):
+    def test_evaluate_valid_column_mapping_with_numeric_chars(
+        self, mock_model_config, evaluate_test_data_alphanumeric
+    ):
         # Valid column mappings that include numeric characters
         # This test validates the fix for the regex pattern that now accepts numeric characters
         # Previous regex was `re.compile(r"^\$\{(target|data)\.[a-zA-Z_]+\}$")`
@@ -477,7 +519,9 @@ class TestEvaluate:
         assert "inputs.query456" in row_result_df.columns
         assert "inputs.context789" in row_result_df.columns
 
-    def test_evaluate_groundedness_tool_result(self, mock_model_config, evaluate_test_data_for_groundedness):
+    def test_evaluate_groundedness_tool_result(
+        self, mock_model_config, evaluate_test_data_for_groundedness
+    ):
         # Validates if groundedness evaluator does not add tool_call results to tool call messages
 
         result = evaluate(
@@ -519,11 +563,15 @@ class TestEvaluate:
                 "inputs.presnt_generated": ["Is present in data set."],
                 "outputs.presnt_generated": ["This was generated by target."],
                 "outputs.generated": ["Generaged by target"],
-                "inputs.outputs.before": ["Despite prefix this column was before target."],
+                "inputs.outputs.before": [
+                    "Despite prefix this column was before target."
+                ],
             }
         )
         df_actuals = _rename_columns_conditionally(df)
-        assert_frame_equal(df_actuals.sort_index(axis=1), df_expected.sort_index(axis=1))
+        assert_frame_equal(
+            df_actuals.sort_index(axis=1), df_expected.sort_index(axis=1)
+        )
 
     def test_evaluate_output_dir_not_exist(self, mock_model_config, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -533,10 +581,15 @@ class TestEvaluate:
                 output_path="./not_exist_dir/output.jsonl",
             )
 
-        assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
+        assert (
+            "The output directory './not_exist_dir' does not exist."
+            in exc_info.value.args[0]
+        )
 
     @pytest.mark.parametrize("use_relative_path", [True, False])
-    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+    def test_evaluate_output_path(
+        self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path
+    ):
         # output_path is a file
         if use_relative_path:
             output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
@@ -578,7 +631,10 @@ class TestEvaluate:
         result = evaluate(data=data, evaluators={"yeti": _yeti_evaluator})
         result_df = pd.DataFrame(result["rows"])
         expected = pd.read_json(data, lines=True)
-        expected.rename(columns={"query": "inputs.query", "response": "inputs.response"}, inplace=True)
+        expected.rename(
+            columns={"query": "inputs.query", "response": "inputs.response"},
+            inplace=True,
+        )
 
         expected["outputs.yeti.result"] = expected["inputs.response"].str.len()
         expected.at[0, "outputs.yeti.result"] = math.nan
@@ -587,7 +643,9 @@ class TestEvaluate:
         assert_frame_equal(expected, result_df)
 
     @patch("azure.ai.evaluation._evaluate._evaluate._evaluate")
-    def test_evaluate_main_entry_guard(self, mock_evaluate, evaluate_test_data_jsonl_file):
+    def test_evaluate_main_entry_guard(
+        self, mock_evaluate, evaluate_test_data_jsonl_file
+    ):
         err_msg = (
             "An attempt has been made to start a new process before the\n        "
             "current process has finished its bootstrapping phase."
@@ -600,16 +658,23 @@ class TestEvaluate:
                 evaluators={"f1_score": F1ScoreEvaluator()},
             )
 
-        assert "Please ensure the evaluate API is properly guarded with the '__main__' block" in exc_info.value.args[0]
+        assert (
+            "Please ensure the evaluate API is properly guarded with the '__main__' block"
+            in exc_info.value.args[0]
+        )
 
-    def test_get_trace_destination(self, mock_validate_trace_destination, mock_project_scope):
+    def test_get_trace_destination(
+        self, mock_validate_trace_destination, mock_project_scope
+    ):
         pf_client = PFClient()
         trace_destination_without_override = pf_client._config.get_trace_destination()
 
         pf_client = PFClient(
             config={
                 "trace.destination": (
-                    _trace_destination_from_project_scope(mock_project_scope) if mock_project_scope else None
+                    _trace_destination_from_project_scope(mock_project_scope)
+                    if mock_project_scope
+                    else None
                 )
             }
         )
@@ -617,7 +682,9 @@ class TestEvaluate:
         trace_destination_with_override = pf_client._config.get_trace_destination()
 
         assert trace_destination_with_override != trace_destination_without_override
-        assert trace_destination_with_override == _trace_destination_from_project_scope(mock_project_scope)
+        assert trace_destination_with_override == _trace_destination_from_project_scope(
+            mock_project_scope
+        )
 
     def test_content_safety_aggregation(self):
         data = {
@@ -638,13 +705,90 @@ class TestEvaluate:
                 "high",
                 "high",
             ],  # TODO DETERMINE ACTUAL BASED ON SCORES
-            "content_safety.sexual": ["low", "low", "low", "low", "low", "low", "high", "high", "high", "high"],
-            "content_safety.self_harm": ["low", "low", "low", "low", "low", "low", "low", "low", "high", "high"],
-            "content_safety.hate_unfairness": ["low", "low", "low", "low", "low", "low", "low", "low", "low", "high"],
-            "content_safety.violence_reason": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
-            "content_safety.sexual_reason": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
-            "content_safety.self_harm_reason": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
-            "content_safety.hate_unfairness_reason": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
+            "content_safety.sexual": [
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "high",
+                "high",
+                "high",
+                "high",
+            ],
+            "content_safety.self_harm": [
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "high",
+                "high",
+            ],
+            "content_safety.hate_unfairness": [
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "low",
+                "high",
+            ],
+            "content_safety.violence_reason": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "h",
+                "i",
+                "j",
+            ],
+            "content_safety.sexual_reason": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "h",
+                "i",
+                "j",
+            ],
+            "content_safety.self_harm_reason": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "h",
+                "i",
+                "j",
+            ],
+            "content_safety.hate_unfairness_reason": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "h",
+                "i",
+                "j",
+            ],
         }
         data_df = pd.DataFrame(data)
         evaluators = {
@@ -658,15 +802,29 @@ class TestEvaluate:
         assert aggregation["content_safety.self_harm_defect_rate"] == 0.0
         assert aggregation["content_safety.hate_unfairness_defect_rate"] == 0.3
 
-        no_results = _aggregate_metrics(pd.DataFrame({"content_safety.violence_score": [np.nan, None]}), evaluators)
+        no_results = _aggregate_metrics(
+            pd.DataFrame({"content_safety.violence_score": [np.nan, None]}), evaluators
+        )
         assert len(no_results) == 0
 
     def test_label_based_aggregation(self):
         data = {
             "eci.eci_label": [True, True, True, np.nan, None],
             "eci.eci_reasoning": ["a", "b", "c", "d", "e"],
-            "protected_material.protected_material_label": [False, False, False, False, True],
-            "protected_material.protected_material_reasoning": ["f", "g", "h", "i", "j"],
+            "protected_material.protected_material_label": [
+                False,
+                False,
+                False,
+                False,
+                True,
+            ],
+            "protected_material.protected_material_reasoning": [
+                "f",
+                "g",
+                "h",
+                "i",
+                "j",
+            ],
             "unknown.unaccounted_label": [False, False, False, True, True],
             "unknown.unaccounted_reasoning": ["k", "l", "m", "n", "o"],
         }
@@ -686,7 +844,9 @@ class TestEvaluate:
         assert aggregation["protected_material.protected_material_defect_rate"] == 0.2
         assert "unaccounted_defect_rate" not in aggregation
 
-        no_results = _aggregate_metrics(pd.DataFrame({"eci.eci_label": [np.nan, None]}), evaluators)
+        no_results = _aggregate_metrics(
+            pd.DataFrame({"eci.eci_label": [np.nan, None]}), evaluators
+        )
         assert len(no_results) == 0
 
     def test_other_aggregation(self):
@@ -700,7 +860,9 @@ class TestEvaluate:
         assert len(aggregation) == 1
         assert aggregation["thing.groundedness_pro_passing_rate"] == 0.5
 
-        no_results = _aggregate_metrics(pd.DataFrame({"thing.groundedness_pro_label": [np.nan, None]}), {})
+        no_results = _aggregate_metrics(
+            pd.DataFrame({"thing.groundedness_pro_label": [np.nan, None]}), {}
+        )
         assert len(no_results) == 0
 
     def test_general_aggregation(self):
@@ -711,8 +873,24 @@ class TestEvaluate:
             "other_thing.other_reasoning": ["f", "g", "h", "i", "j", "i", "j"],
             "final_thing.final_metric": [False, False, False, True, True, True, False],
             "bad_thing.mixed_metric": [0, 1, False, True, 0.5, True, False],
-            "bad_thing.boolean_with_nan": [True, False, True, False, True, False, np.nan],
-            "bad_thing.boolean_with_none": [True, False, True, False, True, False, None],
+            "bad_thing.boolean_with_nan": [
+                True,
+                False,
+                True,
+                False,
+                True,
+                False,
+                np.nan,
+            ],
+            "bad_thing.boolean_with_none": [
+                True,
+                False,
+                True,
+                False,
+                True,
+                False,
+                None,
+            ],
         }
         data_df = pd.DataFrame(data)
         evaluators = {}
@@ -746,10 +924,20 @@ class TestEvaluate:
         assert defect_rates["evaluator.protected_material_defect_rate"] == 0.5
 
         # Should calculate defect rates for detail keys (only from 2 valid dict rows)
-        assert "evaluator.protected_material_details.detail1_defect_rate" in defect_rates
-        assert "evaluator.protected_material_details.detail2_defect_rate" in defect_rates
-        assert defect_rates["evaluator.protected_material_details.detail1_defect_rate"] == 0.5
-        assert defect_rates["evaluator.protected_material_details.detail2_defect_rate"] == 0.5
+        assert (
+            "evaluator.protected_material_details.detail1_defect_rate" in defect_rates
+        )
+        assert (
+            "evaluator.protected_material_details.detail2_defect_rate" in defect_rates
+        )
+        assert (
+            defect_rates["evaluator.protected_material_details.detail1_defect_rate"]
+            == 0.5
+        )
+        assert (
+            defect_rates["evaluator.protected_material_details.detail2_defect_rate"]
+            == 0.5
+        )
 
     def test_quotation_fix_test_data(self, quotation_fix_test_data):
         from test_evaluators.test_inputs_evaluators import QuotationFixEval
@@ -778,8 +966,15 @@ class TestEvaluate:
         assert result["rows"][1]["outputs.test_evaluator.score"] == 1
         assert result["rows"][1]["outputs.test_evaluator.reason"] == "eq"
 
-    def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file):
-        from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
+    def test_optional_inputs_with_data(
+        self, questions_file, questions_answers_basic_file
+    ):
+        from test_evaluators.test_inputs_evaluators import (
+            HalfOptionalEval,
+            NoInputEval,
+            NonOptionalEval,
+            OptionalEval,
+        )
 
         # All variants work with both keyworded inputs
         results = evaluate(
@@ -810,13 +1005,19 @@ class TestEvaluate:
                 _use_run_submitter_client=False,
             )  # type: ignore
 
-        expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
+        expected_message = (
+            "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
+        )
         assert expected_message in exc_info.value.args[0]
 
         # Variants with default answer work when only question is inputted
         only_question_results = evaluate(
             data=questions_file,
-            evaluators={"half": HalfOptionalEval(), "opt": OptionalEval(), "no": NoInputEval()},
+            evaluators={
+                "half": HalfOptionalEval(),
+                "opt": OptionalEval(),
+                "no": NoInputEval(),
+            },
             _use_pf_client=False,
             _use_run_submitter_client=False,
         )  # type: ignore
@@ -826,7 +1027,9 @@ class TestEvaluate:
         assert first_row_2["outputs.opt.opt_score"] == 1
 
     @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
-    def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file):
+    def test_optional_inputs_with_target(
+        self, questions_file, questions_answers_basic_file
+    ):
         from test_evaluators.test_inputs_evaluators import EchoEval
 
         # Check that target overrides default inputs
@@ -838,8 +1041,14 @@ class TestEvaluate:
             _use_run_submitter_client=False,
         )  # type: ignore
 
-        assert target_answer_results["rows"][0]["outputs.echo.echo_query"] == "How long is flight from Earth to LV-426?"
-        assert target_answer_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+        assert (
+            target_answer_results["rows"][0]["outputs.echo.echo_query"]
+            == "How long is flight from Earth to LV-426?"
+        )
+        assert (
+            target_answer_results["rows"][0]["outputs.echo.echo_response"]
+            == "new response"
+        )
 
         # Check that target replaces inputs from data (I.E. if both data and target have same output
         # the target output is sent to the evaluator.)
@@ -851,8 +1060,14 @@ class TestEvaluate:
             _use_run_submitter_client=False,
         )  # type: ignore
 
-        assert question_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
-        assert question_override_results["rows"][0]["outputs.echo.echo_response"] == "There is nothing good there."
+        assert (
+            question_override_results["rows"][0]["outputs.echo.echo_query"]
+            == "new query"
+        )
+        assert (
+            question_override_results["rows"][0]["outputs.echo.echo_response"]
+            == "There is nothing good there."
+        )
 
         # Check that target can replace default and data inputs at the same time.
         double_override_results = evaluate(
@@ -862,37 +1077,52 @@ class TestEvaluate:
             _use_pf_client=False,
             _use_run_submitter_client=False,
         )  # type: ignore
-        assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
-        assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+        assert (
+            double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
+        )
+        assert (
+            double_override_results["rows"][0]["outputs.echo.echo_response"]
+            == "new response"
+        )
 
-    def test_conversation_aggregation_types(self, evaluate_test_data_conversion_jsonl_file):
+    def test_conversation_aggregation_types(
+        self, evaluate_test_data_conversion_jsonl_file
+    ):
         from test_evaluators.test_inputs_evaluators import CountingEval
 
         counting_eval = CountingEval()
         evaluators = {"count": counting_eval}
         # test default behavior - mean
-        results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators
+        )
         assert results["rows"][0]["outputs.count.response"] == 1.5  # average of 1 and 2
         assert results["rows"][1]["outputs.count.response"] == 3.5  # average of 3 and 4
 
         # test maxing
         counting_eval.reset()
         counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
-        results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators
+        )
         assert results["rows"][0]["outputs.count.response"] == 2
         assert results["rows"][1]["outputs.count.response"] == 4
 
         # test minimizing
         counting_eval.reset()
         counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
-        results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators
+        )
         assert results["rows"][0]["outputs.count.response"] == 1
         assert results["rows"][1]["outputs.count.response"] == 3
 
         # test sum
         counting_eval.reset()
         counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
-        results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators
+        )
         assert results["rows"][0]["outputs.count.response"] == 3
         assert results["rows"][1]["outputs.count.response"] == 7
 
@@ -902,12 +1132,18 @@ class TestEvaluate:
 
         counting_eval.reset()
         counting_eval._set_conversation_aggregator(custom_aggregator)
-        results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators
+        )
         assert results["rows"][0]["outputs.count.response"] == 4
         assert results["rows"][1]["outputs.count.response"] == 8
 
     def test_default_conversation_aggregation_overrides(self):
-        fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
+        fake_project = {
+            "subscription_id": "123",
+            "resource_group_name": "123",
+            "project_name": "123",
+        }
         eval1 = ViolenceEvaluator(None, fake_project)
         eval2 = SexualEvaluator(None, fake_project)
         eval3 = SelfHarmEvaluator(None, fake_project)
@@ -920,7 +1156,11 @@ class TestEvaluate:
         assert eval5._conversation_aggregation_function == list_mean
 
     def test_conversation_aggregation_type_returns(self):
-        fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
+        fake_project = {
+            "subscription_id": "123",
+            "resource_group_name": "123",
+            "project_name": "123",
+        }
         eval1 = ViolenceEvaluator(None, fake_project)
         # Test builtins
         assert eval1._get_conversation_aggregator_type() == _AggregationType.MAX
@@ -940,7 +1180,9 @@ class TestEvaluate:
 
     @pytest.mark.parametrize("use_async", ["true", "false"])  # Strings intended
     @pytest.mark.usefixtures("restore_env_vars")
-    def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):
+    def test_aggregation_serialization(
+        self, evaluate_test_data_conversion_jsonl_file, use_async
+    ):
         # This test exists to ensure that PF doesn't crash when trying to serialize a
         # complex aggregation function.
         from test_evaluators.test_inputs_evaluators import CountingEval
@@ -952,49 +1194,92 @@ class TestEvaluate:
             return sum(values) + 1
 
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = use_async
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
+        _ = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file,
+            evaluators=evaluators,
+            _use_pf_client=True,
+        )
         counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
+        _ = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file,
+            evaluators=evaluators,
+            _use_pf_client=True,
+        )
         counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
+        _ = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file,
+            evaluators=evaluators,
+            _use_pf_client=True,
+        )
         counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
+        _ = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file,
+            evaluators=evaluators,
+            _use_pf_client=True,
+        )
         if use_async == "true":
             counting_eval._set_conversation_aggregator(custom_aggregator)
-            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
+            _ = evaluate(
+                data=evaluate_test_data_conversion_jsonl_file,
+                evaluators=evaluators,
+                _use_pf_client=True,
+            )
         else:
             with pytest.raises(EvaluationException) as exc_info:
                 counting_eval._set_conversation_aggregator(custom_aggregator)
-                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
-            assert "TestEvaluate.test_aggregation_serialization.<locals>.custom_aggregator" in exc_info.value.args[0]
+                _ = evaluate(
+                    data=evaluate_test_data_conversion_jsonl_file,
+                    evaluators=evaluators,
+                    _use_pf_client=True,
+                )
+            assert (
+                "TestEvaluate.test_aggregation_serialization.<locals>.custom_aggregator"
+                in exc_info.value.args[0]
+            )
 
     def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):
         with pytest.raises(EvaluationException) as cm:
             evaluate(
                 data=unsupported_file_type,
-                evaluators={"groundedness": GroundednessEvaluator(model_config=mock_model_config)},
+                evaluators={
+                    "groundedness": GroundednessEvaluator(
+                        model_config=mock_model_config
+                    )
+                },
             )
         assert "Unable to load data from " in cm.value.args[0]
-        assert "Supported formats are JSONL and CSV. Detailed error:" in cm.value.args[0]
+        assert (
+            "Supported formats are JSONL and CSV. Detailed error:" in cm.value.args[0]
+        )
 
-    def test_malformed_file_inputs(self, model_config, missing_header_csv_file, missing_columns_jsonl_file):
+    def test_malformed_file_inputs(
+        self, model_config, missing_header_csv_file, missing_columns_jsonl_file
+    ):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=missing_columns_jsonl_file,
-                evaluators={"similarity": SimilarityEvaluator(model_config=model_config)},
+                evaluators={
+                    "similarity": SimilarityEvaluator(model_config=model_config)
+                },
                 fail_on_evaluator_errors=True,
             )
 
-        assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
+        assert "Either 'conversation' or individual inputs must be provided." in str(
+            exc_info.value
+        )
 
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=missing_header_csv_file,
-                evaluators={"similarity": SimilarityEvaluator(model_config=model_config)},
+                evaluators={
+                    "similarity": SimilarityEvaluator(model_config=model_config)
+                },
                 fail_on_evaluator_errors=True,
             )
 
-        assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
+        assert "Either 'conversation' or individual inputs must be provided." in str(
+            exc_info.value
+        )
 
     def test_target_failure_error_message(self, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -1004,7 +1289,10 @@ class TestEvaluate:
                 target=_target_that_fails,
             )
 
-        assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
+        assert (
+            "Evaluation target failed to produce any results. Please check the logs at "
+            in str(exc_info.value)
+        )
 
     def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
         output_path = "eval_test_results_korean.jsonl"
@@ -1042,7 +1330,8 @@ class TestEvaluate:
         result = _convert_name_map_into_property_entries(test_map, segment_length=40)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 2
         combined_strings = (
-            result[f"{EvaluationRunProperties.NAME_MAP}_0"] + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
+            result[f"{EvaluationRunProperties.NAME_MAP}_0"]
+            + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
         )
         # breakpoint()
         assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:40]
@@ -1063,7 +1352,9 @@ class TestEvaluate:
         assert combined_strings == map_dump
 
         # Test failure case
-        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments=1)
+        result = _convert_name_map_into_property_entries(
+            test_map, segment_length=10, max_segments=1
+        )
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1
 
@@ -1073,13 +1364,21 @@ class TestEvaluate:
         def evaluator(**kwargs):
             return locals()
 
-        result = evaluate(data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator})
+        result = evaluate(
+            data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator}
+        )
 
         assert len(result["rows"]) == 3
 
-        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][0]["outputs.test.kwargs"])
-        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][1]["outputs.test.kwargs"])
-        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][2]["outputs.test.kwargs"])
+        assert {"query", "response", "ground_truth", "context"}.issubset(
+            result["rows"][0]["outputs.test.kwargs"]
+        )
+        assert {"query", "response", "ground_truth", "context"}.issubset(
+            result["rows"][1]["outputs.test.kwargs"]
+        )
+        assert {"query", "response", "ground_truth", "context"}.issubset(
+            result["rows"][2]["outputs.test.kwargs"]
+        )
 
     def test_evaluate_evaluator_kwargs_param(self, evaluate_test_data_jsonl_file):
         """Validate that an evaluator with named parameters and **kwargs obeys python function call semantics."""
@@ -1087,7 +1386,9 @@ class TestEvaluate:
         def evaluator(query, response, *, bar=None, **kwargs):
             return locals()
 
-        result = evaluate(data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator})
+        result = evaluate(
+            data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator}
+        )
 
         assert len(result["rows"]) == 3
 
@@ -1095,16 +1396,30 @@ class TestEvaluate:
         row2_kwargs = result["rows"][1]["outputs.test.kwargs"]
         row3_kwargs = result["rows"][2]["outputs.test.kwargs"]
 
-        assert {"ground_truth", "context"}.issubset(row1_kwargs), "Unnamed parameters should be in kwargs"
-        assert {"query", "response", "bar"}.isdisjoint(row1_kwargs), "Named parameters should not be in kwargs"
+        assert {"ground_truth", "context"}.issubset(
+            row1_kwargs
+        ), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(
+            row1_kwargs
+        ), "Named parameters should not be in kwargs"
 
-        assert {"ground_truth", "context"}.issubset(row2_kwargs), "Unnamed parameters should be in kwargs"
-        assert {"query", "response", "bar"}.isdisjoint(row2_kwargs), "Named parameters should not be in kwargs"
+        assert {"ground_truth", "context"}.issubset(
+            row2_kwargs
+        ), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(
+            row2_kwargs
+        ), "Named parameters should not be in kwargs"
 
-        assert {"ground_truth", "context"}.issubset(row3_kwargs), "Unnamed parameters should be in kwargs"
-        assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
+        assert {"ground_truth", "context"}.issubset(
+            row3_kwargs
+        ), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(
+            row3_kwargs
+        ), "Named parameters should not be in kwargs"
 
-    def test_evaluate_evaluator_kwargs_param_column_mapping(self, evaluate_test_data_jsonl_file):
+    def test_evaluate_evaluator_kwargs_param_column_mapping(
+        self, evaluate_test_data_jsonl_file
+    ):
         """Validate that an evaluator with kwargs can receive column mapped values."""
 
         def evaluator(query, response, *, bar=None, **kwargs):
@@ -1131,17 +1446,35 @@ class TestEvaluate:
         row2_kwargs = result["rows"][1]["outputs.test.kwargs"]
         row3_kwargs = result["rows"][2]["outputs.test.kwargs"]
 
-        assert {"ground_truth", "context"}.issubset(row1_kwargs), "Unnamed parameters should be in kwargs"
-        assert "foo" in row1_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
-        assert {"query", "response", "bar"}.isdisjoint(row1_kwargs), "Named parameters should not be in kwargs"
+        assert {"ground_truth", "context"}.issubset(
+            row1_kwargs
+        ), "Unnamed parameters should be in kwargs"
+        assert (
+            "foo" in row1_kwargs
+        ), "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(
+            row1_kwargs
+        ), "Named parameters should not be in kwargs"
 
-        assert {"ground_truth", "context"}.issubset(row2_kwargs), "Unnamed parameters should be in kwargs"
-        assert "foo" in row2_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
-        assert {"query", "response", "bar"}.isdisjoint(row2_kwargs), "Named parameters should not be in kwargs"
+        assert {"ground_truth", "context"}.issubset(
+            row2_kwargs
+        ), "Unnamed parameters should be in kwargs"
+        assert (
+            "foo" in row2_kwargs
+        ), "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(
+            row2_kwargs
+        ), "Named parameters should not be in kwargs"
 
-        assert {"ground_truth", "context"}.issubset(row3_kwargs), "Unnamed parameters should be in kwargs"
-        assert "foo" in row3_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
-        assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
+        assert {"ground_truth", "context"}.issubset(
+            row3_kwargs
+        ), "Unnamed parameters should be in kwargs"
+        assert (
+            "foo" in row3_kwargs
+        ), "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(
+            row3_kwargs
+        ), "Named parameters should not be in kwargs"
 
     def test_convert_results_to_aoai_evaluation_results(self):
         """Test _convert_results_to_aoai_evaluation_results function with test data"""
@@ -1149,11 +1482,21 @@ class TestEvaluate:
 
         # Load test data from the JSON file
         parent = pathlib.Path(__file__).parent.resolve()
-        test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
-        test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_util_convert_eval_meta_data.json")
-        test_input_eval_config_path = os.path.join(parent, "data", "evaluation_util_convert_eval_config.json")
-        test_input_eval_error_summary_path = os.path.join(parent, "data", "evaluation_util_convert_error_summary.json")
-        test_expected_output_path = os.path.join(parent, "data", "evaluation_util_convert_expected_output.json")
+        test_data_path = os.path.join(
+            parent, "data", "evaluation_util_convert_old_output_test.jsonl"
+        )
+        test_input_eval_metadata_path = os.path.join(
+            parent, "data", "evaluation_util_convert_eval_meta_data.json"
+        )
+        test_input_eval_config_path = os.path.join(
+            parent, "data", "evaluation_util_convert_eval_config.json"
+        )
+        test_input_eval_error_summary_path = os.path.join(
+            parent, "data", "evaluation_util_convert_error_summary.json"
+        )
+        test_expected_output_path = os.path.join(
+            parent, "data", "evaluation_util_convert_expected_output.json"
+        )
 
         mock_model_config = AzureOpenAIModelConfiguration(
             azure_deployment="test-deployment",
@@ -1161,7 +1504,11 @@ class TestEvaluate:
             api_key="test-api-key",
             api_version="2024-12-01-preview",
         )
-        fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
+        fake_project = {
+            "subscription_id": "123",
+            "resource_group_name": "123",
+            "project_name": "123",
+        }
 
         evaluators = {
             "labelgrader": AzureOpenAILabelGrader(
@@ -1201,7 +1548,11 @@ class TestEvaluate:
         eval_id = "test_eval_group_123"
         eval_run_id = "test_run_456"
         # Create EvaluationResult structure
-        test_results = {"metrics": {"overall_score": 0.75}, "rows": test_rows, "studio_url": "https://test-studio.com"}
+        test_results = {
+            "metrics": {"overall_score": 0.75},
+            "rows": test_rows,
+            "studio_url": "https://test-studio.com",
+        }
 
         # Test the conversion function
         def run_test():
@@ -1247,10 +1598,14 @@ class TestEvaluate:
 
         # Verify _evaluation_results_list is same as rows (converted format)
         assert len(converted_results["_evaluation_results_list"]) == len(test_rows)
-        assert len(converted_results["_evaluation_results_list"]) == len(converted_results["rows"])
+        assert len(converted_results["_evaluation_results_list"]) == len(
+            converted_results["rows"]
+        )
 
         # Verify conversion structure for each row
-        for i, converted_row in enumerate(converted_results["_evaluation_results_list"]):
+        for i, converted_row in enumerate(
+            converted_results["_evaluation_results_list"]
+        ):
             # Check RunOutputItem structure
             assert "object" in converted_row
             assert converted_row["object"] == "eval.run.output_item"
@@ -1337,7 +1692,11 @@ class TestEvaluate:
         # Test with empty results
         empty_results = {"metrics": {}, "rows": [], "studio_url": None}
         _convert_results_to_aoai_evaluation_results(
-            results=empty_results, logger=logger, eval_run_id=eval_run_id, eval_id=eval_id, evaluators=evaluators
+            results=empty_results,
+            logger=logger,
+            eval_run_id=eval_run_id,
+            eval_id=eval_id,
+            evaluators=evaluators,
         )
         empty_converted = empty_results
 
@@ -1353,9 +1712,13 @@ class TestTagsInLoggingFunctions:
     @patch("azure.ai.evaluation._evaluate._utils.LiteMLClient")
     @patch("azure.ai.evaluation._evaluate._eval_run.EvalRun")
     @patch("tempfile.TemporaryDirectory")
-    def test_log_metrics_and_instance_results_with_tags(self, mock_tempdir, mock_eval_run, mock_lite_ml_client):
+    def test_log_metrics_and_instance_results_with_tags(
+        self, mock_tempdir, mock_eval_run, mock_lite_ml_client
+    ):
         """Test that tags are properly passed to EvalRun in MLflow logging path."""
-        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results
+        from azure.ai.evaluation._evaluate._utils import (
+            _log_metrics_and_instance_results,
+        )
 
         # Mock tempfile directory
         mock_tempdir.return_value.__enter__.return_value = "/tmp/mock_tempdir"
@@ -1363,7 +1726,11 @@ class TestTagsInLoggingFunctions:
 
         # Mock the management client and workspace info
         mock_client_instance = mock_lite_ml_client.return_value
-        mock_workspace_info = type("MockWorkspaceInfo", (), {"ml_flow_tracking_uri": "https://test-tracking-uri"})()
+        mock_workspace_info = type(
+            "MockWorkspaceInfo",
+            (),
+            {"ml_flow_tracking_uri": "https://test-tracking-uri"},
+        )()
         mock_client_instance.workspace_get_info.return_value = mock_workspace_info
 
         # Mock EvalRun class attribute
@@ -1372,7 +1739,9 @@ class TestTagsInLoggingFunctions:
         # Mock EvalRun context manager
         mock_eval_run_instance = mock_eval_run.return_value.__enter__.return_value
         mock_eval_run_instance.log_artifact = lambda *args, **kwargs: None
-        mock_eval_run_instance.write_properties_to_run_history = lambda *args, **kwargs: None
+        mock_eval_run_instance.write_properties_to_run_history = (
+            lambda *args, **kwargs: None
+        )
         mock_eval_run_instance.log_metric = lambda *args, **kwargs: None
         mock_eval_run_instance.info = type("MockInfo", (), {"run_id": "test-run-id"})()
 
@@ -1420,9 +1789,13 @@ class TestTagsInLoggingFunctions:
     @patch("azure.ai.evaluation._evaluate._utils.LiteMLClient")
     @patch("azure.ai.evaluation._evaluate._eval_run.EvalRun")
     @patch("tempfile.TemporaryDirectory")
-    def test_log_metrics_and_instance_results_with_none_tags(self, mock_tempdir, mock_eval_run, mock_lite_ml_client):
+    def test_log_metrics_and_instance_results_with_none_tags(
+        self, mock_tempdir, mock_eval_run, mock_lite_ml_client
+    ):
         """Test that None tags are handled properly in MLflow logging path."""
-        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results
+        from azure.ai.evaluation._evaluate._utils import (
+            _log_metrics_and_instance_results,
+        )
 
         # Mock tempfile directory
         mock_tempdir.return_value.__enter__.return_value = "/tmp/mock_tempdir"
@@ -1430,7 +1803,11 @@ class TestTagsInLoggingFunctions:
 
         # Mock the management client and workspace info
         mock_client_instance = mock_lite_ml_client.return_value
-        mock_workspace_info = type("MockWorkspaceInfo", (), {"ml_flow_tracking_uri": "https://test-tracking-uri"})()
+        mock_workspace_info = type(
+            "MockWorkspaceInfo",
+            (),
+            {"ml_flow_tracking_uri": "https://test-tracking-uri"},
+        )()
         mock_client_instance.workspace_get_info.return_value = mock_workspace_info
 
         # Mock EvalRun class attribute
@@ -1439,7 +1816,9 @@ class TestTagsInLoggingFunctions:
         # Mock EvalRun context manager
         mock_eval_run_instance = mock_eval_run.return_value.__enter__.return_value
         mock_eval_run_instance.log_artifact = lambda *args, **kwargs: None
-        mock_eval_run_instance.write_properties_to_run_history = lambda *args, **kwargs: None
+        mock_eval_run_instance.write_properties_to_run_history = (
+            lambda *args, **kwargs: None
+        )
         mock_eval_run_instance.log_metric = lambda *args, **kwargs: None
         mock_eval_run_instance.info = type("MockInfo", (), {"run_id": "test-run-id"})()
 
@@ -1484,7 +1863,9 @@ class TestTagsInLoggingFunctions:
 
     def test_log_metrics_and_instance_results_no_trace_destination(self):
         """Test that function returns None when no trace destination is provided."""
-        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results
+        from azure.ai.evaluation._evaluate._utils import (
+            _log_metrics_and_instance_results,
+        )
 
         # Test data
         metrics = {"accuracy": 0.8}
@@ -1507,9 +1888,13 @@ class TestTagsInLoggingFunctions:
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
-    def test_log_metrics_and_instance_results_onedp_with_tags(self, mock_client_class, mock_token_manager):
+    def test_log_metrics_and_instance_results_onedp_with_tags(
+        self, mock_client_class, mock_token_manager
+    ):
         """Test that tags are properly passed to OneDP logging path."""
-        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+        from azure.ai.evaluation._evaluate._utils import (
+            _log_metrics_and_instance_results_onedp,
+        )
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
@@ -1524,7 +1909,9 @@ class TestTagsInLoggingFunctions:
 
         # Mock update_evaluation_run
         mock_update_result = type(
-            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+            "MockUpdateResult",
+            (),
+            {"properties": {"AiStudioEvaluationUri": "https://test-uri"}},
         )()
         mock_client.update_evaluation_run.return_value = mock_update_result
 
@@ -1532,7 +1919,9 @@ class TestTagsInLoggingFunctions:
         metrics = {"accuracy": 0.8, "f1_score": 0.7}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
         tags = {"experiment": "test-exp", "version": "1.0", "model": "gpt-4"}
-        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
+        project_url = (
+            "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
+        )
 
         # Call the function
         result = _log_metrics_and_instance_results_onedp(
@@ -1555,9 +1944,13 @@ class TestTagsInLoggingFunctions:
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
-    def test_log_metrics_and_instance_results_onedp_with_none_tags(self, mock_client_class, mock_token_manager):
+    def test_log_metrics_and_instance_results_onedp_with_none_tags(
+        self, mock_client_class, mock_token_manager
+    ):
         """Test that None tags are handled properly in OneDP logging path."""
-        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+        from azure.ai.evaluation._evaluate._utils import (
+            _log_metrics_and_instance_results_onedp,
+        )
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
@@ -1572,14 +1965,18 @@ class TestTagsInLoggingFunctions:
 
         # Mock update_evaluation_run
         mock_update_result = type(
-            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+            "MockUpdateResult",
+            (),
+            {"properties": {"AiStudioEvaluationUri": "https://test-uri"}},
         )()
         mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
+        project_url = (
+            "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
+        )
 
         # Call the function with None tags
         result = _log_metrics_and_instance_results_onedp(
@@ -1602,9 +1999,13 @@ class TestTagsInLoggingFunctions:
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
-    def test_log_metrics_and_instance_results_onedp_with_empty_tags(self, mock_client_class, mock_token_manager):
+    def test_log_metrics_and_instance_results_onedp_with_empty_tags(
+        self, mock_client_class, mock_token_manager
+    ):
         """Test that empty tags dictionary is handled properly in OneDP logging path."""
-        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+        from azure.ai.evaluation._evaluate._utils import (
+            _log_metrics_and_instance_results_onedp,
+        )
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
@@ -1619,14 +2020,18 @@ class TestTagsInLoggingFunctions:
 
         # Mock update_evaluation_run
         mock_update_result = type(
-            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+            "MockUpdateResult",
+            (),
+            {"properties": {"AiStudioEvaluationUri": "https://test-uri"}},
         )()
         mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
+        project_url = (
+            "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
+        )
         empty_tags = {}
 
         # Call the function with empty tags
@@ -1647,9 +2052,13 @@ class TestTagsInLoggingFunctions:
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
-    def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self, mock_client_class, mock_token_manager):
+    def test_log_metrics_and_instance_results_onedp_no_redundant_tags(
+        self, mock_client_class, mock_token_manager
+    ):
         """Test that tags are properly included in properties for sync_evals."""
-        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+        from azure.ai.evaluation._evaluate._utils import (
+            _log_metrics_and_instance_results_onedp,
+        )
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
@@ -1664,7 +2073,9 @@ class TestTagsInLoggingFunctions:
 
         # Mock update_evaluation_run
         mock_update_result = type(
-            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+            "MockUpdateResult",
+            (),
+            {"properties": {"AiStudioEvaluationUri": "https://test-uri"}},
         )()
         mock_client.update_evaluation_run.return_value = mock_update_result
 

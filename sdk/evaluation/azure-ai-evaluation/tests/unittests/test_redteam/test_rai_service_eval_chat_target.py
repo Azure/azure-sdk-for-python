@@ -12,7 +12,9 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
+    from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import (
+        RAIServiceEvalChatTarget,
+    )
     from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
     from pyrit.models import PromptRequestResponse, PromptRequestPiece
     from pyrit.common import initialize_pyrit, IN_MEMORY
@@ -54,8 +56,12 @@ def mock_prompt_request():
 
 
 @pytest.mark.asyncio
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service_sync")
-async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, mock_azure_ai_project):
+@mock.patch(
+    "azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service_sync"
+)
+async def test_send_prompt_async_success(
+    mock_evaluate, mock_prompt_request, mock_azure_ai_project
+):
     """Tests successful evaluation and response formatting."""
     target = RAIServiceEvalChatTarget(
         credential=MockCredential,
@@ -109,8 +115,12 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
 
 
 @pytest.mark.asyncio
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service_sync")
-async def test_send_prompt_async_fail_score(mock_evaluate, mock_prompt_request, mock_azure_ai_project):
+@mock.patch(
+    "azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service_sync"
+)
+async def test_send_prompt_async_fail_score(
+    mock_evaluate, mock_prompt_request, mock_azure_ai_project
+):
     """Tests evaluation resulting in a 'false' score."""
     target = RAIServiceEvalChatTarget(
         credential=mock_credential,
@@ -142,7 +152,9 @@ async def test_send_prompt_async_fail_score(mock_evaluate, mock_prompt_request, 
 
 def test_validate_request_success(mock_prompt_request, mock_azure_ai_project):
     """Tests successful validation."""
-    target = RAIServiceEvalChatTarget(MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger)
+    target = RAIServiceEvalChatTarget(
+        MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger
+    )
     try:
         target._validate_request(prompt_request=mock_prompt_request)
     except ValueError:
@@ -151,15 +163,21 @@ def test_validate_request_success(mock_prompt_request, mock_azure_ai_project):
 
 def test_validate_request_invalid_pieces(mock_prompt_request, mock_azure_ai_project):
     """Tests validation failure with multiple pieces."""
-    target = RAIServiceEvalChatTarget(MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger)
-    mock_prompt_request.request_pieces.append(mock_prompt_request.request_pieces[0])  # Add a second piece
+    target = RAIServiceEvalChatTarget(
+        MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger
+    )
+    mock_prompt_request.request_pieces.append(
+        mock_prompt_request.request_pieces[0]
+    )  # Add a second piece
     with pytest.raises(ValueError, match="only supports a single prompt request piece"):
         target._validate_request(prompt_request=mock_prompt_request)
 
 
 def test_validate_request_invalid_type(mock_prompt_request, mock_azure_ai_project):
     """Tests validation failure with non-text data type."""
-    target = RAIServiceEvalChatTarget(MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger)
+    target = RAIServiceEvalChatTarget(
+        MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger
+    )
     mock_prompt_request.request_pieces[0].converted_value_data_type = "image"
     with pytest.raises(ValueError, match="only supports text prompt input"):
         target._validate_request(prompt_request=mock_prompt_request)
@@ -167,7 +185,9 @@ def test_validate_request_invalid_type(mock_prompt_request, mock_azure_ai_projec
 
 def test_is_json_response_supported(mock_azure_ai_project):
     """Tests if JSON response is supported."""
-    target = RAIServiceEvalChatTarget(MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger)
+    target = RAIServiceEvalChatTarget(
+        MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger
+    )
     assert target.is_json_response_supported() is True
 
 

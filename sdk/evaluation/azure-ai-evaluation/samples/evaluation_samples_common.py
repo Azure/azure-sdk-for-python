@@ -19,7 +19,9 @@ USAGE:
 class EvaluationCommonSamples(object):
     def evaluation_common_classes_methods(self):
         # [START create_AOAI_model_config]
-        from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration
+        from azure.ai.evaluation._model_configurations import (
+            AzureOpenAIModelConfiguration,
+        )
 
         model_config = AzureOpenAIModelConfiguration(
             azure_endpoint="https://abcdefghijklmnopqrstuvwxyz.api.cognitive.microsoft.com",
@@ -34,7 +36,9 @@ class EvaluationCommonSamples(object):
         from azure.ai.evaluation._model_configurations import OpenAIModelConfiguration
 
         oai_model_config = OpenAIModelConfiguration(
-            api_key="my-oai-api-key", base_url="https://api.openai.com/v1", model="gpt-3.5-turbo"
+            api_key="my-oai-api-key",
+            base_url="https://api.openai.com/v1",
+            model="gpt-3.5-turbo",
         )
 
         # [END create_OAI_model_config]
@@ -52,7 +56,9 @@ class EvaluationCommonSamples(object):
 
         # [START python_grader_example]
         from azure.ai.evaluation import AzureOpenAIPythonGrader, evaluate
-        from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration
+        from azure.ai.evaluation._model_configurations import (
+            AzureOpenAIModelConfiguration,
+        )
         import os
 
         # Configure your Azure OpenAI connection

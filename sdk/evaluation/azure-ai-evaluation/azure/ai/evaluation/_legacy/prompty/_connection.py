@@ -12,7 +12,10 @@ from azure.ai.evaluation._legacy.prompty._utils import dataclass_from_dict
 
 
 def _is_empty_connection_config(connection_dict: Mapping[str, Any]) -> bool:
-    return any(key not in {"azure_deployment", "model", "type"} for key in connection_dict.keys())
+    return any(
+        key not in {"azure_deployment", "model", "type"}
+        for key in connection_dict.keys()
+    )
 
 
 @dataclass

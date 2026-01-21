@@ -82,7 +82,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
-    _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
+    _TOOL_DEFINITIONS_MISSING_MESSAGE = (
+        "Tool definitions for all tool calls must be provided."
+    )
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
@@ -91,7 +93,14 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, credential=None, **kwargs):
+    def __init__(
+        self,
+        model_config,
+        *,
+        threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE,
+        credential=None,
+        **kwargs,
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -207,15 +216,21 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         if eval_input.get("query") is None:
             raise EvaluationException(
-                message=("Query is a required input to the Tool Call Accuracy evaluator."),
-                internal_message=("Query is a required input to the Tool Call Accuracy evaluator."),
+                message=(
+                    "Query is a required input to the Tool Call Accuracy evaluator."
+                ),
+                internal_message=(
+                    "Query is a required input to the Tool Call Accuracy evaluator."
+                ),
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
             )
 
         # Single LLM call for all tool calls
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
         llm_output = prompty_output_dict.get("llm_output", {})
         if isinstance(llm_output, dict):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
@@ -243,13 +258,25 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_details": llm_output.get("details", {}),
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get(
+                    "input_token_count", 0
+                ),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get(
+                    "output_token_count", 0
+                ),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get(
+                    "total_token_count", 0
+                ),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get(
+                    "finish_reason", ""
+                ),
                 f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get(
+                    "sample_input", ""
+                ),
+                f"{self._result_key}_sample_output": prompty_output_dict.get(
+                    "sample_output", ""
+                ),
             }
             return response_dict
 
@@ -273,7 +300,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
+            return self._not_applicable_result(
+                eval_input.get("error_message"), self.threshold
+            )
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

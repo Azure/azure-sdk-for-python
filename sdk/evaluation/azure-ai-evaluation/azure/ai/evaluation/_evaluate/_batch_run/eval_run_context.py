@@ -5,9 +5,15 @@ import os
 import types
 from typing import Optional, Type, Union
 
-from azure.ai.evaluation._legacy._adapters._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
+from azure.ai.evaluation._legacy._adapters._constants import (
+    PF_FLOW_ENTRY_IN_TMP,
+    PF_FLOW_META_LOAD_IN_SUBPROCESS,
+)
 from azure.ai.evaluation._legacy._adapters.utils import ClientUserAgentUtil
-from azure.ai.evaluation._legacy._adapters.tracing import inject_openai_api, recover_openai_api
+from azure.ai.evaluation._legacy._adapters.tracing import (
+    inject_openai_api,
+    recover_openai_api,
+)
 from azure.ai.evaluation._legacy._batch_engine._openai_injector import (
     inject_openai_api as ported_inject_openai_api,
     recover_openai_api as ported_recover_openai_api,
@@ -64,7 +70,9 @@ class EvalRunContext:
 
             # For dealing with the timeout issue of OpenTelemetry exporter when multiple evaluators are running
             if os.environ.get(OTEL_EXPORTER_OTLP_TRACES_TIMEOUT) is None:
-                os.environ[OTEL_EXPORTER_OTLP_TRACES_TIMEOUT] = str(OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT)
+                os.environ[OTEL_EXPORTER_OTLP_TRACES_TIMEOUT] = str(
+                    OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT
+                )
                 self._is_otel_timeout_set_by_system = True
 
             # For addressing the issue of asyncio event loop closed on Windows

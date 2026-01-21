@@ -13,13 +13,26 @@ import warnings
 from tqdm import tqdm
 
 from azure.ai.evaluation._common._experimental import experimental
-from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    validate_azure_ai_project,
+    is_onedp_project,
+)
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak
-from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+from azure.ai.evaluation.simulator import (
+    AdversarialScenario,
+    AdversarialScenarioJailbreak,
+)
+from azure.ai.evaluation.simulator._adversarial_scenario import (
+    _UnstableAdversarialScenario,
+)
 from azure.ai.evaluation._constants import TokenScope
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
@@ -67,7 +80,12 @@ class AdversarialSimulator:
                 2 conversation turns each (4 messages per result).
     """
 
-    def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
+    def __init__(
+        self,
+        *,
+        azure_ai_project: Union[str, AzureAIProject],
+        credential: TokenCredential,
+    ):
         """Constructor."""
         warnings.warn(
             "DEPRECATION NOTE: Azure AI Evaluation SDK has discontinued active development on the AdversarialSimulator class."
@@ -86,7 +104,9 @@ class AdversarialSimulator:
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+            self.rai_client = AIProjectClient(
+                endpoint=azure_ai_project, credential=credential
+            )
         else:
             try:
                 self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
@@ -104,7 +124,9 @@ class AdversarialSimulator:
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+            self.rai_client = RAIClient(
+                azure_ai_project=self.azure_ai_project, token_manager=self.token_manager
+            )
 
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
@@ -208,7 +230,9 @@ class AdversarialSimulator:
                 blame=ErrorBlame.USER_ERROR,
             )
         self._ensure_service_dependencies()
-        templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
+        templates = await self.adversarial_template_handler._get_content_harm_template_collections(
+            scenario.value
+        )
         if len(templates) == 0:
             raise EvaluationException(
                 message="Templates not found. Please check https://aka.ms/azureaiadvsimulator-regionsupport for region support.",
@@ -216,7 +240,9 @@ class AdversarialSimulator:
                 target=ErrorTarget.ADVERSARIAL_SIMULATOR,
             )
         simulation_id = str(uuid.uuid4())
-        logger.warning("Use simulation_id to help debug the issue: %s", str(simulation_id))
+        logger.warning(
+            "Use simulation_id to help debug the issue: %s", str(simulation_id)
+        )
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []
@@ -234,12 +260,22 @@ class AdversarialSimulator:
         _jailbreak_type = kwargs.get("_jailbreak_type", None)
         if _jailbreak_type:
             if isinstance(self.rai_client, RAIClient):
-                jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset(type=_jailbreak_type)
+                jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset(
+                    type=_jailbreak_type
+                )
             elif isinstance(self.rai_client, AIProjectClient):
-                jailbreak_dataset = self.rai_client.red_teams.get_jail_break_dataset_with_type(type=_jailbreak_type)
+                jailbreak_dataset = (
+                    self.rai_client.red_teams.get_jail_break_dataset_with_type(
+                        type=_jailbreak_type
+                    )
+                )
         progress_bar = tqdm(
             total=total_tasks,
-            desc="generating jailbreak simulations" if _jailbreak_type else "generating simulations",
+            desc=(
+                "generating jailbreak simulations"
+                if _jailbreak_type
+                else "generating simulations"
+            ),
             ncols=100,
             unit="simulations",
         )
@@ -331,7 +367,9 @@ class AdversarialSimulator:
             if m.full_response is not None and "context" in m.full_response:
                 message["context"] = m.full_response["context"]
             messages.append(message)
-        conversation_category = cast(Dict[str, str], template_parameters.pop("metadata", {})).get("Category")
+        conversation_category = cast(
+            Dict[str, str], template_parameters.pop("metadata", {})
+        ).get("Category")
         template_parameters["metadata"] = {}
         for key in (
             "conversation_starter",
@@ -375,7 +413,11 @@ class AdversarialSimulator:
             simulation_id=simulation_id,
         )
         system_bot = self._setup_bot(
-            target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
+            target=target,
+            role=ConversationRole.ASSISTANT,
+            template=template,
+            parameters=parameters,
+            scenario=scenario,
         )
         bots = [user_bot, system_bot]
 
@@ -408,10 +450,14 @@ class AdversarialSimulator:
         )
 
     def _get_user_proxy_completion_model(
-        self, template_key: str, template_parameters: TemplateParameters, simulation_id: str = ""
+        self,
+        template_key: str,
+        template_parameters: TemplateParameters,
+        simulation_id: str = "",
     ) -> ProxyChatCompletionsModel:
         endpoint_url = (
-            self.rai_client._config.endpoint + "/redTeams/simulation/chat/completions/submit"
+            self.rai_client._config.endpoint
+            + "/redTeams/simulation/chat/completions/submit"
             if isinstance(self.rai_client, AIProjectClient)
             else self.rai_client.simulation_submit_endpoint
         )
@@ -503,7 +549,9 @@ class AdversarialSimulator:
             blame=ErrorBlame.SYSTEM_ERROR,
         )
 
-    def _add_jailbreak_parameter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
+    def _add_jailbreak_parameter(
+        self, parameters: TemplateParameters, to_join: str
+    ) -> TemplateParameters:
         parameters["jailbreak_string"] = to_join
         return parameters
 

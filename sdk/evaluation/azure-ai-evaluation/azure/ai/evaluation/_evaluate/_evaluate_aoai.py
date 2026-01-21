@@ -8,16 +8,36 @@ import re
 
 from openai import AzureOpenAI, OpenAI
 import pandas as pd
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List, cast, Set
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Tuple,
+    TypeVar,
+    Union,
+    Type,
+    Optional,
+    TypedDict,
+    List,
+    cast,
+    Set,
+)
 from time import sleep
 
 from ._batch_run import CodeClient, ProxyClient
 
 # import aoai_mapping
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import is_onedp_project
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
@@ -85,7 +105,9 @@ def _split_evaluators_and_grader_configs(
     :return: Tuple of two dictionaries, the first containing evaluators and the second containing AOAI graders.
     :rtype: Tuple[Dict[str, Callable], Dict[str, AoaiGrader]]
     """
-    LOGGER.info(f"AOAI: Splitting {len(evaluators)} evaluators into AOAI graders and standard evaluators...")
+    LOGGER.info(
+        f"AOAI: Splitting {len(evaluators)} evaluators into AOAI graders and standard evaluators..."
+    )
     true_evaluators = {}
     aoai_graders = {}
     for key, value in evaluators.items():
@@ -93,7 +115,9 @@ def _split_evaluators_and_grader_configs(
             aoai_graders[key] = value
         else:
             true_evaluators[key] = value
-    LOGGER.info(f"AOAI: Found {len(aoai_graders)} AOAI graders and {len(true_evaluators)} standard evaluators.")
+    LOGGER.info(
+        f"AOAI: Found {len(aoai_graders)} AOAI graders and {len(true_evaluators)} standard evaluators."
+    )
     return true_evaluators, aoai_graders
 
 
@@ -128,21 +152,33 @@ def _begin_aoai_evaluation(
     :rtype: List[OAIEvalRunCreationInfo]
     """
 
-    LOGGER.info("AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group...")
+    LOGGER.info(
+        "AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group..."
+    )
     all_eval_run_info: List[OAIEvalRunCreationInfo] = []
 
-    grader_mapping_list = list(_get_graders_and_column_mappings(graders, column_mappings))
-    LOGGER.info(f"AOAI: Will create {len(grader_mapping_list)} separate evaluation run(s) based on column mappings.")
+    grader_mapping_list = list(
+        _get_graders_and_column_mappings(graders, column_mappings)
+    )
+    LOGGER.info(
+        f"AOAI: Will create {len(grader_mapping_list)} separate evaluation run(s) based on column mappings."
+    )
 
-    for idx, (selected_graders, selected_column_mapping) in enumerate(grader_mapping_list):
+    for idx, (selected_graders, selected_column_mapping) in enumerate(
+        grader_mapping_list
+    ):
         LOGGER.info(
             f"AOAI: Starting evaluation run {idx + 1}/{len(grader_mapping_list)} with {len(selected_graders)} grader(s)..."
         )
         all_eval_run_info.append(
-            _begin_single_aoai_evaluation(selected_graders, data, selected_column_mapping, run_name, **kwargs)
+            _begin_single_aoai_evaluation(
+                selected_graders, data, selected_column_mapping, run_name, **kwargs
+            )
         )
 
-    LOGGER.info(f"AOAI: Successfully created {len(all_eval_run_info)} evaluation run(s).")
+    LOGGER.info(
+        f"AOAI: Successfully created {len(all_eval_run_info)} evaluation run(s)."
+    )
     return all_eval_run_info
 
 
@@ -171,7 +207,9 @@ def _begin_single_aoai_evaluation(
     :rtype: Tuple[str, str, Dict[str, str]]
     """
     # Format data for eval group creation
-    LOGGER.info(f"AOAI: Preparing evaluation for {len(graders)} grader(s): {list(graders.keys())}")
+    LOGGER.info(
+        f"AOAI: Preparing evaluation for {len(graders)} grader(s): {list(graders.keys())}"
+    )
     grader_name_list = []
     grader_list = []
 
@@ -184,30 +222,97 @@ def _begin_single_aoai_evaluation(
     if kwargs.get("data_source") is not None:
         data_source = kwargs.get("data_source", {})
 
-    # It's expected that all graders supplied for a single eval run use the same credentials
-    # so grab a client from the first grader.
-    client = list(graders.values())[0].get_client()
+    # Determine which client to use based on whether azure_ai_project is provided.
+    # If azure_ai_project is provided, we need to use the Foundry client (AIProjectClient.get_openai_client())
+    # instead of the grader's Azure OpenAI client, as evals.create() requires the Foundry endpoint.
+    azure_ai_project = kwargs.get("azure_ai_project")
+    if azure_ai_project is not None:
+        try:
+            from azure.ai.projects import AIProjectClient  # type: ignore
+            from azure.identity import DefaultAzureCredential  # type: ignore
+
+            # If azure_ai_project is a string (OneDP endpoint), use it directly
+            # Otherwise, construct the endpoint from the AzureAIProject dict
+            if is_onedp_project(azure_ai_project):
+                endpoint = azure_ai_project
+            else:
+                # Construct endpoint from AzureAIProject dict
+                # Format: https://{account}.services.ai.azure.com/api/projects/{project_name}
+                # For now, we'll need the user to provide the endpoint or construct it
+                # This is a fallback - ideally azure_ai_project should be the endpoint string
+                raise EvaluationException(
+                    message="When using Azure AI Foundry with AOAI graders, azure_ai_project must be provided as a string endpoint (e.g., 'https://<account>.services.ai.azure.com/api/projects/<project_name>').",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.AOAI_GRADER,
+                )
+
+            # Get credential from the first grader if available, otherwise use DefaultAzureCredential
+            first_grader = list(graders.values())[0]
+            credential = (
+                first_grader._credential
+                if first_grader._credential
+                else DefaultAzureCredential()
+            )
+
+            # Create AIProjectClient and get OpenAI client configured for Foundry
+            project_client = AIProjectClient(endpoint=endpoint, credential=credential)
+            client = project_client.get_openai_client()
+            LOGGER.info(
+                f"AOAI: Using Foundry client for evaluation (endpoint: {endpoint})"
+            )
+        except ImportError as import_err:
+            raise EvaluationException(
+                message="azure-ai-projects package is required when using azure_ai_project with AOAI graders. Install it with: pip install azure-ai-projects",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_PACKAGE,
+                target=ErrorTarget.AOAI_GRADER,
+            ) from import_err
+        except Exception as e:
+            raise EvaluationException(
+                message=f"Failed to create Foundry client: {str(e)}",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.AOAI_GRADER,
+            ) from e
+    else:
+        # It's expected that all graders supplied for a single eval run use the same credentials
+        # so grab a client from the first grader.
+        client = list(graders.values())[0].get_client()
+        LOGGER.info("AOAI: Using grader's Azure OpenAI client for evaluation")
 
     for name, grader in graders.items():
         grader_name_list.append(name)
         grader_list.append(grader._grader_config)
     effective_column_mapping: Dict[str, str] = column_mapping or {}
-    LOGGER.info(f"AOAI: Generating data source config with {len(effective_column_mapping)} column mapping(s)...")
+    LOGGER.info(
+        f"AOAI: Generating data source config with {len(effective_column_mapping)} column mapping(s)..."
+    )
     if data_source_config == {}:
-        data_source_config = _generate_data_source_config(data, effective_column_mapping)
-    LOGGER.info(f"AOAI: Data source config generated with schema type: {data_source_config.get('type')}")
+        data_source_config = _generate_data_source_config(
+            data, effective_column_mapping
+        )
+    LOGGER.info(
+        f"AOAI: Data source config generated with schema type: {data_source_config.get('type')}"
+    )
 
     # Create eval group
-    LOGGER.info(f"AOAI: Creating eval group with {len(grader_list)} testing criteria...")
+    LOGGER.info(
+        f"AOAI: Creating eval group with {len(grader_list)} testing criteria..."
+    )
 
     # Combine with the item schema with generated data outside Eval SDK
     _combine_item_schemas(data_source_config, kwargs)
 
     eval_group_info = client.evals.create(
-        data_source_config=data_source_config, testing_criteria=grader_list, metadata={"is_foundry_eval": "true"}
+        data_source_config=data_source_config,
+        testing_criteria=grader_list,
+        metadata={"is_foundry_eval": "true"},
     )
 
-    LOGGER.info(f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next...")
+    LOGGER.info(
+        f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next..."
+    )
     # Use eval group info to map grader IDs back to user-assigned names.
     grader_name_map = {}
     num_criteria = len(eval_group_info.testing_criteria)
@@ -224,7 +329,14 @@ def _begin_single_aoai_evaluation(
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
-    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping, data_source)
+    eval_run_id = _begin_eval_run(
+        client,
+        eval_group_info.id,
+        run_name,
+        data,
+        effective_column_mapping,
+        data_source,
+    )
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -239,7 +351,9 @@ def _begin_single_aoai_evaluation(
     )
 
 
-def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, Any]) -> None:
+def _combine_item_schemas(
+    data_source_config: Dict[str, Any], kwargs: Dict[str, Any]
+) -> None:
     if (
         not kwargs
         or not kwargs.get("item_schema")
@@ -249,16 +363,24 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
         return
 
     if "item_schema" in data_source_config:
-        item_schema = kwargs["item_schema"]["required"] if "required" in kwargs["item_schema"] else []
+        item_schema = (
+            kwargs["item_schema"]["required"]
+            if "required" in kwargs["item_schema"]
+            else []
+        )
         for key in kwargs["item_schema"]["properties"]:
             if key not in data_source_config["item_schema"]["properties"]:
-                data_source_config["item_schema"]["properties"][key] = kwargs["item_schema"]["properties"][key]
+                data_source_config["item_schema"]["properties"][key] = kwargs[
+                    "item_schema"
+                ]["properties"][key]
 
                 if key in item_schema:
                     data_source_config["item_schema"]["required"].append(key)
 
 
-def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+def _get_evaluation_run_results(
+    all_run_info: List[OAIEvalRunCreationInfo],
+) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
     pipeline to consume. This method accepts a list of eval run information, and will combine the
@@ -273,16 +395,22 @@ def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> T
     :raises EvaluationException: If the evaluation run fails or is not completed before timing out.
     """
 
-    LOGGER.info(f"AOAI: Retrieving results from {len(all_run_info)} evaluation run(s)...")
+    LOGGER.info(
+        f"AOAI: Retrieving results from {len(all_run_info)} evaluation run(s)..."
+    )
     run_metrics = {}
     output_df = pd.DataFrame()
     for idx, run_info in enumerate(all_run_info):
-        LOGGER.info(f"AOAI: Fetching results for run {idx + 1}/{len(all_run_info)} (ID: {run_info['eval_run_id']})...")
+        LOGGER.info(
+            f"AOAI: Fetching results for run {idx + 1}/{len(all_run_info)} (ID: {run_info['eval_run_id']})..."
+        )
         cur_output_df, cur_run_metrics = _get_single_run_results(run_info)
         output_df = pd.concat([output_df, cur_output_df], axis=1)
         run_metrics.update(cur_run_metrics)
 
-    LOGGER.info(f"AOAI: Successfully retrieved all results. Combined dataframe shape: {output_df.shape}")
+    LOGGER.info(
+        f"AOAI: Successfully retrieved all results. Combined dataframe shape: {output_df.shape}"
+    )
     return output_df, run_metrics
 
 
@@ -303,9 +431,13 @@ def _get_single_run_results(
     """
     # Wait for evaluation run to complete
     LOGGER.info(f"AOAI: Waiting for eval run {run_info['eval_run_id']} to complete...")
-    run_results = _wait_for_run_conclusion(run_info["client"], run_info["eval_group_id"], run_info["eval_run_id"])
+    run_results = _wait_for_run_conclusion(
+        run_info["client"], run_info["eval_group_id"], run_info["eval_run_id"]
+    )
 
-    LOGGER.info(f"AOAI: Eval run {run_info['eval_run_id']} completed with status: {run_results.status}")
+    LOGGER.info(
+        f"AOAI: Eval run {run_info['eval_run_id']} completed with status: {run_results.status}"
+    )
     if run_results.status != "completed":
         raise EvaluationException(
             message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
@@ -316,7 +448,9 @@ def _get_single_run_results(
         )
 
     # Convert run results into a dictionary of metrics
-    LOGGER.info(f"AOAI: Processing results and calculating metrics for run {run_info['eval_run_id']}...")
+    LOGGER.info(
+        f"AOAI: Processing results and calculating metrics for run {run_info['eval_run_id']}..."
+    )
     run_metrics: Dict[str, Any] = {}
     if run_results.per_testing_criteria_results is None:
         msg = (
@@ -337,20 +471,30 @@ def _get_single_run_results(
         ratio = passed / (passed + failed) if (passed + failed) else 0.0
         formatted_column_name = f"{grader_name}.pass_rate"
         run_metrics[formatted_column_name] = ratio
-        LOGGER.info(f"AOAI: Grader '{grader_name}': {passed} passed, {failed} failed, pass_rate={ratio:.4f}")
+        LOGGER.info(
+            f"AOAI: Grader '{grader_name}': {passed} passed, {failed} failed, pass_rate={ratio:.4f}"
+        )
 
     # Collect all results with pagination
-    LOGGER.info(f"AOAI: Collecting output items for run {run_info['eval_run_id']} with pagination...")
+    LOGGER.info(
+        f"AOAI: Collecting output items for run {run_info['eval_run_id']} with pagination..."
+    )
     all_results: List[Any] = []
     next_cursor: Optional[str] = None
     limit = 100  # Max allowed by API
 
     while True:
-        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
+        list_kwargs = {
+            "eval_id": run_info["eval_group_id"],
+            "run_id": run_info["eval_run_id"],
+            "limit": limit,
+        }
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
-        raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
+        raw_list_results = run_info["client"].evals.runs.output_items.list(
+            **list_kwargs
+        )
 
         # Add current page results
         all_results.extend(raw_list_results.data)
@@ -364,7 +508,9 @@ def _get_single_run_results(
         else:
             break
 
-    LOGGER.info(f"AOAI: Collected {len(all_results)} total output items across all pages.")
+    LOGGER.info(
+        f"AOAI: Collected {len(all_results)} total output items across all pages."
+    )
     listed_results: Dict[str, List[Any]] = {"index": []}
     # Raw data has no order guarantees; capture datasource_item_id per row for ordering.
     for row_result in all_results:
@@ -380,7 +526,10 @@ def _get_single_run_results(
                 result_dict = vars(single_grader_row_result)
             else:
                 raise EvaluationException(
-                    message=("Unsupported AOAI evaluation result type: " f"{type(single_grader_row_result)!r}."),
+                    message=(
+                        "Unsupported AOAI evaluation result type: "
+                        f"{type(single_grader_row_result)!r}."
+                    ),
                     blame=ErrorBlame.UNKNOWN,
                     category=ErrorCategory.FAILED_EXECUTION,
                     target=ErrorTarget.AOAI_GRADER,
@@ -405,7 +554,9 @@ def _get_single_run_results(
                     if len(result_column_name) < 50:
                         if result_column_name not in listed_results:
                             listed_results[result_column_name] = []
-                        listed_results[result_column_name].append(EVALUATION_PASS_FAIL_MAPPING[value])
+                        listed_results[result_column_name].append(
+                            EVALUATION_PASS_FAIL_MAPPING[value]
+                        )
 
                 formatted_column_name = f"outputs.{grader_name}.{name}"
                 if formatted_column_name not in listed_results:
@@ -442,7 +593,9 @@ def _get_single_run_results(
     expected = run_info.get("expected_rows", None)
     if expected is not None:
         pre_len = len(output_df)
-        LOGGER.info(f"AOAI: Validating result count: expected {expected} rows, received {pre_len} rows.")
+        LOGGER.info(
+            f"AOAI: Validating result count: expected {expected} rows, received {pre_len} rows."
+        )
         # Assumes original datasource_item_id space is 0..expected-1
         output_df = output_df.reindex(range(expected))
         if pre_len != expected:
@@ -471,7 +624,9 @@ def _get_single_run_results(
 
     # Drop the temporary helper column before returning (no public surface change)
     if "__azure_ai_evaluation_index" in output_df.columns:
-        output_df.drop(columns=["__azure_ai_evaluation_index"], inplace=True, errors="ignore")
+        output_df.drop(
+            columns=["__azure_ai_evaluation_index"], inplace=True, errors="ignore"
+        )
 
     # Reset to RangeIndex so downstream concatenation aligns on position
     output_df.reset_index(drop=True, inplace=True)
@@ -481,7 +636,9 @@ def _get_single_run_results(
     return output_df, run_metrics
 
 
-def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str, Any]) -> AzureOpenAIGrader:
+def _convert_remote_eval_params_to_grader(
+    grader_id: str, init_params: Dict[str, Any]
+) -> AzureOpenAIGrader:
     """
     Helper function for the remote evaluation service.
     Given a model ID that refers to a specific AOAI grader wrapper class, return an instance of that class
@@ -573,7 +730,9 @@ def _get_graders_and_column_mappings(
 
     LOGGER.info(f"AOAI: Organizing {len(graders)} graders with column mappings...")
     if column_mappings is None:
-        LOGGER.info("AOAI: No column mappings provided, each grader will have its own eval run.")
+        LOGGER.info(
+            "AOAI: No column mappings provided, each grader will have its own eval run."
+        )
         return [({name: grader}, None) for name, grader in graders.items()]
     default_mapping = column_mappings.get("default", None)
     if default_mapping is None:
@@ -582,7 +741,14 @@ def _get_graders_and_column_mappings(
         f"AOAI: Using default mapping with {len(default_mapping)} entries for graders without specific mappings."
     )
     return [
-        ({name: grader}, None if column_mappings is None else column_mappings.get(name, default_mapping))
+        (
+            {name: grader},
+            (
+                None
+                if column_mappings is None
+                else column_mappings.get(name, default_mapping)
+            ),
+        )
         for name, grader in graders.items()
     ]
 
@@ -669,7 +835,9 @@ def _build_schema_tree_from_paths(
     return to_schema(root)
 
 
-def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
+def _generate_data_source_config(
+    input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
+) -> Dict[str, Any]:
     """
     Produce a data source config (JSON schema) that reflects nested object structure
     when column mappings reference dotted paths (e.g., item.context.company...).
@@ -696,14 +864,18 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         if m:
             referenced_paths.append(m.group(1))
 
-    LOGGER.info(f"AOAI: Found {len(referenced_paths)} referenced paths in column mappings: {referenced_paths}")
+    LOGGER.info(
+        f"AOAI: Found {len(referenced_paths)} referenced paths in column mappings: {referenced_paths}"
+    )
     # Decide if we have nested structures
     has_nested = any("." in p for p in referenced_paths)
     LOGGER.info(f"AOAI: Schema generation mode: {'nested' if has_nested else 'flat'}")
 
     if not referenced_paths or not has_nested:
         # Legacy flat behavior (existing logic): treat each mapping key as independent string field
-        LOGGER.info("AOAI: Using flat schema generation (no nested structures detected).")
+        LOGGER.info(
+            "AOAI: Using flat schema generation (no nested structures detected)."
+        )
         data_source_config = {
             "type": "custom",
             "item_schema": {
@@ -715,12 +887,18 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
         for key in column_mapping.keys():
-            if key in input_data_df and len(input_data_df[key]) > 0 and isinstance(input_data_df[key].iloc[0], list):
+            if (
+                key in input_data_df
+                and len(input_data_df[key]) > 0
+                and isinstance(input_data_df[key].iloc[0], list)
+            ):
                 props[key] = {"type": "array"}
             else:
                 props[key] = {"type": "string"}
             req.append(key)
-        LOGGER.info(f"AOAI: Flat schema generated with {len(props)} properties: {list(props.keys())}")
+        LOGGER.info(
+            f"AOAI: Flat schema generated with {len(props)} properties: {list(props.keys())}"
+        )
         return data_source_config
 
     # NEW: If all nested paths share the same first segment (e.g. 'item'),
@@ -736,7 +914,9 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         if only_seg == WRAPPER_KEY:
             strip_wrapper = True
             wrapper_name = only_seg
-            LOGGER.info(f"AOAI: All paths start with wrapper '{WRAPPER_KEY}', will strip from schema.")
+            LOGGER.info(
+                f"AOAI: All paths start with wrapper '{WRAPPER_KEY}', will strip from schema."
+            )
 
     effective_paths = referenced_paths
     if strip_wrapper:
@@ -751,12 +931,20 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         # If stripping produced at least one usable path, adopt; else fall back to original.
         if stripped:
             effective_paths = stripped
-            LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {effective_paths}")
+            LOGGER.info(
+                f"AOAI: Effective paths after stripping wrapper: {effective_paths}"
+            )
 
-    LOGGER.info(f"AOAI: Building nested schema from {len(effective_paths)} effective paths...")
-    nested_schema = _build_schema_tree_from_paths(effective_paths, force_leaf_type="string")
+    LOGGER.info(
+        f"AOAI: Building nested schema from {len(effective_paths)} effective paths..."
+    )
+    nested_schema = _build_schema_tree_from_paths(
+        effective_paths, force_leaf_type="string"
+    )
 
-    LOGGER.info(f"AOAI: Nested schema generated successfully with type '{nested_schema.get('type')}'")
+    LOGGER.info(
+        f"AOAI: Nested schema generated successfully with type '{nested_schema.get('type')}'"
+    )
     return {
         "type": "custom",
         "item_schema": nested_schema,
@@ -793,7 +981,9 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
     return data_source_config
 
 
-def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
+def _get_data_source(
+    input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
+) -> Dict[str, Any]:
     """
     Given a dataframe of data to be evaluated, and a column mapping,
     produce a dictionary that can be used as the data source input for an OAI evaluation run.
@@ -841,7 +1031,9 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
 
     for name, formatted_entry in column_mapping.items():
         if not (
-            isinstance(formatted_entry, str) and formatted_entry.startswith("${") and formatted_entry.endswith("}")
+            isinstance(formatted_entry, str)
+            and formatted_entry.startswith("${")
+            and formatted_entry.endswith("}")
         ):
             continue
         body = formatted_entry[2:-1]  # remove ${ }
@@ -898,7 +1090,9 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
                 }
             )
 
-    LOGGER.info(f"AOAI: Processed {len(path_specs)} path specifications from column mappings.")
+    LOGGER.info(
+        f"AOAI: Processed {len(path_specs)} path specifications from column mappings."
+    )
     content: List[Dict[str, Any]] = []
 
     for _, row in input_data_df.iterrows():
@@ -986,16 +1180,24 @@ def _begin_eval_run(
     :rtype: str
     """
 
-    LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
+    LOGGER.info(
+        f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}..."
+    )
     data_source = _get_data_source(input_data_df, column_mapping)
     if data_source_params is not None:
         data_source.update(data_source_params)
 
     eval_run = client.evals.runs.create(
         eval_id=eval_group_id,
-        data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
+        data_source=cast(
+            Any, data_source
+        ),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
         name=run_name,
-        metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
+        metadata={
+            "sample_generation": "off",
+            "file_format": "jsonl",
+            "is_foundry_eval": "true",
+        },
         # TODO decide if we want to add our own timeout value?
     )
     LOGGER.info(f"AOAI: Eval run created successfully with ID: {eval_run.id}")
@@ -1004,7 +1206,10 @@ def _begin_eval_run(
 
 # Post built TODO: replace with _red_team.py's retry logic?
 def _wait_for_run_conclusion(
-    client: Union[OpenAI, AzureOpenAI], eval_group_id: str, eval_run_id: str, max_wait_seconds=21600
+    client: Union[OpenAI, AzureOpenAI],
+    eval_group_id: str,
+    eval_run_id: str,
+    max_wait_seconds=21600,
 ) -> Any:
     """
     Perform exponential backoff polling to get the results of an AOAI evaluation run.
@@ -1022,7 +1227,9 @@ def _wait_for_run_conclusion(
     :rtype: Any
     """
 
-    LOGGER.info(f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}...")
+    LOGGER.info(
+        f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}..."
+    )
     total_wait = 0
     iters = 0
     # start with ~51 minutes of exponential backoff
@@ -1037,9 +1244,13 @@ def _wait_for_run_conclusion(
         sleep(wait_interval)
         iters += 1
         response = client.evals.runs.retrieve(eval_id=eval_group_id, run_id=eval_run_id)
-        LOGGER.info(f"AOAI: Polling iteration {iters}, status: {response.status}, total wait: {total_wait:.1f}s")
+        LOGGER.info(
+            f"AOAI: Polling iteration {iters}, status: {response.status}, total wait: {total_wait:.1f}s"
+        )
         if response.status not in ["queued", "in_progress"]:
-            LOGGER.info(f"AOAI: Eval run {eval_run_id} reached terminal status: {response.status}")
+            LOGGER.info(
+                f"AOAI: Eval run {eval_run_id} reached terminal status: {response.status}"
+            )
             return response
         if total_wait > max_wait_seconds:
             raise EvaluationException(

@@ -38,7 +38,9 @@ except ImportError:
 
         def get_trace_destination(self, path: Optional[Path] = None) -> Optional[str]:
             if path:
-                raise NotImplementedError("Setting trace destination with a path is not supported.")
+                raise NotImplementedError(
+                    "Setting trace destination with a path is not supported."
+                )
             return self._config.get("trace.destination", None)
 
 

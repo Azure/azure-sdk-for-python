@@ -76,7 +76,13 @@ class JsonLineList(list):
                         user_message = assistant_message = None
                     else:
                         json_lines += (
-                            json.dumps({"query": user_message, "response": assistant_message, "category": category})
+                            json.dumps(
+                                {
+                                    "query": user_message,
+                                    "response": assistant_message,
+                                    "category": category,
+                                }
+                            )
                             + "\n"
                         )
                         user_message = assistant_message = None
@@ -123,10 +129,22 @@ class JsonLineChatProtocol(dict):
             if user_message and assistant_message:
                 if context:
                     json_lines += (
-                        json.dumps({"query": user_message, "response": assistant_message, "context": context}) + "\n"
+                        json.dumps(
+                            {
+                                "query": user_message,
+                                "response": assistant_message,
+                                "context": context,
+                            }
+                        )
+                        + "\n"
                     )
                     user_message = assistant_message = None
                 else:
-                    json_lines += json.dumps({"query": user_message, "response": assistant_message}) + "\n"
+                    json_lines += (
+                        json.dumps(
+                            {"query": user_message, "response": assistant_message}
+                        )
+                        + "\n"
+                    )
                     user_message = assistant_message = None
         return json_lines

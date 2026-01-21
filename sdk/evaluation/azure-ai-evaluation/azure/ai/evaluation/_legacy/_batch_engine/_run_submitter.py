@@ -17,7 +17,13 @@ from ._run_storage import AbstractRunStorage, NoOpRunStorage
 from .._common._logging import incremental_print, print_red_error
 from ._config import BatchEngineConfig
 from ._exceptions import BatchEngineValidationError
-from ._engine import DEFAULTS_KEY, BatchEngine, BatchEngineError, BatchResult, BatchStatus
+from ._engine import (
+    DEFAULTS_KEY,
+    BatchEngine,
+    BatchEngineError,
+    BatchResult,
+    BatchStatus,
+)
 
 
 class RunSubmitter:
@@ -80,13 +86,19 @@ class RunSubmitter:
             # unnecessary Flow loading code was removed here. Instead do direct calls to _submit_bulk_run
             await self._submit_bulk_run(run=run, local_storage=local_storage, **kwargs)
 
-        self.stream_run(run=run, storage=local_storage, raise_on_error=self._config.raise_on_error)
+        self.stream_run(
+            run=run, storage=local_storage, raise_on_error=self._config.raise_on_error
+        )
         return run
 
-    async def _submit_bulk_run(self, run: Run, local_storage: AbstractRunStorage, **kwargs) -> None:
+    async def _submit_bulk_run(
+        self, run: Run, local_storage: AbstractRunStorage, **kwargs
+    ) -> None:
         logger = self._config.logger
 
-        logger.info(f"Submitting run {run.name}, log path: {local_storage.logger.file_path}")
+        logger.info(
+            f"Submitting run {run.name}, log path: {local_storage.logger.file_path}"
+        )
 
         # Old code loaded the Flex flow, parsed input and outputs types. That logic has been
         # removed since it is unnecessary. It also parsed and set environment variables. This
@@ -108,7 +120,11 @@ class RunSubmitter:
                 # load in the previous run's outputs and inputs into the list of dictionaries to allow for
                 # the previous run's outputs to be used as inputs for the current run
                 run.inputs = [
-                    {"run.outputs": previous.outputs[i], "run.inputs": previous.inputs[i], **run.inputs[i]}
+                    {
+                        "run.outputs": previous.outputs[i],
+                        "run.inputs": previous.inputs[i],
+                        **run.inputs[i],
+                    }
                     for i in range(len(run.inputs))
                 ]
 
@@ -126,12 +142,16 @@ class RunSubmitter:
                 executor=self._executor,
             )
 
-            batch_result = await batch_engine.run(data=run.inputs, column_mapping=run.column_mapping, id=run.name)
+            batch_result = await batch_engine.run(
+                data=run.inputs, column_mapping=run.column_mapping, id=run.name
+            )
             run._status = RunStatus.from_batch_result_status(batch_result.status)
 
             error_logs: Sequence[str] = []
             if run._status != RunStatus.COMPLETED:
-                error_logs.append(f"Run {run.name} failed with status {batch_result.status}.")
+                error_logs.append(
+                    f"Run {run.name} failed with status {batch_result.status}."
+                )
                 if batch_result.error:
                     error_logs.append(f"Error: {str(batch_result.error)}")
 
@@ -140,7 +160,9 @@ class RunSubmitter:
         except Exception as e:
             run._status = RunStatus.FAILED
             # when run failed in executor, store the exception in result and dump to file
-            logger.warning(f"Run {run.name} failed when executing in executor with exception {e}.")
+            logger.warning(
+                f"Run {run.name} failed when executing in executor with exception {e}."
+            )
             if not batch_result:
                 batch_result = BatchResult(
                     status=BatchStatus.Failed,
@@ -183,7 +205,9 @@ class RunSubmitter:
     @staticmethod
     def _validate_inputs(run: Run):
         if not run.inputs and not run.previous_run:
-            raise BatchEngineValidationError("Either data, or a previous run must be specified for the evaluation run.")
+            raise BatchEngineValidationError(
+                "Either data, or a previous run must be specified for the evaluation run."
+            )
 
     @staticmethod
     def _validate_column_mapping(column_mapping: Optional[Mapping[str, str]]):
@@ -191,9 +215,13 @@ class RunSubmitter:
             return
 
         if not isinstance(column_mapping, Mapping):
-            raise BatchEngineValidationError(f"Column mapping must be a dict, got {type(column_mapping)}.")
+            raise BatchEngineValidationError(
+                f"Column mapping must be a dict, got {type(column_mapping)}."
+            )
 
-        has_mapping = any([isinstance(v, str) and v.startswith("$") for v in column_mapping.values()])
+        has_mapping = any(
+            [isinstance(v, str) and v.startswith("$") for v in column_mapping.values()]
+        )
         if not has_mapping:
             raise BatchEngineValidationError(
                 "Column mapping must contain at least one mapping binding, "
@@ -229,14 +257,20 @@ class RunSubmitter:
                 if run.result and run.result.error:
                     error_message = "".join(
                         traceback.format_exception(
-                            type(run.result.error), run.result.error, run.result.error.__traceback__
+                            type(run.result.error),
+                            run.result.error,
+                            run.result.error.__traceback__,
                         )
                     )
                 elif run.result and run.result.details:
                     err = next((r.error for r in run.result.details if r.error), None)
                     if err and err.exception:
                         error_message = "".join(
-                            traceback.format_exception(type(err.exception), err.exception, err.exception.__traceback__)
+                            traceback.format_exception(
+                                type(err.exception),
+                                err.exception,
+                                err.exception.__traceback__,
+                            )
                         )
                     elif err and err.details:
                         error_message = err.details

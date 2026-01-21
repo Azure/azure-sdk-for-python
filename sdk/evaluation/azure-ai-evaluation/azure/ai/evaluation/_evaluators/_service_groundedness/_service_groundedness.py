@@ -167,13 +167,19 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         """
         result = await super()._do_eval(eval_input)
         real_result = {}
-        real_result[self._output_prefix + "_reason"] = result[EvaluationMetrics.GROUNDEDNESS + "_reason"]
+        real_result[self._output_prefix + "_reason"] = result[
+            EvaluationMetrics.GROUNDEDNESS + "_reason"
+        ]
         real_result[self._output_prefix + "_label"] = (
             result[EvaluationMetrics.GROUNDEDNESS + "_score"] >= self.threshold
         )
         if self._higher_is_better:
-            real_result[self._output_prefix + "_score"] = max(result[EvaluationMetrics.GROUNDEDNESS + "_score"], 0)
+            real_result[self._output_prefix + "_score"] = max(
+                result[EvaluationMetrics.GROUNDEDNESS + "_score"], 0
+            )
         else:
-            real_result[self._output_prefix + "_score"] = min(result[EvaluationMetrics.GROUNDEDNESS + "_score"], 1)
+            real_result[self._output_prefix + "_score"] = min(
+                result[EvaluationMetrics.GROUNDEDNESS + "_score"], 1
+            )
 
         return real_result

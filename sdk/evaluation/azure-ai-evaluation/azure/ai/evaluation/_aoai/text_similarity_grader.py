@@ -7,7 +7,10 @@ from openai.types.graders import TextSimilarityGrader
 from typing_extensions import Literal
 
 from azure.ai.evaluation._common._experimental import experimental
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
@@ -77,4 +80,9 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             reference=reference,
             type=AzureOpenAITextSimilarityGrader._type,
         )
-        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)
+        super().__init__(
+            model_config=model_config,
+            grader_config=grader,
+            credential=credential,
+            **kwargs
+        )

@@ -8,7 +8,12 @@ from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from ..._common.utils import (
     reformat_conversation_history,
@@ -71,7 +76,14 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, **kwargs):
+    def __init__(
+        self,
+        model_config,
+        *,
+        threshold=_DEFAULT_TASK_ADHERENCE_SCORE,
+        credential=None,
+        **kwargs,
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold  # to be removed in favor of _threshold
@@ -144,7 +156,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
 
         # Reformat conversation history and extract system message
-        query_messages = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
+        query_messages = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True
+        )
         system_message = ""
         user_query = ""
 
@@ -159,7 +173,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             user_query = query_messages
 
         # Reformat response and separate assistant messages from tool calls
-        response_messages = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
+        response_messages = reformat_agent_response(
+            eval_input["response"], logger, include_tool_messages=True
+        )
         assistant_response = ""
         tool_calls = ""
 
@@ -175,10 +191,16 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         if isinstance(content, list):
                             for item in content:
                                 if isinstance(item, dict):
-                                    if item.get("type", None) in ("text", "input_text", "output_text"):
+                                    if item.get("type", None) in (
+                                        "text",
+                                        "input_text",
+                                        "output_text",
+                                    ):
                                         assistant_parts.append(item.get("text", ""))
                                     elif item.get("type") == "tool_call":
-                                        tool_parts.append(str(item.get("tool_call", "")))
+                                        tool_parts.append(
+                                            str(item.get("tool_call", ""))
+                                        )
                         else:
                             assistant_parts.append(str(content))
                     elif role == "tool":
@@ -196,7 +218,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             "tool_calls": tool_calls,
         }
 
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **prompty_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **prompty_input
+        )
         llm_output = prompty_output_dict["llm_output"]
 
         if isinstance(llm_output, dict):
@@ -211,16 +235,30 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_reason": reasoning,
                 f"{self._result_key}_details": llm_output.get("details", ""),
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get(
+                    "input_token_count", 0
+                ),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get(
+                    "output_token_count", 0
+                ),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get(
+                    "total_token_count", 0
+                ),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get(
+                    "finish_reason", ""
+                ),
                 f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get(
+                    "sample_input", ""
+                ),
+                f"{self._result_key}_sample_output": prompty_output_dict.get(
+                    "sample_output", ""
+                ),
             }
 
         if logger:
-            logger.warning("LLM output is not a dictionary, returning 0 for the success.")
+            logger.warning(
+                "LLM output is not a dictionary, returning 0 for the success."
+            )
 
         return {self._result_key: 0}

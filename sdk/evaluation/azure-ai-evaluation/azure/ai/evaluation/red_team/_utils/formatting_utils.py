@@ -16,7 +16,10 @@ from .._red_team_result import RedTeamResult
 
 
 def message_to_dict(
-    message: ChatMessage, context: str = None, tool_calls: List[Any] = None, token_usage: Dict[str, Any] = None
+    message: ChatMessage,
+    context: str = None,
+    tool_calls: List[Any] = None,
+    token_usage: Dict[str, Any] = None,
 ) -> Dict[str, Any]:
     """Convert a ChatMessage and context to dictionary format.
 
@@ -31,13 +34,20 @@ def message_to_dict(
     :return: Dictionary representation with role and content
     :rtype: Dict[str, Any]
     """
-    msg_dict = {"role": message.role, "content": message.content, "context": context, "tool_calls": tool_calls}
+    msg_dict = {
+        "role": message.role,
+        "content": message.content,
+        "context": context,
+        "tool_calls": tool_calls,
+    }
     if token_usage:
         msg_dict["token_usage"] = token_usage
     return msg_dict
 
 
-def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
+def get_strategy_name(
+    attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+) -> str:
     """Get a string name for an attack strategy or list of strategies.
 
     :param attack_strategy: The attack strategy or list of strategies
@@ -66,7 +76,9 @@ def get_flattened_attack_strategies(
     attack_strategies_temp = attack_strategies.copy()
 
     if AttackStrategy.EASY in attack_strategies_temp:
-        attack_strategies_temp.extend([AttackStrategy.Base64, AttackStrategy.Flip, AttackStrategy.Morse])
+        attack_strategies_temp.extend(
+            [AttackStrategy.Base64, AttackStrategy.Flip, AttackStrategy.Morse]
+        )
         attack_strategies_temp.remove(AttackStrategy.EASY)
 
     if AttackStrategy.MODERATE in attack_strategies_temp:
@@ -86,10 +98,14 @@ def get_flattened_attack_strategies(
     attack_strategies_temp.append(AttackStrategy.Baseline)
 
     for strategy in attack_strategies_temp:
-        if isinstance(strategy, List) and tuple(strategy) not in seen_strategies:  # For composed strategies
+        if (
+            isinstance(strategy, List) and tuple(strategy) not in seen_strategies
+        ):  # For composed strategies
             flattened_strategies.append([s for s in strategy])
             seen_strategies.add(tuple(strategy))
-        elif isinstance(strategy, AttackStrategy) and strategy not in seen_strategies:  # For single strategies
+        elif (
+            isinstance(strategy, AttackStrategy) and strategy not in seen_strategies
+        ):  # For single strategies
             flattened_strategies.append(strategy)
             seen_strategies.add(strategy)
 
@@ -117,13 +133,19 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     :rtype: str
     """
     scorecard = redteam_result["scorecard"]
-    risk_summary = scorecard["risk_category_summary"][0] if scorecard["risk_category_summary"] else {}
+    risk_summary = (
+        scorecard["risk_category_summary"][0]
+        if scorecard["risk_category_summary"]
+        else {}
+    )
     overall_asr = risk_summary.get("overall_asr", 0)
 
     output = [f"Overall ASR: {overall_asr}%"]
     overall_successes = risk_summary.get("overall_successful_attacks", 0)
     overall_total = risk_summary.get("overall_total", 0)
-    output.append(f"Attack Success: {overall_successes}/{overall_total} attacks were successful")
+    output.append(
+        f"Attack Success: {overall_successes}/{overall_total} attacks were successful"
+    )
 
     separator = "-" * 132
     output.append(separator)
@@ -145,7 +167,9 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
         moderate = "N/A" if is_none_or_nan(moderate_val) else f"{moderate_val}%"
         difficult = "N/A" if is_none_or_nan(difficult_val) else f"{difficult_val}%"
 
-        output.append(f"{risk_category:<21}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
+        output.append(
+            f"{risk_category:<21}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}"
+        )
 
     return "\n".join(output)
 
@@ -197,7 +221,9 @@ def format_content_by_modality(content: str, modality: str) -> str:
         ]
 
     def format_as_markdown(text):
-        markdown_text = text.replace("\n", "  \n")  # Convert newlines to Markdown line breaks
+        markdown_text = text.replace(
+            "\n", "  \n"
+        )  # Convert newlines to Markdown line breaks
         return [
             f"\n**{markdown_text}**\n",  # Bold
             f"\n*{markdown_text}*\n",  # Italic
@@ -281,14 +307,17 @@ def write_pyrit_outputs_to_file(
         [
             (
                 item.to_chat_message(),
-                prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""),
+                prompt_to_context.get(item.original_value, "")
+                or item.labels.get("context", ""),
                 item.labels.get("tool_calls", []),
                 item.labels.get("risk_sub_type"),
                 item.labels.get("token_usage"),
             )
             for item in group
         ]
-        for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
+        for conv_id, group in itertools.groupby(
+            prompts_request_pieces, key=lambda x: x.conversation_id
+        )
     ]
 
     # Check if we should overwrite existing file with more conversations
@@ -312,14 +341,21 @@ def write_pyrit_outputs_to_file(
                         "conversation": {
                             "messages": [
                                 message_to_dict(
-                                    message[0], message[1], message[2], message[4] if len(message) > 4 else None
+                                    message[0],
+                                    message[1],
+                                    message[2],
+                                    message[4] if len(message) > 4 else None,
                                 )
                                 for message in conversation
                             ]
                         }
                     }
                     # Add risk_sub_type if present (check first message for the label)
-                    if conversation and len(conversation) > 0 and len(conversation[0]) > 3:
+                    if (
+                        conversation
+                        and len(conversation) > 0
+                        and len(conversation[0]) > 3
+                    ):
                         risk_sub_type = conversation[0][3]
                         if risk_sub_type:
                             conv_dict["risk_sub_type"] = risk_sub_type
@@ -348,7 +384,12 @@ def write_pyrit_outputs_to_file(
             conv_dict = {
                 "conversation": {
                     "messages": [
-                        message_to_dict(message[0], message[1], message[2], message[4] if len(message) > 4 else None)
+                        message_to_dict(
+                            message[0],
+                            message[1],
+                            message[2],
+                            message[4] if len(message) > 4 else None,
+                        )
                         for message in conversation
                     ]
                 }
@@ -361,5 +402,7 @@ def write_pyrit_outputs_to_file(
             json_lines += json.dumps(conv_dict) + "\n"
         with Path(output_path).open("w") as f:
             f.writelines(json_lines)
-        logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
+        logger.debug(
+            f"Successfully wrote {len(conversations)} conversations to {output_path}"
+        )
     return str(output_path)

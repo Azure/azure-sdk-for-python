@@ -47,7 +47,9 @@ def fetch_weather(location: str) -> str:
         "Tokyo": "Rainy, 22°C",
         "Seattle": "Rainy, 14°C",
     }
-    weather = mock_weather_data.get(location, "Weather data not available for this location.")
+    weather = mock_weather_data.get(
+        location, "Weather data not available for this location."
+    )
     weather_json = json.dumps({"weather": weather})
     return weather_json
 
@@ -68,7 +70,9 @@ def opening_hours(tourist_destination: str) -> str:
         "Museum of Pop Culture": "10 AM - 5 PM",
         "Seattle Aquarium": "9:30 AM - 6 PM",
     }
-    opening_hours = mock_opening_hours_data.get(tourist_destination, "Opening hours not available for this location.")
+    opening_hours = mock_opening_hours_data.get(
+        tourist_destination, "Opening hours not available for this location."
+    )
     opening_hours_json = json.dumps({"opening_hours": opening_hours})
     return opening_hours_json
 

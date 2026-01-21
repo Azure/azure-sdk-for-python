@@ -6,9 +6,16 @@ import asyncio
 import logging
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation.simulator._constants import SupportedLanguages
-from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
+from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import (
+    SUPPORTED_LANGUAGES_MAPPING,
+)
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
@@ -116,7 +123,10 @@ async def simulate_conversation(
         conversation_id = None
     first_prompt = first_response["samples"][0]
     if language != SupportedLanguages.English:
-        if not isinstance(language, SupportedLanguages) or language not in SupportedLanguages:
+        if (
+            not isinstance(language, SupportedLanguages)
+            or language not in SupportedLanguages
+        ):
             raise Exception(  # pylint: disable=broad-exception-raised
                 f"Language option '{language}' isn't supported. Select a supported language option from "
                 f"azure.ai.evaluation.simulator.SupportedLanguages: {[f'{e}' for e in SupportedLanguages]}"
@@ -140,7 +150,9 @@ async def simulate_conversation(
 
     # Keep iterating and alternate between bots until a stopping word is
     # generated or maximum number of turns is reached.
-    while (not stopping_criteria(conversation_history[-1].message)) and (current_turn < turn_limit):
+    while (not stopping_criteria(conversation_history[-1].message)) and (
+        current_turn < turn_limit
+    ):
         try:
             current_character_idx = current_turn % len(bots)
             current_bot = bots[current_character_idx]
@@ -153,7 +165,10 @@ async def simulate_conversation(
                 turn_number=current_turn,
                 session_state=session_state,
             )
-            if "session_state" in full_response and full_response["session_state"] is not None:
+            if (
+                "session_state" in full_response
+                and full_response["session_state"] is not None
+            ):
                 session_state.update(full_response["session_state"])
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn

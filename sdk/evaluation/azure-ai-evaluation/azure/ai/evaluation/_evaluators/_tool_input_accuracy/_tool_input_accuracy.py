@@ -73,7 +73,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
-    _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
+    _TOOL_DEFINITIONS_MISSING_MESSAGE = (
+        "Tool definitions for all tool calls must be provided."
+    )
 
     def __init__(
         self,
@@ -108,7 +110,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Extract tool calls from response
         if not response:
-            return {"error_message": "Response parameter is required to extract tool calls."}
+            return {
+                "error_message": "Response parameter is required to extract tool calls."
+            }
 
         tool_calls = self._parse_tools_from_response(response)
         if not tool_calls:
@@ -123,7 +127,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Type cast to satisfy static type checker
             tool_calls_typed = cast(List[Dict], tool_calls)
             needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls_typed, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
+                tool_calls_typed,
+                tool_definitions,
+                ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
             )
         except EvaluationException as e:
             # Check if this is because no tool definitions were provided at all
@@ -136,7 +142,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
         # Reformat agent response with tool calls and results using reformat_agent_response
-        agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
+        agent_response_with_tools = reformat_agent_response(
+            response, include_tool_messages=True
+        )
 
         return {
             "query": query,
@@ -155,8 +163,12 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         if eval_input.get("query") is None:
             raise EvaluationException(
-                message=("Query is a required input to " "the Tool Input Accuracy evaluator."),
-                internal_message=("Query is a required input " "to the Tool Input Accuracy evaluator."),
+                message=(
+                    "Query is a required input to " "the Tool Input Accuracy evaluator."
+                ),
+                internal_message=(
+                    "Query is a required input " "to the Tool Input Accuracy evaluator."
+                ),
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
@@ -164,11 +176,16 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Format conversation history for cleaner evaluation
         eval_input["query"] = reformat_conversation_history(
-            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+            eval_input["query"],
+            logger,
+            include_system_messages=True,
+            include_tool_messages=True,
         )
 
         # Call the LLM to evaluate
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
         llm_output = prompty_output_dict.get("llm_output", {})
 
         if isinstance(llm_output, dict):
@@ -184,7 +201,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Add parameter extraction accuracy post-processing
             details = llm_output.get("details", {})
             if details:
-                parameter_extraction_accuracy = self._calculate_parameter_extraction_accuracy(details)
+                parameter_extraction_accuracy = (
+                    self._calculate_parameter_extraction_accuracy(details)
+                )
                 details["parameter_extraction_accuracy"] = parameter_extraction_accuracy
 
             # Format the output
@@ -196,13 +215,25 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": explanation,
                 f"{self._result_key}_details": details,
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get(
+                    "input_token_count", 0
+                ),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get(
+                    "output_token_count", 0
+                ),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get(
+                    "total_token_count", 0
+                ),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get(
+                    "finish_reason", ""
+                ),
                 f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get(
+                    "sample_input", ""
+                ),
+                f"{self._result_key}_sample_output": prompty_output_dict.get(
+                    "sample_output", ""
+                ),
             }
             return response_dict
 

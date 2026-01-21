@@ -143,7 +143,9 @@ class EvaluationException(AzureError):
         super().__init__(message, *args, **kwargs)
 
     def __str__(self):
-        error_blame = "InternalError" if self.blame != ErrorBlame.USER_ERROR else "UserError"
+        error_blame = (
+            "InternalError" if self.blame != ErrorBlame.USER_ERROR else "UserError"
+        )
         msg = f"({error_blame}) {super().__str__()}"
         if self.tsg_link:
             msg += f"\nVisit {self.tsg_link} to troubleshoot this issue."

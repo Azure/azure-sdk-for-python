@@ -16,7 +16,10 @@ azure_ai_project = os.environ.get("AZURE_PROJECT_ENDPOINT")
 
 credential = DefaultAzureCredential()
 agent = RedTeam(
-    azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence], num_objectives=1
+    azure_ai_project=azure_ai_project,
+    credential=credential,
+    risk_categories=[RiskCategory.Violence],
+    num_objectives=1,
 )
 
 
@@ -37,7 +40,9 @@ async def run_scan():
         skip_upload=False,
     )
 
-    print(f"Scan completed with {len(results.scan_result) if results.scan_result else 0} conversations")
+    print(
+        f"Scan completed with {len(results.scan_result) if results.scan_result else 0} conversations"
+    )
     return results
 
 
@@ -54,7 +59,9 @@ async def azure_openai_callback(
     context: Optional[Dict[str, Any]] = None,  # noqa: ARG001
 ) -> dict[str, list[dict[str, str]]]:
     # Get token provider for Azure AD authentication
-    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://ai.azure.com/.default")
+    token_provider = get_bearer_token_provider(
+        DefaultAzureCredential(), "https://ai.azure.com/.default"
+    )
 
     model_config = {
         "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
@@ -74,7 +81,9 @@ async def azure_openai_callback(
     )
 
     ## Extract the latest message from the conversation history
-    messages_list = [{"role": message.role, "content": message.content} for message in messages]
+    messages_list = [
+        {"role": message.role, "content": message.content} for message in messages
+    ]
     latest_message = messages_list[-1]["content"]
 
     try:
@@ -90,7 +99,10 @@ async def azure_openai_callback(
         )
 
         # Format the response to follow the expected chat protocol format
-        formatted_response = {"content": response.choices[0].message.content, "role": "assistant"}
+        formatted_response = {
+            "content": response.choices[0].message.content,
+            "role": "assistant",
+        }
     except Exception as e:
         print(f"Error calling Azure OpenAI: {e!s}")
         formatted_response = "I encountered an error and couldn't process your request."

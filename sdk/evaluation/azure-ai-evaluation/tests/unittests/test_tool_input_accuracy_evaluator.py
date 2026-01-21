@@ -5,7 +5,9 @@
 from unittest.mock import MagicMock
 
 import pytest
-from azure.ai.evaluation._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
+from azure.ai.evaluation._evaluators._tool_input_accuracy import (
+    _ToolInputAccuracyEvaluator,
+)
 from azure.ai.evaluation._exceptions import EvaluationException
 
 
@@ -53,7 +55,9 @@ async def flow_side_effect(timeout, **kwargs):
             "details": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
-                "incorrect_parameters": ["Parameter 'temperature' has wrong type: expected number, got string"],
+                "incorrect_parameters": [
+                    "Parameter 'temperature' has wrong type: expected number, got string"
+                ],
             },
             "result": 0,  # FAIL
         }
@@ -66,7 +70,9 @@ async def flow_side_effect(timeout, **kwargs):
             "details": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
-                "incorrect_parameters": ["Parameter 'location' value not grounded in conversation history"],
+                "incorrect_parameters": [
+                    "Parameter 'location' value not grounded in conversation history"
+                ],
             },
             "result": 0,  # FAIL
         }
@@ -104,7 +110,11 @@ async def flow_side_effect(timeout, **kwargs):
         # Return invalid result to trigger exception
         llm_output = {
             "chain_of_thought": "This should trigger an exception.",
-            "details": {"total_parameters_passed": 1, "correct_parameters_passed": 1, "incorrect_parameters": []},
+            "details": {
+                "total_parameters_passed": 1,
+                "correct_parameters_passed": 1,
+                "incorrect_parameters": [],
+            },
             "result": 5,  # Invalid result
         }
     else:
@@ -162,7 +172,10 @@ class TestToolInputAccuracyEvaluator:
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for",
+                        },
                         "units": {
                             "type": "string",
                             "description": "Temperature units",
@@ -174,7 +187,9 @@ class TestToolInputAccuracyEvaluator:
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -213,7 +228,10 @@ class TestToolInputAccuracyEvaluator:
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for",
+                        },
                         "units": {"type": "string", "description": "Temperature units"},
                     },
                     "required": ["location"],
@@ -221,7 +239,9 @@ class TestToolInputAccuracyEvaluator:
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -229,7 +249,9 @@ class TestToolInputAccuracyEvaluator:
         assert result[f"{key}_result"] == "fail"
         assert "missing required parameter" in result[f"{key}_reason"].lower()
         assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0  # 1/1 correct param
+        assert (
+            result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0
+        )  # 1/1 correct param
 
     def test_evaluate_wrong_parameter_type(self, mock_model_config):
         """Test evaluation when parameters have wrong types."""
@@ -259,22 +281,32 @@ class TestToolInputAccuracyEvaluator:
                     "type": "object",
                     "properties": {
                         "room": {"type": "string", "description": "The room name"},
-                        "temperature": {"type": "number", "description": "Temperature in degrees"},
+                        "temperature": {
+                            "type": "number",
+                            "description": "Temperature in degrees",
+                        },
                     },
                     "required": ["room", "temperature"],
                 },
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == 0
         assert result[f"{key}_result"] == "fail"
-        assert "number" in result[f"{key}_reason"].lower() and "string" in result[f"{key}_reason"].lower()
+        assert (
+            "number" in result[f"{key}_reason"].lower()
+            and "string" in result[f"{key}_reason"].lower()
+        )
         assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
+        assert (
+            result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0
+        )  # 1/2 correct params
 
     def test_evaluate_ungrounded_parameters(self, mock_model_config):
         """Test evaluation when parameters are not grounded in conversation."""
@@ -303,7 +335,10 @@ class TestToolInputAccuracyEvaluator:
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for",
+                        },
                         "units": {"type": "string", "description": "Temperature units"},
                     },
                     "required": ["location"],
@@ -311,7 +346,9 @@ class TestToolInputAccuracyEvaluator:
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -319,7 +356,9 @@ class TestToolInputAccuracyEvaluator:
         assert result[f"{key}_result"] == "fail"
         assert "not grounded" in result[f"{key}_reason"].lower()
         assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
+        assert (
+            result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0
+        )  # 1/2 correct params
 
     def test_evaluate_unexpected_parameters(self, mock_model_config):
         """Test evaluation when unexpected parameters are provided."""
@@ -335,7 +374,11 @@ class TestToolInputAccuracyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_123",
                         "name": "get_weather",
-                        "arguments": {"location": "Paris", "units": "celsius", "extra_param": "unexpected"},
+                        "arguments": {
+                            "location": "Paris",
+                            "units": "celsius",
+                            "extra_param": "unexpected",
+                        },
                     }
                 ],
             }
@@ -348,7 +391,10 @@ class TestToolInputAccuracyEvaluator:
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for",
+                        },
                         "units": {"type": "string", "description": "Temperature units"},
                     },
                     "required": ["location"],
@@ -356,7 +402,9 @@ class TestToolInputAccuracyEvaluator:
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -364,7 +412,9 @@ class TestToolInputAccuracyEvaluator:
         assert result[f"{key}_result"] == "fail"
         assert "unexpected parameter" in result[f"{key}_reason"].lower()
         assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 66.67  # 2/3 correct params
+        assert (
+            result[f"{key}_details"]["parameter_extraction_accuracy"] == 66.67
+        )  # 2/3 correct params
 
     def test_evaluate_mixed_errors(self, mock_model_config):
         """Test evaluation with multiple types of errors."""
@@ -380,7 +430,11 @@ class TestToolInputAccuracyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_123",
                         "name": "complex_function",
-                        "arguments": {"param1": "correct", "param2": "wrong_type", "extra_param": "unexpected"},
+                        "arguments": {
+                            "param1": "correct",
+                            "param2": "wrong_type",
+                            "extra_param": "unexpected",
+                        },
                     }
                 ],
             }
@@ -395,24 +449,32 @@ class TestToolInputAccuracyEvaluator:
                     "properties": {
                         "param1": {"type": "string", "description": "First parameter"},
                         "param2": {"type": "number", "description": "Second parameter"},
-                        "required_param": {"type": "string", "description": "Required parameter"},
+                        "required_param": {
+                            "type": "string",
+                            "description": "Required parameter",
+                        },
                     },
                     "required": ["param1", "required_param"],
                 },
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == 0
         assert result[f"{key}_result"] == "fail"
         assert (
-            "multiple" in result[f"{key}_reason"].lower() or len(result[f"{key}_details"]["incorrect_parameters"]) >= 2
+            "multiple" in result[f"{key}_reason"].lower()
+            or len(result[f"{key}_details"]["incorrect_parameters"]) >= 2
         )
         assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 25.0  # 1/4 correct params
+        assert (
+            result[f"{key}_details"]["parameter_extraction_accuracy"] == 25.0
+        )  # 1/4 correct params
 
     def test_evaluate_no_tool_calls(self, mock_model_config):
         """Test evaluation when no tool calls are present."""
@@ -421,15 +483,26 @@ class TestToolInputAccuracyEvaluator:
 
         query = "Simple question without tool calls"
         response = [{"role": "assistant", "content": "I can help you with that."}]
-        tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+            }
+        ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == "not applicable"
         assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
+        assert (
+            _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
+            in result[f"{key}_reason"]
+        )
 
     def test_evaluate_no_tool_definitions(self, mock_model_config):
         """Test evaluation when no tool definitions are provided."""
@@ -452,13 +525,18 @@ class TestToolInputAccuracyEvaluator:
         ]
         tool_definitions = []
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == "not applicable"
         assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in result[f"{key}_reason"]
+        assert (
+            _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE
+            in result[f"{key}_reason"]
+        )
 
     def test_evaluate_missing_tool_definitions(self, mock_model_config):
         """Test evaluation when tool definitions are missing for some tool calls."""
@@ -479,15 +557,26 @@ class TestToolInputAccuracyEvaluator:
                 ],
             }
         ]
-        tool_definitions = [{"name": "different_function", "type": "function", "description": "A different function"}]
+        tool_definitions = [
+            {
+                "name": "different_function",
+                "type": "function",
+                "description": "A different function",
+            }
+        ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == "not applicable"
         assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
+        assert (
+            _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
+            in result[f"{key}_reason"]
+        )
 
     def test_evaluate_invalid_result_value(self, mock_model_config):
         """Test that invalid result values raise an exception."""
@@ -515,7 +604,9 @@ class TestToolInputAccuracyEvaluator:
                 "description": "Test function",
                 "parameters": {
                     "type": "object",
-                    "properties": {"param": {"type": "string", "description": "Test parameter"}},
+                    "properties": {
+                        "param": {"type": "string", "description": "Test parameter"}
+                    },
                 },
             }
         ]
@@ -531,9 +622,17 @@ class TestToolInputAccuracyEvaluator:
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
         query = "Get weather"
-        tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+            }
+        ]
 
-        result = evaluator(query=query, response=None, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=None, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -555,12 +654,20 @@ class TestToolInputAccuracyEvaluator:
         assert accuracy == 60.0
 
         # Test with all correct parameters
-        details = {"total_parameters_passed": 4, "correct_parameters_passed": 4, "incorrect_parameters": []}
+        details = {
+            "total_parameters_passed": 4,
+            "correct_parameters_passed": 4,
+            "incorrect_parameters": [],
+        }
         accuracy = evaluator._calculate_parameter_extraction_accuracy(details)
         assert accuracy == 100.0
 
         # Test with no parameters
-        details = {"total_parameters_passed": 0, "correct_parameters_passed": 0, "incorrect_parameters": []}
+        details = {
+            "total_parameters_passed": 0,
+            "correct_parameters_passed": 0,
+            "incorrect_parameters": [],
+        }
         accuracy = evaluator._calculate_parameter_extraction_accuracy(details)
         assert accuracy == 100.0
 
@@ -602,13 +709,20 @@ class TestToolInputAccuracyEvaluator:
                 "description": "Get weather information for a location",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for",
+                        }
+                    },
                     "required": ["location"],
                 },
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -641,12 +755,19 @@ class TestToolInputAccuracyEvaluator:
             "description": "Get weather information for a location",
             "parameters": {
                 "type": "object",
-                "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The location to get weather for",
+                    }
+                },
                 "required": ["location"],
             },
         }
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -678,7 +799,12 @@ class TestToolInputAccuracyEvaluator:
                 "description": "Get weather information for a location",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for",
+                        }
+                    },
                     "required": ["location"],
                 },
             }

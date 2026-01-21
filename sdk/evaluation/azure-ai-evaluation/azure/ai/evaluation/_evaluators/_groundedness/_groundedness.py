@@ -102,7 +102,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     @override
     def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
+        prompty_path = os.path.join(
+            current_dir, self._PROMPTY_FILE_NO_QUERY
+        )  # Default to no query
 
         self._higher_is_better = True
         super().__init__(
@@ -249,8 +251,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         contains_context = self._has_context(eval_input)
 
-        simplified_query = simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
-        simplified_response = simplify_messages(eval_input["response"], drop_tool_calls=False)
+        simplified_query = simplify_messages(
+            eval_input["query"], drop_tool_calls=contains_context
+        )
+        simplified_response = simplify_messages(
+            eval_input["response"], drop_tool_calls=False
+        )
 
         # Build simplified input
         simplified_eval_input = {
@@ -305,13 +311,21 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         context = self._get_context_from_agent_response(response, tool_definitions)
 
         filtered_response = self._filter_file_search_results(response)
-        return super()._convert_kwargs_to_eval_input(response=filtered_response, context=context, query=query)
+        return super()._convert_kwargs_to_eval_input(
+            response=filtered_response, context=context, query=query
+        )
 
-    def _filter_file_search_results(self, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _filter_file_search_results(
+        self, messages: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Filter out file_search tool results from the messages."""
         file_search_ids = self._get_file_search_tool_call_ids(messages)
         return [
-            msg for msg in messages if not (msg.get("role") == "tool" and msg.get("tool_call_id") in file_search_ids)
+            msg
+            for msg in messages
+            if not (
+                msg.get("role") == "tool" and msg.get("tool_call_id") in file_search_ids
+            )
         ]
 
     def _get_context_from_agent_response(self, response, tool_definitions):
@@ -328,7 +342,10 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
             context_lines = []
             for tool_call in tool_calls:
-                if not isinstance(tool_call, dict) or tool_call.get("type") != "tool_call":
+                if (
+                    not isinstance(tool_call, dict)
+                    or tool_call.get("type") != "tool_call"
+                ):
                     continue
 
                 tool_name = tool_call.get("name")
@@ -357,4 +374,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def _get_file_search_tool_call_ids(self, query_or_response):
         """Return a list of tool_call_ids for file search tool calls."""
         tool_calls = self._parse_tools_from_response(query_or_response)
-        return [tc.get("tool_call_id") for tc in tool_calls if tc.get("name") == "file_search"]
+        return [
+            tc.get("tool_call_id")
+            for tc in tool_calls
+            if tc.get("name") == "file_search"
+        ]

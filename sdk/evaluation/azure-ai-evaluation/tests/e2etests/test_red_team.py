@@ -19,7 +19,9 @@ from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfigurat
 @pytest.mark.azuretest
 class TestRedTeam:
     @pytest.fixture
-    def sanitized_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+    def sanitized_model_config(
+        self, model_config: AzureOpenAIModelConfiguration
+    ) -> AzureOpenAIModelConfiguration:
         """
         Fixture that sanitizes the Azure OpenAI model configuration for testing.
 
@@ -32,7 +34,10 @@ class TestRedTeam:
         Returns:
             AzureOpenAIModelConfiguration: Sanitized model configuration for testing
         """
-        if model_config["azure_endpoint"] != "https://Sanitized.api.cognitive.microsoft.com":
+        if (
+            model_config["azure_endpoint"]
+            != "https://Sanitized.api.cognitive.microsoft.com"
+        ):
             return model_config
 
         return AzureOpenAIModelConfiguration(
@@ -100,9 +105,12 @@ class TestRedTeam:
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
+        ("proj_scope", "cred"),
+        (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp")),
     )
-    def test_red_team_with_azure_openai_target(self, request, proj_scope, cred, sanitized_model_config):
+    def test_red_team_with_azure_openai_target(
+        self, request, proj_scope, cred, sanitized_model_config
+    ):
         """
         Test red team scan using Azure OpenAI model as the target.
 
@@ -144,7 +152,8 @@ class TestRedTeam:
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
+        ("proj_scope", "cred"),
+        (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp")),
     )
     def test_red_team_with_callback_target(self, request, proj_scope, cred):
         """
@@ -207,7 +216,8 @@ class TestRedTeam:
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
+        ("proj_scope", "cred"),
+        (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp")),
     )
     def test_red_team_multi_turn_attack(self, request, proj_scope, cred):
         """
@@ -261,7 +271,8 @@ class TestRedTeam:
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
+        ("proj_scope", "cred"),
+        (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp")),
     )
     def test_red_team_crescendo_attack(self, request, proj_scope, cred):
         """
@@ -315,7 +326,8 @@ class TestRedTeam:
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
+        ("proj_scope", "cred"),
+        (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp")),
     )
     def test_red_team_ungrounded_attributes(self, request, proj_scope, cred):
         """

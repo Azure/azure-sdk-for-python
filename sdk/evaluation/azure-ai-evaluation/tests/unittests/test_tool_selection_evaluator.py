@@ -29,7 +29,9 @@ async def tool_selection_flow_side_effect(timeout, **kwargs):
     elif "data" in query.lower() and any("data" in name for name in tool_names):
         score = 1
         reason = "Data tool correctly selected for data query"
-    elif "financial" in query.lower() and any("financial" in name for name in tool_names):
+    elif "financial" in query.lower() and any(
+        "financial" in name for name in tool_names
+    ):
         score = 1
         reason = "Financial tool correctly selected for financial query"
     elif len(tool_calls) == 0:
@@ -82,11 +84,16 @@ class TestToolSelectionEvaluator:
                 "name": "get_weather",
                 "type": "function",
                 "description": "Get weather information",
-                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string"}},
+                },
             }
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
@@ -113,17 +120,25 @@ class TestToolSelectionEvaluator:
                 "name": "get_weather",
                 "type": "function",
                 "description": "Get weather information",
-                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string"}},
+                },
             },
             {
                 "name": "buy_item",
                 "type": "function",
                 "description": "Purchase an item",
-                "parameters": {"type": "object", "properties": {"item": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"item": {"type": "string"}},
+                },
             },
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
@@ -150,11 +165,16 @@ class TestToolSelectionEvaluator:
                 "name": "web_search",
                 "type": "function",
                 "description": "Search the web for information",
-                "parameters": {"type": "object", "properties": {"query": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"query": {"type": "string"}},
+                },
             }
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
@@ -179,11 +199,16 @@ class TestToolSelectionEvaluator:
                 "name": "analyze_data",
                 "type": "function",
                 "description": "Analyze data patterns",
-                "parameters": {"type": "object", "properties": {"dataset": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"dataset": {"type": "string"}},
+                },
             }
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
@@ -208,11 +233,16 @@ class TestToolSelectionEvaluator:
                 "name": "get_financial_data",
                 "type": "function",
                 "description": "Get financial account information",
-                "parameters": {"type": "object", "properties": {"account": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"account": {"type": "string"}},
+                },
             }
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
@@ -230,11 +260,16 @@ class TestToolSelectionEvaluator:
                 "name": "get_weather",
                 "type": "function",
                 "description": "Get weather information",
-                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string"}},
+                },
             }
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
@@ -242,7 +277,9 @@ class TestToolSelectionEvaluator:
         assert result[f"{key}_result"] == "pass"
         assert f"{key}_reason" in result
 
-    def test_evaluate_tool_selection_not_applicable_no_tool_definitions(self, mock_model_config):
+    def test_evaluate_tool_selection_not_applicable_no_tool_definitions(
+        self, mock_model_config
+    ):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
 
@@ -250,7 +287,9 @@ class TestToolSelectionEvaluator:
         tool_calls = []
         tool_definitions = []
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
@@ -281,7 +320,9 @@ class TestToolSelectionEvaluator:
         ]
 
         with pytest.raises(EvaluationException) as exc_info:
-            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            evaluator(
+                query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+            )
 
         assert "Invalid score value" in str(exc_info.value)
 
@@ -303,13 +344,18 @@ class TestToolSelectionEvaluator:
                 "name": "get_weather",
                 "type": "function",
                 "description": "Get weather information",
-                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string"}},
+                },
             }
         ]
 
         # Test with query=None
         with pytest.raises(EvaluationException) as exc_info:
-            evaluator(query=None, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            evaluator(
+                query=None, tool_calls=tool_calls, tool_definitions=tool_definitions
+            )
 
         assert "Query is a required input" in str(exc_info.value)
 

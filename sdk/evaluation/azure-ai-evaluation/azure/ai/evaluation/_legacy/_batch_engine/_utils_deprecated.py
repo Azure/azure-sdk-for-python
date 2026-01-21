@@ -7,7 +7,17 @@ import contextvars
 import dataclasses
 from asyncio import Task
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, AsyncIterator, Callable, Iterator, Mapping, Optional, Sequence, Tuple, cast
+from typing import (
+    Any,
+    AsyncIterator,
+    Callable,
+    Iterator,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    cast,
+)
 
 
 class ThreadPoolExecutorWithContext(ThreadPoolExecutor):
@@ -35,7 +45,12 @@ class ThreadPoolExecutorWithContext(ThreadPoolExecutor):
         """
         current_context = contextvars.copy_context()
         initializer_args = (current_context, initializer, initargs)
-        super().__init__(max_workers, thread_name_prefix, self.set_context_then_call, initializer_args)
+        super().__init__(
+            max_workers,
+            thread_name_prefix,
+            self.set_context_then_call,
+            initializer_args,
+        )
 
     @staticmethod
     def set_context_then_call(
@@ -87,7 +102,9 @@ def async_run_allowing_running_loop(async_func, *args, **kwargs):
         #              this odd logic as is, and in phase 2 of the migration, this will be
         #              refactored to be more idiomatic asyncio code.
         with ThreadPoolExecutorWithContext() as executor:
-            return executor.submit(lambda: asyncio.run(async_func(*args, **kwargs))).result()
+            return executor.submit(
+                lambda: asyncio.run(async_func(*args, **kwargs))
+            ).result()
     else:
         return asyncio.run(async_func(*args, **kwargs))
 
@@ -99,7 +116,10 @@ async def stringify_output_async(output: Any) -> str:
         return await stringify_output_async([v for v in output])
     if isinstance(output, Mapping):
         return ", ".join(
-            [f"{await stringify_output_async(k)}:{await stringify_output_async(v)}" for k, v in output.items()]
+            [
+                f"{await stringify_output_async(k)}:{await stringify_output_async(v)}"
+                for k, v in output.items()
+            ]
         )
     if isinstance(output, Sequence):
         return "".join([await stringify_output_async(v) for v in output])

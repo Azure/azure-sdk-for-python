@@ -25,7 +25,12 @@ from azure.ai.evaluation._constants import (
     EvaluationRunProperties,
     Prefixes,
 )
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._user_agent import UserAgentSingleton
@@ -52,7 +57,9 @@ def is_none(value) -> bool:
 def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-long
     trace_provider: str,
 ) -> AzureMLWorkspace:
-    from azure.ai.evaluation._legacy._adapters.utils import get_workspace_triad_from_local
+    from azure.ai.evaluation._legacy._adapters.utils import (
+        get_workspace_triad_from_local,
+    )
 
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:
@@ -76,11 +83,25 @@ def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-lon
     # for backwards compatibility with what the original code that depended on promptflow-azure did
     if not (subscription_id and resource_group_name and workspace_name):
         local = get_workspace_triad_from_local()
-        subscription_id = subscription_id or local.subscription_id or os.getenv("AZUREML_ARM_SUBSCRIPTION")
-        resource_group_name = resource_group_name or local.resource_group_name or os.getenv("AZUREML_ARM_RESOURCEGROUP")
-        workspace_name = workspace_name or local.workspace_name or os.getenv("AZUREML_ARM_WORKSPACE_NAME")
+        subscription_id = (
+            subscription_id
+            or local.subscription_id
+            or os.getenv("AZUREML_ARM_SUBSCRIPTION")
+        )
+        resource_group_name = (
+            resource_group_name
+            or local.resource_group_name
+            or os.getenv("AZUREML_ARM_RESOURCEGROUP")
+        )
+        workspace_name = (
+            workspace_name
+            or local.workspace_name
+            or os.getenv("AZUREML_ARM_WORKSPACE_NAME")
+        )
 
-    return AzureMLWorkspace(subscription_id or "", resource_group_name or "", workspace_name or "")
+    return AzureMLWorkspace(
+        subscription_id or "", resource_group_name or "", workspace_name or ""
+    )
 
 
 def load_jsonl(path):
@@ -121,7 +142,9 @@ def process_message_content(content, images_folder_path):
 
         # Generate a unique filename
         image_file_name = f"{str(uuid.uuid4())}.{ext}"
-        image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
+        image_url["url"] = (
+            f"images/{image_file_name}"  # Replace the base64 URL with the file path
+        )
 
         # Decode the base64 string to binary image data
         image_data_binary = base64.b64decode(base64image)
@@ -146,10 +169,15 @@ def _log_metrics_and_instance_results_onedp(
     # One RP Client
     from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
     from azure.ai.evaluation._constants import TokenScope
-    from azure.ai.evaluation._common import EvaluationServiceOneDPClient, EvaluationUpload
+    from azure.ai.evaluation._common import (
+        EvaluationServiceOneDPClient,
+        EvaluationUpload,
+    )
 
     credentials = AzureMLTokenManager(
-        TokenScope.COGNITIVE_SERVICES_MANAGEMENT.value, LOGGER, credential=kwargs.get("credential")
+        TokenScope.COGNITIVE_SERVICES_MANAGEMENT.value,
+        LOGGER,
+        credential=kwargs.get("credential"),
     )
     client = EvaluationServiceOneDPClient(
         endpoint=project_url,
@@ -181,7 +209,9 @@ def _log_metrics_and_instance_results_onedp(
         properties = {
             EvaluationRunProperties.RUN_TYPE: "eval_run",
             EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-            "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
+            "_azureml.evaluate_artifacts": json.dumps(
+                [{"path": artifact_name, "type": "table"}]
+            ),
         }
         properties.update(_convert_name_map_into_property_entries(name_map))
 
@@ -230,7 +260,9 @@ def _log_metrics_and_instance_results(
     from azure.ai.evaluation._evaluate._eval_run import EvalRun
 
     if trace_destination is None:
-        LOGGER.debug("Skip uploading evaluation results to AI Studio since no trace destination was provided.")
+        LOGGER.debug(
+            "Skip uploading evaluation results to AI Studio since no trace destination was provided."
+        )
         return None
 
     ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
@@ -241,7 +273,9 @@ def _log_metrics_and_instance_results(
         credential=kwargs.get("credential"),
         # let the client automatically determine the credentials to use
     )
-    tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
+    tracking_uri = management_client.workspace_get_info(
+        ws_triad.workspace_name
+    ).ml_flow_tracking_uri
 
     # Adding line_number as index column this is needed by UI to form link to individual instance run
     instance_results["line_number"] = instance_results.index.values
@@ -284,7 +318,9 @@ def _log_metrics_and_instance_results(
                     EvaluationRunProperties.RUN_TYPE: "eval_run",
                     EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
                     EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-                    "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
+                    "_azureml.evaluate_artifacts": json.dumps(
+                        [{"path": artifact_name, "type": "table"}]
+                    ),
                 }
                 properties.update(_convert_name_map_into_property_entries(name_map))
                 ev_run.write_properties_to_run_history(properties=properties)
@@ -299,7 +335,9 @@ def _log_metrics_and_instance_results(
             ev_run.log_metric(metric_name, metric_value)
 
     evaluation_id = ev_run.info.run_name if run is not None else ev_run.info.run_id
-    return _get_ai_studio_url(trace_destination=trace_destination, evaluation_id=evaluation_id)
+    return _get_ai_studio_url(
+        trace_destination=trace_destination, evaluation_id=evaluation_id
+    )
 
 
 def _get_ai_studio_url(trace_destination: str, evaluation_id: str) -> str:
@@ -345,7 +383,9 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
 
 
 def _apply_column_mapping(
-    source_df: pd.DataFrame, mapping_config: Optional[Dict[str, str]], inplace: bool = False
+    source_df: pd.DataFrame,
+    mapping_config: Optional[Dict[str, str]],
+    inplace: bool = False,
 ) -> pd.DataFrame:
     """
     Apply column mapping to source_df based on mapping_config.
@@ -376,7 +416,9 @@ def _apply_column_mapping(
                     map_from_key = pattern[len(pattern_prefix) :]
                 elif pattern.startswith(run_outputs_prefix):
                     # Target-generated columns always starts from .outputs.
-                    map_from_key = f"{Prefixes.TSG_OUTPUTS}{pattern[len(run_outputs_prefix) :]}"
+                    map_from_key = (
+                        f"{Prefixes.TSG_OUTPUTS}{pattern[len(run_outputs_prefix) :]}"
+                    )
                 # if we are not renaming anything, skip.
                 if map_from_key == map_to_key:
                     continue
@@ -484,7 +526,9 @@ class CSVDataFileLoader:
 
 class DataLoaderFactory:
     @staticmethod
-    def get_loader(filename: Union[os.PathLike, str]) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
+    def get_loader(
+        filename: Union[os.PathLike, str]
+    ) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
         filename_str = str(filename).lower()
         if filename_str.endswith(".csv"):
             return CSVDataFileLoader(filename)

@@ -50,7 +50,9 @@ class TestAOAIPagination:
         # Mock the wait_for_run_conclusion response
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=8, failed=2)]
+        mock_run_results.per_testing_criteria_results = [
+            Mock(testing_criteria="grader-1", passed=8, failed=2)
+        ]
 
         # Mock single page of results
         mock_output_items = [
@@ -73,7 +75,8 @@ class TestAOAIPagination:
         mock_client.evals.runs.output_items.list.return_value = mock_list_response
 
         with patch(
-            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results
+            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion",
+            return_value=mock_run_results,
         ):
             df, metrics = _get_single_run_results(run_info)
 
@@ -100,14 +103,23 @@ class TestAOAIPagination:
         # Mock run results
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=80, failed=20)]
+        mock_run_results.per_testing_criteria_results = [
+            Mock(testing_criteria="grader-1", passed=80, failed=20)
+        ]
 
         # Create 3 pages of results
         page1_items = [
             MockOutputItem(
                 id=f"item-{i}",
                 datasource_item_id=i,
-                results=[{"name": "grader-1", "passed": True, "score": 0.9, "sample": f"Sample {i}"}],
+                results=[
+                    {
+                        "name": "grader-1",
+                        "passed": True,
+                        "score": 0.9,
+                        "sample": f"Sample {i}",
+                    }
+                ],
             )
             for i in range(100)
         ]
@@ -116,7 +128,14 @@ class TestAOAIPagination:
             MockOutputItem(
                 id=f"item-{i}",
                 datasource_item_id=i,
-                results=[{"name": "grader-1", "passed": True, "score": 0.85, "sample": f"Sample {i}"}],
+                results=[
+                    {
+                        "name": "grader-1",
+                        "passed": True,
+                        "score": 0.85,
+                        "sample": f"Sample {i}",
+                    }
+                ],
             )
             for i in range(100, 200)
         ]
@@ -125,7 +144,14 @@ class TestAOAIPagination:
             MockOutputItem(
                 id=f"item-{i}",
                 datasource_item_id=i,
-                results=[{"name": "grader-1", "passed": False, "score": 0.3, "sample": f"Sample {i}"}],
+                results=[
+                    {
+                        "name": "grader-1",
+                        "passed": False,
+                        "score": 0.3,
+                        "sample": f"Sample {i}",
+                    }
+                ],
             )
             for i in range(200, 250)
         ]
@@ -140,7 +166,8 @@ class TestAOAIPagination:
         mock_client.evals.runs.output_items.list.side_effect = responses
 
         with patch(
-            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results
+            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion",
+            return_value=mock_run_results,
         ):
             df, metrics = _get_single_run_results(run_info)
 
@@ -171,7 +198,9 @@ class TestAOAIPagination:
 
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=5, failed=0)]
+        mock_run_results.per_testing_criteria_results = [
+            Mock(testing_criteria="grader-1", passed=5, failed=0)
+        ]
 
         # First page has data, second page is empty but has_more=True, third page breaks loop
         responses = [
@@ -193,7 +222,8 @@ class TestAOAIPagination:
         mock_client.evals.runs.output_items.list.side_effect = responses
 
         with patch(
-            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results
+            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion",
+            return_value=mock_run_results,
         ):
             df, metrics = _get_single_run_results(run_info)
 
@@ -213,7 +243,9 @@ class TestAOAIPagination:
 
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=20, failed=0)]
+        mock_run_results.per_testing_criteria_results = [
+            Mock(testing_criteria="grader-1", passed=20, failed=0)
+        ]
 
         # Create results in non-sequential order across pages, covering ids 0..9 exactly
         page1_items = [
@@ -242,7 +274,8 @@ class TestAOAIPagination:
         mock_client.evals.runs.output_items.list.side_effect = responses
 
         with patch(
-            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results
+            "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion",
+            return_value=mock_run_results,
         ):
             df, metrics = _get_single_run_results(run_info)
 

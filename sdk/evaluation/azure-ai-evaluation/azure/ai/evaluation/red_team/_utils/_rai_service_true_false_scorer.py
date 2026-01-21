@@ -8,7 +8,9 @@ from typing import List, Optional
 from pyrit.models import Score, PromptRequestPiece, UnvalidatedScore
 from pyrit.score.scorer import Scorer
 
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from ._rai_service_eval_chat_target import RAIServiceEvalChatTarget
 from .._attack_objective_generator import RiskCategory
 
@@ -84,7 +86,9 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         self.validate(request_response, task=task)
 
         if not self._scoring_target_red_llm.context:
-            self._scoring_target_red_llm.context = request_response.labels.get("context", "")
+            self._scoring_target_red_llm.context = request_response.labels.get(
+                "context", ""
+            )
 
         unvalidated_score: UnvalidatedScore = await self._score_value_with_llm(
             prompt_target=self._scoring_target_red_llm,
@@ -96,7 +100,9 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
             orchestrator_identifier=request_response.orchestrator_identifier,
         )
 
-        score = unvalidated_score.to_score(score_value=unvalidated_score.raw_score_value)
+        score = unvalidated_score.to_score(
+            score_value=unvalidated_score.raw_score_value
+        )
 
         # self._memory.add_scores_to_memory(scores=[score])
         return [score]

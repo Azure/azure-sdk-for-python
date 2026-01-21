@@ -35,9 +35,14 @@ class AnnotationDTO(_model_base.Model):
     :vartype prompt_version: str
     """
 
-    annotation_task: str = rest_field(name="AnnotationTask", visibility=["read", "create", "update", "delete", "query"])
+    annotation_task: str = rest_field(
+        name="AnnotationTask",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
     """Required."""
-    content_type: str = rest_field(name="ContentType", visibility=["read", "create", "update", "delete", "query"])
+    content_type: str = rest_field(
+        name="ContentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
     user_text_list: List[str] = rest_field(
         name="UserTextList", visibility=["read", "create", "update", "delete", "query"]
@@ -47,9 +52,13 @@ class AnnotationDTO(_model_base.Model):
         name="Contents", visibility=["read", "create", "update", "delete", "query"]
     )
     """Required."""
-    metric_list: List[str] = rest_field(name="MetricList", visibility=["read", "create", "update", "delete", "query"])
+    metric_list: List[str] = rest_field(
+        name="MetricList", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
-    prompt_version: str = rest_field(name="PromptVersion", visibility=["read", "create", "update", "delete", "query"])
+    prompt_version: str = rest_field(
+        name="PromptVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
 
     @overload
@@ -84,7 +93,9 @@ class Content(_model_base.Model):
     :vartype messages: list[any]
     """
 
-    messages: List[Any] = rest_field(name="Messages", visibility=["read", "create", "update", "delete", "query"])
+    messages: List[Any] = rest_field(
+        name="Messages", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
 
     @overload
@@ -117,11 +128,13 @@ class CustomizationParameters(_model_base.Model):
     """
 
     application_scenario: Optional[str] = rest_field(
-        name="ApplicationScenario", visibility=["read", "create", "update", "delete", "query"]
+        name="ApplicationScenario",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Application scenario."""
     harm_categories: List[str] = rest_field(
-        name="HarmCategories", visibility=["read", "create", "update", "delete", "query"]
+        name="HarmCategories",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of harm categories. Required."""
 
@@ -153,7 +166,9 @@ class Data(_model_base.Model):
     :vartype asset_id: str
     """
 
-    asset_id: str = rest_field(name="assetId", visibility=["read", "create", "update", "delete", "query"])
+    asset_id: str = rest_field(
+        name="assetId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
 
     @overload
@@ -187,9 +202,13 @@ class Grader(_model_base.Model):
     :vartype config: ~raiclient.models.GraderConfigBase
     """
 
-    name: str = rest_field(name="Name", visibility=["read", "create", "update", "delete", "query"])
+    name: str = rest_field(
+        name="Name", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
-    description: str = rest_field(name="Description", visibility=["read", "create", "update", "delete", "query"])
+    description: str = rest_field(
+        name="Description", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
     config: "_models.GraderConfigBase" = rest_field(
         name="Config", visibility=["read", "create", "update", "delete", "query"]
@@ -225,7 +244,9 @@ class GraderConfigBase(_model_base.Model):
     :vartype type: str
     """
 
-    type: str = rest_field(name="Type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_field(
+        name="Type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
 
     @overload
@@ -261,14 +282,17 @@ class GradersDTO(_model_base.Model):
     :vartype graders: list[~raiclient.models.Grader]
     """
 
-    data: "_models.Data" = rest_field(name="Data", visibility=["read", "create", "update", "delete", "query"])
+    data: "_models.Data" = rest_field(
+        name="Data", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
     model_config: "_models.ModelConfig" = rest_field(
         name="ModelConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """Required."""
     sample_generators: List["_models.SampleGenerator"] = rest_field(
-        name="SampleGenerators", visibility=["read", "create", "update", "delete", "query"]
+        name="SampleGenerators",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Required."""
     graders: List["_models.Grader"] = rest_field(
@@ -307,10 +331,13 @@ class LongRunningResponse(_model_base.Model):
     :vartype operation_result: any
     """
 
-    location: str = rest_field(name="Location", visibility=["read", "create", "update", "delete", "query"])
+    location: str = rest_field(
+        name="Location", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
     operation_result: Any = rest_field(
-        name="OperationResult", visibility=["read", "create", "update", "delete", "query"]
+        name="OperationResult",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Required."""
 
@@ -342,7 +369,9 @@ class ModelConfig(_model_base.Model):
     :vartype azure_endpoint: str
     """
 
-    azure_endpoint: str = rest_field(name="AzureEndpoint", visibility=["read", "create", "update", "delete", "query"])
+    azure_endpoint: str = rest_field(
+        name="AzureEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
 
     @overload
@@ -378,14 +407,22 @@ class SampleGenerator(_model_base.Model):
     :vartype trajectory_template: any
     """
 
-    model_name: str = rest_field(name="ModelName", visibility=["read", "create", "update", "delete", "query"])
+    model_name: str = rest_field(
+        name="ModelName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
-    type: str = rest_field(name="Type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_field(
+        name="Type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required."""
-    sampling_params: Any = rest_field(name="SamplingParams", visibility=["read", "create", "update", "delete", "query"])
+    sampling_params: Any = rest_field(
+        name="SamplingParams",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
     """Required."""
     trajectory_template: Any = rest_field(
-        name="TrajectoryTemplate", visibility=["read", "create", "update", "delete", "query"]
+        name="TrajectoryTemplate",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Required."""
 
@@ -449,36 +486,46 @@ class SimulationDTO(_model_base.Model):
     )
     """Parameters."""
     template_parameters: Optional[Dict[str, str]] = rest_field(
-        name="TemplateParameters", visibility=["read", "create", "update", "delete", "query"]
+        name="TemplateParameters",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Template parameters."""
     customization_parameters: Optional["_models.CustomizationParameters"] = rest_field(
-        name="CustomizationParameters", visibility=["read", "create", "update", "delete", "query"]
+        name="CustomizationParameters",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Customization parameters."""
-    json: Optional[str] = rest_field(name="Json", visibility=["read", "create", "update", "delete", "query"])
+    json: Optional[str] = rest_field(
+        name="Json", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Json."""
-    url: Optional[str] = rest_field(name="Url", visibility=["read", "create", "update", "delete", "query"])
+    url: Optional[str] = rest_field(
+        name="Url", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Url."""
     template_key: Optional[str] = rest_field(
         name="TemplateKey", visibility=["read", "create", "update", "delete", "query"]
     )
     """Template key."""
     simulation_type: Optional[Union[str, "_models.SimulationType"]] = rest_field(
-        name="SimulationType", visibility=["read", "create", "update", "delete", "query"]
+        name="SimulationType",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Type of Simulation. Known values are: \"Default\", \"CustomPersona\", and
      \"HarmTurnGenerator\"."""
     is_microsoft_tenant: Optional[bool] = rest_field(
-        name="IsMicrosoftTenant", visibility=["read", "create", "update", "delete", "query"]
+        name="IsMicrosoftTenant",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """'True' if Microsoft internal tenant and 'False' otherwise."""
     subscription_id: Optional[str] = rest_field(
-        name="SubscriptionId", visibility=["read", "create", "update", "delete", "query"]
+        name="SubscriptionId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Azure subscription id."""
     resource_group_name: Optional[str] = rest_field(
-        name="ResourceGroupName", visibility=["read", "create", "update", "delete", "query"]
+        name="ResourceGroupName",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Resource group name."""
     workspace_name: Optional[str] = rest_field(

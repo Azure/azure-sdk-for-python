@@ -33,7 +33,11 @@ def flat_test_data():
                 "response": "Paris is the capital of France.",
                 "ground_truth": "Paris",
             },
-            {"query": "What is 2+2?", "response": "The answer is 4.", "ground_truth": "4"},
+            {
+                "query": "What is 2+2?",
+                "response": "The answer is 4.",
+                "ground_truth": "4",
+            },
             {
                 "query": "Who wrote Hamlet?",
                 "response": "William Shakespeare wrote Hamlet.",
@@ -145,7 +149,9 @@ class TestBuildSchemaTreeFromPaths:
         assert passwords["properties"]["rotation_days"]["type"] == "string"
 
         network = security["properties"]["network"]
-        assert network["properties"]["vpn"]["properties"]["required"]["type"] == "string"
+        assert (
+            network["properties"]["vpn"]["properties"]["required"]["type"] == "string"
+        )
 
         # Check required arrays exist at each level
         assert "required" in schema
@@ -160,7 +166,12 @@ class TestBuildSchemaTreeFromPaths:
 
     def test_mixed_depth_paths(self):
         """Test building schema with paths of different depths."""
-        paths = ["simple_field", "nested.field.deep", "nested.field.shallow", "another.path"]
+        paths = [
+            "simple_field",
+            "nested.field.deep",
+            "nested.field.shallow",
+            "another.path",
+        ]
         schema = _build_schema_tree_from_paths(paths, force_leaf_type="string")
 
         assert "simple_field" in schema["properties"]
@@ -275,7 +286,10 @@ class TestGenerateDataSourceConfig:
 
     def test_no_data_references(self, flat_test_data):
         """Test column mapping with no ${data.*} references."""
-        column_mapping = {"response": "${run.outputs.response}", "result": "${run.outputs.result}"}
+        column_mapping = {
+            "response": "${run.outputs.response}",
+            "result": "${run.outputs.result}",
+        }
 
         config = _generate_data_source_config(flat_test_data, column_mapping)
 
@@ -412,7 +426,9 @@ class TestGetDataSource:
         # None should be converted to empty string
         assert content[1][WRAPPER_KEY]["response"] == ""
 
-    def test_data_source_with_item_column_and_nested_values(self, nested_item_keyword_data):
+    def test_data_source_with_item_column_and_nested_values(
+        self, nested_item_keyword_data
+    ):
         """Ensure rows that already have an 'item' column keep nested dicts intact."""
 
         column_mapping = {
@@ -433,13 +449,17 @@ class TestGetDataSource:
         item_payload = first_row[WRAPPER_KEY]
         assert item_payload["query"] == "what is the weather today"
         assert item_payload["response"] == "It is sunny out"
-        assert item_payload["test"]["test_string"] == ("baking cakes is a fun pass time when you are bored!")
+        assert item_payload["test"]["test_string"] == (
+            "baking cakes is a fun pass time when you are bored!"
+        )
         # Ensure we did not accidentally nest another 'item' key inside the wrapper
         assert "item" not in item_payload
         assert item_payload["sample"]["output_text"] == "someoutput"
         assert item_payload["sample"]["output_items"] == "['item1', 'item2']"
 
-    def test_data_source_with_item_sample_column_and_nested_values(self, nested_item_sample_keyword_data):
+    def test_data_source_with_item_sample_column_and_nested_values(
+        self, nested_item_sample_keyword_data
+    ):
         """Ensure rows that already have an 'item' column keep nested dicts intact."""
 
         column_mapping = {
@@ -460,7 +480,9 @@ class TestGetDataSource:
         item_payload = first_row[WRAPPER_KEY]
         assert item_payload["query"] == "what is the weather today"
         assert item_payload["response"] == "It is sunny out"
-        assert item_payload["test"]["test_string"] == ("baking cakes is a fun pass time when you are bored!")
+        assert item_payload["test"]["test_string"] == (
+            "baking cakes is a fun pass time when you are bored!"
+        )
         # Ensure we did not accidentally nest another 'item' key inside the wrapper
         assert "item" not in item_payload
         assert item_payload["sample"]["output_text"] == "someoutput"
@@ -492,7 +514,11 @@ class TestGetDataSource:
         flat_test_data["score"] = [95, 87, 92]
         flat_test_data["confidence"] = [0.95, 0.87, 0.92]
 
-        column_mapping = {"query": "${data.query}", "score": "${data.score}", "confidence": "${data.confidence}"}
+        column_mapping = {
+            "query": "${data.query}",
+            "score": "${data.score}",
+            "confidence": "${data.confidence}",
+        }
 
         data_source = _get_data_source(flat_test_data, column_mapping)
 

@@ -37,12 +37,18 @@ class ObjectParameterDescriptorWithRequired:
     properties: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
-        return {"required": self.required, "type": self.type, "properties": self.properties}
+        return {
+            "required": self.required,
+            "type": self.type,
+            "properties": self.properties,
+        }
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ObjectParameterDescriptorWithRequired":
         return cls(
-            required=data.get("required", []), type=data.get("type", "object"), properties=data.get("properties", {})
+            required=data.get("required", []),
+            type=data.get("type", "object"),
+            properties=data.get("properties", {}),
         )
 
 
@@ -50,9 +56,13 @@ class EvaluatorDefinition(ABC):
     """Base class for evaluator definitions"""
 
     def __init__(self):
-        self.init_parameters: ObjectParameterDescriptorWithRequired = ObjectParameterDescriptorWithRequired()
+        self.init_parameters: ObjectParameterDescriptorWithRequired = (
+            ObjectParameterDescriptorWithRequired()
+        )
         self.metrics: Dict[str, EvaluatorMetric] = {}
-        self.data_schema: ObjectParameterDescriptorWithRequired = ObjectParameterDescriptorWithRequired()
+        self.data_schema: ObjectParameterDescriptorWithRequired = (
+            ObjectParameterDescriptorWithRequired()
+        )
         self.type: str = "unknown"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -70,7 +80,13 @@ class EvaluatorDefinition(ABC):
         instance = cls.__new__(cls)
         instance.__init__()
 
-        instance.init_parameters = ObjectParameterDescriptorWithRequired.from_dict(data.get("init_parameters", {}))
-        instance.metrics = {k: EvaluatorMetric.from_dict(v) for k, v in data.get("metrics", {}).items()}
-        instance.data_schema = ObjectParameterDescriptorWithRequired.from_dict(data.get("data_schema", {}))
+        instance.init_parameters = ObjectParameterDescriptorWithRequired.from_dict(
+            data.get("init_parameters", {})
+        )
+        instance.metrics = {
+            k: EvaluatorMetric.from_dict(v) for k, v in data.get("metrics", {}).items()
+        }
+        instance.data_schema = ObjectParameterDescriptorWithRequired.from_dict(
+            data.get("data_schema", {})
+        )
         return instance

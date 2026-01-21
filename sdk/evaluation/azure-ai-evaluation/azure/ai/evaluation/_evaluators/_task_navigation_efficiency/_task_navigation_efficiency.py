@@ -114,7 +114,9 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         # Type checking for metric parameter
         if isinstance(matching_mode, str):
             try:
-                self.matching_mode = _TaskNavigationEfficiencyMatchingMode(matching_mode)
+                self.matching_mode = _TaskNavigationEfficiencyMatchingMode(
+                    matching_mode
+                )
             except ValueError:
                 raise ValueError(
                     f"matching_mode must be one of {[m.value for m in _TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'"
@@ -146,9 +148,12 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         ground_truth_steps: List[Union[str, Tuple[str, Tuple]]] = []
         if use_parameter_matching:
             # When parameter matching is enabled, we need to match both tool name and parameters
-            agent_steps = [(pair[0], tuple(sorted(pair[1].items()))) for pair in agent_tool_pairs]
+            agent_steps = [
+                (pair[0], tuple(sorted(pair[1].items()))) for pair in agent_tool_pairs
+            ]
             ground_truth_steps = [
-                (name, tuple(sorted(ground_truth_params.get(name, {}).items()))) for name in ground_truth
+                (name, tuple(sorted(ground_truth_params.get(name, {}).items())))
+                for name in ground_truth
             ]
         else:
             # When parameter matching is disabled, only compare tool names
@@ -157,7 +162,9 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
 
         return agent_steps, ground_truth_steps
 
-    def _calculate_precision_recall_f1_scores(self, agent_steps: List, ground_truth_steps: List) -> Dict[str, float]:
+    def _calculate_precision_recall_f1_scores(
+        self, agent_steps: List, ground_truth_steps: List
+    ) -> Dict[str, float]:
         """Calculate precision, recall, and F1 scores."""
         if not agent_steps:
             return {"precision_score": 0.0, "recall_score": 0.0, "f1_score": 0.0}
@@ -178,7 +185,8 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         # For each step, count the excess occurrences of agent steps not in (minus) ground truth
         # or zero (agent steps minus agent steps) if agent steps is less than ground truth
         false_positives = sum(
-            agent_steps_counts[step] - min(agent_steps_counts[step], ground_truth_counts.get(step, 0))
+            agent_steps_counts[step]
+            - min(agent_steps_counts[step], ground_truth_counts.get(step, 0))
             for step in agent_steps_counts
         )
 
@@ -186,16 +194,27 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         # For each step, count the excess occurrences of ground truth steps not in (minus) agent steps
         # or zero (ground truth steps minus ground truth steps) if ground truth steps is less than agent steps
         false_negatives = sum(
-            ground_truth_counts[step] - min(ground_truth_counts[step], agent_steps_counts.get(step, 0))
+            ground_truth_counts[step]
+            - min(ground_truth_counts[step], agent_steps_counts.get(step, 0))
             for step in ground_truth_counts
         )
 
         # Calculate precision, recall, F1
         precision = (
-            true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0.0
+            true_positives / (true_positives + false_positives)
+            if (true_positives + false_positives) > 0
+            else 0.0
         )
-        recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0.0
-        f1_score = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
+        recall = (
+            true_positives / (true_positives + false_negatives)
+            if (true_positives + false_negatives) > 0
+            else 0.0
+        )
+        f1_score = (
+            (2 * precision * recall) / (precision + recall)
+            if (precision + recall) > 0
+            else 0.0
+        )
 
         return {
             "precision_score": precision,
@@ -203,30 +222,42 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             "f1_score": f1_score,
         }
 
-    def _calculate_exact_match(self, agent_steps: List, ground_truth_steps: List) -> bool:
+    def _calculate_exact_match(
+        self, agent_steps: List, ground_truth_steps: List
+    ) -> bool:
         """Check if agent steps exactly match ground truth (order and content)."""
         return agent_steps == ground_truth_steps
 
-    def _calculate_in_order_match(self, agent_steps: List, ground_truth_steps: List) -> bool:
+    def _calculate_in_order_match(
+        self, agent_steps: List, ground_truth_steps: List
+    ) -> bool:
         """Check if all ground truth steps appear in agent steps in correct order (extra steps allowed)."""
         if not ground_truth_steps:
             return True
 
         gt_index = 0
         for step in agent_steps:
-            if gt_index < len(ground_truth_steps) and step == ground_truth_steps[gt_index]:
+            if (
+                gt_index < len(ground_truth_steps)
+                and step == ground_truth_steps[gt_index]
+            ):
                 gt_index += 1
 
         return gt_index == len(ground_truth_steps)
 
-    def _calculate_any_order_match(self, agent_steps: List, ground_truth_steps: List) -> bool:
+    def _calculate_any_order_match(
+        self, agent_steps: List, ground_truth_steps: List
+    ) -> bool:
         """Check if all ground truth steps appear in agent steps with sufficient frequency (any order, extra steps allowed)."""
         # Count occurrences of each step in both lists to handle duplicates
         agent_counts = Counter(agent_steps)
         ground_truth_counts = Counter(ground_truth_steps)
 
         # Check if agent has at least as many occurrences of each ground truth step
-        return all(agent_counts[step] >= ground_truth_counts[step] for step in ground_truth_counts)
+        return all(
+            agent_counts[step] >= ground_truth_counts[step]
+            for step in ground_truth_counts
+        )
 
     _TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS = {
         _TaskNavigationEfficiencyMatchingMode.EXACT_MATCH: _calculate_exact_match,
@@ -235,7 +266,9 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     }
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str, Dict[str, float]]]:
+    async def _do_eval(
+        self, eval_input: Dict
+    ) -> Dict[str, Union[float, str, Dict[str, float]]]:
         """Produce a path efficiency evaluation result.
 
         :param eval_input: The input to the evaluation function. Must contain "response" and "ground_truth".
@@ -259,8 +292,12 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             # Tuple format: (tool_names, parameters_dict)
             tool_names_list, params_dict = ground_truth
 
-            if not isinstance(tool_names_list, list) or not all(isinstance(name, str) for name in tool_names_list):
-                raise TypeError("ground_truth tuple first element must be a list of strings (tool names)")
+            if not isinstance(tool_names_list, list) or not all(
+                isinstance(name, str) for name in tool_names_list
+            ):
+                raise TypeError(
+                    "ground_truth tuple first element must be a list of strings (tool names)"
+                )
 
             if not isinstance(params_dict, dict):
                 raise TypeError(
@@ -270,12 +307,18 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             # Validate that all values in params_dict are dictionaries with string keys and values
             for tool_name, params in params_dict.items():
                 if not isinstance(tool_name, str):
-                    raise TypeError("ground_truth parameters dictionary keys must be strings (tool names)")
+                    raise TypeError(
+                        "ground_truth parameters dictionary keys must be strings (tool names)"
+                    )
                 if not isinstance(params, dict):
-                    raise TypeError(f"ground_truth parameters for tool '{tool_name}' must be a dictionary")
+                    raise TypeError(
+                        f"ground_truth parameters for tool '{tool_name}' must be a dictionary"
+                    )
                 for k, v in params.items():
                     if not isinstance(k, str):
-                        raise TypeError(f"ground_truth parameters for tool '{tool_name}' must have string keys")
+                        raise TypeError(
+                            f"ground_truth parameters for tool '{tool_name}' must have string keys"
+                        )
                     try:
                         json.dumps(v)
                     except (TypeError, ValueError):
@@ -286,7 +329,9 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             ground_truth_names = [name.strip() for name in tool_names_list]
             ground_truth_params_dict = params_dict
             use_parameter_matching = True
-        elif isinstance(ground_truth, list) and all(isinstance(step, str) for step in ground_truth):
+        elif isinstance(ground_truth, list) and all(
+            isinstance(step, str) for step in ground_truth
+        ):
             # List format: just tool names
             ground_truth_names = [step.strip() for step in ground_truth]
             use_parameter_matching = False
@@ -307,21 +352,30 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         )
 
         # Calculate precision, recall, and F1 scores
-        additional_properties_metrics = self._calculate_precision_recall_f1_scores(agent_steps, ground_truth_steps)
+        additional_properties_metrics = self._calculate_precision_recall_f1_scores(
+            agent_steps, ground_truth_steps
+        )
 
         # Convert metrics to floats, using nan for None or non-convertible values
         for metric, score in additional_properties_metrics.items():
-            additional_properties_metrics[metric] = float(score) if score is not None else float("nan")
-
-        if self.matching_mode in self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS:
-            # Calculate binary match metrics
-            match_result = self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS[self.matching_mode](
-                self, agent_steps, ground_truth_steps
+            additional_properties_metrics[metric] = (
+                float(score) if score is not None else float("nan")
             )
+
+        if (
+            self.matching_mode
+            in self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS
+        ):
+            # Calculate binary match metrics
+            match_result = self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS[
+                self.matching_mode
+            ](self, agent_steps, ground_truth_steps)
 
             return {
                 "task_navigation_efficiency_label": match_result,
-                "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
+                "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[
+                    match_result
+                ],
                 "task_navigation_efficiency_details": additional_properties_metrics,
             }
         else:

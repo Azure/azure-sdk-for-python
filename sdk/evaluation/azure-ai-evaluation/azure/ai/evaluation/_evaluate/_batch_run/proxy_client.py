@@ -19,7 +19,10 @@ from azure.ai.evaluation._legacy._adapters.client import PFClient
 from azure.ai.evaluation._legacy._adapters.tracing import ThreadPoolExecutorWithContext
 import pandas as pd
 
-from azure.ai.evaluation._evaluate._batch_run.batch_clients import BatchClientRun, HasAsyncCallable
+from azure.ai.evaluation._evaluate._batch_run.batch_clients import (
+    BatchClientRun,
+    HasAsyncCallable,
+)
 
 
 Configuration.get_instance().set_config("trace.destination", "none")
@@ -27,7 +30,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ProxyRun:
-    def __init__(self, run: Future, **kwargs) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self, run: Future, **kwargs
+    ) -> None:  # pylint: disable=unused-argument
         self.run = run
 
 
@@ -37,7 +42,9 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any,
     ) -> None:
         self._pf_client = PFClient(**kwargs)
-        self._thread_pool = ThreadPoolExecutorWithContext(thread_name_prefix="evaluators_thread")
+        self._thread_pool = ThreadPoolExecutorWithContext(
+            thread_name_prefix="evaluators_thread"
+        )
 
     def run(
         self,
@@ -51,7 +58,9 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
             raise ValueError("Data cannot be a pandas DataFrame")
 
         flow_to_run: Callable = flow
-        if os.getenv("AI_EVALS_BATCH_USE_ASYNC", "true").lower() == "true" and isinstance(flow, HasAsyncCallable):
+        if os.getenv(
+            "AI_EVALS_BATCH_USE_ASYNC", "true"
+        ).lower() == "true" and isinstance(flow, HasAsyncCallable):
             flow_to_run = flow._to_async()  # pylint: disable=protected-access
 
         name: str = kwargs.pop("name", "")
@@ -75,7 +84,9 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         return ProxyRun(run=eval_future)
 
-    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
+    def get_details(
+        self, client_run: BatchClientRun, all_results: bool = False
+    ) -> pd.DataFrame:
         run: Run = self.get_result(client_run)
         result_df = self._pf_client.get_details(run, all_results=all_results)
         result_df.replace("(Failed)", math.nan, inplace=True)
@@ -89,8 +100,12 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         run: Run = self.get_result(client_run)
 
         # pylint: disable=protected-access
-        completed_lines = run._properties.get("system_metrics", {}).get("__pf__.lines.completed", "NA")
-        failed_lines = run._properties.get("system_metrics", {}).get("__pf__.lines.failed", "NA")
+        completed_lines = run._properties.get("system_metrics", {}).get(
+            "__pf__.lines.completed", "NA"
+        )
+        failed_lines = run._properties.get("system_metrics", {}).get(
+            "__pf__.lines.failed", "NA"
+        )
 
         # Update status to "Completed with Errors" if the original status is "Completed" and there are failed lines
         if run.status == "Completed" and failed_lines != "NA" and int(failed_lines) > 0:

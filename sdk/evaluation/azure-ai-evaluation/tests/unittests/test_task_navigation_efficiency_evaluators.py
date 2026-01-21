@@ -9,20 +9,43 @@ from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
 class TestTaskNavigationEfficiencyEvaluator:
     def test_exact_match_scenario(self):
         """Test when agent steps exactly match ground truth."""
-        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+        )
 
         response = [
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "analyze",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "report", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_3",
+                        "name": "report",
+                        "arguments": {},
+                    }
+                ],
             },
         ]
         ground_truth = ["search", "analyze", "report"]
@@ -43,28 +66,62 @@ class TestTaskNavigationEfficiencyEvaluator:
         response = [
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "extra_step", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "extra_step",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "analyze", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_3",
+                        "name": "analyze",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_4", "name": "report", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_4",
+                        "name": "report",
+                        "arguments": {},
+                    }
+                ],
             },
         ]
         ground_truth = ["search", "analyze", "report"]
 
         result = evaluator(response=response, ground_truth=ground_truth)
         assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["task_navigation_efficiency_details"]["precision_score"] == 0.75  # 3/4
-        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0  # 3/3
-        assert result["task_navigation_efficiency_details"]["f1_score"] == pytest.approx(0.857, rel=1e-2)
+        assert (
+            result["task_navigation_efficiency_details"]["precision_score"] == 0.75
+        )  # 3/4
+        assert (
+            result["task_navigation_efficiency_details"]["recall_score"] == 1.0
+        )  # 3/3
+        assert result["task_navigation_efficiency_details"][
+            "f1_score"
+        ] == pytest.approx(0.857, rel=1e-2)
 
     def test_any_order_match(self):
         """Test when agent has all steps but in wrong order."""
@@ -75,15 +132,36 @@ class TestTaskNavigationEfficiencyEvaluator:
         response = [
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "report", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "report",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "search", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "search",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "analyze", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_3",
+                        "name": "analyze",
+                        "arguments": {},
+                    }
+                ],
             },
         ]
         ground_truth = ["search", "analyze", "report"]
@@ -106,15 +184,36 @@ class TestTaskNavigationEfficiencyEvaluator:
         response = [
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "extra_step", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "extra_step",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "analyze", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_3",
+                        "name": "analyze",
+                        "arguments": {},
+                    }
+                ],
             },
         ]
         ground_truth = ["search", "analyze"]
@@ -122,7 +221,9 @@ class TestTaskNavigationEfficiencyEvaluator:
         exact_result = exact_evaluator(response=response, ground_truth=ground_truth)
         assert exact_result["task_navigation_efficiency_result"] == "fail"
 
-        in_order_result = in_order_evaluator(response=response, ground_truth=ground_truth)
+        in_order_result = in_order_evaluator(
+            response=response, ground_truth=ground_truth
+        )
         assert in_order_result["task_navigation_efficiency_result"] == "pass"
 
     def test_invalid_ground_truth(self):
@@ -137,7 +238,9 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_tuple_format_with_parameters(self):
         """Test tuple format with exact parameter matching."""
-        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+        )
 
         response = [
             {
@@ -169,13 +272,19 @@ class TestTaskNavigationEfficiencyEvaluator:
         """Test validation of matching_mode parameter."""
         # Test valid string mode
         evaluator1 = _TaskNavigationEfficiencyEvaluator(matching_mode="exact_match")
-        assert evaluator1.matching_mode == _TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+        assert (
+            evaluator1.matching_mode
+            == _TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+        )
 
         # Test valid enum mode
         evaluator2 = _TaskNavigationEfficiencyEvaluator(
             matching_mode=_TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
         )
-        assert evaluator2.matching_mode == _TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
+        assert (
+            evaluator2.matching_mode
+            == _TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
+        )
 
         # Test invalid string mode
         with pytest.raises(ValueError):

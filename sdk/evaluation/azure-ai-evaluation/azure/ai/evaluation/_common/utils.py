@@ -6,14 +6,33 @@ import posixpath
 import re
 import math
 import threading
-from typing import Any, List, Literal, Mapping, Optional, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
+from typing import (
+    Any,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Type,
+    TypeVar,
+    Tuple,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+)
 
 import nltk
 from azure.storage.blob import ContainerClient
 from typing_extensions import NotRequired, Required, TypeGuard, TypeIs
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
-from azure.ai.evaluation._exceptions import ErrorMessage, ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorMessage,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -21,14 +40,20 @@ from azure.ai.evaluation._model_configurations import (
 )
 
 from . import constants
-from .constants import EvaluatorScoringPattern, EVALUATOR_SCORING_PATTERNS, SCORING_PATTERN_CONFIG
+from .constants import (
+    EvaluatorScoringPattern,
+    EVALUATOR_SCORING_PATTERNS,
+    SCORING_PATTERN_CONFIG,
+)
 
 _nltk_data_download_lock = threading.Lock()
 
 T_TypedDict = TypeVar("T_TypedDict", bound=Mapping[Any, Any])
 
 
-def get_harm_severity_level(harm_score: Union[float, int], evaluator: Optional[str] = None) -> Union[str, float]:
+def get_harm_severity_level(
+    harm_score: Union[float, int], evaluator: Optional[str] = None
+) -> Union[str, float]:
     """Generate harm severity level based on harm score.
 
     :param harm_score: The harm score to be evaluated.
@@ -177,7 +202,9 @@ def nltk_tokenize(text: str) -> List[str]:
 
 
 def _is_aoi_model_config(val: object) -> TypeGuard[AzureOpenAIModelConfiguration]:
-    return isinstance(val, dict) and all(isinstance(val.get(k), str) for k in ("azure_endpoint", "azure_deployment"))
+    return isinstance(val, dict) and all(
+        isinstance(val.get(k), str) for k in ("azure_endpoint", "azure_deployment")
+    )
 
 
 def _is_openai_model_config(val: object) -> TypeGuard[OpenAIModelConfiguration]:
@@ -201,21 +228,30 @@ def construct_prompty_model_config(
     parse_model_config_type(model_config)
 
     if _is_aoi_model_config(model_config):
-        model_config["api_version"] = model_config.get("api_version", default_api_version)
+        model_config["api_version"] = model_config.get(
+            "api_version", default_api_version
+        )
 
-    prompty_model_config: dict = {"configuration": model_config, "parameters": {"extra_headers": {}}}
+    prompty_model_config: dict = {
+        "configuration": model_config,
+        "parameters": {"extra_headers": {}},
+    }
 
     # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
     # https://github.com/encode/httpx/discussions/2959
     prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
 
     if _is_aoi_model_config(model_config) and user_agent:
-        prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
+        prompty_model_config["parameters"]["extra_headers"].update(
+            {"x-ms-useragent": user_agent}
+        )
 
     return prompty_model_config
 
 
-def is_onedp_project(azure_ai_project: Optional[Union[str, AzureAIProject]]) -> TypeIs[str]:
+def is_onedp_project(
+    azure_ai_project: Optional[Union[str, AzureAIProject]]
+) -> TypeIs[str]:
     """Check if the Azure AI project is an OneDP project.
 
     :param azure_ai_project: The scope of the Azure AI project.
@@ -268,7 +304,9 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
     return cast(AzureAIProject, o)
 
 
-def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:
+def validate_model_config(
+    config: dict,
+) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:
     try:
         return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
     except TypeError:
@@ -277,7 +315,10 @@ def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, 
         except TypeError as e:
             msg = "Model config validation failed."
             raise EvaluationException(
-                message=msg, internal_message=msg, category=ErrorCategory.MISSING_FIELD, blame=ErrorBlame.USER_ERROR
+                message=msg,
+                internal_message=msg,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
             ) from e
 
 
@@ -328,14 +369,18 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     def validate_annotation(v: object, annotation: Union[str, type, object]) -> bool:
         if isinstance(annotation, str):
-            raise NotImplementedError("Missing support for validating against stringized annotations.")
+            raise NotImplementedError(
+                "Missing support for validating against stringized annotations."
+            )
 
         if (origin := get_origin(annotation)) is not None:
             if origin is tuple:
                 validate_annotation(v, tuple)
                 tuple_args = get_args(annotation)
                 if len(cast(tuple, v)) != len(tuple_args):
-                    raise TypeError(f"Expected a {len(tuple_args)}-tuple, got a {len(cast(tuple, v))}-tuple.")
+                    raise TypeError(
+                        f"Expected a {len(tuple_args)}-tuple, got a {len(cast(tuple, v))}-tuple."
+                    )
                 for tuple_val, tuple_args in zip(cast(tuple, v), tuple_args):
                     validate_annotation(tuple_val, tuple_args)
             elif origin is dict:
@@ -356,23 +401,36 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
                         return True
                     except TypeError:
                         pass
-                    raise TypeError(f"Expected value to have type {annotation}. Received type {type(v)}")
+                    raise TypeError(
+                        f"Expected value to have type {annotation}. Received type {type(v)}"
+                    )
             elif origin is Literal:
                 literal_args = get_args(annotation)
-                if not any(type(literal) is type(v) and literal == v for literal in literal_args):
-                    raise TypeError(f"Expected value to be one of {list(literal_args)!r}. Received type {type(v)}")
+                if not any(
+                    type(literal) is type(v) and literal == v
+                    for literal in literal_args
+                ):
+                    raise TypeError(
+                        f"Expected value to be one of {list(literal_args)!r}. Received type {type(v)}"
+                    )
             elif any(origin is g for g in (NotRequired, Required)):
                 validate_annotation(v, get_args(annotation)[0])
             else:
-                raise NotImplementedError(f"Validation not implemented for generic {origin}.")
+                raise NotImplementedError(
+                    f"Validation not implemented for generic {origin}."
+                )
             return True
 
         if isinstance(annotation, type):
             if not isinstance(v, annotation):
-                raise TypeError(f"Expected value to have type {annotation}. Received type {type(v)}.")
+                raise TypeError(
+                    f"Expected value to have type {annotation}. Received type {type(v)}."
+                )
             return True
 
-        raise ValueError("Annotation to validate against should be a str, type, or generic.")
+        raise ValueError(
+            "Annotation to validate against should be a str, type, or generic."
+        )
 
     for k, v in o.items():
         validate_annotation(v, annotations[k])
@@ -400,7 +458,9 @@ def check_score_is_valid(score: Union[str, float], min_score=1, max_score=5) -> 
     return min_score <= numeric_score <= max_score
 
 
-def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
+def parse_quality_evaluator_reason_score(
+    llm_output: str, valid_score_range: str = "[1-5]"
+) -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
 
     Current supported evaluators:
@@ -547,7 +607,10 @@ def validate_conversation(conversation):
                 ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
             )
         if isinstance(content, list):
-            if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
+            if any(
+                item.get("type") == "image_url" and "url" in item.get("image_url", {})
+                for item in content
+            ):
                 image_found = True
     if not image_found:
         raise_exception(
@@ -591,25 +654,36 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
                     for content in msg.get("content", []):
                         if content.get("type") == "tool_call":
                             any_tools_used = True
-                            if "tool_call" in content and "function" in content["tool_call"]:
+                            if (
+                                "tool_call" in content
+                                and "function" in content["tool_call"]
+                            ):
                                 used_tool_names.add(content["tool_call"]["function"])
                             elif "name" in content:
                                 used_tool_names.add(content["name"])
 
-        filtered_tools = [tool for tool in tool_definitions if tool.get("name") in used_tool_names]
+        filtered_tools = [
+            tool for tool in tool_definitions if tool.get("name") in used_tool_names
+        ]
         if any_tools_used and not filtered_tools:
             if logger:
-                logger.warning("No tool definitions matched the tools used in the messages. Returning original list.")
+                logger.warning(
+                    "No tool definitions matched the tools used in the messages. Returning original list."
+                )
             filtered_tools = tool_definitions
 
         return filtered_tools
     except Exception as e:
         if logger:
-            logger.warning(f"Failed to filter tool definitions, returning original list. Error: {e}")
+            logger.warning(
+                f"Failed to filter tool definitions, returning original list. Error: {e}"
+            )
         return tool_definitions
 
 
-def _get_conversation_history(query, include_system_messages=False, include_tool_messages=False):
+def _get_conversation_history(
+    query, include_system_messages=False, include_tool_messages=False
+):
     all_user_queries, all_agent_responses = [], []
     cur_user_query, cur_agent_response = [], []
     system_message = None
@@ -641,7 +715,9 @@ def _get_conversation_history(query, include_system_messages=False, include_tool
     if cur_user_query:
         all_user_queries.append(cur_user_query)
     if cur_agent_response:
-        formatted_agent_response = _get_agent_response(cur_agent_response, include_tool_messages=include_tool_messages)
+        formatted_agent_response = _get_agent_response(
+            cur_agent_response, include_tool_messages=include_tool_messages
+        )
         all_agent_responses.append([formatted_agent_response])
 
     if len(all_user_queries) != len(all_agent_responses) + 1:
@@ -666,7 +742,10 @@ def _pretty_format_conversation_history(conversation_history):
         formatted_history += "SYSTEM_PROMPT:\n"
         formatted_history += "  " + conversation_history["system_message"] + "\n\n"
     for i, (user_query, agent_response) in enumerate(
-        zip(conversation_history["user_queries"], conversation_history["agent_responses"] + [None])
+        zip(
+            conversation_history["user_queries"],
+            conversation_history["agent_responses"] + [None],
+        )
     ):
         formatted_history += f"User turn {i+1}:\n"
         for msg in user_query:
@@ -681,14 +760,18 @@ def _pretty_format_conversation_history(conversation_history):
             for msg in agent_response:
                 if isinstance(msg, list):
                     for submsg in msg:
-                        formatted_history += "  " + "\n  ".join(submsg.split("\n")) + "\n"
+                        formatted_history += (
+                            "  " + "\n  ".join(submsg.split("\n")) + "\n"
+                        )
                 else:
                     formatted_history += "  " + "\n  ".join(msg.split("\n")) + "\n"
             formatted_history += "\n"
     return formatted_history
 
 
-def reformat_conversation_history(query, logger=None, include_system_messages=False, include_tool_messages=False):
+def reformat_conversation_history(
+    query, logger=None, include_system_messages=False, include_tool_messages=False
+):
     """Reformats the conversation history to a more compact representation."""
     try:
         conversation_history = _get_conversation_history(
@@ -706,7 +789,9 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
         #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
         #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
         if logger:
-            logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
+            logger.warning(
+                f"Conversation history could not be parsed, falling back to original query: {query}"
+            )
         return query
 
 
@@ -734,7 +819,9 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                 for content in msg.get("content", []):
                     # Todo: Verify if this is the correct way to handle tool calls
                     if content.get("type") == "tool_call":
-                        if "tool_call" in content and "function" in content.get("tool_call", {}):
+                        if "tool_call" in content and "function" in content.get(
+                            "tool_call", {}
+                        ):
                             tc = content.get("tool_call", {})
                             func_name = tc.get("function", {}).get("name", "")
                             args = tc.get("function", {}).get("arguments", {})
@@ -756,7 +843,9 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
     try:
         if response is None or response == []:
             return ""
-        agent_response = _get_agent_response(response, include_tool_messages=include_tool_messages)
+        agent_response = _get_agent_response(
+            response, include_tool_messages=include_tool_messages
+        )
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
@@ -769,7 +858,9 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.debug(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.debug(
+                f"Agent response could not be parsed, falling back to original response: {response}"
+            )
         return response
 
 
@@ -847,7 +938,9 @@ def simplify_messages(messages, drop_system=True, drop_tool_calls=False, logger=
                     continue
 
                 # Drop tool calls (if should)
-                if drop_tool_calls and any(c.get("type") == "tool_call" for c in content if isinstance(c, dict)):
+                if drop_tool_calls and any(
+                    c.get("type") == "tool_call" for c in content if isinstance(c, dict)
+                ):
                     continue
 
             # If we reach here, it means we want to keep the message
@@ -857,7 +950,9 @@ def simplify_messages(messages, drop_system=True, drop_tool_calls=False, logger=
 
     except Exception as ex:
         if logger:
-            logger.debug(f"Error simplifying messages: {str(ex)}. Returning original messages.")
+            logger.debug(
+                f"Error simplifying messages: {str(ex)}. Returning original messages."
+            )
         return messages
 
 

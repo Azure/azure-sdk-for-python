@@ -3,7 +3,11 @@
 # ---------------------------------------------------------
 
 from azure.ai.evaluation._legacy.prompty._prompty import AsyncPrompty
-from azure.ai.evaluation._legacy.prompty._connection import Connection, OpenAIConnection, AzureOpenAIConnection
+from azure.ai.evaluation._legacy.prompty._connection import (
+    Connection,
+    OpenAIConnection,
+    AzureOpenAIConnection,
+)
 from azure.ai.evaluation._legacy.prompty._exceptions import (
     PromptyException,
     MissingRequiredInputError,

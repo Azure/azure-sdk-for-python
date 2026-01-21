@@ -18,7 +18,10 @@ def mock_callback():
     """Mock callback for tests."""
     return AsyncMock(
         return_value={
-            "messages": [{"role": "user", "content": "test prompt"}, {"role": "assistant", "content": "test response"}],
+            "messages": [
+                {"role": "user", "content": "test prompt"},
+                {"role": "assistant", "content": "test response"},
+            ],
             "stream": False,
             "session_state": None,
             "context": {},
@@ -39,7 +42,9 @@ def mock_request():
     request_piece.conversation_id = "test-id"
     request_piece.converted_value = "test prompt"
     request_piece.converted_value_data_type = "text"
-    request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
+    request_piece.to_chat_message.return_value = MagicMock(
+        role="user", content="test prompt"
+    )
     request_piece.labels.get.return_value = None
 
     request = MagicMock()
@@ -95,17 +100,23 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {}
 
             # Check memory usage
-            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")
+            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(
+                conversation_id="test-id"
+            )
 
     @pytest.mark.asyncio
-    async def test_send_prompt_async_with_context_from_labels(self, chat_target, mock_callback):
+    async def test_send_prompt_async_with_context_from_labels(
+        self, chat_target, mock_callback
+    ):
         """Test send_prompt_async method with context from request labels."""
         # Create a request with context in labels
         request_piece = MagicMock()
         request_piece.conversation_id = "test-id"
         request_piece.converted_value = "test prompt"
         request_piece.converted_value_data_type = "text"
-        request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
+        request_piece.to_chat_message.return_value = MagicMock(
+            role="user", content="test prompt"
+        )
         request_piece.labels = {"context": {"contexts": ["test context data"]}}
 
         mock_request = MagicMock()
@@ -131,7 +142,9 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {"contexts": ["test context data"]}
 
             # Check memory usage
-            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")
+            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(
+                conversation_id="test-id"
+            )
 
     def test_validate_request_multiple_pieces(self, chat_target):
         """Test _validate_request with multiple request pieces."""

@@ -30,7 +30,10 @@ class EvaluationSimulateSamples(object):
         import os
         import asyncio
         from typing import List, Dict, Any, Optional
-        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import (
+            AdversarialScenario,
+            AdversarialSimulator,
+        )
         from azure.identity import DefaultAzureCredential
 
         azure_ai_project = {
@@ -56,7 +59,9 @@ class EvaluationSimulateSamples(object):
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+        simulator = AdversarialSimulator(
+            azure_ai_project=azure_ai_project, credential=DefaultAzureCredential()
+        )
 
         outputs = asyncio.run(
             simulator(
@@ -77,7 +82,10 @@ class EvaluationSimulateSamples(object):
         import asyncio
         import os
         from azure.ai.evaluation.simulator import SupportedLanguages
-        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import (
+            AdversarialScenario,
+            AdversarialSimulator,
+        )
         from azure.identity import DefaultAzureCredential
 
         azure_ai_project = {
@@ -103,7 +111,9 @@ class EvaluationSimulateSamples(object):
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+        simulator = AdversarialSimulator(
+            azure_ai_project=azure_ai_project, credential=DefaultAzureCredential()
+        )
 
         outputs = asyncio.run(
             simulator(
@@ -119,7 +129,10 @@ class EvaluationSimulateSamples(object):
         # [START direct_attack_simulator]
         import os
         import asyncio
-        from azure.ai.evaluation.simulator import AdversarialScenario, DirectAttackSimulator
+        from azure.ai.evaluation.simulator import (
+            AdversarialScenario,
+            DirectAttackSimulator,
+        )
         from azure.identity import DefaultAzureCredential
 
         azure_ai_project = {
@@ -145,7 +158,9 @@ class EvaluationSimulateSamples(object):
                 "context": context,
             }
 
-        simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+        simulator = DirectAttackSimulator(
+            azure_ai_project=azure_ai_project, credential=DefaultAzureCredential()
+        )
 
         outputs = asyncio.run(
             simulator(
@@ -186,7 +201,9 @@ class EvaluationSimulateSamples(object):
                 "context": context,
             }
 
-        simulator = IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+        simulator = IndirectAttackSimulator(
+            azure_ai_project=azure_ai_project, credential=DefaultAzureCredential()
+        )
 
         outputs = asyncio.run(
             simulator(

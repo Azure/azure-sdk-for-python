@@ -78,7 +78,9 @@ class TestCombineItemSchemas:
         assert data_source_config["item_schema"]["properties"] == expected_properties
         assert data_source_config["item_schema"]["required"] == expected_required
 
-    def test_combine_item_schemas_with_empty_external_properties(self, default_data_source_config):
+    def test_combine_item_schemas_with_empty_external_properties(
+        self, default_data_source_config
+    ):
         data_source_config = copy.deepcopy(default_data_source_config)
         kwargs = {
             "item_schema": {
@@ -97,7 +99,9 @@ class TestCombineItemSchemas:
         assert data_source_config["item_schema"]["properties"] == expected_properties
         assert data_source_config["item_schema"]["required"] == expected_required
 
-    def test_combine_item_schemas_with_external_properties_without_required(self, default_data_source_config):
+    def test_combine_item_schemas_with_external_properties_without_required(
+        self, default_data_source_config
+    ):
         data_source_config = copy.deepcopy(default_data_source_config)
         kwargs = {
             "item_schema": {

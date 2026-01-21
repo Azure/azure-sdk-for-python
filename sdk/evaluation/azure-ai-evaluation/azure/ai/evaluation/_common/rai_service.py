@@ -15,15 +15,27 @@ from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
-from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage, EvaluatorMessage
+from azure.ai.evaluation._common.onedp.models import (
+    QueryResponseInlineMessage,
+    EvaluatorMessage,
+)
 from azure.ai.evaluation._common.onedp._utils.model_base import SdkJSONEncoder
 from azure.core.exceptions import HttpResponseError
 
 import jwt
 
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
+from azure.ai.evaluation._http_utils import (
+    AsyncHttpPipeline,
+    get_async_http_client,
+    get_http_client,
+)
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._common.utils import is_onedp_project
@@ -74,7 +86,10 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
         }
         return json.dumps(as_dict)
     if annotation_task == Tasks.CODE_VULNERABILITY:
-        as_dict = {"context": data.get("query", ""), "completion": data.get("response", "")}
+        as_dict = {
+            "context": data.get("query", ""),
+            "completion": data.get("response", ""),
+        }
         return json.dumps(as_dict)
     if annotation_task == Tasks.UNGROUNDED_ATTRIBUTES:
         as_dict = {
@@ -87,7 +102,9 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
         "query": html.escape(data.get("query", "")),
         "response": html.escape(data.get("response", "")),
     }
-    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**as_dict)
+    user_text = USER_TEXT_TEMPLATE_DICT.get(
+        annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]
+    ).substitute(**as_dict)
     return user_text.replace("'", '\\"')
 
 
@@ -146,7 +163,9 @@ async def ensure_service_availability_onedp(
         )
 
 
-async def ensure_service_availability(rai_svc_url: str, token: str, capability: Optional[str] = None) -> None:
+async def ensure_service_availability(
+    rai_svc_url: str, token: str, capability: Optional[str] = None
+) -> None:
     """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
     :param rai_svc_url: The Responsible AI service URL.
@@ -190,7 +209,9 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
             )
 
 
-def generate_payload(normalized_user_text: str, metric: str, annotation_task: str) -> Dict:
+def generate_payload(
+    normalized_user_text: str, metric: str, annotation_task: str
+) -> Dict:
     """Generate the payload for the annotation request
 
     :param normalized_user_text: The normalized user text to be entered as the "UserTextList" in the payload.
@@ -228,7 +249,12 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
 
 
 async def submit_request(
-    data: dict, metric: str, rai_svc_url: str, token: str, annotation_task: str, evaluator_name: str
+    data: dict,
+    metric: str,
+    rai_svc_url: str,
+    token: str,
+    annotation_task: str,
+    evaluator_name: str,
 ) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
@@ -248,7 +274,9 @@ async def submit_request(
     :rtype: str
     """
     normalized_user_text = get_formatted_template(data, annotation_task)
-    payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
+    payload = generate_payload(
+        normalized_user_text, metric, annotation_task=annotation_task
+    )
 
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token, evaluator_name)
@@ -257,7 +285,11 @@ async def submit_request(
         http_response = await client.post(url, json=payload, headers=headers)
 
     if http_response.status_code != 202:
-        LOGGER.error("Fail evaluating '%s' with error message: %s", payload["UserTextList"], http_response.text())
+        LOGGER.error(
+            "Fail evaluating '%s' with error message: %s",
+            payload["UserTextList"],
+            http_response.text(),
+        )
         http_response.raise_for_status()
     result = http_response.json()
     operation_id = result["location"].split("/")[-1]
@@ -293,7 +325,9 @@ async def submit_request_onedp(
     :rtype: str
     """
     normalized_user_text = get_formatted_template(data, annotation_task)
-    payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
+    payload = generate_payload(
+        normalized_user_text, metric, annotation_task=annotation_task
+    )
     headers = get_common_headers(token, evaluator_name)
     if scan_session_id:
         headers["x-ms-client-request-id"] = scan_session_id
@@ -303,7 +337,9 @@ async def submit_request_onedp(
     return operation_id
 
 
-async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCredential, token: str) -> Dict:
+async def fetch_result(
+    operation_id: str, rai_svc_url: str, credential: TokenCredential, token: str
+) -> Dict:
     """Fetch the annotation result from Responsible AI service
 
     :param operation_id: The operation ID.
@@ -326,7 +362,9 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         headers = get_common_headers(token)
 
         async with get_async_http_client() as client:
-            response = await client.get(url, headers=headers, timeout=RAIService.TIMEOUT)
+            response = await client.get(
+                url, headers=headers, timeout=RAIService.TIMEOUT
+            )
 
         if response.status_code == 200:
             return response.json()
@@ -334,13 +372,17 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         request_count += 1
         time_elapsed = time.time() - start
         if time_elapsed > RAIService.TIMEOUT:
-            raise TimeoutError(f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds")
+            raise TimeoutError(
+                f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds"
+            )
 
         sleep_time = RAIService.SLEEP_TIME**request_count
         await asyncio.sleep(sleep_time)
 
 
-async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: str) -> Dict:
+async def fetch_result_onedp(
+    client: AIProjectClient, operation_id: str, token: str
+) -> Dict:
     """Fetch the annotation result from Responsible AI service
 
     :param client: The AI project client.
@@ -372,7 +414,9 @@ async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: 
 
 
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
-    batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
+    batch_response: List[Dict],
+    metric_name: str,
+    metric_display_name: Optional[str] = None,
 ) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
@@ -404,38 +448,61 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]
         ):
             batch_response[0] = {
-                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES]
+                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][
+                    INFERENCE_OF_SENSITIVE_ATTRIBUTES
+                ]
             }
-        if metric_name == EvaluationMetrics.PROTECTED_MATERIAL and metric_name not in batch_response[0]:
+        if (
+            metric_name == EvaluationMetrics.PROTECTED_MATERIAL
+            and metric_name not in batch_response[0]
+        ):
             pm_metric_names = {"artwork", "fictional_characters", "logos_and_brands"}
             for pm_metric_name in pm_metric_names:
                 response = batch_response[0][pm_metric_name]
                 response = response.replace("false", "False")
                 response = response.replace("true", "True")
                 parsed_response = literal_eval(response)
-                result[pm_metric_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
+                result[pm_metric_name + "_label"] = (
+                    parsed_response["label"] if "label" in parsed_response else math.nan
+                )
                 result[pm_metric_name + "_reason"] = (
-                    parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+                    parsed_response["reasoning"]
+                    if "reasoning" in parsed_response
+                    else ""
                 )
                 result[pm_metric_name + "_total_tokens"] = (
-                    parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+                    parsed_response["totalTokenCount"]
+                    if "totalTokenCount" in parsed_response
+                    else ""
                 )
                 result[pm_metric_name + "_prompt_tokens"] = (
-                    parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+                    parsed_response["inputTokenCount"]
+                    if "inputTokenCount" in parsed_response
+                    else ""
                 )
                 result[pm_metric_name + "_completion_tokens"] = (
-                    parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+                    parsed_response["outputTokenCount"]
+                    if "outputTokenCount" in parsed_response
+                    else ""
                 )
                 result[pm_metric_name + "_finish_reason"] = (
-                    parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+                    parsed_response["finish_reason"]
+                    if "finish_reason" in parsed_response
+                    else ""
                 )
                 result[pm_metric_name + "_sample_input"] = (
-                    parsed_response["sample_input"] if "sample_input" in parsed_response else ""
+                    parsed_response["sample_input"]
+                    if "sample_input" in parsed_response
+                    else ""
                 )
                 result[pm_metric_name + "_sample_output"] = (
-                    parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+                    parsed_response["sample_output"]
+                    if "sample_output" in parsed_response
+                    else ""
                 )
-                result[pm_metric_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
+                result[pm_metric_name + "_model"] = (
+                    parsed_response["model"] if "model" in parsed_response else ""
+                )
             return result
         if metric_name not in batch_response[0]:
             return {}
@@ -445,20 +512,30 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         parsed_response = literal_eval(response)
         # Use label instead of score since these are assumed to be boolean results.
         # Use math.nan as null value since it's ignored by aggregations rather than treated as 0.
-        result[metric_display_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
-        result[metric_display_name + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+        result[metric_display_name + "_label"] = (
+            parsed_response["label"] if "label" in parsed_response else math.nan
+        )
+        result[metric_display_name + "_reason"] = (
+            parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+        )
 
         if metric_name == EvaluationMetrics.XPIA:
             # Add "manipulated_content", "intrusion" and "information_gathering" to the result
             # if present else set them to math.nan
             result[metric_display_name + "_manipulated_content"] = (
-                parsed_response["manipulated_content"] if "manipulated_content" in parsed_response else math.nan
+                parsed_response["manipulated_content"]
+                if "manipulated_content" in parsed_response
+                else math.nan
             )
             result[metric_display_name + "_intrusion"] = (
-                parsed_response["intrusion"] if "intrusion" in parsed_response else math.nan
+                parsed_response["intrusion"]
+                if "intrusion" in parsed_response
+                else math.nan
             )
             result[metric_display_name + "_information_gathering"] = (
-                parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
+                parsed_response["information_gathering"]
+                if "information_gathering" in parsed_response
+                else math.nan
             )
         if (
             metric_name == EvaluationMetrics.CODE_VULNERABILITY
@@ -482,30 +559,46 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                     details[key.replace("-", "_")] = value
             result[metric_display_name + "_details"] = details
         result[metric_display_name + "_total_tokens"] = (
-            parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+            parsed_response["totalTokenCount"]
+            if "totalTokenCount" in parsed_response
+            else ""
         )
         result[metric_display_name + "_prompt_tokens"] = (
-            parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+            parsed_response["inputTokenCount"]
+            if "inputTokenCount" in parsed_response
+            else ""
         )
         result[metric_display_name + "_completion_tokens"] = (
-            parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+            parsed_response["outputTokenCount"]
+            if "outputTokenCount" in parsed_response
+            else ""
         )
         result[metric_display_name + "_finish_reason"] = (
-            parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+            parsed_response["finish_reason"]
+            if "finish_reason" in parsed_response
+            else ""
         )
         result[metric_display_name + "_sample_input"] = (
             parsed_response["sample_input"] if "sample_input" in parsed_response else ""
         )
         result[metric_display_name + "_sample_output"] = (
-            parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+            parsed_response["sample_output"]
+            if "sample_output" in parsed_response
+            else ""
         )
-        result[metric_display_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
+        result[metric_display_name + "_model"] = (
+            parsed_response["model"] if "model" in parsed_response else ""
+        )
         return result
-    return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
+    return _parse_content_harm_response(
+        batch_response, metric_name, metric_display_name
+    )
 
 
 def _parse_content_harm_response(
-    batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
+    batch_response: List[Dict],
+    metric_name: str,
+    metric_display_name: Optional[str] = None,
 ) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
@@ -555,7 +648,10 @@ def _parse_content_harm_response(
         if "label" in harm_response:
             try:
                 # Handle "n/a" or other non-numeric values
-                if isinstance(harm_response["label"], str) and harm_response["label"].strip().lower() == "n/a":
+                if (
+                    isinstance(harm_response["label"], str)
+                    and harm_response["label"].strip().lower() == "n/a"
+                ):
                     metric_value = math.nan
                 else:
                     metric_value = float(harm_response["label"])
@@ -648,7 +744,9 @@ def _parse_content_harm_response(
     return result
 
 
-async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: str) -> str:
+async def _get_service_discovery_url(
+    azure_ai_project: AzureAIProject, token: str
+) -> str:
     """Get the discovery service URL for the Azure AI project
 
     :param azure_ai_project: The Azure AI project details.
@@ -697,7 +795,9 @@ async def get_rai_svc_url(project_scope: AzureAIProject, token: str) -> str:
     :return: The Responsible AI service URL.
     :rtype: str
     """
-    discovery_url = await _get_service_discovery_url(azure_ai_project=project_scope, token=token)
+    discovery_url = await _get_service_discovery_url(
+        azure_ai_project=project_scope, token=token
+    )
     subscription_id = project_scope["subscription_id"]
     resource_group_name = project_scope["resource_group_name"]
     project_name = project_scope["project_name"]
@@ -712,7 +812,9 @@ async def get_rai_svc_url(project_scope: AzureAIProject, token: str) -> str:
 
 
 async def fetch_or_reuse_token(
-    credential: TokenCredential, token: Optional[str] = None, workspace: Optional[str] = ML_WORKSPACE
+    credential: TokenCredential,
+    token: Optional[str] = None,
+    workspace: Optional[str] = ML_WORKSPACE,
 ) -> str:
     """Get token. Fetch a new token if the current token is near expiry
 
@@ -777,14 +879,26 @@ async def evaluate_with_rai_service(
         client = AIProjectClient(
             endpoint=project_scope,
             credential=credential,
-            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+            user_agent_policy=UserAgentPolicy(
+                base_user_agent=UserAgentSingleton().value
+            ),
         )
-        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        token = await fetch_or_reuse_token(
+            credential=credential, workspace=COG_SRV_WORKSPACE
+        )
         await ensure_service_availability_onedp(client, token, annotation_task)
         operation_id = await submit_request_onedp(
-            client, data, metric_name, token, annotation_task, evaluator_name, scan_session_id
+            client,
+            data,
+            metric_name,
+            token,
+            annotation_task,
+            evaluator_name,
+            scan_session_id,
         )
-        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
+        annotation_response = cast(
+            List[Dict], await fetch_result_onedp(client, operation_id, token)
+        )
         result = parse_response(annotation_response, metric_name, metric_display_name)
         return result
     else:
@@ -794,8 +908,12 @@ async def evaluate_with_rai_service(
         await ensure_service_availability(rai_svc_url, token, annotation_task)
 
         # Submit annotation request and fetch result
-        operation_id = await submit_request(data, metric_name, rai_svc_url, token, annotation_task, evaluator_name)
-        annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
+        operation_id = await submit_request(
+            data, metric_name, rai_svc_url, token, annotation_task, evaluator_name
+        )
+        annotation_response = cast(
+            List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token)
+        )
         result = parse_response(annotation_response, metric_name, metric_display_name)
 
         return result
@@ -833,7 +951,9 @@ def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dic
     }
 
 
-async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
+async def submit_multimodal_request(
+    messages, metric: str, rai_svc_url: str, token: str
+) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
     :param messages: The normalized list of messages to be entered as the "Contents" in the payload.
     :type messages: str
@@ -851,15 +971,15 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
         try:
             from azure.ai.inference.models import ChatRequestMessage
         except ImportError as ex:
-            error_message = (
-                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
-            )
+            error_message = "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
             raise MissingRequiredPackage(message=error_message) from ex
         if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
             messages = [message.as_dict() for message in messages]
 
     filtered_messages = [message for message in messages if message["role"] != "system"]
-    assistant_messages = [message for message in messages if message["role"] == "assistant"]
+    assistant_messages = [
+        message for message in messages if message["role"] == "assistant"
+    ]
     content_type = retrieve_content_type(assistant_messages, metric)
     payload = generate_payload_multimodal(content_type, filtered_messages, metric)
 
@@ -872,30 +992,33 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
         )
     if response.status_code != 202:
         raise HttpResponseError(
-            message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+            message=f"Received unexpected HTTP status: {response.status_code} {response.text()}",
+            response=response,
         )
     result = response.json()
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
 
-async def submit_multimodal_request_onedp(client: AIProjectClient, messages, metric: str, token: str) -> str:
+async def submit_multimodal_request_onedp(
+    client: AIProjectClient, messages, metric: str, token: str
+) -> str:
 
     #  handle inference sdk strongly type messages
     if len(messages) > 0 and not isinstance(messages[0], dict):
         try:
             from azure.ai.inference.models import ChatRequestMessage
         except ImportError as ex:
-            error_message = (
-                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
-            )
+            error_message = "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
             raise MissingRequiredPackage(message=error_message) from ex
         if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
             messages = [message.as_dict() for message in messages]
 
     ## fetch system and assistant messages from the list of messages
     filtered_messages = [message for message in messages if message["role"] != "system"]
-    assistant_messages = [message for message in messages if message["role"] == "assistant"]
+    assistant_messages = [
+        message for message in messages if message["role"] == "assistant"
+    ]
 
     ## prepare for request
     content_type = retrieve_content_type(assistant_messages, metric)
@@ -910,7 +1033,10 @@ async def submit_multimodal_request_onedp(client: AIProjectClient, messages, met
 
 
 def _build_sync_eval_payload(
-    data: dict, metric_name: str, annotation_task: str, scan_session_id: Optional[str] = None
+    data: dict,
+    metric_name: str,
+    annotation_task: str,
+    scan_session_id: Optional[str] = None,
 ) -> Dict:
     """Build the sync_evals payload for evaluation using QueryResponseInlineMessage format.
 
@@ -933,7 +1059,9 @@ def _build_sync_eval_payload(
     if data.get("risk_sub_type") is not None:
         properties["category"] = data["risk_sub_type"]
     if data.get("taxonomy") is not None:
-        properties["taxonomy"] = str(data["taxonomy"])  # Ensure taxonomy is converted to string
+        properties["taxonomy"] = str(
+            data["taxonomy"]
+        )  # Ensure taxonomy is converted to string
 
     # Prepare context if available
     context = None
@@ -953,7 +1081,9 @@ def _build_sync_eval_payload(
 
     # Build QueryResponseInlineMessage object
     item_content = QueryResponseInlineMessage(
-        query=data.get("query", "query"),  # TODO: remove default query once sync evals supports no query
+        query=data.get(
+            "query", "query"
+        ),  # TODO: remove default query once sync evals supports no query
         response=data.get("response", ""),
         context=context,
         tools=data.get("tool_calls"),
@@ -967,7 +1097,9 @@ def _build_sync_eval_payload(
     }
 
     # Convert metric_name to string value if it's an enum
-    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+    metric_name_str = (
+        metric_name.value if hasattr(metric_name, "value") else metric_name
+    )
 
     # Create the sync eval input payload
     # Structure: Uses QueryResponseInlineMessage format with azure_ai_evaluator type
@@ -1051,12 +1183,20 @@ async def evaluate_with_rai_service_sync(
 
         # Submit annotation request and fetch result
         url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
-        headers = {"aml-user-token": token, "Authorization": "Bearer " + token, "Content-Type": "application/json"}
-        sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
+        headers = {
+            "aml-user-token": token,
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+        }
+        sync_eval_payload = _build_sync_eval_payload(
+            data, metric_name, annotation_task, scan_session_id
+        )
         sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
 
         with get_http_client() as client:
-            http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
+            http_response = client.post(
+                url, data=sync_eval_payload_json, headers=headers
+            )
 
         if http_response.status_code != 200:
             LOGGER.error("Fail evaluating with error message: %s", http_response.text())
@@ -1071,7 +1211,9 @@ async def evaluate_with_rai_service_sync(
         user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
     )
 
-    sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
+    sync_eval_payload = _build_sync_eval_payload(
+        data, metric_name, annotation_task, scan_session_id
+    )
     # Call sync_evals.create() with the JSON payload
     eval_result = client.sync_evals.create(eval=sync_eval_payload)
 
@@ -1098,9 +1240,7 @@ def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
         try:
             from azure.ai.inference.models import ChatRequestMessage
         except ImportError as ex:
-            error_message = (
-                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
-            )
+            error_message = "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
             raise MissingRequiredPackage(message=error_message) from ex
         if isinstance(raw_messages[0], ChatRequestMessage):
             return [message.as_dict() for message in raw_messages]
@@ -1113,7 +1253,11 @@ def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
             normalized["content"] = []
         elif isinstance(content, list):
             normalized["content"] = [
-                copy.deepcopy(part) if isinstance(part, dict) else {"type": "text", "text": str(part)}
+                (
+                    copy.deepcopy(part)
+                    if isinstance(part, dict)
+                    else {"type": "text", "text": str(part)}
+                )
                 for part in content
             ]
         elif isinstance(content, dict):
@@ -1138,15 +1282,29 @@ def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
                 text_parts.append(json.dumps(part))
         return "\n".join(filter(None, text_parts))
 
-    normalized_messages = [_normalize_message(message) for message in _coerce_messages(messages)]
-    filtered_messages = [message for message in normalized_messages if message.get("role") != "system"]
+    normalized_messages = [
+        _normalize_message(message) for message in _coerce_messages(messages)
+    ]
+    filtered_messages = [
+        message for message in normalized_messages if message.get("role") != "system"
+    ]
 
-    assistant_messages = [message for message in normalized_messages if message.get("role") == "assistant"]
-    user_messages = [message for message in normalized_messages if message.get("role") == "user"]
+    assistant_messages = [
+        message for message in normalized_messages if message.get("role") == "assistant"
+    ]
+    user_messages = [
+        message for message in normalized_messages if message.get("role") == "user"
+    ]
     content_type = retrieve_content_type(assistant_messages, metric_name)
 
-    last_assistant_text = _content_to_text(assistant_messages[-1]["content"]) if assistant_messages else ""
-    last_user_text = _content_to_text(user_messages[-1]["content"]) if user_messages else ""
+    last_assistant_text = (
+        _content_to_text(assistant_messages[-1]["content"])
+        if assistant_messages
+        else ""
+    )
+    last_user_text = (
+        _content_to_text(user_messages[-1]["content"]) if user_messages else ""
+    )
 
     if filtered_messages and filtered_messages[-1].get("role") == "assistant":
         response_messages = [filtered_messages[-1]]
@@ -1262,10 +1420,14 @@ async def evaluate_with_rai_service_sync_multimodal(
         client = AIProjectClient(
             endpoint=project_scope,
             credential=credential,
-            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+            user_agent_policy=UserAgentPolicy(
+                base_user_agent=UserAgentSingleton().value
+            ),
         )
 
-        headers = {"x-ms-client-request-id": scan_session_id} if scan_session_id else None
+        headers = (
+            {"x-ms-client-request-id": scan_session_id} if scan_session_id else None
+        )
         if headers:
             return client.sync_evals.create(eval=sync_eval_payload, headers=headers)
         return client.sync_evals.create(eval=sync_eval_payload)
@@ -1319,12 +1481,20 @@ async def evaluate_with_rai_service_multimodal(
         client = AIProjectClient(
             endpoint=project_scope,
             credential=credential,
-            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+            user_agent_policy=UserAgentPolicy(
+                base_user_agent=UserAgentSingleton().value
+            ),
         )
-        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
+        token = await fetch_or_reuse_token(
+            credential=credential, workspace=COG_SRV_WORKSPACE
+        )
         await ensure_service_availability_onedp(client, token, Tasks.CONTENT_HARM)
-        operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
-        annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
+        operation_id = await submit_multimodal_request_onedp(
+            client, messages, metric_name, token
+        )
+        annotation_response = cast(
+            List[Dict], await fetch_result_onedp(client, operation_id, token)
+        )
         result = parse_response(annotation_response, metric_name)
         return result
     else:
@@ -1332,7 +1502,11 @@ async def evaluate_with_rai_service_multimodal(
         rai_svc_url = await get_rai_svc_url(project_scope, token)
         await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
         # Submit annotation request and fetch result
-        operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
-        annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
+        operation_id = await submit_multimodal_request(
+            messages, metric_name, rai_svc_url, token
+        )
+        annotation_response = cast(
+            List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token)
+        )
         result = parse_response(annotation_response, metric_name)
         return result

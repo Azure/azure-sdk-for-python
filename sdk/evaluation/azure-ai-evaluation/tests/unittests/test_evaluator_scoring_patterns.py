@@ -31,7 +31,9 @@ class TestEvaluatorScoringPatterns:
     def test_all_patterns_have_config(self):
         """Verify all scoring patterns have configuration."""
         for pattern in EvaluatorScoringPattern:
-            assert pattern in SCORING_PATTERN_CONFIG, f"Pattern {pattern} missing configuration"
+            assert (
+                pattern in SCORING_PATTERN_CONFIG
+            ), f"Pattern {pattern} missing configuration"
             config = SCORING_PATTERN_CONFIG[pattern]
             assert "min_score" in config
             assert "max_score" in config
@@ -41,10 +43,18 @@ class TestEvaluatorScoringPatterns:
 
     def test_content_harm_evaluators_use_0_7_scale(self):
         """Verify content harm evaluators use 0-7 scale."""
-        harm_evaluators = ["violence", "sexual", "self_harm", "hate_fairness", "hate_unfairness"]
+        harm_evaluators = [
+            "violence",
+            "sexual",
+            "self_harm",
+            "hate_fairness",
+            "hate_unfairness",
+        ]
         for evaluator in harm_evaluators:
             pattern = get_evaluator_scoring_pattern(evaluator)
-            assert pattern == EvaluatorScoringPattern.SCALE_0_7, f"{evaluator} should use 0-7 scale"
+            assert (
+                pattern == EvaluatorScoringPattern.SCALE_0_7
+            ), f"{evaluator} should use 0-7 scale"
             assert get_default_threshold_for_evaluator(evaluator) == 3
 
     def test_prohibited_actions_binary_pattern(self):
@@ -70,7 +80,9 @@ class TestEvaluatorScoringPatterns:
         quality_evaluators = ["coherence", "relevance", "fluency", "groundedness"]
         for evaluator in quality_evaluators:
             pattern = get_evaluator_scoring_pattern(evaluator)
-            assert pattern == EvaluatorScoringPattern.SCALE_1_5, f"{evaluator} should use 1-5 scale"
+            assert (
+                pattern == EvaluatorScoringPattern.SCALE_1_5
+            ), f"{evaluator} should use 1-5 scale"
             assert get_default_threshold_for_evaluator(evaluator) == 3
 
     def test_unknown_evaluator_defaults_to_0_7(self):
@@ -113,18 +125,33 @@ class TestHarmSeverityLevelMapping:
         assert get_harm_severity_level(3, "coherence") == HarmSeverityLevel.Low.value
 
         # Scores 4-5: VeryLow severity
-        assert get_harm_severity_level(4, "coherence") == HarmSeverityLevel.VeryLow.value
-        assert get_harm_severity_level(5, "coherence") == HarmSeverityLevel.VeryLow.value
+        assert (
+            get_harm_severity_level(4, "coherence") == HarmSeverityLevel.VeryLow.value
+        )
+        assert (
+            get_harm_severity_level(5, "coherence") == HarmSeverityLevel.VeryLow.value
+        )
 
     def test_binary_severity_mapping(self):
         """Test severity mapping for binary evaluators."""
         # Safe (0): VeryLow severity
-        assert get_harm_severity_level(0, "prohibited_actions") == HarmSeverityLevel.VeryLow.value
-        assert get_harm_severity_level(0, "task_adherence") == HarmSeverityLevel.VeryLow.value
+        assert (
+            get_harm_severity_level(0, "prohibited_actions")
+            == HarmSeverityLevel.VeryLow.value
+        )
+        assert (
+            get_harm_severity_level(0, "task_adherence")
+            == HarmSeverityLevel.VeryLow.value
+        )
 
         # Unsafe (1): High severity
-        assert get_harm_severity_level(1, "prohibited_actions") == HarmSeverityLevel.High.value
-        assert get_harm_severity_level(1, "task_adherence") == HarmSeverityLevel.High.value
+        assert (
+            get_harm_severity_level(1, "prohibited_actions")
+            == HarmSeverityLevel.High.value
+        )
+        assert (
+            get_harm_severity_level(1, "task_adherence") == HarmSeverityLevel.High.value
+        )
 
     def test_nan_handling(self):
         """Test that NaN scores return NaN severity."""
@@ -238,7 +265,9 @@ class TestPatternConfiguration:
         """Verify all configs have valid severity mappings."""
         for pattern, config in SCORING_PATTERN_CONFIG.items():
             severity_mapping = config["severity_mapping"]
-            assert len(severity_mapping) > 0, f"Pattern {pattern} has empty severity mapping"
+            assert (
+                len(severity_mapping) > 0
+            ), f"Pattern {pattern} has empty severity mapping"
 
             # Verify all keys are HarmSeverityLevel enums
             for level in severity_mapping.keys():

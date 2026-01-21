@@ -8,7 +8,9 @@ from unittest.mock import MagicMock, patch
 from azure.ai.evaluation._evaluators._content_safety._violence import ViolenceEvaluator
 from azure.ai.evaluation._evaluators._content_safety._sexual import SexualEvaluator
 from azure.ai.evaluation._evaluators._content_safety._self_harm import SelfHarmEvaluator
-from azure.ai.evaluation._evaluators._service_groundedness._service_groundedness import GroundednessProEvaluator
+from azure.ai.evaluation._evaluators._service_groundedness._service_groundedness import (
+    GroundednessProEvaluator,
+)
 
 
 @pytest.mark.unittest
@@ -37,35 +39,57 @@ class TestContentSafetyEvaluatorThresholds:
         }
 
     @patch(
-        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__", return_value=None
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__",
+        return_value=None,
     )
-    @patch("azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__")
-    def test_violence_evaluator_default_threshold(self, mock_call, mock_init, mock_credential, mock_ai_project):
+    @patch(
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__"
+    )
+    def test_violence_evaluator_default_threshold(
+        self, mock_call, mock_init, mock_credential, mock_ai_project
+    ):
         """Test that the default threshold is set correctly for Violence evaluator."""
-        evaluator = ViolenceEvaluator(credential=mock_credential, azure_ai_project=mock_ai_project)
+        evaluator = ViolenceEvaluator(
+            credential=mock_credential, azure_ai_project=mock_ai_project
+        )
         evaluator._threshold = 3  # Default threshold
 
         # Mock the response
-        mock_call.return_value = {"violence": "Low", "violence_score": 3, "violence_reason": "Mock reason"}
+        mock_call.return_value = {
+            "violence": "Low",
+            "violence_score": 3,
+            "violence_reason": "Mock reason",
+        }
 
         result = evaluator(query="Test query", response="Test response")
         assert evaluator._threshold == 3
         assert result["violence"] == "Low"
 
     @patch(
-        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__", return_value=None
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__",
+        return_value=None,
     )
-    @patch("azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__")
-    def test_violence_evaluator_custom_threshold(self, mock_call, mock_init, mock_credential, mock_ai_project):
+    @patch(
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__"
+    )
+    def test_violence_evaluator_custom_threshold(
+        self, mock_call, mock_init, mock_credential, mock_ai_project
+    ):
         """Test that a custom threshold is set correctly for Violence evaluator."""
         custom_threshold = 2
         evaluator = ViolenceEvaluator(
-            credential=mock_credential, azure_ai_project=mock_ai_project, threshold=custom_threshold
+            credential=mock_credential,
+            azure_ai_project=mock_ai_project,
+            threshold=custom_threshold,
         )
         evaluator._threshold = custom_threshold
 
         # Mock the response
-        mock_call.return_value = {"violence": "Medium", "violence_score": 3, "violence_reason": "Mock reason"}
+        mock_call.return_value = {
+            "violence": "Medium",
+            "violence_score": 3,
+            "violence_reason": "Mock reason",
+        }
 
         result = evaluator(query="Test query", response="Test response")
         assert evaluator._threshold == custom_threshold
@@ -85,14 +109,28 @@ class TestContentSafetyEvaluatorThresholds:
         ],
     )
     @patch(
-        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__", return_value=None
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__",
+        return_value=None,
     )
-    @patch("azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__")
+    @patch(
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__"
+    )
     def test_violence_evaluator_threshold_severity_mapping(
-        self, mock_call, mock_init, mock_credential, mock_ai_project, score, threshold, expected_severity
+        self,
+        mock_call,
+        mock_init,
+        mock_credential,
+        mock_ai_project,
+        score,
+        threshold,
+        expected_severity,
     ):
         """Test that violence scores are correctly mapped to severity levels."""
-        evaluator = ViolenceEvaluator(credential=mock_credential, azure_ai_project=mock_ai_project, threshold=threshold)
+        evaluator = ViolenceEvaluator(
+            credential=mock_credential,
+            azure_ai_project=mock_ai_project,
+            threshold=threshold,
+        )
         evaluator._threshold = threshold
 
         # Mock the response
@@ -108,17 +146,31 @@ class TestContentSafetyEvaluatorThresholds:
         assert "violence_reason" in result
 
     @pytest.mark.parametrize(
-        "evaluator_class,threshold", [(ViolenceEvaluator, 0), (SexualEvaluator, 1), (SelfHarmEvaluator, 2)]
+        "evaluator_class,threshold",
+        [(ViolenceEvaluator, 0), (SexualEvaluator, 1), (SelfHarmEvaluator, 2)],
     )
     @patch(
-        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__", return_value=None
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__",
+        return_value=None,
     )
-    @patch("azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__")
+    @patch(
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__"
+    )
     def test_content_safety_evaluator_custom_thresholds(
-        self, mock_call, mock_init, mock_credential, mock_ai_project, evaluator_class, threshold
+        self,
+        mock_call,
+        mock_init,
+        mock_credential,
+        mock_ai_project,
+        evaluator_class,
+        threshold,
     ):
         """Test that custom thresholds are set correctly in different content safety evaluators."""
-        evaluator = evaluator_class(credential=mock_credential, azure_ai_project=mock_ai_project, threshold=threshold)
+        evaluator = evaluator_class(
+            credential=mock_credential,
+            azure_ai_project=mock_ai_project,
+            threshold=threshold,
+        )
         evaluator._threshold = threshold  # This would be set by the base class
 
         # Mock a basic response
@@ -155,12 +207,19 @@ class TestGroundednessProEvaluatorThreshold:
         return mock
 
     @patch(
-        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__", return_value=None
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__",
+        return_value=None,
     )
-    @patch("azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__")
-    def test_groundedness_pro_default_threshold(self, mock_call, mock_init, mock_credential, mock_ai_project):
+    @patch(
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__"
+    )
+    def test_groundedness_pro_default_threshold(
+        self, mock_call, mock_init, mock_credential, mock_ai_project
+    ):
         """Test that the default threshold is set correctly for GroundednessProEvaluator."""
-        evaluator = GroundednessProEvaluator(credential=mock_credential, azure_ai_project=mock_ai_project)
+        evaluator = GroundednessProEvaluator(
+            credential=mock_credential, azure_ai_project=mock_ai_project
+        )
         evaluator.threshold = 5  # Default threshold
 
         # Mock the response
@@ -169,20 +228,29 @@ class TestGroundednessProEvaluatorThreshold:
             "groundedness_pro_reason": "The response is well-grounded in the context.",
         }
 
-        result = evaluator(query="Test query", response="Test response", context="Test context")
+        result = evaluator(
+            query="Test query", response="Test response", context="Test context"
+        )
         assert evaluator.threshold == 5
         assert result["groundedness_pro_label"] is True
         assert "groundedness_pro_reason" in result
 
     @patch(
-        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__", return_value=None
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__init__",
+        return_value=None,
     )
-    @patch("azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__")
-    def test_groundedness_pro_custom_threshold(self, mock_call, mock_init, mock_credential, mock_ai_project):
+    @patch(
+        "azure.ai.evaluation._evaluators._common._base_rai_svc_eval.RaiServiceEvaluatorBase.__call__"
+    )
+    def test_groundedness_pro_custom_threshold(
+        self, mock_call, mock_init, mock_credential, mock_ai_project
+    ):
         """Test that a custom threshold is set correctly for GroundednessProEvaluator."""
         custom_threshold = 2
         evaluator = GroundednessProEvaluator(
-            credential=mock_credential, azure_ai_project=mock_ai_project, threshold=custom_threshold
+            credential=mock_credential,
+            azure_ai_project=mock_ai_project,
+            threshold=custom_threshold,
         )
         evaluator.threshold = custom_threshold
 
@@ -192,7 +260,9 @@ class TestGroundednessProEvaluatorThreshold:
             "groundedness_pro_reason": "The response is well-grounded in the context.",
         }
 
-        result = evaluator(query="Test query", response="Test response", context="Test context")
+        result = evaluator(
+            query="Test query", response="Test response", context="Test context"
+        )
         assert evaluator.threshold == custom_threshold
         assert result["groundedness_pro_label"] is True
         assert "groundedness_pro_reason" in result

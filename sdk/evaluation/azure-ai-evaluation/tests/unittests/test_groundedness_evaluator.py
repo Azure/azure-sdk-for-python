@@ -27,13 +27,17 @@ class TestGroundednessEvaluator:
 
     def test_initialization_with_is_reasoning_model_true(self, mock_model_config):
         """Test that is_reasoning_model=True is stored correctly"""
-        groundedness_evaluator = GroundednessEvaluator(model_config=mock_model_config, is_reasoning_model=True)
+        groundedness_evaluator = GroundednessEvaluator(
+            model_config=mock_model_config, is_reasoning_model=True
+        )
         assert groundedness_evaluator._is_reasoning_model is True
 
     def test_initialization_stores_credential(self, mock_model_config):
         """Test that credential is stored for use in _ensure_query_prompty_loaded"""
         mock_credential = MagicMock()
-        groundedness_evaluator = GroundednessEvaluator(model_config=mock_model_config, credential=mock_credential)
+        groundedness_evaluator = GroundednessEvaluator(
+            model_config=mock_model_config, credential=mock_credential
+        )
         assert groundedness_evaluator._credential is mock_credential
 
     def test_initialization_stores_credential_none(self, mock_model_config):
@@ -43,12 +47,20 @@ class TestGroundednessEvaluator:
 
     def test_query_mode_preserves_is_reasoning_model(self, mock_model_config):
         """Test that is_reasoning_model is passed when switching to query prompty"""
-        groundedness_evaluator = GroundednessEvaluator(model_config=mock_model_config, is_reasoning_model=True)
-        groundedness_evaluator._flow = MagicMock(return_value=groundedness_response_async_mock())
+        groundedness_evaluator = GroundednessEvaluator(
+            model_config=mock_model_config, is_reasoning_model=True
+        )
+        groundedness_evaluator._flow = MagicMock(
+            return_value=groundedness_response_async_mock()
+        )
 
         # Mock AsyncPrompty.load to verify is_reasoning_model is passed
-        with patch("azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load") as mock_load:
-            mock_load.return_value = MagicMock(return_value=groundedness_response_async_mock())
+        with patch(
+            "azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load"
+        ) as mock_load:
+            mock_load.return_value = MagicMock(
+                return_value=groundedness_response_async_mock()
+            )
 
             # Trigger _ensure_query_prompty_loaded by calling with query
             groundedness_evaluator._ensure_query_prompty_loaded()
@@ -61,12 +73,20 @@ class TestGroundednessEvaluator:
     def test_query_mode_preserves_credential(self, mock_model_config):
         """Test that credential is passed when switching to query prompty"""
         mock_credential = MagicMock()
-        groundedness_evaluator = GroundednessEvaluator(model_config=mock_model_config, credential=mock_credential)
-        groundedness_evaluator._flow = MagicMock(return_value=groundedness_response_async_mock())
+        groundedness_evaluator = GroundednessEvaluator(
+            model_config=mock_model_config, credential=mock_credential
+        )
+        groundedness_evaluator._flow = MagicMock(
+            return_value=groundedness_response_async_mock()
+        )
 
         # Mock AsyncPrompty.load to verify token_credential is passed
-        with patch("azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load") as mock_load:
-            mock_load.return_value = MagicMock(return_value=groundedness_response_async_mock())
+        with patch(
+            "azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load"
+        ) as mock_load:
+            mock_load.return_value = MagicMock(
+                return_value=groundedness_response_async_mock()
+            )
 
             # Trigger _ensure_query_prompty_loaded by calling with query
             groundedness_evaluator._ensure_query_prompty_loaded()
@@ -79,7 +99,9 @@ class TestGroundednessEvaluator:
     def test_evaluate_groundedness_valid(self, mock_model_config):
         """Test basic evaluation flow"""
         groundedness_evaluator = GroundednessEvaluator(model_config=mock_model_config)
-        groundedness_evaluator._flow = MagicMock(return_value=groundedness_response_async_mock())
+        groundedness_evaluator._flow = MagicMock(
+            return_value=groundedness_response_async_mock()
+        )
 
         response = "The capital of France is Paris."
         context = "Paris is the capital of France."

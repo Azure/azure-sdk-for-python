@@ -11,7 +11,9 @@ SUPPORTED_LANGUAGES_MAPPING = {
     SupportedLanguages.Italian: BASE_SUFFIX.replace("__language__", "italian"),
     SupportedLanguages.French: BASE_SUFFIX.replace("__language__", "french"),
     SupportedLanguages.German: BASE_SUFFIX.replace("__language__", "german"),
-    SupportedLanguages.SimplifiedChinese: BASE_SUFFIX.replace("__language__", "simplified chinese"),
+    SupportedLanguages.SimplifiedChinese: BASE_SUFFIX.replace(
+        "__language__", "simplified chinese"
+    ),
     SupportedLanguages.Portuguese: BASE_SUFFIX.replace("__language__", "portuguese"),
     SupportedLanguages.Japanese: BASE_SUFFIX.replace("__language__", "japanese"),
     SupportedLanguages.Korean: BASE_SUFFIX.replace("__language__", "korean"),

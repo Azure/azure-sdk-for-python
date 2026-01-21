@@ -45,7 +45,10 @@ def create_sample_data() -> str:
         {
             "conversation": {
                 "messages": [
-                    {"content": "How can I improve my Python coding skills?", "role": "user"},
+                    {
+                        "content": "How can I improve my Python coding skills?",
+                        "role": "user",
+                    },
                     {
                         "content": (
                             "Here are some effective ways to improve your "
@@ -68,7 +71,10 @@ def create_sample_data() -> str:
             "conversation": {
                 "messages": [
                     {"content": "What is Python?", "role": "user"},
-                    {"content": "Python is a programming language.", "role": "assistant"},
+                    {
+                        "content": "Python is a programming language.",
+                        "role": "assistant",
+                    },
                 ]
             },
             "expected_quality": "low",
@@ -77,7 +83,13 @@ def create_sample_data() -> str:
         {
             "conversation": {
                 "messages": [
-                    {"content": ("Can you explain machine learning concepts " "for a beginner?"), "role": "user"},
+                    {
+                        "content": (
+                            "Can you explain machine learning concepts "
+                            "for a beginner?"
+                        ),
+                        "role": "user",
+                    },
                     {
                         "content": (
                             "Machine learning is a subset of artificial "
@@ -114,7 +126,13 @@ def create_sample_data() -> str:
         {
             "conversation": {
                 "messages": [
-                    {"content": ("What are the best practices for writing " "clean Python code?"), "role": "user"},
+                    {
+                        "content": (
+                            "What are the best practices for writing "
+                            "clean Python code?"
+                        ),
+                        "role": "user",
+                    },
                     {
                         "content": (
                             "Here are key best practices for writing clean "
@@ -205,7 +223,9 @@ def demonstrate_score_model_grader():
         if not azure_ai_project:
             print("❌ No Azure AI project configuration found. Please set either:")
             print("   - AZURE_AI_PROJECT_ENDPOINT (for foundry-based projects), or")
-            print("   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)")
+            print(
+                "   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)"
+            )
             return
 
         # 3. Create conversation quality grader

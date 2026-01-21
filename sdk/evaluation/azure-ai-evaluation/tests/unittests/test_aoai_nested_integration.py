@@ -137,8 +137,16 @@ class TestAOAINestedDataIntegration:
         assert "policy" in item_root["context"]["company"]
         assert "security" in item_root["context"]["company"]["policy"]
         assert "passwords" in item_root["context"]["company"]["policy"]["security"]
-        assert "rotation_days" in item_root["context"]["company"]["policy"]["security"]["passwords"]
-        assert item_root["context"]["company"]["policy"]["security"]["passwords"]["rotation_days"] == "90"
+        assert (
+            "rotation_days"
+            in item_root["context"]["company"]["policy"]["security"]["passwords"]
+        )
+        assert (
+            item_root["context"]["company"]["policy"]["security"]["passwords"][
+                "rotation_days"
+            ]
+            == "90"
+        )
 
     def test_data_source_config_matches_data_source_for_nested(self):
         """Test that schema config and data source align for nested structures."""
@@ -189,7 +197,11 @@ class TestAOAINestedDataIntegration:
         """Test that schema config and data source align for flat structures."""
         input_df = pd.DataFrame([{"query": "Test", "response": "Answer", "score": "5"}])
 
-        column_mapping = {"query": "${data.query}", "response": "${data.response}", "score": "${data.score}"}
+        column_mapping = {
+            "query": "${data.query}",
+            "response": "${data.response}",
+            "score": "${data.score}",
+        }
 
         # Generate both config and data source
         config = _generate_data_source_config(input_df, column_mapping)

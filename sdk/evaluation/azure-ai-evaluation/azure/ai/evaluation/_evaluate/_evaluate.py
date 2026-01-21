@@ -11,17 +11,42 @@ import re
 import tempfile
 import json
 import time
-from typing import Any, Callable, Dict, Iterable, Iterator, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Literal,
+    Optional,
+    Set,
+    Tuple,
+    TypedDict,
+    Union,
+    cast,
+)
 
 from openai import OpenAI, AzureOpenAI
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
 from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
-from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
-from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._common.math import (
+    list_mean_nan_safe,
+    apply_transform_nan_safe,
+)
+from azure.ai.evaluation._common.utils import (
+    validate_azure_ai_project,
+    is_onedp_project,
+)
 from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from .._constants import (
@@ -37,7 +62,12 @@ from .._constants import (
     _EvaluatorMetricMapping,
 )
 
-from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig, AppInsightsConfig
+from .._model_configurations import (
+    AzureAIProject,
+    EvaluationResult,
+    EvaluatorConfig,
+    AppInsightsConfig,
+)
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
@@ -111,11 +141,19 @@ def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, flo
         metric_name = col.split(".")[1]
         if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
             renamed_cols.append(col)
-            new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
-            col_with_numeric_values = cast(List[float], pd.to_numeric(df[col], errors="coerce"))
+            new_col_name = (
+                metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
+            )
+            col_with_numeric_values = cast(
+                List[float], pd.to_numeric(df[col], errors="coerce")
+            )
             try:
-                metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
-            except EvaluationException:  # only exception that can be cause is all NaN values
+                metric_columns[new_col_name] = round(
+                    list_mean_nan_safe(col_with_numeric_values), 2
+                )
+            except (
+                EvaluationException
+            ):  # only exception that can be cause is all NaN values
                 msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
                 LOGGER.warning(msg)
 
@@ -162,20 +200,29 @@ def _aggregate_content_safety_metrics(
     defect_rates = {}
     for col in content_safety_df.columns:
         defect_rate_name = col.replace("_score", "_defect_rate")
-        col_with_numeric_values = cast(List[float], pd.to_numeric(content_safety_df[col], errors="coerce"))
+        col_with_numeric_values = cast(
+            List[float], pd.to_numeric(content_safety_df[col], errors="coerce")
+        )
         try:
             col_with_boolean_values = apply_transform_nan_safe(
-                col_with_numeric_values, lambda x: 1 if x >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT else 0
+                col_with_numeric_values,
+                lambda x: 1 if x >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT else 0,
             )
-            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
-        except EvaluationException:  # only exception that can be cause is all NaN values
+            defect_rates[defect_rate_name] = round(
+                list_mean_nan_safe(col_with_boolean_values), 2
+            )
+        except (
+            EvaluationException
+        ):  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
             LOGGER.warning(msg)
 
     return content_safety_cols, defect_rates
 
 
-def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, float]]:
+def _aggregate_label_defect_metrics(
+    df: pd.DataFrame,
+) -> Tuple[List[str], Dict[str, float]]:
     """Find and aggregate defect rates for label-based metrics. Returns both a list
     of columns that were used to calculate defect rates and the defect rates themselves.
 
@@ -199,19 +246,31 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     details_cols = []
     for col in df.columns:
         metric_name = col.split(".")[1]
-        if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
+        if (
+            metric_name.endswith("_label")
+            and metric_name.replace("_label", "").lower() in handled_metrics
+        ):
             label_cols.append(col)
-        if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:
+        if (
+            metric_name.endswith("_details")
+            and metric_name.replace("_details", "").lower() in handled_metrics
+        ):
             details_cols = col
 
     label_df = df[label_cols]
     defect_rates = {}
     for col in label_df.columns:
         defect_rate_name = col.replace("_label", "_defect_rate")
-        col_with_boolean_values = cast(List[float], pd.to_numeric(label_df[col], errors="coerce"))
+        col_with_boolean_values = cast(
+            List[float], pd.to_numeric(label_df[col], errors="coerce")
+        )
         try:
-            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
-        except EvaluationException:  # only exception that can be cause is all NaN values
+            defect_rates[defect_rate_name] = round(
+                list_mean_nan_safe(col_with_boolean_values), 2
+            )
+        except (
+            EvaluationException
+        ):  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
             LOGGER.warning(msg)
 
@@ -228,7 +287,9 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
                 defect_rates[f"{details_cols}.{key}_defect_rate"] = round(
                     list_mean_nan_safe(col_with_boolean_values), 2
                 )
-            except EvaluationException:  # only exception that can be cause is all NaN values
+            except (
+                EvaluationException
+            ):  # only exception that can be cause is all NaN values
                 msg = f"All score evaluations are NaN/None for column {key}. No aggregation can be performed."
                 LOGGER.warning(msg)
 
@@ -261,7 +322,11 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     results = {}
 
     # Find all columns that end with "_result"
-    result_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_result")]
+    result_columns = [
+        col
+        for col in df.columns
+        if col.startswith("outputs.") and col.endswith("_result")
+    ]
 
     for col in result_columns:
         # Extract the evaluator name from the column name
@@ -272,7 +337,8 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
             evaluator_name = parts[1]
         else:
             LOGGER.warning(
-                "Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col
+                "Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'",
+                col,
             )
             continue
         if evaluator_name:
@@ -306,14 +372,16 @@ def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
     evaluation_metrics_values = [
         getattr(EvaluationMetrics, attr)
         for attr in dir(EvaluationMetrics)
-        if not attr.startswith("_") and isinstance(getattr(EvaluationMetrics, attr), str)
+        if not attr.startswith("_")
+        and isinstance(getattr(EvaluationMetrics, attr), str)
     ]
 
     # Get all metric values from _InternalEvaluationMetrics class
     internal_metrics_values = [
         getattr(_InternalEvaluationMetrics, attr)
         for attr in dir(_InternalEvaluationMetrics)
-        if not attr.startswith("_") and isinstance(getattr(_InternalEvaluationMetrics, attr), str)
+        if not attr.startswith("_")
+        and isinstance(getattr(_InternalEvaluationMetrics, attr), str)
     ]
 
     # Combine all known metrics
@@ -336,7 +404,9 @@ def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
     return token_count_cols
 
 
-def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
+def _aggregate_metrics(
+    df: pd.DataFrame, evaluators: Dict[str, Callable]
+) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
     that represent defect rates and renames them accordingly. Other columns in the dataframe are dropped.
@@ -351,13 +421,17 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     """
     binary_metrics = _aggregation_binary_output(df)
 
-    df.rename(columns={col: col.replace("outputs.", "") for col in df.columns}, inplace=True)
+    df.rename(
+        columns={col: col.replace("outputs.", "") for col in df.columns}, inplace=True
+    )
 
     handled_columns = []
     defect_rates = {}
     # Rename certain columns as defect rates if we know that's what their aggregates represent
     # Content safety metrics
-    content_safety_cols, cs_defect_rates = _aggregate_content_safety_metrics(df, evaluators)
+    content_safety_cols, cs_defect_rates = _aggregate_content_safety_metrics(
+        df, evaluators
+    )
     other_renamed_cols, renamed_cols = _aggregate_other_metrics(df)
     # Note: content_safety_cols are NOT added to handled_columns because we want to calculate
     # both defect rates (already done above) AND average scores (done via mean() below)
@@ -375,7 +449,11 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
 
     # Exclude threshold and result columns from aggregation
     # These are per-row metadata, not metrics to be averaged
-    threshold_and_result_cols = [col for col in df.columns if col.endswith("_threshold") or col.endswith("_result")]
+    threshold_and_result_cols = [
+        col
+        for col in df.columns
+        if col.endswith("_threshold") or col.endswith("_result")
+    ]
     handled_columns.extend(threshold_and_result_cols)
 
     # For rest of metrics, we will calculate mean
@@ -416,7 +494,10 @@ def _validate_columns_for_target(
     :raises EvaluationException: If the column starts with "__outputs." or if the input data contains missing fields.
     """
     if any(c.startswith(Prefixes.TSG_OUTPUTS) for c in df.columns):
-        msg = "The column cannot start from " f'"{Prefixes.TSG_OUTPUTS}" if target was defined.'
+        msg = (
+            "The column cannot start from "
+            f'"{Prefixes.TSG_OUTPUTS}" if target was defined.'
+        )
         raise EvaluationException(
             message=msg,
             internal_message=msg,
@@ -431,7 +512,8 @@ def _validate_columns_for_target(
     required_inputs = [
         param.name
         for param in inspect.signature(target).parameters.values()
-        if param.default == inspect.Parameter.empty and param.name not in ["kwargs", "args", "self"]
+        if param.default == inspect.Parameter.empty
+        and param.name not in ["kwargs", "args", "self"]
     ]
 
     missing_inputs = [col for col in required_inputs if col not in df.columns]
@@ -471,7 +553,9 @@ def _validate_columns_for_evaluators(
 
     for evaluator_name, evaluator in evaluators.items():
         # Apply column mapping
-        mapping_config = column_mapping.get(evaluator_name, column_mapping.get("default", None))
+        mapping_config = column_mapping.get(
+            evaluator_name, column_mapping.get("default", None)
+        )
         new_df = _apply_column_mapping(df, mapping_config)
 
         # Validate input data for evaluator
@@ -490,26 +574,36 @@ def _validate_columns_for_evaluators(
                 missing_inputs = []
             else:
                 optional_params = (
-                    cast(Any, evaluator)._OPTIONAL_PARAMS  # pylint: disable=protected-access
+                    cast(
+                        Any, evaluator
+                    )._OPTIONAL_PARAMS  # pylint: disable=protected-access
                     if hasattr(evaluator, "_OPTIONAL_PARAMS")
                     else []
                 )
                 excluded_params = set(new_df.columns).union(optional_params)
-                missing_inputs = [col for col in evaluator_params if col not in excluded_params]
+                missing_inputs = [
+                    col for col in evaluator_params if col not in excluded_params
+                ]
 
                 # If "conversation" is the only parameter and it is missing, keep it in the missing inputs
                 # Otherwise, remove it from the missing inputs
                 if "conversation" in missing_inputs:
-                    if not (evaluator_params == ["conversation"] and missing_inputs == ["conversation"]):
+                    if not (
+                        evaluator_params == ["conversation"]
+                        and missing_inputs == ["conversation"]
+                    ):
                         missing_inputs.remove("conversation")
         else:
             evaluator_params = [
                 param.name
                 for param in inspect.signature(evaluator).parameters.values()
-                if param.default == inspect.Parameter.empty and param.name not in ["kwargs", "args", "self"]
+                if param.default == inspect.Parameter.empty
+                and param.name not in ["kwargs", "args", "self"]
             ]
 
-            missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
+            missing_inputs = [
+                col for col in evaluator_params if col not in new_df.columns
+            ]
 
         if missing_inputs:
             missing_inputs_per_evaluator[evaluator_name] = missing_inputs
@@ -535,7 +629,9 @@ def _validate_columns_for_evaluators(
         )
 
 
-def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name, tags):
+def _validate_and_load_data(
+    target, data, evaluators, output_path, azure_ai_project, evaluation_name, tags
+):
     if data is None:
         msg = "The 'data' parameter is required for evaluation."
         raise EvaluationException(
@@ -598,7 +694,9 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
                 blame=ErrorBlame.USER_ERROR,
             )
 
-        output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
+        output_dir = (
+            output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
+        )
         if output_dir and not os.path.exists(output_dir):
             msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
             raise EvaluationException(
@@ -698,7 +796,9 @@ def _apply_target_to_data(
 
     # Remove input and output prefix
     generated_columns = {
-        col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
+        col[len(Prefixes.OUTPUTS) :]
+        for col in target_output.columns
+        if col.startswith(Prefixes.OUTPUTS)
     }
     # Sort output by line numbers
     target_output.set_index(f"inputs.{LINE_NUMBER}", inplace=True)
@@ -716,7 +816,10 @@ def _apply_target_to_data(
     drop_columns = list(filter(lambda x: x.startswith("inputs"), target_output.columns))
     target_output.drop(drop_columns, inplace=True, axis=1)
     # Rename outputs columns to __outputs
-    rename_dict = {col: col.replace(Prefixes.OUTPUTS, Prefixes.TSG_OUTPUTS) for col in target_output.columns}
+    rename_dict = {
+        col: col.replace(Prefixes.OUTPUTS, Prefixes.TSG_OUTPUTS)
+        for col in target_output.columns
+    }
     target_output.rename(columns=rename_dict, inplace=True)
     # Concatenate output to input - now both dataframes have the same number of rows
     target_output = pd.concat([initial_data, target_output], axis=1)
@@ -737,7 +840,9 @@ def _process_column_mappings(
 
     processed_config: Dict[str, Dict[str, str]] = {}
 
-    expected_references = re.compile(r"^\$\{(target|data)\.([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\}$")
+    expected_references = re.compile(
+        r"^\$\{(target|data)\.([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\}$"
+    )
 
     if column_mapping:
         for evaluator, mapping_config in column_mapping.items():
@@ -757,7 +862,9 @@ def _process_column_mappings(
                         )
 
                     # Replace ${target.} with ${run.outputs.}
-                    processed_config[evaluator][map_to_key] = map_value.replace("${target.", "${run.outputs.")
+                    processed_config[evaluator][map_to_key] = map_value.replace(
+                        "${target.", "${run.outputs."
+                    )
 
     return processed_config
 
@@ -859,7 +966,11 @@ def evaluate(
     """
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
-        with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
+        with (
+            UserAgentSingleton().add_useragent_product(user_agent)
+            if user_agent
+            else contextlib.nullcontext()
+        ):
             results = _evaluate(
                 evaluation_name=evaluation_name,
                 target=target,
@@ -910,7 +1021,9 @@ def evaluate(
 def _print_summary(per_evaluator_results: Dict[str, Any]) -> None:
     # Extract evaluators with a non-empty "run_summary"
     output_dict = {
-        name: result["run_summary"] for name, result in per_evaluator_results.items() if result.get("run_summary")
+        name: result["run_summary"]
+        for name, result in per_evaluator_results.items()
+        if result.get("run_summary")
     }
 
     if output_dict:
@@ -978,7 +1091,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name, **kwargs)
+            # Pass azure_ai_project in kwargs so it can be used to create Foundry client
+            kwargs_with_project = {**kwargs, "azure_ai_project": azure_ai_project}
+            eval_run_info_list = _begin_aoai_evaluation(
+                graders, column_mapping, input_data_df, aoi_name, **kwargs_with_project
+            )
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -995,20 +1112,30 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Evaluate 'normal' evaluators. This includes built-in evaluators and any user-supplied callables.
     if need_local_run:
         try:
-            eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(
-                validated_data=validated_data, fail_on_evaluator_errors=fail_on_evaluator_errors
+            eval_result_df, eval_metrics, per_evaluator_results = (
+                _run_callable_evaluators(
+                    validated_data=validated_data,
+                    fail_on_evaluator_errors=fail_on_evaluator_errors,
+                )
             )
             results_df = eval_result_df
             metrics = eval_metrics
             got_local_results = True
             # TODO figure out how to update this printing to include OAI results?
             _print_summary(per_evaluator_results)
-            eval_run_summary_dict = {name: result["run_summary"] for name, result in per_evaluator_results.items()}
-            LOGGER.info(f"run_summary: \r\n{json.dumps(eval_run_summary_dict, indent=4)}")
+            eval_run_summary_dict = {
+                name: result["run_summary"]
+                for name, result in per_evaluator_results.items()
+            }
+            LOGGER.info(
+                f"run_summary: \r\n{json.dumps(eval_run_summary_dict, indent=4)}"
+            )
         except EvaluationException as e:
             if need_get_oai_results:
                 # If there are OAI graders, we only print a warning on local failures.
-                LOGGER.warning("Local evaluations failed. Will still attempt to retrieve online grader results.")
+                LOGGER.warning(
+                    "Local evaluations failed. Will still attempt to retrieve online grader results."
+                )
                 LOGGER.warning(e)
             else:
                 raise e
@@ -1030,7 +1157,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         except EvaluationException as e:
             if got_local_results:
                 # If there are local eval results, we only print a warning on OAI failure.
-                LOGGER.warning("Remote Azure Open AI grader evaluations failed. Still returning local results.")
+                LOGGER.warning(
+                    "Remote Azure Open AI grader evaluations failed. Still returning local results."
+                )
                 LOGGER.warning(e)
             else:
                 raise e
@@ -1039,15 +1168,32 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     name_map = _map_names_to_builtins(evaluators, graders)
     if is_onedp_project(azure_ai_project):
         studio_url = _log_metrics_and_instance_results_onedp(
-            metrics, results_df, azure_ai_project, evaluation_name, name_map, tags=tags, **kwargs
+            metrics,
+            results_df,
+            azure_ai_project,
+            evaluation_name,
+            name_map,
+            tags=tags,
+            **kwargs,
         )
     else:
         # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-        trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
+        trace_destination = (
+            _trace_destination_from_project_scope(azure_ai_project)
+            if azure_ai_project
+            else None
+        )
         studio_url = None
         if trace_destination:
             studio_url = _log_metrics_and_instance_results(
-                metrics, results_df, trace_destination, None, evaluation_name, name_map, tags=tags, **kwargs
+                metrics,
+                results_df,
+                trace_destination,
+                None,
+                evaluation_name,
+                name_map,
+                tags=tags,
+                **kwargs,
             )
 
     result_df_dict = results_df.to_dict("records")
@@ -1070,7 +1216,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         )
         if app_insights_configuration := kwargs.get("_app_insights_configuration"):
             emit_eval_result_events_to_app_insights(
-                app_insights_configuration, result["_evaluation_results_list"], evaluator_config
+                app_insights_configuration,
+                result["_evaluation_results_list"],
+                evaluator_config,
             )
 
     if output_path:
@@ -1100,12 +1248,16 @@ def _build_internal_log_attributes(
     internal_log_attributes: Dict[str, str] = log_attributes.copy()
     # Add threshold if present
     if event_data.get("threshold"):
-        internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
+        internal_log_attributes["gen_ai.evaluation.threshold"] = str(
+            event_data["threshold"]
+        )
 
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
     if testing_criteria_name:
-        internal_log_attributes["gen_ai.evaluation.testing_criteria.name"] = testing_criteria_name
+        internal_log_attributes["gen_ai.evaluation.testing_criteria.name"] = (
+            testing_criteria_name
+        )
 
         # Get evaluator definition details
         if evaluator_config and testing_criteria_name in evaluator_config:
@@ -1115,25 +1267,37 @@ def _build_internal_log_attributes(
                 internal_log_attributes["gen_ai.evaluator.name"] = str(evaluator_name)
 
             if evaluator_version := testing_criteria_config.get("_evaluator_version"):
-                internal_log_attributes["gen_ai.evaluator.version"] = str(evaluator_version)
+                internal_log_attributes["gen_ai.evaluator.version"] = str(
+                    evaluator_version
+                )
 
             if evaluator_id := testing_criteria_config.get("_evaluator_id"):
                 internal_log_attributes["gen_ai.evaluator.id"] = str(evaluator_id)
 
-            if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
-                metric_config_detail = evaluator_definition.get("metrics").get(metric_name)
+            if evaluator_definition := testing_criteria_config.get(
+                "_evaluator_definition"
+            ):
+                metric_config_detail = evaluator_definition.get("metrics").get(
+                    metric_name
+                )
 
                 if metric_config_detail:
                     if metric_config_detail.get("min_value") is not None:
-                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail["min_value"])
-                    if metric_config_detail.get("max_value") is not None:
-                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail["max_value"])
-                    if metric_config_detail.get("desirable_direction") is not None:
-                        internal_log_attributes["gen_ai.evaluation.desirable_direction"] = str(
-                            metric_config_detail["desirable_direction"]
+                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(
+                            metric_config_detail["min_value"]
                         )
+                    if metric_config_detail.get("max_value") is not None:
+                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(
+                            metric_config_detail["max_value"]
+                        )
+                    if metric_config_detail.get("desirable_direction") is not None:
+                        internal_log_attributes[
+                            "gen_ai.evaluation.desirable_direction"
+                        ] = str(metric_config_detail["desirable_direction"])
                     if metric_config_detail.get("type") is not None:
-                        internal_log_attributes["gen_ai.evaluation.type"] = str(metric_config_detail["type"])
+                        internal_log_attributes["gen_ai.evaluation.type"] = str(
+                            metric_config_detail["type"]
+                        )
 
     return internal_log_attributes
 
@@ -1193,7 +1357,9 @@ def _log_events_to_app_insights(
                 elif key.endswith("span_id") and value and isinstance(value, str):
                     # Remove dashes if present and convert to int
                     span_id_str = str(value).replace("-", "").lower()
-                    if len(span_id_str) == 16:  # Valid span_id length (64-bit = 16 hex chars)
+                    if (
+                        len(span_id_str) == 16
+                    ):  # Valid span_id length (64-bit = 16 hex chars)
                         span_id = int(span_id_str, 16)
                 elif key == "agent_version" and value and isinstance(value, str):
                     agent_version = value
@@ -1208,12 +1374,18 @@ def _log_events_to_app_insights(
                 metric_name = event_data.get("metric")
                 standard_log_attributes = {}
                 # This attributes makes evaluation events to go into customEvents table in App Insights
-                standard_log_attributes["microsoft.custom_event.name"] = EVALUATION_EVENT_NAME
+                standard_log_attributes["microsoft.custom_event.name"] = (
+                    EVALUATION_EVENT_NAME
+                )
                 standard_log_attributes["gen_ai.evaluation.name"] = metric_name
                 if event_data.get("score") is not None:
-                    standard_log_attributes["gen_ai.evaluation.score.value"] = event_data.get("score")
+                    standard_log_attributes["gen_ai.evaluation.score.value"] = (
+                        event_data.get("score")
+                    )
                 if event_data.get("label") is not None:
-                    standard_log_attributes["gen_ai.evaluation.score.label"] = event_data.get("label")
+                    standard_log_attributes["gen_ai.evaluation.score.label"] = (
+                        event_data.get("label")
+                    )
 
                 # Internal proposed attributes
                 # Put it in internal property bag for now, will be expanded if we got sign-off to Otel standard later.
@@ -1223,11 +1395,15 @@ def _log_events_to_app_insights(
 
                 # Optional field that may not always be present
                 if "reason" in event_data:
-                    standard_log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
+                    standard_log_attributes["gen_ai.evaluation.explanation"] = str(
+                        event_data["reason"]
+                    )
 
                 # Handle error from sample if present
                 # Put the error message in error.type to follow OTel semantic conventions
-                error = event_data.get("sample", {}).get("error", {}).get("message", None)
+                error = (
+                    event_data.get("sample", {}).get("error", {}).get("message", None)
+                )
                 if error:
                     standard_log_attributes["error.type"] = error
 
@@ -1236,20 +1412,24 @@ def _log_events_to_app_insights(
                     properties = event_data["properties"]
 
                     if "attack_success" in properties:
-                        internal_log_attributes["gen_ai.redteam.attack.success"] = str(properties["attack_success"])
+                        internal_log_attributes["gen_ai.redteam.attack.success"] = str(
+                            properties["attack_success"]
+                        )
 
                     if "attack_technique" in properties:
-                        internal_log_attributes["gen_ai.redteam.attack.technique"] = str(properties["attack_technique"])
+                        internal_log_attributes["gen_ai.redteam.attack.technique"] = (
+                            str(properties["attack_technique"])
+                        )
 
                     if "attack_complexity" in properties:
-                        internal_log_attributes["gen_ai.redteam.attack.complexity"] = str(
-                            properties["attack_complexity"]
+                        internal_log_attributes["gen_ai.redteam.attack.complexity"] = (
+                            str(properties["attack_complexity"])
                         )
 
                     if "attack_success_threshold" in properties:
-                        internal_log_attributes["gen_ai.redteam.attack.success_threshold"] = str(
-                            properties["attack_success_threshold"]
-                        )
+                        internal_log_attributes[
+                            "gen_ai.redteam.attack.success_threshold"
+                        ] = str(properties["attack_success_threshold"])
 
                 # Add data source item attributes if present
                 if response_id:
@@ -1257,7 +1437,9 @@ def _log_events_to_app_insights(
                 if conversation_id:
                     standard_log_attributes["gen_ai.conversation.id"] = conversation_id
                 if previous_response_id:
-                    internal_log_attributes["gen_ai.previous.response.id"] = previous_response_id
+                    internal_log_attributes["gen_ai.previous.response.id"] = (
+                        previous_response_id
+                    )
                 if agent_id:
                     standard_log_attributes["gen_ai.agent.id"] = agent_id
                 if agent_name:
@@ -1266,7 +1448,9 @@ def _log_events_to_app_insights(
                     internal_log_attributes["gen_ai.agent.version"] = agent_version
 
                 # Combine standard and internal attributes, put internal under the properties bag
-                standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
+                standard_log_attributes["internal_properties"] = json.dumps(
+                    internal_log_attributes
+                )
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
                 standard_log_attributes["http.client_ip"] = "0.0.0.0"
 
@@ -1332,10 +1516,14 @@ def emit_eval_result_events_to_app_insights(
         _logs.set_logger_provider(logger_provider)
 
         # Create Azure Monitor log exporter
-        azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
+        azure_log_exporter = AzureMonitorLogExporter(
+            connection_string=app_insights_config["connection_string"]
+        )
 
         # Add the Azure Monitor exporter to the logger provider
-        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
+        logger_provider.add_log_record_processor(
+            BatchLogRecordProcessor(azure_log_exporter)
+        )
 
         # Create event logger
         event_provider = EventLoggerProvider(logger_provider)
@@ -1346,13 +1534,21 @@ def emit_eval_result_events_to_app_insights(
 
         # Add AppInsights config attributes with proper semantic convention mappings
         if "run_type" in app_insights_config:
-            base_log_attributes["gen_ai.evaluation.azure_ai_type"] = str(app_insights_config["run_type"])
+            base_log_attributes["gen_ai.evaluation.azure_ai_type"] = str(
+                app_insights_config["run_type"]
+            )
         if "schedule_type" in app_insights_config:
-            base_log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(app_insights_config["schedule_type"])
+            base_log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(
+                app_insights_config["schedule_type"]
+            )
         if "run_id" in app_insights_config:
-            base_log_attributes["gen_ai.evaluation.run.id"] = str(app_insights_config["run_id"])
+            base_log_attributes["gen_ai.evaluation.run.id"] = str(
+                app_insights_config["run_id"]
+            )
         if "project_id" in app_insights_config:
-            base_log_attributes["gen_ai.azure_ai_project.id"] = str(app_insights_config["project_id"])
+            base_log_attributes["gen_ai.azure_ai_project.id"] = str(
+                app_insights_config["project_id"]
+            )
 
         for result in results:
             # Create a copy of base attributes for this result's events
@@ -1362,13 +1558,17 @@ def emit_eval_result_events_to_app_insights(
                 event_logger=event_logger,
                 events=result["results"],
                 log_attributes=log_attributes,
-                data_source_item=result["datasource_item"] if "datasource_item" in result else None,
+                data_source_item=(
+                    result["datasource_item"] if "datasource_item" in result else None
+                ),
                 evaluator_config=evaluator_config,
                 app_insights_config=app_insights_config,
             )
         # Force flush to ensure events are sent
         logger_provider.force_flush()
-        LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        LOGGER.info(
+            f"Successfully logged {len(results)} evaluation results to App Insights"
+        )
 
     except Exception as e:
         LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")
@@ -1391,7 +1591,13 @@ def _preprocess_data(
         evaluator_config = {}
 
     input_data_df = _validate_and_load_data(
-        target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name, tags
+        target,
+        data,
+        evaluators_and_graders,
+        output_path,
+        azure_ai_project,
+        evaluation_name,
+        tags,
     )
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
@@ -1417,9 +1623,13 @@ def _preprocess_data(
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
+    def get_client_type(
+        evaluate_kwargs: Dict[str, Any]
+    ) -> Literal["run_submitter", "pf_client", "code_client"]:
         """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
-        _use_run_submitter_client = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
+        _use_run_submitter_client = cast(
+            Optional[bool], kwargs.pop("_use_run_submitter_client", None)
+        )
         _use_pf_client = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
 
         if _use_run_submitter_client is None and _use_pf_client is None:
@@ -1449,7 +1659,9 @@ def _preprocess_data(
 
         assert False, "This should be impossible"
 
-    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
+    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(
+        kwargs
+    )
 
     if client_type == "run_submitter":
         batch_run_client = RunSubmitterClient(raise_on_errors=fail_on_evaluator_errors)
@@ -1466,14 +1678,21 @@ def _preprocess_data(
     # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, batch_run_data, batch_run_client, input_data_df, evaluation_name, **kwargs
+            target,
+            batch_run_data,
+            batch_run_client,
+            input_data_df,
+            evaluation_name,
+            **kwargs,
         )
 
         # IMPORTANT FIX: For ProxyClient, create a temporary file with the complete dataframe
         # This ensures that evaluators get all rows (including failed ones with NaN values)
         if isinstance(batch_run_client, ProxyClient):
             # Create a temporary JSONL file with the complete dataframe
-            temp_file = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+            temp_file = tempfile.NamedTemporaryFile(
+                mode="w", suffix=".jsonl", delete=False
+            )
             try:
                 for _, row in input_data_df.iterrows():
                     row_dict = row.to_dict()
@@ -1489,7 +1708,10 @@ def _preprocess_data(
                         target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
 
                         # We will add our mapping only if customer did not map target output.
-                        if col not in mapping and target_reference not in mapped_to_values:
+                        if (
+                            col not in mapping
+                            and target_reference not in mapped_to_values
+                        ):
                             column_mapping[evaluator_name][col] = target_reference
 
                 # Don't pass the target_run since we're now using the complete dataframe
@@ -1515,7 +1737,9 @@ def _preprocess_data(
                         column_mapping[evaluator_name][col] = target_reference
 
     # After we have generated all columns, we can check if we have everything we need for evaluators.
-    _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
+    _validate_columns_for_evaluators(
+        input_data_df, evaluators, target, target_generated_columns, column_mapping
+    )
 
     # Apply 1-1 mapping from input data to evaluator inputs, excluding values already assigned
     # via target mapping.
@@ -1524,7 +1748,10 @@ def _preprocess_data(
     # NEW: flatten nested object columns (e.g., 'item') so we can map leaf values automatically.
     # Ensure the data does not contain top-level 'conversation' or 'messages' columns (which indicate chat/conversation data)
     if input_data_df is not None:
-        if "conversation" in input_data_df.columns or "messages" in input_data_df.columns:
+        if (
+            "conversation" in input_data_df.columns
+            or "messages" in input_data_df.columns
+        ):
             # No action is taken when 'conversation' or 'messages' columns are present,
             # as these indicate chat/conversation data which should not be flattened or mapped by default.
             pass
@@ -1622,7 +1849,11 @@ def _flatten_object_columns_for_default_mapping(
         for path in leaf_paths:
             if path in df.columns:
                 continue  # already present
-            relative_keys = path[len(root_col) + 1 :].split(".") if len(path) > len(root_col) else []
+            relative_keys = (
+                path[len(root_col) + 1 :].split(".")
+                if len(path) > len(root_col)
+                else []
+            )
 
             def getter(root_val: Any) -> Any:
                 cur = root_val
@@ -1632,7 +1863,9 @@ def _flatten_object_columns_for_default_mapping(
                     cur = cur.get(rk, None)
                 return cur
 
-            df[path] = df[root_col].map(lambda rv: getter(rv) if isinstance(rv, dict) else None)
+            df[path] = df[root_col].map(
+                lambda rv: getter(rv) if isinstance(rv, dict) else None
+            )
 
     return df
 
@@ -1670,7 +1903,9 @@ def _run_callable_evaluators(
                     # Don't pass target_run when using complete dataframe
                     run=target_run,
                     evaluator_name=evaluator_name,
-                    column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
+                    column_mapping=column_mapping.get(
+                        evaluator_name, column_mapping.get("default", None)
+                    ),
                     stream=True,
                     name=kwargs.get("_run_name"),
                 )
@@ -1692,20 +1927,31 @@ def _run_callable_evaluators(
             try:
                 os.unlink(temp_file_to_cleanup)
             except Exception as e:
-                LOGGER.warning(f"Failed to clean up temporary file {temp_file_to_cleanup}: {e}")
+                LOGGER.warning(
+                    f"Failed to clean up temporary file {temp_file_to_cleanup}: {e}"
+                )
     # Concatenate all results
     evaluators_result_df = pd.DataFrame()
     evaluators_metric = {}
     for evaluator_name, evaluator_result in per_evaluator_results.items():
-        if fail_on_evaluator_errors and evaluator_result["run_summary"]["failed_lines"] > 0:
+        if (
+            fail_on_evaluator_errors
+            and evaluator_result["run_summary"]["failed_lines"] > 0
+        ):
             _print_summary(per_evaluator_results)
-            _turn_error_logs_into_exception(evaluator_result["run_summary"]["log_path"] + "/error.json")
+            _turn_error_logs_into_exception(
+                evaluator_result["run_summary"]["log_path"] + "/error.json"
+            )
 
         evaluator_result_df = evaluator_result["result"]
 
         # drop input columns
         evaluator_result_df = evaluator_result_df.drop(
-            columns=[col for col in evaluator_result_df.columns if str(col).startswith(Prefixes.INPUTS)]
+            columns=[
+                col
+                for col in evaluator_result_df.columns
+                if str(col).startswith(Prefixes.INPUTS)
+            ]
         )
 
         # rename output columns
@@ -1721,19 +1967,27 @@ def _run_callable_evaluators(
         evaluator_result_df = _flatten_evaluation_per_turn_columns(evaluator_result_df)
 
         evaluators_result_df = (
-            pd.concat([evaluators_result_df, evaluator_result_df], axis=1, verify_integrity=True)
+            pd.concat(
+                [evaluators_result_df, evaluator_result_df],
+                axis=1,
+                verify_integrity=True,
+            )
             if evaluators_result_df is not None
             else evaluator_result_df
         )
 
-        evaluators_metric.update({f"{evaluator_name}.{k}": v for k, v in evaluator_result["metrics"].items()})
+        evaluators_metric.update(
+            {f"{evaluator_name}.{k}": v for k, v in evaluator_result["metrics"].items()}
+        )
 
     # Rename columns, generated by target function to outputs instead of inputs.
     # If target generates columns, already present in the input data, these columns
     # will be marked as outputs already so we do not need to rename them.
 
     input_data_df = _rename_columns_conditionally(validated_data["input_data_df"])
-    eval_result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
+    eval_result_df = pd.concat(
+        [input_data_df, evaluators_result_df], axis=1, verify_integrity=True
+    )
     eval_metrics = _aggregate_metrics(evaluators_result_df, evaluators)
     eval_metrics.update(evaluators_metric)
 
@@ -1925,7 +2179,14 @@ def _convert_results_to_aoai_evaluation_results(
 
     for row_idx, row in enumerate(results.get("rows", [])):
         converted_row = _convert_single_row_to_aoai_format(
-            row, row_idx, eval_id, eval_run_id, created_time, testing_criteria_metadata, eval_run_summary, logger
+            row,
+            row_idx,
+            eval_id,
+            eval_run_id,
+            created_time,
+            testing_criteria_metadata,
+            eval_run_summary,
+            logger,
         )
         converted_rows.append(converted_row)
 
@@ -1936,7 +2197,9 @@ def _convert_results_to_aoai_evaluation_results(
     )
 
     # Calculate and add summary
-    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, testing_criteria_metadata)
+    evaluation_summary = _calculate_aoai_evaluation_summary(
+        converted_rows, logger, testing_criteria_metadata
+    )
     results["_evaluation_summary"] = evaluation_summary
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
@@ -2014,11 +2277,20 @@ def _extract_testing_criteria_metadata(
     criteria_name_types_from_meta = _extract_criteria_name_types(eval_meta_data)
 
     for criteria_name, evaluator in evaluators.items():
-        criteria_type, evaluator_name, metrics, inverse_metrics = _determine_criteria_type_and_metrics(
-            criteria_name, evaluator, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
+        criteria_type, evaluator_name, metrics, inverse_metrics = (
+            _determine_criteria_type_and_metrics(
+                criteria_name,
+                evaluator,
+                criteria_name_types_from_meta,
+                evaluator_config,
+                logger,
+                eval_id,
+                eval_run_id,
+            )
         )
         is_inverse = len(metrics) > 0 and all(
-            _is_inverse_metric(metric, inverse_metrics, logger, eval_id, eval_run_id) for metric in metrics
+            _is_inverse_metric(metric, inverse_metrics, logger, eval_id, eval_run_id)
+            for metric in metrics
         )
         testing_criteria_metadata[criteria_name] = {
             "type": criteria_type,
@@ -2030,7 +2302,9 @@ def _extract_testing_criteria_metadata(
     return testing_criteria_metadata
 
 
-def _extract_criteria_name_types(eval_meta_data: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+def _extract_criteria_name_types(
+    eval_meta_data: Optional[Dict[str, Any]]
+) -> Dict[str, Any]:
     """
     Extract criteria name types from evaluation metadata.
 
@@ -2094,10 +2368,20 @@ def _determine_criteria_type_and_metrics(
     """
     if criteria_name in criteria_name_types_from_meta:
         result = _extract_from_metadata(
-            criteria_name, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
+            criteria_name,
+            criteria_name_types_from_meta,
+            evaluator_config,
+            logger,
+            eval_id,
+            eval_run_id,
         )
     elif isinstance(evaluator, AzureOpenAIGrader):
-        result = evaluator._type, "", [criteria_name], []  # pylint: disable=protected-access
+        result = (
+            evaluator._type,
+            "",
+            [criteria_name],
+            [],
+        )  # pylint: disable=protected-access
     elif isinstance(evaluator, EvaluatorBase):
         result = _extract_from_evaluator_base(evaluator, criteria_name)
     else:
@@ -2143,7 +2427,9 @@ def _extract_from_metadata(
     if current_evaluator_metrics and len(current_evaluator_metrics) > 0:
         metrics.extend(current_evaluator_metrics)
     elif _has_evaluator_definition(evaluator_config, criteria_name):
-        metrics, inverse_metrics = _extract_metrics_from_definition(evaluator_config[criteria_name])
+        metrics, inverse_metrics = _extract_metrics_from_definition(
+            evaluator_config[criteria_name]
+        )
     elif evaluator_name:
         metrics = _extract_metrics_from_evaluator_name(
             evaluator_name, criteria_name, criteria_type, logger, eval_id, eval_run_id
@@ -2154,7 +2440,9 @@ def _extract_from_metadata(
     return (criteria_type, evaluator_name, metrics, inverse_metrics)
 
 
-def _has_evaluator_definition(evaluator_config: Optional[Dict[str, EvaluatorConfig]], criteria_name: str) -> bool:
+def _has_evaluator_definition(
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]], criteria_name: str
+) -> bool:
     """
     Check if evaluator config has evaluator definition.
 
@@ -2182,7 +2470,9 @@ def _has_evaluator_definition(evaluator_config: Optional[Dict[str, EvaluatorConf
     )
 
 
-def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) -> Tuple[List[str], List[str]]:
+def _extract_metrics_from_definition(
+    testing_criteria_config: Dict[str, Any]
+) -> Tuple[List[str], List[str]]:
     """
     Extract metrics from evaluator definition.
 
@@ -2205,7 +2495,11 @@ def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) ->
     inverse_metrics = []
     if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
         metric_config_detail = evaluator_definition.get("metrics")
-        if metric_config_detail and isinstance(metric_config_detail, dict) and len(metric_config_detail) > 0:
+        if (
+            metric_config_detail
+            and isinstance(metric_config_detail, dict)
+            and len(metric_config_detail) > 0
+        ):
             inverse_metrics = _get_metrics_need_extra_reverse(metric_config_detail)
             return list(metric_config_detail.keys()), inverse_metrics
     return [], []
@@ -2240,11 +2534,15 @@ def _extract_metrics_from_evaluator_name(
     if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
         evaluator_name = evaluator_name.replace("builtin.", "")
 
-    metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
+    metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(
+        evaluator_name, []
+    )
     return metrics_mapped if metrics_mapped else [criteria_name]
 
 
-def _extract_from_evaluator_base(evaluator: EvaluatorBase, criteria_name: str) -> Tuple[str, str, List[str], List[str]]:
+def _extract_from_evaluator_base(
+    evaluator: EvaluatorBase, criteria_name: str
+) -> Tuple[str, str, List[str], List[str]]:
     """
     Extract criteria type and metrics from EvaluatorBase.
 
@@ -2261,11 +2559,15 @@ def _extract_from_evaluator_base(evaluator: EvaluatorBase, criteria_name: str) -
     # Extract evaluator class name
     evaluator_class_name = evaluator.__class__.__name__
 
-    eval_name = _EvaluatorMetricMapping.EVAL_CLASS_NAME_MAP.get(evaluator_class_name, None)
+    eval_name = _EvaluatorMetricMapping.EVAL_CLASS_NAME_MAP.get(
+        evaluator_class_name, None
+    )
 
     metrics = []
     if eval_name:
-        metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(eval_name, [])
+        metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(
+            eval_name, []
+        )
         metrics = metrics_mapped if metrics_mapped else [criteria_name]
     else:
         metrics = [criteria_name]
@@ -2353,14 +2655,21 @@ def _convert_single_row_to_aoai_format(
     # Process each criteria group to extract metric results of output items.
     for criteria_name, metrics in criteria_groups.items():
         criteria_results, sample = _process_criteria_metrics(
-            criteria_name, metrics, testing_criteria_metadata, logger, eval_id, eval_run_id
+            criteria_name,
+            metrics,
+            testing_criteria_metadata,
+            logger,
+            eval_id,
+            eval_run_id,
         )
         run_output_results.extend(criteria_results)
         if sample:
             top_sample = sample
 
     # Add error summaries if needed
-    _add_error_summaries(run_output_results, eval_run_summary, testing_criteria_metadata)
+    _add_error_summaries(
+        run_output_results, eval_run_summary, testing_criteria_metadata
+    )
 
     return {
         "object": "eval.run.output_item",
@@ -2486,9 +2795,13 @@ def _process_criteria_metrics(
             {"input": "...", "output": "..."}
         )
     """
-    expected_metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
+    expected_metrics = testing_criteria_metadata.get(criteria_name, {}).get(
+        "metrics", []
+    )
     criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "")
-    is_inverse = testing_criteria_metadata.get(criteria_name, {}).get("is_inverse", False)
+    is_inverse = testing_criteria_metadata.get(criteria_name, {}).get(
+        "is_inverse", False
+    )
 
     if _is_none_or_nan(criteria_type) or _is_none_or_nan(criteria_name):
         logger.warning(
@@ -2497,7 +2810,9 @@ def _process_criteria_metrics(
         return ([], {})
 
     # Extract metric values
-    result_per_metric = _extract_metric_values(criteria_name, criteria_type, metrics, expected_metrics, logger)
+    result_per_metric = _extract_metric_values(
+        criteria_name, criteria_type, metrics, expected_metrics, logger
+    )
 
     # Convert to result objects
     results = []
@@ -2505,7 +2820,14 @@ def _process_criteria_metrics(
 
     for metric, metric_values in result_per_metric.items():
         result_obj = _create_result_object(
-            criteria_name, metric, metric_values, criteria_type, is_inverse, logger, eval_id, eval_run_id
+            criteria_name,
+            metric,
+            metric_values,
+            criteria_type,
+            is_inverse,
+            logger,
+            eval_id,
+            eval_run_id,
         )
         results.append(result_obj)
 
@@ -2517,7 +2839,11 @@ def _process_criteria_metrics(
 
 
 def _extract_metric_values(
-    criteria_name: str, criteria_type: str, metrics: Dict[str, Any], expected_metrics: List[str], logger: logging.Logger
+    criteria_name: str,
+    criteria_type: str,
+    metrics: Dict[str, Any],
+    expected_metrics: List[str],
+    logger: logging.Logger,
 ) -> Dict[str, Dict[str, Any]]:
     """Extract and organize metric values by metric name.
 
@@ -2565,8 +2891,18 @@ def _extract_metric_values(
         if metric not in result_per_metric:
             result_per_metric[metric] = {}
 
-        result_name, result_name_child_level, result_name_nested_child_level, derived_passed = _update_metric_value(
-            criteria_type, result_per_metric[metric], metric_key, metric, metric_value, logger
+        (
+            result_name,
+            result_name_child_level,
+            result_name_nested_child_level,
+            derived_passed,
+        ) = _update_metric_value(
+            criteria_type,
+            result_per_metric[metric],
+            metric_key,
+            metric,
+            metric_value,
+            logger,
         )
         _append_indirect_attachments_to_results(
             result_per_metric,
@@ -2576,12 +2912,20 @@ def _extract_metric_values(
             result_name_child_level,
             result_name_nested_child_level,
         )
-        if result_name == "label" and criteria_type == "azure_ai_evaluator" and derived_passed is not None:
-            _append_indirect_attachments_to_results(result_per_metric, "passed", metric, derived_passed, None, None)
+        if (
+            result_name == "label"
+            and criteria_type == "azure_ai_evaluator"
+            and derived_passed is not None
+        ):
+            _append_indirect_attachments_to_results(
+                result_per_metric, "passed", metric, derived_passed, None, None
+            )
 
     empty_metrics = []
     empty_metrics.extend(
-        metric for metric, metric_dict in result_per_metric.items() if metric_dict is None or len(metric_dict) == 0
+        metric
+        for metric, metric_dict in result_per_metric.items()
+        if metric_dict is None or len(metric_dict) == 0
     )
     for metric in empty_metrics:
         result_per_metric.pop(metric)
@@ -2647,14 +2991,20 @@ def _update_metric_value(
     elif metric_key == "passed":
         metric_dict["passed"] = metric_value
         result_name = "passed"
-    elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
+    elif (
+        metric_key.endswith("_result")
+        or metric_key == "result"
+        or metric_key.endswith("_label")
+    ):
         metric_dict["label"] = metric_value
         result_name = "label"
         if criteria_type == "azure_ai_evaluator":
             passed = str(metric_value).lower() in ["pass", "true"]
             metric_dict["passed"] = passed
             derived_passed = passed
-    elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
+    elif (
+        metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")
+    ) or metric_key == "reason":
         metric_dict["reason"] = metric_value
         result_name = "reason"
     elif metric_key.endswith("_threshold") or metric_key == "threshold":
@@ -2691,19 +3041,25 @@ def _update_metric_value(
             logger.warning(f"Failed to parse _sample_output value as JSON: {e}")
     elif metric_key.endswith("_total_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["total_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["total_tokens"] = (
+            None if _is_none_or_nan(metric_value) else metric_value
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "total_tokens"
     elif metric_key.endswith("_prompt_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["prompt_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["prompt_tokens"] = (
+            None if _is_none_or_nan(metric_value) else metric_value
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "prompt_tokens"
     elif metric_key.endswith("_completion_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["completion_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["completion_tokens"] = (
+            None if _is_none_or_nan(metric_value) else metric_value
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "completion_tokens"
@@ -2728,7 +3084,12 @@ def _update_metric_value(
         if metric_key == metric and metric_dict.get("score", None) is None:
             metric_dict["score"] = metric_value
 
-    return result_name, result_name_child_level, result_name_nested_child_level, derived_passed
+    return (
+        result_name,
+        result_name_child_level,
+        result_name_nested_child_level,
+        derived_passed,
+    )
 
 
 def _ensure_sample_dict(metric_dict: Dict[str, Any]) -> None:
@@ -2850,7 +3211,11 @@ def _create_result_object(
         "type": criteria_type,
         "name": criteria_name,
         "metric": metric if metric is not None else criteria_name,
-        "score": score if not (score is None or (isinstance(score, float) and math.isnan(score))) else None,
+        "score": (
+            score
+            if not (score is None or (isinstance(score, float) and math.isnan(score)))
+            else None
+        ),
         "label": label,
         "reason": reason,
         "threshold": threshold,
@@ -2913,7 +3278,9 @@ def _is_inverse_metric(
         _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"],
         _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"],
         _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["eci"],
-        _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"],
+        _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[
+            "ungrounded_attributes"
+        ],
     ]
 
     return any(metric in metric_list for metric_list in inverse_metric_lists)
@@ -3002,7 +3369,10 @@ def _add_error_summaries(
         return
 
     for criteria_name, criteria_summary in eval_run_summary.items():
-        if not isinstance(criteria_summary, dict) or criteria_summary.get("error_code") is None:
+        if (
+            not isinstance(criteria_summary, dict)
+            or criteria_summary.get("error_code") is None
+        ):
             continue
 
         error_info = {
@@ -3012,7 +3382,9 @@ def _add_error_summaries(
         sample = {"error": error_info} if error_info["code"] is not None else None
 
         metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
-        criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "azure_ai_evaluator")
+        criteria_type = testing_criteria_metadata.get(criteria_name, {}).get(
+            "type", "azure_ai_evaluator"
+        )
 
         for metric in metrics:
             if not _should_add_error_summary(run_output_results, criteria_name, metric):
@@ -3032,7 +3404,9 @@ def _add_error_summaries(
             run_output_results.append(error_result)
 
 
-def _should_add_error_summary(run_output_results: List[Dict[str, Any]], criteria_name: str, metric: str) -> bool:
+def _should_add_error_summary(
+    run_output_results: List[Dict[str, Any]], criteria_name: str, metric: str
+) -> bool:
     """Check if error summary should be added for given criteria and metric.
 
     This method determines whether an error summary should be added by checking
@@ -3080,8 +3454,13 @@ def _should_add_error_summary(run_output_results: List[Dict[str, Any]], criteria
     Example Output:
         False (valid result exists, no error summary needed)
     """
-    for result_item in run_output_results[:]:  # Create a copy to safely modify during iteration
-        if result_item.get("name") == criteria_name and result_item.get("metric") == metric:
+    for result_item in run_output_results[
+        :
+    ]:  # Create a copy to safely modify during iteration
+        if (
+            result_item.get("name") == criteria_name
+            and result_item.get("metric") == metric
+        ):
             # Check if all values are None/NaN
             score = result_item.get("score")
             threshold = result_item.get("threshold")
@@ -3162,7 +3541,11 @@ def _append_indirect_attachments_to_results(
     :type metric_value: Any
     """
     if metric == "xpia" and result_name:
-        for metric_extended in ["xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]:
+        for metric_extended in [
+            "xpia_manipulated_content",
+            "xpia_intrusion",
+            "xpia_information_gathering",
+        ]:
             if nested_result_name is None:
                 if metric_extended not in current_result_dict:
                     current_result_dict[metric_extended] = {result_name: metric_value}
@@ -3170,39 +3553,61 @@ def _append_indirect_attachments_to_results(
                     current_result_dict[metric_extended][result_name] = metric_value
             elif nested_result_name is not None and secondnested_result_name is None:
                 if metric_extended not in current_result_dict:
-                    current_result_dict[metric_extended] = {result_name: {nested_result_name: metric_value}}
-                elif metric_extended in current_result_dict and result_name not in current_result_dict[metric_extended]:
-                    current_result_dict[metric_extended][result_name] = {nested_result_name: metric_value}
+                    current_result_dict[metric_extended] = {
+                        result_name: {nested_result_name: metric_value}
+                    }
+                elif (
+                    metric_extended in current_result_dict
+                    and result_name not in current_result_dict[metric_extended]
+                ):
+                    current_result_dict[metric_extended][result_name] = {
+                        nested_result_name: metric_value
+                    }
                 elif (
                     metric_extended in current_result_dict
                     and result_name in current_result_dict[metric_extended]
-                    and nested_result_name not in current_result_dict[metric_extended][result_name]
+                    and nested_result_name
+                    not in current_result_dict[metric_extended][result_name]
                 ):
-                    current_result_dict[metric_extended][result_name][nested_result_name] = metric_value
-            elif nested_result_name is not None and secondnested_result_name is not None:
+                    current_result_dict[metric_extended][result_name][
+                        nested_result_name
+                    ] = metric_value
+            elif (
+                nested_result_name is not None and secondnested_result_name is not None
+            ):
                 if metric_extended not in current_result_dict:
                     current_result_dict[metric_extended] = {
-                        result_name: {nested_result_name: {secondnested_result_name: metric_value}}
+                        result_name: {
+                            nested_result_name: {secondnested_result_name: metric_value}
+                        }
                     }
-                elif metric_extended in current_result_dict and result_name not in current_result_dict[metric_extended]:
+                elif (
+                    metric_extended in current_result_dict
+                    and result_name not in current_result_dict[metric_extended]
+                ):
                     current_result_dict[metric_extended][result_name] = {
                         nested_result_name: {secondnested_result_name: metric_value}
                     }
                 elif (
                     metric_extended in current_result_dict
                     and result_name in current_result_dict[metric_extended]
-                    and nested_result_name not in current_result_dict[metric_extended][result_name]
+                    and nested_result_name
+                    not in current_result_dict[metric_extended][result_name]
                 ):
-                    current_result_dict[metric_extended][result_name][nested_result_name] = {
-                        secondnested_result_name: metric_value
-                    }
+                    current_result_dict[metric_extended][result_name][
+                        nested_result_name
+                    ] = {secondnested_result_name: metric_value}
                 else:
                     (
-                        current_result_dict[metric_extended][result_name][nested_result_name][secondnested_result_name]
+                        current_result_dict[metric_extended][result_name][
+                            nested_result_name
+                        ][secondnested_result_name]
                     ) = metric_value
 
 
-def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metric_list: List[str]) -> str:
+def _get_metric_from_criteria(
+    testing_criteria_name: str, metric_key: str, metric_list: List[str]
+) -> str:
     """
     Get the metric name from the testing criteria and metric key.
 
@@ -3226,7 +3631,11 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     elif metric_key == "xpia_information_gathering":
         metric = "xpia_information_gathering"
         return metric
-    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
+    elif (
+        metric_key == "f1_result"
+        or metric_key == "f1_threshold"
+        or metric_key == "f1_score"
+    ):
         metric = "f1_score"
         return metric
     for expected_metric in metric_list:
@@ -3253,10 +3662,18 @@ def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
         not _is_none_or_nan(metric_name)
         and not _is_none_or_nan(evaluator_name)
         and evaluator_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS
-        and isinstance(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name], list)
-        and len(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]) > 1
-        and metric_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]
-        and metric_name.lower() != _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name][0].lower()
+        and isinstance(
+            _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name],
+            list,
+        )
+        and len(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name])
+        > 1
+        and metric_name
+        in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]
+        and metric_name.lower()
+        != _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name][
+            0
+        ].lower()
     ):
         return False
     else:
@@ -3264,7 +3681,9 @@ def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
 
 
 def _calculate_aoai_evaluation_summary(
-    aoai_results: list, logger: logging.Logger, criteria_name_types_from_meta: Optional[Dict[str, Any]]
+    aoai_results: list,
+    logger: logging.Logger,
+    criteria_name_types_from_meta: Optional[Dict[str, Any]],
 ) -> Dict[str, Any]:
     """
     Calculate summary statistics for AOAI evaluation results.
@@ -3316,8 +3735,12 @@ def _calculate_aoai_evaluation_summary(
                         and isinstance(criteria_name_types_from_meta, dict)
                         and testing_criteria in criteria_name_types_from_meta
                     ):
-                        evaluator_name = criteria_name_types_from_meta[testing_criteria].get("evaluator_name", None)
-                        criteria_type = criteria_name_types_from_meta[testing_criteria].get("type", None)
+                        evaluator_name = criteria_name_types_from_meta[
+                            testing_criteria
+                        ].get("evaluator_name", None)
+                        criteria_type = criteria_name_types_from_meta[
+                            testing_criteria
+                        ].get("type", None)
                         if (
                             isinstance(criteria_type, str)
                             and criteria_type == "azure_ai_evaluator"
@@ -3325,7 +3748,9 @@ def _calculate_aoai_evaluation_summary(
                             and evaluator_name.startswith("builtin.")
                         ):
                             evaluator_name = evaluator_name.replace("builtin.", "")
-                        is_primary_metric = _is_primary_metric(result_item.get("metric", ""), evaluator_name)
+                        is_primary_metric = _is_primary_metric(
+                            result_item.get("metric", ""), evaluator_name
+                        )
                     if not is_primary_metric:
                         logger.info(
                             f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
@@ -3347,7 +3772,10 @@ def _calculate_aoai_evaluation_summary(
                             failed_count += 1
                             result_counts_stats[testing_criteria]["failed"] += 1
                     # Check if the result indicates an error status
-                    elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
+                    elif (
+                        "status" in result_item
+                        and result_item["status"] in ["error", "errored"]
+                    ) or (
                         "sample" in result_item
                         and isinstance(result_item["sample"], dict)
                         and result_item["sample"].get("error", None) is not None
@@ -3365,15 +3793,23 @@ def _calculate_aoai_evaluation_summary(
         if failed_count > 0:
             result_counts["failed"] += 1
         elif (
-            failed_count == 0 and passed_count > 0 and passed_count == len(aoai_result.get("results", [])) - error_count
+            failed_count == 0
+            and passed_count > 0
+            and passed_count == len(aoai_result.get("results", [])) - error_count
         ):
             result_counts["passed"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
-        dup_usage_list = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"].copy()
+        dup_usage_list = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[
+            "indirect_attack"
+        ].copy()
         dup_usage_list.remove("xpia")
-        if isinstance(aoai_result, dict) and aoai_result["results"] and isinstance(aoai_result["results"], list):
+        if (
+            isinstance(aoai_result, dict)
+            and aoai_result["results"]
+            and isinstance(aoai_result["results"], list)
+        ):
             for result_item in aoai_result["results"]:
                 if (
                     isinstance(result_item, dict)
@@ -3388,7 +3824,11 @@ def _calculate_aoai_evaluation_summary(
                 usage_data = sample_data["usage"]
                 if usage_data is None or not isinstance(usage_data, dict):
                     continue
-                model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
+                model_name = (
+                    sample_data.get("model", "unknown")
+                    if usage_data.get("model", "unknown")
+                    else "unknown"
+                )
                 if _is_none_or_nan(model_name):
                     continue
                 if model_name not in model_usage_stats:
@@ -3449,7 +3889,11 @@ def _calculate_aoai_evaluation_summary(
                 cur_failed_count = 0
             result_counts_stats_val.append(
                 {
-                    "testing_criteria": criteria_name if not _is_none_or_nan(criteria_name) else "unknown",
+                    "testing_criteria": (
+                        criteria_name
+                        if not _is_none_or_nan(criteria_name)
+                        else "unknown"
+                    ),
                     "passed": cur_passed,
                     "failed": cur_failed_count,
                 }

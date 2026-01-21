@@ -72,11 +72,18 @@ _BUILT_IN_DESCRIPTIONS = {
 _BUILT_IN_PARAMS = {
     _CODE_INTERPRETER: {
         "type": "object",
-        "properties": {"input": {"type": "string", "description": "Generated code to be executed."}},
+        "properties": {
+            "input": {"type": "string", "description": "Generated code to be executed."}
+        },
     },
     _BING_GROUNDING: {
         "type": "object",
-        "properties": {"requesturl": {"type": "string", "description": "URL used in Bing Search API."}},
+        "properties": {
+            "requesturl": {
+                "type": "string",
+                "description": "URL used in Bing Search API.",
+            }
+        },
     },
     _BING_CUSTOM_SEARCH: {
         "type": "object",
@@ -93,8 +100,14 @@ _BUILT_IN_PARAMS = {
             "ranking_options": {
                 "type": "object",
                 "properties": {
-                    "ranker": {"type": "string", "description": "Ranking algorithm to use."},
-                    "score_threshold": {"type": "number", "description": "Threshold for search results."},
+                    "ranker": {
+                        "type": "string",
+                        "description": "Ranking algorithm to use.",
+                    },
+                    "score_threshold": {
+                        "type": "number",
+                        "description": "Threshold for search results.",
+                    },
                 },
                 "description": "Ranking options for search results.",
             }
@@ -102,17 +115,24 @@ _BUILT_IN_PARAMS = {
     },
     _AZURE_AI_SEARCH: {
         "type": "object",
-        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
+        "properties": {
+            "input": {"type": "string", "description": "Search terms to use."}
+        },
     },
     _SHAREPOINT_GROUNDING: {
         "type": "object",
         "properties": {
-            "input": {"type": "string", "description": "A natural language query to search SharePoint content."}
+            "input": {
+                "type": "string",
+                "description": "A natural language query to search SharePoint content.",
+            }
         },
     },
     _FABRIC_DATAAGENT: {
         "type": "object",
-        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
+        "properties": {
+            "input": {"type": "string", "description": "Search terms to use."}
+        },
     },
 }
 
@@ -132,7 +152,9 @@ class Message(BaseModel):
     :type content: Union[str, List[dict]]
     """
 
-    createdAt: Optional[Union[datetime.datetime, int]] = None  # SystemMessage wouldn't have this
+    createdAt: Optional[Union[datetime.datetime, int]] = (
+        None  # SystemMessage wouldn't have this
+    )
     run_id: Optional[str] = None
     tool_call_id: Optional[str] = None  # see ToolMessage
     role: str
@@ -283,7 +305,12 @@ class ToolCall:
     :type details: RunStepFunctionToolCall
     """
 
-    def __init__(self, created: datetime.datetime, completed: datetime.datetime, details: RunStepFunctionToolCall):
+    def __init__(
+        self,
+        created: datetime.datetime,
+        completed: datetime.datetime,
+        details: RunStepFunctionToolCall,
+    ):
         self.created = created
         self.completed = completed
         self.details = details
@@ -338,9 +365,15 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
         content_tool_call = {
             "type": _TOOL_CALL,
             "tool_call_id": tool_call_id,
-            "name": tool_call.details.get(_FUNCTION).get("name") if tool_call.details.get(_FUNCTION) else None,
+            "name": (
+                tool_call.details.get(_FUNCTION).get("name")
+                if tool_call.details.get(_FUNCTION)
+                else None
+            ),
             "arguments": safe_loads(
-                tool_call.details.get(_FUNCTION).get("arguments") if tool_call.details.get(_FUNCTION) else None
+                tool_call.details.get(_FUNCTION).get("arguments")
+                if tool_call.details.get(_FUNCTION)
+                else None
             ),
         }
     else:
@@ -350,11 +383,16 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
         if tool_call.details["type"] == "code_interpreter":
             arguments = {"input": tool_call.details.code_interpreter.input}
         elif tool_call.details["type"] == "bing_grounding":
-            arguments = {"requesturl": tool_call.details["bing_grounding"]["requesturl"]}
+            arguments = {
+                "requesturl": tool_call.details["bing_grounding"]["requesturl"]
+            }
         elif tool_call.details["type"] == "file_search":
             options = tool_call.details["file_search"]["ranking_options"]
             arguments = {
-                "ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}
+                "ranking_options": {
+                    "ranker": options["ranker"],
+                    "score_threshold": options["score_threshold"],
+                }
             }
         elif tool_call.details["type"] == "azure_ai_search":
             arguments = {"input": tool_call.details["azure_ai_search"]["input"]}
@@ -377,7 +415,13 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # We format it into an assistant message, where the content is a singleton list of the content object.
     # It should be a tool message, since this is the call, but the given schema treats this message as
     # assistant's action of calling the tool.
-    messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
+    messages.append(
+        AssistantMessage(
+            run_id=run_id,
+            content=[to_dict(content_tool_call)],
+            createdAt=tool_call.created,
+        )
+    )
 
     if hasattr(tool_call.details, _FUNCTION) or tool_call.details.get("function"):
         output = safe_loads(tool_call.details.get("function")["output"])
@@ -387,11 +431,16 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             # Try to retrieve it, but if we don't find anything, skip adding the message
             # Just manually converting to dicts for easy serialization for now rather than custom serializers
             if tool_call.details.type == _CODE_INTERPRETER:
-                output = [result.as_dict() for result in tool_call.details.code_interpreter.outputs]
+                output = [
+                    result.as_dict()
+                    for result in tool_call.details.code_interpreter.outputs
+                ]
             elif tool_call.details.type == _BING_GROUNDING:
                 return messages  # not supported yet from bing grounding tool
             elif tool_call.details.type == _FILE_SEARCH:
-                output = [result.as_dict() for result in tool_call.details.file_search.results]
+                output = [
+                    result.as_dict() for result in tool_call.details.file_search.results
+                ]
             elif tool_call.details.type == _AZURE_AI_SEARCH:
                 output = tool_call.details.azure_ai_search["output"]
             elif tool_call.details.type == _FABRIC_DATAAGENT:
@@ -455,7 +504,11 @@ def convert_message(msg: dict) -> Message:
     elif role == "user":
         return UserMessage(content=msg["content"], createdAt=msg["createdAt"])
     elif role == "assistant":
-        return AssistantMessage(run_id=str(msg["run_id"]), content=msg["content"], createdAt=msg["createdAt"])
+        return AssistantMessage(
+            run_id=str(msg["run_id"]),
+            content=msg["content"],
+            createdAt=msg["createdAt"],
+        )
     elif role == "tool":
         return ToolMessage(
             run_id=str(msg["run_id"]),

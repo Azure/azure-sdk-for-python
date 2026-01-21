@@ -132,7 +132,12 @@ class _EvaluatorMetricMapping:
         "eci": ["eci"],
         "protected_material": ["protected_material"],
         "ungrounded_attributes": ["ungrounded_attributes"],
-        "indirect_attack": ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"],
+        "indirect_attack": [
+            "xpia",
+            "xpia_manipulated_content",
+            "xpia_intrusion",
+            "xpia_information_gathering",
+        ],
         "label_grader": ["label_model"],
         "string_check_grader": ["string_check"],
         "text_similarity_grader": ["similarity"],
@@ -213,7 +218,9 @@ BINARY_AGGREGATE_SUFFIX = "binary_aggregate"
 
 AOAI_COLUMN_NAME = "aoai"
 DEFAULT_OAI_EVAL_RUN_NAME = "AI_SDK_EVAL_RUN"
-DEFAULT_AOAI_API_VERSION = "2025-04-01-preview"  # Unfortunately relying on preview version for now.
+DEFAULT_AOAI_API_VERSION = (
+    "2025-04-01-preview"  # Unfortunately relying on preview version for now.
+)
 
 # OpenTelemetry event names
 EVALUATION_EVENT_NAME = "gen_ai.evaluation.result"

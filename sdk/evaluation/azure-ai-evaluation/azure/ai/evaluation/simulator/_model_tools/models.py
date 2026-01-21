@@ -15,7 +15,12 @@ from urllib.parse import urlparse
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from ._rai_client import RAIClient
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 
 from ._identity_manager import APITokenManager
@@ -51,7 +56,12 @@ class LLMBase(ABC):
     Base class for all LLM models.
     """
 
-    def __init__(self, endpoint_url: str, name: str = "unknown", additional_headers: Optional[Dict[str, str]] = None):
+    def __init__(
+        self,
+        endpoint_url: str,
+        name: str = "unknown",
+        additional_headers: Optional[Dict[str, str]] = None,
+    ):
         self.endpoint_url = endpoint_url
         self.name = name
         self.additional_headers = additional_headers or {}
@@ -59,7 +69,9 @@ class LLMBase(ABC):
 
         # Metric tracking
         self._lock = None
-        self.response_times: Deque[Union[int, float]] = deque(maxlen=MAX_TIME_TAKEN_RECORDS)
+        self.response_times: Deque[Union[int, float]] = deque(
+            maxlen=MAX_TIME_TAKEN_RECORDS
+        )
         self.step = 0
         self.error_count = 0
 
@@ -225,7 +237,9 @@ class OpenAICompletionsModel(LLMBase):
         image_captions: Optional[Dict[str, str]] = None,
         images_dir: Optional[str] = None,  # Note: unused, kept for class compatibility
     ):
-        super().__init__(endpoint_url=endpoint_url, name=name, additional_headers=additional_headers)
+        super().__init__(
+            endpoint_url=endpoint_url, name=name, additional_headers=additional_headers
+        )
         self.api_version = api_version
         self.token_manager = token_manager
         self.azureml_model_deployment = azureml_model_deployment
@@ -263,7 +277,11 @@ class OpenAICompletionsModel(LLMBase):
         self.logger.info(f"Default model settings: {self.get_model_params()}")
 
     def get_model_params(self):
-        return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
+        return {
+            param: getattr(self, param)
+            for param in self.model_param_names
+            if getattr(self, param) is not None
+        }
 
     def format_request_data(self, prompt: Dict[str, str], **request_params) -> Dict[str, str]:  # type: ignore[override]
         """
@@ -293,7 +311,9 @@ class OpenAICompletionsModel(LLMBase):
         """
         prompt = []
         for message in messages:
-            prompt.append(f"{self.CHAT_START_TOKEN}{message['role']}\n{message['content']}\n{self.CHAT_END_TOKEN}\n")
+            prompt.append(
+                f"{self.CHAT_START_TOKEN}{message['role']}\n{message['content']}\n{self.CHAT_END_TOKEN}\n"
+            )
         prompt_string: str = "".join(prompt)
         prompt_string += f"{self.CHAT_START_TOKEN}{role}\n"
 
@@ -325,7 +345,9 @@ class OpenAICompletionsModel(LLMBase):
         request_params: Additional parameters to pass to the API.
         """
         if api_call_max_parallel_count > 1:
-            self.logger.info(f"Using {api_call_max_parallel_count} parallel workers to query the API..")
+            self.logger.info(
+                f"Using {api_call_max_parallel_count} parallel workers to query the API.."
+            )
 
         # Format prompts and tag with index
         request_datas: List[Dict] = []
@@ -339,18 +361,20 @@ class OpenAICompletionsModel(LLMBase):
             return []  # queue is empty
 
         output_collector: List = []
-        tasks = [  # create a set of worker-tasks to query inference endpoint in parallel
-            asyncio.create_task(
-                self.request_api_parallel(
-                    request_datas=request_datas,
-                    output_collector=output_collector,
-                    session=session,
-                    api_call_delay_seconds=api_call_delay_seconds,
-                    request_error_rate_threshold=request_error_rate_threshold,
+        tasks = (
+            [  # create a set of worker-tasks to query inference endpoint in parallel
+                asyncio.create_task(
+                    self.request_api_parallel(
+                        request_datas=request_datas,
+                        output_collector=output_collector,
+                        session=session,
+                        api_call_delay_seconds=api_call_delay_seconds,
+                        request_error_rate_threshold=request_error_rate_threshold,
+                    )
                 )
-            )
-            for _ in range(api_call_max_parallel_count)
-        ]
+                for _ in range(api_call_max_parallel_count)
+            ]
+        )
 
         # Await the completion of all tasks, and propagate any exceptions
         await asyncio.gather(*tasks, return_exceptions=False)
@@ -410,10 +434,11 @@ class OpenAICompletionsModel(LLMBase):
                     # if we count too many errors, we stop and raise an exception
                     response_count = await self.get_response_count()
                     error_rate = await self.get_error_rate()
-                    if response_count >= MIN_ERRORS_TO_FAIL and error_rate >= request_error_rate_threshold:
-                        error_msg = (
-                            f"Error rate is more than {request_error_rate_threshold:.0%} -- something is broken!"
-                        )
+                    if (
+                        response_count >= MIN_ERRORS_TO_FAIL
+                        and error_rate >= request_error_rate_threshold
+                    ):
+                        error_msg = f"Error rate is more than {request_error_rate_threshold:.0%} -- something is broken!"
                         raise EvaluationException(
                             message=error_msg,
                             internal_message=error_msg,
@@ -479,9 +504,13 @@ class OpenAICompletionsModel(LLMBase):
         full_response = None
 
         if isinstance(session, AIProjectClient):
-            response_data = session.red_teams.submit_simulation(request_data, headers, params)
+            response_data = session.red_teams.submit_simulation(
+                request_data, headers, params
+            )
         else:
-            response = await session.post(url=self.endpoint_url, headers=headers, json=request_data, params=params)
+            response = await session.post(
+                url=self.endpoint_url, headers=headers, json=request_data, params=params
+            )
             response.raise_for_status()
             response_data = response.json()
 
@@ -501,7 +530,9 @@ class OpenAICompletionsModel(LLMBase):
             "full_response": full_response,
         }
 
-    def _parse_response(self, response_data: dict, request_data: Optional[dict] = None) -> dict:
+    def _parse_response(
+        self, response_data: dict, request_data: Optional[dict] = None
+    ) -> dict:
         # https://platform.openai.com/docs/api-reference/completions
         samples = []
         finish_reason = []
@@ -511,7 +542,11 @@ class OpenAICompletionsModel(LLMBase):
             if "finish_reason" in choice:
                 finish_reason.append(choice["finish_reason"])
 
-        return {"samples": samples, "finish_reason": finish_reason, "id": response_data["id"]}
+        return {
+            "samples": samples,
+            "finish_reason": finish_reason,
+            "id": response_data["id"],
+        }
 
 
 # ===========================================================
@@ -603,7 +638,9 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
             **request_params,
         )
 
-    def _parse_response(self, response_data: dict, request_data: Optional[dict] = None) -> dict:
+    def _parse_response(
+        self, response_data: dict, request_data: Optional[dict] = None
+    ) -> dict:
         # https://platform.openai.com/docs/api-reference/chat
         samples = []
         finish_reason = []
@@ -614,4 +651,8 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
             if "message" in choice and "finish_reason" in choice["message"]:
                 finish_reason.append(choice["message"]["finish_reason"])
 
-        return {"samples": samples, "finish_reason": finish_reason, "id": response_data["id"]}
+        return {
+            "samples": samples,
+            "finish_reason": finish_reason,
+            "id": response_data["id"],
+        }

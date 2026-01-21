@@ -32,7 +32,11 @@ from typing import (
 
 from jinja2 import Template
 from openai import AsyncStream
-from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionUserMessageParam,
+)
 from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
@@ -71,10 +75,14 @@ class PromptyModelConfiguration:
 
     def __post_init__(self):
         if not isinstance(self.configuration, dict):
-            raise PromptyException("The configuration of the model must be a dictionary.")
+            raise PromptyException(
+                "The configuration of the model must be a dictionary."
+            )
 
         if not self.model:
-            self.model = self.configuration.get("azure_deployment", None) or self.configuration.get("model", None)
+            self.model = self.configuration.get(
+                "azure_deployment", None
+            ) or self.configuration.get("model", None)
 
 
 T = TypeVar("T")
@@ -113,7 +121,9 @@ def dataclass_from_dict(cls: Type[T], data: Dict[str, Any]) -> T:
     return cast(T, cls(**params))
 
 
-def resolve_references(origin: Mapping[str, Any], base_path: Optional[Path] = None) -> Dict[str, Any]:
+def resolve_references(
+    origin: Mapping[str, Any], base_path: Optional[Path] = None
+) -> Dict[str, Any]:
     """Resolve all reference in the object.
 
     :param Mapping[str, Any] origin: The object to resolve.
@@ -128,13 +138,18 @@ def resolve_references(origin: Mapping[str, Any], base_path: Optional[Path] = No
         if isinstance(origin, list):
             return [_resolve_references(item, base_path=base_path) for item in origin]
         if isinstance(origin, dict):
-            return {key: _resolve_references(value, base_path=base_path) for key, value in origin.items()}
+            return {
+                key: _resolve_references(value, base_path=base_path)
+                for key, value in origin.items()
+            }
         return origin
 
     return {k: _resolve_references(v, base_path=base_path) for k, v in origin.items()}
 
 
-def _resolve_reference(reference: str, base_path: Optional[Path] = None) -> Union[str, dict]:
+def _resolve_reference(
+    reference: str, base_path: Optional[Path] = None
+) -> Union[str, dict]:
     """
     Resolve the reference, two types are supported, env, file.
     When the string format is ${env:ENV_NAME}, the environment variable value will be returned.
@@ -175,7 +190,9 @@ def _resolve_reference(reference: str, base_path: Optional[Path] = None) -> Unio
     return reference
 
 
-def update_dict_recursively(origin_dict: Mapping[str, Any], overwrite_dict: Mapping[str, Any]) -> Dict[str, Any]:
+def update_dict_recursively(
+    origin_dict: Mapping[str, Any], overwrite_dict: Mapping[str, Any]
+) -> Dict[str, Any]:
     updated_dict: Dict[str, Any] = {}
     for k, v in overwrite_dict.items():
         if isinstance(v, dict):
@@ -201,7 +218,9 @@ PROMPTY_ROLE_SEPARATOR_PATTERN = re.compile(
 )
 """Pattern to match the role separator in a prompty template"""
 
-MARKDOWN_IMAGE_PATTERN = re.compile(r"(?P<match>!\[[^\]]*\]\(.*?(?=\"|\))\))", flags=re.MULTILINE)
+MARKDOWN_IMAGE_PATTERN = re.compile(
+    r"(?P<match>!\[[^\]]*\]\(.*?(?=\"|\))\))", flags=re.MULTILINE
+)
 """Pattern to match markdown syntax for embedding images such as ![alt text](url).
    This uses a 'hack' where by naming the capture group, using re.split() will cause
    the named capture group to appear in the list of split parts"""
@@ -239,24 +258,36 @@ FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
 """Mapping of file extensions to mime types"""
 
 
-def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_newline=True, **kwargs) -> str:
+def render_jinja_template(
+    template_str: str, *, trim_blocks=True, keep_trailing_newline=True, **kwargs
+) -> str:
     try:
-        template = Template(template_str, trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
+        template = Template(
+            template_str,
+            trim_blocks=trim_blocks,
+            keep_trailing_newline=keep_trailing_newline,
+        )
         return template.render(**kwargs)
     except Exception as e:  # pylint: disable=broad-except
-        raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
+        raise PromptyException(
+            f"Failed to render jinja template - {type(e).__name__}: {str(e)}"
+        ) from e
 
 
 def build_messages(
     *, prompt: str, working_dir: Path, image_detail: str = "auto", **kwargs: Any
 ) -> Sequence[Mapping[str, Any]]:
     # keep_trailing_newline=True is to keep the last \n in the prompt to avoid converting "user:\t\n" to "user:".
-    chat_str = render_jinja_template(prompt, trim_blocks=True, keep_trailing_newline=True, **kwargs)
+    chat_str = render_jinja_template(
+        prompt, trim_blocks=True, keep_trailing_newline=True, **kwargs
+    )
     messages = _parse_chat(chat_str, working_dir, image_detail)
     return messages
 
 
-def _parse_chat(chat_str: str, working_dir: Path, image_detail: str) -> Sequence[Mapping[str, Any]]:
+def _parse_chat(
+    chat_str: str, working_dir: Path, image_detail: str
+) -> Sequence[Mapping[str, Any]]:
     # openai chat api only supports VALID_ROLES as role names.
     # customer can add single # in front of role name for markdown highlight.
     # and we still support role name without # prefix for backward compatibility.
@@ -285,12 +316,16 @@ def _parse_chat(chat_str: str, working_dir: Path, image_detail: str) -> Sequence
         if (
             last_message
             and "role" in last_message  # pylint: disable=unsupported-membership-test
-            and "content" not in last_message  # pylint: disable=unsupported-membership-test
-            and "tool_calls" not in last_message  # pylint: disable=unsupported-membership-test
+            and "content"
+            not in last_message  # pylint: disable=unsupported-membership-test
+            and "tool_calls"
+            not in last_message  # pylint: disable=unsupported-membership-test
         ):
             parsed_result = _try_parse_name_and_content(chunk)
             if parsed_result is None:
-                if last_message["role"] == "function":  # pylint: disable=unsubscriptable-object
+                if (
+                    last_message["role"] == "function"
+                ):  # pylint: disable=unsubscriptable-object
                     # "name" is required if the role is "function"
                     raise JinjaTemplateError(
                         "Failed to parse function role prompt. Please make sure the prompt follows the "
@@ -302,13 +337,19 @@ def _parse_chat(chat_str: str, working_dir: Path, image_detail: str) -> Sequence
                     )
 
                 # "name" is optional for other role types.
-                last_message["content"] = _to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
-                    chunk, working_dir, image_detail
+                last_message["content"] = (
+                    _to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
+                        chunk, working_dir, image_detail
+                    )
                 )
             else:
-                last_message["name"] = parsed_result[0]  # pylint: disable=unsupported-assignment-operation
-                last_message["content"] = _to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
-                    parsed_result[1], working_dir, image_detail
+                last_message["name"] = parsed_result[
+                    0
+                ]  # pylint: disable=unsupported-assignment-operation
+                last_message["content"] = (
+                    _to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
+                        parsed_result[1], working_dir, image_detail
+                    )
                 )
         else:
             if chunk.strip() == "":
@@ -334,8 +375,14 @@ def _validate_role(role: str):
         raise JinjaTemplateError(message=error_message)
 
 
-def _to_content_str_or_list(chat_str: str, working_dir: Path, image_detail: str) -> Union[str, List[Dict[str, Any]]]:
-    chunks = [c for c in (chunk.strip() for chunk in re.split(MARKDOWN_IMAGE_PATTERN, chat_str)) if c]
+def _to_content_str_or_list(
+    chat_str: str, working_dir: Path, image_detail: str
+) -> Union[str, List[Dict[str, Any]]]:
+    chunks = [
+        c
+        for c in (chunk.strip() for chunk in re.split(MARKDOWN_IMAGE_PATTERN, chat_str))
+        if c
+    ]
     if len(chunks) <= 1:
         return chat_str.strip()
 
@@ -372,7 +419,9 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
 
         base64_encoded = base64.b64encode(path.read_bytes()).decode("utf-8")
         if not mime_type:
-            mime_type = FILE_EXT_TO_MIME.get(path.suffix.lower(), DEFAULT_IMAGE_MIME_TYPE)
+            mime_type = FILE_EXT_TO_MIME.get(
+                path.suffix.lower(), DEFAULT_IMAGE_MIME_TYPE
+            )
         return f"data:{mime_type};base64,{base64_encoded}"
 
     match = re.match(IMAGE_URL_PARSING_PATTERN, image)
@@ -403,7 +452,9 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
         inlined_uri = local_to_base64((match.group("link") or "").strip(), mime_type)
 
     if not inlined_uri:
-        raise InvalidInputError(f"Failed to determine how to inline the following image URL '{image}'")
+        raise InvalidInputError(
+            f"Failed to determine how to inline the following image URL '{image}'"
+        )
 
     return {
         "type": "image_url",
@@ -434,7 +485,8 @@ OpenAIChatResponseType = Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]
 
 
 def prepare_open_ai_request_params(
-    model_config: PromptyModelConfiguration, template: Union[str, Sequence[Mapping[str, Any]]]
+    model_config: PromptyModelConfiguration,
+    template: Union[str, Sequence[Mapping[str, Any]]],
 ) -> MutableMapping[str, Any]:
     params = copy.deepcopy(model_config.parameters)
     # if isinstance(connection, AzureOpenAIConnection):
@@ -512,11 +564,15 @@ async def format_llm_response(
         output_results = {}
         for key in outputs:
             if key not in result_dict:
-                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}")
+                raise InvalidInputError(
+                    f"Cannot find '{key}' in response {list(result_dict.keys())}"
+                )
             output_results[key] = result_dict[key]
         return output_results
 
-    async def format_stream(llm_response: AsyncStream[ChatCompletionChunk]) -> AsyncGenerator[str, None]:
+    async def format_stream(
+        llm_response: AsyncStream[ChatCompletionChunk],
+    ) -> AsyncGenerator[str, None]:
         cur_index = None
         async for chunk in llm_response:
             if len(chunk.choices) > 0 and chunk.choices[0].delta.content:
@@ -541,7 +597,10 @@ async def format_llm_response(
         to_ret["llm_output"] = response
         return to_ret  # we don't actually use this code path since streaming is not used, so set token counts to 0
 
-    is_json_format = isinstance(response_format, dict) and response_format.get("type") == "json_object"
+    is_json_format = (
+        isinstance(response_format, dict)
+        and response_format.get("type") == "json_object"
+    )
     if isinstance(response, AsyncStream):
         if not is_json_format:
             to_ret["llm_output"] = format_stream(llm_response=response)
@@ -550,18 +609,39 @@ async def format_llm_response(
         to_ret["llm_output"] = format_choice(content)
         return to_ret  # we don't actually use this code path since streaming is not used, so set token counts to 0
     else:
-        input_token_count = response.usage.prompt_tokens if response.usage and response.usage.prompt_tokens else 0
-        output_token_count = (
-            response.usage.completion_tokens if response.usage and response.usage.completion_tokens else 0
+        input_token_count = (
+            response.usage.prompt_tokens
+            if response.usage and response.usage.prompt_tokens
+            else 0
         )
-        total_token_count = response.usage.total_tokens if response.usage and response.usage.total_tokens else 0
+        output_token_count = (
+            response.usage.completion_tokens
+            if response.usage and response.usage.completion_tokens
+            else 0
+        )
+        total_token_count = (
+            response.usage.total_tokens
+            if response.usage and response.usage.total_tokens
+            else 0
+        )
         finish_reason = (
-            response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
+            response.choices[0].finish_reason
+            if response.choices and response.choices[0].finish_reason
+            else ""
         )
         model_id = response.model if response.model else ""
         sample_output_list = (
-            [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}]
-            if (response.choices and response.choices[0].message.content and response.choices[0].message.role)
+            [
+                {
+                    "role": response.choices[0].message.role,
+                    "content": response.choices[0].message.content,
+                }
+            ]
+            if (
+                response.choices
+                and response.choices[0].message.content
+                and response.choices[0].message.role
+            )
             else []
         )
         sample_output = json.dumps(sample_output_list)
@@ -623,7 +703,9 @@ def openai_error_retryable(
             "server disconnected without sending a response",
         ]
         should_retry = (
-            isinstance(error, APITimeoutError)  # APITimeoutError is a subclass of APIConnectionError
+            isinstance(
+                error, APITimeoutError
+            )  # APITimeoutError is a subclass of APIConnectionError
             or str(error).lower() in retriable_error_messages
             or str(error.__cause__).lower() in retriable_error_messages
         )

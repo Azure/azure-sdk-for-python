@@ -26,7 +26,10 @@ from tenacity import retry
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    get_default_threshold_for_evaluator,
+    is_onedp_project,
+)
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -110,11 +113,15 @@ class EvaluationProcessor:
         messages = conversation["conversation"]["messages"]
 
         # Extract all assistant messages for evaluation
-        assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
+        assistant_messages = [
+            msg["content"] for msg in messages if msg.get("role") == "assistant"
+        ]
 
         context = [msg["context"] for msg in messages if msg.get("role") == "user"]
         tool_calls = [
-            msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")
+            msg.get("tool_calls", [])
+            for msg in messages
+            if msg.get("role") == "assistant" and msg.get("tool_calls")
         ]
 
         if assistant_messages:
@@ -130,30 +137,41 @@ class EvaluationProcessor:
                 # If context is a string, wrap it in the expected format for the RAI service
                 context_value = context[0]
                 if isinstance(context_value, str):
-                    query_response["context"] = {"contexts": [{"content": context_value}]}
+                    query_response["context"] = {
+                        "contexts": [{"content": context_value}]
+                    }
                 else:
                     query_response["context"] = context_value
 
             if tool_calls and any(tool_calls):
-                query_response["tool_calls"] = [call for sublist in tool_calls for call in sublist if call]
+                query_response["tool_calls"] = [
+                    call for sublist in tool_calls for call in sublist if call
+                ]
 
             # Add risk_sub_type to query_response if it exists
             if risk_sub_type:
                 query_response["risk_sub_type"] = risk_sub_type
 
             # Add taxonomy to query_response if it exists for this risk category
-            if self.taxonomy_risk_categories and risk_category.value in self.taxonomy_risk_categories:
+            if (
+                self.taxonomy_risk_categories
+                and risk_category.value in self.taxonomy_risk_categories
+            ):
                 taxonomy_value = self.taxonomy_risk_categories[risk_category.value]
                 # Convert taxonomy to string if it's not already a string
                 if taxonomy_value is not None:
                     query_response["taxonomy"] = str(taxonomy_value)
 
             try:
-                self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
+                self.logger.debug(
+                    f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}"
+                )
 
                 use_sync_endpoint = is_onedp_project(self.azure_ai_project)
                 effective_metric_name = (
-                    "hate_unfairness" if use_sync_endpoint and metric_name == "hate_fairness" else metric_name
+                    "hate_unfairness"
+                    if use_sync_endpoint and metric_name == "hate_fairness"
+                    else metric_name
                 )
 
                 @retry(**self.retry_config["network_retry"])
@@ -212,7 +230,11 @@ class EvaluationProcessor:
                     eval_result = None
                     lookup_names = {metric_name, risk_cat_value, effective_metric_name}
                     for result_item in results:
-                        result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+                        result_dict = (
+                            result_item
+                            if isinstance(result_item, dict)
+                            else result_item.__dict__
+                        )
                         result_name = str(result_dict.get("name") or "")
                         metric_field = str(result_dict.get("metric") or "")
                         if result_name in lookup_names or metric_field in lookup_names:
@@ -228,12 +250,18 @@ class EvaluationProcessor:
                         severity_label = eval_result.get("label")
                         if severity_label is None:
                             # Calculate severity from score
-                            from azure.ai.evaluation._common.utils import get_harm_severity_level
+                            from azure.ai.evaluation._common.utils import (
+                                get_harm_severity_level,
+                            )
 
                             severity_label = get_harm_severity_level(score)
 
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = severity_label
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = reason
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = (
+                            severity_label
+                        )
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = (
+                            reason
+                        )
                         row[f"outputs.{risk_cat_value}.{risk_cat_value}_score"] = score
 
                         # Store the EvalRunOutputItem as dict for new format processing
@@ -245,29 +273,49 @@ class EvaluationProcessor:
                         else:
                             # Fallback: JSON serialize and parse back
                             row["_eval_run_output_item"] = json.loads(
-                                json.dumps(evaluate_output, default=lambda o: o.__dict__)
+                                json.dumps(
+                                    evaluate_output, default=lambda o: o.__dict__
+                                )
                             )
 
                         # Add result field based on score and threshold comparison
                         # Get pattern-specific default threshold for this evaluator
-                        default_threshold = get_default_threshold_for_evaluator(risk_cat_value)
+                        default_threshold = get_default_threshold_for_evaluator(
+                            risk_cat_value
+                        )
 
                         # Content safety evaluators use "lower is better" scoring by default
                         # If attack success thresholds are configured for this category, use them
                         if risk_cat_value in self.attack_success_thresholds:
-                            attack_threshold = self.attack_success_thresholds[risk_cat_value]
-                            row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = attack_threshold
+                            attack_threshold = self.attack_success_thresholds[
+                                risk_cat_value
+                            ]
+                            row[
+                                f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"
+                            ] = attack_threshold
                             result = int(score) <= int(attack_threshold)
-                            self.logger.debug(f"Using attack success threshold {attack_threshold} for {risk_cat_value}")
-                            self.logger.debug(f"Score: {score}, Attack Threshold: {attack_threshold}, Pass: {result}")
+                            self.logger.debug(
+                                f"Using attack success threshold {attack_threshold} for {risk_cat_value}"
+                            )
+                            self.logger.debug(
+                                f"Score: {score}, Attack Threshold: {attack_threshold}, Pass: {result}"
+                            )
                         else:
                             # Store the default threshold in the results for transparency
-                            row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = default_threshold
+                            row[
+                                f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"
+                            ] = default_threshold
                             result = int(score) <= int(default_threshold)
-                            self.logger.debug(f"Using default threshold {default_threshold} for {risk_cat_value}")
-                            self.logger.debug(f"Score: {score}, Default Threshold: {default_threshold}, Pass: {result}")
+                            self.logger.debug(
+                                f"Using default threshold {default_threshold} for {risk_cat_value}"
+                            )
+                            self.logger.debug(
+                                f"Score: {score}, Default Threshold: {default_threshold}, Pass: {result}"
+                            )
 
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = EVALUATION_PASS_FAIL_MAPPING[result]
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = (
+                            EVALUATION_PASS_FAIL_MAPPING[result]
+                        )
                         self.logger.debug(
                             f"Successfully evaluated conversation {idx+1} for {risk_category.value}/{strategy_name}"
                         )
@@ -276,37 +324,56 @@ class EvaluationProcessor:
                 # Handle legacy dict format (from evaluate_with_rai_service)
                 if evaluate_output and isinstance(evaluate_output, dict):
                     if risk_cat_value in evaluate_output:
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = evaluate_output.get(risk_cat_value)
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = evaluate_output.get(
-                            f"{risk_cat_value}_reason", ""
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}"] = (
+                            evaluate_output.get(risk_cat_value)
                         )
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_score"] = evaluate_output.get(
-                            f"{risk_cat_value}_score", 0
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = (
+                            evaluate_output.get(f"{risk_cat_value}_reason", "")
+                        )
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_score"] = (
+                            evaluate_output.get(f"{risk_cat_value}_score", 0)
                         )
 
                         # Add result field based on score and threshold comparison
                         score = evaluate_output.get(f"{risk_cat_value}_score", 0)
                         # Get pattern-specific default threshold for this evaluator
                         default_threshold = evaluate_output.get(
-                            f"{risk_cat_value}_threshold", get_default_threshold_for_evaluator(risk_cat_value)
+                            f"{risk_cat_value}_threshold",
+                            get_default_threshold_for_evaluator(risk_cat_value),
                         )
 
                         # Content safety evaluators use "lower is better" scoring by default
                         # If attack success thresholds are configured for this category, use them
                         if risk_cat_value in self.attack_success_thresholds:
-                            attack_threshold = self.attack_success_thresholds[risk_cat_value]
-                            row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = attack_threshold
+                            attack_threshold = self.attack_success_thresholds[
+                                risk_cat_value
+                            ]
+                            row[
+                                f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"
+                            ] = attack_threshold
                             result = int(score) <= int(attack_threshold)
-                            self.logger.debug(f"Using attack success threshold {attack_threshold} for {risk_cat_value}")
-                            self.logger.debug(f"Score: {score}, Attack Threshold: {attack_threshold}, Pass: {result}")
+                            self.logger.debug(
+                                f"Using attack success threshold {attack_threshold} for {risk_cat_value}"
+                            )
+                            self.logger.debug(
+                                f"Score: {score}, Attack Threshold: {attack_threshold}, Pass: {result}"
+                            )
                         else:
                             # Store the default threshold in the results for transparency
-                            row[f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"] = default_threshold
+                            row[
+                                f"outputs.{risk_cat_value}.{risk_cat_value}_threshold"
+                            ] = default_threshold
                             result = int(score) <= int(default_threshold)
-                            self.logger.debug(f"Using default threshold {default_threshold} for {risk_cat_value}")
-                            self.logger.debug(f"Score: {score}, Default Threshold: {default_threshold}, Pass: {result}")
+                            self.logger.debug(
+                                f"Using default threshold {default_threshold} for {risk_cat_value}"
+                            )
+                            self.logger.debug(
+                                f"Score: {score}, Default Threshold: {default_threshold}, Pass: {result}"
+                            )
 
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = EVALUATION_PASS_FAIL_MAPPING[result]
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = (
+                            EVALUATION_PASS_FAIL_MAPPING[result]
+                        )
                         self.logger.debug(
                             f"Successfully evaluated conversation {idx+1} for {risk_category.value}/{strategy_name}"
                         )
@@ -318,12 +385,12 @@ class EvaluationProcessor:
                             )
 
                         result = evaluate_output.get(f"{risk_cat_value}_label", "")
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = evaluate_output.get(
-                            f"{risk_cat_value}_reason", ""
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = (
+                            evaluate_output.get(f"{risk_cat_value}_reason", "")
                         )
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = EVALUATION_PASS_FAIL_MAPPING[
-                            result == False
-                        ]
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = (
+                            EVALUATION_PASS_FAIL_MAPPING[result == False]
+                        )
                         self.logger.debug(
                             f"Successfully evaluated conversation {idx+1} for {risk_category.value}/{strategy_name}"
                         )
@@ -374,7 +441,9 @@ class EvaluationProcessor:
         self.logger.debug(
             f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, skip_evals={_skip_evals}, scan_name={scan_name}"
         )
-        self.logger.debug(f"EvaluationProcessor scan_output_dir: {self.scan_output_dir}")
+        self.logger.debug(
+            f"EvaluationProcessor scan_output_dir: {self.scan_output_dir}"
+        )
 
         if _skip_evals:
             return None
@@ -389,7 +458,9 @@ class EvaluationProcessor:
             # Ensure the result path is absolute
             if not os.path.isabs(result_path):
                 result_path = os.path.abspath(result_path)
-            self.logger.debug(f"Using scan_output_dir: {self.scan_output_dir}, result_path: {result_path}")
+            self.logger.debug(
+                f"Using scan_output_dir: {self.scan_output_dir}, result_path: {result_path}"
+            )
         else:
             result_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
             # Make it absolute if not already
@@ -408,7 +479,9 @@ class EvaluationProcessor:
                 metric_name = "hate_unfairness"
                 self.logger.debug(f"Using metric 'hate_unfairness' for Sync API")
 
-            self.logger.debug(f"Using metric '{metric_name}' for risk category '{risk_category.value}'")
+            self.logger.debug(
+                f"Using metric '{metric_name}' for risk category '{risk_category.value}'"
+            )
 
             # Load all conversations from the data file
             conversations = []
@@ -417,19 +490,30 @@ class EvaluationProcessor:
                     for line in f:
                         try:
                             data = json.loads(line)
-                            if "conversation" in data and "messages" in data["conversation"]:
+                            if (
+                                "conversation" in data
+                                and "messages" in data["conversation"]
+                            ):
                                 conversations.append(data)
                         except json.JSONDecodeError:
-                            self.logger.warning(f"Skipping invalid JSON line in {data_path}")
+                            self.logger.warning(
+                                f"Skipping invalid JSON line in {data_path}"
+                            )
             except Exception as e:
-                self.logger.error(f"Failed to read conversations from {data_path}: {str(e)}")
+                self.logger.error(
+                    f"Failed to read conversations from {data_path}: {str(e)}"
+                )
                 return None
 
             if not conversations:
-                self.logger.warning(f"No valid conversations found in {data_path}, skipping evaluation")
+                self.logger.warning(
+                    f"No valid conversations found in {data_path}, skipping evaluation"
+                )
                 return None
 
-            self.logger.debug(f"Found {len(conversations)} conversations in {data_path}")
+            self.logger.debug(
+                f"Found {len(conversations)} conversations in {data_path}"
+            )
 
             # Evaluate each conversation
             eval_start_time = datetime.now()
@@ -447,7 +531,9 @@ class EvaluationProcessor:
             rows = await asyncio.gather(*tasks)
 
             if not rows:
-                self.logger.warning(f"No conversations could be successfully evaluated in {data_path}")
+                self.logger.warning(
+                    f"No conversations could be successfully evaluated in {data_path}"
+                )
                 return None
 
             # Create the evaluation result structure
@@ -468,23 +554,37 @@ class EvaluationProcessor:
             self.logger.debug(
                 f"Evaluation of {len(rows)} conversations for {risk_category.value}/{strategy_name} completed in {eval_duration} seconds"
             )
-            self.logger.debug(f"Successfully wrote evaluation results for {len(rows)} conversations to {result_path}")
+            self.logger.debug(
+                f"Successfully wrote evaluation results for {len(rows)} conversations to {result_path}"
+            )
 
         except Exception as e:
-            self.logger.error(f"Error during evaluation for {risk_category.value}/{strategy_name}: {str(e)}")
+            self.logger.error(
+                f"Error during evaluation for {risk_category.value}/{strategy_name}: {str(e)}"
+            )
             evaluation_result = None
 
         # Update red_team_info with evaluation results
         if red_team_info:
-            red_team_info[strategy_name][risk_category.value]["evaluation_result_file"] = str(result_path)
-            red_team_info[strategy_name][risk_category.value]["evaluation_result"] = evaluation_result
-            red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
+            red_team_info[strategy_name][risk_category.value][
+                "evaluation_result_file"
+            ] = str(result_path)
+            red_team_info[strategy_name][risk_category.value][
+                "evaluation_result"
+            ] = evaluation_result
+            red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS[
+                "COMPLETED"
+            ]
             self.logger.debug(
                 f"Evaluation complete for {strategy_name}/{risk_category.value}, results stored in red_team_info"
             )
-            self.logger.debug(f"Updated red_team_info evaluation_result_file path: {result_path}")
+            self.logger.debug(
+                f"Updated red_team_info evaluation_result_file path: {result_path}"
+            )
 
-    def get_attack_success(self, result: Union[str, float], risk_category: Optional[str] = None) -> bool:
+    def get_attack_success(
+        self, result: Union[str, float], risk_category: Optional[str] = None
+    ) -> bool:
         """Determine if an attack was successful based on evaluation result.
 
         :param result: The evaluation result - either a string or numeric score

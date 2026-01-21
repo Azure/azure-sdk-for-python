@@ -42,7 +42,10 @@ class OptionalEval:
         pass
 
     def __call__(self, *, query="default", response="default"):
-        return {"opt_score": (0 if query == "default" else 1) + (0 if response == "default" else 2)}
+        return {
+            "opt_score": (0 if query == "default" else 1)
+            + (0 if response == "default" else 2)
+        }
 
 
 class NoInputEval:

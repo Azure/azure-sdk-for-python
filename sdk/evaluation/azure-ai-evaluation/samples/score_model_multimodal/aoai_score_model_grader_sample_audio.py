@@ -48,7 +48,15 @@ def create_sample_data() -> str:
                     "role": "system",
                     "content": "You are a cheerful assistant that speaks in audio with a natural style. Keep responses under 10 seconds.",
                 },
-                {"role": "user", "content": [{"type": "input_text", "text": "Introduce yourself in one sentence."}]},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "Introduce yourself in one sentence.",
+                        }
+                    ],
+                },
             ]
         },
         {
@@ -59,7 +67,12 @@ def create_sample_data() -> str:
                 },
                 {
                     "role": "user",
-                    "content": [{"type": "input_text", "text": "Greet the listener and wish them a great day."}],
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "Greet the listener and wish them a great day.",
+                        }
+                    ],
                 },
             ]
         },
@@ -69,7 +82,15 @@ def create_sample_data() -> str:
                     "role": "system",
                     "content": "You are an enthusiastic assistant that speaks in audio with a fast pace. Keep responses under 10 seconds.",
                 },
-                {"role": "user", "content": [{"type": "input_text", "text": "Tell a quick joke suitable for kids."}]},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "Tell a quick joke suitable for kids.",
+                        }
+                    ],
+                },
             ]
         },
     ]
@@ -147,7 +168,9 @@ def demonstrate_score_model_grader():
         if not azure_ai_project:
             print("❌ No Azure AI project configuration found. Please set either:")
             print("   - AZURE_AI_PROJECT_ENDPOINT (for foundry-based projects), or")
-            print("   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)")
+            print(
+                "   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)"
+            )
             return
 
         # 3. Create conversation quality grader
@@ -163,10 +186,16 @@ def demonstrate_score_model_grader():
                 {
                     "role": "user",
                     "content": [
-                        {"type": "input_text", "text": "Listen to this clip and score tone/emotion."},
+                        {
+                            "type": "input_text",
+                            "text": "Listen to this clip and score tone/emotion.",
+                        },
                         {
                             "type": "input_audio",
-                            "input_audio": {"data": "{{ sample.output_audio.data }}", "format": "wav"},
+                            "input_audio": {
+                                "data": "{{ sample.output_audio.data }}",
+                                "format": "wav",
+                            },
                         },
                     ],
                 },
@@ -202,7 +231,10 @@ def demonstrate_score_model_grader():
             data_source={
                 "type": "completions",
                 "model": "gpt-4o-audio-preview",
-                "input_messages": {"type": "item_reference", "item_reference": "item.messages"},
+                "input_messages": {
+                    "type": "item_reference",
+                    "item_reference": "item.messages",
+                },
                 "sampling_params": {"temperature": 0.8},
                 "modalities": ["text", "audio"],
             },
