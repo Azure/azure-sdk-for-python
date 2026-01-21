@@ -3,24 +3,21 @@
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation,broad-exception-caught,logging-not-lazy
 # mypy: disable-error-code="valid-type,call-overload,attr-defined"
-from abc import ABC, abstractmethod
 import copy
-import json
-from typing import Any, Collection, List
+from abc import ABC, abstractmethod
+from typing import Any, Collection, Iterable, List
 
 from langchain_core import messages
 from langchain_core.messages import AnyMessage
-from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-
 from .human_in_the_loop_helper import (
     HumanInTheLoopHelper,
     INTERRUPT_NODE_NAME,
 )
 from .utils import extract_function_call
+from .._context import LanggraphRunContext
 
 logger = get_logger()
 
@@ -41,39 +38,44 @@ class ResponseAPINonStreamResponseConverter(ABC):
         :return: A list of ItemResource objects representing the converted output.
         :rtype: list[project_models.ItemResource]
         """
-        pass
+        raise NotImplementedError
 
 
-class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponseConverter):
+class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponseConverter):  # pylint: disable=C4751
     """
     Convert Langgraph MessageState output to ItemResource objects.
     """
     def __init__(self,
-            context: AgentRunContext,
+            context: LanggraphRunContext,
             hitl_helper: HumanInTheLoopHelper):
         self.context = context
         self.hitl_helper = hitl_helper
 
     def convert(self, output: dict[str, Any]) -> list[project_models.ItemResource]:
-        res = []
-        for step in output:
-            for node_name, node_output in step.items():
-                if node_name == INTERRUPT_NODE_NAME:
-                    interrupt_messages = self.hitl_helper.convert_interrupts(node_output)
-                    res.extend(interrupt_messages)
-                else:
-                    message_arr = node_output.get("messages")
-                    if not message_arr or not isinstance(message_arr, Collection):
-                        logger.warning(f"No messages found in node {node_name} output: {node_output}")
-                        continue
-                    for message in message_arr:
-                        try:
-                            converted = self.convert_output_message(message)
-                            if converted:
-                                res.append(converted)
-                        except Exception as e:
-                            logger.error(f"Error converting message {message}: {e}")
+        res: list[project_models.ItemResource] = []
+        for node_name, node_output in output.items():
+            node_results = self._convert_node_output(node_name, node_output)
+            res.extend(node_results)
         return res
+
+    def _convert_node_output(
+        self, node_name: str, node_output: Any
+    ) -> Iterable[project_models.ItemResource]:
+        if node_name == INTERRUPT_NODE_NAME:
+            yield from self.hitl_helper.convert_interrupts(node_output)
+
+        message_arr = node_output.get("messages")
+        if not message_arr or not isinstance(message_arr, Collection):
+            logger.warning(f"No messages found in node {node_name} output: {node_output}")
+            return
+
+        for message in message_arr:
+            try:
+                converted = self.convert_output_message(message)
+                if converted:
+                    yield converted
+            except Exception as e:
+                logger.error(f"Error converting message {message}: {e}")
 
     def convert_output_message(self, output_message: AnyMessage):  # pylint: disable=inconsistent-return-statements
         # Implement the conversion logic for inner inputs
@@ -82,7 +84,7 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                 content=self.convert_MessageContent(
                     output_message.content, role=project_models.ResponsesMessageRole.USER
                 ),
-                id=self.context.id_generator.generate_message_id(),
+                id=self.context.agent_run.id_generator.generate_message_id(),
                 status="completed",  # temporary status, can be adjusted based on actual logic
             )
         if isinstance(output_message, messages.SystemMessage):
@@ -90,7 +92,7 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                 content=self.convert_MessageContent(
                     output_message.content, role=project_models.ResponsesMessageRole.SYSTEM
                 ),
-                id=self.context.id_generator.generate_message_id(),
+                id=self.context.agent_run.id_generator.generate_message_id(),
                 status="completed",
             )
         if isinstance(output_message, messages.AIMessage):
@@ -107,21 +109,21 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                     call_id=call_id,
                     name=name,
                     arguments=argument,
-                    id=self.context.id_generator.generate_function_call_id(),
+                    id=self.context.agent_run.id_generator.generate_function_call_id(),
                     status="completed",
                 )
             return project_models.ResponsesAssistantMessageItemResource(
                 content=self.convert_MessageContent(
                     output_message.content, role=project_models.ResponsesMessageRole.ASSISTANT
                 ),
-                id=self.context.id_generator.generate_message_id(),
+                id=self.context.agent_run.id_generator.generate_message_id(),
                 status="completed",
             )
         if isinstance(output_message, messages.ToolMessage):
             return project_models.FunctionToolCallOutputItemResource(
                 call_id=output_message.tool_call_id,
                 output=output_message.content,
-                id=self.context.id_generator.generate_function_output_id(),
+                id=self.context.agent_run.id_generator.generate_function_output_id(),
             )
         logger.warning(f"Unsupported message type: {type(output_message)}, {output_message}")
 
@@ -171,4 +173,3 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
             content_dict["annotations"] = []  # annotation is required for output_text
 
         return project_models.ItemContent(content_dict)
-    

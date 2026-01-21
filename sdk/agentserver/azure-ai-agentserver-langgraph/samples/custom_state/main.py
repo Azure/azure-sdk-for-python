@@ -1,18 +1,17 @@
 from __future__ import annotations
 
-import os
 import json
+import os
 import time
 from dataclasses import dataclass
-from typing import Any, AsyncGenerator, AsyncIterator, Dict, List, TypedDict
+from typing import Any, AsyncIterable, AsyncIterator, Dict, List, TypedDict
 
 from dotenv import load_dotenv
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import END, START, StateGraph
 from openai import OpenAI, OpenAIError
 
-from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
-from azure.ai.agentserver.langgraph import from_langgraph
+from azure.ai.agentserver.langgraph import LanggraphRunContext, from_langgraph
 from azure.ai.agentserver.langgraph.models.response_api_default_converter import ResponseAPIDefaultConverter
 from azure.ai.agentserver.langgraph.models.response_api_request_converter import ResponseAPIRequestConverter
 
@@ -101,11 +100,11 @@ def retrieve_docs(question: str, k: int = 2) -> List[Dict[str, Any]]:
 class RAGRequestConverter(ResponseAPIRequestConverter):
     """Converter implementing mini RAG logic."""
 
-    def __init__(self, context: AgentRunContext):
+    def __init__(self, context: LanggraphRunContext):
         self.context = context
 
     def convert(self) -> dict:
-        req = self.context.request
+        req = self.context.agent_run.request
         user_input = req.get("input")
         if isinstance(user_input, list):
             for item in user_input:
@@ -141,12 +140,12 @@ class RAGStateConverter(ResponseAPIDefaultConverter):
         super().__init__(graph=graph,
                          create_request_converter=lambda context: RAGRequestConverter(context))
 
-    def get_stream_mode(self, context: AgentRunContext) -> str:  # noqa: D401
-        if context.request.get("stream", False):  # type: ignore[attr-defined]
+    def get_stream_mode(self, context: LanggraphRunContext) -> str:  # noqa: D401
+        if context.agent_run.request.get("stream", False):  # type: ignore[attr-defined]
             raise NotImplementedError("Streaming not supported in this sample.")
         return "values"
 
-    async def convert_response_non_stream(self, state: Any, context: AgentRunContext) -> Response:
+    async def convert_response_non_stream(self, state: Any, context: LanggraphRunContext) -> Response:
         final_answer = state.get("final_answer") or "(no answer generated)"
         print(f"convert state to response, state: {state}")
         citations = state.get("retrieved", [])
@@ -170,9 +169,9 @@ class RAGStateConverter(ResponseAPIDefaultConverter):
         }
         base = {
             "object": "response",
-            "id": context.response_id,
-            "agent": context.get_agent_id_object(),
-            "conversation": context.get_conversation_object(),
+            "id": context.agent_run.response_id,
+            "agent": context.agent_run.get_agent_id_object(),
+            "conversation": context.agent_run.get_conversation_object(),
             "status": "completed",
             "created_at": int(time.time()),
             "output": [output_item],
@@ -182,8 +181,8 @@ class RAGStateConverter(ResponseAPIDefaultConverter):
     async def convert_response_stream(  # noqa: D401
         self,
         stream_state: AsyncIterator[Dict[str, Any] | Any],
-        context: AgentRunContext,
-    ) -> AsyncGenerator[ResponseStreamEvent, None]:
+        context: LanggraphRunContext,
+    ) -> AsyncIterable[ResponseStreamEvent]:
         raise NotImplementedError("Streaming not supported in this sample.")
 
 

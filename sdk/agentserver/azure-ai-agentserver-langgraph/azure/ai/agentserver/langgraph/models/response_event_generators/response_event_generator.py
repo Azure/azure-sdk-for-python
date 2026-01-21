@@ -8,7 +8,7 @@ from typing import List
 from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+from ..._context import LanggraphRunContext
 
 
 class StreamEventState:
@@ -35,7 +35,7 @@ class ResponseEventGenerator:
     def try_process_message(
         self,
         message: AnyMessage,  # mypy: ignore[valid-type]
-        context: AgentRunContext,
+        context: LanggraphRunContext,
         stream_state: StreamEventState,
     ):  # mypy: ignore[empty-body]
         """
@@ -44,7 +44,7 @@ class ResponseEventGenerator:
         :param message: The incoming message to process.
         :type message: AnyMessage
         :param context: The agent run context.
-        :type context: AgentRunContext
+        :type context: LanggraphRunContext
         :param stream_state: The current stream event state.
         :type stream_state: StreamEventState
 
@@ -63,7 +63,7 @@ class ResponseEventGenerator:
         return False, []
 
     def on_end(
-        self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState
+        self, message: AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         """
         Generate the ending events for this layer.
@@ -72,7 +72,7 @@ class ResponseEventGenerator:
         :param message: The incoming message to process.
         :type message: AnyMessage
         :param context: The agent run context.
-        :type context: AgentRunContext
+        :type context: LanggraphRunContext
         :param stream_state: The current stream event state.
         :type stream_state: StreamEventState
 

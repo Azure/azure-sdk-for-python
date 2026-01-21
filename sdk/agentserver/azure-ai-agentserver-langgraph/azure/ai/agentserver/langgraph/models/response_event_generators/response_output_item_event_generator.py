@@ -10,13 +10,12 @@ from langchain_core.messages import AnyMessage
 from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 from azure.ai.agentserver.core.server.common.id_generator.id_generator import IdGenerator
-
-from ..human_in_the_loop_helper import HumanInTheLoopHelper
 from . import ResponseEventGenerator, StreamEventState, item_resource_helpers
 from .response_content_part_event_generator import ResponseContentPartEventGenerator
 from .response_function_call_argument_event_generator import ResponseFunctionCallArgumentEventGenerator
+from ..human_in_the_loop_helper import HumanInTheLoopHelper
+from ..._context import LanggraphRunContext
 
 
 class ResponseOutputItemEventGenerator(ResponseEventGenerator):
@@ -30,13 +29,13 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         self.hitl_helper = hitl_helper
 
     def try_process_message(
-        self, message: Union[AnyMessage, Interrupt, None], context: AgentRunContext, stream_state: StreamEventState
+        self, message: Union[AnyMessage, Interrupt, None], context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         next_processor = self
         events = []
         if self.item_resource_helper is None:
-            if not self.try_create_item_resource_helper(message, context.id_generator):
+            if not self.try_create_item_resource_helper(message, context.agent_run.id_generator):
                 # cannot create item resource, skip this message
                 self.logger.warning(f"Cannot create item resource helper for message: {message}, skipping.")
                 return True, self, []
@@ -70,7 +69,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return is_processed, next_processor, events
 
     def on_start(
-        self, event: Union[AnyMessage, Interrupt], context: AgentRunContext, stream_state: StreamEventState
+        self, event: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if self.started:
             return True, []
@@ -97,7 +96,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(
-        self, message: Union[AnyMessage, Interrupt], context: AgentRunContext, stream_state: StreamEventState
+        self, message: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if not self.started:  # should not happen
             return []

@@ -10,11 +10,10 @@ from langchain_core.messages import AnyMessage
 from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-
+from . import ResponseEventGenerator, StreamEventState
 from ..human_in_the_loop_helper import HumanInTheLoopHelper
 from ..utils import extract_function_call
-from . import ResponseEventGenerator, StreamEventState
+from ..._context import LanggraphRunContext
 
 
 class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
@@ -36,7 +35,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         self.hitl_helper = hitl_helper
 
     def try_process_message(
-        self, message, context: AgentRunContext, stream_state: StreamEventState
+        self, message, context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         events = []
@@ -74,7 +73,10 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
 
         argument = None
         if isinstance(message, Interrupt):
-            _, _, argument = self.hitl_helper.interrupt_to_function_call(message) if self.hitl_helper else (None, None, None)
+            if self.hitl_helper:
+                _, _, argument = self.hitl_helper.interrupt_to_function_call(message)
+            else:
+                argument = None
         else:
             tool_call = self.get_tool_call_info(message)
             if tool_call:
@@ -113,7 +115,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(
-        self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState
+        self, message: AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         done_event = project_models.ResponseFunctionCallArgumentsDoneEvent(
             item_id=self.item_id,

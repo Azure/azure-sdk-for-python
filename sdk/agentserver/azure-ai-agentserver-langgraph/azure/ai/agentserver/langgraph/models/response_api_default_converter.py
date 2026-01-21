@@ -1,20 +1,26 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+from __future__ import annotations
+
 import time
-from typing import Any, AsyncGenerator, AsyncIterator, Dict, Optional, TypedDict, Union
+from collections.abc import Callable
+from typing import Any, AsyncIterable, AsyncIterator, Dict, Optional, Union
 
 from langchain_core.runnables import RunnableConfig
-from langgraph.types import Command, Interrupt, StateSnapshot
 from langgraph.graph.state import CompiledStateGraph
+from langgraph.types import Command, StateSnapshot
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
-from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-
-from .response_api_request_converter import ResponseAPIRequestConverter, ResponseAPIMessageRequestConverter
-from .response_api_stream_response_converter import ResponseAPIStreamResponseConverter, ResponseAPIMessagesStreamResponseConverter
-from .response_api_non_stream_response_converter import ResponseAPINonStreamResponseConverter, ResponseAPIMessagesNonStreamResponseConverter
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .human_in_the_loop_json_helper import HumanInTheLoopJsonHelper
-from .response_api_converter import ResponseAPIConverter, GraphInputArguments
+from .response_api_converter import GraphInputArguments, ResponseAPIConverter
+from .response_api_non_stream_response_converter import (ResponseAPIMessagesNonStreamResponseConverter,
+                                                         ResponseAPINonStreamResponseConverter)
+from .response_api_request_converter import ResponseAPIMessageRequestConverter, ResponseAPIRequestConverter
+from .response_api_stream_response_converter import ResponseAPIMessagesStreamResponseConverter
+from .._context import LanggraphRunContext
+
 
 class ResponseAPIDefaultConverter(ResponseAPIConverter):
     """
@@ -23,89 +29,109 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
     """
     def __init__(self,
             graph: CompiledStateGraph,
-            create_request_converter=None,
-            create_stream_response_converter=None,
-            create_non_stream_response_converter=None,
-            create_human_in_the_loop_helper=None):
+            create_request_converter: Callable[[LanggraphRunContext], ResponseAPIRequestConverter] | None = None,
+            create_stream_response_converter: Callable[
+                                                  [LanggraphRunContext],
+                                                  ResponseAPIMessagesStreamResponseConverter
+                                              ] | None = None,
+            create_non_stream_response_converter: Callable[
+                                                      [LanggraphRunContext],
+                                                      ResponseAPINonStreamResponseConverter
+                                                  ] | None = None,
+            create_human_in_the_loop_helper: Callable[[LanggraphRunContext], HumanInTheLoopHelper] | None = None):
         self._graph = graph
-        if create_request_converter:
-            self._create_request_converter = create_request_converter
-        if create_stream_response_converter:
-            self._create_stream_response_converter = create_stream_response_converter
-        if create_non_stream_response_converter:
-            self._create_non_stream_response_converter = create_non_stream_response_converter
-        if create_human_in_the_loop_helper:
-            self._create_human_in_the_loop_helper = create_human_in_the_loop_helper
+        self._custom_request_converter_factory = create_request_converter
+        self._custom_stream_response_converter_factory = create_stream_response_converter
+        self._custom_non_stream_response_converter_factory = create_non_stream_response_converter
+        self._custom_human_in_the_loop_helper_factory = create_human_in_the_loop_helper
 
-    async def convert_request(self, context: AgentRunContext) -> GraphInputArguments:
+    async def convert_request(self, context: LanggraphRunContext) -> GraphInputArguments:
         prev_state = await self._aget_state(context)
         input_data = self._convert_request_input(context, prev_state)
         stream_mode = self.get_stream_mode(context)
-        return GraphInputArguments({
-            "input": input_data,
-            "stream_mode": stream_mode})
+        return GraphInputArguments(
+            input=input_data,
+            stream_mode=stream_mode,
+            config={},
+            context=context,
+        )
 
-    async def convert_response_non_stream(self, output: Any, context: AgentRunContext) -> Response:
+    async def convert_response_non_stream(self, output: Any, context: LanggraphRunContext) -> Response:
+        agent_run_context = context.agent_run
         converter = self._create_non_stream_response_converter(context)
-        output = converter.convert(output)
+        converted_output = converter.convert(output)
 
-        agent_id = context.get_agent_id_object()
-        conversation = context.get_conversation_object()
-        response = Response(
+        agent_id = agent_run_context.get_agent_id_object()
+        conversation = agent_run_context.get_conversation_object()
+        response = Response(  # type: ignore[call-overload]
             object="response",
-            id=context.response_id,
+            id=agent_run_context.response_id,
             agent=agent_id,
             conversation=conversation,
-            metadata=context.request.get("metadata"),
+            metadata=agent_run_context.request.get("metadata"),
             created_at=int(time.time()),
-            output=output,
+            output=converted_output,
         )
         return response
 
-    async def convert_response_stream(
+    async def convert_response_stream(  # type: ignore[override]
         self,
-        output: AsyncIterator[Dict[str, Any] | Any],
-        context: AgentRunContext,
-    ) -> AsyncGenerator[ResponseStreamEvent, None]:
+        output: AsyncIterator[Union[Dict[str, Any], Any]],
+        context: LanggraphRunContext,
+    ) -> AsyncIterable[ResponseStreamEvent]:
         converter = self._create_stream_response_converter(context)
         async for event in output:
-            output = converter.convert(event)
-            for e in output:
+            converted_output = converter.convert(event)
+            for e in converted_output:
                 yield e
-        
+
         state = await self._aget_state(context)
-        output = converter.finalize(state) # finalize the response with graph state after stream
-        for event in output:
+        finalized_output = converter.finalize(state)  # finalize the response with graph state after stream
+        for event in finalized_output:
             yield event
 
-    def get_stream_mode(self, context: AgentRunContext) -> str:
-        if context.stream:
+    def get_stream_mode(self, context: LanggraphRunContext) -> str:
+        if context.agent_run.stream:
             return "messages"
         return "updates"
 
-    def _create_request_converter(self, context: AgentRunContext) -> ResponseAPIRequestConverter:
-        data = context.request
+    def _create_request_converter(self, context: LanggraphRunContext) -> ResponseAPIRequestConverter:
+        if self._custom_request_converter_factory:
+            return self._custom_request_converter_factory(context)
+        data = context.agent_run.request
         return ResponseAPIMessageRequestConverter(data)
-    
-    def _create_stream_response_converter(self, context: AgentRunContext) -> ResponseAPIMessagesStreamResponseConverter:
+
+    def _create_stream_response_converter(
+        self, context: LanggraphRunContext
+    ) -> ResponseAPIMessagesStreamResponseConverter:
+        if self._custom_stream_response_converter_factory:
+            return self._custom_stream_response_converter_factory(context)
         hitl_helper = self._create_human_in_the_loop_helper(context)
         return ResponseAPIMessagesStreamResponseConverter(context, hitl_helper=hitl_helper)
-    
-    def _create_non_stream_response_converter(self, context: AgentRunContext) -> ResponseAPINonStreamResponseConverter:
+
+    def _create_non_stream_response_converter(
+        self, context: LanggraphRunContext
+    ) -> ResponseAPINonStreamResponseConverter:
+        if self._custom_non_stream_response_converter_factory:
+            return self._custom_non_stream_response_converter_factory(context)
         hitl_helper = self._create_human_in_the_loop_helper(context)
         return ResponseAPIMessagesNonStreamResponseConverter(context, hitl_helper)
 
-    def _create_human_in_the_loop_helper(self, context: AgentRunContext) -> HumanInTheLoopHelper:
+    def _create_human_in_the_loop_helper(self, context: LanggraphRunContext) -> HumanInTheLoopHelper:
+        if self._custom_human_in_the_loop_helper_factory:
+            return self._custom_human_in_the_loop_helper_factory(context)
         return HumanInTheLoopJsonHelper(context)
 
-    def _convert_request_input(self, context: AgentRunContext, prev_state: StateSnapshot) -> Union[Dict[str, Any], Command]:
+    def _convert_request_input(
+        self, context: LanggraphRunContext, prev_state: Optional[StateSnapshot]
+    ) -> Union[Dict[str, Any], Command]:
         """
         Convert the CreateResponse input to LangGraph input format, handling HITL if needed.
 
         :param context: The context for the agent run.
-        :type context: AgentRunContext
+        :type context: LanggraphRunContext
         :param prev_state: The previous LangGraph state snapshot.
-        :type prev_state: StateSnapshot
+        :type prev_state: Optional[StateSnapshot]
 
         :return: The converted LangGraph input data or Command for HITL.
         :rtype: Union[Dict[str, Any], Command]
@@ -113,16 +139,16 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         hitl_helper = self._create_human_in_the_loop_helper(context)
         if hitl_helper:
             command = hitl_helper.validate_and_convert_human_feedback(
-                prev_state, context.request.get("input")
+                prev_state, context.agent_run.request.get("input")
             )
             if command is not None:
                 return command
         converter = self._create_request_converter(context)
         return converter.convert()
-    
-    async def _aget_state(self, context: AgentRunContext) -> Optional[StateSnapshot]:
+
+    async def _aget_state(self, context: LanggraphRunContext) -> Optional[StateSnapshot]:
         config = RunnableConfig(
-            configurable={"thread_id": context.conversation_id},
+            configurable={"thread_id": context.agent_run.conversation_id},
         )
         if self._graph.checkpointer:
             state = await self._graph.aget_state(config=config)

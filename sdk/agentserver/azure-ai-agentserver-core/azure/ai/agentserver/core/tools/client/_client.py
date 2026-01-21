@@ -34,7 +34,7 @@ from ._models import (
 )
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
-from .._exceptions import ToolInvocationError
+from .._exceptions import OAuthConsentRequiredError, ToolInvocationError
 
 
 class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: disable=C4748
@@ -181,7 +181,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: di
         :type agent_name: str
         :return: The result of invoking the tool.
         :rtype: Any
-        :raises ~Tool_Client.exceptions.OAuthConsentRequiredError:
+        :raises ~OAuthConsentRequiredError:
             Raised when the service requires user OAuth consent.
         :raises ~azure.core.exceptions.HttpResponseError:
             Raised for HTTP communication failures.

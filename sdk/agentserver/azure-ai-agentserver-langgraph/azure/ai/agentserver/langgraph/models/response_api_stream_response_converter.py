@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation
+# pylint: disable=logging-fstring-interpolation,C4751
 # mypy: disable-error-code="assignment,valid-type"
 from abc import ABC, abstractmethod
 from typing import Any, List, Union
@@ -10,14 +10,13 @@ from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import ResponseStreamEvent
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 from .response_event_generators import (
     ResponseEventGenerator,
     ResponseStreamEventGenerator,
     StreamEventState,
 )
+from .._context import LanggraphRunContext
 
 logger = get_logger()
 
@@ -28,28 +27,31 @@ class ResponseAPIStreamResponseConverter(ABC):
     One converter instance handles one response stream.
     """
     @abstractmethod
-    async def convert(self, event: Union[AnyMessage, dict, Any, None]):
+    def convert(self, event: Union[AnyMessage, dict, Any, None]):
         """
         Convert the Langgraph streamed output to ResponseStreamEvent objects.
 
+        :param event: The event to convert.
+        :type event: Union[AnyMessage, dict, Any, None]
         :return: An asynchronous generator yielding ResponseStreamEvent objects.
         :rtype: AsyncGenerator[ResponseStreamEvent, None]
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
-    async def finalize(self, args=None):
+    def finalize(self, graph_state=None):
         """
         Finalize the conversion process after the stream ends.
 
+        :param graph_state: The final graph state.
+        :type graph_state: Any
         :return: An asynchronous generator yielding final ResponseStreamEvent objects.
         :rtype: AsyncGenerator[ResponseStreamEvent, None]
         """
-        pass
 
 
 class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConverter):
-    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper):
+    def __init__(self, context: LanggraphRunContext, *, hitl_helper: HumanInTheLoopHelper):
         # self.stream = stream
         self.context = context
         self.hitl_helper = hitl_helper
@@ -57,23 +59,25 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
         self.stream_state = StreamEventState()
         self.current_generator: ResponseEventGenerator = None
 
-    def convert(self, output_event: Union[AnyMessage, dict, Any, None]):
+    def convert(self, event: Union[AnyMessage, dict, Any, None]):
         try:
             if self.current_generator is None:
                 self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
-            message= output_event[0] # expect a tuple
+            if event is None or not hasattr(event, '__getitem__'):
+                raise ValueError(f"Event is not indexable: {event}")
+            message = event[0]  # expect a tuple
             converted = self.try_process_message(message, self.context)
             return converted
         except Exception as e:
-            logger.error(f"Error converting message {message}: {e}")
-            raise ValueError(f"Error converting message {message}") from e
-    
+            logger.error(f"Error converting message {event}: {e}")
+            raise ValueError(f"Error converting message {event}") from e
+
     def finalize(self, graph_state=None):
         logger.info("Stream ended, finalizing response.")
         res = []
         # check and convert interrupts
         if self.hitl_helper.has_interrupt(graph_state):
-            interrupt = graph_state.interrupts[0] # should have only one interrupt
+            interrupt = graph_state.interrupts[0]  # should have only one interrupt
             converted = self.try_process_message(interrupt, self.context)
             res.extend(converted)
         # finalize the stream
@@ -81,7 +85,9 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
         res.extend(converted)
         return res
 
-    def try_process_message(self, event: Union[AnyMessage, Any, None], context: AgentRunContext) -> List[ResponseStreamEvent]:
+    def try_process_message(
+        self, event: Union[AnyMessage, Any, None], context: LanggraphRunContext
+    ) -> List[ResponseStreamEvent]:
         if event and not self.current_generator:
             self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
 

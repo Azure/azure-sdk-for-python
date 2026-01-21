@@ -21,19 +21,19 @@ provided async iterator). Keep them pure transformation layers so they are testa
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, AsyncIterator, Dict, TypedDict, Union
+from typing import Any, AsyncIterable, AsyncIterator, Dict, TypedDict, Union
 
 from langgraph.types import Command
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+from .._context import LanggraphRunContext
 
 
 class GraphInputArguments(TypedDict):
     """TypedDict for LangGraph input arguments."""
     input: Union[Dict[str, Any], Command, None]
     config: Dict[str, Any]
-    context: Dict[str, Any]
+    context: LanggraphRunContext
     stream_mode: str
 
 
@@ -46,28 +46,30 @@ class ResponseAPIConverter(ABC):
     :meta private:
     """
     @abstractmethod
-    async def convert_request(self, context: AgentRunContext) -> GraphInputArguments:
+    async def convert_request(self, context: LanggraphRunContext) -> GraphInputArguments:
         """Convert the incoming request to a serializable dict for LangGraph.
 
         This is a convenience wrapper around request_to_state that only returns
         dict states, raising ValueError if a Command is returned instead.
 
         :param context: The context for the agent run.
-        :type context: AgentRunContext
+        :type context: LanggraphRunContext
 
         :return: The initial LangGraph arguments
         :rtype: GraphInputArguments
         """
 
     @abstractmethod
-    async def convert_response_non_stream(self, output: Any, context: AgentRunContext) -> Response:
+    async def convert_response_non_stream(self, output: Any, context: LanggraphRunContext) -> Response:
         """Convert the completed LangGraph state into a final non-streaming Response object.
 
         This is a convenience wrapper around state_to_response that retrieves
         the current state snapshot asynchronously.
 
+        :param output: The LangGraph output to convert.
+        :type output: Any
         :param context: The context for the agent run.
-        :type context: AgentRunContext
+        :type context: LanggraphRunContext
 
         :return: The final non-streaming Response object.
         :rtype: Response
@@ -76,9 +78,9 @@ class ResponseAPIConverter(ABC):
     @abstractmethod
     async def convert_response_stream(
             self,
-            output: AsyncIterator[Dict[str, Any] | Any],
-            context: AgentRunContext,
-        ) -> AsyncGenerator[ResponseStreamEvent, None]:
+            output: AsyncIterator[Union[Dict[str, Any], Any]],
+            context: LanggraphRunContext,
+        ) -> AsyncIterable[ResponseStreamEvent]:
         """Convert an async iterator of LangGraph stream events into stream events.
 
         This is a convenience wrapper around state_to_response_stream that retrieves
@@ -87,8 +89,9 @@ class ResponseAPIConverter(ABC):
         :param output: An async iterator yielding LangGraph stream events
         :type output: AsyncIterator[Dict[str, Any] | Any]
         :param context: The context for the agent run.
-        :type context: AgentRunContext
+        :type context: LanggraphRunContext
 
-        :return: An async generator yielding ResponseStreamEvent objects.
-        :rtype: AsyncGenerator[ResponseStreamEvent, None]
+        :return: An async iterable yielding ResponseStreamEvent objects.
+        :rtype: AsyncIterable[ResponseStreamEvent]
         """
+        raise NotImplementedError
