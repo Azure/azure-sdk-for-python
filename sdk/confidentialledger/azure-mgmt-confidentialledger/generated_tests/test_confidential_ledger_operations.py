@@ -22,7 +22,7 @@ class TestConfidentialLedgerOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
