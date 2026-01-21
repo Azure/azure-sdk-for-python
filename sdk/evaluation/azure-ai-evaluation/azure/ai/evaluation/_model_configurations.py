@@ -18,12 +18,12 @@ class AzureOpenAIModelConfiguration(TypedDict):
     :type azure_deployment: str
     :param azure_endpoint: Endpoint of Azure OpenAI resource to make requests to
     :type azure_endpoint: str
-    :param api_key: API key of Azure OpenAI resource. Either api_key or credential must be provided.
-    :type api_key: NotRequired[str]
+    :param api_key: API key of Azure OpenAI resource
+    :type api_key: str
     :param api_version: API version to use in request to Azure OpenAI deployment. Optional.
     :type api_version: NotRequired[str]
     :param credential: Credential object for AAD authentication. Must have a get_token(scope) method.
-        Compatible with azure.core.credentials.TokenCredential. Either api_key or credential must be provided.
+        Compatible with azure.core.credentials.TokenCredential.
     :type credential: NotRequired[Any]
 
     .. admonition:: Example:

@@ -167,6 +167,7 @@ def get_chat_target(
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
             api_key = target.get("api_key", None)
             credential = target.get("credential", None)
+            api_version = target.get("api_version", "2024-06-01")
 
             if api_key:
                 # Use API key authentication
@@ -174,25 +175,32 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=api_key,
+                    api_version=api_version,
                 )
             elif credential:
-                # Use TokenCredential for AAD auth
+                # Use explicit TokenCredential for AAD auth (e.g., in ACA environments)
                 token_provider = _create_token_provider(credential)
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=token_provider,  # Callable that returns tokens
+                    api_version=api_version,
                 )
             else:
-                raise ValueError(
-                    "Azure OpenAI target requires either 'api_key' or 'credential'. "
-                    "Pass a TokenCredential for AAD authentication."
+                # Fall back to DefaultAzureCredential via PyRIT's use_aad_auth
+                # This works in local dev environments where DefaultAzureCredential has access
+                chat_target = OpenAIChatTarget(
+                    model_name=target["azure_deployment"],
+                    endpoint=target["azure_endpoint"],
+                    use_aad_auth=True,
+                    api_version=api_version,
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
                 api_key=target["api_key"],
+                api_version=target.get("api_version", "2024-06-01"),
             )
     else:
         # Target is callable
