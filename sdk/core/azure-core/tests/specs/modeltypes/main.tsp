@@ -17,8 +17,8 @@ model Scratch {
 model FlattenModel {
   name: string;
 
-  #suppress "deprecated" "@flattenProperty decorator is not recommended to use."
-  @flattenProperty
+  #suppress "@azure-tools/typespec-azure-core/no-legacy-usage" "Testing backcompat"
+  @Azure.ClientGenerator.Core.Legacy.flattenProperty
   properties: PropertiesModel;
 }
 
@@ -85,4 +85,22 @@ model RecursiveElement extends Element {
 
 model Element {
   recursiveElement?: RecursiveElement[];
+}
+
+model BackcompatModel {
+  keys: Record<string>;
+}
+
+@alternateType(
+  {
+    identity: "geojson.Feature",
+    package: "geojson",
+    minVersion: "3.2.0",
+  },
+  "python"
+)
+model Feature {
+  type: "Feature";
+  properties: Record<unknown>;
+  id?: string | numeric;
 }
