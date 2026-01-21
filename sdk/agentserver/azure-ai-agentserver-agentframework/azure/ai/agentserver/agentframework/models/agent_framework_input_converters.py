@@ -50,11 +50,11 @@ class AgentFrameworkInputConverter:
             if agent_thread and agent_thread.message_store:
                 thread_messages = await agent_thread.message_store.list_messages()
             pending_hitl_requests = self._hitl_helper.get_pending_hitl_request(thread_messages, checkpoint)
-            logger.info(f"Pending HitL requests: {list(pending_hitl_requests.keys())}")
+            logger.info("Pending HitL requests: %s", list(pending_hitl_requests.keys()))
             hitl_response = self._hitl_helper.validate_and_convert_hitl_response(
                 input,
                 pending_requests=pending_hitl_requests)
-            logger.info(f"HitL response validation result: {[m.to_dict() for m in hitl_response]}")
+            logger.info("HitL response validation result: %s", [m.to_dict() for m in hitl_response])
             if hitl_response:
                 return hitl_response
 

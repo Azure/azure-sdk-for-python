@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=attribute-defined-outside-init,protected-access
+# pylint: disable=attribute-defined-outside-init,protected-access,unnecessary-lambda-assignment
 # mypy: disable-error-code="call-overload,assignment,arg-type,override"
 from __future__ import annotations
 
@@ -270,7 +270,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             return arguments
         try:
             return json.dumps(arguments)
-        except Exception as e:
+        except Exception: # pylint: disable=broad-exception-caught
             return str(arguments)
 
 
@@ -373,7 +373,7 @@ class AgentFrameworkOutputStreamingConverter:
         is_changed = (
             lambda a, b: a is not None \
                 and b is not None \
-                and a.message_id != b.message_id  # pylint: disable=unnecessary-lambda-assignment
+                and a.message_id != b.message_id
         )
 
         async for group in chunk_on_change(updates, is_changed):
@@ -401,7 +401,7 @@ class AgentFrameworkOutputStreamingConverter:
 
             # Extract just the content from (content, author_name) tuples using async generator
             async def extract_contents():
-                async for content, _ in contents_with_author:
+                async for content, _ in contents_with_author:  # pylint: disable=cell-var-from-loop
                     yield content
 
             async for content in state.convert_contents(extract_contents(), author_name):

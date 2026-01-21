@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 from abc import ABC, abstractmethod
 import json
 import os
@@ -10,7 +13,11 @@ class AgentThreadRepository(ABC):
     """AgentThread repository to manage saved thread messages of agent threads and workflows."""
 
     @abstractmethod
-    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
+    async def get(
+        self,
+        conversation_id: str,
+        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
+    ) -> Optional[AgentThread]:
         """Retrieve the savedt thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
@@ -131,6 +138,8 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         :type conversation_id: str
         :param serialized_thread: The serialized thread to save.
         :type serialized_thread: Any
+        :return: None
+        :rtype: None
         """
         raise NotImplementedError("write_to_storage is not implemented.")
 

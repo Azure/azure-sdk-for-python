@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 from typing import Any, List, Dict, Optional, Union
 import json
 
@@ -87,9 +90,9 @@ class HumanInTheLoopHelper:
         return arguments
 
     def validate_and_convert_hitl_response(self,
-            input: str | List[Dict] | None,
+            input: Union[str, List[Dict], None],
             pending_requests: Dict[str, RequestInfoEvent],
-        ) -> List[ChatMessage] | None:
+        ) -> Optional[List[ChatMessage]]:
 
         if input is None or isinstance(input, str):
             logger.warning("Expected list input for HitL response validation, got str.")

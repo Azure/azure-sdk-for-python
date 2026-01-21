@@ -12,7 +12,7 @@ from azure.ai.agentserver.agentframework._agent_framework import AgentFrameworkA
 from azure.ai.agentserver.agentframework._ai_agent_adapter import AgentFrameworkAIAgentAdapter
 from azure.ai.agentserver.agentframework._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
 from azure.ai.agentserver.agentframework._foundry_tools import FoundryToolsChatMiddleware
-from azure.ai.agentserver.core.application import PackageMetadata, set_current_app
+from azure.ai.agentserver.core.application import PackageMetadata, set_current_app  # pylint: disable=import-error,no-name-in-module
 
 if TYPE_CHECKING:  # pragma: no cover
     from azure.core.credentials_async import AsyncTokenCredential
@@ -28,12 +28,10 @@ def from_agent_framework(
     """
     Create an Agent Framework AI Agent Adapter from an AgentProtocol or BaseAgent.
 
-    :param agent: The agent to adapt.
+    :keyword agent: The agent to adapt.
     :type agent: Union[BaseAgent, AgentProtocol]
-    :param credentials: Optional asynchronous token credential for authentication.
+    :keyword credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[AsyncTokenCredential]
-    :param kwargs: Additional keyword arguments to pass to the adapter.
-    :type kwargs: Any
 
     :return: An instance of AgentFrameworkAIAgentAdapter.
     :rtype: AgentFrameworkAIAgentAdapter
@@ -56,12 +54,10 @@ def from_agent_framework(
     workflow definition can be converted to a WorkflowAgent. For more information,
     see the agent-framework samples and documentation.
 
-    :param workflow: The workflow builder or factory function to adapt.
+    :keyword workflow: The workflow builder or factory function to adapt.
     :type workflow: Union[WorkflowBuilder, Callable[[], Workflow]]
-    :param credentials: Optional asynchronous token credential for authentication.
+    :keyword credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[AsyncTokenCredential]
-    :param kwargs: Additional keyword arguments to pass to the adapter.
-    :type kwargs: Any
     :return: An instance of AgentFrameworkWorkflowAdapter.
     :rtype: AgentFrameworkWorkflowAdapter
     """
@@ -79,14 +75,12 @@ def from_agent_framework(
     WorkflowAgent.
     One of agent or workflow must be provided.
 
-    :param agent: The agent to adapt.
+    :keyword agent: The agent to adapt.
     :type agent: Optional[Union[BaseAgent, AgentProtocol]]
-    :param workflow: The workflow builder or factory function to adapt.
+    :keyword workflow: The workflow builder or factory function to adapt.
     :type workflow: Optional[Union[WorkflowBuilder, Callable[[], Workflow]]]
-    :param credentials: Optional asynchronous token credential for authentication.
+    :keyword credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[AsyncTokenCredential]
-    :param kwargs: Additional keyword arguments to pass to the adapter.
-    :type kwargs: Any
     :return: An instance of AgentFrameworkAgent.
     :rtype: AgentFrameworkAgent
     :raises TypeError: If neither or both of agent and workflow are provided, or if
@@ -107,7 +101,7 @@ def from_agent_framework(
             return AgentFrameworkWorkflowAdapter(workflow_factory=workflow, credentials=credentials, **kwargs)
         raise TypeError("workflow must be a WorkflowBuilder or callable returning a Workflow")
 
-    if isinstance(agent, AgentProtocol) or isinstance(agent, BaseAgent):
+    if isinstance(agent, (AgentProtocol, BaseAgent)):
         return AgentFrameworkAIAgentAdapter(agent, credentials=credentials, **kwargs)
     raise TypeError("agent must be an instance of AgentProtocol or BaseAgent")
 
