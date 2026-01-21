@@ -317,46 +317,6 @@ input-file:
 output-folder: $(python-sdks-folder)/v2024_04_01_dataplanepreview
 ```
 
-### Tag: multiapi
-
-These settings apply only when `--multiapi` is specified on the command line.
-
-```yaml
-clear-output-folder: true
-batch:
-  - tag: model-dataplane
-  - tag: dataset-dataplane
-  - tag: v2022-05-01
-  - tag: v2022-02-01-preview
-  - tag: v2022-01-01-preview
-  - tag: runhistory
-  - tag: v2020-09-01-dataplanepreview
-  - tag: registry-discovery
-  - tag: v2022-10-01-preview
-  - tag: v2022-12-01-preview
-  - tag: v2023-02-01-preview
-  - tag: v2023-04-01-preview
-  - tag: v2023-04-01
-  - tag: v2023-06-01-preview
-  - tag: v2023-08-01-preview
-  - tag: v2023-10-01
-  - tag: v2024-01-01-preview
-  - tag: v2024-04-01-preview
-  - tag: v2024-07-01-preview
-  - tag: v2024-10-01-preview
-  #unstable tags
-  - tag: v2021-10-01-dataplanepreview
-  - multiapiscript: true
-```
-
-### Multi API Script
-
-```yaml
-clear-output-folder: false
-output-folder: $(python-sdks-folder)
-perform-load: false
-```
-
 ---
 
 ## Code Generation
