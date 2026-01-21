@@ -11,6 +11,7 @@ import os
 import logging
 from typing import List, Any, Optional
 from openai import OpenAI
+from openai._base_client import BaseClient as _OpenAIBaseClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
@@ -241,16 +242,33 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
             http_client = httpx.Client(transport=OpenAILoggingTransport())
 
-        client = OpenAI(
-            # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
-            api_key=get_bearer_token_provider(
-                self._config.credential,  # pylint: disable=protected-access
-                "https://ai.azure.com/.default",
-            ),
-            base_url=base_url,
-            http_client=http_client,
-            **kwargs,
-        )
+
+        user_headers = kwargs.pop("default_headers", None)
+
+        def _create_openai_client(default_headers=None) -> OpenAI:
+            return OpenAI(
+                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
+                api_key=get_bearer_token_provider(
+                    self._config.credential,  # pylint: disable=protected-access
+                    "https://ai.azure.com/.default",
+                ),
+                base_url=base_url,
+                http_client=http_client,
+                default_headers=default_headers,
+                **kwargs,
+            )
+
+        dummy_client = _create_openai_client()
+
+        ua_value = getattr(dummy_client, "user_agent", None)
+        patched_ua = f"{self._patched_user_agent}-{ua_value}"
+
+        merged_headers = dict(dummy_client.default_headers)
+        if user_headers:
+            merged_headers.update(user_headers)
+        merged_headers["User-Agent"] = patched_ua
+
+        client = _create_openai_client(default_headers=merged_headers)
 
         return client
 
