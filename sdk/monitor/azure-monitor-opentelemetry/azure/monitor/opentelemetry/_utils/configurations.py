@@ -13,6 +13,7 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
+
 try:
     from opentelemetry.instrumentation.environment_variables import (  # type: ignore
         OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,

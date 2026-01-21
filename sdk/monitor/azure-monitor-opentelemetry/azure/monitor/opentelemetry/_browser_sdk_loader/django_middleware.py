@@ -94,9 +94,7 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
             _logger.warning("Failed to inject Application Insights snippet: %s", ex, exc_info=True)
         return response
 
-    def configure(
-        self, config: Union[BrowserSDKConfig, dict, str], legacy_config: Optional[dict] = None
-    ) -> None:
+    def configure(self, config: Union[BrowserSDKConfig, dict, str], legacy_config: Optional[dict] = None) -> None:
         """Configure the middleware with Application Insights settings.
 
         :param config: Configuration object, dict, or connection string.
