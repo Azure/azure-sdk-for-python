@@ -55,6 +55,10 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Entity was created by a user."""
     SCHEDULED_TRIGGER = "ScheduledTrigger"
     """Entity was created by a scheduled trigger."""
+    AZURE_PIPELINES = "AzurePipelines"
+    """Entity was created by Azure DevOps pipelines."""
+    GIT_HUB_WORKFLOWS = "GitHubWorkflows"
+    """Entity was created by GitHub Workflows."""
 
 
 class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -72,6 +76,11 @@ class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If the file is a JSON config file to define the requests for a URL test."""
     TEST_SCRIPT = "TEST_SCRIPT"
     """If the file is a test script."""
+    BROWSER_RECORDING = "BROWSER_RECORDING"
+    """If the file is a browser recording of interactions with web applications."""
+    TEST_PLAN_RECOMMENDATIONS = "TEST_PLAN_RECOMMENDATIONS"
+    """If the file is an AI Recommendations file created by the system containing recommendations to
+    create a load test plan from browser recording."""
 
 
 class FileValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -87,6 +96,23 @@ class FileValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """File validation is in progress."""
     VALIDATION_NOT_REQUIRED = "VALIDATION_NOT_REQUIRED"
     """Validation is not required."""
+
+
+class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Frequency of recurrence for a trigger."""
+
+    CRON = "Cron"
+    """Recurrence defined by a cron expression."""
+    HOURLY = "Hourly"
+    """Recurrence defined on an hourly basis, as specified by HourlyRecurrence."""
+    DAILY = "Daily"
+    """Recurrence defined on a daily basis, as specified by DailyRecurrence."""
+    WEEKLY = "Weekly"
+    """Recurrence defined on a weekly basis, as specified by WeeklyRecurrence."""
+    MONTHLY_BY_DAYS = "MonthlyByDays"
+    """Recurrence defined monthly on specific days, as specified by MonthlyRecurrenceByWeekDays."""
+    MONTHLY_BY_DATES = "MonthlyByDates"
+    """Recurrence defined monthly on specific dates, as specified by MonthlyRecurrenceByDates."""
 
 
 class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -117,6 +143,52 @@ class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Bytes per second"""
     COUNT_PER_SECOND = "CountPerSecond"
     """Count per second"""
+
+
+class NotificationEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Notification event type."""
+
+    TEST_RUN_ENDED = "TestRunEnded"
+    """Test run ended event. This event would occur when a test run reaches terminal state."""
+    TEST_RUN_STARTED = "TestRunStarted"
+    """Test run started event. This event would occur when a new test run is triggered."""
+    TRIGGER_COMPLETED = "TriggerCompleted"
+    """Trigger completed event. This event would occur when a trigger completes."""
+    TRIGGER_DISABLED = "TriggerDisabled"
+    """Trigger disabled event. This event would occur when a trigger is disabled."""
+
+
+class NotificationScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope type of a notification rule."""
+
+    TESTS = "Tests"
+    """Notification rule is for Tests."""
+
+
+class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the long running operation."""
+
+    CLONE_TEST = "CloneTest"
+    """Operation represents a clone test operation"""
+    GENERATE_TEST_RUN_INSIGHTS = "GenerateTestRunInsights"
+    """Operation represents a test run insights generation operation"""
+    TEST_PLAN_RECOMMENDATIONS = "TestPlanRecommendations"
+    """Operation represents a test plan recommendations generation operation"""
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
 
 
 class PassFailAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -315,3 +387,42 @@ class TimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """5 minutes, available only if test run duration is greater than 1 minute."""
     PT1H = "PT1H"
     """1 hour, available only if test run duration is greater than 1 minute."""
+
+
+class TriggerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of a trigger."""
+
+    ACTIVE = "Active"
+    """The trigger is active."""
+    PAUSED = "Paused"
+    """The trigger is paused manually."""
+    COMPLETED = "Completed"
+    """The trigger is completed."""
+    DISABLED = "Disabled"
+    """The trigger is disabled due to error."""
+
+
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of a trigger."""
+
+    SCHEDULE_TESTS_TRIGGER = "ScheduleTestsTrigger"
+    """Trigger is a Scheduled Trigger on a Test."""
+
+
+class WeekDays(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the days of the week."""
+
+    SUNDAY = "Sunday"
+    """Refers to Sunday."""
+    MONDAY = "Monday"
+    """Refers to Monday."""
+    TUESDAY = "Tuesday"
+    """Refers to Tuesday."""
+    WEDNESDAY = "Wednesday"
+    """Refers to Wednesday."""
+    THURSDAY = "Thursday"
+    """Refers to Thursday."""
+    FRIDAY = "Friday"
+    """Refers to Friday."""
+    SATURDAY = "Saturday"
+    """Refers to Saturday."""
