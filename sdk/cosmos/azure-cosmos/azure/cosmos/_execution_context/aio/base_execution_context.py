@@ -192,6 +192,10 @@ class _QueryExecutionContextBase(object):
                 raise  # Not a partition split error, propagate immediately
 
         # This should never be reached, but added for safety
+        _LOGGER.warning(
+            "Partition split retry (async): Unexpectedly exited retry loop without returning results. "
+            "This indicates a potential logic error."
+        )
         return []
 
 
