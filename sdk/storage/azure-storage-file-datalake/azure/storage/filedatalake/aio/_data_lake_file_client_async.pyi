@@ -14,6 +14,7 @@ from typing import (
     Callable,
     Dict,
     IO,
+    Iterable,
     Literal,
     Optional,
     Union,
@@ -134,7 +135,7 @@ class DataLakeFileClient(PathClient):
     @distributed_trace_async
     async def upload_data(
         self,
-        data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
         *,
@@ -147,7 +148,7 @@ class DataLakeFileClient(PathClient):
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        validate_content: Optional[Literal["auto", 'md5', 'crc64']] = None,
+        validate_content: Optional[bool] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         max_concurrency: Optional[int] = None,
         chunk_size: Optional[int] = None,
@@ -159,12 +160,12 @@ class DataLakeFileClient(PathClient):
     @distributed_trace_async
     async def append_data(
         self,
-        data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
         offset: int,
         length: Optional[int] = None,
         *,
         flush: Optional[bool] = None,
-        validate_content: Optional[Literal["auto", 'md5', 'crc64']] = None,
+        validate_content: Optional[bool] = None,
         lease_action: Optional[Literal["acquire", "auto-renew", "release", "acquire-release"]] = None,
         lease_duration: int = -1,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
@@ -197,7 +198,6 @@ class DataLakeFileClient(PathClient):
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        validate_content: Optional[Literal["auto", 'md5', 'crc64']] = None,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,

@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 
 def _append_data_options(
-    data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
     offset: int,
     scheme: str,
     length: Optional[int] = None,
