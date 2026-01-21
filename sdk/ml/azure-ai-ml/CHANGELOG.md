@@ -6,6 +6,8 @@
 
 ### Bugs Fixed
 
+- Fixed issue where optional string inputs with `None` or empty string values would fail with "The Value field is required" error. Optional inputs with `None` or empty string values are now correctly excluded from REST API requests, allowing the backend to use default values from component definitions.
+
 ### Other Changes
 
 
