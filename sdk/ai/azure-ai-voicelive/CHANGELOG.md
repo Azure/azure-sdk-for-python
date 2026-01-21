@@ -18,6 +18,7 @@
 - **Reasoning Effort Control**: Added `reasoning_effort` field to `RequestSession`, `ResponseSession`, and `ResponseCreateParams` for controlling reasoning models effort levels with `ReasoningEffort` enum (`none`, `minimal`, `low`, `medium`, `high`, `xhigh`)
 - **Response Metadata**: Added `metadata` field to `Response` and `ResponseCreateParams` for attaching up to 16 key-value pairs (max 64 chars for keys, 512 chars for values)
 - **Array Encoding Support**: Enhanced serialization to support pipe, space, comma, and newline-delimited array encoding formats
+- **Custom Text Normalization**: Added `custom_text_normalization_url` field to `AzureStandardVoice`, `AzureCustomVoice`, and `AzurePersonalVoice` for custom text normalization configurations
 
 ### Other Changes
 
@@ -26,6 +27,8 @@
 - **Serialization Improvements**: Enhanced model_base deserialization for mutable types and array-encoded strings
 
 ### Bug Fixes
+
+- **Audio Format Values**: Fixed `OutputAudioFormat` enum values to use underscore format (`pcm16_8000hz`, `pcm16_16000hz`) instead of hyphenated format for consistency with wire protocol and backward compatibility
 
 ## 1.2.0b2 (2025-11-20)
 

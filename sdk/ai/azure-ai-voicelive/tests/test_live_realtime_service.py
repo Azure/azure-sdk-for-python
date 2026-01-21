@@ -413,6 +413,7 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
+            await conn.response.create()
             timeout_s = 10
             conversation_created_events = []
             function_call_results = []

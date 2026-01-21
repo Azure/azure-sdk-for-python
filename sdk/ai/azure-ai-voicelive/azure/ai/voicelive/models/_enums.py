@@ -220,9 +220,9 @@ class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PCM16 = "pcm16"
     """16-bit PCM audio format at default sampling rate (24kHz)"""
-    PCM16_8000_HZ = "pcm16-8000hz"
+    PCM16_8000_HZ = "pcm16_8000hz"
     """16-bit PCM audio format at 8kHz sampling rate"""
-    PCM16_16000_HZ = "pcm16-16000hz"
+    PCM16_16000_HZ = "pcm16_16000hz"
     """16-bit PCM audio format at 16kHz sampling rate"""
     G711_ULAW = "g711_ulaw"
     """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""

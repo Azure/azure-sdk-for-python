@@ -480,6 +480,8 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
     :vartype temperature: float
     :ivar custom_lexicon_url:
     :vartype custom_lexicon_url: str
+    :ivar custom_text_normalization_url:
+    :vartype custom_text_normalization_url: str
     :ivar prefer_locales:
     :vartype prefer_locales: list[str]
     :ivar locale:
@@ -503,6 +505,9 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Temperature must be between 0.0 and 1.0."""
     custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    custom_text_normalization_url: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -518,6 +523,7 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
         endpoint_id: str,
         temperature: Optional[float] = None,
         custom_lexicon_url: Optional[str] = None,
+        custom_text_normalization_url: Optional[str] = None,
         prefer_locales: Optional[list[str]] = None,
         locale: Optional[str] = None,
         style: Optional[str] = None,
@@ -552,6 +558,8 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     :vartype model: str or ~azure.ai.voicelive.models.PersonalVoiceModels
     :ivar custom_lexicon_url:
     :vartype custom_lexicon_url: str
+    :ivar custom_text_normalization_url:
+    :vartype custom_text_normalization_url: str
     :ivar prefer_locales:
     :vartype prefer_locales: list[str]
     :ivar locale:
@@ -578,6 +586,9 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     """Underlying neural model to use for personal voice. Required. Known values are:
      \"DragonLatestNeural\", \"PhoenixLatestNeural\", and \"PhoenixV2Neural\"."""
     custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    custom_text_normalization_url: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -593,6 +604,7 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
         model: Union[str, "_models.PersonalVoiceModels"],
         temperature: Optional[float] = None,
         custom_lexicon_url: Optional[str] = None,
+        custom_text_normalization_url: Optional[str] = None,
         prefer_locales: Optional[list[str]] = None,
         locale: Optional[str] = None,
         style: Optional[str] = None,
@@ -1027,6 +1039,8 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
     :vartype temperature: float
     :ivar custom_lexicon_url:
     :vartype custom_lexicon_url: str
+    :ivar custom_text_normalization_url:
+    :vartype custom_text_normalization_url: str
     :ivar prefer_locales:
     :vartype prefer_locales: list[str]
     :ivar locale:
@@ -1048,6 +1062,9 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Temperature must be between 0.0 and 1.0."""
     custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    custom_text_normalization_url: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1062,6 +1079,7 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
         name: str,
         temperature: Optional[float] = None,
         custom_lexicon_url: Optional[str] = None,
+        custom_text_normalization_url: Optional[str] = None,
         prefer_locales: Optional[list[str]] = None,
         locale: Optional[str] = None,
         style: Optional[str] = None,
@@ -2984,8 +3002,8 @@ class RequestSession(_Model):
     output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16-8000hz\",
-     \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
+    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16_8000hz\",
+     \"pcm16_16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     turn_detection: Optional["_models.TurnDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3144,7 +3162,7 @@ class Response(_Model):
      could be responding in either text or audio.
     :vartype modalities: list[str or ~azure.ai.voicelive.models.Modality]
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
-     ``g711_alaw``. Known values are: "pcm16", "pcm16-8000hz", "pcm16-16000hz", "g711_ulaw", and
+     ``g711_alaw``. Known values are: "pcm16", "pcm16_8000hz", "pcm16_16000hz", "g711_ulaw", and
      "g711_alaw".
     :vartype output_audio_format: str or ~azure.ai.voicelive.models.OutputAudioFormat
     :ivar temperature: Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8.
@@ -3206,7 +3224,7 @@ class Response(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or ``g711_alaw``. Known
-     values are: \"pcm16\", \"pcm16-8000hz\", \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
+     values are: \"pcm16\", \"pcm16_8000hz\", \"pcm16_16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8."""
     max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
@@ -3388,7 +3406,7 @@ class ResponseCreateParams(_Model):
     :vartype voice: str or ~azure.ai.voicelive.models.OpenAIVoiceName or
      ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
-     ``g711_alaw``. Known values are: "pcm16", "pcm16-8000hz", "pcm16-16000hz", "g711_ulaw", and
+     ``g711_alaw``. Known values are: "pcm16", "pcm16_8000hz", "pcm16_16000hz", "g711_ulaw", and
      "g711_alaw".
     :vartype output_audio_format: str or ~azure.ai.voicelive.models.OutputAudioFormat
     :ivar tools: Tools (functions) available to the model.
@@ -3458,7 +3476,7 @@ class ResponseCreateParams(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or ``g711_alaw``. Known
-     values are: \"pcm16\", \"pcm16-8000hz\", \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
+     values are: \"pcm16\", \"pcm16_8000hz\", \"pcm16_16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tools (functions) available to the model."""
     tool_choice: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4158,8 +4176,8 @@ class ResponseSession(_Model):
     output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16-8000hz\",
-     \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
+    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16_8000hz\",
+     \"pcm16_16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     turn_detection: Optional["_models.TurnDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
