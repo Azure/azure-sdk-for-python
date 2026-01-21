@@ -1,20 +1,22 @@
 from abc import ABC, abstractmethod
 import json
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
-from agent_framework import AgentThread, AgentProtocol
+from agent_framework import AgentThread, AgentProtocol, WorkflowAgent
 
 
 class AgentThreadRepository(ABC):
     """AgentThread repository to manage saved thread messages of agent threads and workflows."""
 
     @abstractmethod
-    async def get(self, conversation_id: str) -> Optional[AgentThread]:
+    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
         """Retrieve the savedt thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: str
+        :param agent: The agent instance. If provided, it can be used to deserialize the thread.
+        :type agent: Optional[Union[AgentProtocol, WorkflowAgent]]
 
         :return: The saved AgentThread if available, None otherwise.
         :rtype: Optional[AgentThread]
@@ -36,12 +38,13 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
     def __init__(self) -> None:
         self._inventory: dict[str, AgentThread] = {}
 
-    async def get(self, conversation_id: str) -> Optional[AgentThread]:
+    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: str
-
+        :param agent: The agent instance. It will be used for in-memory repository for interface consistency.
+        :type agent: Optional[Union[AgentProtocol, WorkflowAgent]]
         :return: The saved AgentThread if available, None otherwise.
         :rtype: Optional[AgentThread]
         """
@@ -72,18 +75,22 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         """
         self._agent = agent
 
-    async def get(self, conversation_id: str) -> Optional[AgentThread]:
+    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: str
+        :param agent: The agent instance. If provided, it can be used to deserialize the thread.
+                      Otherwise, the repository's agent will be used.
+        :type agent: Optional[Union[AgentProtocol, WorkflowAgent]]
 
         :return: The saved AgentThread if available, None otherwise.
         :rtype: Optional[AgentThread]
         """
         serialized_thread = await self.read_from_storage(conversation_id)
         if serialized_thread:
-            thread = await self._agent.deserialize_thread(serialized_thread)
+            agent_to_use = agent or self._agent
+            thread = await agent_to_use.deserialize_thread(serialized_thread)
             return thread
         return None
 

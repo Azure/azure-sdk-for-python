@@ -132,7 +132,7 @@ Respond by sending a `CreateResponse` request with `function_call_output` messag
   "input": [
     {
       "call_id": "<call_id>",
-      "output": "{\"request_id\":\"<request_id>\",\"approved\":true}",
+      "output": "{\"request_id\":\"<request_id>\",\"approved\":true,\"feedback\":\"approve\"}",
       "type": "function_call_output",
     }
   ]
