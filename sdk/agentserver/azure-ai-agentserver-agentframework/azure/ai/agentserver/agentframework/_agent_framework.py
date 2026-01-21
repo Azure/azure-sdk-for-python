@@ -20,13 +20,10 @@ from azure.ai.agentserver.core.models import (
 )
 from azure.ai.agentserver.core.models.projects import ResponseErrorEvent, ResponseFailedEvent
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
-from .models.agent_framework_input_converters import AgentFrameworkInputConverter
-from .models.agent_framework_output_non_streaming_converter import (
-    AgentFrameworkOutputNonStreamingConverter,
-)
+
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
-from .persistence import AgentThreadRepository, CheckpointRepository
+from .persistence import AgentThreadRepository
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -53,12 +50,13 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
     def __init__(self, agent: AgentProtocol,
                  credentials: "Optional[AsyncTokenCredential]" = None,
+                 *,
+                 thread_repository: Optional[AgentThreadRepository] = None,
                  **kwargs: Any,
                 ):
-        """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
+        """Initialize the AgentFrameworkAgent with an AgentProtocol.
 
-        :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient
-            and returns AgentProtocol (sync or async).
+        :param agent: The Agent Framework agent to adapt.
         :type agent: AgentProtocol
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
@@ -67,6 +65,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         self._agent: AgentProtocol = agent
+        self._thread_repository = thread_repository
         self._hitl_helper = HumanInTheLoopHelper()
 
     @property

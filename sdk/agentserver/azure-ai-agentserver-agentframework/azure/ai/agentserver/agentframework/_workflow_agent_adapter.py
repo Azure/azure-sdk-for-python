@@ -1,9 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Callable, Optional, Protocol, Union, List
 
-from agent_framework import WorkflowBuilder, CheckpointStorage, WorkflowAgent, WorkflowCheckpoint
+from agent_framework import Workflow, CheckpointStorage, WorkflowAgent, WorkflowCheckpoint
 from agent_framework._workflows import get_checkpoint_summary
 
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
@@ -27,13 +27,13 @@ logger = get_logger()
 class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
     """Adapter to run WorkflowBuilder agents within the Agent Framework CBAgent structure."""
     def __init__(self,
-                workflow_builder: WorkflowBuilder,
+                workflow_factory: Callable[[], Workflow],
                 *,
                 thread_repository: Optional[AgentThreadRepository] = None,
                 checkpoint_repository: Optional[CheckpointRepository] = None,
                 **kwargs: Any) -> None:
-        super().__init__(agent=workflow_builder, **kwargs)
-        self._workflow_builder = workflow_builder
+        super().__init__(agent=None, **kwargs)
+        self._workflow_factory = workflow_factory
         self._thread_repository = thread_repository
         self._checkpoint_repository = checkpoint_repository
 
@@ -112,7 +112,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             pass
 
     def _build_agent(self) -> WorkflowAgent:
-        return self._workflow_builder.build().as_agent()
+        return self._workflow_factory().as_agent()
 
     async def _get_latest_checkpoint(self,
                 checkpoint_storage: CheckpointStorage) -> Optional[Any]:
