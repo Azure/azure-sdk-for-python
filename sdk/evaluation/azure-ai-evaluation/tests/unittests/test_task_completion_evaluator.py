@@ -100,7 +100,9 @@ class TestTaskCompletionEvaluator:
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
         query = "Create a budget plan with income, expenses, and savings goals."
-        response = "I have provided a partial budget plan with income and expenses only."
+        response = (
+            "I have provided a partial budget plan with income and expenses only."
+        )
 
         result = evaluator(query=query, response=response)
 
@@ -117,9 +119,17 @@ class TestTaskCompletionEvaluator:
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        query = [{"role": "user", "content": "Find hotels in Paris and book the cheapest one"}]
+        query = [
+            {
+                "role": "user",
+                "content": "Find hotels in Paris and book the cheapest one",
+            }
+        ]
         response = [
-            {"role": "assistant", "content": "Task is complete. I found hotels and booked the cheapest option."}
+            {
+                "role": "assistant",
+                "content": "Task is complete. I found hotels and booked the cheapest option.",
+            }
         ]
         tool_definitions = [
             {
@@ -127,7 +137,9 @@ class TestTaskCompletionEvaluator:
                 "description": "Search for hotels in a location",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "City name"}},
+                    "properties": {
+                        "location": {"type": "string", "description": "City name"}
+                    },
                 },
             },
             {
@@ -135,12 +147,19 @@ class TestTaskCompletionEvaluator:
                 "description": "Book a hotel",
                 "parameters": {
                     "type": "object",
-                    "properties": {"hotel_id": {"type": "string", "description": "Hotel identifier"}},
+                    "properties": {
+                        "hotel_id": {
+                            "type": "string",
+                            "description": "Hotel identifier",
+                        }
+                    },
                 },
             },
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
@@ -160,7 +179,10 @@ class TestTaskCompletionEvaluator:
             {"role": "user", "content": "December 15-22, 2025"},
         ]
         response = [
-            {"role": "assistant", "content": "Done! I have booked your flight to Tokyo for December 15-22, 2025."}
+            {
+                "role": "assistant",
+                "content": "Done! I have booked your flight to Tokyo for December 15-22, 2025.",
+            }
         ]
 
         result = evaluator(query=query, response=response)
@@ -179,7 +201,9 @@ class TestTaskCompletionEvaluator:
         with pytest.raises(EvaluationException) as exc_info:
             evaluator()
 
-        assert "Either 'conversation' or individual inputs must be provided" in str(exc_info.value)
+        assert "Either 'conversation' or individual inputs must be provided" in str(
+            exc_info.value
+        )
 
     def test_string_success_value_true(self, mock_model_config):
         """Test handling of string 'TRUE' as success value"""
@@ -286,8 +310,15 @@ class TestTaskCompletionEvaluator:
                     }
                 ],
             },
-            {"role": "tool", "tool_call_id": "call_1", "content": "Found 5 Italian restaurants downtown."},
-            {"role": "assistant", "content": "Task complete! I found restaurants and made a reservation."},
+            {
+                "role": "tool",
+                "tool_call_id": "call_1",
+                "content": "Found 5 Italian restaurants downtown.",
+            },
+            {
+                "role": "assistant",
+                "content": "Task complete! I found restaurants and made a reservation.",
+            },
         ]
         tool_definitions = [
             {
@@ -298,7 +329,9 @@ class TestTaskCompletionEvaluator:
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
 
         key = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None

@@ -62,7 +62,9 @@ class SimulationRequestDTO:
         toReturn = self.__dict__.copy()
 
         if toReturn["templateParameters"] is not None:
-            toReturn["templateParameters"] = {str(k): str(v) for k, v in toReturn["templateParameters"].items()}
+            toReturn["templateParameters"] = {
+                str(k): str(v) for k, v in toReturn["templateParameters"].items()
+            }
 
         return toReturn
 
@@ -88,7 +90,13 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
     :keyword kwargs: Additional keyword arguments to pass to the parent class.
     """
 
-    def __init__(self, name: str, template_key: str, template_parameters: TemplateParameters, **kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        template_key: str,
+        template_parameters: TemplateParameters,
+        **kwargs,
+    ) -> None:
         self.tkey = template_key
         self.tparam = template_parameters
         self.result_url: Optional[str] = None
@@ -201,23 +209,34 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 template_key=self.tkey,
                 template_parameters=self.tparam,
             )
-            response_data = session.red_teams.submit_simulation(sim_request_dto, headers=headers, params=params)
+            response_data = session.red_teams.submit_simulation(
+                sim_request_dto, headers=headers, params=params
+            )
             operation_id = response_data["location"].split("/")[-1]
 
             request_count = 0
             flag = True
             while flag:
                 try:
-                    response = session.red_teams.operation_results(operation_id, headers=headers)
+                    response = session.red_teams.operation_results(
+                        operation_id, headers=headers
+                    )
                 except Exception as e:
-                    from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
+                    from types import (
+                        SimpleNamespace,
+                    )  # pylint: disable=forgotten-debug-statement
 
-                    response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})
+                    response = SimpleNamespace(
+                        status_code=202, text=str(e), json=lambda: {"error": str(e)}
+                    )
                 if isinstance(response, dict):
                     response_data = response
                     flag = False
                     break
-                if not isinstance(response, SimpleNamespace) and response.get("object") == "chat.completion":
+                if (
+                    not isinstance(response, SimpleNamespace)
+                    and response.get("object") == "chat.completion"
+                ):
                     response_data = response
                     flag = False
                     break
@@ -236,13 +255,20 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             )
 
             response = None
-            async with get_async_http_client().with_policies(retry_policy=service_call_retry_policy) as retry_client:
+            async with get_async_http_client().with_policies(
+                retry_policy=service_call_retry_policy
+            ) as retry_client:
                 try:
                     response = await retry_client.post(
-                        url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict()
+                        url=self.endpoint_url,
+                        headers=proxy_headers,
+                        json=sim_request_dto.to_dict(),
                     )
                 except ServiceResponseError as e:
-                    self.logger.error("ServiceResponseError during POST request to rai svc after retries: %s", str(e))
+                    self.logger.error(
+                        "ServiceResponseError during POST request to rai svc after retries: %s",
+                        str(e),
+                    )
                     raise
 
             # response.raise_for_status()
@@ -268,7 +294,9 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             await asyncio.sleep(15)
             time.sleep(15)
 
-            async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
+            async with get_async_http_client().with_policies(
+                retry_policy=retry_policy
+            ) as exp_retry_client:
                 token = await self.token_manager.get_token_async()
                 proxy_headers = {
                     "Authorization": f"Bearer {token}",

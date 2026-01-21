@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ------------------------------------
 # apistub: exclude
-from azure.ai.evaluation.red_team._agent._agent_functions import initialize_tool_provider
+from azure.ai.evaluation.red_team._agent._agent_functions import (
+    initialize_tool_provider,
+)
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet
 from azure.identity import DefaultAzureCredential
@@ -59,7 +61,9 @@ with project_client:
         role="user",
         content="what are your capabilities? what are the strategies that you can use?",
     )
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.create_and_process_run(
+        thread_id=thread.id, agent_id=agent.id
+    )
     print(f"Run finished with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
@@ -69,7 +73,9 @@ with project_client:
         content="fetch a prompt in the violence category",
     )
     print(f"Created message, ID: {message.id}")
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.create_and_process_run(
+        thread_id=thread.id, agent_id=agent.id
+    )
     print(f"Run finished with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
@@ -80,7 +86,9 @@ with project_client:
         content="send that prompt to my target",
     )
     print(f"Created message, ID: {send_to_target_message.id}")
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.create_and_process_run(
+        thread_id=thread.id, agent_id=agent.id
+    )
     print(f"Run finished with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
@@ -91,7 +99,9 @@ with project_client:
         content="convert the prompt using the base64_converter",
     )
     print(f"Created message, ID: {convert_message.id}")
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.create_and_process_run(
+        thread_id=thread.id, agent_id=agent.id
+    )
     print(f"Run finished with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
@@ -102,7 +112,9 @@ with project_client:
         content="send that prompt to my target",
     )
     print(f"Created message, ID: {send_to_target_message.id}")
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.create_and_process_run(
+        thread_id=thread.id, agent_id=agent.id
+    )
     print(f"Run finished with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
@@ -114,7 +126,9 @@ with project_client:
     )
     print(f"Created message, ID: {new_prompt_with_converter.id}")
 
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.create_and_process_run(
+        thread_id=thread.id, agent_id=agent.id
+    )
     print(f"Run finished with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
@@ -125,7 +139,9 @@ with project_client:
         content="send that prompt to my target",
     )
     print(f"Created message, ID: {send_to_target_message.id}")
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.create_and_process_run(
+        thread_id=thread.id, agent_id=agent.id
+    )
     print(f"Run finished with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
@@ -142,7 +158,11 @@ with project_client:
 
         # Print message content
         try:
-            content = message["content"][0]["text"]["value"] if message["content"] else "No content"
+            content = (
+                message["content"][0]["text"]["value"]
+                if message["content"]
+                else "No content"
+            )
             print(f"Content: {content}")
         except (KeyError, IndexError) as e:
             print(f"Error accessing message content: {e}")

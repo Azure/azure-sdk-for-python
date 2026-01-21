@@ -81,7 +81,9 @@ class RedTeamSamples(object):
             application_scenario="A customer service chatbot for a retail company",
         )
 
-        print(f"Scan completed with {len(results.scan_result) if results.scan_result else 0} conversations")
+        print(
+            f"Scan completed with {len(results.scan_result) if results.scan_result else 0} conversations"
+        )
         # [END red_team_basic_callback]
         return results
 
@@ -115,9 +117,14 @@ class RedTeamSamples(object):
         )
 
         # Create a more complex callback function that handles conversation state
-        async def advanced_callback(messages, stream=False, session_state=None, context=None):
+        async def advanced_callback(
+            messages, stream=False, session_state=None, context=None
+        ):
             # Extract the latest message from the conversation history
-            messages_list = [{"role": message.role, "content": message.content} for message in messages]
+            messages_list = [
+                {"role": message.role, "content": message.content}
+                for message in messages
+            ]
             latest_message = messages_list[-1]["content"]
 
             # In a real application, you might process the entire conversation history
@@ -133,11 +140,17 @@ class RedTeamSamples(object):
         results = await agent.scan(
             target=advanced_callback,
             scan_name="Advanced-Callback-Test",
-            attack_strategies=[AttackStrategy.Base64, AttackStrategy.ROT13, AttackStrategy.UnicodeConfusable],
+            attack_strategies=[
+                AttackStrategy.Base64,
+                AttackStrategy.ROT13,
+                AttackStrategy.UnicodeConfusable,
+            ],
             application_scenario="An AI assistant for educational content",
         )
 
-        print(f"Advanced scan completed with {len(results.scan_result) if results.scan_result else 0} conversations")
+        print(
+            f"Advanced scan completed with {len(results.scan_result) if results.scan_result else 0} conversations"
+        )
         # [END red_team_advanced_callback]
         return results
 
@@ -324,7 +337,9 @@ class RedTeamSamples(object):
 
         # Access the collected conversation data
         conversations = results.scan_result
-        print(f"Collected {len(conversations) if conversations else 0} conversations without evaluation")
+        print(
+            f"Collected {len(conversations) if conversations else 0} conversations without evaluation"
+        )
         # [END red_team_data_only]
         return results
 
@@ -404,7 +419,13 @@ class RedTeamSamples(object):
         # Define a more complex application with some guardrails
         class ContentCreationAssistant:
             def __init__(self):
-                self.banned_topics = ["violence", "hate", "harassment", "self-harm", "explicit"]
+                self.banned_topics = [
+                    "violence",
+                    "hate",
+                    "harassment",
+                    "self-harm",
+                    "explicit",
+                ]
                 self.conversation_history = []
 
             def check_content(self, text):
@@ -420,14 +441,14 @@ class RedTeamSamples(object):
 
                 # Check if content passes moderation
                 if not self.check_content(query):
-                    response = (
-                        "I'm sorry, I cannot assist with that type of content as it may violate content guidelines."
-                    )
+                    response = "I'm sorry, I cannot assist with that type of content as it may violate content guidelines."
                 else:
                     response = "I'm a content creation assistant. I can help you draft blog posts and articles following ethical guidelines."
 
                 # Add response to history
-                self.conversation_history.append({"role": "assistant", "content": response})
+                self.conversation_history.append(
+                    {"role": "assistant", "content": response}
+                )
                 return response
 
         # Create an instance of the assistant
@@ -523,7 +544,9 @@ class RedTeamSamples(object):
         credential = DefaultAzureCredential()
 
         # Path to custom objectives file with context
-        custom_objectives_path = "samples/data/custom_objectives_with_context_example.json"
+        custom_objectives_path = (
+            "samples/data/custom_objectives_with_context_example.json"
+        )
 
         agent = RedTeam(
             azure_ai_project=azure_ai_project,

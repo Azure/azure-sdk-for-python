@@ -16,7 +16,9 @@ if has_pyrit:
     from pyrit.common import initialize_pyrit, IN_MEMORY
 
     initialize_pyrit(memory_db_type=IN_MEMORY)
-    from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
+    from azure.ai.evaluation.red_team._utils._rai_service_target import (
+        AzureRAIServiceTarget,
+    )
     from pyrit.models import PromptRequestResponse, PromptRequestPiece
 
 
@@ -203,7 +205,9 @@ async def test_poll_operation_result_timeout(mock_sleep, rai_target):
     # Replace the actual get_operation_result function with our mock
     rai_target._client._client.get_operation_result = always_running
 
-    result = await rai_target._poll_operation_result(operation_id, max_retries=max_retries)
+    result = await rai_target._poll_operation_result(
+        operation_id, max_retries=max_retries
+    )
 
     assert result is None
     MockLogger.error.assert_called_with(
@@ -230,7 +234,9 @@ async def test_poll_operation_result_not_found_fallback(mock_sleep, rai_target):
     # Replace the client's get_operation_result with our function
     rai_target._client._client.get_operation_result = operation_not_found
 
-    result = await rai_target._poll_operation_result(operation_id, max_retries=max_retries)
+    result = await rai_target._poll_operation_result(
+        operation_id, max_retries=max_retries
+    )
 
     # The implementation should recognize the error pattern after 3 calls and return fallback
     assert call_count == 3
@@ -252,9 +258,19 @@ async def test_poll_operation_result_not_found_fallback(mock_sleep, rai_target):
         # Case 3: Direct content (plain string)
         ({"content": "plain string"}, {"content": "plain string"}),
         # Case 4: Nested result structure
-        ({"result": {"output": {"choices": [{"message": {"content": '{"nested": 1}'}}]}}}, {"nested": 1}),
+        (
+            {
+                "result": {
+                    "output": {"choices": [{"message": {"content": '{"nested": 1}'}}]}
+                }
+            },
+            {"nested": 1},
+        ),
         # Case 5: Result with direct content
-        ({"result": {"content": '{"result_content": "yes"}'}}, {"result_content": "yes"}),
+        (
+            {"result": {"content": '{"result_content": "yes"}'}},
+            {"result_content": "yes"},
+        ),
         # Case 6: Plain string response (parsable as dict)
         ('{"string_dict": "parsed"}', {"string_dict": "parsed"}),
         # Case 7: Plain string response (not JSON)
@@ -264,7 +280,10 @@ async def test_poll_operation_result_not_found_fallback(mock_sleep, rai_target):
         # Case 9: Empty dict
         ({}, {}),
         # Case 10: None response
-        (None, {"content": "None"}),  # None is converted to string and wrapped in content dict
+        (
+            None,
+            {"content": "None"},
+        ),  # None is converted to string and wrapped in content dict
     ],
 )
 async def test_process_response(rai_target, raw_response, expected_content):
@@ -274,10 +293,18 @@ async def test_process_response(rai_target, raw_response, expected_content):
 
 
 @pytest.mark.asyncio
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._create_simulation_request")
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._extract_operation_id")
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._poll_operation_result")
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._process_response")
+@mock.patch(
+    "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._create_simulation_request"
+)
+@mock.patch(
+    "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._extract_operation_id"
+)
+@mock.patch(
+    "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._poll_operation_result"
+)
+@mock.patch(
+    "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget._process_response"
+)
 async def test_send_prompt_async_success_flow(
     mock_process, mock_poll, mock_extract, mock_create, rai_target, mock_prompt_request
 ):
@@ -296,9 +323,13 @@ async def test_send_prompt_async_success_flow(
     mock_poll.return_value = {"status": "succeeded", "raw": "poll_result"}
     mock_process.return_value = {"processed": "final_content"}
 
-    response = await rai_target.send_prompt_async(prompt_request=mock_prompt_request, objective="override_objective")
+    response = await rai_target.send_prompt_async(
+        prompt_request=mock_prompt_request, objective="override_objective"
+    )
 
-    mock_create.assert_called_once_with("Test prompt for simulation", "override_objective")
+    mock_create.assert_called_once_with(
+        "Test prompt for simulation", "override_objective"
+    )
     # We're not using MockRAISvc anymore, so don't assert on it
     # Check that our extract was called with the right value
     mock_extract.assert_called_once_with(mock_submit_response)
@@ -312,7 +343,9 @@ async def test_send_prompt_async_success_flow(
 
 
 @pytest.mark.asyncio
-async def test_send_prompt_async_exception_fallback(rai_target, mock_prompt_request, monkeypatch):
+async def test_send_prompt_async_exception_fallback(
+    rai_target, mock_prompt_request, monkeypatch
+):
     """Tests fallback response generation on exception during send_prompt_async."""
     # Import the module to patch
     from azure.ai.evaluation.red_team._utils import _rai_service_target
@@ -345,10 +378,14 @@ async def test_send_prompt_async_exception_fallback(rai_target, mock_prompt_requ
         raise ValueError(f"Simulated failure #{call_count}")
 
     # Patch the method directly on the instance to ensure we're affecting the retry mechanism
-    with patch.object(rai_target, "_extract_operation_id", side_effect=mock_extract_operation_id):
+    with patch.object(
+        rai_target, "_extract_operation_id", side_effect=mock_extract_operation_id
+    ):
 
         # Call the function, which should trigger retries and eventually use fallback
-        response = await rai_target.send_prompt_async(prompt_request=mock_prompt_request)
+        response = await rai_target.send_prompt_async(
+            prompt_request=mock_prompt_request
+        )
 
         # Verify that our exception was triggered multiple times (showing retry happened)
         assert call_count >= 5, f"Expected at least 5 retries but got {call_count}"
@@ -373,7 +410,9 @@ def test_validate_request_success(rai_target, mock_prompt_request):
 
 def test_validate_request_invalid_pieces(rai_target, mock_prompt_request):
     """Tests validation failure with multiple pieces."""
-    mock_prompt_request.request_pieces.append(mock_prompt_request.request_pieces[0])  # Add a second piece
+    mock_prompt_request.request_pieces.append(
+        mock_prompt_request.request_pieces[0]
+    )  # Add a second piece
     with pytest.raises(ValueError, match="only supports a single prompt request piece"):
         rai_target._validate_request(prompt_request=mock_prompt_request)
 

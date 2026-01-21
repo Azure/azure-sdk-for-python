@@ -125,7 +125,9 @@ def demonstrate_score_model_grader():
         if not azure_ai_project:
             print("❌ No Azure AI project configuration found. Please set either:")
             print("   - AZURE_AI_PROJECT_ENDPOINT (for foundry-based projects), or")
-            print("   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)")
+            print(
+                "   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)"
+            )
             return
 
         # 3. Create conversation quality grader
@@ -143,7 +145,10 @@ def demonstrate_score_model_grader():
                     "content": [
                         {
                             "type": "input_audio",
-                            "input_audio": {"data": "{{ sample.output_audio.data }}", "format": "wav"},
+                            "input_audio": {
+                                "data": "{{ sample.output_audio.data }}",
+                                "format": "wav",
+                            },
                         }
                     ],
                 },
@@ -172,7 +177,10 @@ def demonstrate_score_model_grader():
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "audio_data": {"type": "string", "description": "Base64-encoded WAV audio data."},
+                        "audio_data": {
+                            "type": "string",
+                            "description": "Base64-encoded WAV audio data.",
+                        },
                         "expected_emotion": {
                             "type": "string",
                             "description": "The expected primary emotion in the audio.",
@@ -207,7 +215,10 @@ def demonstrate_score_model_grader():
                             "type": "message",
                             "content": {
                                 "type": "input_audio",
-                                "input_audio": {"data": "{{item.audio_data}}", "format": "wav"},
+                                "input_audio": {
+                                    "data": "{{item.audio_data}}",
+                                    "format": "wav",
+                                },
                             },
                         },
                     ],

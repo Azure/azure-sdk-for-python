@@ -8,7 +8,12 @@ from typing import Dict, Union, List
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
@@ -172,9 +177,13 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 target=ErrorTarget.CONVERSATION,
             )
         if not isinstance(eval_input["query"], str):
-            eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
+            eval_input["query"] = reformat_conversation_history(
+                eval_input["query"], logger
+            )
         if not isinstance(eval_input["response"], str):
-            eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
+            eval_input["response"] = reformat_agent_response(
+                eval_input["response"], logger
+            )
         result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = result.get("llm_output")
         score = math.nan
@@ -191,7 +200,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
+                f"{self._result_key}_completion_tokens": result.get(
+                    "output_token_count", 0
+                ),
                 f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
                 f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
                 f"{self._result_key}_model": result.get("model_id", ""),
@@ -200,7 +211,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             }
 
         if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
+            logger.warning(
+                "LLM output is not a dictionary, returning NaN for the score."
+            )
 
         binary_result = self._get_binary_result(score)
         return {

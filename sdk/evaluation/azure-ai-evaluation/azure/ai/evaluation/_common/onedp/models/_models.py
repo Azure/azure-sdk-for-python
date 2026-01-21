@@ -9,7 +9,17 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import (
+    Any,
+    Dict,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    TYPE_CHECKING,
+    Union,
+    overload,
+)
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
@@ -46,7 +56,9 @@ class InsightResult(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of insights result. Required. Known values are: \"EvaluationRunClusterInsight\",
      \"AgentClusterInsight\", and \"EvaluationComparison\"."""
 
@@ -80,7 +92,8 @@ class AgentClusterInsightResult(InsightResult, discriminator="AgentClusterInsigh
     type: Literal[InsightType.AGENT_CLUSTER_INSIGHT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of insights result. Required. Cluster Insight on an Agent."""
     cluster_insight: "_models.ClusterInsightResult" = rest_field(
-        name="clusterInsight", visibility=["read", "create", "update", "delete", "query"]
+        name="clusterInsight",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Required."""
 
@@ -114,7 +127,9 @@ class InsightRequest(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of request. Required. Known values are: \"EvaluationRunClusterInsight\",
      \"AgentClusterInsight\", and \"EvaluationComparison\"."""
 
@@ -149,10 +164,13 @@ class AgentClusterInsightsRequest(InsightRequest, discriminator="AgentClusterIns
 
     type: Literal[InsightType.AGENT_CLUSTER_INSIGHT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of request. Required. Cluster Insight on an Agent."""
-    agent_name: str = rest_field(name="agentName", visibility=["read", "create", "update", "delete", "query"])
+    agent_name: str = rest_field(
+        name="agentName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier for the agent. Required."""
     model_configuration: Optional["_models.InsightModelConfiguration"] = rest_field(
-        name="modelConfiguration", visibility=["read", "create", "update", "delete", "query"]
+        name="modelConfiguration",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Configuration of the model used in the insight generation."""
 
@@ -192,7 +210,9 @@ class AgentEvaluation(_Model):
     """Identifier of the agent evaluation run. Required."""
     status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Status of the agent evaluation. Options: Running, Completed, Failed. Required."""
-    error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reason of the request failure for the long running process, if applicable."""
     result: Optional[List["_models.AgentEvaluationResult"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -229,7 +249,8 @@ class AgentEvaluationRedactionConfiguration(_Model):
     """
 
     redact_score_properties: Optional[bool] = rest_field(
-        name="redactScoreProperties", visibility=["read", "create", "update", "delete", "query"]
+        name="redactScoreProperties",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Redact score properties. If not specified, the default is to redact in production."""
 
@@ -271,25 +292,36 @@ class AgentEvaluationRequest(_Model):
     :vartype app_insights_connection_string: str
     """
 
-    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    run_id: str = rest_field(
+        name="runId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier of the agent run. Required."""
-    thread_id: Optional[str] = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
+    thread_id: Optional[str] = rest_field(
+        name="threadId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier of the agent thread. This field is mandatory currently, but it will be optional in
      the future."""
     evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Evaluators to be used for the evaluation. Required."""
-    sampling_configuration: Optional["_models.AgentEvaluationSamplingConfiguration"] = rest_field(
-        name="samplingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    sampling_configuration: Optional["_models.AgentEvaluationSamplingConfiguration"] = (
+        rest_field(
+            name="samplingConfiguration",
+            visibility=["read", "create", "update", "delete", "query"],
+        )
     )
     """Sampling configuration for the evaluation."""
-    redaction_configuration: Optional["_models.AgentEvaluationRedactionConfiguration"] = rest_field(
-        name="redactionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    redaction_configuration: Optional[
+        "_models.AgentEvaluationRedactionConfiguration"
+    ] = rest_field(
+        name="redactionConfiguration",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Redaction configuration for the evaluation."""
     app_insights_connection_string: str = rest_field(
-        name="appInsightsConnectionString", visibility=["read", "create", "update", "delete", "query"]
+        name="appInsightsConnectionString",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Pass the AppInsights connection string to the agent evaluation for the evaluation results and
      the errors logs. Required."""
@@ -302,8 +334,12 @@ class AgentEvaluationRequest(_Model):
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
         app_insights_connection_string: str,
         thread_id: Optional[str] = None,
-        sampling_configuration: Optional["_models.AgentEvaluationSamplingConfiguration"] = None,
-        redaction_configuration: Optional["_models.AgentEvaluationRedactionConfiguration"] = None,
+        sampling_configuration: Optional[
+            "_models.AgentEvaluationSamplingConfiguration"
+        ] = None,
+        redaction_configuration: Optional[
+            "_models.AgentEvaluationRedactionConfiguration"
+        ] = None,
     ) -> None: ...
 
     @overload
@@ -345,27 +381,44 @@ class AgentEvaluationResult(_Model):
     :vartype additional_details: dict[str, str]
     """
 
-    evaluator: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    evaluator: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Evaluator's name. This is the name of the evaluator that was used to evaluate the agent's
      completion. Required."""
-    evaluator_id: str = rest_field(name="evaluatorId", visibility=["read", "create", "update", "delete", "query"])
+    evaluator_id: str = rest_field(
+        name="evaluatorId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier of the evaluator. Required."""
-    score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    score: float = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Score of the given evaluator. No restriction on range. Required."""
     status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Status of the evaluator result. Options: Running, Completed, Failed, NotApplicable. Required."""
-    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    reason: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reasoning for the evaluation result."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    version: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Version of the evaluator that was used to evaluate the agent's completion."""
-    thread_id: Optional[str] = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
+    thread_id: Optional[str] = rest_field(
+        name="threadId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique identifier of the thread."""
-    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    run_id: str = rest_field(
+        name="runId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique identifier of the run. Required."""
-    error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string explaining why there was an error, if applicable."""
     additional_details: Optional[Dict[str, str]] = rest_field(
-        name="additionalDetails", visibility=["read", "create", "update", "delete", "query"]
+        name="additionalDetails",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Additional properties relevant to the evaluator. These will differ between evaluators."""
 
@@ -410,11 +463,13 @@ class AgentEvaluationSamplingConfiguration(_Model):
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the sampling strategy. Required."""
     sampling_percent: float = rest_field(
-        name="samplingPercent", visibility=["read", "create", "update", "delete", "query"]
+        name="samplingPercent",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Percentage of sampling per hour (0-100). Required."""
     max_request_rate: float = rest_field(
-        name="maxRequestRate", visibility=["read", "create", "update", "delete", "query"]
+        name="maxRequestRate",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Maximum request rate per hour (0 to 1000). Required."""
 
@@ -450,7 +505,9 @@ class EvaluationTaxonomyInput(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Input type of the evaluation taxonomy. Required. Known values are: \"agent\" and \"policy\"."""
 
     @overload
@@ -484,10 +541,13 @@ class AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator="agent"):
 
     type: Literal[EvaluationTaxonomyInputType.AGENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Input type of the evaluation taxonomy. Required. Agent"""
-    target: "_models.AzureAIAgentTarget" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    target: "_models.AzureAIAgentTarget" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Target configuration for the agent. Required."""
     risk_categories: List[Union[str, "_models.RiskCategory"]] = rest_field(
-        name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
+        name="riskCategories",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of risk categories to evaluate against. Required."""
 
@@ -522,7 +582,9 @@ class AIContent(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content of the message. Required. Is one of the following types: Literal[\"text\"],
      Literal[\"image_url\"], Literal[\"tool_call\"], Literal[\"tool_result\"], str"""
 
@@ -571,9 +633,14 @@ class AnnotationDTO(_Model):
     :vartype client_request_id: str
     """
 
-    annotation_task: str = rest_field(name="AnnotationTask", visibility=["read", "create", "update", "delete", "query"])
+    annotation_task: str = rest_field(
+        name="AnnotationTask",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
     """The task associated with the annotation. Required."""
-    content_type: str = rest_field(name="ContentType", visibility=["read", "create", "update", "delete", "query"])
+    content_type: str = rest_field(
+        name="ContentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of content being annotated. Required."""
     user_text_list: List[str] = rest_field(
         name="UserTextList", visibility=["read", "create", "update", "delete", "query"]
@@ -583,20 +650,33 @@ class AnnotationDTO(_Model):
         name="Contents", visibility=["read", "create", "update", "delete", "query"]
     )
     """A collection of content objects related to the annotation. Required."""
-    metric_list: List[str] = rest_field(name="MetricList", visibility=["read", "create", "update", "delete", "query"])
+    metric_list: List[str] = rest_field(
+        name="MetricList", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of metrics associated with the annotation. Required."""
-    prompt_version: str = rest_field(name="PromptVersion", visibility=["read", "create", "update", "delete", "query"])
+    prompt_version: str = rest_field(
+        name="PromptVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the prompt used for the annotation. Required."""
-    user_agent: str = rest_field(name="UserAgent", visibility=["read", "create", "update", "delete", "query"])
+    user_agent: str = rest_field(
+        name="UserAgent", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user agent information. Required."""
-    partner_id: str = rest_field(name="PartnerId", visibility=["read", "create", "update", "delete", "query"])
+    partner_id: str = rest_field(
+        name="PartnerId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The partner identifier. Required."""
-    model_id: str = rest_field(name="ModelId", visibility=["read", "create", "update", "delete", "query"])
+    model_id: str = rest_field(
+        name="ModelId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The model identifier. Required."""
-    inference_type: str = rest_field(name="InferenceType", visibility=["read", "create", "update", "delete", "query"])
+    inference_type: str = rest_field(
+        name="InferenceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of inference performed. Required."""
     client_request_id: str = rest_field(
-        name="ClientRequestId", visibility=["read", "create", "update", "delete", "query"]
+        name="ClientRequestId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The client request identifier. Required."""
 
@@ -700,7 +780,9 @@ class AssetCredentialRequest(_Model):
     :vartype blob_uri: str
     """
 
-    blob_uri: str = rest_field(name="BlobUri", visibility=["read", "create", "update", "delete", "query"])
+    blob_uri: str = rest_field(
+        name="BlobUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Blob URI. Required."""
 
     @overload
@@ -764,7 +846,9 @@ class Message(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
+    role: str = rest_discriminator(
+        name="role", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The role of the message author. Known values: 'system', 'assistant', 'developer', 'user'.
      Required. Is one of the following types: Literal[\"system\"], Literal[\"assistant\"],
      Literal[\"developer\"], Literal[\"user\"], str"""
@@ -834,11 +918,17 @@ class AttackMessage(_Model):
     :vartype context: str
     """
 
-    role: Optional[str] = rest_field(name="Role", visibility=["read", "create", "update", "delete", "query"])
+    role: Optional[str] = rest_field(
+        name="Role", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The role."""
-    content: Optional[str] = rest_field(name="Content", visibility=["read", "create", "update", "delete", "query"])
+    content: Optional[str] = rest_field(
+        name="Content", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content."""
-    context: Optional[str] = rest_field(name="Context", visibility=["read", "create", "update", "delete", "query"])
+    context: Optional[str] = rest_field(
+        name="Context", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The context."""
 
     @overload
@@ -876,15 +966,21 @@ class AttackObjective(_Model):
     :vartype messages: list[~azure.ai.projects.models.AttackMessage]
     """
 
-    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(
+        name="Id", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique identifier. Required."""
     metadata: Optional["_models.Metadata"] = rest_field(
         name="Metadata", visibility=["read", "create", "update", "delete", "query"]
     )
     """The metadata."""
-    source: List[str] = rest_field(name="Source", visibility=["read", "create", "update", "delete", "query"])
+    source: List[str] = rest_field(
+        name="Source", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of sources. Required."""
-    modality: str = rest_field(name="Modality", visibility=["read", "create", "update", "delete", "query"])
+    modality: str = rest_field(
+        name="Modality", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The modality. Required."""
     messages: List["_models.AttackMessage"] = rest_field(
         name="Messages", visibility=["read", "create", "update", "delete", "query"]
@@ -926,13 +1022,19 @@ class AzureAIAgentTarget(_Model):
     :vartype tools: list[~azure.ai.projects.models.ToolDescription]
     """
 
-    type: Literal[TargetType.AZURE_AI_AGENT] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[TargetType.AZURE_AI_AGENT] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the target. Required. Azure AI Agent Target"""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the Azure AI Agent. Required."""
-    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    version: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Version of the Azure AI Agent. Required."""
-    tools: List["_models.ToolDescription"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: List["_models.ToolDescription"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Tool description. Required."""
 
     @overload
@@ -974,18 +1076,28 @@ class AzureAIEvaluator(_Model):
     :vartype data_mapping: dict[str, str]
     """
 
-    type: Literal["azure_ai_evaluator"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["azure_ai_evaluator"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The object type, which is always ``azure_ai_evaluator``. Required. Default value is
      \"azure_ai_evaluator\"."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """User provided name of the Azure AI Evaluator object instance. Required."""
-    evaluator_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    evaluator_name: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference name of the evaluator. Required."""
-    evaluator_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    evaluator_version: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The optional reference version of the evaluator."""
-    initialization_parameters: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    initialization_parameters: Optional[Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The initialization parameters for the evaluation."""
-    data_mapping: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data_mapping: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The model to use for the evaluation."""
 
     @overload
@@ -1033,7 +1145,9 @@ class Index(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDBNoSqlVectorStore\", and
      \"ManagedAzureSearch\"."""
     id: Optional[str] = rest_field(visibility=["read"])
@@ -1096,7 +1210,9 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
     """Name of connection to Azure AI Search. Required."""
     index_name: str = rest_field(name="indexName", visibility=["create"])
     """Name of index in Azure AI Search resource to attach. Required."""
-    field_mapping: Optional["_models.FieldMapping"] = rest_field(name="fieldMapping", visibility=["create"])
+    field_mapping: Optional["_models.FieldMapping"] = rest_field(
+        name="fieldMapping", visibility=["create"]
+    )
     """Field mapping configuration."""
 
     @overload
@@ -1132,7 +1248,9 @@ class TargetConfig(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the model configuration. Required. Default value is None."""
 
     @overload
@@ -1168,7 +1286,8 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
     type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"AzureOpenAIModel\"."""
     model_deployment_name: str = rest_field(
-        name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+        name="modelDeploymentName",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Deployment name for AOAI model. Example: gpt-4o if in AIServices or connection based
      ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``. Required."""
@@ -1204,14 +1323,19 @@ class BlobReference(_Model):
     :vartype credential: ~azure.ai.projects.models.SasCredential
     """
 
-    blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
+    blob_uri: str = rest_field(
+        name="blobUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
      <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
-        name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
+        name="storageAccountArmId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """ARM ID of the storage account to use. Required."""
-    credential: "_models.SasCredential" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    credential: "_models.SasCredential" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Credential info to access the storage account. Required."""
 
     @overload
@@ -1247,14 +1371,19 @@ class BlobReferenceForConsumption(_Model):
     :vartype credential: ~azure.ai.projects.models.SasCredential
     """
 
-    blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
+    blob_uri: str = rest_field(
+        name="blobUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
      <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
-        name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
+        name="storageAccountArmId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """ARM ID of the storage account to use. Required."""
-    credential: "_models.SasCredential" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    credential: "_models.SasCredential" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Credential info to access the storage account. Required."""
 
     @overload
@@ -1332,7 +1461,9 @@ class ChatChoice(_Model):
 
     index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field(visibility=["read"])
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field(
+        visibility=["read"]
+    )
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     message: "_models.ChatResponseMessage" = rest_field(visibility=["read"])
@@ -1385,7 +1516,9 @@ class ChatCompletions(_Model):
     """A unique identifier associated with this chat completions response. Required."""
     object: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The response object type. Required."""
-    created: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    created: datetime.datetime = rest_field(
+        visibility=["read"], format="unix-timestamp"
+    )
     """The first timestamp associated with generation activity for this completions response,
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
     model: str = rest_field(visibility=["read"])
@@ -1465,9 +1598,13 @@ class ClusterInsightResult(_Model):
     :vartype coordinates: dict[str, ~azure.ai.projects.models.ChartCoordinate]
     """
 
-    summary: "_models.InsightSummary" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    summary: "_models.InsightSummary" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Summary of the insights report. Required."""
-    clusters: List["_models.InsightCluster"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    clusters: List["_models.InsightCluster"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of clusters identified in the insights. Required."""
     coordinates: Optional[Dict[str, "_models.ChartCoordinate"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1521,15 +1658,18 @@ class ClusterTokenUsage(_Model):
     """
 
     input_token_usage: int = rest_field(
-        name="inputTokenUsage", visibility=["read", "create", "update", "delete", "query"]
+        name="inputTokenUsage",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """input token usage. Required."""
     output_token_usage: int = rest_field(
-        name="outputTokenUsage", visibility=["read", "create", "update", "delete", "query"]
+        name="outputTokenUsage",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """output token usage. Required."""
     total_token_usage: int = rest_field(
-        name="totalTokenUsage", visibility=["read", "create", "update", "delete", "query"]
+        name="totalTokenUsage",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """total token usage. Required."""
 
@@ -1573,13 +1713,19 @@ class EvaluatorDefinition(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of evaluator definition. Required. Known values are: \"prompt\", \"code\",
      \"prompt_and_code\", \"service\", and \"openai_graders\"."""
-    init_parameters: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    init_parameters: Optional[Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The JSON schema (Draft 2020-12) for the evaluator's input parameters. This includes parameters
      like type, properties, required."""
-    data_schema: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data_schema: Optional[Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The JSON schema (Draft 2020-12) for the evaluator's input data. This includes parameters like
      type, properties, required."""
     metrics: Optional[Dict[str, "_models.EvaluatorMetric"]] = rest_field(
@@ -1627,7 +1773,9 @@ class CodeBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="code"):
 
     type: Literal[EvaluatorDefinitionType.CODE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Code-based definition"""
-    code_text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code_text: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Inline code text for the evaluator. Required."""
 
     @overload
@@ -1677,9 +1825,13 @@ class CompletionsUsage(_Model):
     """The number of tokens in the provided prompts for the completions request. Required."""
     total_tokens: int = rest_field(visibility=["read"])
     """The total number of tokens processed for the completions request and response. Required."""
-    completion_tokens_details: Optional["_models.CompletionsUsageDetails"] = rest_field(visibility=["read"])
+    completion_tokens_details: Optional["_models.CompletionsUsageDetails"] = rest_field(
+        visibility=["read"]
+    )
     """Breakdown of tokens used in a completion."""
-    prompt_tokens_details: Optional["_models.PromptUsageDetails"] = rest_field(visibility=["read"])
+    prompt_tokens_details: Optional["_models.PromptUsageDetails"] = rest_field(
+        visibility=["read"]
+    )
     """Breakdown of tokens used in the prompt/chat history."""
 
 
@@ -1750,7 +1902,9 @@ class Content(_Model):
     :vartype messages: list[any]
     """
 
-    messages: List[Any] = rest_field(name="Messages", visibility=["read", "create", "update", "delete", "query"])
+    messages: List[Any] = rest_field(
+        name="Messages", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of content. Required."""
 
     @overload
@@ -1783,7 +1937,9 @@ class EvaluationRuleAction(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the evaluation action. Required. Known values are: \"continuousEvaluation\" and
      \"humanEvaluation\"."""
 
@@ -1805,7 +1961,9 @@ class EvaluationRuleAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="continuousEvaluation"):
+class ContinuousEvaluationRuleAction(
+    EvaluationRuleAction, discriminator="continuousEvaluation"
+):
     """Evaluation rule action for continuous evaluation.
 
     :ivar type: Required. Continuous evaluation.
@@ -1818,7 +1976,9 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
 
     type: Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Continuous evaluation."""
-    eval_id: str = rest_field(name="evalId", visibility=["read", "create", "update", "delete", "query"])
+    eval_id: str = rest_field(
+        name="evalId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Eval Id to add continuous evaluation runs to. Required."""
     max_hourly_runs: Optional[int] = rest_field(
         name="maxHourlyRuns", visibility=["read", "create", "update", "delete", "query"]
@@ -1841,7 +2001,9 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=EvaluationRuleActionType.CONTINUOUS_EVALUATION, **kwargs)
+        super().__init__(
+            *args, type=EvaluationRuleActionType.CONTINUOUS_EVALUATION, **kwargs
+        )
 
 
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
@@ -1883,7 +2045,9 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         name="embeddingConfiguration", visibility=["create"]
     )
     """Embedding model configuration. Required."""
-    field_mapping: "_models.FieldMapping" = rest_field(name="fieldMapping", visibility=["create"])
+    field_mapping: "_models.FieldMapping" = rest_field(
+        name="fieldMapping", visibility=["create"]
+    )
     """Field mapping configuration. Required."""
 
     @overload
@@ -1919,7 +2083,9 @@ class CreateEvalJsonlRunDataSource(_Model):
     :vartype source: ~azure.ai.projects.models.EvalJsonlFileContentSource
     """
 
-    type: Literal["jsonl"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["jsonl"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of data source. Always jsonl. Required. Default value is \"jsonl\"."""
     source: "_models.EvalJsonlFileContentSource" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1957,7 +2123,9 @@ class Trigger(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the trigger. Required. Known values are: \"Cron\", \"Recurrence\", and \"OneTime\"."""
 
     @overload
@@ -1995,13 +2163,21 @@ class CronTrigger(Trigger, discriminator="Cron"):
 
     type: Literal[TriggerType.CRON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Cron based trigger."""
-    expression: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    expression: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Cron expression that defines the schedule frequency. Required."""
-    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
+    time_zone: Optional[str] = rest_field(
+        name="timeZone", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Time zone for the cron schedule."""
-    start_time: Optional[str] = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    start_time: Optional[str] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Start time for the cron schedule in ISO 8601 format."""
-    end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
+    end_time: Optional[str] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End time for the cron schedule in ISO 8601 format."""
 
     @overload
@@ -2060,9 +2236,13 @@ class CustomInference(_Model):
     :vartype deployment_id: str
     """
 
-    endpoint_url: str = rest_field(name="endpointUrl", visibility=["read", "create", "update", "delete", "query"])
+    endpoint_url: str = rest_field(
+        name="endpointUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The endpoint URL to be used for inferencing. Required."""
-    deployment_id: str = rest_field(name="DeploymentId", visibility=["read", "create", "update", "delete", "query"])
+    deployment_id: str = rest_field(
+        name="DeploymentId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The deployment id to be used for inferencing. Required."""
 
     @overload
@@ -2094,11 +2274,13 @@ class CustomizationParameters(_Model):
     """
 
     application_scenario: Optional[str] = rest_field(
-        name="ApplicationScenario", visibility=["read", "create", "update", "delete", "query"]
+        name="ApplicationScenario",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Application scenario."""
     harm_categories: List[str] = rest_field(
-        name="HarmCategories", visibility=["read", "create", "update", "delete", "query"]
+        name="HarmCategories",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of harm categories. Required."""
 
@@ -2134,7 +2316,9 @@ class RecurrenceSchedule(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Recurrence type for the recurrence schedule. Required. Known values are: \"Hourly\", \"Daily\",
      \"Weekly\", and \"Monthly\"."""
 
@@ -2167,7 +2351,9 @@ class DailyRecurrenceSchedule(RecurrenceSchedule, discriminator="Daily"):
 
     type: Literal[RecurrenceType.DAILY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Daily recurrence type. Required. Daily recurrence pattern."""
-    hours: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    hours: List[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Hours for the recurrence schedule. Required."""
 
     @overload
@@ -2222,12 +2408,16 @@ class DatasetVersion(_Model):
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
     """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
     """Indicates if the dataset holds a reference to the storage, or the dataset manages storage
      itself. If true, the underlying data will not be deleted when the dataset version is deleted."""
-    connection_name: Optional[str] = rest_field(name="connectionName", visibility=["read", "create"])
+    connection_name: Optional[str] = rest_field(
+        name="connectionName", visibility=["read", "create"]
+    )
     """The Azure Storage Account connection name. Required if startPendingUploadVersion was not called
      before creating the Dataset."""
     id: Optional[str] = rest_field(visibility=["read"])
@@ -2276,7 +2466,9 @@ class Deployment(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of the deployment. Required. \"ModelDeployment\""""
     name: str = rest_field(visibility=["read"])
     """Name of the deployment. Required."""
@@ -2345,7 +2537,9 @@ class EmbeddingConfiguration(_Model):
     :vartype embedding_field: str
     """
 
-    model_deployment_name: str = rest_field(name="modelDeploymentName", visibility=["create"])
+    model_deployment_name: str = rest_field(
+        name="modelDeploymentName", visibility=["create"]
+    )
     """Deployment name of embedding model. It can point to a model deployment either in the parent
      AIServices or a connection. Required."""
     embedding_field: str = rest_field(name="embeddingField", visibility=["create"])
@@ -2444,9 +2638,13 @@ class EvalJsonlFileContent(_Model):
     :vartype sample: any
     """
 
-    item: "_models.EvalJsonlFileContentItem" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    item: "_models.EvalJsonlFileContentItem" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The eval jsonl file content item. Required."""
-    sample: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sample: Optional[Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """optional sample."""
 
     @overload
@@ -2479,7 +2677,9 @@ class EvalJsonlFileContentItem(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the eval jsonl file content item. Required. Default value is None."""
 
     @overload
@@ -2510,9 +2710,13 @@ class EvalJsonlFileContentSource(_Model):
     :vartype content: ~azure.ai.projects.models.EvalJsonlFileContent
     """
 
-    type: Literal["file_content"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["file_content"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of jsonl source. Always ``file_content``. Required. Default value is \"file_content\"."""
-    content: "_models.EvalJsonlFileContent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: "_models.EvalJsonlFileContent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content of the jsonl file. Required."""
 
     @overload
@@ -2551,9 +2755,13 @@ class EvalResult(_Model):
     """name of the check. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """type of the check. Required."""
-    score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    score: float = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """score. Required."""
-    passed: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    passed: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """indicates if the check passed or failed. Required."""
 
     @overload
@@ -2604,27 +2812,45 @@ class EvalRunOutputItem(_Model):
     :vartype sample: any
     """
 
-    object: Literal["eval.run.output_item"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    object: Literal["eval.run.output_item"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of the object. Always eval.run.output_item. Required. Default value is
      \"eval.run.output_item\"."""
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Unique identifier for the evaluation run output item."""
-    run_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    run_id: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identifier of the evaluation run associated with this output item."""
-    eval_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    eval_id: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identifier of the evaluation group."""
-    created_at: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    created_at: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Unix timestamp (in seconds) when the evaluation run was created. Required."""
     status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The status of the evaluation run. Required."""
-    datasource_item_id: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    datasource_item_id: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identifier for the data source item."""
-    datasource_item: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    datasource_item: Any = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details of the input data source item. Required."""
-    results: List[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    results: List[Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of results from the evaluation run. Expected Object: EvaluationRunOutputItemResult.
      Required."""
-    sample: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sample: Optional[Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A sample containing the input and output of the evaluation run."""
 
     @overload
@@ -2671,19 +2897,26 @@ class EvalRunResultCompareItem(_Model):
     """
 
     treatment_run_id: str = rest_field(
-        name="treatmentRunId", visibility=["read", "create", "update", "delete", "query"]
+        name="treatmentRunId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The treatment run ID. Required."""
     treatment_run_summary: "_models.EvalRunResultSummary" = rest_field(
-        name="treatmentRunSummary", visibility=["read", "create", "update", "delete", "query"]
+        name="treatmentRunSummary",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Summary statistics of the treatment run. Required."""
-    delta_estimate: float = rest_field(name="deltaEstimate", visibility=["read", "create", "update", "delete", "query"])
+    delta_estimate: float = rest_field(
+        name="deltaEstimate", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Estimated difference between treatment and baseline. Required."""
-    p_value: float = rest_field(name="pValue", visibility=["read", "create", "update", "delete", "query"])
+    p_value: float = rest_field(
+        name="pValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """P-value for the treatment effect. Required."""
     treatment_effect: Union[str, "_models.TreatmentEffectType"] = rest_field(
-        name="treatmentEffect", visibility=["read", "create", "update", "delete", "query"]
+        name="treatmentEffect",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Type of treatment effect. Required. Known values are: \"TooFewSamples\", \"Inconclusive\",
      \"Changed\", \"Improved\", and \"Degraded\"."""
@@ -2726,15 +2959,19 @@ class EvalRunResultComparison(_Model):
     """
 
     testing_criteria: str = rest_field(
-        name="testingCriteria", visibility=["read", "create", "update", "delete", "query"]
+        name="testingCriteria",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Name of the testing criteria. Required."""
     metric: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metric being evaluated. Required."""
-    evaluator: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    evaluator: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Name of the evaluator for this testing criteria. Required."""
     baseline_run_summary: "_models.EvalRunResultSummary" = rest_field(
-        name="baselineRunSummary", visibility=["read", "create", "update", "delete", "query"]
+        name="baselineRunSummary",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Summary statistics of the baseline run. Required."""
     compare_items: List["_models.EvalRunResultCompareItem"] = rest_field(
@@ -2777,14 +3014,21 @@ class EvalRunResultSummary(_Model):
     :vartype standard_deviation: float
     """
 
-    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    run_id: str = rest_field(
+        name="runId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The evaluation run ID. Required."""
-    sample_count: int = rest_field(name="sampleCount", visibility=["read", "create", "update", "delete", "query"])
+    sample_count: int = rest_field(
+        name="sampleCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of samples in the evaluation run. Required."""
-    average: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    average: float = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Average value of the metric in the evaluation run. Required."""
     standard_deviation: float = rest_field(
-        name="standardDeviation", visibility=["read", "create", "update", "delete", "query"]
+        name="standardDeviation",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Standard deviation of the metric in the evaluation run. Required."""
 
@@ -2837,21 +3081,29 @@ class Evaluation(_Model):
 
     name: str = rest_field(name="id", visibility=["read"])
     """Identifier of the evaluation. Required."""
-    data: "_models.InputData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: "_models.InputData" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
      need to be unique."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the evaluation. It is set by service and is read-only."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
     evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(
@@ -2902,12 +3154,17 @@ class EvaluationComparisonRequest(InsightRequest, discriminator="EvaluationCompa
 
     type: Literal[InsightType.EVALUATION_COMPARISON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of request. Required. Evaluation Comparison."""
-    eval_id: str = rest_field(name="evalId", visibility=["read", "create", "update", "delete", "query"])
+    eval_id: str = rest_field(
+        name="evalId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier for the evaluation. Required."""
-    baseline_run_id: str = rest_field(name="baselineRunId", visibility=["read", "create", "update", "delete", "query"])
+    baseline_run_id: str = rest_field(
+        name="baselineRunId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The baseline run ID for comparison. Required."""
     treatment_run_ids: List[str] = rest_field(
-        name="treatmentRunIds", visibility=["read", "create", "update", "delete", "query"]
+        name="treatmentRunIds",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of treatment run IDs for comparison. Required."""
 
@@ -2958,9 +3215,13 @@ class EvaluationResult(_Model):
     )
     """Type of Evaluation result. Known values are: \"Benchmark\", \"Evaluation\", \"Redteam\", and
      \"Simulation\"."""
-    metrics: Optional[Dict[str, float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metrics: Optional[Dict[str, float]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Aggregated metrics."""
-    blob_uri: Optional[str] = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
+    blob_uri: Optional[str] = rest_field(
+        name="blobUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Blob URI."""
     id: Optional[str] = rest_field(visibility=["read"])
     """Asset ID, a unique identifier for the asset."""
@@ -3014,12 +3275,17 @@ class InsightSample(_Model):
     __mapping__: Dict[str, _Model] = {}
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier for the analysis sample. Required."""
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Sample type. Required. \"EvaluationResultSample\""""
-    features: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    features: Dict[str, Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Features to help with additional filtering of data in UX. Required."""
     correlation_info: Dict[str, Any] = rest_field(
-        name="correlationInfo", visibility=["read", "create", "update", "delete", "query"]
+        name="correlationInfo",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Info about the correlation for the analysis sample. Required."""
 
@@ -3062,7 +3328,8 @@ class EvaluationResultSample(InsightSample, discriminator="EvaluationResultSampl
     type: Literal[SampleType.EVALUATION_RESULT_SAMPLE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Evaluation Result Sample Type. Required. A sample from the evaluation result."""
     evaluation_result: "_models.EvalResult" = rest_field(
-        name="evaluationResult", visibility=["read", "create", "update", "delete", "query"]
+        name="evaluationResult",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Evaluation result for the analysis sample. Required."""
 
@@ -3115,9 +3382,13 @@ class EvaluationRule(_Model):
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Display Name for the evaluation rule."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description for the evaluation rule."""
-    action: "_models.EvaluationRuleAction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    action: "_models.EvaluationRuleAction" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Definition of the evaluation rule action. Required."""
     filter: Optional["_models.EvaluationRuleFilter"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3128,7 +3399,9 @@ class EvaluationRule(_Model):
     )
     """Event type that the evaluation rule applies to. Required. Known values are:
      \"response.completed\" and \"manual\"."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    enabled: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether the evaluation rule is enabled. Default is true. Required."""
     system_data: Dict[str, str] = rest_field(name="systemData", visibility=["read"])
     """System metadata for the evaluation rule. Required."""
@@ -3142,7 +3415,9 @@ class EvaluationRule(_Model):
         enabled: bool,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        filter: Optional["_models.EvaluationRuleFilter"] = None,  # pylint: disable=redefined-builtin
+        filter: Optional[
+            "_models.EvaluationRuleFilter"
+        ] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -3163,7 +3438,9 @@ class EvaluationRuleFilter(_Model):
     :vartype agent_name: str
     """
 
-    agent_name: str = rest_field(name="agentName", visibility=["read", "create", "update", "delete", "query"])
+    agent_name: str = rest_field(
+        name="agentName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Filter by agent name. Required."""
 
     @overload
@@ -3184,7 +3461,9 @@ class EvaluationRuleFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationRunClusterInsightResult(InsightResult, discriminator="EvaluationRunClusterInsight"):
+class EvaluationRunClusterInsightResult(
+    InsightResult, discriminator="EvaluationRunClusterInsight"
+):
     """Insights from the evaluation run cluster analysis.
 
     :ivar type: The type of insights result. Required. Insights on an Evaluation run result.
@@ -3196,7 +3475,8 @@ class EvaluationRunClusterInsightResult(InsightResult, discriminator="Evaluation
     type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of insights result. Required. Insights on an Evaluation run result."""
     cluster_insight: "_models.ClusterInsightResult" = rest_field(
-        name="clusterInsight", visibility=["read", "create", "update", "delete", "query"]
+        name="clusterInsight",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Required."""
 
@@ -3215,10 +3495,14 @@ class EvaluationRunClusterInsightResult(InsightResult, discriminator="Evaluation
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=InsightType.EVALUATION_RUN_CLUSTER_INSIGHT, **kwargs)
+        super().__init__(
+            *args, type=InsightType.EVALUATION_RUN_CLUSTER_INSIGHT, **kwargs
+        )
 
 
-class EvaluationRunClusterInsightsRequest(InsightRequest, discriminator="EvaluationRunClusterInsight"):
+class EvaluationRunClusterInsightsRequest(
+    InsightRequest, discriminator="EvaluationRunClusterInsight"
+):
     """Insights on set of Evaluation Results.
 
     :ivar type: The type of insights request. Required. Insights on an Evaluation run result.
@@ -3233,12 +3517,17 @@ class EvaluationRunClusterInsightsRequest(InsightRequest, discriminator="Evaluat
 
     type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of insights request. Required. Insights on an Evaluation run result."""
-    eval_id: str = rest_field(name="evalId", visibility=["read", "create", "update", "delete", "query"])
+    eval_id: str = rest_field(
+        name="evalId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Evaluation Id for the insights. Required."""
-    run_ids: List[str] = rest_field(name="runIds", visibility=["read", "create", "update", "delete", "query"])
+    run_ids: List[str] = rest_field(
+        name="runIds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of evaluation run IDs for the insights. Required."""
     model_configuration: Optional["_models.InsightModelConfiguration"] = rest_field(
-        name="modelConfiguration", visibility=["read", "create", "update", "delete", "query"]
+        name="modelConfiguration",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Configuration of the model used in the insight generation."""
 
@@ -3259,7 +3548,9 @@ class EvaluationRunClusterInsightsRequest(InsightRequest, discriminator="Evaluat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=InsightType.EVALUATION_RUN_CLUSTER_INSIGHT, **kwargs)
+        super().__init__(
+            *args, type=InsightType.EVALUATION_RUN_CLUSTER_INSIGHT, **kwargs
+        )
 
 
 class ScheduleTask(_Model):
@@ -3275,9 +3566,13 @@ class ScheduleTask(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the task. Required. Known values are: \"Evaluation\" and \"Insight\"."""
-    configuration: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    configuration: Dict[str, str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Configuration for the task. Required."""
 
     @overload
@@ -3314,9 +3609,13 @@ class EvaluationScheduleTask(ScheduleTask, discriminator="Evaluation"):
 
     type: Literal[ScheduleTaskType.EVALUATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Evaluation task."""
-    eval_id: str = rest_field(name="evalId", visibility=["read", "create", "update", "delete", "query"])
+    eval_id: str = rest_field(
+        name="evalId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier of the evaluation group. Required."""
-    eval_run: Any = rest_field(name="evalRun", visibility=["read", "create", "update", "delete", "query"])
+    eval_run: Any = rest_field(
+        name="evalRun", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The evaluation run payload. Required."""
 
     @overload
@@ -3351,7 +3650,9 @@ class EvaluationTarget(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Discriminator that defines the type of the evaluation target. Required.
      \"modelResponseGeneration\""""
 
@@ -3409,10 +3710,13 @@ class EvaluationTaxonomy(_Model):
     )
     """Input configuration for the evaluation taxonomy. Required."""
     taxonomy_categories: List["_models.TaxonomyCategory"] = rest_field(
-        name="taxonomyCategories", visibility=["read", "create", "update", "delete", "query"]
+        name="taxonomyCategories",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of taxonomy categories. Required."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional properties for the evaluation taxonomy."""
 
     @overload
@@ -3472,32 +3776,48 @@ class EvaluationUpload(_Model):
 
     id: str = rest_field(visibility=["read"])
     """Identifier of the evaluation. Required."""
-    data: Optional["_models.InputData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: Optional["_models.InputData"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Data for evaluation."""
-    target: Optional["_models.EvaluationTarget"] = rest_field(visibility=["read", "create"])
+    target: Optional["_models.EvaluationTarget"] = rest_field(
+        visibility=["read", "create"]
+    )
     """Evaluation target specifying the model config and parameters."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
      need to be unique."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    system_data: Optional["_models.SystemData"] = rest_field(
+        name="systemData", visibility=["read"]
+    )
     """Metadata containing createdBy and modifiedBy information."""
-    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the evaluation. For upload: Failed or Completed."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
     evaluators: Optional[Dict[str, "_models.EvaluatorConfiguration"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Evaluators to be used for the evaluation."""
-    outputs: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    outputs: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Outputs of the evaluation as a dictionary of IDs. Example: { 'evaluationResultId':
      'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}'}."""
 
@@ -3569,7 +3889,9 @@ class EvaluatorConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorMessage(EvalJsonlFileContentItem, discriminator="azure_ai_evaluator_messages"):
+class EvaluatorMessage(
+    EvalJsonlFileContentItem, discriminator="azure_ai_evaluator_messages"
+):
     """Query and response excepted input messsage defintion.
 
     :ivar type: The object type, which is always query_response_inline_message. Required. Default
@@ -3589,14 +3911,22 @@ class EvaluatorMessage(EvalJsonlFileContentItem, discriminator="azure_ai_evaluat
     type: Literal["azure_ai_evaluator_messages"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always query_response_inline_message. Required. Default value is
      \"azure_ai_evaluator_messages\"."""
-    query: List["_models.Message"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    query: List["_models.Message"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The input query string provided by the user or system. Can be image url. Required."""
-    response: Optional[List["_models.Message"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    response: Optional[List["_models.Message"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The generated response corresponding to the input query. Can be image url."""
-    tools: Optional[List[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: Optional[List[Any]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Optional list of tools or resources utilized during the evaluation or generation of the
      response."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional properties for the query response inline message."""
 
     @overload
@@ -3640,16 +3970,22 @@ class EvaluatorMetric(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of the metric. Known values are: \"ordinal\", \"continuous\", and \"boolean\"."""
-    desirable_direction: Optional[Union[str, "_models.EvaluatorMetricDirection"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    desirable_direction: Optional[Union[str, "_models.EvaluatorMetricDirection"]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
     )
     """It indicates whether a higher value is better or a lower value is better for this metric. Known
      values are: \"increase\", \"decrease\", and \"neutral\"."""
-    min_value: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    min_value: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Minimum value for the metric."""
-    max_value: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    max_value: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Maximum value for the metric. If not specified, it is assumed to be unbounded."""
-    is_primary: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    is_primary: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates if this metric is primary when there are multiple metrics."""
 
     @overload
@@ -3657,7 +3993,9 @@ class EvaluatorMetric(_Model):
         self,
         *,
         type: Optional[Union[str, "_models.EvaluatorMetricType"]] = None,
-        desirable_direction: Optional[Union[str, "_models.EvaluatorMetricDirection"]] = None,
+        desirable_direction: Optional[
+            Union[str, "_models.EvaluatorMetricDirection"]
+        ] = None,
         min_value: Optional[float] = None,
         max_value: Optional[float] = None,
         is_primary: Optional[bool] = None,
@@ -3707,10 +4045,14 @@ class EvaluatorVersion(_Model):
     :vartype tags: dict[str, str]
     """
 
-    display_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    display_name: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Display Name for evaluator. It helps to find the evaluator easily in AI Foundry. It does not
      need to be unique."""
-    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Metadata about the evaluator."""
     evaluator_type: Union[str, "_models.EvaluatorType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3720,7 +4062,9 @@ class EvaluatorVersion(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The categories of the evaluator. Required."""
-    definition: "_models.EvaluatorDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    definition: "_models.EvaluatorDefinition" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Definition of the evaluator. Required."""
     created_by: str = rest_field(visibility=["read"])
     """Creator of the evaluator. Required."""
@@ -3782,15 +4126,21 @@ class FieldMapping(_Model):
 
     content_fields: List[str] = rest_field(name="contentFields", visibility=["create"])
     """List of fields with text content. Required."""
-    filepath_field: Optional[str] = rest_field(name="filepathField", visibility=["create"])
+    filepath_field: Optional[str] = rest_field(
+        name="filepathField", visibility=["create"]
+    )
     """Path of file to be used as a source of text content."""
     title_field: Optional[str] = rest_field(name="titleField", visibility=["create"])
     """Field containing the title of the document."""
     url_field: Optional[str] = rest_field(name="urlField", visibility=["create"])
     """Field containing the url of the document."""
-    vector_fields: Optional[List[str]] = rest_field(name="vectorFields", visibility=["create"])
+    vector_fields: Optional[List[str]] = rest_field(
+        name="vectorFields", visibility=["create"]
+    )
     """List of fields with vector content."""
-    metadata_fields: Optional[List[str]] = rest_field(name="metadataFields", visibility=["create"])
+    metadata_fields: Optional[List[str]] = rest_field(
+        name="metadataFields", visibility=["create"]
+    )
     """List of fields with metadata content."""
 
     @overload
@@ -3955,7 +4305,9 @@ class HumanEvaluationRuleAction(EvaluationRuleAction, discriminator="humanEvalua
 
     type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Human evaluation."""
-    template_id: str = rest_field(name="templateId", visibility=["read", "create", "update", "delete", "query"])
+    template_id: str = rest_field(
+        name="templateId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Human evaluation template Id. Required."""
 
     @overload
@@ -3973,7 +4325,9 @@ class HumanEvaluationRuleAction(EvaluationRuleAction, discriminator="humanEvalua
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=EvaluationRuleActionType.HUMAN_EVALUATION, **kwargs)
+        super().__init__(
+            *args, type=EvaluationRuleActionType.HUMAN_EVALUATION, **kwargs
+        )
 
 
 class ImageSource(_Model):
@@ -3983,7 +4337,9 @@ class ImageSource(_Model):
     :vartype url: str
     """
 
-    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    url: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A publicly accessible image URL."""
 
     @overload
@@ -4015,7 +4371,9 @@ class ImageUrlContent(AIContent, discriminator="image_url"):
 
     type: Literal["image_url"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The content of the image URL message. Required. Default value is \"image_url\"."""
-    image_url: "_models.ImageSource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    image_url: "_models.ImageSource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The URL of the image. Required."""
 
     @overload
@@ -4047,7 +4405,9 @@ class InputData(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the data. Required. Default value is None."""
 
     @overload
@@ -4125,9 +4485,13 @@ class Insight(_Model):
     state: Union[str, "_models.OperationState"] = rest_field(visibility=["read"])
     """The current state of the insights. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    display_name: str = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User friendly display name for the insight. Required."""
-    request: "_models.InsightRequest" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    request: "_models.InsightRequest" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Request for the insights analysis. Required."""
     result: Optional["_models.InsightResult"] = rest_field(visibility=["read"])
     """The result of the insights report."""
@@ -4176,9 +4540,13 @@ class InsightCluster(_Model):
     """The id of the analysis cluster. Required."""
     label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Label for the cluster. Required."""
-    suggestion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    suggestion: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Suggestion for the cluster. Required."""
-    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the analysis cluster. Required."""
     weight: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The weight of the analysis cluster. This indicate number of samples in the cluster. Required."""
@@ -4225,7 +4593,8 @@ class InsightModelConfiguration(_Model):
     """
 
     model_deployment_name: str = rest_field(
-        name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+        name="modelDeploymentName",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The model deployment to be evaluated. Accepts either the deployment name alone or with the
      connection name as '{connectionName}/<modelDeploymentName>'. Required."""
@@ -4261,7 +4630,9 @@ class InsightScheduleTask(ScheduleTask, discriminator="Insight"):
 
     type: Literal[ScheduleTaskType.INSIGHT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Insight task."""
-    insight: "_models.Insight" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    insight: "_models.Insight" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The insight payload. Required."""
 
     @overload
@@ -4293,11 +4664,15 @@ class InsightsMetadata(_Model):
     """
 
     created_at: datetime.datetime = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="createdAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """The timestamp when the insights were created. Required."""
     completed_at: Optional[datetime.datetime] = rest_field(
-        name="completedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="completedAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """The timestamp when the insights were completed."""
 
@@ -4335,19 +4710,25 @@ class InsightSummary(_Model):
     :vartype usage: ~azure.ai.projects.models.ClusterTokenUsage
     """
 
-    sample_count: int = rest_field(name="sampleCount", visibility=["read", "create", "update", "delete", "query"])
+    sample_count: int = rest_field(
+        name="sampleCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total number of samples analyzed. Required."""
     unique_subcluster_count: int = rest_field(
-        name="uniqueSubclusterCount", visibility=["read", "create", "update", "delete", "query"]
+        name="uniqueSubclusterCount",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Total number of unique subcluster labels. Required."""
     unique_cluster_count: int = rest_field(
-        name="uniqueClusterCount", visibility=["read", "create", "update", "delete", "query"]
+        name="uniqueClusterCount",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Total number of unique clusters. Required."""
     method: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Method used for clustering. Required."""
-    usage: "_models.ClusterTokenUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usage: "_models.ClusterTokenUsage" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Token usage while performing clustering analysis. Required."""
 
     @overload
@@ -4381,10 +4762,13 @@ class LongRunningResponse(_Model):
     :vartype operation_result: any
     """
 
-    location: str = rest_field(name="Location", visibility=["read", "create", "update", "delete", "query"])
+    location: str = rest_field(
+        name="Location", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The location. Required."""
     operation_result: Any = rest_field(
-        name="OperationResult", visibility=["read", "create", "update", "delete", "query"]
+        name="OperationResult",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The OperationResult. Required."""
 
@@ -4464,7 +4848,9 @@ class Metadata(_Model):
         name="TargetHarms", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of target harms. Required."""
-    language: str = rest_field(name="Language", visibility=["read", "create", "update", "delete", "query"])
+    language: str = rest_field(
+        name="Language", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The language. Required."""
 
     @overload
@@ -4519,7 +4905,9 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
     """Capabilities of deployed model. Required."""
     sku: "_models.Sku" = rest_field(visibility=["read"])
     """Sku of the model deployment. Required."""
-    connection_name: Optional[str] = rest_field(name="connectionName", visibility=["read"])
+    connection_name: Optional[str] = rest_field(
+        name="connectionName", visibility=["read"]
+    )
     """Name of the connection the deployment comes from."""
 
     @overload
@@ -4538,7 +4926,9 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
         super().__init__(*args, type=DeploymentType.MODEL_DEPLOYMENT, **kwargs)
 
 
-class ModelResponseGenerationTarget(EvaluationTarget, discriminator="modelResponseGeneration"):
+class ModelResponseGenerationTarget(
+    EvaluationTarget, discriminator="modelResponseGeneration"
+):
     """Evaluation target for generating responses using a given model and dataset.
 
     :ivar type: The type of evaluation target. Always 'modelResponseGeneration'. Required.
@@ -4562,7 +4952,8 @@ class ModelResponseGenerationTarget(EvaluationTarget, discriminator="modelRespon
     )
     """A list of messages comprising the conversation so far. Required."""
     model_deployment_name: str = rest_field(
-        name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+        name="modelDeploymentName",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The model deployment to be evaluated. Accepts either the deployment name alone or with the
      connection name as '{connectionName}/modelDeploymentName'. Required."""
@@ -4588,7 +4979,9 @@ class ModelResponseGenerationTarget(EvaluationTarget, discriminator="modelRespon
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=EvaluationTargetType.MODEL_RESPONSE_GENERATION, **kwargs)
+        super().__init__(
+            *args, type=EvaluationTargetType.MODEL_RESPONSE_GENERATION, **kwargs
+        )
 
 
 class MonthlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Monthly"):
@@ -4664,9 +5057,13 @@ class OneTimeTrigger(Trigger, discriminator="OneTime"):
 
     type: Literal[TriggerType.ONE_TIME] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. One-time trigger."""
-    trigger_at: str = rest_field(name="triggerAt", visibility=["read", "create", "update", "delete", "query"])
+    trigger_at: str = rest_field(
+        name="triggerAt", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Date and time for the one-time trigger in ISO 8601 format. Required."""
-    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
+    time_zone: Optional[str] = rest_field(
+        name="timeZone", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Time zone for the one-time trigger."""
 
     @overload
@@ -4702,15 +5099,20 @@ class PendingUploadRequest(_Model):
     """
 
     pending_upload_id: Optional[str] = rest_field(
-        name="pendingUploadId", visibility=["read", "create", "update", "delete", "query"]
+        name="pendingUploadId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """If PendingUploadId is not provided, a random GUID will be used."""
     connection_name: Optional[str] = rest_field(
-        name="connectionName", visibility=["read", "create", "update", "delete", "query"]
+        name="connectionName",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Azure Storage Account connection name to use for generating temporary SAS token."""
-    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
-        name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
+    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = (
+        rest_field(
+            name="pendingUploadType",
+            visibility=["read", "create", "update", "delete", "query"],
+        )
     )
     """BlobReference is the only supported type. Required. Temporary Blob Reference is the only
      supported type."""
@@ -4753,7 +5155,8 @@ class PendingUploadResponse(_Model):
     """
 
     blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
-        name="blobReferenceForConsumption", visibility=["read", "create", "update", "delete", "query"]
+        name="blobReferenceForConsumption",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Container-level read, write, list SAS. Required."""
     blob_reference: "_models.BlobReference" = rest_field(
@@ -4761,13 +5164,19 @@ class PendingUploadResponse(_Model):
     )
     """Container-level read, write, list SAS. Required."""
     pending_upload_id: str = rest_field(
-        name="pendingUploadId", visibility=["read", "create", "update", "delete", "query"]
+        name="pendingUploadId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """ID for this upload request. Required."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    version: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Version of asset to be created if user did not specify version when initially creating upload."""
-    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
-        name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
+    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = (
+        rest_field(
+            name="pendingUploadType",
+            visibility=["read", "create", "update", "delete", "query"],
+        )
     )
     """BlobReference is the only supported type. Required. Temporary Blob Reference is the only
      supported type."""
@@ -4813,7 +5222,9 @@ class PromptBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="prompt"
 
     type: Literal[EvaluatorDefinitionType.PROMPT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Prompt-based definition"""
-    prompt_text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prompt_text: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The prompt text used for evaluation. Required."""
 
     @overload
@@ -4852,7 +5263,9 @@ class PromptUsageDetails(_Model):
     """The total number of tokens cached. Required."""
 
 
-class QueryResponseInlineMessage(EvalJsonlFileContentItem, discriminator="azure_ai_query_response_inline_message"):
+class QueryResponseInlineMessage(
+    EvalJsonlFileContentItem, discriminator="azure_ai_query_response_inline_message"
+):
     """Query and response excepted input messsage defintion.
 
     :ivar type: The object type, which is always query_response_inline_message. Required. Default
@@ -4877,15 +5290,23 @@ class QueryResponseInlineMessage(EvalJsonlFileContentItem, discriminator="azure_
      \"azure_ai_query_response_inline_message\"."""
     query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The input query string provided by the user or system. Can be image url. Required."""
-    response: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    response: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The generated response corresponding to the input query. Can be image url."""
-    context: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    context: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Optional contextual information that may provide additional details or background relevant to
      the query-response pair."""
-    tools: Optional[List[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: Optional[List[Any]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Optional list of tools or resources utilized during the evaluation or generation of the
      response."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional properties for the query response inline message."""
 
     @overload
@@ -4929,15 +5350,25 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
 
     type: Literal[TriggerType.RECURRENCE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of the trigger. Required. Recurrence based trigger."""
-    start_time: Optional[str] = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    start_time: Optional[str] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Start time for the recurrence schedule in ISO 8601 format."""
-    end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
+    end_time: Optional[str] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End time for the recurrence schedule in ISO 8601 format."""
-    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
+    time_zone: Optional[str] = rest_field(
+        name="timeZone", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Time zone for the recurrence schedule."""
-    interval: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    interval: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Interval for the recurrence schedule. Required."""
-    schedule: "_models.RecurrenceSchedule" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    schedule: "_models.RecurrenceSchedule" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Recurrence schedule for the recurrence trigger. Required."""
 
     @overload
@@ -5007,28 +5438,38 @@ class RedTeam(_Model):
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Display name of the red-team scan."""
-    num_turns: int = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
+    num_turns: int = rest_field(
+        name="numTurns", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of simulation rounds. Required."""
     attack_strategies: List[Union[str, "_models.AttackStrategy"]] = rest_field(
-        name="attackStrategies", visibility=["read", "create", "update", "delete", "query"]
+        name="attackStrategies",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of attack strategies or nested lists of attack strategies. Required."""
     simulation_only: bool = rest_field(
-        name="simulationOnly", visibility=["read", "create", "update", "delete", "query"]
+        name="simulationOnly",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
      conversation not evaluation result. Required."""
     risk_categories: List[Union[str, "_models.RiskCategory"]] = rest_field(
-        name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
+        name="riskCategories",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of risk categories to generate attack objectives for. Required."""
     application_scenario: Optional[str] = rest_field(
-        name="applicationScenario", visibility=["read", "create", "update", "delete", "query"]
+        name="applicationScenario",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Application scenario for the red team operation, to generate scenario specific attacks."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Red team's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Red team's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
     status: Optional[str] = rest_field(visibility=["read"])
@@ -5039,9 +5480,13 @@ class RedTeam(_Model):
      'logId':
      'azureai://accounts/{AccountName}/projects/{myproject}/datasets/{dataset-name}/versions/{dataset-version}'
      }. Required."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    system_data: Optional["_models.SystemData"] = rest_field(
+        name="systemData", visibility=["read"]
+    )
     """Metadata containing createdBy and modifiedBy information."""
-    target: "_models.TargetConfig" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    target: "_models.TargetConfig" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Target configuration for the red-team run. Required."""
 
     @overload
@@ -5113,39 +5558,59 @@ class RedTeamUpload(_Model):
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Display name of the red-team scan."""
-    num_turns: Optional[int] = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
+    num_turns: Optional[int] = rest_field(
+        name="numTurns", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of simulation rounds."""
-    attack_strategies: Optional[List[Union[str, "_models.AttackStrategy"]]] = rest_field(
-        name="attackStrategies", visibility=["read", "create", "update", "delete", "query"]
+    attack_strategies: Optional[List[Union[str, "_models.AttackStrategy"]]] = (
+        rest_field(
+            name="attackStrategies",
+            visibility=["read", "create", "update", "delete", "query"],
+        )
     )
     """List of attack strategies or nested lists of attack strategies."""
     simulation_only: Optional[bool] = rest_field(
-        name="simulationOnly", visibility=["read", "create", "update", "delete", "query"]
+        name="simulationOnly",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
      conversation not evaluation result."""
     risk_categories: Optional[List[Union[str, "_models.RiskCategory"]]] = rest_field(
-        name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
+        name="riskCategories",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of risk categories to generate attack objectives for."""
     application_scenario: Optional[str] = rest_field(
-        name="applicationScenario", visibility=["read", "create", "update", "delete", "query"]
+        name="applicationScenario",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Application scenario for the red team operation, to generate scenario specific attacks."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Red team's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Red team's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
-    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the red-team. It is set by service and is read-only."""
-    outputs: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    outputs: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Read-only result outputs. Example: { 'evaluationResultId':
      'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}'
      }."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    system_data: Optional["_models.SystemData"] = rest_field(
+        name="systemData", visibility=["read"]
+    )
     """Metadata containing createdBy and modifiedBy information."""
-    target: Optional["_models.TargetConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    target: Optional["_models.TargetConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Target configuration for the red-team run."""
 
     @overload
@@ -5259,22 +5724,34 @@ class Schedule(_Model):
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Name of the schedule."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the schedule."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    enabled: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Enabled status of the schedule. Required."""
-    provisioning_status: Optional[Union[str, "_models.ScheduleProvisioningStatus"]] = rest_field(
-        name="provisioningStatus", visibility=["read"]
+    provisioning_status: Optional[Union[str, "_models.ScheduleProvisioningStatus"]] = (
+        rest_field(name="provisioningStatus", visibility=["read"])
     )
     """Provisioning status of the schedule. Known values are: \"Creating\", \"Updating\",
      \"Deleting\", \"Succeeded\", and \"Failed\"."""
-    trigger: "_models.Trigger" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    trigger: "_models.Trigger" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Trigger for the schedule. Required."""
-    task: "_models.ScheduleTask" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    task: "_models.ScheduleTask" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Task for the schedule. Required."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Schedule's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Schedule's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
     system_data: Dict[str, str] = rest_field(name="systemData", visibility=["read"])
@@ -5323,7 +5800,9 @@ class ScheduleRun(_Model):
 
     id: str = rest_field(visibility=["read"])
     """Identifier of the schedule run. Required."""
-    schedule_id: str = rest_field(name="scheduleId", visibility=["read", "create", "update", "delete", "query"])
+    schedule_id: str = rest_field(
+        name="scheduleId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier of the schedule. Required."""
     success: bool = rest_field(visibility=["read"])
     """Trigger success status of the schedule run. Required."""
@@ -5394,36 +5873,46 @@ class SimulationDTO(_Model):
     )
     """Parameters."""
     template_parameters: Optional[Dict[str, str]] = rest_field(
-        name="TemplateParameters", visibility=["read", "create", "update", "delete", "query"]
+        name="TemplateParameters",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Template parameters."""
     customization_parameters: Optional["_models.CustomizationParameters"] = rest_field(
-        name="CustomizationParameters", visibility=["read", "create", "update", "delete", "query"]
+        name="CustomizationParameters",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Customization parameters."""
-    json: Optional[str] = rest_field(name="Json", visibility=["read", "create", "update", "delete", "query"])
+    json: Optional[str] = rest_field(
+        name="Json", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Json."""
-    url: Optional[str] = rest_field(name="Url", visibility=["read", "create", "update", "delete", "query"])
+    url: Optional[str] = rest_field(
+        name="Url", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Url."""
     template_key: Optional[str] = rest_field(
         name="TemplateKey", visibility=["read", "create", "update", "delete", "query"]
     )
     """Template key."""
     simulation_type: Optional[Union[str, "_models.SimulationType"]] = rest_field(
-        name="SimulationType", visibility=["read", "create", "update", "delete", "query"]
+        name="SimulationType",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Type of Simulation. Known values are: \"Default\", \"CustomPersona\", and
      \"HarmTurnGenerator\"."""
     is_microsoft_tenant: Optional[bool] = rest_field(
-        name="IsMicrosoftTenant", visibility=["read", "create", "update", "delete", "query"]
+        name="IsMicrosoftTenant",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """'True' if Microsoft internal tenant and 'False' otherwise."""
     subscription_id: Optional[str] = rest_field(
-        name="SubscriptionId", visibility=["read", "create", "update", "delete", "query"]
+        name="SubscriptionId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Azure subscription id."""
     resource_group_name: Optional[str] = rest_field(
-        name="ResourceGroupName", visibility=["read", "create", "update", "delete", "query"]
+        name="ResourceGroupName",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Resource group name."""
     workspace_name: Optional[str] = rest_field(
@@ -5475,7 +5964,9 @@ class Sku(_Model):
     :vartype tier: str
     """
 
-    capacity: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    capacity: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Sku capacity. Required."""
     family: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sku family. Required."""
@@ -5530,11 +6021,14 @@ class SyncEvalInput(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Evaluators to be used for the evaluation. Required."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
     custom_inference: Optional["_models.CustomInference"] = rest_field(
-        name="customInference", visibility=["read", "create", "update", "delete", "query"]
+        name="customInference",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Custom inference configuration."""
 
@@ -5572,11 +6066,15 @@ class SystemData(_Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read"], format="rfc3339"
+    )
     """The timestamp the resource was created at."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The identity that created the resource."""
-    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
+    created_by_type: Optional[str] = rest_field(
+        name="createdByType", visibility=["read"]
+    )
     """The identity type that created the resource."""
     last_modified_at: Optional[datetime.datetime] = rest_field(
         name="lastModifiedAt", visibility=["read"], format="rfc3339"
@@ -5629,7 +6127,9 @@ class TargetHarm(_Model):
     :vartype risk_sub_type: str
     """
 
-    risk_type: Optional[str] = rest_field(name="RiskType", visibility=["read", "create", "update", "delete", "query"])
+    risk_type: Optional[str] = rest_field(
+        name="RiskType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The risk type."""
     risk_sub_type: Optional[str] = rest_field(
         name="RiskSubType", visibility=["read", "create", "update", "delete", "query"]
@@ -5674,7 +6174,9 @@ class TaxonomyCategory(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the taxonomy category. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the taxonomy category."""
     risk_category: Union[str, "_models.RiskCategory"] = rest_field(
         name="riskCategory", visibility=["read", "create", "update", "delete", "query"]
@@ -5686,7 +6188,9 @@ class TaxonomyCategory(_Model):
         name="subCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of taxonomy sub categories. Required."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional properties for the taxonomy category."""
 
     @overload
@@ -5726,11 +6230,17 @@ class TaxonomySubCategory(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the taxonomy sub-category. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the taxonomy sub-category."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    enabled: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of taxonomy items under this sub-category. Required."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[Dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional properties for the taxonomy sub-category."""
 
     @overload
@@ -5803,9 +6313,13 @@ class ToolCallContent(AIContent, discriminator="tool_call"):
     """The content of the tool call. Required. Default value is \"tool_call\"."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the tool being called. Required."""
-    tool_call_id: str = rest_field(name="toolCallId", visibility=["read", "create", "update", "delete", "query"])
+    tool_call_id: str = rest_field(
+        name="toolCallId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique identifier of the tool call. Required."""
-    arguments: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    arguments: Dict[str, Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The parameters for the tool call in JSON format. Required."""
 
     @overload
@@ -5839,7 +6353,9 @@ class ToolDescription(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the tool. Required."""
-    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the tool. Required."""
 
     @overload
@@ -5872,7 +6388,9 @@ class ToolResultContent(AIContent, discriminator="tool_result"):
 
     type: Literal["tool_result"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The content of the tool result. Required. Default value is \"tool_result\"."""
-    results: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    results: Dict[str, Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the tool call in JSON format. Required."""
 
     @overload

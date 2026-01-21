@@ -68,7 +68,9 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
-    _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
+    _TOOL_DEFINITIONS_MISSING_MESSAGE = (
+        "Tool definitions for all tool calls must be provided."
+    )
     _INVALID_SCORE_MESSAGE = "Tool selection score must be 0 or 1."
 
     id = "azureai://built-in/evaluators/tool_selection"
@@ -178,7 +180,9 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if eval_input.get("query") is None:
             raise EvaluationException(
                 message=("Query is a required input to the Tool Selection evaluator."),
-                internal_message=("Query is a required input to the Tool Selection evaluator."),
+                internal_message=(
+                    "Query is a required input to the Tool Selection evaluator."
+                ),
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
@@ -186,11 +190,16 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Format conversation history for cleaner evaluation
         eval_input["query"] = reformat_conversation_history(
-            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+            eval_input["query"],
+            logger,
+            include_system_messages=True,
+            include_tool_messages=True,
         )
 
         # Call the LLM to evaluate
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
         llm_output = prompty_output_dict.get("llm_output", {})
 
         if isinstance(llm_output, dict):
@@ -211,7 +220,9 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Add tool selection accuracy post-processing
             details = llm_output.get("details", {})
             if details:
-                tool_selection_accuracy = self._calculate_tool_selection_accuracy(details)
+                tool_selection_accuracy = self._calculate_tool_selection_accuracy(
+                    details
+                )
                 details["tool_selection_accuracy"] = tool_selection_accuracy
 
             response_dict = {
@@ -220,13 +231,25 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": explanation,
                 f"{self._result_key}_details": details,
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get(
+                    "input_token_count", 0
+                ),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get(
+                    "output_token_count", 0
+                ),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get(
+                    "total_token_count", 0
+                ),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get(
+                    "finish_reason", ""
+                ),
                 f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get(
+                    "sample_input", ""
+                ),
+                f"{self._result_key}_sample_output": prompty_output_dict.get(
+                    "sample_output", ""
+                ),
             }
             return response_dict
 

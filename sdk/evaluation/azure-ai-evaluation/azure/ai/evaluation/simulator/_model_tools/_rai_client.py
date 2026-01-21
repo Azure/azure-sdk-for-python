@@ -7,8 +7,17 @@ from urllib.parse import urljoin, urlparse
 import base64
 import json
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
+from azure.ai.evaluation._http_utils import (
+    AsyncHttpPipeline,
+    get_async_http_client,
+    get_http_client,
+)
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
@@ -19,7 +28,9 @@ api_url = None
 if "RAI_SVC_URL" in os.environ:
     api_url = os.environ["RAI_SVC_URL"]
     api_url = api_url.rstrip("/")
-    print(f"Found RAI_SVC_URL in environment variable, using {api_url} for the service endpoint.")
+    print(
+        f"Found RAI_SVC_URL in environment variable, using {api_url} for the service endpoint."
+    )
 
 
 class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -58,16 +69,29 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         self.api_url = "/".join(segments)
         # add a "/" at the end of the url
         self.api_url = self.api_url.rstrip("/") + "/"
-        self.parameter_json_endpoint = urljoin(self.api_url, "simulation/template/parameters")
-        self.parameter_image_endpoint = urljoin(self.api_url, "simulation/template/parameters/image")
+        self.parameter_json_endpoint = urljoin(
+            self.api_url, "simulation/template/parameters"
+        )
+        self.parameter_image_endpoint = urljoin(
+            self.api_url, "simulation/template/parameters/image"
+        )
         self.jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak")
-        self.simulation_submit_endpoint = urljoin(self.api_url, "simulation/chat/completions/submit")
-        self.xpia_jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak/xpia")
-        self.attack_objectives_endpoint = urljoin(self.api_url, "simulation/attackobjectives")
+        self.simulation_submit_endpoint = urljoin(
+            self.api_url, "simulation/chat/completions/submit"
+        )
+        self.xpia_jailbreaks_json_endpoint = urljoin(
+            self.api_url, "simulation/jailbreak/xpia"
+        )
+        self.attack_objectives_endpoint = urljoin(
+            self.api_url, "simulation/attackobjectives"
+        )
 
     def _get_service_discovery_url(self):
         bearer_token = self.token_manager.get_token()
-        headers = {"Authorization": f"Bearer {bearer_token}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {bearer_token}",
+            "Content-Type": "application/json",
+        }
         http_client = get_http_client()
         response = http_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
             f"https://management.azure.com/subscriptions/{self.azure_ai_project['subscription_id']}/"
@@ -102,7 +126,9 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: ~azure.ai.evaluation._http_utils.AsyncHttpPipeline
         """
         return get_async_http_client().with_policies(
-            retry_policy=AsyncRetryPolicy(retry_total=6, retry_backoff_factor=5, retry_mode=RetryMode.Fixed)
+            retry_policy=AsyncRetryPolicy(
+                retry_total=6, retry_backoff_factor=5, retry_mode=RetryMode.Fixed
+            )
         )
 
     async def get_contentharm_parameters(self) -> Any:
@@ -120,11 +146,15 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         if self.jailbreaks_dataset is None:
             if type == "xpia":
-                self.jailbreaks_dataset = await self.get(self.xpia_jailbreaks_json_endpoint)
+                self.jailbreaks_dataset = await self.get(
+                    self.xpia_jailbreaks_json_endpoint
+                )
             elif type == "upia":
                 self.jailbreaks_dataset = await self.get(self.jailbreaks_json_endpoint)
             else:
-                msg = f"Invalid jailbreak type: {type}. Supported types: ['xpia', 'upia']"
+                msg = (
+                    f"Invalid jailbreak type: {type}. Supported types: ['xpia', 'upia']"
+                )
                 raise EvaluationException(
                     message=msg,
                     internal_message=msg,
@@ -154,7 +184,9 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         session = self._create_async_client()
 
         async with session:
-            response = await session.get(url=url, headers=headers)  # pylint: disable=unexpected-keyword-arg
+            response = await session.get(
+                url=url, headers=headers
+            )  # pylint: disable=unexpected-keyword-arg
 
         if response.status_code == 200:
             return response.json()
@@ -210,7 +242,10 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         )
 
     async def get_attack_objectives(
-        self, risk_categories: List[str], application_scenario: str = None, strategy: str = None
+        self,
+        risk_categories: List[str],
+        application_scenario: str = None,
+        strategy: str = None,
     ) -> Any:
         """Get the attack objectives based on risk categories and application scenario
 
@@ -258,7 +293,10 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             # This is temporary until the API endpoint is fully implemented
             return [
                 {
-                    "metadata": {"lang": "en", "target_harms": [{"risk-type": "violence", "risk-subtype": ""}]},
+                    "metadata": {
+                        "lang": "en",
+                        "target_harms": [{"risk-type": "violence", "risk-subtype": ""}],
+                    },
                     "messages": [{"role": "user", "content": "Risky content"}],
                     "modality": "text",
                     "source": ["source"],

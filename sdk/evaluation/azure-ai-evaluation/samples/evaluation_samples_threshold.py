@@ -38,7 +38,9 @@ class EvaluationThresholdSamples(object):
         }
 
         print(os.getcwd())
-        path = "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
+        path = (
+            "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
+        )
 
         evaluate(
             data=path,
@@ -70,7 +72,8 @@ class EvaluationThresholdSamples(object):
 
         bleu_evaluator = BleuScoreEvaluator(threshold=0.3)
         bleu_score = bleu_evaluator(
-            response="Lyon is the capital of France.", ground_truth="Paris is the capital of France."
+            response="Lyon is the capital of France.",
+            ground_truth="Paris is the capital of France.",
         )
         print(
             f"BLEU Score: {bleu_score['bleu_score']}, Result: {bleu_score['bleu_result']}, Threshold: {bleu_score['bleu_threshold']}"
@@ -88,7 +91,8 @@ class EvaluationThresholdSamples(object):
         }
         coherence_evaluator = CoherenceEvaluator(model_config=model_config, threshold=2)
         coherence_result = coherence_evaluator(
-            query="What is the capital of France?", response="Paris is the capital of France."
+            query="What is the capital of France?",
+            response="Paris is the capital of France.",
         )
         print(
             f"Coherence Score: {coherence_result['coherence']}, Result: {coherence_result['coherence_result']}, Threshold: {coherence_result['coherence_threshold']}"
@@ -107,7 +111,9 @@ class EvaluationThresholdSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        chat_eval = ContentSafetyEvaluator(azure_ai_project=azure_ai_project, credential=credential, threshold=3)
+        chat_eval = ContentSafetyEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential, threshold=3
+        )
 
         chat_eval(
             query="What is the capital of France?",
@@ -148,7 +154,9 @@ class EvaluationThresholdSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        self_harm_eval = SelfHarmEvaluator(azure_ai_project=azure_ai_project, credential=credential, threshold=4)
+        self_harm_eval = SelfHarmEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential, threshold=4
+        )
         self_harm_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -167,7 +175,9 @@ class EvaluationThresholdSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        sexual_eval = SexualEvaluator(azure_ai_project=azure_ai_project, credential=credential, threshold=1)
+        sexual_eval = SexualEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential, threshold=1
+        )
         sexual_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -186,7 +196,9 @@ class EvaluationThresholdSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        violence_eval = ViolenceEvaluator(azure_ai_project=azure_ai_project, credential=credential, threshold=1)
+        violence_eval = ViolenceEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential, threshold=1
+        )
         violence_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -197,7 +209,10 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import F1ScoreEvaluator
 
         f1_evaluator = F1ScoreEvaluator(threshold=0.6)
-        f1_evaluator(response="Lyon is the capital of France.", ground_truth="Paris is the capital of France.")
+        f1_evaluator(
+            response="Lyon is the capital of France.",
+            ground_truth="Paris is the capital of France.",
+        )
         # [END threshold_f1_score_evaluator]
 
         # [START threshold_fluency_evaluator]
@@ -218,7 +233,10 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import GleuScoreEvaluator
 
         gleu_evaluator = GleuScoreEvaluator(threshold=0.2)
-        gleu_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
+        gleu_evaluator(
+            response="Paris is the capital of France.",
+            ground_truth="France's capital is Paris.",
+        )
         # [END threshold_gleu_score_evaluator]
 
         # [START threshold_groundedness_evaluator]
@@ -231,7 +249,9 @@ class EvaluationThresholdSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        groundedness_evaluator = GroundednessEvaluator(model_config=model_config, threshold=2)
+        groundedness_evaluator = GroundednessEvaluator(
+            model_config=model_config, threshold=2
+        )
         groundedness_evaluator(
             response="Paris is the capital of France.",
             context=(
@@ -246,7 +266,10 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import MeteorScoreEvaluator
 
         meteor_evaluator = MeteorScoreEvaluator(alpha=0.8, threshold=0.3)
-        meteor_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
+        meteor_evaluator(
+            response="Paris is the capital of France.",
+            ground_truth="France's capital is Paris.",
+        )
         # [END threshold_meteor_score_evaluator]
 
         # [START threshold_qa_evaluator]
@@ -268,7 +291,12 @@ class EvaluationThresholdSamples(object):
             similarity_threshold=2,
             f1_score_threshold=0.5,
         )
-        qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
+        qa_eval(
+            query="This's the color?",
+            response="Black",
+            ground_truth="gray",
+            context="gray",
+        )
         # [END threshold_qa_evaluator]
 
         # [START threshold_relevance_evaluator]
@@ -306,13 +334,21 @@ class EvaluationThresholdSamples(object):
                     "role": "user",
                     "context": "Customer wants to know the capital of France",
                 },
-                {"content": "Paris", "role": "assistant", "context": "Paris is the capital of France"},
+                {
+                    "content": "Paris",
+                    "role": "assistant",
+                    "context": "Paris is the capital of France",
+                },
                 {
                     "content": "What is the capital of Hawaii?",
                     "role": "user",
                     "context": "Customer wants to know the capital of Hawaii",
                 },
-                {"content": "Honolulu", "role": "assistant", "context": "Honolulu is the capital of Hawaii"},
+                {
+                    "content": "Honolulu",
+                    "role": "assistant",
+                    "context": "Honolulu is the capital of Hawaii",
+                },
             ],
             "context": "Global context",
         }
@@ -323,9 +359,15 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import RougeScoreEvaluator, RougeType
 
         rouge_evaluator = RougeScoreEvaluator(
-            rouge_type=RougeType.ROUGE_4, precision_threshold=0.5, recall_threshold=0.5, f1_score_threshold=0.5
+            rouge_type=RougeType.ROUGE_4,
+            precision_threshold=0.5,
+            recall_threshold=0.5,
+            f1_score_threshold=0.5,
         )
-        rouge_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
+        rouge_evaluator(
+            response="Paris is the capital of France.",
+            ground_truth="France's capital is Paris.",
+        )
         # [END threshold_rouge_score_evaluator]
 
         # [START threshold_similarity_evaluator]
@@ -389,7 +431,8 @@ class EvaluationThresholdSamples(object):
 
         document_retrieval_evaluator = DocumentRetrievalEvaluator()
         document_retrieval_evaluator(
-            retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents
+            retrieval_ground_truth=retrieval_ground_truth,
+            retrieved_documents=retrieved_documents,
         )
         # [END document_retrieval_evaluator]
 

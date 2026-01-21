@@ -5,7 +5,9 @@ from azure.core.credentials import AzureSasCredential, TokenCredential, AccessTo
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
-@pytest.mark.usefixtures("model_config", "project_scope", "recording_injection", "recorded_test")
+@pytest.mark.usefixtures(
+    "model_config", "project_scope", "recording_injection", "recorded_test"
+)
 class TestLiteAzureManagementClient(object):
     """End to end tests for the lite Azure management client."""
 
@@ -37,7 +39,11 @@ class TestLiteAzureManagementClient(object):
     @pytest.mark.parametrize("include_credentials", [False, True])
     @pytest.mark.parametrize("config_name", ["sas", "none"])
     def test_workspace_get_default_store(
-        self, azure_cred, datastore_project_scopes, config_name: str, include_credentials: bool
+        self,
+        azure_cred,
+        datastore_project_scopes,
+        config_name: str,
+        include_credentials: bool,
     ):
         project_scope = datastore_project_scopes[config_name]
 
@@ -49,7 +55,8 @@ class TestLiteAzureManagementClient(object):
         )
 
         store = client.workspace_get_default_datastore(
-            workspace_name=project_scope["project_name"], include_credentials=include_credentials
+            workspace_name=project_scope["project_name"],
+            include_credentials=include_credentials,
         )
 
         assert store
@@ -60,8 +67,14 @@ class TestLiteAzureManagementClient(object):
         if include_credentials:
             assert (
                 (config_name == "account_key" and isinstance(store.credential, str))
-                or (config_name == "sas" and isinstance(store.credential, AzureSasCredential))
-                or (config_name == "none" and isinstance(store.credential, TokenCredential))
+                or (
+                    config_name == "sas"
+                    and isinstance(store.credential, AzureSasCredential)
+                )
+                or (
+                    config_name == "none"
+                    and isinstance(store.credential, TokenCredential)
+                )
             )
         else:
             assert store.credential == None
@@ -69,7 +82,10 @@ class TestLiteAzureManagementClient(object):
     @pytest.mark.azuretest
     @pytest.mark.parametrize("config_name", ["sas", "none", "private"])
     def test_workspace_get_info(
-        self, datastore_project_scopes: Mapping[str, Any], azure_cred: TokenCredential, config_name: str
+        self,
+        datastore_project_scopes: Mapping[str, Any],
+        azure_cred: TokenCredential,
+        config_name: str,
     ):
         project_scope = datastore_project_scopes[config_name]
 

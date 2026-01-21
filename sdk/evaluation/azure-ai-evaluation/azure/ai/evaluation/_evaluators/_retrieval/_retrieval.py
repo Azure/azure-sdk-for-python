@@ -7,7 +7,9 @@ import os
 from typing import Dict, List, Union
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+    PromptyEvaluatorBase,
+)
 from azure.ai.evaluation._model_configurations import Conversation
 
 logger = logging.getLogger(__name__)
@@ -83,7 +85,9 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: float = 3, credential=None, **kwargs):
+    def __init__(
+        self, model_config, *, threshold: float = 3, credential=None, **kwargs
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold

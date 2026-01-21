@@ -79,7 +79,9 @@ class BleuScoreEvaluator(EvaluatorBase):
 
         # NIST Smoothing
         smoothing_function = SmoothingFunction().method4
-        score = sentence_bleu([reference_tokens], hypothesis_tokens, smoothing_function=smoothing_function)
+        score = sentence_bleu(
+            [reference_tokens], hypothesis_tokens, smoothing_function=smoothing_function
+        )
         binary_result = False
         if self._higher_is_better:
             binary_result = score >= self._threshold

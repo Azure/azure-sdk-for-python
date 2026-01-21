@@ -15,7 +15,12 @@ from azure.ai.evaluation.red_team._utils.strategy_utils import (
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
-from pyrit.prompt_converter import PromptConverter, Base64Converter, FlipConverter, MorseConverter
+from pyrit.prompt_converter import (
+    PromptConverter,
+    Base64Converter,
+    FlipConverter,
+    MorseConverter,
+)
 from pyrit.prompt_target import PromptChatTarget, OpenAIChatTarget
 
 initialize_pyrit(memory_db_type=IN_MEMORY)
@@ -56,11 +61,15 @@ class TestConverterForStrategy:
         mock_rai_client = MagicMock()
         mock_logger = MagicMock()
 
-        converter = get_converter_for_strategy(AttackStrategy.Base64, mock_rai_client, False, mock_logger)
+        converter = get_converter_for_strategy(
+            AttackStrategy.Base64, mock_rai_client, False, mock_logger
+        )
         assert isinstance(converter, Base64Converter)
 
         # Test strategy with no converter
-        converter = get_converter_for_strategy(AttackStrategy.Baseline, mock_rai_client, False, mock_logger)
+        converter = get_converter_for_strategy(
+            AttackStrategy.Baseline, mock_rai_client, False, mock_logger
+        )
         assert converter is None
 
     def test_get_converter_for_strategy_list(self):
@@ -70,7 +79,9 @@ class TestConverterForStrategy:
         mock_logger = MagicMock()
 
         strategies = [AttackStrategy.Base64, AttackStrategy.Flip]
-        converters = get_converter_for_strategy(strategies, mock_rai_client, False, mock_logger)
+        converters = get_converter_for_strategy(
+            strategies, mock_rai_client, False, mock_logger
+        )
 
         assert isinstance(converters, list)
         assert len(converters) == 2
@@ -119,7 +130,10 @@ class TestChatTargetFunctions:
         mock_openai_chat_target.reset_mock()
 
         # Test with AAD auth
-        config = {"azure_deployment": "gpt-35-turbo", "azure_endpoint": "https://example.openai.azure.com"}
+        config = {
+            "azure_deployment": "gpt-35-turbo",
+            "azure_endpoint": "https://example.openai.azure.com",
+        }
 
         result = get_chat_target(config)
 
@@ -141,18 +155,28 @@ class TestChatTargetFunctions:
         result = get_chat_target(config)
 
         mock_openai_chat_target.assert_called_once_with(
-            model_name="gpt-4", endpoint=None, api_key="test-api-key", api_version="2024-06-01"
+            model_name="gpt-4",
+            endpoint=None,
+            api_key="test-api-key",
+            api_version="2024-06-01",
         )
 
         # Test with base_url
         mock_openai_chat_target.reset_mock()
 
-        config = {"model": "gpt-4", "api_key": "test-api-key", "base_url": "https://example.com/api"}
+        config = {
+            "model": "gpt-4",
+            "api_key": "test-api-key",
+            "base_url": "https://example.com/api",
+        }
 
         result = get_chat_target(config)
 
         mock_openai_chat_target.assert_called_once_with(
-            model_name="gpt-4", endpoint="https://example.com/api", api_key="test-api-key", api_version="2024-06-01"
+            model_name="gpt-4",
+            endpoint="https://example.com/api",
+            api_key="test-api-key",
+            api_version="2024-06-01",
         )
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
@@ -170,7 +194,9 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
-    def test_get_chat_target_callback_function_with_context(self, mock_callback_chat_target):
+    def test_get_chat_target_callback_function_with_context(
+        self, mock_callback_chat_target
+    ):
         """Test getting chat target from a callback function. Context is now handled via request labels."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance
@@ -199,7 +225,9 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
-    def test_get_chat_target_simple_function_with_context(self, mock_callback_chat_target):
+    def test_get_chat_target_simple_function_with_context(
+        self, mock_callback_chat_target
+    ):
         """Test getting chat target from a simple function. Context is now handled via request labels."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance

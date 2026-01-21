@@ -17,8 +17,17 @@ from typing_extensions import override
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
+from ..._common.utils import (
+    construct_prompty_model_config,
+    validate_model_config,
+    parse_quality_evaluator_reason_score,
+)
 from . import EvaluatorBase
 
 try:
@@ -74,10 +83,16 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         self._prompty_file = prompty_file
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
-        super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
+        super().__init__(
+            eval_last_turn=eval_last_turn,
+            threshold=threshold,
+            _higher_is_better=_higher_is_better,
+        )
 
         subclass_name = self.__class__.__name__
-        user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
+        user_agent = (
+            f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
+        )
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
@@ -134,7 +149,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 target=ErrorTarget.CONVERSATION,
             )
         # Call the prompty flow to get the evaluation result.
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
 
         score = math.nan
         if prompty_output_dict:
@@ -207,7 +224,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             pass
         return None
 
-    def _get_needed_built_in_tool_definitions(self, tool_calls: List[Dict]) -> List[Dict]:
+    def _get_needed_built_in_tool_definitions(
+        self, tool_calls: List[Dict]
+    ) -> List[Dict]:
         """Extract tool definitions needed for the given built-in tool calls."""
         needed_definitions = []
         for tool_call in tool_calls:
@@ -243,7 +262,10 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         return tool_names
 
     def _extract_needed_tool_definitions(
-        self, tool_calls: List[Dict], tool_definitions: List[Dict], error_target: ErrorTarget
+        self,
+        tool_calls: List[Dict],
+        tool_definitions: List[Dict],
+        error_target: ErrorTarget,
     ) -> List[Dict]:
         """Extract the tool definitions that are needed for the provided tool calls.
 
@@ -287,7 +309,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     elif tool_name:
                         # This is a regular function tool from converter
                         tool_definition_exists = any(
-                            tool.get("name") == tool_name for tool in tool_definitions_expanded
+                            tool.get("name") == tool_name
+                            for tool in tool_definitions_expanded
                         )
                         if not tool_definition_exists:
                             raise EvaluationException(

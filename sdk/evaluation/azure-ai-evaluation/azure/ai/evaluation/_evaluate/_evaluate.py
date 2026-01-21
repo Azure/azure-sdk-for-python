@@ -449,7 +449,11 @@ def _aggregate_metrics(
 
     # Exclude threshold and result columns from aggregation
     # These are per-row metadata, not metrics to be averaged
-    threshold_and_result_cols = [col for col in df.columns if col.endswith("_threshold") or col.endswith("_result")]
+    threshold_and_result_cols = [
+        col
+        for col in df.columns
+        if col.endswith("_threshold") or col.endswith("_result")
+    ]
     handled_columns.extend(threshold_and_result_cols)
 
     # For rest of metrics, we will calculate mean

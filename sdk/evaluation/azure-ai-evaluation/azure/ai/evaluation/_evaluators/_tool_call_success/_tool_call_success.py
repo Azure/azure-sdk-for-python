@@ -146,7 +146,9 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
-        eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
+        eval_input["tool_calls"] = _reformat_tool_calls_results(
+            eval_input["response"], logger
+        )
 
         if "tool_definitions" in eval_input:
             tool_definitions = eval_input["tool_definitions"]
@@ -155,9 +157,13 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 msgs_list=eval_input["response"],
                 logger=logger,
             )
-            eval_input["tool_definitions"] = _reformat_tool_definitions(filtered_tool_definitions, logger)
+            eval_input["tool_definitions"] = _reformat_tool_definitions(
+                filtered_tool_definitions, logger
+            )
 
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
         llm_output = prompty_output_dict.get("llm_output", "")
 
         if isinstance(llm_output, dict):
@@ -177,16 +183,30 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_result": success_result,
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": f"{reason} {details or ''}",
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get(
+                    "input_token_count", 0
+                ),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get(
+                    "output_token_count", 0
+                ),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get(
+                    "total_token_count", 0
+                ),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get(
+                    "finish_reason", ""
+                ),
                 f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get(
+                    "sample_input", ""
+                ),
+                f"{self._result_key}_sample_output": prompty_output_dict.get(
+                    "sample_output", ""
+                ),
             }
         if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
+            logger.warning(
+                "LLM output is not a dictionary, returning NaN for the score."
+            )
 
         score = math.nan
         binary_result = self._get_binary_result(score)
@@ -208,21 +228,30 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
                 for content in msg.get("content", []):
                     if content.get("type") == "tool_call":
                         any_tools_used = True
-                        if "tool_call" in content and "function" in content["tool_call"]:
+                        if (
+                            "tool_call" in content
+                            and "function" in content["tool_call"]
+                        ):
                             used_tool_names.add(content["tool_call"]["function"])
                         elif "name" in content:
                             used_tool_names.add(content["name"])
 
-        filtered_tools = [tool for tool in tool_definitions if tool.get("name") in used_tool_names]
+        filtered_tools = [
+            tool for tool in tool_definitions if tool.get("name") in used_tool_names
+        ]
         if any_tools_used and not filtered_tools:
             if logger:
-                logger.warning("No tool definitions matched the tools used in the messages. Returning original list.")
+                logger.warning(
+                    "No tool definitions matched the tools used in the messages. Returning original list."
+                )
             filtered_tools = tool_definitions
 
         return filtered_tools
     except Exception as e:
         if logger:
-            logger.warning(f"Failed to filter tool definitions, returning original list. Error: {e}")
+            logger.warning(
+                f"Failed to filter tool definitions, returning original list. Error: {e}"
+            )
         return tool_definitions
 
 
@@ -247,7 +276,9 @@ def _get_tool_calls_results(agent_response_msgs):
             for content in msg.get("content", []):
 
                 if content.get("type") == "tool_call":
-                    if "tool_call" in content and "function" in content.get("tool_call", {}):
+                    if "tool_call" in content and "function" in content.get(
+                        "tool_call", {}
+                    ):
                         tc = content.get("tool_call", {})
                         func_name = tc.get("function", {}).get("name", "")
                         args = tc.get("function", {}).get("arguments", {})
@@ -286,7 +317,9 @@ def _reformat_tool_calls_results(response, logger=None):
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.warning(
+                f"Agent response could not be parsed, falling back to original response: {response}"
+            )
         return response
 
 

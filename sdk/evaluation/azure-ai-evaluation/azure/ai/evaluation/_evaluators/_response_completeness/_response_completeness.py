@@ -9,7 +9,12 @@ from typing import Dict, List, Union, Optional
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Conversation, Message
@@ -73,7 +78,12 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     def __init__(
-        self, model_config, *, threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD, credential=None, **kwargs
+        self,
+        model_config,
+        *,
+        threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD,
+        credential=None,
+        **kwargs,
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
@@ -172,7 +182,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 score = float(llm_output.get("score", math.nan))
                 reason = llm_output.get("explanation", "")
             else:
-                score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
+                score, reason = parse_quality_evaluator_reason_score(
+                    llm_output, valid_score_range="[1-5]"
+                )
 
             binary_result = self._get_binary_result(score)
 
@@ -183,7 +195,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": int(self._threshold),
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
+                f"{self._result_key}_completion_tokens": result.get(
+                    "output_token_count", 0
+                ),
                 f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
                 f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
                 f"{self._result_key}_model": result.get("model_id", ""),
@@ -192,7 +206,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
 
         if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
+            logger.warning(
+                "LLM output is not a dictionary, returning NaN for the score."
+            )
 
         binary_result = self._get_binary_result(score)
         return {

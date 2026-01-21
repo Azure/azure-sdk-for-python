@@ -105,7 +105,9 @@ class NoOpRunStorage(AbstractRunStorage):
 
     def load_inputs_and_outputs(self) -> Tuple[Mapping[str, Any], BatchResult]:
         now = datetime.now(timezone.utc)
-        return {}, BatchResult(BatchStatus.NotStarted, 0, 0, now, now, TokenMetrics(0, 0, 0), [])
+        return {}, BatchResult(
+            BatchStatus.NotStarted, 0, 0, now, now, TokenMetrics(0, 0, 0), []
+        )
 
     def load_metrics(self) -> Mapping[str, Union[int, float, str]]:
         return {}

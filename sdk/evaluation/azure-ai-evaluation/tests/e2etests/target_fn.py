@@ -3,7 +3,9 @@ def target_fn(query: str) -> str:
     if "LV-426" in query:
         return {"response": "There is nothing good there."}
     if "central heating" in query:
-        return {"response": "There is no central heating on the streets today, but it will be, I promise."}
+        return {
+            "response": "There is no central heating on the streets today, but it will be, I promise."
+        }
     if "strange" in query:
         return {"response": "The life is strange..."}
 

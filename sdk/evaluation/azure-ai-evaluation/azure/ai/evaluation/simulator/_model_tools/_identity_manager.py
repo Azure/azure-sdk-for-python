@@ -59,7 +59,9 @@ class APITokenManager(ABC):
             self._lock = asyncio.Lock()
         return self._lock
 
-    def get_aad_credential(self) -> Union[DefaultAzureCredential, ManagedIdentityCredential]:
+    def get_aad_credential(
+        self,
+    ) -> Union[DefaultAzureCredential, ManagedIdentityCredential]:
         """Return the AAD credential object.
 
         If the environment variable DEFAULT_IDENTITY_CLIENT_ID is set, ManagedIdentityCredential will be used with
@@ -73,7 +75,9 @@ class APITokenManager(ABC):
             self.logger.info(f"Using DEFAULT_IDENTITY_CLIENT_ID: {identity_client_id}")
             return ManagedIdentityCredential(client_id=identity_client_id)
 
-        self.logger.info("Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential")
+        self.logger.info(
+            "Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential"
+        )
         return DefaultAzureCredential()
 
     @abstractmethod

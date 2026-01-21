@@ -30,7 +30,9 @@ def data_file() -> pathlib.Path:
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestAoaiEvaluation:
-    @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
+    @pytest.mark.skipif(
+        not is_live(), reason="AOAI recordings have bad recording scrubbing"
+    )
     def test_evaluate_all_aoai_graders(self, model_config, data_file):
         # create a normal evaluator for comparison
         f1_eval = F1ScoreEvaluator()
@@ -70,10 +72,16 @@ class TestAoaiEvaluation:
 
         # Define an string check grader config directly using the OAI SDK
         oai_string_check_grader = StringCheckGrader(
-            input="{{item.query}}", name="contains hello", operation="like", reference="hello", type="string_check"
+            input="{{item.query}}",
+            name="contains hello",
+            operation="like",
+            reference="hello",
+            type="string_check",
         )
         # Plug that into the general grader
-        general_grader = AzureOpenAIGrader(model_config=model_config, grader_config=oai_string_check_grader)
+        general_grader = AzureOpenAIGrader(
+            model_config=model_config, grader_config=oai_string_check_grader
+        )
 
         evaluators = {
             "f1_score": f1_eval,
@@ -84,7 +92,9 @@ class TestAoaiEvaluation:
         }
 
         # run the evaluation
-        result = evaluate(data=data_file, evaluators=evaluators, _use_run_submitter_client=True)
+        result = evaluate(
+            data=data_file, evaluators=evaluators, _use_run_submitter_client=True
+        )
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
@@ -121,7 +131,9 @@ class TestAoaiEvaluation:
         assert metrics["label_model.pass_rate"] >= 0
         assert metrics["general_grader.pass_rate"] == 0.0
 
-    @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
+    @pytest.mark.skipif(
+        not is_live(), reason="AOAI recordings have bad recording scrubbing"
+    )
     def test_evaluate_with_column_mapping_and_target(self, model_config, data_file):
         sim_grader = AzureOpenAITextSimilarityGrader(
             model_config=model_config,
@@ -185,13 +197,21 @@ class TestAoaiEvaluation:
         assert metrics["similarity.pass_rate"] == 1.0
         assert metrics["string_check.pass_rate"] == 0.3333333333333333
 
-    @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
+    @pytest.mark.skipif(
+        not is_live(), reason="AOAI recordings have bad recording scrubbing"
+    )
     def test_evaluate_with_large_dataset_pagination(self, model_config):
         """Test AOAI graders with a large dataset that requires pagination"""
         # Create a large dataset that will trigger pagination (>100 rows)
         large_data = []
         for i in range(150):  # Create 150 rows to ensure pagination
-            large_data.append({"query": f"What is {i}?", "ground_truth": f"This is item {i}", "answer": f"Item {i}"})
+            large_data.append(
+                {
+                    "query": f"What is {i}?",
+                    "ground_truth": f"This is item {i}",
+                    "answer": f"Item {i}",
+                }
+            )
 
         # Create a temporary file with the large dataset
         import tempfile
@@ -217,7 +237,9 @@ class TestAoaiEvaluation:
             }
 
             # Run evaluation with large dataset
-            result = evaluate(data=temp_file, evaluators=evaluators, _use_run_submitter_client=True)
+            result = evaluate(
+                data=temp_file, evaluators=evaluators, _use_run_submitter_client=True
+            )
 
             row_result_df = pd.DataFrame(result["rows"])
             metrics = result["metrics"]
@@ -235,7 +257,9 @@ class TestAoaiEvaluation:
             # Clean up temp file
             os.unlink(temp_file)
 
-    @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
+    @pytest.mark.skipif(
+        not is_live(), reason="AOAI recordings have bad recording scrubbing"
+    )
     def test_evaluate_multiple_graders_with_pagination(self, model_config):
         """Test multiple AOAI graders with pagination to ensure proper result mapping"""
         # Create dataset with 120 rows
@@ -275,7 +299,9 @@ class TestAoaiEvaluation:
             }
 
             # Run evaluation
-            result = evaluate(data=temp_file, evaluators=evaluators, _use_run_submitter_client=True)
+            result = evaluate(
+                data=temp_file, evaluators=evaluators, _use_run_submitter_client=True
+            )
 
             row_result_df = pd.DataFrame(result["rows"])
 
@@ -292,7 +318,9 @@ class TestAoaiEvaluation:
         finally:
             os.unlink(temp_file)
 
-    @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
+    @pytest.mark.skipif(
+        not is_live(), reason="AOAI recordings have bad recording scrubbing"
+    )
     @pytest.mark.parametrize(
         "grader_factory",
         [

@@ -23,7 +23,10 @@ NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(PACKAGE_FOLDER_PATH, "_version.py"), "r") as fd:
-    version = cast(Match[Any], re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE)).group(1)
+    version = cast(
+        Match[Any],
+        re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE),
+    ).group(1)
 if not version:
     raise RuntimeError("Cannot find version information")
 
@@ -84,8 +87,14 @@ setup(
         "aiohttp>=3.0",
     ],
     extras_require={
-        "redteam": ['pyrit==0.8.1;python_version>="3.10"', 'duckdb==1.3.2;python_version>="3.10"'],
-        "opentelemetry": ["opentelemetry-sdk>=1.17.0", "azure-monitor-opentelemetry-exporter>=1.0.0b17"],
+        "redteam": [
+            'pyrit==0.8.1;python_version>="3.10"',
+            'duckdb==1.3.2;python_version>="3.10"',
+        ],
+        "opentelemetry": [
+            "opentelemetry-sdk>=1.17.0",
+            "azure-monitor-opentelemetry-exporter>=1.0.0b17",
+        ],
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

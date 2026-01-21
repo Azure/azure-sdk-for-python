@@ -58,10 +58,14 @@ async def main():
     azure_ai_project_endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
 
     # Initialize the service
-    service = AzureChatCompletion(deployment_name=deployment, endpoint=endpoint, api_key=api_key)
+    service = AzureChatCompletion(
+        deployment_name=deployment, endpoint=endpoint, api_key=api_key
+    )
 
     # Initialize the RedTeamPlugin with the target function
-    red_team_plugin = RedTeamPlugin(azure_ai_project_endpoint=azure_ai_project_endpoint, target_func=call_ollama)
+    red_team_plugin = RedTeamPlugin(
+        azure_ai_project_endpoint=azure_ai_project_endpoint, target_func=call_ollama
+    )
 
     # Create the agent with the plugin
     agent = ChatCompletionAgent(

@@ -10,10 +10,21 @@ from typing import Callable, cast, Union, Optional
 
 from tqdm import tqdm
 
-from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    validate_azure_ai_project,
+    is_onedp_project,
+)
 from azure.ai.evaluation._common._experimental import experimental
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
+from azure.ai.evaluation.simulator import (
+    AdversarialScenarioJailbreak,
+    SupportedLanguages,
+)
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.core.credentials import TokenCredential
@@ -21,7 +32,11 @@ from azure.ai.evaluation._constants import TokenScope
 
 from ._adversarial_simulator import AdversarialSimulator, JsonLineList
 
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient
+from ._model_tools import (
+    AdversarialTemplateHandler,
+    ManagedIdentityAPITokenManager,
+    RAIClient,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +62,12 @@ class IndirectAttackSimulator(AdversarialSimulator):
             :caption: Run the IndirectAttackSimulator to produce 1 result with 1 conversation turn (2 messages in the result).
     """
 
-    def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
+    def __init__(
+        self,
+        *,
+        azure_ai_project: Union[str, AzureAIProject],
+        credential: TokenCredential,
+    ):
         """Constructor."""
 
         if is_onedp_project(azure_ai_project):
@@ -58,7 +78,9 @@ class IndirectAttackSimulator(AdversarialSimulator):
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+            self.rai_client = AIProjectClient(
+                endpoint=azure_ai_project, credential=credential
+            )
             self.adversarial_template_handler = AdversarialTemplateHandler(
                 azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
             )
@@ -80,7 +102,9 @@ class IndirectAttackSimulator(AdversarialSimulator):
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+            self.rai_client = RAIClient(
+                azure_ai_project=self.azure_ai_project, token_manager=self.token_manager
+            )
             self.adversarial_template_handler = AdversarialTemplateHandler(
                 azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
             )
@@ -174,7 +198,9 @@ class IndirectAttackSimulator(AdversarialSimulator):
         max_conversation_turns = 2
         language = SupportedLanguages.English
         self._ensure_service_dependencies()
-        templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
+        templates = await self.adversarial_template_handler._get_content_harm_template_collections(
+            scenario.value
+        )
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []

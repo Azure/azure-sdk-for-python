@@ -131,7 +131,9 @@ def demonstrate_score_model_grader():
         if not azure_ai_project:
             print("❌ No Azure AI project configuration found. Please set either:")
             print("   - AZURE_AI_PROJECT_ENDPOINT (for foundry-based projects), or")
-            print("   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)")
+            print(
+                "   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)"
+            )
             return
 
         # 3. Create conversation quality grader
@@ -176,8 +178,14 @@ def demonstrate_score_model_grader():
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
-                        "caption": {"type": "string", "description": "The caption describing the image."},
+                        "image_url": {
+                            "type": "string",
+                            "description": "The URL of the image to be evaluated.",
+                        },
+                        "caption": {
+                            "type": "string",
+                            "description": "The caption describing the image.",
+                        },
                     },
                     "required": ["image_url", "caption"],
                 },
@@ -196,7 +204,11 @@ def demonstrate_score_model_grader():
                         {
                             "role": "user",
                             "type": "message",
-                            "content": {"type": "input_image", "image_url": "{{ item.image_url }}", "detail": "auto"},
+                            "content": {
+                                "type": "input_image",
+                                "image_url": "{{ item.image_url }}",
+                                "detail": "auto",
+                            },
                         },
                     ],
                 },

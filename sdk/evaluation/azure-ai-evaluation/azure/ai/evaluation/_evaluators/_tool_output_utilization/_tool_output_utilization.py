@@ -151,7 +151,11 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
-        if ("query" not in eval_input) and ("response" not in eval_input) and ("tool_definitions" not in eval_input):
+        if (
+            ("query" not in eval_input)
+            and ("response" not in eval_input)
+            and ("tool_definitions" not in eval_input)
+        ):
             raise EvaluationException(
                 message="Query, response, and tool_definitions are required inputs to the Tool Output Utilization evaluator.",
                 internal_message="Query, response, and tool_definitions are required inputs to the Tool Output Utilization evaluator.",
@@ -166,7 +170,9 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             msgs_lists=[eval_input["query"], eval_input["response"]],
             logger=logger,
         )
-        eval_input["tool_definitions"] = reformat_tool_definitions(filtered_tool_definitions, logger)
+        eval_input["tool_definitions"] = reformat_tool_definitions(
+            filtered_tool_definitions, logger
+        )
 
         eval_input["query"] = reformat_conversation_history(
             eval_input["query"],
@@ -174,15 +180,21 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             include_system_messages=True,
             include_tool_messages=True,
         )
-        eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
+        eval_input["response"] = reformat_agent_response(
+            eval_input["response"], logger, include_tool_messages=True
+        )
 
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
         llm_output = prompty_output_dict.get("llm_output", "")
         if isinstance(llm_output, dict):
             output_label = llm_output.get("label", None)
             if output_label is None:
                 if logger:
-                    logger.warning("LLM output does not contain 'label' key, returning NaN for the score.")
+                    logger.warning(
+                        "LLM output does not contain 'label' key, returning NaN for the score."
+                    )
                 output_label = "fail"
 
             output_label = output_label.lower()
@@ -205,16 +217,30 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get(
+                    "input_token_count", 0
+                ),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get(
+                    "output_token_count", 0
+                ),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get(
+                    "total_token_count", 0
+                ),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get(
+                    "finish_reason", ""
+                ),
                 f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get(
+                    "sample_input", ""
+                ),
+                f"{self._result_key}_sample_output": prompty_output_dict.get(
+                    "sample_output", ""
+                ),
             }
         if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
+            logger.warning(
+                "LLM output is not a dictionary, returning NaN for the score."
+            )
 
         score = math.nan
         binary_result = self._get_binary_result(score)

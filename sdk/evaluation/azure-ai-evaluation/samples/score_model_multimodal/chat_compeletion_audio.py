@@ -28,8 +28,14 @@ def demonstrate_score_model_grader():
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "You are an AI assistant that helps people find information."},
-                {"type": "input_audio", "input_audio": {"data": encoded_audio, "format": "wav"}},
+                {
+                    "type": "text",
+                    "text": "You are an AI assistant that helps people find information.",
+                },
+                {
+                    "type": "input_audio",
+                    "input_audio": {"data": encoded_audio, "format": "wav"},
+                },
             ],
         }
     ]
@@ -39,7 +45,10 @@ def demonstrate_score_model_grader():
 
     # Generate the completion
     completion = client.chat.completions.create(
-        model=deployment, modalities=["text", "audio"], audio={"voice": "alloy", "format": "wav"}, messages=messages
+        model=deployment,
+        modalities=["text", "audio"],
+        audio={"voice": "alloy", "format": "wav"},
+        messages=messages,
     )
 
     print(completion.to_json())

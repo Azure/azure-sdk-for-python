@@ -37,9 +37,15 @@ async def flow_side_effect(timeout, **kwargs):
                 custom_function_calls.append(tc)
 
     # Handle traditional function tool calls with tool_call_id only for non-built-in tools
-    good_calls = sum(1 for tc in custom_function_calls if "good" in tc.get("tool_call_id", ""))
-    bad_calls = sum(1 for tc in custom_function_calls if "bad" in tc.get("tool_call_id", ""))
-    invalid_calls = sum(1 for tc in custom_function_calls if "invalid" in tc.get("tool_call_id", ""))
+    good_calls = sum(
+        1 for tc in custom_function_calls if "good" in tc.get("tool_call_id", "")
+    )
+    bad_calls = sum(
+        1 for tc in custom_function_calls if "bad" in tc.get("tool_call_id", "")
+    )
+    invalid_calls = sum(
+        1 for tc in custom_function_calls if "invalid" in tc.get("tool_call_id", "")
+    )
 
     total_calls = len(tool_calls)
     total_good_calls = good_calls + builtin_calls
@@ -126,14 +132,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert (
+            key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        )
         assert result[key] == 3.0  # Mixed good/bad gets score 3
         assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        assert (
+            result[f"{key}_threshold"]
+            == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        )
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
         assert f"{key}_details" in result
@@ -188,14 +201,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert (
+            key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        )
         assert result[key] == 1.0  # All bad gets score 1
         assert result[f"{key}_result"] == "fail"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        assert (
+            result[f"{key}_threshold"]
+            == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        )
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 0 correct calls."
         assert f"{key}_details" in result
@@ -250,14 +270,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert (
+            key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        )
         assert result[key] == 5.0  # All good gets score 5
         assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        assert (
+            result[f"{key}_threshold"]
+            == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        )
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 2 correct calls."
         assert f"{key}_details" in result
@@ -293,7 +320,9 @@ class TestToolCallAccuracyEvaluator:
                     },
                 },
             ]
-            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            evaluator(
+                query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+            )
 
         assert "Invalid score value" in str(exc_info.value)
 
@@ -333,14 +362,22 @@ class TestToolCallAccuracyEvaluator:
                 },
             },  # buy_jacket definition is missing
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
         assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
+        assert (
+            result[f"{key}_threshold"]
+            == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        )
+        assert (
+            result[f"{key}_reason"]
+            == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
+        )
         assert result[f"{key}_details"] == {}
 
     def test_evaluate_tools_built_in_tool_definition(self, mock_model_config):
@@ -373,14 +410,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert (
+            key in result and f"{key}_result" in result and f"{key}_threshold" in result
+        )
         assert result[key] == 5.0  # All good gets score 5
         assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        assert (
+            result[f"{key}_threshold"]
+            == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        )
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 1 tool calls with 1 correct calls."
         assert f"{key}_details" in result
@@ -408,14 +452,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
         assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
+        assert (
+            result[f"{key}_threshold"]
+            == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
+        )
+        assert (
+            result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
+        )
         assert result[f"{key}_details"] == {}
 
     def test_evaluate_bing_custom_search(self, mock_model_config):
@@ -435,7 +486,9 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -447,7 +500,9 @@ class TestToolCallAccuracyEvaluator:
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
         # Test relevant bing grounding for house prices - converter format
-        query = "What is the average price for a house with a pool in Los Angeles in 2025?"
+        query = (
+            "What is the average price for a house with a pool in Los Angeles in 2025?"
+        )
         tool_calls = [
             {
                 "type": "tool_call",
@@ -459,7 +514,9 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -477,11 +534,18 @@ class TestToolCallAccuracyEvaluator:
                 "type": "tool_call",
                 "tool_call_id": "call_builtin_good",
                 "name": "file_search",
-                "arguments": {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}},
+                "arguments": {
+                    "ranking_options": {
+                        "ranker": "default_2024_08_21",
+                        "score_threshold": 0.0,
+                    }
+                },
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -503,7 +567,9 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -525,7 +591,9 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -549,7 +617,9 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -571,7 +641,9 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -589,11 +661,16 @@ class TestToolCallAccuracyEvaluator:
                 "type": "tool_call",
                 "tool_call_id": "call_builtin_good",
                 "name": "openapi",
-                "arguments": {"name": "exchange_rates_getExchangeRates", "arguments": '{"base":"GBP","symbols":"EUR"}'},
+                "arguments": {
+                    "name": "exchange_rates_getExchangeRates",
+                    "arguments": '{"base":"GBP","symbols":"EUR"}',
+                },
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -645,7 +722,9 @@ class TestToolCallAccuracyEvaluator:
                                 "responses": {
                                     "200": {
                                         "description": "Success",
-                                        "content": {"text/plain": {"schema": {"type": "string"}}},
+                                        "content": {
+                                            "text/plain": {"schema": {"type": "string"}}
+                                        },
                                     }
                                 },
                             }
@@ -662,7 +741,10 @@ class TestToolCallAccuracyEvaluator:
                         "parameters": {
                             "type": "object",
                             "properties": {
-                                "currency": {"type": "string", "description": "The currency to search for."}
+                                "currency": {
+                                    "type": "string",
+                                    "description": "The currency to search for.",
+                                }
                             },
                             "required": ["currency"],
                         },
@@ -670,7 +752,9 @@ class TestToolCallAccuracyEvaluator:
                 ],
             }
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(
+            query=query, tool_calls=tool_calls, tool_definitions=tool_definitions
+        )
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
@@ -697,7 +781,9 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Get weather information",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location"}},
+                    "properties": {
+                        "location": {"type": "string", "description": "The location"}
+                    },
                     "required": ["location"],
                 },
             }
@@ -705,7 +791,9 @@ class TestToolCallAccuracyEvaluator:
 
         # Test with query=None
         with pytest.raises(EvaluationException) as exc_info:
-            evaluator(query=None, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            evaluator(
+                query=None, tool_calls=tool_calls, tool_definitions=tool_definitions
+            )
 
         assert "Query is a required input" in str(exc_info.value)
 

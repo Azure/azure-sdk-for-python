@@ -10,7 +10,12 @@ from json.decoder import JSONDecodeError
 
 from azure.core.credentials import TokenCredential, AzureSasCredential, AccessToken
 from azure.core.rest import HttpResponse
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._http_utils import HttpPipeline, get_http_client
 from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
 from azure.ai.evaluation._constants import TokenScope
@@ -83,7 +88,12 @@ class LiteMLClient:
         stores_response = self._http_client.request(
             method="GET",
             url=url,
-            params={QUERY_KEY_API_VERSION: self._api_version, "isDefault": True, "count": 1, "orderByAsc": "false"},
+            params={
+                QUERY_KEY_API_VERSION: self._api_version,
+                "isDefault": True,
+                "count": 1,
+                "orderByAsc": "false",
+            },
             headers=headers,
         )
         self._throw_on_http_error(stores_response, "list default workspace datastore")
@@ -108,7 +118,11 @@ class LiteMLClient:
             blob_store_credential = self.get_credential()
         else:
             url = self._generate_path(
-                *PATH_ML_WORKSPACES, workspace_name, "datastores", "workspaceblobstore", "listSecrets"
+                *PATH_ML_WORKSPACES,
+                workspace_name,
+                "datastores",
+                "workspaceblobstore",
+                "listSecrets",
             )
             secrets_response = self._http_client.request(
                 method="POST",
@@ -145,7 +159,9 @@ class LiteMLClient:
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
 
-        return BlobStoreInfo(name, account_name, endpoint, container_name, blob_store_credential)
+        return BlobStoreInfo(
+            name, account_name, endpoint, container_name, blob_store_credential
+        )
 
     def workspace_get_info(self, workspace_name: str) -> Workspace:
         # https://learn.microsoft.com/rest/api/azureml/workspaces/get?view=rest-azureml-2024-10-01
@@ -156,7 +172,9 @@ class LiteMLClient:
             headers=self._get_headers(),
         )
 
-        self._throw_on_http_error(workspace_response, f"get '{workspace_name}' workspace")
+        self._throw_on_http_error(
+            workspace_response, f"get '{workspace_name}' workspace"
+        )
         workspace = Workspace.deserialize(workspace_response)
         return workspace
 
@@ -166,14 +184,20 @@ class LiteMLClient:
             with self._lock:
                 if self._token_manager is None:
                     self._token_manager = AzureMLTokenManager(
-                        TokenScope.DEFAULT_AZURE_MANAGEMENT.value, self._logger, credential=self._credential
+                        TokenScope.DEFAULT_AZURE_MANAGEMENT.value,
+                        self._logger,
+                        credential=self._credential,
                     )
                     self._credential = self._token_manager.credential
 
         return self._token_manager
 
     @staticmethod
-    def _throw_on_http_error(response: HttpResponse, description: str, valid_status: Optional[Set[int]] = None) -> None:
+    def _throw_on_http_error(
+        response: HttpResponse,
+        description: str,
+        valid_status: Optional[Set[int]] = None,
+    ) -> None:
         if valid_status and (response.status_code in valid_status):
             return
         if response.status_code >= 200 and response.status_code < 300:
@@ -201,4 +225,7 @@ class LiteMLClient:
         return url
 
     def _get_headers(self) -> Dict[str, str]:
-        return {"Authorization": f"Bearer {self.get_token().token}", "Content-Type": "application/json"}
+        return {
+            "Authorization": f"Bearer {self.get_token().token}",
+            "Content-Type": "application/json",
+        }

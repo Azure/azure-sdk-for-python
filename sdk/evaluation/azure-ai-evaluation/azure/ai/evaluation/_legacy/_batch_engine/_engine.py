@@ -39,7 +39,12 @@ from typing import (
 from uuid import uuid4
 
 from ._config import BatchEngineConfig
-from ._utils import DEFAULTS_KEY, get_int_env_var, get_value_from_path, is_async_callable
+from ._utils import (
+    DEFAULTS_KEY,
+    get_int_env_var,
+    get_value_from_path,
+    is_async_callable,
+)
 from ._status import BatchStatus
 from ._result import BatchResult, BatchRunDetails, BatchRunError, TokenMetrics
 from ._run_storage import AbstractRunStorage, NoOpRunStorage
@@ -118,7 +123,8 @@ class BatchEngine:
             raise
         except Exception as ex:
             raise BatchEngineError(
-                "Unexpected error while running the batch run.", blame=ErrorBlame.SYSTEM_ERROR
+                "Unexpected error while running the batch run.",
+                blame=ErrorBlame.SYSTEM_ERROR,
             ) from ex
 
     def cancel(self):
@@ -132,9 +138,13 @@ class BatchEngine:
         max_lines: Optional[int],
     ) -> Sequence[Mapping[str, str]]:
 
-        resolved_column_mapping: Mapping[str, str] = self._resolve_column_mapping(column_mapping)
+        resolved_column_mapping: Mapping[str, str] = self._resolve_column_mapping(
+            column_mapping
+        )
         resolved_column_mapping.update(self._generate_defaults_for_column_mapping())
-        return self._apply_column_mapping_to_lines(data, resolved_column_mapping, max_lines)
+        return self._apply_column_mapping_to_lines(
+            data, resolved_column_mapping, max_lines
+        )
 
     def _resolve_column_mapping(
         self,
@@ -155,7 +165,9 @@ class BatchEngine:
         resolved_mapping.update(column_mapping or {})
         return resolved_mapping
 
-    def _generate_defaults_for_column_mapping(self) -> Mapping[Literal["$defaults$"], Any]:
+    def _generate_defaults_for_column_mapping(
+        self,
+    ) -> Mapping[Literal["$defaults$"], Any]:
 
         return {
             DEFAULTS_KEY: {
@@ -208,14 +220,19 @@ class BatchEngine:
 
             if missing_inputs:
                 missing = ", ".join(missing_inputs)
-                raise BatchEngineValidationError(f"Missing inputs for line {line_number}: '{missing}'")
+                raise BatchEngineValidationError(
+                    f"Missing inputs for line {line_number}: '{missing}'"
+                )
 
             inputs.append(mapped)
 
         return inputs
 
     async def _exec_in_task(
-        self, run_id: str, batch_inputs: Sequence[Mapping[str, Any]], start_time: datetime
+        self,
+        run_id: str,
+        batch_inputs: Sequence[Mapping[str, Any]],
+        start_time: datetime,
     ) -> BatchResult:
         # Since the batch execution is not guaranteed to be completed in the same order
         # as the inputs, we keep track of these in a mapping from index to result
@@ -223,7 +240,9 @@ class BatchEngine:
         status: BatchStatus = BatchStatus.Completed
         error: Optional[Exception] = None
 
-        task = asyncio.create_task(self._exec_batch(run_id, batch_inputs, start_time, results))
+        task = asyncio.create_task(
+            self._exec_batch(run_id, batch_inputs, start_time, results)
+        )
 
         while not task.done():
             # check whether the task is completed or canceled every 1s
@@ -282,7 +301,11 @@ class BatchEngine:
         if failed_lines and not error:
             error_message = f"{floor(failed_lines / len(batch_inputs) * 100)}% of the batch run failed."
             first_exception: Optional[Exception] = next(
-                (result.error.exception for result in result_details if result.error and result.error.exception),
+                (
+                    result.error.exception
+                    for result in result_details
+                    if result.error and result.error.exception
+                ),
                 None,
             )
             if first_exception is not None:
@@ -318,7 +341,8 @@ class BatchEngine:
                 return await self._exec_line_async(run_id, inputs, index)
 
         pending = [
-            asyncio.create_task(create_under_semaphore(index, inputs)) for index, inputs in enumerate(batch_inputs)
+            asyncio.create_task(create_under_semaphore(index, inputs))
+            for index, inputs in enumerate(batch_inputs)
         ]
 
         total_lines: int = len(batch_inputs)
@@ -326,7 +350,9 @@ class BatchEngine:
         while completed_lines < total_lines:
             # TODO ralphe: Fix this code so it doesn't re-order the outputs
             # wait for any task to complete
-            done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+            done, pending = await asyncio.wait(
+                pending, return_when=asyncio.FIRST_COMPLETED
+            )
             completed_line_results = [task.result() for task in done]
             # persist node run infos and flow run info in line result to storage
             self._persist_run_info([result for _, result in completed_line_results])
@@ -349,7 +375,9 @@ class BatchEngine:
         if has_kwargs:
             return inputs
         else:
-            filtered_params = {key: value for key, value in inputs.items() if key in func_params}
+            filtered_params = {
+                key: value for key, value in inputs.items() if key in func_params
+            }
             return filtered_params
 
     async def _exec_line_async(
@@ -405,7 +433,8 @@ class BatchEngine:
             except Exception as ex:
                 details.status = BatchStatus.Failed
                 details.error = BatchRunError(
-                    f"Error while evaluating single input: {ex.__class__.__name__}: {str(ex)}", ex
+                    f"Error while evaluating single input: {ex.__class__.__name__}: {str(ex)}",
+                    ex,
                 )
             finally:
                 details.end_time = datetime.now(timezone.utc)
@@ -413,9 +442,13 @@ class BatchEngine:
         return index, details
 
     @staticmethod
-    def handle_line_failures(run_infos: List[BatchRunDetails], raise_on_line_failure: bool = False):
+    def handle_line_failures(
+        run_infos: List[BatchRunDetails], raise_on_line_failure: bool = False
+    ):
         """Handle line failures in batch run"""
-        failed_run_infos: List[BatchRunDetails] = [r for r in run_infos if r.status == BatchStatus.Failed]
+        failed_run_infos: List[BatchRunDetails] = [
+            r for r in run_infos if r.status == BatchStatus.Failed
+        ]
         failed_msg: Optional[str] = None
         if len(failed_run_infos) > 0:
             failed_indexes = ",".join([str(r.index) for r in failed_run_infos])
@@ -437,10 +470,14 @@ class BatchEngine:
     def _batch_timeout_expired(self, start_time: datetime) -> bool:
         if self._batch_timeout_sec is None:
             return False
-        return (datetime.now(timezone.utc) - start_time).total_seconds() > self._batch_timeout_sec
+        return (
+            datetime.now(timezone.utc) - start_time
+        ).total_seconds() > self._batch_timeout_sec
 
     @contextmanager
-    def _exec_line_context(self, run_id: str, line_number: int) -> Generator[None, Any, None]:
+    def _exec_line_context(
+        self, run_id: str, line_number: int
+    ) -> Generator[None, Any, None]:
         # TODO ralphe: Do proper tracing and logging here
         log_manager = NodeLogManager()
         log_manager.set_node_context(run_id, "Flex", line_number)
@@ -448,7 +485,9 @@ class BatchEngine:
             yield
 
     @contextmanager
-    def _update_operation_context(self, run_id: str, line_number: int) -> Generator[None, Any, None]:
+    def _update_operation_context(
+        self, run_id: str, line_number: int
+    ) -> Generator[None, Any, None]:
         # operation_context = OperationContext.get_instance()
         # original_context = operation_context.copy()
         # original_mode = operation_context.get("run_mode", RunMode.Test.name)

@@ -7,7 +7,9 @@ from azure.ai.evaluation import QAEvaluator
 class TestQAEvaluator:
     def test_is_reasoning_model_passed_to_sub_evaluators(self, mock_model_config):
         """Test that is_reasoning_model is passed to all LLM-based sub-evaluators"""
-        qa_evaluator = QAEvaluator(model_config=mock_model_config, is_reasoning_model=True)
+        qa_evaluator = QAEvaluator(
+            model_config=mock_model_config, is_reasoning_model=True
+        )
 
         # Verify that all LLM-based sub-evaluators have is_reasoning_model=True
         for evaluator in qa_evaluator._evaluators:

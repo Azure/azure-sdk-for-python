@@ -28,7 +28,10 @@ class EvaluationSafetyEvaluationSamples(object):
     def evaluation_safety_evaluation_classes_methods(self):
         import os
         import asyncio
-        from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, _SafetyEvaluator
+        from azure.ai.evaluation._safety_evaluation._safety_evaluation import (
+            _SafetyEvaluation,
+            _SafetyEvaluator,
+        )
         from azure.ai.evaluation.simulator import AdversarialScenario
         from azure.identity import DefaultAzureCredential
 
@@ -44,7 +47,9 @@ class EvaluationSafetyEvaluationSamples(object):
 
         credential = DefaultAzureCredential()
 
-        safety_evaluation_default = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_default = _SafetyEvaluation(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         safety_evaluation_default_results = asyncio.run(
             safety_evaluation_default(
                 target=test_target,
@@ -72,7 +77,9 @@ class EvaluationSafetyEvaluationSamples(object):
 
         credential = DefaultAzureCredential()
 
-        safety_evaluation_default = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_default = _SafetyEvaluation(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         safety_evaluation_default_results = asyncio.run(
             safety_evaluation_default(
                 target=model_config,
@@ -208,7 +215,9 @@ class EvaluationSafetyEvaluationSamples(object):
 
         credential = DefaultAzureCredential()
 
-        safety_evaluation_groundedness = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_groundedness = _SafetyEvaluation(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         safety_evaluation_groundedness_results = asyncio.run(
             safety_evaluation_groundedness(
                 evaluators=[_SafetyEvaluator.GROUNDEDNESS],
@@ -233,11 +242,17 @@ class EvaluationSafetyEvaluationSamples(object):
 
         credential = DefaultAzureCredential()
 
-        safety_evaluation_quality = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_quality = _SafetyEvaluation(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
 
         safety_evaluation_quality_results = asyncio.run(
             safety_evaluation_quality(
-                evaluators=[_SafetyEvaluator.RELEVANCE, _SafetyEvaluator.COHERENCE, _SafetyEvaluator.FLUENCY],
+                evaluators=[
+                    _SafetyEvaluator.RELEVANCE,
+                    _SafetyEvaluator.COHERENCE,
+                    _SafetyEvaluator.FLUENCY,
+                ],
                 target=test_target,
                 num_turns=1,
                 num_rows=3,
@@ -260,7 +275,9 @@ class EvaluationSafetyEvaluationSamples(object):
 
         credential = DefaultAzureCredential()
 
-        safety_evaluation_xpia = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_xpia = _SafetyEvaluation(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
 
         safety_evaluation_xpia_results = asyncio.run(
             safety_evaluation_xpia(
@@ -286,7 +303,9 @@ class EvaluationSafetyEvaluationSamples(object):
 
         credential = DefaultAzureCredential()
 
-        safety_evaluation_upia = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_upia = _SafetyEvaluation(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         safety_evaluation_upia_results = asyncio.run(
             safety_evaluation_upia(
                 evaluators=[_SafetyEvaluator.DIRECT_ATTACK],
@@ -310,7 +329,9 @@ class EvaluationSafetyEvaluationSamples(object):
 
         credential = DefaultAzureCredential()
 
-        safety_evaluation_eci = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_eci = _SafetyEvaluation(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         safety_evaluation_eci_results = asyncio.run(
             safety_evaluation_eci(
                 evaluators=[_SafetyEvaluator.ECI],

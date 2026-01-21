@@ -15,7 +15,10 @@ from azure.ai.evaluation._common.rai_service import (
     evaluate_with_rai_service_sync,
     evaluate_with_rai_service_sync_multimodal,
 )
-from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    validate_azure_ai_project,
+    is_onedp_project,
+)
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._constants import _AggregationType
@@ -130,7 +133,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         messages = conversation["messages"]
 
         # Convert enum to string value
-        metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
+        metric_value = (
+            self._eval_metric.value
+            if hasattr(self._eval_metric, "value")
+            else self._eval_metric
+        )
 
         # Extract conversation turns (user-assistant pairs)
         turns = self._extract_turns(messages)
@@ -224,15 +231,23 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         : rtype: Dict[str, T]
         """
         # Handle EvalRunOutputItem structure
-        if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
-            results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+        if hasattr(eval_result, "results") or (
+            isinstance(eval_result, dict) and "results" in eval_result
+        ):
+            results = (
+                eval_result.results
+                if hasattr(eval_result, "results")
+                else eval_result.get("results", [])
+            )
 
             # Find the result matching our metric
             for result_item in results:
                 # Handle dict, Model objects (which support dict-like access), or fall back to __dict__
                 if isinstance(result_item, dict):
                     result_dict = result_item
-                elif hasattr(result_item, "get") and callable(getattr(result_item, "get")):
+                elif hasattr(result_item, "get") and callable(
+                    getattr(result_item, "get")
+                ):
                     # Model objects from OneDP client support dict-like access via .get()
                     result_dict = result_item
                 else:
@@ -245,7 +260,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                 # Check if this result matches our evaluator's metric
                 # Handle both exact match ("violence") and prefixed format ("builtin.violence")
-                expected_metric = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
+                expected_metric = (
+                    self._eval_metric.value
+                    if hasattr(self._eval_metric, "value")
+                    else self._eval_metric
+                )
                 if (
                     metric_name == expected_metric
                     or metric_name == f"builtin.{expected_metric}"
@@ -269,7 +288,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                         label_str = score_properties.get("label", "false")
 
                         # Convert string to boolean
-                        label = label_str.lower() == "true" if isinstance(label_str, str) else bool(label_str)
+                        label = (
+                            label_str.lower() == "true"
+                            if isinstance(label_str, str)
+                            else bool(label_str)
+                        )
 
                         parsed_result = {
                             f"{self._eval_metric.value}_label": label,
@@ -278,7 +301,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                         # For protected_material, also extract breakdown if available
                         if self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
-                            for component in ["fictional_characters", "logos_and_brands", "artwork"]:
+                            for component in [
+                                "fictional_characters",
+                                "logos_and_brands",
+                                "artwork",
+                            ]:
                                 component_value = score_properties.get(component)
                                 if component_value is not None:
                                     # Convert string to boolean if needed
@@ -287,15 +314,23 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                                         if isinstance(component_value, str)
                                         else bool(component_value)
                                     )
-                                    parsed_result[f"{component}_label"] = component_label
+                                    parsed_result[f"{component}_label"] = (
+                                        component_label
+                                    )
                                     # Reason might be in a separate field or computed
-                                    component_reason = score_properties.get(f"{component}_reasoning", "")
+                                    component_reason = score_properties.get(
+                                        f"{component}_reasoning", ""
+                                    )
                                     if component_reason:
-                                        parsed_result[f"{component}_reason"] = component_reason
+                                        parsed_result[f"{component}_reason"] = (
+                                            component_reason
+                                        )
 
                         # Extract details from scoreProperties
                         if score_properties:
-                            parsed_result[f"{self._eval_metric. value}_details"] = _prepare_details(score_properties)
+                            parsed_result[f"{self._eval_metric. value}_details"] = (
+                                _prepare_details(score_properties)
+                            )
 
                         # Extract token counts from metrics
                         metrics = properties.get("metrics", {})
@@ -313,9 +348,15 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                             total_tokens = ""
 
                         # Add token metadata (matching old format)
-                        parsed_result[f"{self._eval_metric. value}_total_tokens"] = total_tokens
-                        parsed_result[f"{self._eval_metric.value}_prompt_tokens"] = prompt_tokens
-                        parsed_result[f"{self._eval_metric.value}_completion_tokens"] = completion_tokens
+                        parsed_result[f"{self._eval_metric. value}_total_tokens"] = (
+                            total_tokens
+                        )
+                        parsed_result[f"{self._eval_metric.value}_prompt_tokens"] = (
+                            prompt_tokens
+                        )
+                        parsed_result[
+                            f"{self._eval_metric.value}_completion_tokens"
+                        ] = completion_tokens
 
                         # Add empty placeholders for fields that sync_evals doesn't provide
                         parsed_result[f"{self._eval_metric.value}_finish_reason"] = ""
@@ -328,7 +369,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                     # Standard handling for harm severity evaluators
                     # For sync_evals endpoint, the "label" field contains "pass"/"fail" (threshold check result),
                     # not the severity label. We must always calculate severity from the score.
-                    from azure.ai.evaluation._common.utils import get_harm_severity_level
+                    from azure.ai.evaluation._common.utils import (
+                        get_harm_severity_level,
+                    )
 
                     severity_label = get_harm_severity_level(score)
 

@@ -5,7 +5,9 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
 import logging
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from .._attack_strategy import AttackStrategy
 from pyrit.prompt_converter import (
     PromptConverter,
@@ -34,11 +36,16 @@ from ._rai_service_target import AzureRAIServiceTarget
 from .._default_converter import _DefaultConverter
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from .._callback_chat_target import _CallbackChatTarget
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 
 
 def create_tense_converter(
-    generated_rai_client: GeneratedRAIClient, is_one_dp_project: bool, logger: logging.Logger
+    generated_rai_client: GeneratedRAIClient,
+    is_one_dp_project: bool,
+    logger: logging.Logger,
 ) -> TenseConverter:
     """Factory function for creating TenseConverter with proper dependencies."""
     converter_target = AzureRAIServiceTarget(
@@ -53,7 +60,9 @@ def create_tense_converter(
     return TenseConverter(converter_target=converter_target, tense="past")
 
 
-def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
+def strategy_converter_map() -> (
+    Dict[Any, Union[PromptConverter, List[PromptConverter], None]]
+):
     """
     Returns a mapping of attack strategies to their corresponding converters.
     """
@@ -102,7 +111,9 @@ def get_converter_for_strategy(
 
     def _resolve_converter(strategy):
         converter_or_factory = factory_map[strategy]
-        if callable(converter_or_factory) and not isinstance(converter_or_factory, PromptConverter):
+        if callable(converter_or_factory) and not isinstance(
+            converter_or_factory, PromptConverter
+        ):
             # It's a factory function, call it with dependencies
             return converter_or_factory(generated_rai_client, is_one_dp_project, logger)
         return converter_or_factory
@@ -114,7 +125,12 @@ def get_converter_for_strategy(
 
 
 def get_chat_target(
-    target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    target: Union[
+        PromptChatTarget,
+        Callable,
+        AzureOpenAIModelConfiguration,
+        OpenAIModelConfiguration,
+    ],
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
@@ -211,7 +227,12 @@ def get_chat_target(
                     "context": {},
                 }
                 messages_list.append(formatted_response)  # type: ignore
-                return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
+                return {
+                    "messages": messages_list,
+                    "stream": stream,
+                    "session_state": session_state,
+                    "context": {},
+                }
 
             chat_target = _CallbackChatTarget(callback=callback_target)  # type: ignore
 

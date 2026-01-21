@@ -40,8 +40,12 @@ from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.core.credentials import TokenCredential
 
 PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
-CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json").resolve()
-RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
+CONNECTION_FILE = (
+    PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json"
+).resolve()
+RECORDINGS_TEST_CONFIGS_ROOT = Path(
+    PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs"
+).resolve()
 ZERO_GUID: Final[str] = "00000000-0000-0000-0000-000000000000"
 
 # Connection file keys
@@ -57,7 +61,9 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "azuretest: mark test as an Azure test.")
     config.addinivalue_line("markers", "localtest: mark test as a local test.")
     config.addinivalue_line("markers", "unittest: mark test as a unit test.")
-    config.addinivalue_line("markers", "performance_test: mark test as a performance test.")
+    config.addinivalue_line(
+        "markers", "performance_test: mark test as a performance test."
+    )
 
     # suppress deprecation warnings for now
     config.addinivalue_line("filterwarnings", "ignore::DeprecationWarning")
@@ -100,7 +106,9 @@ def add_sanitizers(
         mock_deployment = mock_model_config["azure_deployment"]
 
         add_general_regex_sanitizer(
-            regex=r"/openai/deployments/([^\/&#\"]+)", value=mock_deployment, group_for_replace="1"
+            regex=r"/openai/deployments/([^\/&#\"]+)",
+            value=mock_deployment,
+            group_for_replace="1",
         )
         add_body_key_sanitizer(json_path="$.model", value=mock_deployment)
 
@@ -117,13 +125,19 @@ def add_sanitizers(
             group_for_replace="1",
         )
         add_general_regex_sanitizer(
-            regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+            regex=r"/workspaces/([-\w\._\(\)]+)",
+            value=mock_project_scope["project_name"],
+            group_for_replace="1",
         )
         add_general_regex_sanitizer(
-            regex=r"/projects/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+            regex=r"/projects/([-\w\._\(\)]+)",
+            value=mock_project_scope["project_name"],
+            group_for_replace="1",
         )
         add_general_regex_sanitizer(
-            regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
+            regex=r"image_understanding/([-\w\._\(\)/]+)",
+            value=mock_project_scope["image_name"],
+            group_for_replace="1",
         )
 
     def openai_stainless_default_headers():
@@ -150,7 +164,9 @@ def add_sanitizers(
         ]
 
         for header_suffix, value in replacements:
-            add_header_regex_sanitizer(key=f"X-Stainless-{header_suffix}", regex="^.*$", value=value)
+            add_header_regex_sanitizer(
+                key=f"X-Stainless-{header_suffix}", regex="^.*$", value=value
+            )
 
     def azure_ai_generative_sanitizer():
         """Sanitize header values from azure-ai-generative"""
@@ -166,12 +182,21 @@ def add_sanitizers(
         project_scope = connection_file[KEY_AZURE_PROJECT_SCOPE]["value"]
         model_config = connection_file[KEY_AZURE_MODEL_CONFIG]["value"]
 
-        add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID)
         add_general_regex_sanitizer(
-            regex=project_scope["resource_group_name"], value=SanitizedValues.RESOURCE_GROUP_NAME
+            regex=project_scope["subscription_id"],
+            value=SanitizedValues.SUBSCRIPTION_ID,
         )
-        add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
-        add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config["azure_endpoint"])
+        add_general_regex_sanitizer(
+            regex=project_scope["resource_group_name"],
+            value=SanitizedValues.RESOURCE_GROUP_NAME,
+        )
+        add_general_regex_sanitizer(
+            regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME
+        )
+        add_general_regex_sanitizer(
+            regex=model_config["azure_endpoint"],
+            value=mock_model_config["azure_endpoint"],
+        )
 
     def promptflow_root_run_id_sanitizer():
         """Sanitize the promptflow service isolation values."""
@@ -204,7 +229,9 @@ def add_sanitizers(
         # In the eval run history, sanitize additional values such as the upn (which contains the user's email)
         add_body_key_sanitizer(json_path="$..userObjectId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..userPuId", value="0000000000000000")
-        add_body_key_sanitizer(json_path="$..userIss", value="https://sts.windows.net/" + ZERO_GUID)
+        add_body_key_sanitizer(
+            json_path="$..userIss", value="https://sts.windows.net/" + ZERO_GUID
+        )
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
@@ -219,20 +246,27 @@ def add_sanitizers(
         add_remove_header_sanitizer(headers=",".join(headers_to_ignore))
 
         # Sanitize the aml-user-token header to prevent recording mismatches
-        add_header_regex_sanitizer(key="aml-user-token", regex="^.*$", value="YOU SHALL NOT PASS")
+        add_header_regex_sanitizer(
+            key="aml-user-token", regex="^.*$", value="YOU SHALL NOT PASS"
+        )
 
         # Sanitize the category field in sync_evals requests to handle taxonomy variations
         # The category comes from risk_sub_type/taxonomy and can vary between live and playback
         add_body_key_sanitizer(
-            json_path="$.data_source.source.content.item.properties.category", value="sanitized_category"
+            json_path="$.data_source.source.content.item.properties.category",
+            value="sanitized_category",
         )
         add_body_key_sanitizer(
-            json_path="$.data_source.source.content.item.properties.taxonomy", value="sanitized_taxonomy"
+            json_path="$.data_source.source.content.item.properties.taxonomy",
+            value="sanitized_taxonomy",
         )
 
         # Sanitize the response field in sync_evals requests to handle variable content
         # The response can include conversation_objective which varies per attack
-        add_body_key_sanitizer(json_path="$.data_source.source.content.item.response", value="sanitized_response")
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.response",
+            value="sanitized_response",
+        )
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -278,8 +312,13 @@ def redirect_asyncio_requests_traffic() -> Generator[None, Any, None]:
         # this makes the request look like it was made to the original endpoint instead of to the proxy
         # without this, things like LROPollers can get broken by polling the wrong endpoint
         parsed_result = url_parse.urlparse(result.request.url)
-        upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
-        upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+        upstream_uri = url_parse.urlparse(
+            result.request.headers["x-recording-upstream-base-uri"]
+        )
+        upstream_uri_dict = {
+            "scheme": upstream_uri.scheme,
+            "netloc": upstream_uri.netloc,
+        }
         original_target = parsed_result._replace(**upstream_uri_dict).geturl()
 
         result.request.url = original_target
@@ -301,13 +340,21 @@ def simple_conversation():
                 "role": "user",
                 "context": "Customer wants to know the capital of France",
             },
-            {"content": "Paris", "role": "assistant", "context": "Paris is the capital of France"},
+            {
+                "content": "Paris",
+                "role": "assistant",
+                "context": "Paris is the capital of France",
+            },
             {
                 "content": "What is the capital of Hawaii?",
                 "role": "user",
                 "context": "Customer wants to know the capital of Hawaii",
             },
-            {"content": "Honolulu", "role": "assistant", "context": "Honolulu is the capital of Hawaii"},
+            {
+                "content": "Honolulu",
+                "role": "assistant",
+                "context": "Honolulu is the capital of Hawaii",
+            },
         ],
         "context": "Global context",
     }
@@ -317,7 +364,9 @@ def simple_conversation():
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
     config = TestProxyConfig(
-        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL
+        recording_id=get_recording_id(),
+        recording_mode="record" if is_live() else "playback",
+        proxy_url=PROXY_URL,
     )
 
     with TestProxyHttpxClientBase.record_with_proxy(config):
@@ -326,7 +375,10 @@ def redirect_openai_requests():
 
 @pytest.fixture
 def recorded_test(
-    recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic, mock_azure_management_api
+    recorded_test,
+    redirect_openai_requests,
+    redirect_asyncio_requests_traffic,
+    mock_azure_management_api,
 ):
     return recorded_test
 
@@ -388,10 +440,14 @@ def _get_connection_from_env() -> Dict[str, Any]:
 
 
 def get_config(
-    connection_file: Mapping[str, Any], key: str, defaults: Optional[Dict[str, Any]] = None
+    connection_file: Mapping[str, Any],
+    key: str,
+    defaults: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     if is_live():
-        assert key in connection_file, f"Connection '{key}' not found in dev connections."
+        assert (
+            key in connection_file
+        ), f"Connection '{key}' not found in dev connections."
 
     config = deepcopy(connection_file.get(key, {}).get("value", {}))
 
@@ -452,7 +508,8 @@ def model_config(
 
 @pytest.fixture(scope="session")
 def model_config_onedp(
-    connection_file: Dict[str, Any], mock_model_config_onedp: AzureOpenAIModelConfiguration
+    connection_file: Dict[str, Any],
+    mock_model_config_onedp: AzureOpenAIModelConfiguration,
 ) -> AzureOpenAIModelConfiguration:
     if not is_live():
         return mock_model_config_onedp
@@ -465,7 +522,9 @@ def model_config_onedp(
 
 
 @pytest.fixture
-def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIModelConfiguration:
+def non_azure_openai_model_config(
+    connection_file: Mapping[str, Any]
+) -> OpenAIModelConfiguration:
     """Requires the following in your local connections.json file. If not present, ask around the team.
 
         "openai_model_config": {
@@ -493,20 +552,37 @@ def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIM
 
 
 @pytest.fixture
-def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[str, Any]) -> Dict[str, Any]:
-    config = get_config(connection_file, KEY_AZURE_PROJECT_SCOPE) if is_live() else mock_project_scope
+def project_scope(
+    connection_file: Mapping[str, Any], mock_project_scope: Dict[str, Any]
+) -> Dict[str, Any]:
+    config = (
+        get_config(connection_file, KEY_AZURE_PROJECT_SCOPE)
+        if is_live()
+        else mock_project_scope
+    )
     return config
 
 
 @pytest.fixture
-def project_scope_onedp(connection_file: Mapping[str, Any], mock_onedp_project_scope: Dict[str, Any]) -> Dict[str, Any]:
-    config = get_config(connection_file, KEY_ONE_DP_PROJECT_SCOPE) if is_live() else mock_onedp_project_scope
+def project_scope_onedp(
+    connection_file: Mapping[str, Any], mock_onedp_project_scope: Dict[str, Any]
+) -> Dict[str, Any]:
+    config = (
+        get_config(connection_file, KEY_ONE_DP_PROJECT_SCOPE)
+        if is_live()
+        else mock_onedp_project_scope
+    )
     return config
 
 
 @pytest.fixture
-def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
-    keys = {"none": "azure_ai_entra_id_project_scope", "private": "azure_ai_private_connection_project_scope"}
+def datastore_project_scopes(
+    connection_file, project_scope, mock_project_scope
+) -> Dict[str, Any]:
+    keys = {
+        "none": "azure_ai_entra_id_project_scope",
+        "private": "azure_ai_private_connection_project_scope",
+    }
 
     scopes: Dict[str, Any] = {
         "sas": project_scope,
@@ -536,7 +612,10 @@ def mock_trace_destination_to_cloud(project_scope: dict):
         f"azureml://subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/"
         f"providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"
     )
-    with patch("promptflow._sdk._configuration.Configuration.get_trace_destination", return_value=trace_destination):
+    with patch(
+        "promptflow._sdk._configuration.Configuration.get_trace_destination",
+        return_value=trace_destination,
+    ):
         yield
 
 
@@ -544,7 +623,9 @@ def mock_trace_destination_to_cloud(project_scope: dict):
 def mock_validate_trace_destination():
     """Mock validate trace destination config to use in unit tests."""
 
-    with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
+    with patch(
+        "promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None
+    ):
         yield
 
 
@@ -652,10 +733,15 @@ def pytest_collection_modifyitems(items):
     parents = {}
     for item in items:
         # Check if parent contains 'localtest' marker and remove it.
-        if any(mark.name == "localtest" for mark in item.parent.own_markers) or id(item.parent) in parents:
+        if (
+            any(mark.name == "localtest" for mark in item.parent.own_markers)
+            or id(item.parent) in parents
+        ):
             if id(item.parent) not in parents:
                 item.parent.own_markers = [
-                    marker for marker in item.own_markers if getattr(marker, "name", None) != "localtest"
+                    marker
+                    for marker in item.own_markers
+                    if getattr(marker, "name", None) != "localtest"
                 ]
                 parents[id(item.parent)] = item.parent
             if not item.get_closest_marker("azuretest"):

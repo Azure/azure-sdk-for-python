@@ -6,7 +6,10 @@ from typing import Any, Dict, Optional, Union
 from openai.types.graders import PythonGrader
 
 from azure.ai.evaluation._common._experimental import experimental
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
@@ -83,4 +86,9 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
             type=AzureOpenAIPythonGrader._type,
         )
 
-        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)
+        super().__init__(
+            model_config=model_config,
+            grader_config=grader,
+            credential=credential,
+            **kwargs,
+        )

@@ -7,8 +7,16 @@ from typing_extensions import TypeIs
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION, TokenScope
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.credentials import TokenCredential
 
@@ -63,14 +71,18 @@ class AzureOpenAIGrader:
         """Validate the model configuration that this grader wrapper is using."""
         msg = None
         if self._is_azure_model_config(self._model_config):
-            if not any(auth for auth in (self._model_config.get("api_key"), self._credential)):
+            if not any(
+                auth for auth in (self._model_config.get("api_key"), self._credential)
+            ):
                 msg = (
                     f"{type(self).__name__}: Requires an api_key in the supplied model_config, "
                     + "or providing a credential to the grader's __init__ method. "
                 )
 
         else:
-            if "api_key" not in self._model_config or not self._model_config.get("api_key"):
+            if "api_key" not in self._model_config or not self._model_config.get(
+                "api_key"
+            ):
                 msg = f"{type(self).__name__}: Requires an api_key in the supplied model_config."
 
         if msg is None:
@@ -103,7 +115,9 @@ class AzureOpenAIGrader:
         :rtype: [~openai.OpenAI, ~openai.AzureOpenAI]
         """
         default_headers = {"User-Agent": UserAgentSingleton().value}
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration] = self._model_config
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration] = (
+            self._model_config
+        )
         api_key: Optional[str] = model_config.get("api_key")
 
         if self._is_azure_model_config(model_config):
@@ -115,7 +129,9 @@ class AzureOpenAIGrader:
                 api_key=api_key,  # Default-style access to appease linters.
                 api_version=DEFAULT_AOAI_API_VERSION,  # Force a known working version
                 azure_deployment=model_config.get("azure_deployment", ""),
-                azure_ad_token_provider=self._get_token_provider(self._credential) if not api_key else None,
+                azure_ad_token_provider=(
+                    self._get_token_provider(self._credential) if not api_key else None
+                ),
                 default_headers=default_headers,
             )
         from openai import OpenAI

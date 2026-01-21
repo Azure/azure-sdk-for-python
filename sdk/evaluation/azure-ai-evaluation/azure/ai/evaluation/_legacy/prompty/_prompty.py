@@ -8,7 +8,20 @@ import re
 from logging import Logger
 from os import PathLike
 from pathlib import Path
-from typing import Any, AsyncGenerator, Awaitable, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing import (
+    Any,
+    AsyncGenerator,
+    Awaitable,
+    Dict,
+    Final,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven, OpenAIError
 from openai.lib.azure import AsyncAzureADTokenProvider
@@ -24,7 +37,11 @@ from azure.ai.evaluation._legacy.prompty._exceptions import (
     NotSupportedError,
     WrappedOpenAIError,
 )
-from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
+from azure.ai.evaluation._legacy.prompty._connection import (
+    AzureOpenAIConnection,
+    Connection,
+    OpenAIConnection,
+)
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string
 from azure.ai.evaluation._legacy.prompty._utils import (
     dataclass_from_dict,
@@ -37,9 +54,13 @@ from azure.ai.evaluation._legacy.prompty._utils import (
     resolve_references,
     update_dict_recursively,
 )
-from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+from azure.ai.evaluation._constants import (
+    DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS,
+)
 from azure.ai.evaluation._legacy._common._logging import get_logger
-from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
+from azure.ai.evaluation._legacy._common._async_token_provider import (
+    AsyncAzureTokenProvider,
+)
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 
 PROMPTY_EXTENSION: Final[str] = ".prompty"
@@ -148,13 +169,22 @@ class AsyncPrompty:
             parameters = configs.get("model", {}).get("parameters", {})
             if "max_tokens" in parameters:
                 parameters.pop("max_tokens", None)
-                parameters["max_completion_tokens"] = DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+                parameters["max_completion_tokens"] = (
+                    DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+                )
             # Remove unsupported parameters for reasoning models
-            for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
+            for key in [
+                "temperature",
+                "top_p",
+                "presence_penalty",
+                "frequency_penalty",
+            ]:
                 parameters.pop(key, None)
 
         configs = resolve_references(configs, base_path=path.parent)
-        configs = update_dict_recursively(configs, resolve_references(kwargs, base_path=path.parent))
+        configs = update_dict_recursively(
+            configs, resolve_references(kwargs, base_path=path.parent)
+        )
 
         if configs["model"].get("api") == "completion":
             raise InvalidInputError(
@@ -216,7 +246,9 @@ class AsyncPrompty:
         """
         source_path = Path(source)
         if not source_path.exists():
-            raise PromptyException(f"Source {source_path.absolute().as_posix()} does not exist")
+            raise PromptyException(
+                f"Source {source_path.absolute().as_posix()} does not exist"
+            )
 
         if source_path.suffix != PROMPTY_EXTENSION:
             raise PromptyException("Source must be a file with .prompty extension.")
@@ -256,10 +288,14 @@ class AsyncPrompty:
                 missing_inputs.append(input_name)
                 continue
 
-            resolved_inputs[input_name] = input_values.get(input_name, value.get("default", None))
+            resolved_inputs[input_name] = input_values.get(
+                input_name, value.get("default", None)
+            )
 
         if missing_inputs:
-            raise MissingRequiredInputError(f"Missing required inputs: {missing_inputs}")
+            raise MissingRequiredInputError(
+                f"Missing required inputs: {missing_inputs}"
+            )
 
         return resolved_inputs
 
@@ -280,7 +316,9 @@ class AsyncPrompty:
 
         inputs = self._resolve_inputs(kwargs)
         connection = Connection.parse_from_config(self._model.configuration)
-        messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
+        messages = build_messages(
+            prompt=self._template, working_dir=self.path.parent, **inputs
+        )
         params = prepare_open_ai_request_params(self._model, messages)
 
         timeout: Optional[float] = None
@@ -302,7 +340,9 @@ class AsyncPrompty:
                 api_version=connection.api_version,
                 max_retries=max_retries,
                 azure_ad_token_provider=(
-                    self.get_token_provider(self._token_credential) if not connection.api_key else None
+                    self.get_token_provider(self._token_credential)
+                    if not connection.api_key
+                    else None
                 ),
                 default_headers=default_headers,
             )
@@ -316,7 +356,8 @@ class AsyncPrompty:
             )
         else:
             raise NotSupportedError(
-                f"'{type(connection).__name__}' is not a supported connection type.", target=ErrorTarget.EVAL_RUN
+                f"'{type(connection).__name__}' is not a supported connection type.",
+                target=ErrorTarget.EVAL_RUN,
             )
 
         response: OpenAIChatResponseType = await self._send_with_retries(
@@ -327,7 +368,8 @@ class AsyncPrompty:
 
         return await format_llm_response(
             response=response,
-            is_first_choice=self._data.get("model", {}).get("response", "first").lower() == "first",
+            is_first_choice=self._data.get("model", {}).get("response", "first").lower()
+            == "first",
             response_format=params.get("response_format", {}),
             outputs=self._outputs,
             inputs=inputs,
@@ -345,7 +387,9 @@ class AsyncPrompty:
         """
 
         inputs = self._resolve_inputs(kwargs)
-        messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
+        messages = build_messages(
+            prompt=self._template, working_dir=self.path.parent, **inputs
+        )
         return messages
 
     async def _send_with_retries(
@@ -368,7 +412,9 @@ class AsyncPrompty:
         """
 
         client_name: str = api_client.__class__.__name__
-        client: Union[AsyncAzureOpenAI, AsyncOpenAI] = api_client.with_options(timeout=timeout or NotGiven())
+        client: Union[AsyncAzureOpenAI, AsyncOpenAI] = api_client.with_options(
+            timeout=timeout or NotGiven()
+        )
 
         entity_retries: List[int] = [0]
         should_retry: bool = True
@@ -386,7 +432,9 @@ class AsyncPrompty:
                 if retry >= max_retries:
                     should_retry = False
                 else:
-                    should_retry, delay = openai_error_retryable(error, retry, entity_retries, max_entity_retries)
+                    should_retry, delay = openai_error_retryable(
+                        error, retry, entity_retries, max_entity_retries
+                    )
 
                 if should_retry:
                     self._logger.warning(
@@ -413,7 +461,9 @@ class AsyncPrompty:
                 retry += 1
 
     @staticmethod
-    def get_token_provider(cred: Union[TokenCredential, AsyncTokenCredential]) -> AsyncAzureADTokenProvider:
+    def get_token_provider(
+        cred: Union[TokenCredential, AsyncTokenCredential]
+    ) -> AsyncAzureADTokenProvider:
         """Get the token provider for the prompty.
 
         :param Union[TokenCredential, AsyncTokenCredential] cred: The Azure authentication credential.

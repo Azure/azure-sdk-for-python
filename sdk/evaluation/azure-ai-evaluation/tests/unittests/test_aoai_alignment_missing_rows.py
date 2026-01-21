@@ -44,19 +44,45 @@ def test_aoai_results_preserve_order_with_unordered_output_items(caplog):
     # Completed run; pass_rate comes from per_testing_criteria_results
     mock_run_results = Mock()
     mock_run_results.status = "completed"
-    mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=4, failed=1)]
+    mock_run_results.per_testing_criteria_results = [
+        Mock(testing_criteria="grader-1", passed=4, failed=1)
+    ]
 
     # Unordered items: ids [3,0,4,1,2]; score equals its id for easy checks
     unordered_items = [
-        MockOutputItem(id="i3", datasource_item_id=3, results=[{"name": "grader-1", "passed": True, "score": 3.0}]),
-        MockOutputItem(id="i0", datasource_item_id=0, results=[{"name": "grader-1", "passed": True, "score": 0.0}]),
-        MockOutputItem(id="i4", datasource_item_id=4, results=[{"name": "grader-1", "passed": False, "score": 4.0}]),
-        MockOutputItem(id="i1", datasource_item_id=1, results=[{"name": "grader-1", "passed": True, "score": 1.0}]),
-        MockOutputItem(id="i2", datasource_item_id=2, results=[{"name": "grader-1", "passed": True, "score": 2.0}]),
+        MockOutputItem(
+            id="i3",
+            datasource_item_id=3,
+            results=[{"name": "grader-1", "passed": True, "score": 3.0}],
+        ),
+        MockOutputItem(
+            id="i0",
+            datasource_item_id=0,
+            results=[{"name": "grader-1", "passed": True, "score": 0.0}],
+        ),
+        MockOutputItem(
+            id="i4",
+            datasource_item_id=4,
+            results=[{"name": "grader-1", "passed": False, "score": 4.0}],
+        ),
+        MockOutputItem(
+            id="i1",
+            datasource_item_id=1,
+            results=[{"name": "grader-1", "passed": True, "score": 1.0}],
+        ),
+        MockOutputItem(
+            id="i2",
+            datasource_item_id=2,
+            results=[{"name": "grader-1", "passed": True, "score": 2.0}],
+        ),
     ]
-    mock_client.evals.runs.output_items.list.return_value = MockOutputItemsList(data=unordered_items, has_more=False)
+    mock_client.evals.runs.output_items.list.return_value = MockOutputItemsList(
+        data=unordered_items, has_more=False
+    )
 
-    caplog.set_level(logging.WARNING, logger="azure.ai.evaluation._evaluate._evaluate_aoai")
+    caplog.set_level(
+        logging.WARNING, logger="azure.ai.evaluation._evaluate._evaluate_aoai"
+    )
 
     with patch(
         "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion",

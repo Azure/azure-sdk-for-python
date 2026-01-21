@@ -63,7 +63,11 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
 
         thing_to_eval = prompt_request.request_pieces[0].to_dict()["original_value"]
 
-        thing_to_eval_qr = {"query": "query", "response": thing_to_eval, "context": self.context}
+        thing_to_eval_qr = {
+            "query": "query",
+            "response": thing_to_eval,
+            "context": self.context,
+        }
 
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
@@ -85,13 +89,26 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         passed = None
 
         # Handle EvalRunOutputItem structure
-        if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
-            results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+        if hasattr(eval_result, "results") or (
+            isinstance(eval_result, dict) and "results" in eval_result
+        ):
+            results = (
+                eval_result.results
+                if hasattr(eval_result, "results")
+                else eval_result.get("results", [])
+            )
 
             # Find the result matching our metric
             for result_item in results:
-                result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
-                if result_dict.get("name") == metric_name or result_dict.get("metric") == metric_name:
+                result_dict = (
+                    result_item
+                    if isinstance(result_item, dict)
+                    else result_item.__dict__
+                )
+                if (
+                    result_dict.get("name") == metric_name
+                    or result_dict.get("metric") == metric_name
+                ):
                     score = result_dict.get("score")
                     if score is None:
                         score = 0
@@ -102,7 +119,9 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
                     # Convert score to severity label if needed
                     result = result_dict.get("label")
                     if result is None:
-                        from azure.ai.evaluation._common.utils import get_harm_severity_level
+                        from azure.ai.evaluation._common.utils import (
+                            get_harm_severity_level,
+                        )
 
                         result = get_harm_severity_level(score)
                     break
