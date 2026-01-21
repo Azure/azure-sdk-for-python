@@ -702,7 +702,7 @@ async def main():
     """Main async function."""
     # Get credentials from environment variables
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
-    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
+    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "https://test.voicelive.com/")
 
     if not api_key:
         print("❌ Error: No API key provided")

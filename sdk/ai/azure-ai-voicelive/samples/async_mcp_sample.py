@@ -647,7 +647,7 @@ async def main():
     # Get credentials from environment variables
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
     # Note: Use api_version="2026-01-01-preview" to enable MCP features
-    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT")
+    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "https://test.voicelive.com/")
 
     if not api_key:
         print("❌ Error: No API key provided")
