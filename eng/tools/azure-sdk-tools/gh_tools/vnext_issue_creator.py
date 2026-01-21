@@ -16,7 +16,7 @@ import calendar
 import typing
 import pathlib
 from typing_extensions import Literal
-from github import Github, Auth
+from github import Github, Auth, GithubException
 
 from ci_tools.variables import discover_repo_root
 
@@ -91,7 +91,7 @@ def get_date_for_version_bump(today: datetime.datetime) -> str:
     return merge_date.strftime("%Y-%m-%d")
 
 
-def get_labels(package_name: str, service: str) -> list[str]:
+def get_labels(package_name: str, service: str) -> tuple[list[str], list[str]]:
     repo_root = discover_repo_root()
     codeowners_path = pathlib.Path(repo_root) / ".github" / "CODEOWNERS"
     with open(codeowners_path, "r") as codeowners_file:
@@ -99,7 +99,9 @@ def get_labels(package_name: str, service: str) -> list[str]:
 
     label = ""
     service_label = ""
+    service_owners = []
     labels = []
+    assignees = []
     if "mgmt" in package_name:
         labels.append("Mgmt")
     for line in codeowners:
@@ -118,14 +120,24 @@ def get_labels(package_name: str, service: str) -> list[str]:
                 library = parts[1]
                 if package_name == library:
                     labels.append(label)
-                    return labels
+                    # Extract codeowners from the line
+                    tokens = line.split()
+                    owners = [token.lstrip("@") for token in tokens if token.startswith("@")]
+                    # Filter out teams (containing '/')
+                    assignees = [owner for owner in owners if "/" not in owner]
+                    return labels, assignees
             except IndexError:
                 if service_directory == service:
                     service_label = label
+                    # Extract service-level codeowners
+                    tokens = line.split()
+                    owners = [token.lstrip("@") for token in tokens if token.startswith("@")]
+                    service_owners = [owner for owner in owners if "/" not in owner]
 
     if service_label:
         labels.append(service_label)
-    return labels
+        assignees = service_owners
+    return labels, assignees
 
 
 def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
@@ -174,18 +186,49 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     # create an issue for the library failing the vnext check
     if not vnext_issue:
-        labels = get_labels(package_name, service_directory)
+        try:
+            labels, assignees = get_labels(package_name, service_directory)
+        except Exception as e:
+            logging.warning(f"Failed to get labels and assignees from CODEOWNERS for {package_name}: {e}")
+            labels = []
+            assignees = []
+            if "mgmt" in package_name:
+                labels.append("Mgmt")
+
         labels.extend([check_type])
         logging.info(f"Issue does not exist for {package_name} with {check_type} version {version}. Creating...")
-        repo.create_issue(title=title, body=template, labels=labels)
+        issue = repo.create_issue(title=title, body=template, labels=labels)
+
+        # Assign codeowners individually with error handling
+        for assignee in assignees:
+            try:
+                issue.add_to_assignees(assignee)
+                logging.info(f"Assigned {assignee} to issue for {package_name}")
+            except GithubException as e:
+                logging.warning(f"Failed to assign {assignee} to issue for {package_name}: {e}")
         return
 
     # an issue exists, let's update it so it reflects the latest typing/linting errors
     logging.info(f"Issue exists for {package_name} with {check_type} version {version}. Updating...")
+    try:
+        labels, assignees = get_labels(package_name, service_directory)
+    except Exception as e:
+        logging.warning(f"Failed to get labels and assignees from CODEOWNERS for {package_name}: {e}")
+        labels = []
+        assignees = []
+
     vnext_issue[0].edit(
         title=title,
         body=template,
     )
+
+    # Assign codeowners individually with error handling
+    for assignee in assignees:
+        try:
+            vnext_issue[0].add_to_assignees(assignee)
+            logging.info(f"Assigned {assignee} to issue for {package_name}")
+        except GithubException as e:
+            logging.warning(f"Failed to assign {assignee} to issue for {package_name}: {e}")
 
 
 def close_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:

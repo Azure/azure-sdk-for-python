@@ -13,7 +13,7 @@ mimetypes.add_type("text/markdown", ".md")
 
 import os
 import pytest
-from dotenv import load_dotenv, find_dotenv
+from dotenv import find_dotenv, load_dotenv
 from devtools_testutils import (
     remove_batch_sanitizers,
     add_general_regex_sanitizer,
@@ -119,6 +119,12 @@ def add_sanitizers(test_proxy, sanitized_values):
 
     # Sanitize checkpoint IDs in URLs and response bodies
     add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
+
+    # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
+    add_general_regex_sanitizer(
+        regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC",
+        value="eval-data-sanitized-timestamp"
+    )
 
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
