@@ -1,0 +1,9 @@
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: test-minimal-template
+version: 1
+type: deploymenttemplates
+deployment_template_type: Managed
+description: Minimal deployment template for E2E testing
+environment: azureml://registries/testFeed/environments/test-sklearn-env/versions/1
+instance_count: 1
+default_instance_type: Standard_DS2_v2

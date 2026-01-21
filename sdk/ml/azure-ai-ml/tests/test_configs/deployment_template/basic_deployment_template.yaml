@@ -1,0 +1,20 @@
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: test-basic-template
+version: 1
+type: deploymenttemplates
+deployment_template_type: Managed
+description: Test deployment template for E2E testing
+environment: azureml://registries/testFeed/environments/test-sklearn-env/versions/1
+tags:
+  env: test
+  type: basic
+instance_count: 2
+default_instance_type: Standard_DS3_v2
+allowed_instance_types: Standard_DS2_v2,Standard_DS3_v2
+request_settings:
+  request_timeout_ms: 5000
+  max_concurrent_requests_per_instance: 1
+environment_variables:
+  MODEL_PATH: /var/azureml-app/azureml-models/model/1
+  LOG_LEVEL: INFO
+  MODEL_NAME: test_model
