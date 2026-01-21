@@ -16,15 +16,28 @@ from azure.ai.evaluation.red_team._utils.objective_utils import extract_risk_sub
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
 
-# PyRIT related imports to mock
+# PyRIT related imports - handle API changes gracefully
 from pyrit.prompt_converter import PromptConverter
-from pyrit.orchestrator import PromptSendingOrchestrator
-from pyrit.common import DUCK_DB
 from pyrit.exceptions import PyritException
 from pyrit.models import ChatMessage
 
-# Imports for Crescendo tests
-from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+# Try to import orchestrator modules - these were removed in newer PyRIT versions
+try:
+    from pyrit.orchestrator import PromptSendingOrchestrator
+    from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+    HAS_ORCHESTRATOR = True
+except ImportError:
+    # New PyRIT versions don't have orchestrator module
+    PromptSendingOrchestrator = MagicMock
+    CrescendoOrchestrator = MagicMock
+    HAS_ORCHESTRATOR = False
+
+# Try to import DUCK_DB - may not exist in newer versions
+try:
+    from pyrit.common import DUCK_DB
+except ImportError:
+    DUCK_DB = "duckdb"  # Fallback value
+
 from pyrit.prompt_target import PromptChatTarget
 from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
 from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
@@ -50,7 +63,7 @@ def red_team(mock_azure_ai_project, mock_credential):
     with patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient"), patch(
         "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
     ), patch("azure.ai.evaluation.red_team._red_team.setup_logger") as mock_setup_logger, patch(
-        "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
+        "azure.ai.evaluation.red_team._red_team.CentralMemory"
     ), patch(
         "os.makedirs"
     ), patch(
@@ -125,7 +138,7 @@ def red_team_instance(mock_azure_ai_project, mock_credential):
     with patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient"), patch(
         "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
     ), patch("azure.ai.evaluation.red_team._red_team.setup_logger") as mock_setup_logger, patch(
-        "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
+        "azure.ai.evaluation.red_team._red_team.CentralMemory"
     ), patch(
         "os.makedirs"
     ), patch(
@@ -163,10 +176,10 @@ class TestRedTeamInitialization:
     @patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient")
     @patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient")
     @patch("azure.ai.evaluation.red_team._red_team.setup_logger")
-    @patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit")
+    @patch("azure.ai.evaluation.red_team._red_team.CentralMemory")
     def test_red_team_initialization(
         self,
-        mock_initialize_pyrit,
+        mock_central_memory,
         mock_setup_logger,
         mock_generated_rai_client,
         mock_rai_client,
@@ -188,7 +201,7 @@ class TestRedTeamInitialization:
         assert agent.generated_rai_client is not None
         assert isinstance(agent.attack_objectives, dict)
         assert agent.red_team_info == {}
-        mock_initialize_pyrit.assert_called_once()
+        mock_central_memory.set_memory_instance.assert_called_once()
 
 
 @pytest.mark.unittest
@@ -788,6 +801,7 @@ class TestRedTeamOrchestrator:
     """Test orchestrator functionality in RedTeam."""
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not HAS_ORCHESTRATOR, reason="PyRIT orchestrator module not available in this version")
     async def test_prompt_sending_orchestrator(self, red_team):
         """Test _prompt_sending_orchestrator method."""
         mock_chat_target = MagicMock()
@@ -831,6 +845,7 @@ class TestRedTeamOrchestrator:
             # The test validates that the orchestrator flow works correctly
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not HAS_ORCHESTRATOR, reason="PyRIT orchestrator module not available in this version")
     async def test_prompt_sending_orchestrator_timeout(self, red_team):
         """Test _prompt_sending_orchestrator method with timeout."""
         mock_chat_target = MagicMock()
@@ -889,6 +904,7 @@ class TestCrescendoOrchestrator:
     """Test Crescendo orchestrator functionality in RedTeam."""
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not HAS_ORCHESTRATOR, reason="PyRIT orchestrator module not available in this version")
     async def test_crescendo_orchestrator_initialization_and_run(self, red_team_instance):
         """Test the initialization and basic run of CrescendoOrchestrator."""
         mock_chat_target = MagicMock(spec=PromptChatTarget)
@@ -940,6 +956,7 @@ class TestCrescendoOrchestrator:
             # The important thing is that the method executes successfully
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not HAS_ORCHESTRATOR, reason="PyRIT orchestrator module not available in this version")
     async def test_crescendo_orchestrator_general_exception_handling(self, red_team_instance):
         """Test general exception handling in _crescendo_orchestrator."""
         mock_chat_target = MagicMock(spec=PromptChatTarget)
@@ -951,9 +968,9 @@ class TestCrescendoOrchestrator:
         red_team_instance.red_team_info[strategy_name] = {risk_category_name: {}}
 
         mock_crescendo_orchestrator_instance = AsyncMock(spec=CrescendoOrchestrator)
-        # Use the imported PyritException
+        # Use the imported PyritException with keyword argument (required in new PyRIT API)
         mock_crescendo_orchestrator_instance.run_attack_async.side_effect = PyritException(
-            "Test Pyrit Exception from Crescendo"
+            message="Test Pyrit Exception from Crescendo"
         )
 
         with patch(

@@ -12,12 +12,14 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
+    from pyrit.memory import CentralMemory, SQLiteMemory
+
+    # Initialize PyRIT with in-memory database
+    CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
+
     from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
     from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
-    from pyrit.models import PromptRequestResponse, PromptRequestPiece
-    from pyrit.common import initialize_pyrit, IN_MEMORY
-
-    initialize_pyrit(memory_db_type=IN_MEMORY)
+    from pyrit.models import Message as PromptRequestResponse, MessagePiece as PromptRequestPiece
 
 
 # Create mock objects for testing
@@ -50,7 +52,7 @@ def mock_prompt_request():
         original_value_data_type="text",
         converted_value_data_type="text",
     )
-    return PromptRequestResponse(request_pieces=[piece])
+    return PromptRequestResponse(message_pieces=[piece])
 
 
 @pytest.mark.asyncio
@@ -82,8 +84,8 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
         annotation_task="content harm",
     )
 
-    assert len(response.request_pieces) == 1
-    response_piece = response.request_pieces[0]
+    assert len(response.message_pieces) == 1
+    response_piece = response.message_pieces[0]
     assert response_piece.role == "assistant"
 
     expected_response_data = {
@@ -116,8 +118,8 @@ async def test_send_prompt_async_fail_score(mock_evaluate, mock_prompt_request, 
 
     response = await target.send_prompt_async(prompt_request=mock_prompt_request)
 
-    assert len(response.request_pieces) == 1
-    response_piece = response.request_pieces[0]
+    assert len(response.message_pieces) == 1
+    response_piece = response.message_pieces[0]
     response_data = json.loads(response_piece.converted_value)
     assert response_data["score_value"] == False  # 2 <= 4
     assert response_data["metadata"]["raw_score"] == 2
@@ -135,7 +137,7 @@ def test_validate_request_success(mock_prompt_request, mock_azure_ai_project):
 def test_validate_request_invalid_pieces(mock_prompt_request, mock_azure_ai_project):
     """Tests validation failure with multiple pieces."""
     target = RAIServiceEvalChatTarget(MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger)
-    mock_prompt_request.request_pieces.append(mock_prompt_request.request_pieces[0])  # Add a second piece
+    mock_prompt_request.message_pieces.append(mock_prompt_request.message_pieces[0])  # Add a second piece
     with pytest.raises(ValueError, match="only supports a single prompt request piece"):
         target._validate_request(prompt_request=mock_prompt_request)
 
@@ -143,7 +145,7 @@ def test_validate_request_invalid_pieces(mock_prompt_request, mock_azure_ai_proj
 def test_validate_request_invalid_type(mock_prompt_request, mock_azure_ai_project):
     """Tests validation failure with non-text data type."""
     target = RAIServiceEvalChatTarget(MockCredential, mock_azure_ai_project, RiskCategory.HateUnfairness, MockLogger)
-    mock_prompt_request.request_pieces[0].converted_value_data_type = "image"
+    mock_prompt_request.message_pieces[0].converted_value_data_type = "image"
     with pytest.raises(ValueError, match="only supports text prompt input"):
         target._validate_request(prompt_request=mock_prompt_request)
 

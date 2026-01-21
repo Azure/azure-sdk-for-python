@@ -6,11 +6,12 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 import asyncio
 
-from pyrit.common import initialize_pyrit, IN_MEMORY
+from pyrit.memory import CentralMemory, SQLiteMemory
 
 from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
 
-initialize_pyrit(memory_db_type=IN_MEMORY)
+# Initialize PyRIT with in-memory database
+CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
 
 
 @pytest.fixture(scope="function")
@@ -34,7 +35,7 @@ def chat_target(mock_callback):
 
 @pytest.fixture(scope="function")
 def mock_request():
-    """Create a mocked request object that mimics PromptRequestResponse from pyrit."""
+    """Create a mocked request object that mimics Message from pyrit."""
     request_piece = MagicMock()
     request_piece.conversation_id = "test-id"
     request_piece.converted_value = "test prompt"
@@ -43,8 +44,8 @@ def mock_request():
     request_piece.labels.get.return_value = None
 
     request = MagicMock()
-    request.request_pieces = [request_piece]
-    request.response_pieces = []
+    request.message_pieces = [request_piece]
+    request.get_piece = MagicMock(side_effect=lambda i: request.message_pieces[i])
 
     # Mock the constructor pattern used by _CallbackChatTarget
     response_piece = MagicMock()
@@ -109,7 +110,8 @@ class TestCallbackChatTargetPrompts:
         request_piece.labels = {"context": {"contexts": ["test context data"]}}
 
         mock_request = MagicMock()
-        mock_request.request_pieces = [request_piece]
+        mock_request.message_pieces = [request_piece]
+        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
 
         with patch.object(chat_target, "_memory") as mock_memory, patch(
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
@@ -136,7 +138,7 @@ class TestCallbackChatTargetPrompts:
     def test_validate_request_multiple_pieces(self, chat_target):
         """Test _validate_request with multiple request pieces."""
         mock_req = MagicMock()
-        mock_req.request_pieces = [MagicMock(), MagicMock()]  # Two pieces
+        mock_req.message_pieces = [MagicMock(), MagicMock()]  # Two pieces
 
         with pytest.raises(ValueError) as excinfo:
             chat_target._validate_request(prompt_request=mock_req)
@@ -148,7 +150,8 @@ class TestCallbackChatTargetPrompts:
         mock_req = MagicMock()
         mock_piece = MagicMock()
         mock_piece.converted_value_data_type = "image"  # Not text
-        mock_req.request_pieces = [mock_piece]
+        mock_req.message_pieces = [mock_piece]
+        mock_req.get_piece = MagicMock(side_effect=lambda i: mock_req.message_pieces[i])
 
         with pytest.raises(ValueError) as excinfo:
             chat_target._validate_request(prompt_request=mock_req)

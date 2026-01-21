@@ -194,29 +194,38 @@ class TestDatasetConfigurationBuilder:
         assert isinstance(result, uuid.UUID)
 
     def test_determine_data_type_text(self):
-        """Test data type determination for text contexts."""
+        """Test data type determination for text-like contexts.
+
+        With binary_path support, all non-tool_call contexts return binary_path.
+        """
         builder = DatasetConfigurationBuilder(risk_category="violence")
 
-        # Text-like types should return "text"
+        # All text-like types should return "binary_path" (stored as files)
         for ctx_type in ["email", "document", "code", "text", "markdown", "footnote", ""]:
             result = builder._determine_data_type({"context_type": ctx_type})
-            assert result == "text", f"Expected 'text' for {ctx_type}"
+            assert result == "binary_path", f"Expected 'binary_path' for {ctx_type}"
 
     def test_determine_data_type_url(self):
-        """Test data type determination for URL contexts."""
+        """Test data type determination for URL-like contexts.
+
+        With binary_path support, all non-tool_call contexts return binary_path.
+        """
         builder = DatasetConfigurationBuilder(risk_category="violence")
 
         for ctx_type in ["html", "url", "web"]:
             result = builder._determine_data_type({"context_type": ctx_type})
-            assert result == "url", f"Expected 'url' for {ctx_type}"
+            assert result == "binary_path", f"Expected 'binary_path' for {ctx_type}"
 
     def test_determine_data_type_media(self):
-        """Test data type determination for media contexts."""
+        """Test data type determination for media contexts.
+
+        With binary_path support, all non-tool_call contexts return binary_path.
+        """
         builder = DatasetConfigurationBuilder(risk_category="violence")
 
-        assert builder._determine_data_type({"context_type": "image"}) == "image_path"
-        assert builder._determine_data_type({"context_type": "audio"}) == "audio_path"
-        assert builder._determine_data_type({"context_type": "video"}) == "video_path"
+        assert builder._determine_data_type({"context_type": "image"}) == "binary_path"
+        assert builder._determine_data_type({"context_type": "audio"}) == "binary_path"
+        assert builder._determine_data_type({"context_type": "video"}) == "binary_path"
 
     def test_determine_data_type_tool_call(self):
         """Test data type determination for tool_call contexts."""
@@ -827,7 +836,7 @@ class TestScenarioOrchestrator:
         mock_foundry.run_attack_async = AsyncMock()
 
         with patch(
-            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.Foundry",
+            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
             return_value=mock_foundry,
         ), patch(
             "pyrit.executor.attack.AttackScoringConfig",
@@ -1649,20 +1658,23 @@ class TestDatasetConfigurationBuilderExtended:
         assert len(attack_vehicles) >= 0  # May be 3 if working correctly
 
     def test_determine_data_type_edge_cases(self):
-        """Test data type determination for edge case context types."""
+        """Test data type determination for edge case context types.
+
+        With binary_path support, all non-tool_call contexts return binary_path.
+        """
         builder = DatasetConfigurationBuilder(risk_category="violence")
 
-        # Empty context
-        assert builder._determine_data_type({}) == "text"
+        # Empty context returns binary_path (stored as file)
+        assert builder._determine_data_type({}) == "binary_path"
 
-        # Mixed case
-        assert builder._determine_data_type({"context_type": "HTML"}) == "url"
+        # Mixed case - all non-tool_call return binary_path
+        assert builder._determine_data_type({"context_type": "HTML"}) == "binary_path"
         assert builder._determine_data_type({"context_type": "TOOL_CALL"}) == "tool_call"
 
-        # Substrings
-        assert builder._determine_data_type({"context_type": "image_png"}) == "image_path"
-        assert builder._determine_data_type({"context_type": "audio_wav"}) == "audio_path"
-        assert builder._determine_data_type({"context_type": "video_mp4"}) == "video_path"
+        # Substrings - all return binary_path now
+        assert builder._determine_data_type({"context_type": "image_png"}) == "binary_path"
+        assert builder._determine_data_type({"context_type": "audio_wav"}) == "binary_path"
+        assert builder._determine_data_type({"context_type": "video_mp4"}) == "binary_path"
 
     def test_build_with_no_seed_groups(self):
         """Test building with no seed groups added raises error on access."""
@@ -1860,7 +1872,7 @@ class TestScenarioOrchestratorExtended:
         mock_foundry.run_attack_async = AsyncMock()
 
         with patch(
-            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.Foundry",
+            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
             return_value=mock_foundry,
         ), patch(
             "pyrit.executor.attack.AttackScoringConfig",
@@ -1871,7 +1883,7 @@ class TestScenarioOrchestratorExtended:
             )
 
             assert result == orchestrator
-            # Foundry should be created with adversarial_chat
+            # FoundryScenario should be created with adversarial_chat
             mock_foundry.initialize_async.assert_called_once()
 
     def test_calculate_asr_with_undetermined(self, mock_logger):
