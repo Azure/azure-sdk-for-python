@@ -43,7 +43,7 @@ class AgentFrameworkInputConverter:
 
         if isinstance(input, str):
             return input
-        
+
         if self._hitl_helper:
             # load pending requests from checkpoint and thread messages if available
             thread_messages = []
@@ -57,7 +57,7 @@ class AgentFrameworkInputConverter:
             logger.info(f"HitL response validation result: {[m.to_dict() for m in hitl_response]}")
             if hitl_response:
                 return hitl_response
-        
+
         return self._transform_input_internal(input)
 
     def _transform_input_internal(
@@ -163,7 +163,7 @@ class AgentFrameworkInputConverter:
         if not isinstance(input, list) or len(input) != 1:
             logger.warning("Expected single-item list input for HitL response validation.")
             return None
-        
+
         item = input[0]
         if item.get("type") != "function_call_output":
             logger.warning("Expected function_call_output type for HitL response validation.")
@@ -178,5 +178,5 @@ class AgentFrameworkInputConverter:
         if not isinstance(request_info, RequestInfoEvent):
             logger.warning("No valid pending request info found for call_id: %s", call_id)
             return None
-        
+
         return self._hitl_helper.convert_response(request_info, item)

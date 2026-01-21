@@ -22,7 +22,7 @@ class AgentThreadRepository(ABC):
         :rtype: Optional[AgentThread]
         """
 
-    @abstractmethod    
+    @abstractmethod
     async def set(self, conversation_id: str, thread: AgentThread) -> None:
         """Save the thread for a given conversation ID.
 
@@ -69,7 +69,7 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
     def __init__(self, agent: AgentProtocol) -> None:
         """
         Initialize the repository with the given agent.
-        
+
         :param agent: The agent instance.
         :type agent: AgentProtocol
         """
@@ -115,7 +115,7 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         :rtype: Optional[Any]
         """
         raise NotImplementedError("read_from_storage is not implemented.")
-    
+
     async def write_to_storage(self, conversation_id: str, serialized_thread: Any) -> None:
         """Write the serialized thread to storage.
 
@@ -125,7 +125,7 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         :type serialized_thread: Any
         """
         raise NotImplementedError("write_to_storage is not implemented.")
-    
+
 
 class JsonLocalFileAgentThreadRepository(SerializedAgentThreadRepository):
     """Json based implementation of AgentThreadRepository using local file storage."""

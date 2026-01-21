@@ -114,9 +114,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
     def _create_otlp_exporter(self, endpoint, protocol=None):
         try:
             if protocol and protocol.lower() in ("http", "http/protobuf", "http/json"):
-                    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+                from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 
-                    return OTLPSpanExporter(endpoint=endpoint)
+                return OTLPSpanExporter(endpoint=endpoint)
             else:
                 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
@@ -182,7 +182,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
         AsyncGenerator[ResponseStreamEvent, Any],
     ]:
         raise NotImplementedError("This method is implemented in the base class.")
-    
+
     async def _load_agent_thread(self, context: AgentRunContext, agent: Union[AgentProtocol, WorkflowAgent]) -> Optional[AgentThread]:
         """Load the agent thread for a given conversation ID.
 

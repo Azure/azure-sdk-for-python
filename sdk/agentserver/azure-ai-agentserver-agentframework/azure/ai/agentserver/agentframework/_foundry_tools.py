@@ -50,7 +50,7 @@ class FoundryToolClient:
         foundry_tool_catalog = server_context.tools.catalog
         resolved_tools = await foundry_tool_catalog.list(self._allowed_tools)
         return [self._to_aifunction(tool) for tool in resolved_tools]
-    
+
     def _to_aifunction(self, foundry_tool: "ResolvedFoundryTool") -> AIFunction:
         """Convert an FoundryTool to an Agent Framework AI Function
 

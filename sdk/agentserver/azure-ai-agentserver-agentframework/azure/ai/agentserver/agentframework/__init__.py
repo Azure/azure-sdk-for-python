@@ -27,7 +27,7 @@ def from_agent_framework(
     ) -> "AgentFrameworkAIAgentAdapter":
     """
     Create an Agent Framework AI Agent Adapter from an AgentProtocol or BaseAgent.
-    
+
     :param agent: The agent to adapt.
     :type agent: Union[BaseAgent, AgentProtocol]
     :param credentials: Optional asynchronous token credential for authentication.
@@ -49,9 +49,9 @@ def from_agent_framework(
     ) -> "AgentFrameworkWorkflowAdapter":
     """
     Create an Agent Framework Workflow Adapter.
-    The arugument `workflow` can be either a WorkflowBuilder or a factory function 
+    The arugument `workflow` can be either a WorkflowBuilder or a factory function
     that returns a Workflow.
-    It will be called to create a new Workflow instance and `.as_agent()` will be 
+    It will be called to create a new Workflow instance and `.as_agent()` will be
     called as well for each incoming CreateResponse request. Please ensure that the
     workflow definition can be converted to a WorkflowAgent. For more information,
     see the agent-framework samples and documentation.
@@ -61,7 +61,7 @@ def from_agent_framework(
     :param credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[AsyncTokenCredential]
     :param kwargs: Additional keyword arguments to pass to the adapter.
-    :type kwargs: Any   
+    :type kwargs: Any
     :return: An instance of AgentFrameworkWorkflowAdapter.
     :rtype: AgentFrameworkWorkflowAdapter
     """
@@ -75,7 +75,7 @@ def from_agent_framework(
     **kwargs: Any,
 ) -> "AgentFrameworkAgent":
     """
-    Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a 
+    Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a
     WorkflowAgent.
     One of agent or workflow must be provided.
 

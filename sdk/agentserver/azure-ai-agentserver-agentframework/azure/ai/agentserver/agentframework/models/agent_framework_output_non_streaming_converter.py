@@ -53,13 +53,13 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
 
     def _build_created_by(self, author_name: str) -> dict:
         self._ensure_response_started()
-        
+
         agent_dict = {
             "type": "agent_id",
             "name": author_name or "",
             "version": "",  # Default to empty string
         }
-        
+
         return {
             "agent": agent_dict,
             "response_id": self._response_id,
@@ -216,7 +216,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             call_id,
             len(result),
         )
-    
+
     def _append_user_input_request_contents(self, content: UserInputRequestContents, sink: List[dict], author_name: str) -> None:
         item_id = self._context.id_generator.generate_function_call_id()
         content = self._hitl_helper.convert_user_input_request_content(content)

@@ -116,8 +116,8 @@ class _TextContentStreamingState(_BaseStreamingState):
         )
 
         item = ResponsesAssistantMessageItemResource(
-            id=item_id, 
-            status="completed", 
+            id=item_id,
+            status="completed",
             content=[content_part],
             created_by=self._parent._build_created_by(author_name),
         )
@@ -209,7 +209,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             )
 
             self._parent.add_completed_output_item(item)  # pylint: disable=protected-access
-        
+
         # process HITL contents after function calls
         for content in hitl_contents:
             item_id = self._parent.context.id_generator.generate_function_call_id()
@@ -389,7 +389,7 @@ class AgentFrameworkOutputStreamingConverter:
             async def extract_contents():
                 async for content, _ in contents_with_author:
                     yield content
-            
+
             async for content in state.convert_contents(extract_contents(), author_name):
                 yield content
 
@@ -404,7 +404,7 @@ class AgentFrameworkOutputStreamingConverter:
             "name": author_name or "",
             "version": "",
         }
-        
+
         return {
             "agent": agent_dict,
             "response_id": self._response_id,
