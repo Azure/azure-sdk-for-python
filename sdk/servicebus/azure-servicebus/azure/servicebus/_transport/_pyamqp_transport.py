@@ -818,15 +818,21 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :keyword ~azure.servicebus.ServiceBusReceiver receiver: Required.
         :keyword bool is_peeked_message: Optional. For peeked messages.
         :keyword bool is_deferred_message: Optional. For deferred messages.
+        :keyword uuid.UUID lock_token: Optional. Lock token, if it is given by the message receiver.
         :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
         :return: List of service bus received messages.
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
+        is_deferred_message = kwargs.get("is_deferred_message", False)
         parsed = []
         if message.value:
             for m in message.value[b"messages"]:
                 wrapped = decode_payload(memoryview(m[b"message"]))
-                parsed.append(message_type(wrapped, **kwargs))
+                if is_deferred_message and b"lock-token" in m:
+                    lock_token = m[b"lock-token"]
+                else:
+                    lock_token = kwargs.pop("lock_token", None)
+                parsed.append(message_type(wrapped, lock_token=lock_token, **kwargs))
         return parsed
 
     @staticmethod
