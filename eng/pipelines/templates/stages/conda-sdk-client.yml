@@ -1,185 +1,184 @@
 parameters:
   - name: release_msrest
-    displayName: 'msrest'
+    displayName: msrest
     type: boolean
     default: true
   - name: release_msal
-    displayName: 'msal'
+    displayName: msal
     type: boolean
     default: true
   - name: release_msal_extensions
-    displayName: 'msal-extensions'
+    displayName: msal-extensions
     type: boolean
     default: true
   - name: release_azure_core
-    displayName: 'azure-core'
+    displayName: azure-core
     type: boolean
     default: true
   - name: release_azure_identity
-    displayName: 'azure-identity'
+    displayName: azure-identity
     type: boolean
     default: true
   - name: release_azure_healthinsights
-    displayName: 'azure-healthinsights'
+    displayName: azure-healthinsights
     type: boolean
     default: true
   - name: release_azure_storage
-    displayName: 'azure-storage'
+    displayName: azure-storage
     type: boolean
     default: true
   - name: release_azure_ai_contentsafety
-    displayName: 'azure-ai-contentsafety'
+    displayName: azure-ai-contentsafety
     type: boolean
     default: true
   - name: release_azure_ai_evaluation
-    displayName: 'azure-ai-evaluation'
+    displayName: azure-ai-evaluation
     type: boolean
     default: false
   - name: release_azure_ai_formrecognizer
-    displayName: 'azure-ai-formrecognizer'
+    displayName: azure-ai-formrecognizer
     type: boolean
     default: false
   - name: release_azure_ai_language_conversations
-    displayName: 'azure-ai-language-conversations'
+    displayName: azure-ai-language-conversations
     type: boolean
     default: true
   - name: release_azure_ai_language_questionanswering
-    displayName: 'azure-ai-language-questionanswering'
+    displayName: azure-ai-language-questionanswering
     type: boolean
     default: true
   - name: release_azure_ai_metricsadvisor
-    displayName: 'azure-ai-metricsadvisor'
+    displayName: azure-ai-metricsadvisor
     type: boolean
     default: false
   - name: release_azure_ai_ml
-    displayName: 'azure-ai-ml'
+    displayName: azure-ai-ml
     type: boolean
     default: true
   - name: release_azure_ai_textanalytics
-    displayName: 'azure-ai-textanalytics'
+    displayName: azure-ai-textanalytics
     type: boolean
     default: true
   - name: release_azure_ai_translation_document
-    displayName: 'azure-ai-translation-document'
+    displayName: azure-ai-translation-document
     type: boolean
     default: true
   - name: release_azure_ai_translation_text
-    displayName: 'azure-ai-translation-text'
+    displayName: azure-ai-translation-text
     type: boolean
     default: true
   - name: release_azure_ai_vision
-    displayName: 'azure-ai-vision'
+    displayName: azure-ai-vision
     type: boolean
     default: true
   - name: release_azure_ai_voicelive
-    displayName: 'azure-ai-voicelive'
+    displayName: azure-ai-voicelive
     type: boolean
     default: true
   - name: release_azure_appconfiguration
-    displayName: 'azure-appconfiguration'
+    displayName: azure-appconfiguration
     type: boolean
     default: true
   - name: release_azure_communication
-    displayName: 'azure-communication'
+    displayName: azure-communication
     type: boolean
     default: true
   - name: release_azure_confidentialledger
-    displayName: 'azure-confidentialledger'
+    displayName: azure-confidentialledger
     type: boolean
     default: true
   - name: release_azure_containerregistry
-    displayName: 'azure-containerregistry'
+    displayName: azure-containerregistry
     type: boolean
     default: true
   - name: release_azure_cosmos
-    displayName: 'azure-cosmos'
+    displayName: azure-cosmos
     type: boolean
     default: true
   - name: release_azure_data_tables
-    displayName: 'azure-data-tables'
+    displayName: azure-data-tables
     type: boolean
     default: true
   - name: release_azure_developer_loadtesting
-    displayName: 'azure-developer-loadtesting'
+    displayName: azure-developer-loadtesting
     type: boolean
     default: true
   - name: release_azure_digitaltwins_core
-    displayName: 'azure-digitaltwins-core'
+    displayName: azure-digitaltwins-core
     type: boolean
     default: true
   - name: release_azure_eventgrid
-    displayName: 'azure-eventgrid'
+    displayName: azure-eventgrid
     type: boolean
     default: true
   - name: release_azure_eventhub
-    displayName: 'azure-eventhub'
+    displayName: azure-eventhub
     type: boolean
     default: true
   - name: release_azure_iot_deviceupdate
-    displayName: 'azure-iot-deviceupdate'
+    displayName: azure-iot-deviceupdate
     type: boolean
     default: true
   - name: release_azure_keyvault
-    displayName: 'azure-keyvault'
+    displayName: azure-keyvault
     type: boolean
     default: true
   - name: release_azure_messaging_webpubsubservice
-    displayName: 'azure-messaging-webpubsubservice'
+    displayName: azure-messaging-webpubsubservice
     type: boolean
     default: true
   - name: release_azure_messaging_webpubsubclient
-    displayName: 'azure-messaging-webpubsubclient'
+    displayName: azure-messaging-webpubsubclient
     type: boolean
     default: true
   - name: release_azure_monitor_query
-    displayName: 'azure-monitor-query'
+    displayName: azure-monitor-query
     type: boolean
     default: true
   - name: release_azure_monitor_ingestion
-    displayName: 'azure-monitor-ingestion'
+    displayName: azure-monitor-ingestion
     type: boolean
     default: true
   - name: release_azure_schemaregistry
-    displayName: 'azure-schemaregistry'
+    displayName: azure-schemaregistry
     type: boolean
     default: true
   - name: release_azure_search_documents
-    displayName: 'azure-search-documents'
+    displayName: azure-search-documents
     type: boolean
     default: true
   - name: release_azure_security_attestation
-    displayName: 'azure-security-attestation'
+    displayName: azure-security-attestation
     type: boolean
     default: true
   - name: release_azure_servicebus
-    displayName: 'azure-servicebus'
+    displayName: azure-servicebus
     type: boolean
     default: true
   - name: release_azure_ai_documentintelligence
-    displayName: 'azure-ai-documentintelligence'
+    displayName: azure-ai-documentintelligence
     type: boolean
     default: true
   - name: release_azure_health_deidentification
-    displayName: 'azure-health-deidentification'
+    displayName: azure-health-deidentification
     type: boolean
     default: true
   - name: release_azure_ai_agents
-    displayName: 'azure-ai-agents'
+    displayName: azure-ai-agents
     type: boolean
     default: true
   - name: release_azure_ai_projects
-    displayName: 'azure-ai-projects'
+    displayName: azure-ai-projects
     type: boolean
     default: true
   - name: release_azure_monitor_querymetrics
-    displayName: 'azure-monitor-querymetrics'
+    displayName: azure-monitor-querymetrics
     type: boolean
     default: true
   - name: release_azure_mgmt
-    displayName: 'azure-mgmt'
+    displayName: azure-mgmt
     type: boolean
     default: true
-
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
@@ -188,18 +187,14 @@ extends:
         displayName: Build Universal Conda Packages
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml@self
-
         jobs:
-          - job: 'Build'
+          - job: Build
             timeoutInMinutes: 240
-
             pool:
               name: azsdk-pool
               image: ubuntu-24.04
               os: linux
-
             steps:
-
               - template: /eng/pipelines/templates/steps/build-conda-artifacts.yml@self
                 parameters:
                   CondaArtifacts:
@@ -209,7 +204,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_core }}
                       checkout:
                         - package: azure-core
-                          version: 1.36.0
+                          version: 1.38.0
                         - package: azure-mgmt-core
                           version: 1.6.0
                         - package: azure-common
@@ -249,13 +244,13 @@ extends:
                       service: storage
                       checkout:
                         - package: azure-storage-blob
-                          version: 12.27.1
+                          version: 12.28.0
                         - package: azure-storage-queue
-                          version: 12.14.1
+                          version: 12.15.0
                         - package: azure-storage-file-share
-                          version: 12.23.1
+                          version: 12.24.0
                         - package: azure-storage-file-datalake
-                          version: 12.22.0
+                          version: 12.23.0
                     - name: azure-ai-ml
                       service: ml
                       in_batch: ${{ parameters.release_azure_ai_ml }}
@@ -263,7 +258,7 @@ extends:
                         - conda-forge
                       checkout:
                         - package: azure-ai-ml
-                          version: 1.30.0
+                          version: 1.31.0
                     - name: azure-ai-contentsafety
                       common_root: azure
                       service: contentsafety
@@ -277,7 +272,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_ai_evaluation }}
                       checkout:
                         - package: azure-ai-evaluation
-                          version: 1.13.5
+                          version: 1.14.0
                     - name: azure-ai-formrecognizer
                       common_root: azure
                       service: formrecognizer
@@ -375,7 +370,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_cosmos }}
                       checkout:
                         - package: azure-cosmos
-                          version: 4.14.1
+                          version: 4.14.5
                     - name: azure-data-tables
                       service: tables
                       in_batch: ${{ parameters.release_azure_data_tables }}
@@ -557,7 +552,7 @@ extends:
                         - package: azure-mgmt-automation
                           version: 1.0.0
                         - package: azure-mgmt-avs
-                          version: 9.1.0
+                          version: 10.0.0
                         - package: azure-mgmt-azurearcdata
                           version: 1.0.0
                         - package: azure-mgmt-azurestack
@@ -587,7 +582,7 @@ extends:
                         - package: azure-mgmt-commerce
                           version: 6.0.0
                         - package: azure-mgmt-communication
-                          version: 2.1.0
+                          version: 2.2.0
                         - package: azure-mgmt-compute
                           version: 37.0.1
                         - package: azure-mgmt-computefleet
@@ -633,6 +628,8 @@ extends:
                         - package: azure-mgmt-dataprotection
                           version: 2.0.1
                         - package: azure-mgmt-datashare
+                          version: 1.0.0
+                        - package: azure-mgmt-dellstorage
                           version: 1.0.0
                         - package: azure-mgmt-deploymentmanager
                           version: 1.0.0
@@ -702,16 +699,16 @@ extends:
                           version: 1.4.0
                         - package: azure-mgmt-informaticadatamanagement
                           version: 1.0.0
+                        - package: azure-mgmt-iotfirmwaredefense
+                          version: 2.0.0
                         - package: azure-mgmt-iothub
                           version: 4.0.0
                         - package: azure-mgmt-iothubprovisioningservices
                           version: 1.1.0
-                        - package: azure-mgmt-iotfirmwaredefense
-                          version: 2.0.0
                         - package: azure-mgmt-iotoperations
                           version: 1.0.0
                         - package: azure-mgmt-keyvault
-                          version: 12.1.1
+                          version: 13.0.0
                         - package: azure-mgmt-kubernetesconfiguration
                           version: 3.1.0
                         - package: azure-mgmt-kusto
@@ -723,7 +720,7 @@ extends:
                         - package: azure-mgmt-loadtesting
                           version: 1.0.0
                         - package: azure-mgmt-loganalytics
-                          version: 12.0.0
+                          version: 13.1.1
                         - package: azure-mgmt-logic
                           version: 10.0.0
                         - package: azure-mgmt-logz
@@ -767,7 +764,7 @@ extends:
                         - package: azure-mgmt-networkanalytics
                           version: 1.0.0
                         - package: azure-mgmt-networkcloud
-                          version: 2.1.0
+                          version: 2.2.0
                         - package: azure-mgmt-newrelicobservability
                           version: 1.1.0
                         - package: azure-mgmt-nginx
@@ -902,5 +899,3 @@ extends:
                           version: 1.0.0
                         - package: azure-mgmt-workloadssapvirtualinstance
                           version: 1.0.0
-
-
