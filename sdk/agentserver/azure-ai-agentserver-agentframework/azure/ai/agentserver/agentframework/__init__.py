@@ -7,12 +7,13 @@ from typing import TYPE_CHECKING, Any, Callable, Optional, Union, overload
 
 from agent_framework import AgentProtocol, BaseAgent, Workflow, WorkflowBuilder
 
-from azure.ai.agentserver.agentframework._version import VERSION
-from azure.ai.agentserver.agentframework._agent_framework import AgentFrameworkAgent
-from azure.ai.agentserver.agentframework._ai_agent_adapter import AgentFrameworkAIAgentAdapter
-from azure.ai.agentserver.agentframework._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
-from azure.ai.agentserver.agentframework._foundry_tools import FoundryToolsChatMiddleware
 from azure.ai.agentserver.core.application import PackageMetadata, set_current_app  # pylint: disable=import-error,no-name-in-module
+
+from ._version import VERSION
+from ._agent_framework import AgentFrameworkAgent
+from ._ai_agent_adapter import AgentFrameworkAIAgentAdapter
+from ._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
+from ._foundry_tools import FoundryToolsChatMiddleware
 
 if TYPE_CHECKING:  # pragma: no cover
     from azure.core.credentials_async import AsyncTokenCredential
