@@ -3,7 +3,22 @@
 ## 2.0.0b4 (Unreleased)
 
 ### Features Added
+
 * Tracing: included agent ID in response generation traces when available.
+
+### Breaking changes
+
+* To align with OpenAI naming conventions, use "Tool" suffix for class names describing Azure tools that are generally available (stable release):
+  * Rename class `AzureAISearchAgentTool` to `AzureAISearchTool`
+  * Rename class `OpenApiAgentTool` to OpenApiTool`
+  * Rename class `AzureFunctionAgentTool` to `AzureFunctionTool`
+  * Rename class `BingGroundingAgentTool` to `BingGroundingTool`
+* To align with OpenAI naming conventions, use "PreviewTool" suffix for class names descirbing Azure tools in preview:
+  * Rename class `MicrosoftFabricAgentTool` to `MicrosoftFabricPreviewTool`
+  * Rename class `SharepointAgentTool` to `SharepointPreviewTool`
+  * Rename class `BingCustomSearchAgentTool` to `BingCustomSearchPreviewTool`
+  * Rename class `BrowserAutomationAgentTool` to `BrowserAutomationPreviewTool`
+  * Rename class `A2ATool` to `A2APreviewTool`
 
 ## 2.0.0b3 (2026-01-06)
 
