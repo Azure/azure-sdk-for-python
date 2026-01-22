@@ -68,15 +68,11 @@ snapshot_filters = [
     ConfigurationSettingsFilter(key=".appconfig.featureflag/*"),
 ]
 
-try:
-    created_snapshot = client.begin_create_snapshot(
-        name=snapshot_name, filters=snapshot_filters, retention_period=3600
-    ).result()
-    print(f"Created snapshot: {created_snapshot.name} with status: {created_snapshot.status}")
-except Exception as e:
-    print(f"Error creating snapshot: {e}")
-    print("Make sure you have configuration settings with keys starting with 'app/' in your store.")
-    raise
+created_snapshot = client.begin_create_snapshot(
+    name=snapshot_name, filters=snapshot_filters, retention_period=3600
+).result()
+print(f"Created snapshot: {created_snapshot.name} with status: {created_snapshot.status}")
+
 
 # Step 2: Loading configuration settings from the snapshot
 snapshot_selects = [SettingSelector(snapshot_name=snapshot_name)]
