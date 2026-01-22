@@ -383,37 +383,3 @@ java:
 regenerate-manager: true
 generate-interface: true
 ```
-
-### Multi-API/Profile support for AutoRest v3 generators
-
-AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
-
-This block is updated by an automatic script. Edits may be lost!
-
-```yaml
-# include the azure profile definitions from the standard location
-require: $(this-folder)/../../../profiles/readme.md
-
-# all the input files across all versions
-input-file:
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2020-06-01/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2020-04-01/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2020-03-01/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2020-01-01/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2019-11-01/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2019-06-01/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2019-05-01/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/stable/2018-11-19/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/preview/2020-05-01-preview/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/preview/2020-04-01-preview/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/preview/2020-02-18-preview/machineLearningServices.json
-  - $(this-folder)/Microsoft.MachineLearningServices/preview/2018-03-01-preview/machineLearningServices.json
-```
-
-If there are files that should not be in the `all-api-versions` set,
-uncomment the `exclude-file` section below and add the file paths.
-
-```yaml
-#exclude-file:
-#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
-```
