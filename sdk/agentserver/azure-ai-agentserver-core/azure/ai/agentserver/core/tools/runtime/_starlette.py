@@ -33,11 +33,12 @@ class UserInfoContextMiddleware(BaseHTTPMiddleware):
         :param app: The Starlette application to install the middleware into.
         :type app: Starlette
         :param user_context: Optional context variable to use for storing user info.
-                             If not provided, a default context variable will be used.
-         :type user_context: Optional[ContextVar[Optional[UserInfo]]]
+                            If not provided, a default context variable will be used.
+        :type user_context: Optional[ContextVar[Optional[UserInfo]]]
         :param user_resolver: Optional function to resolve user info from the request.
-                              If not provided, a default resolver will be used.
+                            If not provided, a default resolver will be used.
         :type user_resolver: Optional[Callable[[Request], Awaitable[Optional[UserInfo]]]]
+
         """
         app.add_middleware(UserInfoContextMiddleware,  # type: ignore[arg-type]
                            user_info_var=user_context or ContextVarUserProvider.default_user_info_context,
