@@ -29,6 +29,7 @@ extends:
               - script: |
                   python -m pip install --upgrade pip
                   python -m pip install "eng/tools/azure-sdk-tools[build]"
+                  python -m pip install dateutils
                 displayName: 'Prep Environment'
 
               - script: |
