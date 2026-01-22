@@ -118,6 +118,8 @@ class AgentPool(TrackedResource):
     )
     """The properties associated with the agent pool."""
 
+    __flattened_items = ["count", "tier", "os", "virtual_network_subnet_resource_id", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -135,7 +137,25 @@ class AgentPool(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class AgentPoolProperties(_Model):
@@ -2015,6 +2035,31 @@ class Run(ProxyResource):
     )
     """The properties of a run."""
 
+    __flattened_items = [
+        "run_id",
+        "status",
+        "last_updated_time",
+        "run_type",
+        "agent_pool_name",
+        "create_time",
+        "start_time",
+        "finish_time",
+        "output_images",
+        "task",
+        "image_update_trigger",
+        "source_trigger",
+        "timer_trigger",
+        "platform",
+        "agent_configuration",
+        "source_registry_auth",
+        "custom_registries",
+        "run_error_message",
+        "update_trigger_token",
+        "log_artifact",
+        "provisioning_state",
+        "is_archive_enabled",
+    ]
+
     @overload
     def __init__(
         self,
@@ -2030,7 +2075,25 @@ class Run(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class RunGetLogResult(_Model):
@@ -2816,6 +2879,21 @@ class Task(TrackedResource):
     )
     """Identity for the resource."""
 
+    __flattened_items = [
+        "provisioning_state",
+        "creation_date",
+        "status",
+        "platform",
+        "agent_configuration",
+        "agent_pool_name",
+        "timeout",
+        "step",
+        "trigger",
+        "credentials",
+        "log_template",
+        "is_system_task",
+    ]
+
     @overload
     def __init__(
         self,
@@ -2834,7 +2912,25 @@ class Task(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class TaskProperties(_Model):
@@ -3064,6 +3160,8 @@ class TaskRun(ProxyResource):
     location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The location of the resource."""
 
+    __flattened_items = ["provisioning_state", "run_request", "run_result", "force_update_tag"]
+
     @overload
     def __init__(
         self,
@@ -3081,7 +3179,25 @@ class TaskRun(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class TaskRunProperties(_Model):
