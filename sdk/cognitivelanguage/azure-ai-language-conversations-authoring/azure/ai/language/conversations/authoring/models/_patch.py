@@ -198,7 +198,7 @@ class _JobsPollingMethod(PollingMethod):
 
     # ---- Continuation token support (doc pattern) ----
     def get_continuation_token(self) -> str:
-        import base64, json
+        import json
 
         if not self._operation:
             raise RuntimeError("Polling method not initialized")
@@ -219,15 +219,15 @@ class _JobsPollingMethod(PollingMethod):
     def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
         try:
             client = kwargs["client"]
-        except KeyError:
-            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+        except KeyError as exc:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token") from exc
 
         try:
             deserialization_callback = kwargs["deserialization_callback"]
-        except KeyError:
+        except KeyError as exc:
             raise ValueError(
                 "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            )
+            ) from exc
 
         import json
 
@@ -364,7 +364,7 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
 
     # ---- Continuation token ----
     def get_continuation_token(self) -> str:
-        import base64, json
+        import json
 
         if not self._operation:
             raise RuntimeError("Polling method not initialized")
@@ -385,15 +385,15 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
     def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
         try:
             client = kwargs["client"]
-        except KeyError:
-            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+        except KeyError as exc:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token") from exc
 
         try:
             deserialization_callback = kwargs["deserialization_callback"]
-        except KeyError:
+        except KeyError as exc:
             raise ValueError(
                 "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            )
+            ) from exc
 
         import json
 
