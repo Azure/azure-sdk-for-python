@@ -37,14 +37,26 @@ class _CallbackChatTarget(PromptChatTarget):
         self._callback = callback
         self._stream = stream
 
-    async def send_prompt_async(self, *, prompt_request: Message) -> Message:
+    async def send_prompt_async(self, *, message: Message) -> List[Message]:
 
-        self._validate_request(prompt_request=prompt_request)
-        request = prompt_request.get_piece(0)
+        self._validate_request(prompt_request=message)
+        request = message.get_piece(0)
 
-        messages = self._memory.get_chat_messages_with_conversation_id(conversation_id=request.conversation_id)
+        # Get conversation history and convert to chat message format
+        conversation_history = self._memory.get_conversation(conversation_id=request.conversation_id)
+        messages: List[Dict[str, str]] = []
+        for msg in conversation_history:
+            for piece in msg.message_pieces:
+                messages.append({
+                    "role": piece.api_role if hasattr(piece, 'api_role') else str(piece.role),
+                    "content": piece.converted_value or piece.original_value or ""
+                })
 
-        messages.append(request.to_chat_message())
+        # Add current request
+        messages.append({
+            "role": request.api_role if hasattr(request, 'api_role') else str(request.role),
+            "content": request.converted_value or request.original_value or ""
+        })
 
         logger.debug(f"Sending the following prompt to the prompt target: {request}")
 
@@ -101,7 +113,7 @@ class _CallbackChatTarget(PromptChatTarget):
             logger.debug(f"Captured token usage from callback: {token_usage}")
 
         logger.debug("Received the following response from the prompt target" + f"{response_text}")
-        return response_entry
+        return [response_entry]
 
     def _validate_request(self, *, prompt_request: Message) -> None:
         if len(prompt_request.message_pieces) != 1:

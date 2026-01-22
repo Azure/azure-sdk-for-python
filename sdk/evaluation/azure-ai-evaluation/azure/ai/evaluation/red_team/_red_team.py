@@ -1672,11 +1672,14 @@ class RedTeam:
 
         try:
             # Create Foundry execution manager
+            # Use chat_target as adversarial_chat_target since PyRIT's RedTeamAgent requires one
+            # even for single-turn attacks (it's used for default scoring if not overridden)
             foundry_manager = FoundryExecutionManager(
                 credential=self.credential,
                 azure_ai_project=self.azure_ai_project,
                 logger=self.logger,
                 output_dir=self.scan_output_dir,
+                adversarial_chat_target=chat_target,
             )
 
             # Build objectives by risk category from cached attack_objectives
@@ -1689,15 +1692,22 @@ class RedTeam:
 
                 # Get baseline objectives for this risk category from cache
                 baseline_key = ((risk_value,), "baseline")
+                self.logger.debug(f"Looking for baseline_key: {baseline_key}")
+                self.logger.debug(f"Available keys in attack_objectives: {list(self.attack_objectives.keys())}")
                 if baseline_key in self.attack_objectives:
                     cached_data = self.attack_objectives[baseline_key]
                     selected_objectives = cached_data.get("selected_objectives", [])
+                    self.logger.debug(f"Found {len(selected_objectives)} cached objectives for {risk_value}")
 
                     for obj in selected_objectives:
                         # Build objective dict in the expected format
                         obj_dict = self._build_objective_dict_from_cached(obj, risk_value)
                         if obj_dict:
                             objectives_by_risk[risk_value].append(obj_dict)
+                        else:
+                            self.logger.debug(f"_build_objective_dict_from_cached returned None for obj type: {type(obj)}")
+                else:
+                    self.logger.debug(f"baseline_key {baseline_key} NOT found in attack_objectives")
 
             # Log objectives count
             for risk_value, objs in objectives_by_risk.items():
@@ -1812,47 +1822,52 @@ class RedTeam:
         if not obj:
             return None
 
-        if isinstance(obj, dict):
+        # Handle AttackObjective objects (from OneDp API)
+        if hasattr(obj, "as_dict"):
+            obj_dict = obj.as_dict()
+        elif isinstance(obj, dict):
             # Already in dict format
             obj_dict = obj.copy()
+        else:
+            obj_dict = None
 
-            # Ensure messages format
-            if "messages" not in obj_dict and "content" in obj_dict:
-                content = obj_dict["content"]
-                context = obj_dict.get("context", "")
-
-                # Build context list if we have context
-                context_items = []
-                if context:
-                    if isinstance(context, list):
-                        context_items = context
-                    elif isinstance(context, dict):
-                        context_items = [context]
-                    elif isinstance(context, str):
-                        context_items = [{"content": context}]
-
-                obj_dict["messages"] = [{
-                    "content": content,
-                    "context": context_items,
-                }]
-
-            # Add metadata if not present
-            if "metadata" not in obj_dict:
-                obj_dict["metadata"] = {
-                    "risk_category": risk_value,
-                    "risk_subtype": obj_dict.get("risk_subtype", ""),
+        if obj_dict is None:
+            if isinstance(obj, str):
+                # String content - wrap in expected format
+                return {
+                    "messages": [{"content": obj}],
+                    "metadata": {"risk_category": risk_value},
                 }
+            return None
 
-            return obj_dict
+        # Ensure messages format
+        if "messages" not in obj_dict and "content" in obj_dict:
+            content = obj_dict["content"]
+            context = obj_dict.get("context", "")
 
-        elif isinstance(obj, str):
-            # String content - wrap in expected format
-            return {
-                "messages": [{"content": obj}],
-                "metadata": {"risk_category": risk_value},
+            # Build context list if we have context
+            context_items = []
+            if context:
+                if isinstance(context, list):
+                    context_items = context
+                elif isinstance(context, dict):
+                    context_items = [context]
+                elif isinstance(context, str):
+                    context_items = [{"content": context}]
+
+            obj_dict["messages"] = [{
+                "content": content,
+                "context": context_items,
+            }]
+
+        # Add metadata if not present
+        if "metadata" not in obj_dict:
+            obj_dict["metadata"] = {
+                "risk_category": risk_value,
+                "risk_subtype": obj_dict.get("risk_subtype", ""),
             }
 
-        return None
+        return obj_dict
 
     async def _handle_baseline_with_foundry_results(
         self,

@@ -6,9 +6,11 @@
 import logging
 from typing import Any, Dict, List, Optional
 
+from pyrit.models import AttackResult
+from pyrit.models.scenario_result import ScenarioResult
 from pyrit.prompt_target import PromptChatTarget
 from pyrit.scenario import DatasetConfiguration
-from pyrit.scenario.foundry import Foundry, FoundryStrategy
+from pyrit.scenario.scenarios.foundry import FoundryScenario, FoundryStrategy
 
 from ._rai_scorer import RAIServiceScorer
 
@@ -48,7 +50,8 @@ class ScenarioOrchestrator:
         self.rai_scorer = rai_scorer
         self.logger = logger
         self.adversarial_chat_target = adversarial_chat_target
-        self._scenario: Optional[Foundry] = None
+        self._scenario: Optional[FoundryScenario] = None
+        self._scenario_result: Optional[ScenarioResult] = None
 
     async def execute(
         self,
@@ -57,7 +60,7 @@ class ScenarioOrchestrator:
     ) -> "ScenarioOrchestrator":
         """Execute attacks for all strategies in this risk category.
 
-        Creates a Foundry scenario with the provided dataset and strategies,
+        Creates a FoundryScenario with the provided dataset and strategies,
         then runs the attack asynchronously. Results are stored in PyRIT's
         memory and can be retrieved via get_attack_results().
 
@@ -70,24 +73,24 @@ class ScenarioOrchestrator:
         """
         num_objectives = len(dataset_config.get_all_seed_groups())
         self.logger.info(
-            f"Creating Foundry scenario for {self.risk_category} with "
+            f"Creating FoundryScenario for {self.risk_category} with "
             f"{len(strategies)} strategies and {num_objectives} objectives"
         )
 
         # Create scoring configuration from our RAI scorer
-        # Foundry expects an AttackScoringConfig
+        # FoundryScenario expects an AttackScoringConfig
         scoring_config = self._create_scoring_config()
 
-        # Create Foundry scenario
-        self._scenario = Foundry(
+        # Create FoundryScenario
+        self._scenario = FoundryScenario(
             adversarial_chat=self.adversarial_chat_target,
             attack_scoring_config=scoring_config,
             include_baseline=False,  # We handle baseline separately
         )
 
         # Initialize with dataset and strategies
-        # Note: Foundry.initialize_async expects specific parameters
-        self.logger.info(f"Initializing Foundry with strategies: {[s.value for s in strategies]}")
+        # Note: FoundryScenario.initialize_async expects specific parameters
+        self.logger.info(f"Initializing FoundryScenario with strategies: {[s.value for s in strategies]}")
 
         await self._scenario.initialize_async(
             objective_target=self.objective_target,
@@ -97,7 +100,7 @@ class ScenarioOrchestrator:
 
         # Run attack - PyRIT handles all execution
         self.logger.info(f"Executing attacks for {self.risk_category}...")
-        await self._scenario.run_attack_async()
+        self._scenario_result = await self._scenario.run_async()
 
         self.logger.info(f"Attack execution complete for {self.risk_category}")
 
@@ -106,7 +109,7 @@ class ScenarioOrchestrator:
     def _create_scoring_config(self) -> Any:
         """Create attack scoring configuration from RAI scorer.
 
-        Foundry uses AttackScoringConfig to configure how attacks are scored.
+        FoundryScenario uses AttackScoringConfig to configure how attacks are scored.
         We wrap our RAI scorer in the appropriate configuration.
 
         :return: Attack scoring configuration
@@ -116,21 +119,27 @@ class ScenarioOrchestrator:
         from pyrit.executor.attack import AttackScoringConfig
 
         return AttackScoringConfig(
-            scorer=self.rai_scorer,
-            success_threshold=0.5,  # True = success for true_false scorer
+            objective_scorer=self.rai_scorer,
+            use_score_as_feedback=True,
         )
 
-    def get_attack_results(self) -> List[Any]:
+    def get_attack_results(self) -> List[AttackResult]:
         """Get attack results from the completed scenario.
 
         :return: List of AttackResult objects from the scenario
-        :rtype: List[Any]
+        :rtype: List[AttackResult]
         :raises RuntimeError: If scenario hasn't been executed
         """
-        if not self._scenario:
+        if not self._scenario_result:
             raise RuntimeError("Scenario has not been executed. Call execute() first.")
 
-        return self._scenario.get_attack_results()
+        # ScenarioResult.attack_results is a dict[str, List[AttackResult]]
+        # Flatten all results into a single list
+        all_results: List[AttackResult] = []
+        for objective_id, results_list in self._scenario_result.attack_results.items():
+            all_results.extend(results_list)
+
+        return all_results
 
     def get_memory(self) -> Any:
         """Get the memory instance for querying conversations.
@@ -190,10 +199,10 @@ class ScenarioOrchestrator:
         }
 
     @property
-    def scenario(self) -> Optional[Foundry]:
-        """Get the underlying Foundry scenario.
+    def scenario(self) -> Optional[FoundryScenario]:
+        """Get the underlying FoundryScenario.
 
-        :return: Foundry scenario instance or None if not executed
-        :rtype: Optional[Foundry]
+        :return: FoundryScenario instance or None if not executed
+        :rtype: Optional[FoundryScenario]
         """
         return self._scenario

@@ -155,9 +155,14 @@ class FoundryExecutionManager:
                 )
             except Exception as e:
                 self.logger.error(f"Error executing attacks for {risk_value}: {e}")
-                red_team_info[risk_value] = {
+                # Use "Foundry" as fallback strategy name to match expected structure
+                if "Foundry" not in red_team_info:
+                    red_team_info["Foundry"] = {}
+                red_team_info["Foundry"][risk_value] = {
+                    "data_file": "",
                     "status": "failed",
                     "error": str(e),
+                    "asr": 0.0,
                 }
                 continue
 

@@ -3,8 +3,12 @@
 # ---------------------------------------------------------
 """DatasetConfigurationBuilder for transforming RAI service responses into PyRIT data structures."""
 
+import atexit
+import os
+import tempfile
 import uuid
-from typing import Any, Dict, List, Optional
+from pathlib import Path
+from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pyrit.models import PromptDataType, SeedGroup, SeedObjective, SeedPrompt
 from pyrit.scenario import DatasetConfiguration
@@ -23,7 +27,25 @@ class DatasetConfigurationBuilder:
 
     For indirect/XPIA attacks, the attack string is injected into the context
     (email, document, etc.) using modality-based formatting.
+
+    Context data (except tool_call) is stored as files using binary_path data type
+    for proper handling of multimodal content.
     """
+
+    # Class-level tracking for temp files
+    _temp_files: ClassVar[Set[str]] = set()
+    _cleanup_registered: ClassVar[bool] = False
+
+    # Extension mapping for context types
+    _EXTENSION_MAP: ClassVar[Dict[str, str]] = {
+        "email": ".eml",
+        "document": ".txt",
+        "code": ".py",
+        "markdown": ".md",
+        "html": ".html",
+        "footnote": ".txt",
+        "text": ".txt",
+    }
 
     def __init__(self, risk_category: str, is_indirect_attack: bool = False):
         """Initialize builder.
@@ -77,9 +99,9 @@ class DatasetConfigurationBuilder:
         if self.is_indirect_attack and context_items:
             # XPIA: Create separate SeedPrompt with injected attack string
             seeds.extend(self._create_xpia_prompts(objective_content, context_items, group_uuid))
-        elif context_items:
-            # Standard: Just add context prompts if present (objective is used as-is)
-            seeds.extend(self._create_context_prompts(context_items, group_uuid))
+        # Note: For standard attacks, we don't add context prompts to the SeedGroup
+        # because PyRIT's converters don't support non-text data types.
+        # Context is stored in objective metadata for reference if needed.
 
         # 3. Create seed group
         seed_group = SeedGroup(seeds=seeds)
@@ -100,12 +122,94 @@ class DatasetConfigurationBuilder:
         except (ValueError, AttributeError):
             return uuid.uuid4()
 
+    def _get_extension_for_context_type(self, context_type: str) -> str:
+        """Map context type to appropriate file extension.
+
+        :param context_type: The context type (email, document, code, etc.)
+        :type context_type: str
+        :return: File extension including the dot (e.g., ".eml")
+        :rtype: str
+        """
+        if not context_type:
+            return ".bin"
+        return self._EXTENSION_MAP.get(context_type.lower(), ".bin")
+
+    def _get_context_file_directory(self) -> Path:
+        """Get the directory for storing context files.
+
+        Uses PyRIT's DB_DATA_PATH if available, otherwise system temp.
+
+        :return: Path to the context file directory
+        :rtype: Path
+        """
+        try:
+            from pyrit.common.path import DB_DATA_PATH
+            base_dir = Path(DB_DATA_PATH) / "seed-prompt-entries" / "binaries"
+        except ImportError:
+            base_dir = Path(tempfile.gettempdir()) / "pyrit_foundry_context"
+
+        base_dir.mkdir(parents=True, exist_ok=True)
+        return base_dir
+
+    def _create_context_file(self, content: str, context_type: str) -> str:
+        """Create a file for context content and return its path.
+
+        The file is created in PyRIT's data directory (or system temp) and
+        tracked for cleanup.
+
+        :param content: The context content to write
+        :type content: str
+        :param context_type: The context type (determines file extension)
+        :type context_type: str
+        :return: Absolute path to the created file
+        :rtype: str
+        """
+        extension = self._get_extension_for_context_type(context_type)
+        base_dir = self._get_context_file_directory()
+
+        # Generate unique filename using UUID
+        filename = f"context_{uuid.uuid4().hex}{extension}"
+        file_path = base_dir / filename
+
+        # Write content to file
+        file_path.write_text(content, encoding="utf-8")
+
+        # Track for cleanup
+        DatasetConfigurationBuilder._temp_files.add(str(file_path))
+        self._register_cleanup()
+
+        return str(file_path)
+
+    def _register_cleanup(self) -> None:
+        """Register atexit handler for cleanup (once only)."""
+        if not DatasetConfigurationBuilder._cleanup_registered:
+            atexit.register(DatasetConfigurationBuilder._cleanup_all_files)
+            DatasetConfigurationBuilder._cleanup_registered = True
+
+    @classmethod
+    def _cleanup_all_files(cls) -> None:
+        """Clean up all tracked temp files."""
+        for file_path in cls._temp_files.copy():
+            try:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                cls._temp_files.discard(file_path)
+            except Exception:
+                pass  # Best effort cleanup
+
+    def cleanup(self) -> None:
+        """Explicitly clean up temp files created by this builder."""
+        DatasetConfigurationBuilder._cleanup_all_files()
+
     def _create_context_prompts(
         self,
         context_items: List[Dict[str, Any]],
         group_uuid: uuid.UUID,
     ) -> List[SeedPrompt]:
         """Create SeedPrompt objects from context items.
+
+        For non-tool_call context, content is written to files and the file path
+        is used as the SeedPrompt value with binary_path data type.
 
         :param context_items: List of context dictionaries
         :type context_items: List[Dict[str, Any]]
@@ -123,18 +227,28 @@ class DatasetConfigurationBuilder:
             if not content:
                 continue
 
+            context_type = ctx.get("context_type") or "text"
+            data_type = self._determine_data_type(ctx)
+
+            # For binary_path, write content to file and use path as value
+            if data_type == "binary_path":
+                value = self._create_context_file(content, context_type)
+            else:
+                value = content
+
             ctx_metadata = {
                 "is_context": True,
                 "context_index": idx,
+                "original_content_length": len(content),
             }
             if ctx.get("tool_name"):
                 ctx_metadata["tool_name"] = ctx.get("tool_name")
-            if ctx.get("context_type"):
-                ctx_metadata["context_type"] = ctx.get("context_type")
+            if context_type:
+                ctx_metadata["context_type"] = context_type
 
             prompt = SeedPrompt(
-                value=content,
-                data_type=self._determine_data_type(ctx),
+                value=value,
+                data_type=data_type,
                 prompt_group_id=group_uuid,
                 metadata=ctx_metadata,
                 role="user",
@@ -156,6 +270,9 @@ class DatasetConfigurationBuilder:
         attack vehicle (email, document, etc.) using modality-based formatting,
         and create prompts for both the injected version and original context.
 
+        For non-tool_call context, content is written to files and the file path
+        is used as the SeedPrompt value with binary_path data type.
+
         :param attack_string: The attack objective to inject
         :type attack_string: str
         :param context_items: List of context dictionaries
@@ -172,8 +289,9 @@ class DatasetConfigurationBuilder:
                 continue
 
             content = ctx.get("content", "")
-            context_type = ctx.get("context_type", "text")
+            context_type = ctx.get("context_type") or "text"
             tool_name = ctx.get("tool_name")
+            data_type = self._determine_data_type(ctx)
 
             # Format and inject attack string into content based on context type
             injected_content = self._inject_attack_into_vehicle(
@@ -182,10 +300,18 @@ class DatasetConfigurationBuilder:
                 context_type=context_type,
             )
 
+            # For binary_path, write content to files and use paths as values
+            if data_type == "binary_path":
+                attack_vehicle_value = self._create_context_file(injected_content, context_type)
+                original_value = self._create_context_file(content, context_type) if content else None
+            else:
+                attack_vehicle_value = injected_content
+                original_value = content
+
             # Create attack vehicle prompt (with injection) - this is what gets sent
             attack_vehicle = SeedPrompt(
-                value=injected_content,
-                data_type=self._determine_data_type(ctx),
+                value=attack_vehicle_value,
+                data_type=data_type,
                 prompt_group_id=group_uuid,
                 metadata={
                     "context_type": context_type,
@@ -193,6 +319,7 @@ class DatasetConfigurationBuilder:
                     "is_attack_vehicle": True,
                     "contains_injected_attack": True,
                     "context_index": idx,
+                    "original_content_length": len(injected_content),
                 },
                 role="user",
                 sequence=idx + 1,
@@ -200,16 +327,17 @@ class DatasetConfigurationBuilder:
             prompts.append(attack_vehicle)
 
             # Keep original context for reference (for result reconstruction)
-            if content:
+            if original_value:
                 original_prompt = SeedPrompt(
-                    value=content,
-                    data_type=self._determine_data_type(ctx),
+                    value=original_value,
+                    data_type=data_type,
                     prompt_group_id=group_uuid,
                     metadata={
                         "context_type": context_type,
                         "tool_name": tool_name,
                         "is_original_context": True,
                         "context_index": idx,
+                        "original_content_length": len(content) if content else 0,
                     },
                     role="user",
                     sequence=idx + 100,  # High sequence to keep separate
@@ -276,37 +404,26 @@ class DatasetConfigurationBuilder:
         """Determine appropriate PromptDataType for context.
 
         Maps RAI service context_type to PyRIT PromptDataType:
-        - tool_call → tool_call (direct match)
-        - email, document, code, text, markdown, footnote → text
-        - html, url, web → url
-        - image-related → image_path
-        - audio-related → audio_path
-        - video-related → video_path
+        - tool_call → tool_call (stored inline, not as file)
+        - All other types → binary_path (stored as files)
 
         The original context_type is preserved in metadata for semantic information
-        and XPIA formatting.
+        and XPIA formatting. The content is written to files with appropriate
+        extensions based on context_type.
 
         :param context: Context dictionary with optional 'context_type' key
         :type context: Dict[str, Any]
         :return: Appropriate PromptDataType
         :rtype: PromptDataType
         """
-        context_type = context.get("context_type", "").lower()
+        context_type = (context.get("context_type") or "").lower()
 
-        # Direct semantic matches
+        # tool_call is always stored inline (not as file)
         if context_type == "tool_call":
             return "tool_call"
-        elif "image" in context_type:
-            return "image_path"
-        elif "audio" in context_type:
-            return "audio_path"
-        elif "video" in context_type:
-            return "video_path"
-        elif context_type in ("html", "url", "web"):
-            return "url"
-        else:
-            # Default for email, document, code, text, markdown, footnote, and unspecified
-            return "text"
+
+        # All other context types are stored as files using binary_path
+        return "binary_path"
 
     def build(self) -> DatasetConfiguration:
         """Build the final DatasetConfiguration.

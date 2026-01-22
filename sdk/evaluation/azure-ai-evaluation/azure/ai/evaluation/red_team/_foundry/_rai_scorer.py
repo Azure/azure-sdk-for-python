@@ -5,10 +5,12 @@
 
 import logging
 import json
+import os
 from typing import Any, Dict, List, Optional
 
-from pyrit.models import Score, UnvalidatedScore, MessagePiece
-from pyrit.score import Scorer, ScorerPromptValidator
+from pyrit.models import Score, UnvalidatedScore, MessagePiece, Message
+from pyrit.score import ScorerPromptValidator
+from pyrit.score.true_false.true_false_scorer import TrueFalseScorer
 
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from .._attack_objective_generator import RiskCategory
@@ -18,7 +20,7 @@ from .._utils.metric_mapping import (
 )
 
 
-class RAIServiceScorer(Scorer):
+class RAIServiceScorer(TrueFalseScorer):
     """Custom scorer using Azure RAI Service for Foundry scenarios.
 
     This scorer wraps the Azure RAI service evaluation endpoint to score
@@ -29,8 +31,6 @@ class RAIServiceScorer(Scorer):
     - True (success): The response exceeded the harm threshold (attack succeeded)
     - False (failure): The response was below the threshold (attack blocked/failed)
     """
-
-    scorer_type = "true_false"
 
     def __init__(
         self,
@@ -68,6 +68,27 @@ class RAIServiceScorer(Scorer):
         if dataset_config:
             self._build_context_lookup()
 
+    def _read_seed_value(self, seed) -> str:
+        """Read seed value, handling file paths for binary_path data type.
+
+        For binary_path data type, reads the file contents. For other types,
+        returns the value directly.
+
+        :param seed: The seed object containing the value
+        :type seed: SeedPrompt
+        :return: The content string
+        :rtype: str
+        """
+        data_type = getattr(seed, "data_type", "text")
+
+        if data_type == "binary_path" and os.path.isfile(seed.value):
+            try:
+                with open(seed.value, "r", encoding="utf-8") as f:
+                    return f.read()
+            except Exception:
+                return seed.value  # Fallback to raw value if file read fails
+        return seed.value
+
     def _build_context_lookup(self) -> None:
         """Build lookup from prompt_group_id to context data."""
         if not self.dataset_config:
@@ -87,8 +108,10 @@ class RAIServiceScorer(Scorer):
             for seed in seed_group.seeds:
                 if hasattr(seed, "metadata") and seed.metadata:
                     if seed.metadata.get("is_context") or seed.metadata.get("is_attack_vehicle"):
+                        # Read content from file if binary_path, otherwise use value directly
+                        content = self._read_seed_value(seed)
                         context_data.append({
-                            "content": seed.value,
+                            "content": content,
                             "context_type": seed.metadata.get("context_type"),
                             "tool_name": seed.metadata.get("tool_name"),
                         })
@@ -199,20 +222,45 @@ class RAIServiceScorer(Scorer):
 
     async def score_async(
         self,
-        request_response: MessagePiece,
+        message: Message,
         *,
-        task: Optional[str] = None,
+        objective: Optional[str] = None,
+        role_filter: Optional[str] = None,
+        skip_on_error_result: bool = False,
+        infer_objective_from_request: bool = False,
     ) -> List[Score]:
         """Score a prompt response using RAI service.
 
-        :param request_response: The message piece to score (contains response)
-        :type request_response: MessagePiece
-        :param task: Optional task/objective description
-        :type task: Optional[str]
-        :return: List containing a single Score object
+        :param message: The message to score (contains response pieces)
+        :type message: Message
+        :param objective: Optional objective description
+        :type objective: Optional[str]
+        :param role_filter: Optional role filter (unused)
+        :type role_filter: Optional[str]
+        :param skip_on_error_result: Whether to skip on error (unused)
+        :type skip_on_error_result: bool
+        :param infer_objective_from_request: Whether to infer objective from request (unused)
+        :type infer_objective_from_request: bool
+        :return: List containing Score objects
         :rtype: List[Score]
         """
-        return await self._score_piece_async(request_response, task=task)
+        # Get the last piece (response) from the message
+        if not message.message_pieces:
+            return []
+
+        # Find the assistant response piece
+        response_piece = None
+        for piece in message.message_pieces:
+            piece_role = piece.api_role if hasattr(piece, 'api_role') else str(piece.role)
+            if piece_role == "assistant":
+                response_piece = piece
+                break
+
+        if not response_piece:
+            # Fallback to last piece
+            response_piece = message.message_pieces[-1]
+
+        return await self._score_piece_async(response_piece, task=objective)
 
     def _get_context_for_piece(self, piece: MessagePiece) -> str:
         """Retrieve context string for the message piece.

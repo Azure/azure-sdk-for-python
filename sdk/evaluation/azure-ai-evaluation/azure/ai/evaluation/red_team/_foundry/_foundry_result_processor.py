@@ -19,6 +19,9 @@ class FoundryResultProcessor:
     converts them to the JSONL format expected by the main ResultProcessor.
     This ensures compatibility with existing result processing and reporting
     infrastructure.
+
+    Handles binary_path data type by reading file contents when reconstructing
+    context data.
     """
 
     def __init__(
@@ -41,6 +44,28 @@ class FoundryResultProcessor:
         self.risk_category = risk_category
         self._context_lookup: Dict[str, Dict[str, Any]] = {}
         self._build_context_lookup()
+
+    def _read_context_content(self, seed) -> str:
+        """Read context content, handling both direct values and file paths.
+
+        For binary_path data type, reads the file contents. For other types,
+        returns the value directly.
+
+        :param seed: The seed object containing the value
+        :type seed: SeedPrompt
+        :return: The context content string
+        :rtype: str
+        """
+        value = seed.value
+        data_type = getattr(seed, "data_type", "text")
+
+        if data_type == "binary_path" and os.path.isfile(value):
+            try:
+                with open(value, "r", encoding="utf-8") as f:
+                    return f.read()
+            except Exception:
+                return value  # Fallback to raw value if file read fails
+        return value
 
     def _build_context_lookup(self) -> None:
         """Build lookup from prompt_group_id (UUID) to context data."""
@@ -69,11 +94,13 @@ class FoundryResultProcessor:
                 contexts = []
                 for ctx_seed in context_seeds:
                     metadata = ctx_seed.metadata or {}
+                    # Read content from file if binary_path, otherwise use value directly
+                    content = self._read_context_content(ctx_seed)
 
                     # For XPIA, include the injected vehicle
                     if metadata.get("is_attack_vehicle"):
                         contexts.append({
-                            "content": ctx_seed.value,
+                            "content": content,
                             "tool_name": metadata.get("tool_name"),
                             "context_type": metadata.get("context_type"),
                             "is_attack_vehicle": True,
@@ -81,7 +108,7 @@ class FoundryResultProcessor:
                     elif not metadata.get("is_original_context"):
                         # Standard context
                         contexts.append({
-                            "content": ctx_seed.value,
+                            "content": content,
                             "tool_name": metadata.get("tool_name"),
                             "context_type": metadata.get("context_type"),
                         })

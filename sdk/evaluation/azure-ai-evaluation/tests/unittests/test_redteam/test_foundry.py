@@ -583,6 +583,10 @@ class TestRAIServiceScorer:
         mock_piece.converted_value = "Harmful response content"
         mock_piece.original_value = "Original content"
         mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
 
         mock_eval_result = {
             "violence_score": 5,
@@ -597,7 +601,7 @@ class TestRAIServiceScorer:
         ) as mock_eval:
             mock_eval.return_value = mock_eval_result
 
-            scores = await scorer.score_async(mock_piece, task="Test attack")
+            scores = await scorer.score_async(mock_message, objective="Test attack")
 
             assert len(scores) == 1
             score = scores[0]
@@ -619,6 +623,10 @@ class TestRAIServiceScorer:
         mock_piece.converted_value = "Safe response"
         mock_piece.original_value = "Original content"
         mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
 
         mock_eval_result = {
             "violence_score": 1,
@@ -633,7 +641,7 @@ class TestRAIServiceScorer:
         ) as mock_eval:
             mock_eval.return_value = mock_eval_result
 
-            scores = await scorer.score_async(mock_piece, task="Test attack")
+            scores = await scorer.score_async(mock_message, objective="Test attack")
 
             assert len(scores) == 1
             score = scores[0]
@@ -654,6 +662,10 @@ class TestRAIServiceScorer:
         mock_piece.converted_value = "Test response"
         mock_piece.original_value = "Original content"
         mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
 
         with patch(
             "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service",
@@ -661,7 +673,7 @@ class TestRAIServiceScorer:
         ) as mock_eval:
             mock_eval.side_effect = Exception("RAI service error")
 
-            scores = await scorer.score_async(mock_piece, task="Test attack")
+            scores = await scorer.score_async(mock_message, objective="Test attack")
 
             # Should return a score with error info
             assert len(scores) == 1
@@ -810,8 +822,8 @@ class TestScenarioOrchestrator:
             config = orchestrator._create_scoring_config()
 
             mock_config.assert_called_once_with(
-                scorer=mock_scorer,
-                success_threshold=0.5,
+                objective_scorer=mock_scorer,
+                use_score_as_feedback=True,
             )
 
     @pytest.mark.asyncio
@@ -833,7 +845,7 @@ class TestScenarioOrchestrator:
 
         mock_foundry = AsyncMock()
         mock_foundry.initialize_async = AsyncMock()
-        mock_foundry.run_attack_async = AsyncMock()
+        mock_foundry.run_async = AsyncMock()
 
         with patch(
             "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
@@ -849,7 +861,7 @@ class TestScenarioOrchestrator:
             assert result == orchestrator
             assert orchestrator._scenario == mock_foundry
             mock_foundry.initialize_async.assert_called_once()
-            mock_foundry.run_attack_async.assert_called_once()
+            mock_foundry.run_async.assert_called_once()
 
     def test_calculate_asr_empty_results(self, mock_logger):
         """Test ASR calculation with no results."""
@@ -863,9 +875,9 @@ class TestScenarioOrchestrator:
             logger=mock_logger,
         )
 
-        # Set up a mock scenario with empty results
-        orchestrator._scenario = MagicMock()
-        orchestrator._scenario.get_attack_results.return_value = []
+        # Set up a mock scenario result with empty results
+        orchestrator._scenario_result = MagicMock()
+        orchestrator._scenario_result.attack_results = {}
 
         asr = orchestrator.calculate_asr()
         assert asr == 0.0
@@ -891,12 +903,10 @@ class TestScenarioOrchestrator:
         failure_result = MagicMock()
         failure_result.outcome = AttackOutcome.FAILURE
 
-        orchestrator._scenario = MagicMock()
-        orchestrator._scenario.get_attack_results.return_value = [
-            success_result,
-            success_result,
-            failure_result,
-        ]
+        orchestrator._scenario_result = MagicMock()
+        orchestrator._scenario_result.attack_results = {
+            "obj1": [success_result, success_result, failure_result]
+        }
 
         asr = orchestrator.calculate_asr()
         assert asr == pytest.approx(2 / 3)  # 2 successes out of 3
@@ -928,12 +938,10 @@ class TestScenarioOrchestrator:
         morse_success.outcome = AttackOutcome.SUCCESS
         morse_success.attack_identifier = {"__type__": "MorseAttack"}
 
-        orchestrator._scenario = MagicMock()
-        orchestrator._scenario.get_attack_results.return_value = [
-            base64_success,
-            base64_failure,
-            morse_success,
-        ]
+        orchestrator._scenario_result = MagicMock()
+        orchestrator._scenario_result.attack_results = {
+            "obj1": [base64_success, base64_failure, morse_success]
+        }
 
         asr_by_strategy = orchestrator.calculate_asr_by_strategy()
 
@@ -1778,6 +1786,10 @@ class TestRAIServiceScorerExtended:
         mock_piece.labels = {
             "context": json.dumps({"contexts": [{"content": "Context for eval"}]})
         }
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
 
         mock_eval_result = {
             "violence_score": 4,
@@ -1792,7 +1804,7 @@ class TestRAIServiceScorerExtended:
         ) as mock_eval:
             mock_eval.return_value = mock_eval_result
 
-            scores = await scorer.score_async(mock_piece, task="Test task")
+            scores = await scorer.score_async(mock_message, objective="Test task")
 
             # Should include context in call
             assert len(scores) == 1
@@ -1821,6 +1833,10 @@ class TestRAIServiceScorerExtended:
             mock_piece.converted_value = "Test response"
             mock_piece.original_value = "Original"
             mock_piece.labels = {}
+            mock_piece.api_role = "assistant"
+
+            mock_message = MagicMock()
+            mock_message.message_pieces = [mock_piece]
 
             mock_eval_result = {
                 f"{risk_cat.value}_score": 2,
@@ -1835,7 +1851,7 @@ class TestRAIServiceScorerExtended:
             ) as mock_eval:
                 mock_eval.return_value = mock_eval_result
 
-                scores = await scorer.score_async(mock_piece, task="Test")
+                scores = await scorer.score_async(mock_message, objective="Test")
 
                 assert len(scores) == 1
                 assert risk_cat.value in scores[0].score_category
@@ -1910,10 +1926,10 @@ class TestScenarioOrchestratorExtended:
         undetermined = MagicMock()
         undetermined.outcome = AttackOutcome.UNDETERMINED
 
-        orchestrator._scenario = MagicMock()
-        orchestrator._scenario.get_attack_results.return_value = [
-            success, failure, undetermined, success
-        ]
+        orchestrator._scenario_result = MagicMock()
+        orchestrator._scenario_result.attack_results = {
+            "obj1": [success, failure, undetermined, success]
+        }
 
         asr = orchestrator.calculate_asr()
         # 2 successes out of 4 total
@@ -1942,8 +1958,10 @@ class TestScenarioOrchestratorExtended:
         result2.outcome = AttackOutcome.FAILURE
         result2.attack_identifier = {"__type__": "KnownAttack"}
 
-        orchestrator._scenario = MagicMock()
-        orchestrator._scenario.get_attack_results.return_value = [result1, result2]
+        orchestrator._scenario_result = MagicMock()
+        orchestrator._scenario_result.attack_results = {
+            "obj1": [result1, result2]
+        }
 
         asr_by_strategy = orchestrator.calculate_asr_by_strategy()
 

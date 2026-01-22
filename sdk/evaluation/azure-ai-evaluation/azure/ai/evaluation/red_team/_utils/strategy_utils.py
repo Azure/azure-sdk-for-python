@@ -127,6 +127,9 @@ def get_chat_target(
 
     # Helper function for message conversion
     def _message_to_dict(message):
+        # Handle both dict and object formats
+        if isinstance(message, dict):
+            return message
         return {
             "role": message.role,
             "content": message.content,
