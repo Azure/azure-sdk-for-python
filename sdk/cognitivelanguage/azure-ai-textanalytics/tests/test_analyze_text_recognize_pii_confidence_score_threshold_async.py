@@ -55,12 +55,8 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
 
             # Confidence score overrides
             ssn_override = ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber")
-            email_override = ConfidenceScoreThresholdOverride(
-                value=0.9, entity="Email"
-            )
-            confidence_threshold = ConfidenceScoreThreshold(
-                default=0.3, overrides=[ssn_override, email_override]
-            )
+            email_override = ConfidenceScoreThresholdOverride(value=0.9, entity="Email")
+            confidence_threshold = ConfidenceScoreThreshold(default=0.3, overrides=[ssn_override, email_override])
 
             # Parameters
             parameters = PiiActionContent(

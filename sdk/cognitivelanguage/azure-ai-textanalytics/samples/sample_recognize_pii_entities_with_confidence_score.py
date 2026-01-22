@@ -49,10 +49,7 @@ def sample_recognize_pii_entities_with_confidence_score():
     client = TextAnalysisClient(endpoint, credential=credential)
 
     # Input text
-    text = (
-        "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. "
-        "John Doe is my name."
-    )
+    text = "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. " "John Doe is my name."
 
     # Confidence score threshold configuration:
     # - Default threshold is 0.3
@@ -66,9 +63,7 @@ def sample_recognize_pii_entities_with_confidence_score():
     )
 
     body = TextPiiEntitiesRecognitionInput(
-        text_input=MultiLanguageTextInput(
-            multi_language_inputs=[MultiLanguageInput(id="1", text=text, language="en")]
-        ),
+        text_input=MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="1", text=text, language="en")]),
         action_content=PiiActionContent(
             pii_categories=["All"],
             disable_entity_validation=True,

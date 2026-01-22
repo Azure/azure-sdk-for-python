@@ -66,7 +66,6 @@ async def sample_recognize_pii_entities_with_redaction_policies_async():
                 redaction_policies=[
                     # Default policy: mask all categories (asterisks)
                     EntityMaskPolicyType(policy_name="defaultPolicy", is_default=True),
-
                     # SSN: keep first 4 characters visible, mask the rest
                     CharacterMaskPolicyType(
                         policy_name="ssnMaskPolicy",
@@ -74,7 +73,6 @@ async def sample_recognize_pii_entities_with_redaction_policies_async():
                         unmask_from_end=False,
                         entity_types=["USSocialSecurityNumber"],
                     ),
-
                     # Person & Email: replace with synthetic (fake) values
                     SyntheticReplacementPolicyType(
                         policy_name="syntheticPolicy",

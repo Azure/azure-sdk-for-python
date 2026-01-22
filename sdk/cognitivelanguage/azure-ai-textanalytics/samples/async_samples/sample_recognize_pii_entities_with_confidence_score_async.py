@@ -50,10 +50,7 @@ async def sample_recognize_pii_entities_with_confidence_score_async():
 
     async with TextAnalysisClient(endpoint, credential=credential) as client:
         # Input text
-        text = (
-            "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. "
-            "John Doe is my name."
-        )
+        text = "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. " "John Doe is my name."
 
         # Confidence score thresholds:
         # - Default threshold is 0.3
