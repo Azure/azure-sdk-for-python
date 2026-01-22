@@ -77,29 +77,38 @@ for pkg_name in packages_for_installation:
         # Determine which file to use: pyproject.toml with [project] or setup.py
         use_pyproject = False
         if os.path.exists(pkg_pyproject_path):
-            # Check if pyproject.toml has [project] section
+            # Check if pyproject.toml has [project] section using TOML parser
             try:
-                with open(pkg_pyproject_path, 'r') as f:
-                    content = f.read()
-                    if '[project]' in content:
+                # Use tomllib for Python 3.11+, fallback to tomli for older versions
+                try:
+                    import tomllib as toml
+                except ImportError:
+                    import tomli as toml
+                
+                with open(pkg_pyproject_path, 'rb') as f:
+                    pyproject_data = toml.load(f)
+                    if 'project' in pyproject_data:
                         use_pyproject = True
             except Exception:
+                # If parsing fails, fallback to setup.py if available
                 pass
         
         if use_pyproject:
             # Use pip to install pyproject.toml-based packages
-            print("Start ", pkg_pyproject_path)
             # Map setup.py commands to pip commands
             if "install" in sys.argv:
+                print("Start ", pkg_pyproject_path)
                 cmd = [sys.executable, '-m', 'pip', 'install', '.']
             elif "develop" in sys.argv or any(arg in sys.argv for arg in ['-e', '--editable']):
+                print("Start ", pkg_pyproject_path)
                 cmd = [sys.executable, '-m', 'pip', 'install', '-e', '.']
             else:
-                # For other commands like --version, --help, etc., just show the package info
-                cmd = [sys.executable, '-m', 'pip', 'show', pkg_name]
+                # For other commands like --version, --help, etc., skip pyproject.toml packages
+                # These commands are meant for the root setup.py, not individual packages
+                continue
             
             result = subprocess.run(cmd, cwd=pkg_setup_folder, capture_output=False)
-            if result.returncode != 0 and "install" in sys.argv:
+            if result.returncode != 0:
                 print(f"Warning: Package {pkg_name} installation returned non-zero exit code", file=sys.stderr)
         elif os.path.exists(pkg_setup_path):
             # Use the traditional setup.py approach
