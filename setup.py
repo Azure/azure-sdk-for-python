@@ -14,10 +14,14 @@ import runpy
 
 root_folder = os.path.abspath(os.path.dirname(__file__))
 
-# pull in any packages that exist in the root directory
+# pull in any packages that exist in the root directory (setup.py or pyproject.toml)
 packages = {('.', os.path.dirname(p)) for p in glob.glob('azure*/setup.py')}
-# Handle the SDK folder as well
+packages.update({('.', os.path.dirname(p)) for p in glob.glob('azure*/pyproject.toml')})
+
+# Handle the SDK folder as well - look for both setup.py and pyproject.toml
 packages.update({tuple(os.path.dirname(f).rsplit(os.sep, 1)) for f in glob.glob('sdk/*/azure*/setup.py')})
+packages.update({tuple(os.path.dirname(f).rsplit(os.sep, 1)) for f in glob.glob('sdk/*/azure*/pyproject.toml')})
+
 # [(base_folder, package_name), ...] to {package_name: base_folder, ...}
 packages = {package_name: base_folder for (base_folder, package_name) in packages}
 
@@ -44,6 +48,7 @@ else:
 for pkg_name in packages_for_installation:
     pkg_setup_folder = os.path.join(root_folder, packages[pkg_name], pkg_name)
     pkg_setup_path = os.path.join(pkg_setup_folder, 'setup.py')
+    pkg_pyproject_path = os.path.join(pkg_setup_folder, 'pyproject.toml')
 
     try:
         saved_dir = os.getcwd()
@@ -52,8 +57,17 @@ for pkg_name in packages_for_installation:
         os.chdir(pkg_setup_folder)
         sys.path = [pkg_setup_folder] + copy.copy(saved_syspath)
 
-        print("Start ", pkg_setup_path)
-        result = runpy.run_path(pkg_setup_path)
+        # Prefer setup.py if it exists, otherwise use pyproject.toml
+        if os.path.exists(pkg_setup_path):
+            print("Start ", pkg_setup_path)
+            result = runpy.run_path(pkg_setup_path)
+        elif os.path.exists(pkg_pyproject_path):
+            print("Start ", pkg_pyproject_path)
+            # Use pip to install from pyproject.toml
+            import subprocess
+            subprocess.check_call([sys.executable, '-m', 'pip'] + sys.argv[1:] + ['.'])
+        else:
+            print(f"Warning: No setup.py or pyproject.toml found for {pkg_name}", file=sys.stderr)
     except Exception as e:
         print(e, file=sys.stderr)
     finally:
