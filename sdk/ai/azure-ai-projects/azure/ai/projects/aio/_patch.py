@@ -62,7 +62,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
-    :keyword user_agent: Optional string that is appended to the default OpenAI user-agent when you call
+    :keyword user_agent: Optional string identifying the caller. This string will show up at the front of the "User-Agent" HTTP request header in all network calls this client makes. If an OpenAI client was obtained by calling get_openai_client(), this string will also show up at the front of the "User-Agent" request header in network calls that OpenAI client makes.
      :meth:`get_openai_client`.
     """
 
@@ -106,7 +106,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai" appended.
         * ``api-version`` set to "2025-05-15-preview" by default, unless overridden by the ``api_version`` keyword argument.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient constructor, with scope "https://ai.azure.com/.default".
-        * ``user_agent`` if provided either when constructing AIProjectClient or via ``get_openai_client(user_agent=...)`` is appended to the default OpenAI user-agent.
 
         .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
 
@@ -230,7 +229,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
             http_client = httpx.AsyncClient(transport=OpenAILoggingTransport())
 
-        default_headers = dict[str, Any](kwargs.pop("default_headers", None) or {})
+        default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
 
         openai_custom_user_agent = default_headers.get("User-Agent", None)
 
@@ -250,12 +249,14 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         openai_default_user_agent = dummy_client.user_agent
 
-        final_user_agent = (
-            "-".join(ua for ua in [self._custom_user_agent, "AIProjectClient"] if ua) + " " + openai_default_user_agent
-        )
-
         if openai_custom_user_agent:
             final_user_agent = openai_custom_user_agent
+        else:
+            final_user_agent = (
+                "-".join(ua for ua in [self._custom_user_agent, "AIProjectClient"] if ua)
+                + " "
+                + openai_default_user_agent
+            )
 
         default_headers["User-Agent"] = final_user_agent
 
