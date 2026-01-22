@@ -52,7 +52,7 @@ for setting in sample_settings:
     print(f"  Created: {setting.key} = {setting.value}")
 
 # Create the feature flag
-# client.set_configuration_setting(sample_feature_flag)
+client.set_configuration_setting(sample_feature_flag)
 print(f"  Created feature flag: {sample_feature_flag.feature_id} = {sample_feature_flag.enabled}")
 
 for setting in override_settings:
