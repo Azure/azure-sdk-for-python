@@ -20,7 +20,7 @@ class TestConversationsAsync(AzureRecordedTestCase):
     async def create_client(self, endpoint: str, key: str) -> ConversationAuthoringClient:
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCancelTrainingAsync(TestConversationsAsync):
     @ConversationsPreparer()
     @recorded_by_proxy_async
@@ -29,7 +29,7 @@ class TestConversationsCancelTrainingAsync(TestConversationsAsync):
         client = await self.create_client(authoring_endpoint, authoring_key)
         try:
             project_name = "Test-data-labels"
-            job_id = "122b7341-afaa-4bea-af63-f6c7e0539fcb_638985888000000000"
+            job_id = "fb3b428d-185f-4d6e-a777-e3fd86cab993_639034272000000000"
             project_client = client.get_project_client(project_name)
 
             poller = await project_client.project.begin_cancel_training_job(

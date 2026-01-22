@@ -27,7 +27,7 @@ class TestConversationsDeleteProjectSync(TestConversations):
     @recorded_by_proxy
     def test_delete_project(self, authoring_endpoint, authoring_key):
         authoring_client = self.create_client(authoring_endpoint, authoring_key)
-        project_name = "MyPythonProject0820"
+        project_name = "MyPythonProject1110"
 
         # Act: begin delete (LRO)
         poller = authoring_client.begin_delete_project(project_name)

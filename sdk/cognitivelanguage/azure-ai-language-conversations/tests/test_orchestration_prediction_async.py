@@ -34,7 +34,7 @@ class TestConversations(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return ConversationAnalysisClient(endpoint, credential)
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async

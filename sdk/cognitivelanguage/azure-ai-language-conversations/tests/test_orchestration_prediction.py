@@ -36,7 +36,7 @@ class TestConversations(AzureRecordedTestCase):
 
     ...
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy

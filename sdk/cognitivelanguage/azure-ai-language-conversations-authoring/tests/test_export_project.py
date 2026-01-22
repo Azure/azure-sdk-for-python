@@ -28,7 +28,7 @@ class TestConversationsExportCase(TestConversations):
     @recorded_by_proxy
     def test_export_project(self, authoring_endpoint, authoring_key):
         authoring_client = self.create_client(authoring_endpoint, authoring_key)
-        project_name = "PythonImportProject0820"
+        project_name = "Test-data-labels"
         project_client = authoring_client.get_project_client(project_name)
 
         # Act: begin export (LRO)
