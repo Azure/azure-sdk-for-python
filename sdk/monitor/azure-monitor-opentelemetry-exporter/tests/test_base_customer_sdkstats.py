@@ -139,7 +139,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             track_mock.return_value = track_response
             result = exporter._transmit(self._envelopes_to_export)
 
-        track_successful_mock.assert_called_once_with(self._envelopes_to_export)
+        track_successful_mock.assert_any_call(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.SUCCESS)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
@@ -174,7 +174,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             )
             result = exporter._transmit(self._envelopes_to_export * 2)
 
-        track_dropped_mock.assert_called_once()
+        track_dropped_mock.assert_any_call(self._envelopes_to_export, 400)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
@@ -203,7 +203,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             track_mock.side_effect = HttpResponseError("Throttling error", response=error_response)
             result = exporter._transmit(self._envelopes_to_export)
 
-        track_dropped_mock.assert_called_once()
+        track_dropped_mock.assert_any_call(self._envelopes_to_export, 402)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
@@ -216,7 +216,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             request_mock.return_value = MockResponse(400, "{}")
             result = exporter._transmit(self._envelopes_to_export)
 
-        track_dropped_mock.assert_called_once()
+        track_dropped_mock.assert_any_call(self._envelopes_to_export, 400)
         shutdown_mock.assert_called_once()
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
@@ -241,9 +241,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         ):
             result = exporter._transmit(self._envelopes_to_export)
 
-        track_dropped_mock.assert_called_once()
-        # We're not going to verify the specific argument values since they can change
-        # Just make sure the function was called
+        track_dropped_mock.assert_any_call(self._envelopes_to_export, DropCode.CLIENT_EXCEPTION, "Client exception")
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
@@ -260,9 +258,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             )
             result = exporter._transmit(self._envelopes_to_export)
 
-        track_dropped_mock.assert_called_once()
-        # The arguments structure has changed in the new implementation
-        # No need to verify specific arguments as the function signature has changed
+        track_dropped_mock.assert_any_call(self._envelopes_to_export, DropCode.CLIENT_STORAGE_DISABLED)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
