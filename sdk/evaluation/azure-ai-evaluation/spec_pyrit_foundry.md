@@ -136,46 +136,56 @@ PromptDataType = Literal[
     "function_call",
     "tool_call",
     "function_call_output",
+    "binary_path",  # Added in PyRIT PR #1315
 ]
 ```
 
 **RAI Context Types**: `email`, `document`, `html`, `code`, `tool_call`
 
-**Proposed Mapping**:
+**Current Mapping** (using `binary_path` for file-based storage):
 ```python
-email       → PromptDataType.text
-document    → PromptDataType.text
-code        → PromptDataType.text
-tool_call   → PromptDataType.tool_call  # Direct match available!
-html        → PromptDataType.url
+tool_call   → PromptDataType.tool_call  # Stored inline
+email       → PromptDataType.binary_path  # Stored as .eml file
+document    → PromptDataType.binary_path  # Stored as .txt file
+code        → PromptDataType.binary_path  # Stored as .py file
+html        → PromptDataType.binary_path  # Stored as .html file
+markdown    → PromptDataType.binary_path  # Stored as .md file
+(all others)→ PromptDataType.binary_path  # Stored as .bin file
 ```
 
-**Remaining Considerations**:
-- **XPIA Formatting**: For indirect jailbreak attacks, context types like `email` and `document` determine attack vehicle formatting. While PyRIT sees them as `text`, we preserve the original `context_type` in metadata for downstream formatters.
-- **Semantic Preservation**: Always include `context_type` in seed metadata to enable:
+**Key Features**:
+- **File-based Storage**: All context types (except `tool_call`) are written to temporary files with context-type-appropriate extensions
+- **Semantic Preservation**: The original `context_type` is preserved in seed metadata for:
   - XPIA attack vehicle formatting based on context type
   - Agent evaluation callbacks that need to know the context modality
   - Future extensibility if RAI service adds new context types
-
-**Recommendation**: Use direct mapping where available (`tool_call` → `PromptDataType.tool_call`), map text-based contexts to `PromptDataType.text`, and **always preserve** `context_type` in seed metadata for semantic information.
+- **Automatic Cleanup**: Files are tracked and cleaned up via `atexit` handler or explicit `cleanup()` method
 
 ### Resolution Summary
 
 **PromptDataType Mapping**: Implemented in `DatasetConfigurationBuilder._determine_data_type()`:
 
-| RAI Context Type | PyRIT PromptDataType | Notes |
-|-----------------|---------------------|-------|
-| `tool_call` | `tool_call` | Direct mapping |
-| `email`, `document`, `code`, `text`, `markdown`, `footnote` | `text` | Semantic context preserved in metadata |
-| `html`, `url`, `web` | `url` | URL-like content |
-| Image-related | `image_path` | File-based |
-| Audio-related | `audio_path` | File-based |
-| Video-related | `video_path` | File-based |
+| RAI Context Type | PyRIT PromptDataType | File Extension | Notes |
+|-----------------|---------------------|----------------|-------|
+| `tool_call` | `tool_call` | N/A | Stored inline (not as file) |
+| `email` | `binary_path` | `.eml` | RFC 2822 email format |
+| `document` | `binary_path` | `.txt` | Plain text document |
+| `code` | `binary_path` | `.py` | Python code (default) |
+| `html` | `binary_path` | `.html` | HTML content |
+| `markdown` | `binary_path` | `.md` | Markdown content |
+| `footnote` | `binary_path` | `.txt` | Plain text |
+| Other/unknown | `binary_path` | `.bin` | Generic binary |
 
-**Key Design Decision**: We use `text` for most semantic content types (email, document, code) and preserve the original `context_type` in the seed's `metadata` field. This metadata is then used by:
-1. `format_content_by_modality()` for XPIA attack formatting
-2. Result processors for context reconstruction
-3. Downstream evaluators that need semantic type information
+**Key Design Decision**: We use `binary_path` for all context types (except `tool_call`) and store content as files. This approach:
+1. Provides consistent file-based handling for multimodal content
+2. Preserves the original `context_type` in the seed's `metadata` field
+3. Enables proper MIME type detection and file handling downstream
+4. Files are stored in PyRIT's `DB_DATA_PATH/seed-prompt-entries/binaries/` directory
+
+**File Reading**: Result processors and scorers read file contents when `data_type == "binary_path"` via helper methods (`_read_context_content()`, `_read_seed_value()`) that:
+1. Check if the value is a valid file path
+2. Read and return file contents
+3. Fall back to raw value if file read fails
 
 **XPIA Injection**: Implemented in `DatasetConfigurationBuilder._inject_attack_into_vehicle()`:
 1. If the context has a `{attack_text}` placeholder, the formatted attack is injected there
@@ -1275,18 +1285,21 @@ from pyrit.scenario.scenarios.foundry.foundry import Foundry, FoundryStrategy
 
 The RAI service returns context with `context_type` field that indicates the modality/format of the context data. Supported types:
 
-- **`email`**: Email message format → maps to `PromptDataType.text`
-- **`document`**: Document/text format → maps to `PromptDataType.text`
-- **`html`**: HTML/web page format → maps to `PromptDataType.url`
-- **`code`**: Code snippet format → maps to `PromptDataType.text`
-- **`tool_call`**: Tool/function call output format → maps to `PromptDataType.tool_call` 
+- **`tool_call`**: Tool/function call output format → maps to `PromptDataType.tool_call` (stored inline)
+- **`email`**: Email message format → maps to `PromptDataType.binary_path` (stored as `.eml` file)
+- **`document`**: Document/text format → maps to `PromptDataType.binary_path` (stored as `.txt` file)
+- **`html`**: HTML/web page format → maps to `PromptDataType.binary_path` (stored as `.html` file)
+- **`code`**: Code snippet format → maps to `PromptDataType.binary_path` (stored as `.py` file)
+- **`markdown`**: Markdown format → maps to `PromptDataType.binary_path` (stored as `.md` file)
+- **Other types**: → maps to `PromptDataType.binary_path` (stored as `.bin` file)
 
-**Note**: PyRIT's `PromptDataType` includes: `text`, `url`, `image_path`, `audio_path`, `video_path`, `reasoning`, `error`, `function_call`, `tool_call`, and `function_call_output`. The `tool_call` context type has a direct matching data type in PyRIT. For other text-based contexts (`email`, `document`, `code`), the original `context_type` value is preserved in seed metadata for downstream processing (XPIA formatting, agent evaluation).
+**Note**: PyRIT's `PromptDataType` includes: `text`, `url`, `image_path`, `audio_path`, `video_path`, `reasoning`, `error`, `function_call`, `tool_call`, `function_call_output`, and `binary_path`. The `tool_call` context type is the only type stored inline. All other context types are written to temporary files and use `binary_path` data type. The original `context_type` value is preserved in seed metadata for downstream processing (XPIA formatting, agent evaluation, file extension determination).
 
 These context types are used for:
 1. **Data type mapping**: Determining appropriate `PromptDataType` for PyRIT seeds
-2. **XPIA attacks**: Formatting attack vehicles in indirect jailbreak scenarios
-3. **Agent evaluation**: Providing properly formatted context to callback functions
+2. **File extension selection**: Choosing appropriate file extension (`.eml`, `.html`, `.py`, etc.)
+3. **XPIA attacks**: Formatting attack vehicles in indirect jailbreak scenarios
+4. **Agent evaluation**: Providing properly formatted context to callback functions
 
 #### AttackResult Schema
 

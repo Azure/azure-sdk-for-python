@@ -6,7 +6,7 @@
 import logging
 from typing import Any, Dict, List, Optional
 
-from pyrit.models import AttackResult
+from pyrit.models import AttackResult, AttackOutcome
 from pyrit.models.scenario_result import ScenarioResult
 from pyrit.prompt_target import PromptChatTarget
 from pyrit.scenario import DatasetConfiguration
@@ -57,6 +57,7 @@ class ScenarioOrchestrator:
         self,
         dataset_config: DatasetConfiguration,
         strategies: List[FoundryStrategy],
+        include_baseline: bool = False,
     ) -> "ScenarioOrchestrator":
         """Execute attacks for all strategies in this risk category.
 
@@ -68,14 +69,32 @@ class ScenarioOrchestrator:
         :type dataset_config: DatasetConfiguration
         :param strategies: List of FoundryStrategy enums to execute
         :type strategies: List[FoundryStrategy]
+        :param include_baseline: Whether to include baseline attacks (no conversion)
+        :type include_baseline: bool
         :return: Self for chaining
         :rtype: ScenarioOrchestrator
         """
         num_objectives = len(dataset_config.get_all_seed_groups())
         self.logger.info(
-            f"Creating FoundryScenario for {self.risk_category} with "
-            f"{len(strategies)} strategies and {num_objectives} objectives"
+            f"Creating scenario for {self.risk_category} with "
+            f"{len(strategies)} strategies, {num_objectives} objectives, "
+            f"include_baseline={include_baseline}"
         )
+
+        # Note: PyRIT requires at least one strategy in initialize_async even when
+        # include_baseline=True. If only Baseline is requested (no other strategies),
+        # we need to log a warning and skip execution.
+        # TODO: File feature request for PyRIT to support baseline-only execution
+        if not strategies:
+            if include_baseline:
+                self.logger.warning(
+                    f"Baseline-only execution requested for {self.risk_category}, but PyRIT requires "
+                    "at least one FoundryStrategy. Please include an additional strategy like Base64. "
+                    "Skipping execution for this risk category."
+                )
+            else:
+                self.logger.warning(f"No strategies provided for {self.risk_category}, skipping execution.")
+            return self
 
         # Create scoring configuration from our RAI scorer
         # FoundryScenario expects an AttackScoringConfig
@@ -85,7 +104,7 @@ class ScenarioOrchestrator:
         self._scenario = FoundryScenario(
             adversarial_chat=self.adversarial_chat_target,
             attack_scoring_config=scoring_config,
-            include_baseline=False,  # We handle baseline separately
+            include_baseline=include_baseline,
         )
 
         # Initialize with dataset and strategies
@@ -131,7 +150,8 @@ class ScenarioOrchestrator:
         :raises RuntimeError: If scenario hasn't been executed
         """
         if not self._scenario_result:
-            raise RuntimeError("Scenario has not been executed. Call execute() first.")
+            # Return empty list if no strategies were executed (e.g., baseline-only case)
+            return []
 
         # ScenarioResult.attack_results is a dict[str, List[AttackResult]]
         # Flatten all results into a single list
@@ -146,10 +166,8 @@ class ScenarioOrchestrator:
 
         :return: MemoryInterface instance
         :rtype: Any
-        :raises RuntimeError: If scenario hasn't been executed
         """
-        if not self._scenario:
-            raise RuntimeError("Scenario has not been executed. Call execute() first.")
+        # Return memory instance regardless of scenario execution state
 
         from pyrit.memory import CentralMemory
         return CentralMemory.get_memory_instance()

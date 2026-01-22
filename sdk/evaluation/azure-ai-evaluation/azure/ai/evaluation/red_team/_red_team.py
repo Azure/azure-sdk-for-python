@@ -1723,11 +1723,12 @@ class RedTeam:
             )
 
             # Execute attacks via Foundry
+            # Pass flattened_attack_strategies (not foundry_strategies) so Baseline detection works
             progress_bar.set_postfix({"current": "executing"})
             foundry_results = await foundry_manager.execute_attacks(
                 objective_target=chat_target,
                 risk_categories=self.risk_categories,
-                attack_strategies=foundry_strategies,
+                attack_strategies=flattened_attack_strategies,
                 objectives_by_risk=objectives_by_risk,
             )
 

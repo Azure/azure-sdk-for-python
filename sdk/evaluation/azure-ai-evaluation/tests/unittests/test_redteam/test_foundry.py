@@ -760,8 +760,8 @@ class TestScenarioOrchestrator:
 
         assert orchestrator.adversarial_chat_target == mock_adversarial
 
-    def test_get_attack_results_before_execution_raises(self, mock_logger):
-        """Test that get_attack_results raises before execute()."""
+    def test_get_attack_results_before_execution_returns_empty(self, mock_logger):
+        """Test that get_attack_results returns empty list before execute()."""
         mock_target = MagicMock()
         mock_scorer = MagicMock()
 
@@ -772,13 +772,17 @@ class TestScenarioOrchestrator:
             logger=mock_logger,
         )
 
-        with pytest.raises(RuntimeError, match="not been executed"):
-            orchestrator.get_attack_results()
+        # Now returns empty list instead of raising
+        results = orchestrator.get_attack_results()
+        assert results == []
 
-    def test_get_memory_before_execution_raises(self, mock_logger):
-        """Test that get_memory raises before execute()."""
+    @patch("pyrit.memory.CentralMemory")
+    def test_get_memory_returns_memory_instance(self, mock_central_memory, mock_logger):
+        """Test that get_memory returns memory instance."""
         mock_target = MagicMock()
         mock_scorer = MagicMock()
+        mock_memory = MagicMock()
+        mock_central_memory.get_memory_instance.return_value = mock_memory
 
         orchestrator = ScenarioOrchestrator(
             risk_category="violence",
@@ -787,8 +791,10 @@ class TestScenarioOrchestrator:
             logger=mock_logger,
         )
 
-        with pytest.raises(RuntimeError, match="not been executed"):
-            orchestrator.get_memory()
+        # Now returns memory instance instead of raising
+        memory = orchestrator.get_memory()
+        assert memory is mock_memory
+        mock_central_memory.get_memory_instance.assert_called_once()
 
     def test_scenario_property(self, mock_logger):
         """Test scenario property returns None before execution."""

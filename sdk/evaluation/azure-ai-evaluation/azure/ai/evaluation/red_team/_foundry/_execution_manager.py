@@ -86,9 +86,16 @@ class FoundryExecutionManager:
         foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
         mapped_strategies = StrategyMapper.map_strategies(foundry_strategies)
 
+        # Check if Baseline was requested (it's in special_strategies)
+        include_baseline = any(
+            s == AttackStrategy.Baseline if not isinstance(s, list)
+            else AttackStrategy.Baseline in s
+            for s in attack_strategies
+        )
+
         self.logger.info(
             f"Executing Foundry attacks with {len(mapped_strategies)} strategies "
-            f"across {len(risk_categories)} risk categories"
+            f"across {len(risk_categories)} risk categories, include_baseline={include_baseline}"
         )
 
         # Check if adversarial chat is needed
@@ -152,6 +159,7 @@ class FoundryExecutionManager:
                 await orchestrator.execute(
                     dataset_config=dataset_config,
                     strategies=mapped_strategies,
+                    include_baseline=include_baseline,
                 )
             except Exception as e:
                 self.logger.error(f"Error executing attacks for {risk_value}: {e}")
