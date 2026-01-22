@@ -48,7 +48,7 @@ override_settings = [
 
 print("Creating sample configuration settings...")
 for setting in sample_settings:
-    # client.set_configuration_setting(setting)
+    client.set_configuration_setting(setting)
     print(f"  Created: {setting.key} = {setting.value}")
 
 # Create the feature flag
@@ -56,7 +56,7 @@ client.set_configuration_setting(sample_feature_flag)
 print(f"  Created feature flag: {sample_feature_flag.feature_id} = {sample_feature_flag.enabled}")
 
 for setting in override_settings:
-    # client.set_configuration_setting(setting)
+    client.set_configuration_setting(setting)
     print(f"  Created: {setting.key} = {setting.value} (label: {setting.label})")
 
 # Generate a unique snapshot name
