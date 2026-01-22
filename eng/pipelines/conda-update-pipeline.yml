@@ -13,7 +13,6 @@ extends:
             displayName: Update Conda Files and Submit PR
             variables:
               - template: /eng/pipelines/templates/variables/globals.yml
-              - group: Release Secrets for GitHub
 
             pool:
               name: azsdk-pool
