@@ -148,7 +148,6 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
     tags = envelope.tags or {}
-    envelope.tags = tags
     tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(log_record.trace_id or _DEFAULT_TRACE_ID)  # type: ignore
     if log_record.attributes and _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
@@ -236,7 +235,12 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         data.message = data.message.strip()
         if len(data.message) == 0:
             data.message = _DEFAULT_LOG_MESSAGE
+
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
+
+        # Assign updated tags after all tag modifications to avoid losing changes when
+        # TelemetryItem clones the incoming mapping in its setter.
+        envelope.tags = tags
 
     return envelope
 
