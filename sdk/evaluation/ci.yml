@@ -39,3 +39,28 @@ extends:
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation
+    # Run red team tests for the dedicated redteam job
+    AfterTestSteps:
+      - pwsh: |
+          if ("$(IsRedteamJob)" -eq "true") {
+            Write-Host "Running red team tests with dev_requirements_redteam.txt..."
+            $packageDir = "$(Build.SourcesDirectory)/sdk/evaluation/azure-ai-evaluation"
+
+            # Install redteam requirements
+            python -m pip install -r "$packageDir/dev_requirements_redteam.txt"
+
+            # Install the package with redteam extra
+            python -m pip install -e "$packageDir[redteam]"
+
+            # Run redteam unit tests
+            Write-Host "Running red team unit tests..."
+            python -m pytest "$packageDir/tests/unittests/test_redteam" -v --tb=short
+
+            # Run redteam e2e tests
+            Write-Host "Running red team e2e tests..."
+            python -m pytest "$packageDir/tests/e2etests" -v --tb=short -k "red_team or redteam or foundry"
+          } else {
+            Write-Host "Skipping red team tests (not a redteam job)"
+          }
+        displayName: 'Run Red Team Tests'
+        condition: eq(variables['IsRedteamJob'], 'true')
