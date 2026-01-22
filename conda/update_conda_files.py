@@ -974,6 +974,9 @@ if __name__ == "__main__":
 
     old_date, new_version = update_conda_version(target_release_date)
 
+    # Output version as Azure DevOps pipeline variable
+    print(f"##vso[task.setvariable variable=CondaReleaseVersion]{new_version}")
+
     # convert to mm/dd/yyyy format for comparison with CSV dates
     old_version = old_date.strftime("%m/%d/%Y")
 
