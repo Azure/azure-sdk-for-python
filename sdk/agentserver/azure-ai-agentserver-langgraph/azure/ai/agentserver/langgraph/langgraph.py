@@ -128,7 +128,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
         try:
             result = await self._graph.ainvoke(**input_arguments)
-            output = self.converter.convert_response_non_stream(result, input_arguments["context"])
+            output = await self.converter.convert_response_non_stream(result, input_arguments["context"])
             return output
         except Exception as e:
             logger.error(f"Error during agent run: {e}", exc_info=True)
