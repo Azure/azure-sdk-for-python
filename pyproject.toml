@@ -36,5 +36,8 @@ Homepage = "https://github.com/Azure/azure-sdk-for-python"
 Repository = "https://github.com/Azure/azure-sdk-for-python"
 Documentation = "https://docs.microsoft.com/python/azure/"
 
+[project.scripts]
+install-azure-sdk-packages = "install_packages:main"
+
 [tool.setuptools]
-py-modules = []
+py-modules = ["install_packages"]
