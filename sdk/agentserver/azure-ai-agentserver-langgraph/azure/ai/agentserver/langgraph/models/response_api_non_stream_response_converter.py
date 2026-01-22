@@ -53,6 +53,9 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
 
     def convert(self, output: Union[dict[str, Any], Any]) -> list[project_models.ItemResource]:
         res: list[project_models.ItemResource] = []
+        if not isinstance(output, list):
+            logger.error(f"Expected output to be a list, got {type(output)}: {output}")
+            raise ValueError(f"Invalid output format. Expected a list, got {type(output)}.")
         for step in output:
             for node_name, node_output in step.items():
                 node_results = self._convert_node_output(node_name, node_output)
@@ -62,7 +65,6 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
     def _convert_node_output(
         self, node_name: str, node_output: Any
     ) -> Iterable[project_models.ItemResource]:
-        logger.info(f"Converting output for node: {node_name} with output: {node_output}")
         if node_name == INTERRUPT_NODE_NAME:
             yield from self.hitl_helper.convert_interrupts(node_output)
         else:
