@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence
 
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models import BaseChatModel, LanguageModelInput
@@ -12,6 +12,7 @@ from langchain_core.outputs import ChatResult
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.tools import BaseTool
 from langgraph.prebuilt import ToolNode
+from langgraph.runtime import Runtime
 
 from azure.ai.agentserver.core.tools import FoundryToolLike
 from ._tool_node import FoundryToolCallWrapper, FoundryToolNodeWrappers
@@ -29,9 +30,10 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
     :type foundry_tools: List[FoundryToolLike]
     """
 
-    def __init__(self, delegate: BaseChatModel, foundry_tools: List[FoundryToolLike]):
+    def __init__(self, delegate: BaseChatModel, runtime: Runtime, foundry_tools: List[FoundryToolLike]):
         super().__init__()
         self._delegate = delegate
+        self._runtime = runtime
         self._foundry_tools_to_bind = foundry_tools
         self._bound_tools: List[Dict[str, Any] | type | Callable | BaseTool] = []
         self._bound_kwargs: dict[str, Any] = {}
@@ -88,7 +90,9 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
     def _bound_delegate_for_call(self) -> Runnable[LanguageModelInput, AIMessage]:
         from .._context import LanggraphRunContext
 
-        foundry_tools = LanggraphRunContext.get_current().tools.resolved_tools.get(self._foundry_tools_to_bind)
+        foundry_tools: Iterable[BaseTool] = []
+        if (context := LanggraphRunContext.from_runtime(self._runtime)) is not None:
+            foundry_tools = context.tools.resolved_tools.get(self._foundry_tools_to_bind)
         all_tools = self._bound_tools.copy()
         all_tools.extend(foundry_tools)
 

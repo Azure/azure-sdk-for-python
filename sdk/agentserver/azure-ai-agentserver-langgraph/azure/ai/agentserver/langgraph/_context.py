@@ -2,10 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from dataclasses import dataclass
+from typing import Optional, Union
 
-from langgraph.runtime import get_runtime
+from langgraph.prebuilt import ToolRuntime
+from langgraph.runtime import Runtime
+
 from azure.ai.agentserver.core import AgentRunContext
-
 from .tools._context import FoundryToolContext
 
 
@@ -15,7 +17,9 @@ class LanggraphRunContext:
 
     tools: FoundryToolContext
 
-    @classmethod
-    def get_current(cls) -> "LanggraphRunContext":
-        lg_runtime = get_runtime(cls)
-        return lg_runtime.context
+    @staticmethod
+    def from_runtime(runtime: Union[Runtime, ToolRuntime]) -> Optional["LanggraphRunContext"]:
+        context = runtime.context
+        if isinstance(context, LanggraphRunContext):
+            return context
+        return None

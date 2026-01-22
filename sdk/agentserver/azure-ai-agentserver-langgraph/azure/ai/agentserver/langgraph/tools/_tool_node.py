@@ -74,14 +74,16 @@ class FoundryToolCallWrapper:
         return await invocation(self._maybe_calling_foundry_tool(request))
 
     def _maybe_calling_foundry_tool(self, request: ToolCallRequest) -> ToolCallRequest:
-        if request.tool or not self._allowed_foundry_tools:
+        from .._context import LanggraphRunContext
+
+        if (request.tool
+                or not self._allowed_foundry_tools
+                or (context := LanggraphRunContext.from_runtime(request.runtime)) is None):
             # tool is already resolved
             return request
 
-        from .._context import LanggraphRunContext
-
         tool_name = request.tool_call["name"]
-        for t in LanggraphRunContext.get_current().tools.resolved_tools.get(self._allowed_foundry_tools):
+        for t in context.tools.resolved_tools.get(self._allowed_foundry_tools):
             if t.name == tool_name:
                 return ToolCallRequest(
                     tool_call=request.tool_call,

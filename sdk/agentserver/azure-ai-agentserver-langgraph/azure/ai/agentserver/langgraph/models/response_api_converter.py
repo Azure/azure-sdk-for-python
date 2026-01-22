@@ -23,7 +23,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, AsyncIterable, AsyncIterator, Dict, TypedDict, Union
 
-from langgraph.types import Command
+from langchain_core.runnables import RunnableConfig
+from langgraph.types import Command, StreamMode
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
 from .._context import LanggraphRunContext
@@ -32,9 +33,9 @@ from .._context import LanggraphRunContext
 class GraphInputArguments(TypedDict):
     """TypedDict for LangGraph input arguments."""
     input: Union[Dict[str, Any], Command, None]
-    config: Dict[str, Any]
+    config: RunnableConfig
     context: LanggraphRunContext
-    stream_mode: str
+    stream_mode: StreamMode
 
 
 class ResponseAPIConverter(ABC):

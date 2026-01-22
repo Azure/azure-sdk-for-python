@@ -27,11 +27,21 @@ def from_agent_framework(
     ) -> "AgentFrameworkAIAgentAdapter":
     """
     Create an Agent Framework AI Agent Adapter from an AgentProtocol or BaseAgent.
+<<<<<<< HEAD
 
     :keyword agent: The agent to adapt.
     :type agent: Union[BaseAgent, AgentProtocol]
     :keyword credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[AsyncTokenCredential]
+=======
+    
+    :param agent: The agent to adapt.
+    :type agent: Union[BaseAgent, AgentProtocol]
+    :param credentials: Optional asynchronous token credential for authentication.
+    :type credentials: Optional[AsyncTokenCredential]
+    :param kwargs: Additional keyword arguments to pass to the adapter.
+    :type kwargs: Any
+>>>>>>> lusu/agentserver-1110
 
     :return: An instance of AgentFrameworkAIAgentAdapter.
     :rtype: AgentFrameworkAIAgentAdapter
@@ -47,17 +57,32 @@ def from_agent_framework(
     ) -> "AgentFrameworkWorkflowAdapter":
     """
     Create an Agent Framework Workflow Adapter.
+<<<<<<< HEAD
     The arugument `workflow` can be either a WorkflowBuilder or a factory function
     that returns a Workflow.
     It will be called to create a new Workflow instance and `.as_agent()` will be
+=======
+    The arugument `workflow` can be either a WorkflowBuilder or a factory function 
+    that returns a Workflow.
+    It will be called to create a new Workflow instance and `.as_agent()` will be 
+>>>>>>> lusu/agentserver-1110
     called as well for each incoming CreateResponse request. Please ensure that the
     workflow definition can be converted to a WorkflowAgent. For more information,
     see the agent-framework samples and documentation.
 
+<<<<<<< HEAD
     :keyword workflow: The workflow builder or factory function to adapt.
     :type workflow: Union[WorkflowBuilder, Callable[[], Workflow]]
     :keyword credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[AsyncTokenCredential]
+=======
+    :param workflow: The workflow builder or factory function to adapt.
+    :type workflow: Union[WorkflowBuilder, Callable[[], Workflow]]
+    :param credentials: Optional asynchronous token credential for authentication.
+    :type credentials: Optional[AsyncTokenCredential]
+    :param kwargs: Additional keyword arguments to pass to the adapter.
+    :type kwargs: Any   
+>>>>>>> lusu/agentserver-1110
     :return: An instance of AgentFrameworkWorkflowAdapter.
     :rtype: AgentFrameworkWorkflowAdapter
     """
@@ -71,6 +96,7 @@ def from_agent_framework(
     **kwargs: Any,
 ) -> "AgentFrameworkAgent":
     """
+<<<<<<< HEAD
     Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a
     WorkflowAgent.
     One of agent or workflow must be provided.
@@ -81,6 +107,20 @@ def from_agent_framework(
     :type workflow: Optional[Union[WorkflowBuilder, Callable[[], Workflow]]]
     :keyword credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[AsyncTokenCredential]
+=======
+    Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a 
+    WorkflowAgent.
+    One of agent or workflow must be provided.
+
+    :param agent: The agent to adapt.
+    :type agent: Optional[Union[BaseAgent, AgentProtocol]]
+    :param workflow: The workflow builder or factory function to adapt.
+    :type workflow: Optional[Union[WorkflowBuilder, Callable[[], Workflow]]]
+    :param credentials: Optional asynchronous token credential for authentication.
+    :type credentials: Optional[AsyncTokenCredential]
+    :param kwargs: Additional keyword arguments to pass to the adapter.
+    :type kwargs: Any
+>>>>>>> lusu/agentserver-1110
     :return: An instance of AgentFrameworkAgent.
     :rtype: AgentFrameworkAgent
     :raises TypeError: If neither or both of agent and workflow are provided, or if
@@ -101,7 +141,11 @@ def from_agent_framework(
             return AgentFrameworkWorkflowAdapter(workflow_factory=workflow, credentials=credentials, **kwargs)
         raise TypeError("workflow must be a WorkflowBuilder or callable returning a Workflow")
 
+<<<<<<< HEAD
     if isinstance(agent, (AgentProtocol, BaseAgent)):
+=======
+    if isinstance(agent, AgentProtocol) or isinstance(agent, BaseAgent):
+>>>>>>> lusu/agentserver-1110
         return AgentFrameworkAIAgentAdapter(agent, credentials=credentials, **kwargs)
     raise TypeError("agent must be an instance of AgentProtocol or BaseAgent")
 
