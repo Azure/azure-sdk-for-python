@@ -67,7 +67,7 @@
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99
+/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99 @jimmyca15
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
