@@ -11,7 +11,7 @@
 #
 # Package Discovery:
 # - Finds packages with setup.py at root or in sdk/*/ directories
-# - Finds packages with pyproject.toml at root or in sdk/*/ directories
+# - Finds packages with pyproject.toml (with [project] section) at root or in sdk/*/ directories
 #
 # Installation Logic:
 # - Packages with pyproject.toml containing [project] section:
@@ -29,15 +29,39 @@ import sys
 import runpy
 import subprocess
 
+# Use tomllib for Python 3.11+, fallback to tomli for older versions
+try:
+    import tomllib as toml
+except ImportError:
+    import tomli as toml
+
 root_folder = os.path.abspath(os.path.dirname(__file__))
 
-# pull in any packages that exist in the root directory
-# Support both setup.py and pyproject.toml packages
+# Helper function to check if pyproject.toml has [project] section
+def has_project_section(pyproject_path):
+    """Check if a pyproject.toml file has a [project] section."""
+    try:
+        with open(pyproject_path, 'rb') as f:
+            pyproject_data = toml.load(f)
+            return 'project' in pyproject_data
+    except Exception:
+        return False
+
+# Discover packages with setup.py
 packages = {('.', os.path.dirname(p)) for p in glob.glob('azure*/setup.py')}
-packages.update({('.', os.path.dirname(p)) for p in glob.glob('azure*/pyproject.toml')})
-# Handle the SDK folder as well
 packages.update({tuple(os.path.dirname(f).rsplit(os.sep, 1)) for f in glob.glob('sdk/*/azure*/setup.py')})
-packages.update({tuple(os.path.dirname(f).rsplit(os.sep, 1)) for f in glob.glob('sdk/*/azure*/pyproject.toml')})
+
+# Discover packages with pyproject.toml that have [project] section
+for pyproject_file in glob.glob('azure*/pyproject.toml'):
+    pyproject_path = os.path.join(root_folder, pyproject_file)
+    if has_project_section(pyproject_path):
+        packages.add(('.', os.path.dirname(pyproject_file)))
+
+for pyproject_file in glob.glob('sdk/*/azure*/pyproject.toml'):
+    pyproject_path = os.path.join(root_folder, pyproject_file)
+    if has_project_section(pyproject_path):
+        packages.add(tuple(os.path.dirname(pyproject_file).rsplit(os.sep, 1)))
+
 # [(base_folder, package_name), ...] to {package_name: base_folder, ...}
 packages = {package_name: base_folder for (base_folder, package_name) in packages}
 
@@ -75,23 +99,8 @@ for pkg_name in packages_for_installation:
         sys.path = [pkg_setup_folder] + copy.copy(saved_syspath)
 
         # Determine which file to use: pyproject.toml with [project] or setup.py
-        use_pyproject = False
-        if os.path.exists(pkg_pyproject_path):
-            # Check if pyproject.toml has [project] section using TOML parser
-            try:
-                # Use tomllib for Python 3.11+, fallback to tomli for older versions
-                try:
-                    import tomllib as toml
-                except ImportError:
-                    import tomli as toml
-                
-                with open(pkg_pyproject_path, 'rb') as f:
-                    pyproject_data = toml.load(f)
-                    if 'project' in pyproject_data:
-                        use_pyproject = True
-            except Exception:
-                # If parsing fails, fallback to setup.py if available
-                pass
+        # Since we already filtered during discovery, if pyproject.toml exists it has [project]
+        use_pyproject = os.path.exists(pkg_pyproject_path) and has_project_section(pkg_pyproject_path)
         
         if use_pyproject:
             # Use pip to install pyproject.toml-based packages
