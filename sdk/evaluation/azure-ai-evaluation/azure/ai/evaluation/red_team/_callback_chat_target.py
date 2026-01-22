@@ -4,6 +4,12 @@
 import logging
 from typing import Any, Callable, Dict, List, Optional
 
+from openai import RateLimitError as OpenAIRateLimitError
+from pyrit.exceptions import (
+    EmptyResponseException,
+    RateLimitException,
+    pyrit_target_retry,
+)
 from pyrit.models import (
     Message,
     construct_response_from_request,
@@ -19,6 +25,7 @@ class _CallbackChatTarget(PromptChatTarget):
         *,
         callback: Callable[[List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict],
         stream: bool = False,
+        retry_enabled: bool = True,
     ) -> None:
         """
         Initializes an instance of the _CallbackChatTarget class.
@@ -32,13 +39,54 @@ class _CallbackChatTarget(PromptChatTarget):
         Args:
             callback (Callable): The callback function that sends a prompt to a target and receives a response.
             stream (bool, optional): Indicates whether the target supports streaming. Defaults to False.
+            retry_enabled (bool, optional): Enables retry with exponential backoff for rate limit errors
+                and empty responses using PyRIT's @pyrit_target_retry decorator. Defaults to True.
         """
         PromptChatTarget.__init__(self)
         self._callback = callback
         self._stream = stream
+        self._retry_enabled = retry_enabled
 
     async def send_prompt_async(self, *, message: Message) -> List[Message]:
+        """
+        Sends a prompt to the callback target and returns the response.
 
+        When retry_enabled=True (default), this method will retry on rate limit errors
+        and empty responses using PyRIT's exponential backoff strategy.
+
+        Args:
+            message: The message to send to the target.
+
+        Returns:
+            A list containing the response message.
+
+        Raises:
+            RateLimitException: When rate limit is hit and retries are exhausted.
+            EmptyResponseException: When callback returns empty response and retries are exhausted.
+        """
+        if self._retry_enabled:
+            return await self._send_prompt_with_retry(message=message)
+        else:
+            return await self._send_prompt_impl(message=message)
+
+    @pyrit_target_retry
+    async def _send_prompt_with_retry(self, *, message: Message) -> List[Message]:
+        """
+        Internal method with retry decorator applied.
+
+        This method wraps _send_prompt_impl with PyRIT's retry logic for handling
+        rate limit errors and empty responses with exponential backoff.
+        """
+        return await self._send_prompt_impl(message=message)
+
+    async def _send_prompt_impl(self, *, message: Message) -> List[Message]:
+        """
+        Core implementation of send_prompt_async.
+
+        Handles conversation history, context extraction, callback invocation,
+        and response processing. Translates OpenAI RateLimitError to PyRIT's
+        RateLimitException for retry handling.
+        """
         self._validate_request(prompt_request=message)
         request = message.get_piece(0)
 
@@ -88,8 +136,21 @@ class _CallbackChatTarget(PromptChatTarget):
                 else:
                     logger.debug(f"Extracted model context: {len(contexts)} context source(s)")
 
-        # response_context contains "messages", "stream", "session_state, "context"
-        response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
+        # Invoke callback with exception translation for retry handling
+        try:
+            # response_context contains "messages", "stream", "session_state, "context"
+            response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
+        except OpenAIRateLimitError as e:
+            # Translate OpenAI RateLimitError to PyRIT RateLimitException for retry decorator
+            logger.warning(f"Rate limit error from callback, translating for retry: {e}")
+            raise RateLimitException(status_code=429, message=str(e)) from e
+        except Exception as e:
+            # Check for rate limit indicators in error message (fallback detection)
+            error_str = str(e).lower()
+            if "rate limit" in error_str or "429" in error_str or "too many requests" in error_str:
+                logger.warning(f"Rate limit detected in error message, translating for retry: {e}")
+                raise RateLimitException(status_code=429, message=str(e)) from e
+            raise
 
         # Store token_usage before processing tuple
         token_usage = None
@@ -104,6 +165,11 @@ class _CallbackChatTarget(PromptChatTarget):
                 token_usage = response["token_usage"]
 
         response_text = response["messages"][-1]["content"]
+
+        # Check for empty response and raise EmptyResponseException for retry
+        if not response_text or (isinstance(response_text, str) and response_text.strip() == ""):
+            logger.warning("Callback returned empty response")
+            raise EmptyResponseException(message="Callback returned empty response")
 
         response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
 
