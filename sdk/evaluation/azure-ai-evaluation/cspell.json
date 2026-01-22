@@ -26,7 +26,10 @@
         "isna",
         "dtype",
         "duckdb",
-        "semconv"
+        "semconv",
+        "e2etests",
+        "etests",
+        "redteam"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",
