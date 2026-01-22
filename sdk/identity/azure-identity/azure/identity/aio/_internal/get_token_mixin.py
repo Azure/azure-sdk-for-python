@@ -75,15 +75,24 @@ class GetTokenMixin(abc.ABC):
 
     def _should_refresh(self, token: AccessTokenInfo) -> bool:
         now = int(time.time())
+
+        # Token is expired - must refresh
         if now >= token.expires_on:
             return True
-        if token.refresh_on is not None and now >= token.refresh_on:
-            return True
-        if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
-            return False
+
+        # Check if we recently attempted a refresh to avoid hammering the token endpoint
         if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
             return False
-        return True
+
+        # Token has a refresh_on value, so refresh if we've passed that time
+        if token.refresh_on is not None and now >= token.refresh_on:
+            return True
+
+        # Proactively refresh if token is within the default refresh window
+        if token.expires_on - now <= DEFAULT_REFRESH_OFFSET:
+            return True
+
+        return False
 
     async def get_token(
         self,
