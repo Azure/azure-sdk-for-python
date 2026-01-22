@@ -5,14 +5,19 @@ import sys
 import time
 import signal
 import shutil
+import shlex
+import subprocess
+import urllib.request
 from dataclasses import dataclass
-from typing import List
+from typing import IO, List, Optional
 
+from azpysdk.proxy_ports import get_proxy_port_for_check, get_proxy_url_for_check
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
+from devtools_testutils.proxy_startup import prepare_local_tool
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
@@ -25,6 +30,110 @@ class CheckResult:
     duration: float
     stdout: str
     stderr: str
+
+
+@dataclass
+class ProxyProcess:
+    port: int
+    process: subprocess.Popen
+    log_handle: Optional[IO[str]]
+
+
+PROXY_STATUS_SUFFIX = "/Info/Available"
+PROXY_STARTUP_TIMEOUT = 60
+
+
+def _proxy_status_url(port: int) -> str:
+    return f"http://localhost:{port}{PROXY_STATUS_SUFFIX}"
+
+
+def _proxy_is_running(port: int) -> bool:
+    try:
+        with urllib.request.urlopen(_proxy_status_url(port), timeout=5) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+
+def _wait_for_proxy(port: int, timeout: int = PROXY_STARTUP_TIMEOUT) -> bool:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if _proxy_is_running(port):
+            return True
+        time.sleep(1)
+    return _proxy_is_running(port)
+
+
+def _start_proxy(port: int, tool_path: str) -> ProxyProcess:
+    env = os.environ.copy()
+    log_handle: Optional[IO[str]] = None
+
+    if in_ci():
+        log_path = os.path.join(root_dir, f"_proxy_log_{port}.log")
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+        log_handle = open(log_path, "a")
+        assets_folder = os.path.join(root_dir, "l", f"proxy_{port}")
+        os.makedirs(assets_folder, exist_ok=True)
+        env["PROXY_ASSETS_FOLDER"] = assets_folder
+
+    command = shlex.split(
+        f'{tool_path} start --storage-location="{root_dir}" -- --urls "http://localhost:{port}"'
+    )
+    process = subprocess.Popen(
+        command,
+        stdout=log_handle or subprocess.DEVNULL,
+        stderr=log_handle or subprocess.STDOUT,
+        env=env,
+    )
+
+    if not _wait_for_proxy(port):
+        process.terminate()
+        if log_handle:
+            log_handle.close()
+        raise RuntimeError(f"Failed to start test proxy on port {port}")
+
+    logger.info(f"Started test proxy on port {port}")
+    return ProxyProcess(port=port, process=process, log_handle=log_handle)
+
+
+def _stop_proxy_instances(instances: List[ProxyProcess]) -> None:
+    for instance in instances:
+        proc = instance.process
+        if proc.poll() is None:
+            proc.terminate()
+            try:
+                proc.wait(timeout=15)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+        if instance.log_handle:
+            instance.log_handle.close()
+
+
+def ensure_proxies_for_checks(checks: List[str]) -> List[ProxyProcess]:
+    ports = sorted({get_proxy_port_for_check(check) for check in checks if check})
+    if not ports:
+        return []
+
+    started: List[ProxyProcess] = []
+    tool_path: Optional[str] = None
+
+    try:
+        for port in ports:
+            if _proxy_is_running(port):
+                logger.info(f"Test proxy already running on port {port}")
+                continue
+            if tool_path is None:
+                tool_path = prepare_local_tool(root_dir)
+
+            if tool_path is None:
+                raise RuntimeError("Failed to prepare test proxy tool.")
+            started.append(_start_proxy(port, tool_path))
+    except Exception:
+        _stop_proxy_instances(started)
+        raise
+
+    os.environ["PROXY_MANUAL_START"] = "1"
+    return started
 
 
 def _normalize_newlines(text: str) -> str:
@@ -60,12 +169,17 @@ async def run_check(
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
+        env = os.environ.copy()
+        proxy_url = get_proxy_url_for_check(check)
+        env["PROXY_URL"] = proxy_url
+        env["PROXY_MANUAL_START"] = "1"
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
                 cwd=package,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
+                env=env,
             )
         except Exception as ex:  # subprocess failed to launch
             logger.error(f"Failed to start check {check} for {package}: {ex}")
@@ -395,9 +509,15 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     configure_interrupt_handling()
+    proxy_processes: List[ProxyProcess] = []
     try:
+        if in_ci():
+            logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
+            proxy_processes = ensure_proxies_for_checks(checks)
         exit_code = asyncio.run(run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir))
     except KeyboardInterrupt:
         logger.error("Aborted by user.")
         exit_code = 130
+    finally:
+        _stop_proxy_instances(proxy_processes)
     sys.exit(exit_code)
