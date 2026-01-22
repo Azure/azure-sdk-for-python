@@ -24,7 +24,7 @@ class DummyAsyncTokenCredential(AsyncTokenCredential):
         return AccessToken("token", 0)
 
 
-def _build_client(
+def _build_dummy_client(
     project_user_agent: Optional[str],
     default_headers: Optional[Dict[str, str]],
 ):
@@ -95,7 +95,7 @@ class TestResponsesAsync(TestBase):
     )
     @pytest.mark.asyncio
     async def test_user_agent_patching_via_response_create(self, project_ua, openai_default_header, expected_ua):
-        client = _build_client(project_ua, openai_default_header)
+        client = _build_dummy_client(project_ua, openai_default_header)
 
         calls = []
 
