@@ -20,9 +20,9 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=1.0.0b7",
-    "agent-framework-azure-ai>=1.0.0b251112",
-    "agent-framework-core>=1.0.0b251112",
+    "azure-ai-agentserver-core>=1.0.0b8",
+    "agent-framework-azure-ai>=1.0.0b251112,<=1.0.0b260107",
+    "agent-framework-core>=1.0.0b251112,<=1.0.0b260107",
     "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
 ]
 
@@ -65,9 +65,10 @@ breaking = false   # incompatible python version
 pyright = false
 verifytypes = false   # incompatible python version for -core
 verify_keywords = false
-#mindependency = false  # depends on -core package
-#latestdependency = false
-#whl = false
-#depends = false
-#pylint = false
+mindependency = false  # depends on -core package
+latestdependency = false
+whl = false
+depends = false
+pylint = false
+mypy = false
 whl_no_aio = false

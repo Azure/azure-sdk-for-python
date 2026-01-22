@@ -1,6 +1,12 @@
 # Release History
 
 
+## 1.0.0b8 (2026-01-21)
+
+### Features Added
+- Support keep alive for long-running streaming responses.
+
+
 ## 1.0.0b7 (2025-12-05)
 
 ### Features Added
