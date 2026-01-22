@@ -1,5 +1,11 @@
 # Azure Container Registry client library for Python (conda)
 
+## 2026.03.01
+
+### Packages included
+
+- azure-containerregistry-1.2.0
+
 ## 2025.12.01
 
 ### Packages included
