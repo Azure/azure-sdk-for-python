@@ -199,7 +199,6 @@ class _JobsPollingMethod(PollingMethod):
 
     # ---- Continuation token support (doc pattern) ----
     def get_continuation_token(self) -> str:
-        
         return _encode_continuation_token(self._initial_response)
 
     @classmethod
@@ -329,7 +328,6 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
 
     # ---- Continuation token ----
     def get_continuation_token(self) -> str:
-
         return _encode_continuation_token(self._initial_response)
 
     @classmethod
