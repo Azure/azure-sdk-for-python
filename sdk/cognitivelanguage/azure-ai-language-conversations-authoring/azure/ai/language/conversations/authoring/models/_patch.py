@@ -22,6 +22,7 @@ from azure.core.polling.base_polling import (
     LongRunningOperation,
     OperationFailed,
 )
+from azure.core.polling._utils import _decode_continuation_token
 from azure.core.rest import HttpRequest
 
 from ._enums import ExportedProjectFormat
@@ -54,7 +55,7 @@ from ._models import (
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 class _JobsStrategy(LongRunningOperation):
     """Interprets job-status responses and tells the poller which URL to use."""
@@ -203,14 +204,14 @@ class _JobsPollingMethod(PollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
 
     @classmethod
-    def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, PipelineResponse, Callable]:
-        import pickle
+    def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from None
 
-        client = kwargs["client"]
-        deserialization_callback = kwargs["deserialization_callback"]
-        initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
-        return client, initial_response, deserialization_callback
-
+        initial_response = _decode_continuation_token(continuation_token)
+        return None, initial_response, deserialization_callback
 
 class _AsyncJobsPollingMethod(AsyncPollingMethod):
     def __init__(
@@ -334,13 +335,14 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
 
     @classmethod
-    def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, PipelineResponse, Callable]:
-        import pickle
+    def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from None
 
-        client = kwargs["client"]
-        deserialization_callback = kwargs["deserialization_callback"]
-        initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
-        return client, initial_response, deserialization_callback
+        initial_response = _decode_continuation_token(continuation_token)
+        return None, initial_response, deserialization_callback
 
 class CreateDeploymentDetails(_GeneratedCreateDeploymentDetails):
     """Represents the options for creating or updating a project deployment.
