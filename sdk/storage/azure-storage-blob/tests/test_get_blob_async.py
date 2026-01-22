@@ -30,7 +30,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
     async def _setup(self, storage_account_name, key, upload_blob=True):
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=key,
+            credential=key.secret,
             max_single_get_size=32 * 1024,
             max_chunk_get_size=4 * 1024)
         self.config = self.bsc._config
@@ -1039,7 +1039,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, 'blob'),
             self.container_name,
             blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 
@@ -1067,7 +1067,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, 'blob'),
             self.container_name,
             blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 
@@ -1096,7 +1096,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, 'blob'),
             self.container_name,
             blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 
@@ -1125,7 +1125,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, 'blob'),
             self.container_name,
             blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 
@@ -1159,7 +1159,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, 'blob'),
             self.container_name,
             blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 
