@@ -22,7 +22,6 @@ from azure.core.polling.base_polling import (
     LongRunningOperation,
     OperationFailed,
 )
-from azure.core.polling._utils import _decode_continuation_token, _encode_continuation_token
 from azure.core.rest import HttpRequest
 
 from ._enums import ExportedProjectFormat
