@@ -171,12 +171,12 @@ class TestRedTeamFoundry:
             num_objectives=1,
         )
 
-        # Note: PyRIT requires at least one Foundry strategy - Baseline alone is not sufficient
+        # PyRIT now supports baseline-only execution
         result = asyncio.run(
             red_team.scan(
                 target=simple_target,
                 scan_name="test_multi_risk",
-                attack_strategies=[AttackStrategy.Baseline, AttackStrategy.Base64],
+                attack_strategies=[AttackStrategy.Baseline],
                 timeout=4800,
                 skip_upload=True,
             )
@@ -219,12 +219,12 @@ class TestRedTeamFoundry:
             application_scenario="A customer service chatbot for a retail company",
         )
 
-        # Note: PyRIT requires at least one Foundry strategy - Baseline alone is not sufficient
+        # PyRIT now supports baseline-only execution
         result = asyncio.run(
             red_team.scan(
                 target=simple_target,
                 scan_name="test_app_scenario",
-                attack_strategies=[AttackStrategy.Baseline, AttackStrategy.Base64],
+                attack_strategies=[AttackStrategy.Baseline],
                 timeout=4800,
                 skip_upload=True,
             )

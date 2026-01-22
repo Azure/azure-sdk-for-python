@@ -81,19 +81,9 @@ class ScenarioOrchestrator:
             f"include_baseline={include_baseline}"
         )
 
-        # Note: PyRIT requires at least one strategy in initialize_async even when
-        # include_baseline=True. If only Baseline is requested (no other strategies),
-        # we need to log a warning and skip execution.
-        # TODO: File feature request for PyRIT to support baseline-only execution
-        if not strategies:
-            if include_baseline:
-                self.logger.warning(
-                    f"Baseline-only execution requested for {self.risk_category}, but PyRIT requires "
-                    "at least one FoundryStrategy. Please include an additional strategy like Base64. "
-                    "Skipping execution for this risk category."
-                )
-            else:
-                self.logger.warning(f"No strategies provided for {self.risk_category}, skipping execution.")
+        # If no strategies and no baseline requested, nothing to do
+        if not strategies and not include_baseline:
+            self.logger.warning(f"No strategies provided for {self.risk_category}, skipping execution.")
             return self
 
         # Create scoring configuration from our RAI scorer
