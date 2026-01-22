@@ -81,7 +81,7 @@ class _ConfigurationManager(metaclass=Singleton):
             try:
                 cb(settings)
             except Exception as ex:  # pylint: disable=broad-except
-                logger.warning("Callback failed: %s", ex)
+                logger.warning("Callback failed: %s", ex) # pylint: disable=do-not-log-exceptions-if-not-debug
 
     def _is_transient_error(self, response: OneSettingsResponse) -> bool:
         """Check if the response indicates a transient error.
