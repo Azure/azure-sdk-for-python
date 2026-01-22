@@ -110,8 +110,11 @@ class Check(abc.ABC):
 
     def get_executable(self, isolate: bool, check_name: str, executable: str, package_folder: str) -> Tuple[str, str]:
         """Get the Python executable that should be used for this check."""
-        venv_location = os.path.join(package_folder, f".venv_{check_name}")
-
+        # Keep venvs under a shared repo-level folder to prevent nested import errors during pytest collection
+        package_name = os.path.basename(os.path.normpath(package_folder))
+        shared_venv_root = os.path.join(REPO_ROOT, ".venv", package_name)
+        os.makedirs(shared_venv_root, exist_ok=True)
+        venv_location = os.path.join(shared_venv_root, f".venv_{check_name}")
         # if isolation is required, the executable we get back will align with the venv
         # otherwise we'll just get sys.executable and install in current
         executable = self.create_venv(isolate, venv_location)

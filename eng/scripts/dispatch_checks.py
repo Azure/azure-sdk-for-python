@@ -100,7 +100,8 @@ async def run_check(
 
         # finally, we need to clean up any temp dirs created by --isolate
         if in_ci():
-            isolate_dir = os.path.join(package, f".venv_{check}")
+            package_name = os.path.basename(os.path.normpath(package))
+            isolate_dir = os.path.join(root_dir, ".venv", package_name, f".venv_{check}")
             try:
                 shutil.rmtree(isolate_dir)
             except:
