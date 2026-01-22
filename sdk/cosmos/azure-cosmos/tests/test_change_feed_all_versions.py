@@ -72,9 +72,10 @@ class TestChangeAllVersionsFeed:
         partition_key = 'pk'
         # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
         change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
-        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                                  PartitionKey(path=f"/{partition_key}"),
-                                                                  change_feed_policy=change_feed_policy)
+        container_name = "change_feed_test_" + str(uuid.uuid4())
+        created_collection = setup["created_db"].create_container(container_name,
+                                                                        PartitionKey(path=f"/{partition_key}"),
+                                                                        change_feed_policy=change_feed_policy)
         mode = 'AllVersionsAndDeletes'
 
         ## Test Change Feed with empty collection(Save the continuation token)
@@ -143,9 +144,55 @@ class TestChangeAllVersionsFeed:
         expected_change_feeds = [{CURRENT: {ID: f'doc1'}, METADATA: {OPERATION_TYPE: CREATE}}]
         actual_change_feeds = list(query_iterable)
         assert_change_feed(expected_change_feeds, actual_change_feeds)
+        setup["created_db"].delete_container(container_name)
+
+    @pytest.mark.skip(reason="not supported in emulator yet")
+    def test_query_change_feed_all_versions_and_deletes_start_time(self, setup):
+        partition_key = 'pk'
+        # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
+        # change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
+        container_name = "change_feed_test_" + str(uuid.uuid4())
+        created_collection = setup["created_db"].create_container(container_name,
+                                                                  PartitionKey(path=f"/{partition_key}"))
+
+        new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
+        created_items = []
+        for document in new_documents:
+            created_item = created_collection.create_item(body=document)
+            created_items.append(created_item)
+        start_time = datetime.now()
+
+        mode = 'AllVersionsAndDeletes'
+
+        ## Test Change Feed with empty collection(Save the continuation token)
+        query_iterable = created_collection.query_items_change_feed(
+            mode=mode,
+            start_time=start_time
+        )
+        expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]
+        actual_change_feeds = [item for item in query_iterable]
+        cont_token1 = created_collection.client_connection.last_response_headers[E_TAG]
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+
+        ## Test change_feed for created items from cont_token1 (Save the new continuation token)
+        new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4,8)]
+        created_items = []
+        for document in new_documents:
+            created_item = created_collection.create_item(body=document)
+            created_items.append(created_item)
+        query_iterable = created_collection.query_items_change_feed(
+            continuation=cont_token1,
+            mode=mode,
+        )
+
+        expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4,8)]
+        actual_change_feeds = [item for item in query_iterable]
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+        setup["created_db"].delete_container(container_name)
 
     def test_query_change_feed_all_versions_and_deletes_errors(self, setup):
-        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+        container_name = "change_feed_test_" + str(uuid.uuid4())
+        created_collection = setup["created_db"].create_container(container_name,
                                                                   PartitionKey(path="/pk"))
         mode = 'AllVersionsAndDeletes'
 
@@ -200,14 +247,6 @@ class TestChangeAllVersionsFeed:
             created_collection.query_items_change_feed(start_time=invalid_time)
         assert str(e.value) == "'float' object has no attribute 'lower'"
 
-        # Error if start_time was used with FULL_FIDELITY_FEED
-        with pytest.raises(ValueError) as e:
-            created_collection.query_items_change_feed(
-                start_time=round_time(),
-                mode=mode,
-            )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supported if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
-
         # Error if too many positional arguments
         with pytest.raises(TypeError) as e:
             created_collection.query_items_change_feed(
@@ -243,6 +282,7 @@ class TestChangeAllVersionsFeed:
                 continuation_json=continuation_json,
             )
         assert str(e.value) == "Invalid continuation: [Missing mode]"
+        setup["created_db"].delete_container(container_name)
 
 if __name__ == "__main__":
     unittest.main()
