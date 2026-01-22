@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from azure.appconfiguration.provider import load, SettingSelector
-from azure.appconfiguration import (
+from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
