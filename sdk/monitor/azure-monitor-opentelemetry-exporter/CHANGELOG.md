@@ -3,6 +3,8 @@
 ## 1.0.0b47 (Unreleased)
 
 ### Features Added
+- Add auto detection for application ID from connection string if not set 
+  ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
 - Add support for user id and authId
 ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
 
