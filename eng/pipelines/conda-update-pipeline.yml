@@ -1,0 +1,52 @@
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: UpdateCondaFiles
+        displayName: Update Conda Files
+
+        jobs:
+          - job: UpdateCondaFilesJob
+            timeoutInMinutes: 90
+            displayName: Update Conda Files and Submit PR
+            variables:
+              - template: /eng/pipelines/templates/variables/globals.yml
+
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+
+            steps:
+              - checkout: self
+                persistCredentials: true
+
+              - task: UsePythonVersion@0
+                displayName: 'Use Python 3.11'
+                inputs:
+                  versionSpec: '3.11'
+
+              - script: |
+                  python -m pip install --upgrade pip
+                  python -m pip install "eng/tools/azure-sdk-tools[build]"
+                displayName: 'Prep Environment'
+
+              - script: |
+                  python conda/update_conda_files.py
+                displayName: 'Update Conda Files'
+
+              - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                parameters:
+                  PRBranchName: conda-update-$(Build.BuildId)
+                  CommitMsg: 'Update conda files'
+                  PRTitle: 'Conda Release Update generated from $(Build.BuildId)'
+                  PRBody: |
+                    This PR was automatically generated to update conda files.
+
+                    - Updates package versions in conda-sdk-client.yml
+                    - Adds new packages if detected
+                    - Updates yamls and changelogs
+
+                    Build: $(Build.BuildId)
+                  BaseBranchName: main
+        displayName: 'Create Pull Request'
