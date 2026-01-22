@@ -36,7 +36,7 @@ logger = get_logger()
 class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-long
     """Non-streaming converter: AgentRunResponse -> OpenAIResponse."""
 
-    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper):
+    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper=None):
         self._context = context
         self._response_id = None
         self._response_created_at = None

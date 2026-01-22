@@ -186,7 +186,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
 
         for call_id, content in content_by_call_id.items():
             item_id, output_index = ids_by_call_id[call_id]
-            args = content.arguments if isinstance(content.arguments, str) else json.dumps(content.arguments)
+            args = self._serialize_arguments(content.arguments)
             yield ResponseFunctionCallArgumentsDoneEvent(
                 sequence_number=self._parent.next_sequence(),
                 item_id=item_id,
@@ -254,6 +254,14 @@ class _FunctionCallStreamingState(_BaseStreamingState):
                 item=item,
             )
             self._parent.add_completed_output_item(item)
+
+    def _serialize_arguments(self, arguments: Any) -> str:
+        if isinstance(arguments, str):
+            return arguments
+        try:
+            return json.dumps(arguments)
+        except Exception as e:
+            return str(arguments)
 
 
 class _FunctionCallOutputStreamingState(_BaseStreamingState):
@@ -355,8 +363,7 @@ class AgentFrameworkOutputStreamingConverter:
         is_changed = (
             lambda a, b: a is not None \
                 and b is not None \
-                and (a.message_id != b.message_id \
-                or type(a.content[0]) != type(b.content[0]))  # pylint: disable=unnecessary-lambda-assignment
+                and a.message_id != b.message_id  # pylint: disable=unnecessary-lambda-assignment
         )
 
         async for group in chunk_on_change(updates, is_changed):
