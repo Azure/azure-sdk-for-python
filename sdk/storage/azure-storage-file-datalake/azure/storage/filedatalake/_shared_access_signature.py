@@ -201,11 +201,11 @@ def generate_file_system_sas(
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
     :keyword Dict[str, str] request_headers:
-        If specified, both the correct request header(s) and corresponding values must be present,
-        or the request will fail.
+        Specifies a set of headers and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword Dict[str, str] request_query_params:
-        If specified, both the correct query parameter(s) and corresponding values must be present,
-        or the request will fail.
+        Specifies a set of query parameters and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -221,6 +221,8 @@ def generate_file_system_sas(
         permission=cast(Optional[Union["ContainerSasPermissions", str]], permission),
         expiry=expiry,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -329,11 +331,11 @@ def generate_directory_sas(
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
     :keyword Dict[str, str] request_headers:
-        If specified, both the correct request header(s) and corresponding values must be present,
-        or the request will fail.
+        Specifies a set of headers and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword Dict[str, str] request_query_params:
-        If specified, both the correct query parameter(s) and corresponding values must be present,
-        or the request will fail.
+        Specifies a set of query parameters and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -353,6 +355,8 @@ def generate_directory_sas(
         sdd=depth,
         is_directory=True,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -464,11 +468,11 @@ def generate_file_sas(
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
     :keyword Dict[str, str] request_headers:
-        If specified, both the correct request header(s) and corresponding values must be present,
-        or the request will fail.
+        Specifies a set of headers and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword Dict[str, str] request_query_params:
-        If specified, both the correct query parameter(s) and corresponding values must be present,
-        or the request will fail.
+        Specifies a set of query parameters and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -488,8 +492,10 @@ def generate_file_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=cast(Optional[Union["BlobSasPermissions", str]], permission),
         expiry=expiry,
-        sts_hook=sts_hook,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
+        sts_hook=sts_hook,
         **kwargs
     )
 
