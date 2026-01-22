@@ -62,8 +62,15 @@ def quoted_presenter(dumper, data):
     return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="'")
 
 
-def update_conda_version() -> Tuple[datetime, str]:
-    """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the old and new versions."""
+def update_conda_version(
+    target_release_date: Optional[datetime] = None,
+) -> Tuple[datetime, str]:
+    """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the old and new versions.
+
+    Args:
+        target_release_date: Optional specific release date to use. If None, calculates
+                            the next release date by adding RELEASE_PERIOD_MONTHS to the old version.
+    """
 
     with open(CONDA_ENV_PATH, "r") as file:
         conda_env_data = yaml.safe_load(file)
@@ -71,7 +78,10 @@ def update_conda_version() -> Tuple[datetime, str]:
     old_version = conda_env_data["variables"]["AZURESDK_CONDA_VERSION"]
     old_date = datetime.strptime(old_version, "%Y.%m.%d")
 
-    new_date = old_date + relativedelta(months=RELEASE_PERIOD_MONTHS)
+    if target_release_date:
+        new_date = target_release_date
+    else:
+        new_date = old_date + relativedelta(months=RELEASE_PERIOD_MONTHS)
 
     # bump version
     new_version = new_date.strftime("%Y.%m.%d")
@@ -929,11 +939,40 @@ if __name__ == "__main__":
         action="store_true",
         help="Enable debug logging",
     )
+    parser.add_argument(
+        "--release-date",
+        type=str,
+        default=None,
+        help="Release date in 'MM.DD' format (e.g., '03.01', '12.01'). "
+        "Year is determined automatically. If not provided, the next release date is calculated.",
+    )
 
     args = parser.parse_args()
     configure_logging(args)
 
-    old_date, new_version = update_conda_version()
+    # Handle release date
+    if args.release_date:
+        try:
+            current_year = datetime.now().year
+            target_release_date = datetime.strptime(
+                f"{current_year}.{args.release_date}", "%Y.%m.%d"
+            )
+            logger.info(
+                f"Using provided release date: {target_release_date.strftime('%Y.%m.%d')}"
+            )
+        except ValueError as e:
+            logger.error(f"Invalid release date format '{args.release_date}': {e}")
+            logger.error("Expected format: 'MM.DD' (e.g., '03.01', '12.01')")
+            exit(1)
+    else:
+        logger.info(
+            "No release date provided, auto bumping old date by {} months.".format(
+                RELEASE_PERIOD_MONTHS
+            )
+        )
+        target_release_date = None
+
+    old_date, new_version = update_conda_version(target_release_date)
 
     # convert to mm/dd/yyyy format for comparison with CSV dates
     old_version = old_date.strftime("%m/%d/%Y")

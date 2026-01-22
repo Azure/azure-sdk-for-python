@@ -1,6 +1,45 @@
 trigger: none
 pr: none
 
+parameters:
+  - name: releaseDate
+    displayName: Release Date (MM.DD)
+    type: string
+    default: 'auto'
+    values:
+      - auto
+      - 03.01
+      - 06.01
+      - 09.01
+      - 12.01
+
+# Scheduled to run a week before each quarterly release
+schedules:
+  - cron: "0 0 24 11 *"  
+    displayName: Pre-December Quarterly Release
+    branches:
+      include:
+        - main
+    always: true
+  - cron: "0 0 22 2 *" 
+    displayName: Pre-March Quarterly Release
+    branches:
+      include:
+        - main
+    always: true
+  - cron: "0 0 25 5 *" 
+    displayName: Pre-June Quarterly Release
+    branches:
+      include:
+        - main
+    always: true
+  - cron: "0 0 25 8 *" 
+    displayName: Pre-September Quarterly Release
+    branches:
+      include:
+        - main
+    always: true
+
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
@@ -14,6 +53,20 @@ extends:
             displayName: Update Conda Files and Submit PR
             variables:
               - template: /eng/pipelines/templates/variables/globals.yml
+              - name: ReleaseDate
+                ${{ if eq(parameters.releaseDate, 'auto') }}:
+                  ${{ if contains(variables['Build.CronSchedule.DisplayName'], 'December') }}:
+                    value: '12.01'
+                  ${{ elseif contains(variables['Build.CronSchedule.DisplayName'], 'March') }}:
+                    value: '03.01'
+                  ${{ elseif contains(variables['Build.CronSchedule.DisplayName'], 'June') }}:
+                    value: '06.01'
+                  ${{ elseif contains(variables['Build.CronSchedule.DisplayName'], 'September') }}:
+                    value: '09.01'
+                  ${{ else }}:
+                    value: 'Unknown'
+                ${{ else }}:
+                  value: ${{ parameters.releaseDate }}
 
             pool:
               name: azsdk-pool
@@ -36,7 +89,11 @@ extends:
                 displayName: 'Prep Environment'
 
               - script: |
-                  python conda/update_conda_files.py
+                  if [ "$(ReleaseDate)" != "Unknown" ]; then
+                    python conda/update_conda_files.py --release-date "$(ReleaseDate)"
+                  else
+                    python conda/update_conda_files.py
+                  fi
                 displayName: 'Update Conda Files'
 
               - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
@@ -45,7 +102,7 @@ extends:
                   CommitMsg: 'Update conda files'
                   PRTitle: 'Conda Release Update generated from $(Build.BuildId)'
                   PRBody: |
-                    This PR was automatically generated to update conda files for a new release.
+                    This PR was automatically generated to update Conda files for a new release.
 
                     - Updates outdated package versions in conda-sdk-client.yml
                     - Adds new packages to conda-sdk-client.yml
