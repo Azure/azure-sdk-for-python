@@ -1,4 +1,5 @@
-trigger: none 
+trigger: none
+pr: none
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -44,11 +45,9 @@ extends:
                   CommitMsg: 'Update conda files'
                   PRTitle: 'Conda Release Update generated from $(Build.BuildId)'
                   PRBody: |
-                    This PR was automatically generated to update conda files.
+                    This PR was automatically generated to update conda files for a new release.
 
-                    - Updates package versions in conda-sdk-client.yml
-                    - Adds new packages if detected
-                    - Updates yamls and changelogs
-
-                    Build: $(Build.BuildId)
+                    - Updates outdated package versions in conda-sdk-client.yml
+                    - Adds new packages to conda-sdk-client.yml
+                    - Adds/updates yamls and changelogs 
                   BaseBranchName: main
