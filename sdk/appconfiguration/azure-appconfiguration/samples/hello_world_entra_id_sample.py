@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: hello_world_sample.py
+FILE: hello_world_entra_id_sample.py
 
 DESCRIPTION:
     This sample demos how to add/update/retrieve/delete configuration settings synchronously.
 
-USAGE: python hello_world_sample.py
+USAGE: python hello_world_entra_id_sample.py
 
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
