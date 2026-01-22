@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry.aio import ContainerRegistryClient
+from azure.mgmt.containerregistry.aio import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryReplicationsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestContainerRegistryManagementScopeMapsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerRegistryClient, is_async=True)
+        self.client = self.create_mgmt_client(ContainerRegistryManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_replications_get(self, resource_group):
-        response = await self.client.replications.get(
+    async def test_scope_maps_get(self, resource_group):
+        response = await self.client.scope_maps.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            replication_name="str",
+            scope_map_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,21 +33,21 @@ class TestContainerRegistryReplicationsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_replications_begin_create(self, resource_group):
+    async def test_scope_maps_begin_create(self, resource_group):
         response = await (
-            await self.client.replications.begin_create(
+            await self.client.scope_maps.begin_create(
                 resource_group_name=resource_group.name,
                 registry_name="str",
-                replication_name="str",
-                replication={
-                    "location": "str",
+                scope_map_name="str",
+                scope_map_create_parameters={
                     "id": "str",
                     "name": "str",
                     "properties": {
+                        "actions": ["str"],
+                        "creationDate": "2020-02-20 00:00:00",
+                        "description": "str",
                         "provisioningState": "str",
-                        "regionEndpointEnabled": bool,
-                        "status": {"displayStatus": "str", "message": "str", "timestamp": "2020-02-20 00:00:00"},
-                        "zoneRedundancy": "str",
+                        "type": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -57,7 +57,6 @@ class TestContainerRegistryReplicationsOperationsAsync(AzureMgmtRecordedTestCase
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "tags": {"str": "str"},
                     "type": "str",
                 },
             )
@@ -68,13 +67,13 @@ class TestContainerRegistryReplicationsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_replications_begin_update(self, resource_group):
+    async def test_scope_maps_begin_update(self, resource_group):
         response = await (
-            await self.client.replications.begin_update(
+            await self.client.scope_maps.begin_update(
                 resource_group_name=resource_group.name,
                 registry_name="str",
-                replication_name="str",
-                replication_update_parameters={"properties": {"regionEndpointEnabled": bool}, "tags": {"str": "str"}},
+                scope_map_name="str",
+                scope_map_update_parameters={"properties": {"actions": ["str"], "description": "str"}},
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -83,12 +82,12 @@ class TestContainerRegistryReplicationsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_replications_begin_delete(self, resource_group):
+    async def test_scope_maps_begin_delete(self, resource_group):
         response = await (
-            await self.client.replications.begin_delete(
+            await self.client.scope_maps.begin_delete(
                 resource_group_name=resource_group.name,
                 registry_name="str",
-                replication_name="str",
+                scope_map_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -97,8 +96,8 @@ class TestContainerRegistryReplicationsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_replications_list(self, resource_group):
-        response = self.client.replications.list(
+    async def test_scope_maps_list(self, resource_group):
+        response = self.client.scope_maps.list(
             resource_group_name=resource_group.name,
             registry_name="str",
         )

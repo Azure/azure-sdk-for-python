@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry import ContainerRegistryClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryCredentialSetsOperations(AzureMgmtRecordedTestCase):
+class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerRegistryClient)
+        self.client = self.create_mgmt_client(ContainerRegistryManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_credential_sets_get(self, resource_group):
-        response = self.client.credential_sets.get(
+    def test_cache_rules_get(self, resource_group):
+        response = self.client.cache_rules.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            credential_set_name="str",
+            cache_rule_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,32 +32,20 @@ class TestContainerRegistryCredentialSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_credential_sets_begin_create(self, resource_group):
-        response = self.client.credential_sets.begin_create(
+    def test_cache_rules_begin_create(self, resource_group):
+        response = self.client.cache_rules.begin_create(
             resource_group_name=resource_group.name,
             registry_name="str",
-            credential_set_name="str",
-            credential_set_create_parameters={
+            cache_rule_name="str",
+            cache_rule_create_parameters={
                 "id": "str",
-                "identity": {
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "type": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
                 "name": "str",
                 "properties": {
-                    "authCredentials": [
-                        {
-                            "credentialHealth": {"errorCode": "str", "errorMessage": "str", "status": "str"},
-                            "name": "str",
-                            "passwordSecretIdentifier": "str",
-                            "usernameSecretIdentifier": "str",
-                        }
-                    ],
                     "creationDate": "2020-02-20 00:00:00",
-                    "loginServer": "str",
+                    "credentialSetResourceId": "str",
                     "provisioningState": "str",
+                    "sourceRepository": "str",
+                    "targetRepository": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -76,29 +64,12 @@ class TestContainerRegistryCredentialSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_credential_sets_begin_update(self, resource_group):
-        response = self.client.credential_sets.begin_update(
+    def test_cache_rules_begin_update(self, resource_group):
+        response = self.client.cache_rules.begin_update(
             resource_group_name=resource_group.name,
             registry_name="str",
-            credential_set_name="str",
-            credential_set_update_parameters={
-                "identity": {
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "type": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
-                "properties": {
-                    "authCredentials": [
-                        {
-                            "credentialHealth": {"errorCode": "str", "errorMessage": "str", "status": "str"},
-                            "name": "str",
-                            "passwordSecretIdentifier": "str",
-                            "usernameSecretIdentifier": "str",
-                        }
-                    ]
-                },
-            },
+            cache_rule_name="str",
+            cache_rule_update_parameters={"properties": {"credentialSetResourceId": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -106,11 +77,11 @@ class TestContainerRegistryCredentialSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_credential_sets_begin_delete(self, resource_group):
-        response = self.client.credential_sets.begin_delete(
+    def test_cache_rules_begin_delete(self, resource_group):
+        response = self.client.cache_rules.begin_delete(
             resource_group_name=resource_group.name,
             registry_name="str",
-            credential_set_name="str",
+            cache_rule_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -118,8 +89,8 @@ class TestContainerRegistryCredentialSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_credential_sets_list(self, resource_group):
-        response = self.client.credential_sets.list(
+    def test_cache_rules_list(self, resource_group):
+        response = self.client.cache_rules.list(
             resource_group_name=resource_group.name,
             registry_name="str",
         )

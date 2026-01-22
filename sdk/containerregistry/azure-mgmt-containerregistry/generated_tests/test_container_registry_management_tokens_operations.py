@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry import ContainerRegistryClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryReplicationsOperations(AzureMgmtRecordedTestCase):
+class TestContainerRegistryManagementTokensOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerRegistryClient)
+        self.client = self.create_mgmt_client(ContainerRegistryManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_replications_get(self, resource_group):
-        response = self.client.replications.get(
+    def test_tokens_get(self, resource_group):
+        response = self.client.tokens.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            replication_name="str",
+            token_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,20 +32,37 @@ class TestContainerRegistryReplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_replications_begin_create(self, resource_group):
-        response = self.client.replications.begin_create(
+    def test_tokens_begin_create(self, resource_group):
+        response = self.client.tokens.begin_create(
             resource_group_name=resource_group.name,
             registry_name="str",
-            replication_name="str",
-            replication={
-                "location": "str",
+            token_name="str",
+            token_create_parameters={
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "creationDate": "2020-02-20 00:00:00",
+                    "credentials": {
+                        "certificates": [
+                            {
+                                "encodedPemCertificate": "str",
+                                "expiry": "2020-02-20 00:00:00",
+                                "name": "str",
+                                "thumbprint": "str",
+                            }
+                        ],
+                        "passwords": [
+                            {
+                                "creationTime": "2020-02-20 00:00:00",
+                                "expiry": "2020-02-20 00:00:00",
+                                "name": "str",
+                                "value": "str",
+                            }
+                        ],
+                    },
                     "provisioningState": "str",
-                    "regionEndpointEnabled": bool,
-                    "status": {"displayStatus": "str", "message": "str", "timestamp": "2020-02-20 00:00:00"},
-                    "zoneRedundancy": "str",
+                    "scopeMapId": "str",
+                    "status": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -55,7 +72,6 @@ class TestContainerRegistryReplicationsOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
-                "tags": {"str": "str"},
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -65,12 +81,35 @@ class TestContainerRegistryReplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_replications_begin_update(self, resource_group):
-        response = self.client.replications.begin_update(
+    def test_tokens_begin_update(self, resource_group):
+        response = self.client.tokens.begin_update(
             resource_group_name=resource_group.name,
             registry_name="str",
-            replication_name="str",
-            replication_update_parameters={"properties": {"regionEndpointEnabled": bool}, "tags": {"str": "str"}},
+            token_name="str",
+            token_update_parameters={
+                "properties": {
+                    "credentials": {
+                        "certificates": [
+                            {
+                                "encodedPemCertificate": "str",
+                                "expiry": "2020-02-20 00:00:00",
+                                "name": "str",
+                                "thumbprint": "str",
+                            }
+                        ],
+                        "passwords": [
+                            {
+                                "creationTime": "2020-02-20 00:00:00",
+                                "expiry": "2020-02-20 00:00:00",
+                                "name": "str",
+                                "value": "str",
+                            }
+                        ],
+                    },
+                    "scopeMapId": "str",
+                    "status": "str",
+                }
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,11 +117,11 @@ class TestContainerRegistryReplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_replications_begin_delete(self, resource_group):
-        response = self.client.replications.begin_delete(
+    def test_tokens_begin_delete(self, resource_group):
+        response = self.client.tokens.begin_delete(
             resource_group_name=resource_group.name,
             registry_name="str",
-            replication_name="str",
+            token_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -90,8 +129,8 @@ class TestContainerRegistryReplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_replications_list(self, resource_group):
-        response = self.client.replications.list(
+    def test_tokens_list(self, resource_group):
+        response = self.client.tokens.list(
             resource_group_name=resource_group.name,
             registry_name="str",
         )

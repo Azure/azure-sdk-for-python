@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry import ContainerRegistryClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryTokensOperations(AzureMgmtRecordedTestCase):
+class TestContainerRegistryManagementCredentialSetsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerRegistryClient)
+        self.client = self.create_mgmt_client(ContainerRegistryManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_tokens_get(self, resource_group):
-        response = self.client.tokens.get(
+    def test_credential_sets_get(self, resource_group):
+        response = self.client.credential_sets.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            token_name="str",
+            credential_set_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,37 +32,32 @@ class TestContainerRegistryTokensOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_tokens_begin_create(self, resource_group):
-        response = self.client.tokens.begin_create(
+    def test_credential_sets_begin_create(self, resource_group):
+        response = self.client.credential_sets.begin_create(
             resource_group_name=resource_group.name,
             registry_name="str",
-            token_name="str",
-            token_create_parameters={
+            credential_set_name="str",
+            credential_set_create_parameters={
                 "id": "str",
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
+                    "authCredentials": [
+                        {
+                            "credentialHealth": {"errorCode": "str", "errorMessage": "str", "status": "str"},
+                            "name": "str",
+                            "passwordSecretIdentifier": "str",
+                            "usernameSecretIdentifier": "str",
+                        }
+                    ],
                     "creationDate": "2020-02-20 00:00:00",
-                    "credentials": {
-                        "certificates": [
-                            {
-                                "encodedPemCertificate": "str",
-                                "expiry": "2020-02-20 00:00:00",
-                                "name": "str",
-                                "thumbprint": "str",
-                            }
-                        ],
-                        "passwords": [
-                            {
-                                "creationTime": "2020-02-20 00:00:00",
-                                "expiry": "2020-02-20 00:00:00",
-                                "name": "str",
-                                "value": "str",
-                            }
-                        ],
-                    },
+                    "loginServer": "str",
                     "provisioningState": "str",
-                    "scopeMapId": "str",
-                    "status": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -81,34 +76,28 @@ class TestContainerRegistryTokensOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_tokens_begin_update(self, resource_group):
-        response = self.client.tokens.begin_update(
+    def test_credential_sets_begin_update(self, resource_group):
+        response = self.client.credential_sets.begin_update(
             resource_group_name=resource_group.name,
             registry_name="str",
-            token_name="str",
-            token_update_parameters={
+            credential_set_name="str",
+            credential_set_update_parameters={
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
-                    "credentials": {
-                        "certificates": [
-                            {
-                                "encodedPemCertificate": "str",
-                                "expiry": "2020-02-20 00:00:00",
-                                "name": "str",
-                                "thumbprint": "str",
-                            }
-                        ],
-                        "passwords": [
-                            {
-                                "creationTime": "2020-02-20 00:00:00",
-                                "expiry": "2020-02-20 00:00:00",
-                                "name": "str",
-                                "value": "str",
-                            }
-                        ],
-                    },
-                    "scopeMapId": "str",
-                    "status": "str",
-                }
+                    "authCredentials": [
+                        {
+                            "credentialHealth": {"errorCode": "str", "errorMessage": "str", "status": "str"},
+                            "name": "str",
+                            "passwordSecretIdentifier": "str",
+                            "usernameSecretIdentifier": "str",
+                        }
+                    ]
+                },
             },
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,11 +106,11 @@ class TestContainerRegistryTokensOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_tokens_begin_delete(self, resource_group):
-        response = self.client.tokens.begin_delete(
+    def test_credential_sets_begin_delete(self, resource_group):
+        response = self.client.credential_sets.begin_delete(
             resource_group_name=resource_group.name,
             registry_name="str",
-            token_name="str",
+            credential_set_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -129,8 +118,8 @@ class TestContainerRegistryTokensOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_tokens_list(self, resource_group):
-        response = self.client.tokens.list(
+    def test_credential_sets_list(self, resource_group):
+        response = self.client.credential_sets.list(
             resource_group_name=resource_group.name,
             registry_name="str",
         )

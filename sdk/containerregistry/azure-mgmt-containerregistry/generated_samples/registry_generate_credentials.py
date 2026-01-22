@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerregistry import ContainerRegistryClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.containerregistry import ContainerRegistryClient
 
 
 def main():
-    client = ContainerRegistryClient(
+    client = ContainerRegistryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

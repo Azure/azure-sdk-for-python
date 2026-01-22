@@ -208,6 +208,14 @@ class CacheRule(ProxyResource):
     )
     """The properties of the cache rule."""
 
+    __flattened_items = [
+        "credential_set_resource_id",
+        "source_repository",
+        "target_repository",
+        "creation_date",
+        "provisioning_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -223,7 +231,25 @@ class CacheRule(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CacheRuleProperties(_Model):
@@ -424,6 +450,22 @@ class ConnectedRegistry(ProxyResource):
     )
     """The properties of the connected registry."""
 
+    __flattened_items = [
+        "provisioning_state",
+        "mode",
+        "version",
+        "connection_state",
+        "last_activity_time",
+        "activation",
+        "parent",
+        "client_token_ids",
+        "login_server",
+        "logging",
+        "status_details",
+        "notifications_list",
+        "garbage_collection",
+    ]
+
     @overload
     def __init__(
         self,
@@ -439,7 +481,25 @@ class ConnectedRegistry(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class ConnectedRegistryProperties(_Model):
@@ -734,6 +794,8 @@ class CredentialSet(ProxyResource):
     )
     """Identities associated with the resource. This is used to access the KeyVault secrets."""
 
+    __flattened_items = ["login_server", "auth_credentials", "creation_date", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -750,7 +812,25 @@ class CredentialSet(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CredentialSetProperties(_Model):
@@ -2210,6 +2290,8 @@ class PrivateEndpointConnection(ProxyResource):
     )
     """The properties of a private endpoint connection."""
 
+    __flattened_items = ["private_endpoint", "private_link_service_connection_state", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -2225,7 +2307,25 @@ class PrivateEndpointConnection(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class PrivateEndpointConnectionProperties(_Model):
@@ -2546,6 +2646,26 @@ class Registry(TrackedResource):
     )
     """The identity of the container registry."""
 
+    __flattened_items = [
+        "login_server",
+        "creation_date",
+        "provisioning_state",
+        "status",
+        "admin_user_enabled",
+        "network_rule_set",
+        "policies",
+        "encryption",
+        "data_endpoint_enabled",
+        "data_endpoint_host_names",
+        "private_endpoint_connections",
+        "public_network_access",
+        "network_rule_bypass_options",
+        "network_rule_bypass_allowed_for_tasks",
+        "zone_redundancy",
+        "anonymous_pull_enabled",
+        "role_assignment_mode",
+    ]
+
     @overload
     def __init__(
         self,
@@ -2565,7 +2685,25 @@ class Registry(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class RegistryListCredentialsResult(_Model):
@@ -3141,6 +3279,8 @@ class Replication(TrackedResource):
     )
     """The properties of the replication."""
 
+    __flattened_items = ["provisioning_state", "status", "region_endpoint_enabled", "zone_redundancy"]
+
     @overload
     def __init__(
         self,
@@ -3158,7 +3298,25 @@ class Replication(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class ReplicationProperties(_Model):
@@ -3424,6 +3582,8 @@ class ScopeMap(ProxyResource):
     )
     """The properties of the scope map."""
 
+    __flattened_items = ["description", "type", "creation_date", "provisioning_state", "actions"]
+
     @overload
     def __init__(
         self,
@@ -3439,7 +3599,25 @@ class ScopeMap(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class ScopeMapProperties(_Model):
@@ -4006,6 +4184,8 @@ class Token(ProxyResource):
     )
     """The properties of the token."""
 
+    __flattened_items = ["creation_date", "provisioning_state", "scope_map_id", "credentials", "status"]
+
     @overload
     def __init__(
         self,
@@ -4021,7 +4201,25 @@ class Token(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class TokenCertificate(_Model):
@@ -4397,6 +4595,8 @@ class Webhook(TrackedResource):
     )
     """The properties of the webhook."""
 
+    __flattened_items = ["status", "scope", "actions", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -4414,7 +4614,25 @@ class Webhook(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class WebhookCreateParameters(_Model):

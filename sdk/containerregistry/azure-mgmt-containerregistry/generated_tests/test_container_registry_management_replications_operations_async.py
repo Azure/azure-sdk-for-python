@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry.aio import ContainerRegistryClient
+from azure.mgmt.containerregistry.aio import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestContainerRegistryManagementReplicationsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerRegistryClient, is_async=True)
+        self.client = self.create_mgmt_client(ContainerRegistryManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_endpoint_connections_get(self, resource_group):
-        response = await self.client.private_endpoint_connections.get(
+    async def test_replications_get(self, resource_group):
+        response = await self.client.replications.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            private_endpoint_connection_name="str",
+            replication_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,23 +33,21 @@ class TestContainerRegistryPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_endpoint_connections_begin_create_or_update(self, resource_group):
+    async def test_replications_begin_create(self, resource_group):
         response = await (
-            await self.client.private_endpoint_connections.begin_create_or_update(
+            await self.client.replications.begin_create(
                 resource_group_name=resource_group.name,
                 registry_name="str",
-                private_endpoint_connection_name="str",
-                private_endpoint_connection={
+                replication_name="str",
+                replication={
+                    "location": "str",
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "privateEndpoint": {"id": "str"},
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str",
-                        },
                         "provisioningState": "str",
+                        "regionEndpointEnabled": bool,
+                        "status": {"displayStatus": "str", "message": "str", "timestamp": "2020-02-20 00:00:00"},
+                        "zoneRedundancy": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -59,6 +57,7 @@ class TestContainerRegistryPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
+                    "tags": {"str": "str"},
                     "type": "str",
                 },
             )
@@ -69,12 +68,13 @@ class TestContainerRegistryPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_endpoint_connections_begin_delete(self, resource_group):
+    async def test_replications_begin_update(self, resource_group):
         response = await (
-            await self.client.private_endpoint_connections.begin_delete(
+            await self.client.replications.begin_update(
                 resource_group_name=resource_group.name,
                 registry_name="str",
-                private_endpoint_connection_name="str",
+                replication_name="str",
+                replication_update_parameters={"properties": {"regionEndpointEnabled": bool}, "tags": {"str": "str"}},
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -83,8 +83,22 @@ class TestContainerRegistryPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_endpoint_connections_list(self, resource_group):
-        response = self.client.private_endpoint_connections.list(
+    async def test_replications_begin_delete(self, resource_group):
+        response = await (
+            await self.client.replications.begin_delete(
+                resource_group_name=resource_group.name,
+                registry_name="str",
+                replication_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replications_list(self, resource_group):
+        response = self.client.replications.list(
             resource_group_name=resource_group.name,
             registry_name="str",
         )

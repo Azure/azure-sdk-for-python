@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import ContainerRegistryClientConfiguration
+from .._configuration import ContainerRegistryManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -1716,14 +1716,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1820,14 +1822,16 @@ class RegistriesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`registries` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3769,14 +3773,16 @@ class CacheRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`cache_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4581,14 +4587,16 @@ class CredentialSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`credential_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5399,14 +5407,16 @@ class ConnectedRegistriesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`connected_registries` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6349,14 +6359,16 @@ class PrivateEndpointConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`private_endpoint_connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6925,14 +6937,16 @@ class ReplicationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`replications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7736,14 +7750,16 @@ class ScopeMapsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`scope_maps` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8546,14 +8562,16 @@ class TokensOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`tokens` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9354,14 +9372,16 @@ class WebhooksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryClient`'s
+        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
         :attr:`webhooks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerRegistryManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

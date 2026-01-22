@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerregistry import ContainerRegistryClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryCacheRulesOperations(AzureMgmtRecordedTestCase):
+class TestContainerRegistryManagementScopeMapsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerRegistryClient)
+        self.client = self.create_mgmt_client(ContainerRegistryManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cache_rules_get(self, resource_group):
-        response = self.client.cache_rules.get(
+    def test_scope_maps_get(self, resource_group):
+        response = self.client.scope_maps.get(
             resource_group_name=resource_group.name,
             registry_name="str",
-            cache_rule_name="str",
+            scope_map_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,20 +32,20 @@ class TestContainerRegistryCacheRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cache_rules_begin_create(self, resource_group):
-        response = self.client.cache_rules.begin_create(
+    def test_scope_maps_begin_create(self, resource_group):
+        response = self.client.scope_maps.begin_create(
             resource_group_name=resource_group.name,
             registry_name="str",
-            cache_rule_name="str",
-            cache_rule_create_parameters={
+            scope_map_name="str",
+            scope_map_create_parameters={
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "actions": ["str"],
                     "creationDate": "2020-02-20 00:00:00",
-                    "credentialSetResourceId": "str",
+                    "description": "str",
                     "provisioningState": "str",
-                    "sourceRepository": "str",
-                    "targetRepository": "str",
+                    "type": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -64,12 +64,12 @@ class TestContainerRegistryCacheRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cache_rules_begin_update(self, resource_group):
-        response = self.client.cache_rules.begin_update(
+    def test_scope_maps_begin_update(self, resource_group):
+        response = self.client.scope_maps.begin_update(
             resource_group_name=resource_group.name,
             registry_name="str",
-            cache_rule_name="str",
-            cache_rule_update_parameters={"properties": {"credentialSetResourceId": "str"}},
+            scope_map_name="str",
+            scope_map_update_parameters={"properties": {"actions": ["str"], "description": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -77,11 +77,11 @@ class TestContainerRegistryCacheRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cache_rules_begin_delete(self, resource_group):
-        response = self.client.cache_rules.begin_delete(
+    def test_scope_maps_begin_delete(self, resource_group):
+        response = self.client.scope_maps.begin_delete(
             resource_group_name=resource_group.name,
             registry_name="str",
-            cache_rule_name="str",
+            scope_map_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,8 +89,8 @@ class TestContainerRegistryCacheRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cache_rules_list(self, resource_group):
-        response = self.client.cache_rules.list(
+    def test_scope_maps_list(self, resource_group):
+        response = self.client.scope_maps.list(
             resource_group_name=resource_group.name,
             registry_name="str",
         )

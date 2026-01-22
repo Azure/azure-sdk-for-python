@@ -21,14 +21,26 @@ load_dotenv()
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    containerregistry_subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    containerregistry_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    containerregistry_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    containerregistry_client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=containerregistry_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=containerregistry_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=containerregistry_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=containerregistry_client_secret, value="00000000-0000-0000-0000-000000000000")
+    containerregistrymanagement_subscription_id = os.environ.get(
+        "AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    containerregistrymanagement_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    containerregistrymanagement_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    containerregistrymanagement_client_secret = os.environ.get(
+        "AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=containerregistrymanagement_subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=containerregistrymanagement_tenant_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=containerregistrymanagement_client_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=containerregistrymanagement_client_secret, value="00000000-0000-0000-0000-000000000000"
+    )
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")

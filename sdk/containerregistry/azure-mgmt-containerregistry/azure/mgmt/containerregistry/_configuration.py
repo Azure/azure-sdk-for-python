@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ContainerRegistryClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ContainerRegistryClient.
+class ContainerRegistryManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for ContainerRegistryManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
