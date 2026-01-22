@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
     pip install azure-identity
     pip install azure-mgmt-redhatopenshift
 # USAGE
-    python secrets_delete.py
+    python platform_workload_identity_role_set_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,16 +28,16 @@ from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
 def main():
     client = AzureRedHatOpenShiftClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    client.secrets.delete(
-        resource_group_name="resourceGroup",
-        resource_name="resourceName",
-        child_resource_name="childResourceName",
+    response = client.platform_workload_identity_role_set.get(
+        location="location",
+        open_shift_minor_version="4.14",
     )
+    print(response)
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/stable/2023-11-22/examples/Secrets_Delete.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/OpenShiftClusters/stable/2025-07-25/examples/PlatformWorkloadIdentityRoleSet_Get.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,52 @@
 # Release History
 
+## 3.0.0 (2026-02-16)
+
+### Features Added
+
+  - Model `AzureRedHatOpenShiftClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureRedHatOpenShiftClient` added operation group `platform_workload_identity_role_sets`
+  - Client `AzureRedHatOpenShiftClient` added operation group `platform_workload_identity_role_set`
+  - Model `ClusterProfile` added property `oidc_issuer`
+  - Model `OpenShiftCluster` added property `identity`
+  - Model `OpenShiftCluster` added property `platform_workload_identity_profile`
+  - Model `OpenShiftClusterUpdate` added property `identity`
+  - Model `OpenShiftClusterUpdate` added property `platform_workload_identity_profile`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `PlatformWorkloadIdentity`
+  - Added model `PlatformWorkloadIdentityProfile`
+  - Added model `PlatformWorkloadIdentityRole`
+  - Added model `PlatformWorkloadIdentityRoleSet`
+  - Added model `PlatformWorkloadIdentityRoleSetList`
+  - Added model `UserAssignedIdentity`
+  - Added model `PlatformWorkloadIdentityRoleSetOperations`
+  - Added model `PlatformWorkloadIdentityRoleSetsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `AzureRedHatOpenShiftClient.machine_pools`
+  - Deleted or renamed client operation group `AzureRedHatOpenShiftClient.secrets`
+  - Deleted or renamed client operation group `AzureRedHatOpenShiftClient.sync_identity_providers`
+  - Deleted or renamed client operation group `AzureRedHatOpenShiftClient.sync_sets`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `system_data`
+  - Deleted or renamed model `MachinePool`
+  - Deleted or renamed model `MachinePoolList`
+  - Deleted or renamed model `MachinePoolUpdate`
+  - Deleted or renamed model `Secret`
+  - Deleted or renamed model `SecretList`
+  - Deleted or renamed model `SecretUpdate`
+  - Deleted or renamed model `SyncIdentityProvider`
+  - Deleted or renamed model `SyncIdentityProviderList`
+  - Deleted or renamed model `SyncIdentityProviderUpdate`
+  - Deleted or renamed model `SyncSet`
+  - Deleted or renamed model `SyncSetList`
+  - Deleted or renamed model `SyncSetUpdate`
+  - Deleted or renamed model `MachinePoolsOperations`
+  - Deleted or renamed model `SecretsOperations`
+  - Deleted or renamed model `SyncIdentityProvidersOperations`
+  - Deleted or renamed model `SyncSetsOperations`
+
 ## 2.0.0 (2024-10-30)
 
 ### Breaking Changes

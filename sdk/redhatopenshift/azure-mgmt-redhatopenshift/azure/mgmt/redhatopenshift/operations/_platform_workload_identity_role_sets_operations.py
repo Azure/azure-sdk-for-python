@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,7 +38,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_request(**kwargs: Any) -> HttpRequest:
+def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -45,7 +46,16 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.RedHatOpenShift/operations")
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.RedHatOpenShift/locations/{location}/platformWorkloadIdentityRoleSets",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -56,14 +66,14 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class PlatformWorkloadIdentityRoleSetsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.redhatopenshift.AzureRedHatOpenShiftClient`'s
-        :attr:`operations` attribute.
+        :attr:`platform_workload_identity_role_sets` attribute.
     """
 
     models = _models
@@ -78,20 +88,25 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
-        """Lists all of the available RP operations.
+    def list(self, location: str, **kwargs: Any) -> ItemPaged["_models.PlatformWorkloadIdentityRoleSet"]:
+        """Lists a mapping of OpenShift versions to identity requirements, which include operatorName,
+        roleDefinitionName, roleDefinitionId, and serviceAccounts.
 
-        The operation returns the RP operations.
+        This operation returns a list of Platform Workload Identity Role Sets as a string.
 
-        :return: An iterator like instance of either Operation or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.redhatopenshift.models.Operation]
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of either PlatformWorkloadIdentityRoleSet or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityRoleSet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.OperationList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PlatformWorkloadIdentityRoleSetList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -105,6 +120,8 @@ class Operations:
             if not next_link:
 
                 _request = build_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -129,7 +146,7 @@ class Operations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationList", pipeline_response)
+            deserialized = self._deserialize("PlatformWorkloadIdentityRoleSetList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
