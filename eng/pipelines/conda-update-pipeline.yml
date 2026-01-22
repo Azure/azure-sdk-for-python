@@ -49,4 +49,3 @@ extends:
 
                     Build: $(Build.BuildId)
                   BaseBranchName: main
-        displayName: 'Create Pull Request'
