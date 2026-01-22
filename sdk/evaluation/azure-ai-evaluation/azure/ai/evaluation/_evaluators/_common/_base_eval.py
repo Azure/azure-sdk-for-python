@@ -377,7 +377,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
         Either they receive a collection of keyname inputs that are all single values
-        (like a query and response), or they receive conversation that iss a list of dictionary
+        (like a query and response), or they receive conversation that is a list of dictionary
         values.
 
         The self._singleton_inputs list (containing overload signatures) assigned during initialization
@@ -398,6 +398,22 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         # Collect inputs
         conversation = kwargs.get("conversation", None)
+        
+        # If conversation is a string (e.g., from CSV files), try to parse it as JSON
+        if isinstance(conversation, str):
+            try:
+                conversation = json.loads(conversation)
+                # Update kwargs to maintain consistency
+                kwargs["conversation"] = conversation
+            except json.JSONDecodeError as e:
+                raise EvaluationException(
+                    message=f"{type(self).__name__}: Conversation input is a string but is not valid JSON. "
+                    f"If loading from CSV, ensure the conversation column contains valid JSON. Error: {e}",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.CONVERSATION,
+                ) from e
+        
         singletons = {}
         if len(self._singleton_inputs) > 0:
             # Get all possible singleton inputs and check what's provided
@@ -438,6 +454,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         )
 
     def _is_multi_modal_conversation(self, conversation: Dict) -> bool:
+        # Ensure conversation is a dictionary before checking for keys
+        if not isinstance(conversation, dict):
+            return False
         if "messages" not in conversation:
             return False
         messages = conversation["messages"]
