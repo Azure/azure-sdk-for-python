@@ -5,6 +5,9 @@
 ### Features Added
 - Added support for service version 2026-04-06.
 
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
+
 ## 12.15.0 (2026-01-06)
 
 ### Features Added

@@ -6,6 +6,9 @@
 - Added support for service version 2026-04-06.
 - Added support for improved error handling for file share provisioning.
 
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
+
 ## 12.24.0 (2026-01-06)
 
 ### Features Added

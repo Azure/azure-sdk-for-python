@@ -9,6 +9,9 @@ This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which h
 - Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
 conditionally perform `BlobClient.delete_blob` operation.
 
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
+
 ## 12.28.0 (2026-01-06)
 
 ### Features Added
