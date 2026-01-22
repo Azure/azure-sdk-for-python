@@ -3,7 +3,7 @@
 ## 1.0.0b4 (2026-01-22)
 
 ### Bugs Fixed
-- Replaced unsafe pickle deserialization in LRO continuation tokens with a JSON-based format and added validation.
+- Changed the continuation token format.
 
 ## 1.0.0b3 (2025-12-09)
 
