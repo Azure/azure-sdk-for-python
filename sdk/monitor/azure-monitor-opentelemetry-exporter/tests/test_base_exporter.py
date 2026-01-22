@@ -38,8 +38,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _UNKNOWN,
     _exception_categories,
 )
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorExporterClient
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     MessageData,
     MetricDataPoint,
     MetricsData,
@@ -313,19 +313,15 @@ class TestBaseExporter(unittest.TestCase):
     # STORAGE TESTS
     # ========================================================================
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
-    @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_success(self, dict_patch, format_patch):
+    def test_transmit_from_storage_success(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
         blob_mock.lease.return_value = True
         envelope_mock = {"name": "test", "time": "time"}
         blob_mock.get.return_value = [envelope_mock]
-        dict_patch.return_value = {"name": "test", "time": "time"}
-        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -336,20 +332,16 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_called_once()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
-    @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_store_again(self, dict_patch, format_patch):
+    def test_transmit_from_storage_store_again(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
         blob_mock.lease.return_value = True
         envelope_mock = {"name": "test", "time": "time"}
         blob_mock.get.return_value = [envelope_mock]
-        dict_patch.return_value = {"name": "test", "time": "time"}
-        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code"):
-            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorExporterClient, "track", throw(HttpResponseError)):
                 exporter._transmit_from_storage()
         exporter.storage.gets.assert_called_once()
         blob_mock.lease.assert_called()
@@ -417,7 +409,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "MessageData")
@@ -435,7 +427,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "EventData")
@@ -457,7 +449,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "ExceptionData")
@@ -495,7 +487,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "MetricData")
@@ -531,7 +523,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "RemoteDependencyData")
@@ -555,7 +547,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "RequestData")
@@ -611,14 +603,14 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmit_http_error_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
             m.return_value = True
-            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorExporterClient, "track", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_http_error_not_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
             m.return_value = False
-            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorExporterClient, "track", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
@@ -630,7 +622,7 @@ class TestBaseExporter(unittest.TestCase):
         self._base.client._config.redirect_policy.max_redirects = 2
         prev_host = self._base.client._config.host
         error = HttpResponseError(response=response)
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.side_effect = error
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -645,7 +637,7 @@ class TestBaseExporter(unittest.TestCase):
         response.headers = None
         error = HttpResponseError(response=response)
         prev_host = self._base.client._config.host
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.side_effect = error
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -658,7 +650,7 @@ class TestBaseExporter(unittest.TestCase):
         response.headers = {"location": "123"}
         error = HttpResponseError(response=response)
         prev_host = self._base.client._config.host
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.side_effect = error
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -666,12 +658,12 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(self._base.client._config.host, prev_host)
 
     def test_transmit_request_error(self):
-        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceRequestError, message="error")):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(ServiceRequestError, message="error")):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_200(self):
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -689,7 +681,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=1,
@@ -715,7 +707,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=2,
@@ -803,7 +795,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_error_statsbeat(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceRequestError, message="error")):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(ServiceRequestError, message="error")):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -813,7 +805,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_request_exception(self):
-        with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(Exception)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
@@ -827,7 +819,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_exception_statsbeat(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(Exception)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -845,7 +837,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_200(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -875,7 +867,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=1,
@@ -913,7 +905,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=2,
@@ -1290,6 +1282,19 @@ class MockResponse:
         self.reason = reason
         self.content = content
         self.raw = MockRaw()
+        self._content_consumed = False
+
+    def iter_content(self, chunk_size=1):
+        content_bytes = self.content.encode() if isinstance(self.content, str) else self.content
+        for i in range(0, len(content_bytes), chunk_size):
+            yield content_bytes[i : i + chunk_size]
+        self._content_consumed = True
+
+    def iter_bytes(self, chunk_size=None):
+        return self.iter_content(chunk_size or 1)
+
+    def close(self):
+        pass
 
 
 class MockRaw:

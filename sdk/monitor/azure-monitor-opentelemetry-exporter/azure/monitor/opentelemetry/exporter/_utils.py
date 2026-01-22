@@ -14,14 +14,10 @@ from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import (
-    ContextTagKeys,
-    TelemetryItem,
-)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
@@ -242,11 +238,12 @@ class PeriodicTask(threading.Thread):
 
 
 def _create_telemetry_item(timestamp: int) -> TelemetryItem:
+    ts = datetime.datetime.fromtimestamp(timestamp / 1e9, tz=datetime.timezone.utc)
     return TelemetryItem(
         name="",
         instrumentation_key="",
         tags=dict(azure_monitor_context),  # type: ignore
-        time=ns_to_iso_str(timestamp),  # type: ignore
+        time=ts,
     )
 
 
