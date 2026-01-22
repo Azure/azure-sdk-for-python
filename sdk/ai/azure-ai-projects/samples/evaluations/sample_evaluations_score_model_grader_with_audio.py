@@ -125,17 +125,17 @@ with (
     print("Evaluation Response:")
     pprint(eval_object_response)
 
-    sourceFileContentContent = SourceFileContentContent(
+    source_file_content_content = SourceFileContentContent(
         item={
             "audio_data": audio_to_base64(os.path.join(folder_path, "data_folder/sample_evaluations_score_model_grader_with_audio.wav")),
             "expected": "Don't forget a jacket",
         },
     )
-    sourceFileContent = SourceFileContent(
+    source_file_content = SourceFileContent(
         type="file_content",
-        content=[sourceFileContentContent],
+        content=[source_file_content_content],
     )
-    inputMessages = InputMessagesTemplate(
+    input_messages = InputMessagesTemplate(
         type="template",
         template=[
             EasyInputMessageParam(
@@ -168,9 +168,9 @@ with (
         metadata={"team": "eval-exp", "scenario": "notifications-v1"},
         data_source=CreateEvalCompletionsRunDataSourceParam(
             type="completions",
-            source=sourceFileContent,
+            source=source_file_content,
             model=model_deployment_name_for_audio,
-            input_messages=inputMessages,
+            input_messages=input_messages,
             sampling_params={
                 "temperature": 0.8,
             },
