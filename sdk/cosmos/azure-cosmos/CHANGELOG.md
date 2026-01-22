@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
 
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
