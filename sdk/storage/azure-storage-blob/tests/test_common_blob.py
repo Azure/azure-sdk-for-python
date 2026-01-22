@@ -67,7 +67,7 @@ TEST_BLOB_PREFIX = 'blob'
 
 class TestStorageCommonBlob(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         if self.is_live:
@@ -93,7 +93,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         return blob_client
 
     def _setup_remote(self, storage_account_name, key):
-        self.bsc2 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc2 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.remote_container_name = 'rmt'
 
     def _teardown(self, file_path):
@@ -188,7 +188,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Set up destination blob without data
         blob_service_client = BlobServiceClient(
             account_url=self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         destination_blob_client = blob_service_client.get_blob_client(
             container=self.source_container_name,
@@ -457,7 +457,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.account_name,
             blob.container_name,
             blob.blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1100,7 +1100,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob_client.container_name,
             blob_client.blob_name,
             version_id=version_id,
-            account_key=versioned_storage_account_key,
+            account_key=versioned_storage_account_key.secret,
             permission=BlobSasPermissions(delete=True, delete_previous_version=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -2150,7 +2150,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(container=True, object=True, service=True),
             AccountSasPermissions(read=True, list=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -2295,7 +2295,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key.secret)
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), named_key)
         container_name = self._get_container_reference()
 
@@ -2629,7 +2629,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         account_token = self.generate_sas(
             generate_account_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -2639,7 +2639,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             generate_container_sas,
             account_name=storage_account_name,
             container_name=self.container_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -2649,7 +2649,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             account_name=storage_account_name,
             container_name=self.container_name,
             blob_name=self._get_blob_reference(),
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -2814,7 +2814,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key.secret)
             temp_file.seek(0)
             # Assert
             actual = temp_file.read()
@@ -2832,7 +2832,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key.secret)
             temp_file.seek(0)
             # Assert
             actual = temp_file.read()
@@ -2850,7 +2850,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            download_blob_from_url(source_blob.url, temp_file.name, credential=storage_account_key, overwrite=True)
+            download_blob_from_url(source_blob.url, temp_file.name, credential=storage_account_key.secret, overwrite=True)
 
             with pytest.raises(ValueError):
                 download_blob_from_url(source_blob.url, temp_file.name)
@@ -2877,13 +2877,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, file_path,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         data2 = b'ABC' * 1024
         source_blob = self._create_blob(data=data2)
         download_blob_from_url(
             source_blob.url, file_path, overwrite=True,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         # Assert
         with open(file_path, 'rb') as stream:
@@ -2935,7 +2935,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         uploaded = upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key.secret)
 
         # Assert
         assert uploaded is not None
@@ -2957,7 +2957,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceExistsError):
             upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+                blob.url, data, credential=storage_account_key.secret)
 
         # Assert
         content = blob.download_blob().readall()
@@ -2979,7 +2979,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         uploaded = upload_blob_to_url(
             blob.url, data,
             overwrite=True,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         # Assert
         assert uploaded is not None
@@ -2999,7 +2999,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         uploaded = upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key.secret)
 
         # Assert
         assert uploaded is not None
@@ -3023,7 +3023,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            uploaded = upload_blob_to_url(blob.url, data, credential=storage_account_key)
+            uploaded = upload_blob_to_url(blob.url, data, credential=storage_account_key.secret)
 
             # Assert
             assert uploaded is not None
@@ -3053,7 +3053,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         container_name = self.get_resource_name('utcontainersync')
         transport = RequestsTransport()
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, transport=transport)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, transport=transport)
         blob_name = self._get_blob_reference()
         with bsc:
             bsc.get_service_properties()
@@ -3463,7 +3463,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_client.upload_blob(blob_data, overwrite=True)
         v1_props = blob_client.get_blob_properties()
         v1_blob = BlobClient(self.bsc.url, container_name=self.container_name, blob_name=blob_name,
-                             version_id=v1_props['version_id'], credential=versioned_storage_account_key)
+                             version_id=v1_props['version_id'], credential=versioned_storage_account_key.secret)
         blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = blob_client.get_blob_properties()
         v2_blob = container.get_blob_client(v2_props, version_id=v2_props['version_id'])
@@ -3675,7 +3675,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             account_url=self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name = blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_chunk_get_size=4,
             max_single_get_size=4,
         )

@@ -3,12 +3,20 @@
 ## 1.0.0b47 (Unreleased)
 
 ### Features Added
+- Add auto detection for application ID from connection string if not set 
+  ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
+- Add support for user id and authId
+([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+- Update maximum size of custom properties
+([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
+- Declare support for Python 3.13 and 3.14
+([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
 
 ## 1.0.0b46 (2025-12-04)
 

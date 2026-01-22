@@ -13,6 +13,6 @@ from ._state import (
 
 __all__ = [
     "get_customer_stats_manager",
-    "collect_customer_sdkstats", 
+    "collect_customer_sdkstats",
     "shutdown_customer_sdkstats_metrics",
 ]

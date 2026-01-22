@@ -41,7 +41,7 @@ TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 class TestFileSystemAsync(AsyncStorageRecordedTestCase):
     def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
         self.test_file_systems = []
 
@@ -384,7 +384,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             datalake_storage_account_name,
-            datalake_storage_account_key,
+            datalake_storage_account_key.secret,
             ResourceTypes(service=True),
             AccountSasPermissions(list=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -713,9 +713,9 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        dsc2 = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        dsc2 = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key.secret)
         async with DataLakeServiceClient(
-                self.dsc.url, credential=datalake_storage_account_key) as ds_client:
+                self.dsc.url, credential=datalake_storage_account_key.secret) as ds_client:
             fs1 = await ds_client.create_file_system(self._get_file_system_reference(prefix="fs1"))
             await fs1.delete_file_system()
         await dsc2.create_file_system(self._get_file_system_reference(prefix="fs2"))
@@ -814,7 +814,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key.secret)
         # Act
         filesystems = []
         async for fs in dsc.list_file_systems(include_system=True):

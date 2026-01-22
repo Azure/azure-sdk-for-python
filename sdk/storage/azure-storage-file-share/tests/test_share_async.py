@@ -48,7 +48,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials.secret)
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -156,7 +156,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         snapshot_props = await snapshot_client.get_share_properties()
         # Assert
@@ -232,7 +232,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
 
         share_lease = await share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -550,7 +550,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
 
         deleted = await snapshot_client.delete_share()
@@ -976,7 +976,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(service=True),
             AccountSasPermissions(list=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -1006,7 +1006,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(service=True),
             AccountSasPermissions(list=True),
             datetime.utcnow() - timedelta(hours=1)
@@ -1649,7 +1649,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        async with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
+        async with ShareServiceClient(url, credential=credential.secret, transport=transport) as fsc:
             await fsc.get_service_properties()
             assert transport.session is not None
             async with fsc.get_share_client(share_name) as fc:
@@ -1981,7 +1981,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             generate_share_sas,
             share.account_name,
             share.share_name,
-            storage_account_key,
+            storage_account_key.secret,
             permission=ShareSasPermissions(read=True, list=True),
             expiry=expiry,
             user_delegation_key=user_delegation_key,
@@ -2006,7 +2006,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             file.account_name,
             file.share_name,
             file.file_path,
-            storage_account_key,
+            storage_account_key.secret,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,

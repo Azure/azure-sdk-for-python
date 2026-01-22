@@ -17,11 +17,7 @@ from test_base import (
     GLOBAL_STANDARD_TRAINING_TYPE,
     DEVELOPER_TIER_TRAINING_TYPE,
 )
-from devtools_testutils import (
-    recorded_by_proxy,
-    RecordedTransport,
-    is_live_and_not_recording,
-)
+from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
@@ -295,13 +291,13 @@ class TestFineTuning(TestBase):
         if not completed_job_id:
             pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")
 
-        subscription_id = kwargs.get("azure_ai_projects_tests_azure_subscription_id")
-        resource_group = kwargs.get("azure_ai_projects_tests_azure_resource_group")
-        project_endpoint = kwargs.get("azure_ai_projects_tests_project_endpoint")
+        subscription_id = kwargs.get("azure_subscription_id")
+        resource_group = kwargs.get("azure_resource_group")
+        project_endpoint = kwargs.get("azure_ai_project_endpoint")
 
         if not all([subscription_id, resource_group, project_endpoint]):
             pytest.skip(
-                f"Missing required environment variables for deployment (AZURE_AI_PROJECTS_TESTS_AZURE_SUBSCRIPTION_ID, AZURE_AI_PROJECTS_TESTS_AZURE_RESOURCE_GROUP, AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT) - skipping {test_prefix} deploy and infer test"
+                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, azure_ai_project_endpoint) - skipping {test_prefix} deploy and infer test"
             )
 
         account_name = self._extract_account_name_from_endpoint(project_endpoint, test_prefix)
@@ -340,14 +336,15 @@ class TestFineTuning(TestBase):
                         deployment_name=deployment_name,
                         deployment=deployment_config,
                     )
-
-                    while deployment_operation.status() not in ["Succeeded", "Failed"]:
-                        time.sleep(30)
-                        print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
+                    if is_live():
+                        while deployment_operation.status() not in ["Succeeded", "Failed"]:
+                            time.sleep(30)
+                            print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
 
                     print(f"[{test_prefix}] Deployment completed successfully")
-                    print(f"[{test_prefix}] Waiting for 120 seconds for deployment to be fully ready.")
-                    time.sleep(120)
+                    if is_live():
+                        print(f"[{test_prefix}] Waiting for 10 minutes for deployment to be fully ready.")
+                        time.sleep(600)
                     print(f"[{test_prefix}] Testing inference on deployment: {deployment_name}")
 
                     response = openai_client.responses.create(
@@ -622,19 +619,13 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, train_file.id)
                 self._cleanup_test_file(openai_client, validation_file.id)
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to pause any job",
-    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_pause_job(self, **kwargs):
-        running_job_id = kwargs.get("azure_ai_projects_tests_running_fine_tuning_job_id")
+        running_job_id = kwargs.get("running_fine_tuning_job_id")
 
         if not running_job_id:
-            pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_RUNNING_FINE_TUNING_JOB_ID environment variable not set - skipping pause test"
-            )
+            pytest.skip("running_fine_tuning_job_id environment variable not set - skipping pause test")
 
         with self.create_client(**kwargs) as project_client:
             with project_client.get_openai_client() as openai_client:
@@ -658,19 +649,13 @@ class TestFineTuning(TestBase):
 
                 print(f"[test_finetuning_pause_job] Successfully paused and verified job: {running_job_id}")
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to pause any job",
-    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_resume_job(self, **kwargs):
-        paused_job_id = kwargs.get("azure_ai_projects_tests_paused_fine_tuning_job_id")
+        paused_job_id = kwargs.get("paused_fine_tuning_job_id")
 
         if not paused_job_id:
-            pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_PAUSED_FINE_TUNING_JOB_ID environment variable not set - skipping resume test"
-            )
+            pytest.skip("paused_fine_tuning_job_id environment variable not set - skipping resume test")
 
         with self.create_client(**kwargs) as project_client:
             with project_client.get_openai_client() as openai_client:
@@ -696,11 +681,11 @@ class TestFineTuning(TestBase):
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_list_checkpoints(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("completed_oai_model_sft_fine_tuning_job_id")
 
         if not completed_job_id:
             pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID environment variable not set - skipping checkpoints test"
+                "completed_oai_model_sft_fine_tuning_job_id environment variable not set - skipping checkpoints test"
             )
 
         with self.create_client(**kwargs) as project_client:
@@ -733,14 +718,10 @@ class TestFineTuning(TestBase):
                     f"[test_finetuning_list_checkpoints] Successfully validated {len(checkpoints_list)} checkpoints for job: {completed_job_id}"
                 )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because API not sending completed or failed status despite job being complete",
-    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_deploy_and_infer_oai_model_sft_job(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("completed_oai_model_sft_fine_tuning_job_id")
         self._test_deploy_and_infer_helper(
             completed_job_id,
             "OpenAI",
@@ -750,14 +731,10 @@ class TestFineTuning(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to complete any RFT job",
-    )
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_deploy_and_infer_oai_model_rft_job(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_rft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("completed_oai_model_rft_fine_tuning_job_id")
         self._test_deploy_and_infer_helper(
             completed_job_id,
             "OpenAI",
@@ -767,14 +744,10 @@ class TestFineTuning(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because API not sending completed or failed status despite job being complete",
-    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_deploy_and_infer_oai_model_dpo_job(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oai_model_dpo_fine_tuning_job_id")
+        completed_job_id = kwargs.get("completed_oai_model_dpo_fine_tuning_job_id")
         self._test_deploy_and_infer_helper(
             completed_job_id,
             "OpenAI",
@@ -784,14 +757,10 @@ class TestFineTuning(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because API not sending completed or failed status despite job being complete",
-    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_deploy_and_infer_oss_model_sft_job(self, **kwargs):
-        completed_job_id = kwargs.get("azure_ai_projects_tests_completed_oss_model_sft_fine_tuning_job_id")
+        completed_job_id = kwargs.get("completed_oss_model_sft_fine_tuning_job_id")
         self._test_deploy_and_infer_helper(
             completed_job_id,
             "Mistral AI",

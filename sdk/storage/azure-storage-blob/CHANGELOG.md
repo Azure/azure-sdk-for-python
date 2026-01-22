@@ -9,6 +9,15 @@ This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which h
 - Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
 conditionally perform `BlobClient.delete_blob` operation.
 
+## 12.28.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.28.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
 ## 12.28.0b1 (2025-12-04)
 
 ### Features Added

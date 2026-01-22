@@ -48,7 +48,7 @@ TEST_FILE_PREFIX = 'file'
 class TestFileAsync(AsyncStorageRecordedTestCase):
     async def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret)
 
         self.config = self.dsc._config
 
@@ -246,7 +246,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
                                              file_client.file_system_name + '/',
                                              '/' + file_client.path_name,
-                                             credential=datalake_storage_account_key, logging_enable=True)
+                                             credential=datalake_storage_account_key.secret, logging_enable=True)
         response = await new_file_client.create_file()
 
         # Assert
@@ -1203,7 +1203,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key.secret, logging_enable=True)
         self.file_system_name = self.get_resource_name('filesystem')
         file_name = 'testfile'
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
@@ -1231,7 +1231,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
                                   self.file_system_name,
                                   None,
                                   "oldfile",
-                                  datalake_storage_account_key,
+                                  datalake_storage_account_key.secret,
                                   permission=FileSasPermissions(read=True, create=True, write=True, delete=True, move=True),
                                   expiry=datetime.utcnow() + timedelta(hours=1),
                                   )
@@ -1240,7 +1240,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
                                       self.file_system_name,
                                       None,
                                       "newname",
-                                      datalake_storage_account_key,
+                                      datalake_storage_account_key.secret,
                                       permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
                                       expiry=datetime.utcnow() + timedelta(hours=1),
                                       )
@@ -1396,7 +1396,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         url = self.account_url(datalake_storage_account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key.secret)
         self.file_system_name = self.get_resource_name('filesystem')
         file_name = 'testfile'
         file_system = self.dsc.get_file_system_client(self.file_system_name)
@@ -1436,7 +1436,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         url = self.account_url(datalake_storage_account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key.secret)
         self.file_system_name = self.get_resource_name('filesystem')
         data = self.get_random_bytes(200 * 1024)
         file_name = 'testfile'
@@ -1548,7 +1548,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(datalake_storage_account_name, 'dfs'),
             "filesystem/",
             "dir/file.txt",
-            credential=datalake_storage_account_key,
+            credential=datalake_storage_account_key.secret,
             transport=transport,
             retry_total=0
         )
@@ -1582,7 +1582,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(datalake_storage_account_name, 'dfs'),
             "filesystem/",
             "dir/file.txt",
-            credential=datalake_storage_account_key,
+            credential=datalake_storage_account_key.secret,
             transport=transport,
             retry_total=0
         )
@@ -1664,7 +1664,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(datalake_storage_account_name, 'dfs'),
             self.file_system_name,
             file_name,
-            credential=datalake_storage_account_key,
+            credential=datalake_storage_account_key.secret,
             max_chunk_get_size=4,
             max_single_get_size=4,
         )
