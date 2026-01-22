@@ -369,6 +369,7 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WORKFLOW_ACTION = "workflow_action"
     MEMORY_SEARCH_CALL = "memory_search_call"
     OAUTH_CONSENT_REQUEST = "oauth_consent_request"
+    AZURE_AI_SEARCH_CALL = "azure_ai_search_call"
 
 
 class LocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -733,6 +734,7 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
     SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
     AZURE_AI_SEARCH = "azure_ai_search"
+    REMOTE_TOOL = "remote_tool" # AI Search Remote Tool
     OPENAPI = "openapi"
     BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
     CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
