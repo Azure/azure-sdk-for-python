@@ -65,7 +65,6 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
         logger.info(f"Converting output for node: {node_name} with output: {node_output}")
         if node_name == INTERRUPT_NODE_NAME:
             yield from self.hitl_helper.convert_interrupts(node_output)
-            
         else:
             message_arr = node_output.get("messages")
             if not message_arr or not isinstance(message_arr, Collection):
