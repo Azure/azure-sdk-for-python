@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list evaluation and eval runs.
+    `openai.evals.*` methods to create, get, and list evaluations and eval runs.
 
     The OpenAI official tutorial is here: https://cookbook.openai.com/examples/evaluation/use-cases/evalsapi_audio_inputs
 
