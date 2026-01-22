@@ -35,7 +35,6 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._validation import api_version_validation
 from ...operations._operations import (
     build_agents_create_from_manifest_request,
     build_agents_create_request,
@@ -130,11 +129,6 @@ class AgentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, agent_name: str, **kwargs: Any) -> _models.AgentDetails:
         """Retrieves the agent.
 
@@ -271,11 +265,6 @@ class AgentsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -458,11 +447,6 @@ class AgentsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update(
         self,
         agent_name: str,
@@ -641,11 +625,6 @@ class AgentsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_from_manifest(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -845,11 +824,6 @@ class AgentsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update_from_manifest(
         self,
         agent_name: str,
@@ -964,11 +938,6 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, agent_name: str, **kwargs: Any) -> _models.DeleteAgentResponse:
         """Deletes an agent.
 
@@ -1033,11 +1002,6 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "kind", "limit", "order", "after", "before", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
@@ -1216,11 +1180,6 @@ class AgentsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_version(
         self,
         agent_name: str,
@@ -1417,11 +1376,6 @@ class AgentsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_version_from_manifest(
         self,
         agent_name: str,
@@ -1539,11 +1493,6 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionDetails:
         """Retrieves a specific version of an agent.
 
@@ -1611,11 +1560,6 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete_version(
         self, agent_name: str, agent_version: str, **kwargs: Any
     ) -> _models.DeleteAgentVersionResponse:
@@ -1686,13 +1630,6 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "agent_name", "limit", "order", "after", "before", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_versions(
         self,
         agent_name: str,
@@ -1784,13 +1721,6 @@ class AgentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "agent_name", "agent_version", "kind", "replica_name", "tail"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def stream_agent_container_logs(
         self,
         agent_name: str,
@@ -1971,11 +1901,6 @@ class MemoryStoresOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -2137,11 +2062,6 @@ class MemoryStoresOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update(
         self,
         name: str,
@@ -2234,11 +2154,6 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
         """Retrieve a memory store.
 
@@ -2303,11 +2218,6 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "limit", "order", "after", "before", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
@@ -2395,11 +2305,6 @@ class MemoryStoresOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
         """Delete a memory store.
 
@@ -2534,11 +2439,6 @@ class MemoryStoresOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def search_memories(
         self,
         name: str,
@@ -2644,11 +2544,6 @@ class MemoryStoresOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def _update_memories_initial(
         self,
         name: str,
@@ -2755,11 +2650,6 @@ class MemoryStoresOperations:
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def _begin_update_memories(
         self,
         name: str,
@@ -2917,11 +2807,6 @@ class MemoryStoresOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete_scope(
         self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
@@ -4587,11 +4472,6 @@ class RedTeamsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
-    )
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
@@ -4657,11 +4537,6 @@ class RedTeamsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
-    )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.RedTeam"]:
         """List a redteam by name.
 
@@ -4790,11 +4665,6 @@ class RedTeamsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
-    )
     async def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
@@ -4883,11 +4753,6 @@ class EvaluationRulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
         """Get an evaluation rule.
 
@@ -4953,11 +4818,6 @@ class EvaluationRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, id: str, **kwargs: Any) -> None:
         """Delete an evaluation rule.
 
@@ -5065,11 +4925,6 @@ class EvaluationRulesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_or_update(
         self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
@@ -5145,13 +5000,6 @@ class EvaluationRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "action_type", "agent_name", "enabled", "client_request_id", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
@@ -5269,11 +5117,6 @@ class EvaluationTaxonomiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
         """Get an evaluation run by name.
 
@@ -5339,13 +5182,6 @@ class EvaluationTaxonomiesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "input_name", "input_type", "client_request_id", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluationTaxonomy"]:
@@ -5436,11 +5272,6 @@ class EvaluationTaxonomiesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, name: str, **kwargs: Any) -> None:
         """Delete an evaluation taxonomy by name.
 
@@ -5548,11 +5379,6 @@ class EvaluationTaxonomiesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create(
         self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -5682,11 +5508,6 @@ class EvaluationTaxonomiesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update(
         self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -5780,11 +5601,6 @@ class EvaluatorsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "type", "limit", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_versions(
         self,
         name: str,
@@ -5886,11 +5702,6 @@ class EvaluatorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "type", "limit", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_latest_versions(
         self,
         *,
@@ -5988,11 +5799,6 @@ class EvaluatorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
         """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
         the EvaluatorVersion does not exist.
@@ -6057,11 +5863,6 @@ class EvaluatorsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "version"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
         EvaluatorVersion was deleted successfully or if the EvaluatorVersion does not exist.
@@ -6173,11 +5974,6 @@ class EvaluatorsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_version(
         self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -6325,11 +6121,6 @@ class EvaluatorsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update_version(
         self,
         name: str,
@@ -6481,19 +6272,6 @@ class InsightsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": [
-                "api_version",
-                "repeatability_request_id",
-                "repeatability_first_sent",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
         """Generate Insights.
 
@@ -6564,13 +6342,6 @@ class InsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "id", "include_coordinates", "client_request_id", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
         """Get a specific insight by Id.
 
@@ -6640,22 +6411,6 @@ class InsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": [
-                "api_version",
-                "type",
-                "eval_id",
-                "run_id",
-                "agent_name",
-                "include_coordinates",
-                "client_request_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
@@ -6782,11 +6537,6 @@ class SchedulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, id: str, **kwargs: Any) -> None:
         """Delete a schedule.
 
@@ -6840,11 +6590,6 @@ class SchedulesOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, id: str, **kwargs: Any) -> _models.Schedule:
         """Get a schedule by id.
 
@@ -6910,11 +6655,6 @@ class SchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Schedule"]:
         """List all schedules.
 
@@ -7051,11 +6791,6 @@ class SchedulesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_or_update(
         self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
@@ -7131,11 +6866,6 @@ class SchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "schedule_id", "run_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
         """Get a schedule run by id.
 
@@ -7199,11 +6929,6 @@ class SchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_runs(self, id: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduleRun"]:
         """List all schedule runs.
 

@@ -112,7 +112,7 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JAILBREAK = "jailbreak"
     """Injects specially crafted prompts to bypass AI safeguards, known as User Injected Prompt
     Attacks (UPIA)."""
-    ANSII_ATTACK = "ansii_attack"
+    ANSI_ATTACK = "ansi_attack"
     """Utilizes ANSI escape sequences to manipulate text appearance and behavior."""
     CHARACTER_SWAP = "character_swap"
     """Swaps characters within text to create variations or obfuscate the original content."""
@@ -477,13 +477,6 @@ class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOW = "low"
 
 
-class InputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of InputItemType."""
-
-    MESSAGE = "message"
-    ITEM_REFERENCE = "item_reference"
-
-
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The request of the insights."""
 
@@ -518,6 +511,10 @@ class ItemResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MCP_APPROVAL_REQUEST = "mcp_approval_request"
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
     MCP_CALL = "mcp_call"
+    STRUCTURED_OUTPUTS = "structured_outputs"
+    WORKFLOW_ACTION = "workflow_action"
+    MEMORY_SEARCH_CALL = "memory_search_call"
+    OAUTH_CONSENT_REQUEST = "oauth_consent_request"
 
 
 class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -644,29 +641,6 @@ class OutputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REASONING_TEXT = "reasoning_text"
 
 
-class OutputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of OutputItemType."""
-
-    OUTPUT_MESSAGE = "output_message"
-    FILE_SEARCH_CALL = "file_search_call"
-    FUNCTION_CALL = "function_call"
-    WEB_SEARCH_CALL = "web_search_call"
-    COMPUTER_CALL = "computer_call"
-    REASONING = "reasoning"
-    COMPACTION = "compaction"
-    IMAGE_GENERATION_CALL = "image_generation_call"
-    CODE_INTERPRETER_CALL = "code_interpreter_call"
-    LOCAL_SHELL_CALL = "local_shell_call"
-    SHELL_CALL = "shell_call"
-    SHELL_CALL_OUTPUT = "shell_call_output"
-    APPLY_PATCH_CALL = "apply_patch_call"
-    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
-    MCP_CALL = "mcp_call"
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    CUSTOM_TOOL_CALL = "custom_tool_call"
-
-
 class OutputMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of OutputMessageContentType."""
 
@@ -708,29 +682,6 @@ class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Weekly recurrence pattern."""
     MONTHLY = "Monthly"
     """Monthly recurrence pattern."""
-
-
-class ResponseErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The error code for the response."""
-
-    SERVER_ERROR = "server_error"
-    RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
-    INVALID_PROMPT = "invalid_prompt"
-    VECTOR_STORE_TIMEOUT = "vector_store_timeout"
-    INVALID_IMAGE = "invalid_image"
-    INVALID_IMAGE_FORMAT = "invalid_image_format"
-    INVALID_BASE64_IMAGE = "invalid_base64_image"
-    INVALID_IMAGE_URL = "invalid_image_url"
-    IMAGE_TOO_LARGE = "image_too_large"
-    IMAGE_TOO_SMALL = "image_too_small"
-    IMAGE_PARSE_ERROR = "image_parse_error"
-    IMAGE_CONTENT_POLICY_VIOLATION = "image_content_policy_violation"
-    INVALID_IMAGE_MODE = "invalid_image_mode"
-    IMAGE_FILE_TOO_LARGE = "image_file_too_large"
-    UNSUPPORTED_IMAGE_MEDIA_TYPE = "unsupported_image_media_type"
-    EMPTY_IMAGE_FILE = "empty_image_file"
-    FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image"
-    IMAGE_FILE_NOT_FOUND = "image_file_not_found"
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -805,23 +756,6 @@ class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEn
     JSON_OBJECT = "json_object"
 
 
-class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ToolChoiceParamType."""
-
-    ALLOWED_TOOLS = "allowed_tools"
-    FUNCTION = "function"
-    MCP = "mcp"
-    CUSTOM = "custom"
-    APPLY_PATCH = "apply_patch"
-    SHELL = "shell"
-    FILE_SEARCH = "file_search"
-    WEB_SEARCH_PREVIEW = "web_search_preview"
-    COMPUTER_USE_PREVIEW = "computer_use_preview"
-    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
-    IMAGE_GENERATION = "image_generation"
-    CODE_INTERPRETER = "code_interpreter"
-
-
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ToolType."""
 
@@ -837,16 +771,16 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "custom"
     WEB_SEARCH_PREVIEW = "web_search_preview"
     APPLY_PATCH = "apply_patch"
-    BING_GROUNDING = "bing_grounding"
+    A2A_PREVIEW = "a2a_preview"
+    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
     BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
     FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
     SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
     AZURE_AI_SEARCH = "azure_ai_search"
-    OPENAPI = "openapi"
-    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
-    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
-    A2A_PREVIEW = "a2a_preview"
     AZURE_FUNCTION = "azure_function"
+    BING_GROUNDING = "bing_grounding"
+    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+    OPENAPI = "openapi"
     MEMORY_SEARCH = "memory_search"
 
 
