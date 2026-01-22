@@ -5,7 +5,7 @@
 # mypy: disable-error-code="valid-type,call-overload,attr-defined"
 import copy
 from abc import ABC, abstractmethod
-from typing import Any, Collection, Iterable, List
+from typing import Any, Collection, Iterable, List, Union
 
 from langchain_core import messages
 from langchain_core.messages import AnyMessage
@@ -51,31 +51,34 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
         self.context = context
         self.hitl_helper = hitl_helper
 
-    def convert(self, output: dict[str, Any]) -> list[project_models.ItemResource]:
+    def convert(self, output: Union[dict[str, Any], Any]) -> list[project_models.ItemResource]:
         res: list[project_models.ItemResource] = []
-        for node_name, node_output in output.items():
-            node_results = self._convert_node_output(node_name, node_output)
-            res.extend(node_results)
+        for step in output:
+            for node_name, node_output in step.items():
+                node_results = self._convert_node_output(node_name, node_output)
+                res.extend(node_results)
         return res
 
     def _convert_node_output(
         self, node_name: str, node_output: Any
     ) -> Iterable[project_models.ItemResource]:
+        logger.info(f"Converting output for node: {node_name} with output: {node_output}")
         if node_name == INTERRUPT_NODE_NAME:
             yield from self.hitl_helper.convert_interrupts(node_output)
+            
+        else:
+            message_arr = node_output.get("messages")
+            if not message_arr or not isinstance(message_arr, Collection):
+                logger.warning(f"No messages found in node {node_name} output: {node_output}")
+                return
 
-        message_arr = node_output.get("messages")
-        if not message_arr or not isinstance(message_arr, Collection):
-            logger.warning(f"No messages found in node {node_name} output: {node_output}")
-            return
-
-        for message in message_arr:
-            try:
-                converted = self.convert_output_message(message)
-                if converted:
-                    yield converted
-            except Exception as e:
-                logger.error(f"Error converting message {message}: {e}")
+            for message in message_arr:
+                try:
+                    converted = self.convert_output_message(message)
+                    if converted:
+                        yield converted
+                except Exception as e:
+                    logger.error(f"Error converting message {message}: {e}")
 
     def convert_output_message(self, output_message: AnyMessage):  # pylint: disable=inconsistent-return-statements
         # Implement the conversion logic for inner inputs
