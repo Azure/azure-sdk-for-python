@@ -11,9 +11,7 @@ from typing import Any, Dict, Optional
 from openai import AsyncOpenAI
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
-
 from azure.ai.projects.aio import AIProjectClient
-
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport

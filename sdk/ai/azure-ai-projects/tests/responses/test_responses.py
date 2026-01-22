@@ -10,10 +10,8 @@ import httpx
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from test_base import TestBase, servicePreparer
 from typing import Any, Dict, Optional
-
 from openai import OpenAI
 from azure.core.credentials import TokenCredential
-
 from azure.ai.projects import AIProjectClient
 
 BASE_OPENAI_UA = OpenAI(api_key="dummy").user_agent

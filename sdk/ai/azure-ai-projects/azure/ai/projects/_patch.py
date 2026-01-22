@@ -11,7 +11,6 @@ import os
 import logging
 from typing import List, Any
 from openai import OpenAI
-from openai._base_client import BaseClient as _OpenAIBaseClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
