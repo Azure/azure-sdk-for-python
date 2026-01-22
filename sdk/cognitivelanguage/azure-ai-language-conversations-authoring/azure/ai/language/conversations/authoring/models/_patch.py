@@ -22,7 +22,7 @@ from azure.core.polling.base_polling import (
     LongRunningOperation,
     OperationFailed,
 )
-from azure.core.polling._utils import _decode_continuation_token
+from azure.core.polling._utils import _decode_continuation_token, _encode_continuation_token
 from azure.core.rest import HttpRequest
 
 from ._enums import ExportedProjectFormat
@@ -199,9 +199,8 @@ class _JobsPollingMethod(PollingMethod):
 
     # ---- Continuation token support (doc pattern) ----
     def get_continuation_token(self) -> str:
-        import pickle
-
-        return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
+        
+        return _encode_continuation_token(self._initial_response)
 
     @classmethod
     def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
@@ -330,9 +329,8 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
 
     # ---- Continuation token ----
     def get_continuation_token(self) -> str:
-        import pickle
 
-        return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
+        return _encode_continuation_token(self._initial_response)
 
     @classmethod
     def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
