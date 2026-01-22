@@ -5,6 +5,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+#
+# This setup.py supports discovery and installation of Azure SDK packages
+# from both traditional setup.py and modern pyproject.toml configurations.
+#
+# Package Discovery:
+# - Finds packages with setup.py at root or in sdk/*/ directories
+# - Finds packages with pyproject.toml at root or in sdk/*/ directories
+#
+# Installation Logic:
+# - Packages with pyproject.toml containing [project] section:
+#   Installed using pip (PEP 621 compliant)
+# - Packages with setup.py:
+#   Installed using traditional setuptools via runpy
+# - Packages with both setup.py and pyproject.toml (without [project]):
+#   Prefer setup.py for backward compatibility
+#--------------------------------------------------------------------------
 
 import os.path
 import glob
