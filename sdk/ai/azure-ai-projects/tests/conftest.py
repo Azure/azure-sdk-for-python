@@ -25,6 +25,7 @@ from devtools_testutils import (
 if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
 
+
 def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
         return
@@ -118,6 +119,12 @@ def add_sanitizers(test_proxy, sanitized_values):
 
     # Sanitize checkpoint IDs in URLs and response bodies
     add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
+
+    # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
+    add_general_regex_sanitizer(
+        regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC",
+        value="eval-data-sanitized-timestamp"
+    )
 
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")

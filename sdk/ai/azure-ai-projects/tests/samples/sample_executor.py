@@ -241,7 +241,7 @@ class BaseSampleExecutor:
 
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             log_file = os.path.join(tempfile.gettempdir(), f"sample_validation_error_{timestamp}.log")
-            with open(log_file, "w") as f:
+            with open(log_file, "w", encoding="utf-8") as f:
                 f.write(f"Sample: {self.sample_path}\n")
                 f.write(f"Validation Error: {test_report['reason']}\n\n")
                 f.write("Print Statements:\n")
