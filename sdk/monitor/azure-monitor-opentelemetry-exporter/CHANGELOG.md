@@ -3,6 +3,8 @@
 ## 1.0.0b47 (Unreleased)
 
 ### Features Added
+- Add support for user id and authId
+([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
 
 ### Breaking Changes
 

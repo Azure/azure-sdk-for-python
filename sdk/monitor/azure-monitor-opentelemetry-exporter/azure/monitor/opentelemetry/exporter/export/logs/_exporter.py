@@ -5,21 +5,36 @@ import logging
 from typing import Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
+from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportResult
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_ESCAPED,
     EXCEPTION_MESSAGE,
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
-from opentelemetry.sdk._logs import ReadableLogRecord
-from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportResult
+
+try:
+    from opentelemetry.semconv.logs import (
+        LogRecordAttributes as _SemconvLogRecordAttributes,
+    )
+except ImportError:
+    _SemconvLogRecordAttributes = None
+try:
+    from opentelemetry.semconv._incubating.attributes import (
+        enduser_attributes as _enduser_attributes,
+    )
+except ImportError:
+    _enduser_attributes = None
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+    _DEFAULT_LOG_MESSAGE,
     _EXCEPTION_ENVELOPE_NAME,
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _MESSAGE_ENVELOPE_NAME,
-    _DEFAULT_LOG_MESSAGE,
+    _MICROSOFT_CUSTOM_EVENT_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
@@ -36,15 +51,22 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
-from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
-    _MICROSOFT_CUSTOM_EVENT_NAME,
-)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_shutdown,
     get_statsbeat_custom_events_feature_set,
     is_statsbeat_enabled,
     set_statsbeat_custom_events_feature_set,
+)
+
+_ENDUSER_ID_ATTRIBUTE = (
+    getattr(_SemconvLogRecordAttributes, "ENDUSER_ID", None)
+    or getattr(_enduser_attributes, "ENDUSER_ID", None)
+    or "enduser.id"
+)
+_ENDUSER_PSEUDO_ID_ATTRIBUTE = (
+    getattr(_SemconvLogRecordAttributes, "ENDUSER_PSEUDO_ID", None)
+    or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
+    or "enduser.pseudo.id"
 )
 
 _logger = logging.getLogger(__name__)
@@ -125,11 +147,16 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
-    envelope.tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
-    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
-        log_record.trace_id or _DEFAULT_TRACE_ID
-    )
-    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
+    tags = envelope.tags or {}
+    envelope.tags = tags
+    tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
+    tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(log_record.trace_id or _DEFAULT_TRACE_ID)  # type: ignore
+    if log_record.attributes and _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
+        tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[_ENDUSER_ID_ATTRIBUTE]
+    if log_record.attributes and _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
+        tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[_ENDUSER_PSEUDO_ID_ATTRIBUTE]
+
+    tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
     if (
@@ -137,15 +164,15 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         and ContextTagKeys.AI_OPERATION_NAME in log_record.attributes
         and log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] is not None
     ):
-        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
     if _utils._is_any_synthetic_source(log_record.attributes):
-        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
     location_ip = trace_utils._get_location_ip(log_record.attributes)
     if location_ip:
-        envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
+        tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
         log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )
@@ -241,7 +268,7 @@ def _map_body_to_message(log_body: Any) -> str:
 
     try:
         return json.dumps(log_body)[:32768]
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=broad-except
         return str(log_body)[:32768]
 
 
@@ -257,6 +284,8 @@ _IGNORED_ATTRS = frozenset(
         EXCEPTION_ESCAPED,
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
         _MICROSOFT_CUSTOM_EVENT_NAME,
+        _ENDUSER_ID_ATTRIBUTE,
+        _ENDUSER_PSEUDO_ID_ATTRIBUTE,
     )
 )
 

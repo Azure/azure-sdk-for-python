@@ -22,14 +22,17 @@ def target_fn3(query: str) -> str:
 def target_multimodal_fn1(conversation) -> str:
     if conversation is not None and "messages" in conversation:
         messages = conversation["messages"]
+        # Only include text in assistant response (matching the working imageurls test pattern)
         messages.append(
             {
                 "role": "assistant",
                 "content": [
                     {
-                        "type": "image_url",
-                        "image_url": {"url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"},
-                    }
+                        "type": "text",
+                        "text": "The image depicts a person with short, brown hair that appears to be styled neatly. "
+                        "They are wearing a dark-colored, possibly navy blue, crew-neck shirt. "
+                        "The background appears to be dark, possibly indicating an indoor setting with minimal lighting.",
+                    },
                 ],
             }
         )
