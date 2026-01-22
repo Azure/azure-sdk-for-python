@@ -247,11 +247,13 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         dummy_client = _create_openai_client()
 
         openai_default_user_agent = dummy_client.user_agent
-        final_user_agent = " ".join(
-            ua
-            for ua in ["AIProjectClient", self._custom_user_agent, openai_default_user_agent, openai_custom_user_agent]
-            if ua
+
+        final_user_agent = (
+            "-".join(ua for ua in [self._custom_user_agent, "AIProjectClient"] if ua) + " " + openai_default_user_agent
         )
+
+        if openai_custom_user_agent:
+            final_user_agent = openai_custom_user_agent
 
         default_headers["User-Agent"] = final_user_agent
 

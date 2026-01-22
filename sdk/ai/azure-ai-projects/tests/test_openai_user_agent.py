@@ -49,19 +49,19 @@ def _build_client(
         (
             "custom-client-ua",
             None,
-            f"AIProjectClient custom-client-ua {BASE_OPENAI_UA}",
+            f"custom-client-ua-AIProjectClient {BASE_OPENAI_UA}",
         ),
         # 3) user_agent at openai client only
         (
             None,
             {"User-Agent": "custom-openai-ua"},
-            f"AIProjectClient {BASE_OPENAI_UA} custom-openai-ua",
+            "custom-openai-ua",
         ),
         # 4) user_agent at both clients only
         (
             "custom-client-ua",
             {"User-Agent": "custom-openai-ua"},
-            f"AIProjectClient custom-client-ua {BASE_OPENAI_UA} custom-openai-ua",
+            "custom-openai-ua",
         ),
     ],
 )
