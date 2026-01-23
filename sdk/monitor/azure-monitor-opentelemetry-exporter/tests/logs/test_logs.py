@@ -53,9 +53,8 @@ class NotSerializeableClass:
         return "This class is not serializeable"
 
 
-# pylint: disable=import-error
-# pylint: disable=protected-access
-# pylint: disable=too-many-lines
+# pylint: disable=import-error, disable=protected-access
+# pylint: disable=too-many-public-methods, disable=too-many-lines
 class TestAzureLogExporter(unittest.TestCase):
     _exporter_class = AzureMonitorLogExporter
 
@@ -242,7 +241,10 @@ class TestAzureLogExporter(unittest.TestCase):
                     "test": "attribute",
                     EXCEPTION_TYPE: "ZeroDivisionError",
                     EXCEPTION_MESSAGE: "division by zero",
-                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
+                    EXCEPTION_STACKTRACE: (
+                        "Traceback (most recent call last):\n  File 'test.py', line 38, in <module>\n"
+                        "    raise ZeroDivisionError()\nZeroDivisionError\n"
+                    ),
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -259,7 +261,10 @@ class TestAzureLogExporter(unittest.TestCase):
                     "test": "attribute",
                     EXCEPTION_TYPE: "ZeroDivisionError",
                     EXCEPTION_MESSAGE: "division by zero",
-                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
+                    EXCEPTION_STACKTRACE: (
+                        "Traceback (most recent call last):\n  File 'test.py', line 38, in <module>\n"
+                        "    raise ZeroDivisionError()\nZeroDivisionError\n"
+                    ),
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -481,7 +486,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, _DEFAULT_LOG_MESSAGE)
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
 
-    def test_log_to_envelope_log_empty_with_whitespaces(self):
+    def test_log_to_envelope_log_empty_with_whitespaces(self): # pylint: disable=name-too-long
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_empty_with_whitespaces)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
@@ -499,7 +504,7 @@ class TestAzureLogExporter(unittest.TestCase):
         )
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
 
-    def test_log_to_envelope_log_complex_body_not_serializeable(self):
+    def test_log_to_envelope_log_complex_body_not_serializeable(self): # pylint: disable=name-too-long
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_complex_body_not_serializeable)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
@@ -509,7 +514,7 @@ class TestAzureLogExporter(unittest.TestCase):
             str(self._log_data_complex_body_not_serializeable.log_record.body),
         )
 
-    def test_log_to_envelope_exception_with_string_message(self):
+    def test_log_to_envelope_exception_with_string_message(self):  # pylint: disable=name-too-long
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
         record = self._log_data.log_record
@@ -524,10 +529,13 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(
             envelope.data.base_data.exceptions[0].stack,
-            'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
+            (
+                "Traceback (most recent call last):\n  File 'test.py', line 38, in <module>\n"
+                "    raise ZeroDivisionError()\nZeroDivisionError\n"
+            ),
         )
 
-    def test_log_to_envelope_exception_with_exc_message(self):
+    def test_log_to_envelope_exception_with_exc_message(self): # pylint: disable=name-too-long
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data_with_exc_body)
         record = self._log_data.log_record
@@ -542,7 +550,10 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(
             envelope.data.base_data.exceptions[0].stack,
-            'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
+            (
+                "Traceback (most recent call last):\n  File 'test.py', line 38, in <module>\n"
+                "    raise ZeroDivisionError()\nZeroDivisionError\n"
+            ),
         )
 
     def test_log_to_envelope_exception_empty(self):
@@ -560,7 +571,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
 
-    def test_log_to_envelope_exception_with_blank_exception(self):
+    def test_log_to_envelope_exception_with_blank_exception(self): # pylint: disable=name-too-long
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data_blank_exception)
         record = self._log_data.log_record
@@ -595,7 +606,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.name, json.dumps(record.body))
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
-    def test_log_to_envelope_event_complex_body_not_serializeable(self):
+    def test_log_to_envelope_event_complex_body_not_serializeable(self): # pylint: disable=name-too-long
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_event_complex_body_not_serializeable)
         record = self._log_data_event_complex_body_not_serializeable.log_record
@@ -670,7 +681,7 @@ class TestAzureLogExporter(unittest.TestCase):
             "testServiceInstanceId",
         )
 
-    def test_log_to_envelope_synthetic_load_always_on(self):
+    def test_log_to_envelope_synthetic_load_always_on(self): # pylint: disable=name-too-long
         exporter = self._exporter
         resource = Resource.create(
             {

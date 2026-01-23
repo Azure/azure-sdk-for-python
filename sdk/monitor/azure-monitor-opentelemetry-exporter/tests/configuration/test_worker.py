@@ -3,12 +3,12 @@
 import unittest
 import threading
 import time
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
 from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON_TARGETING
 
-
+# pylint: disable=protected-access, docstring-missing-param
 class TestConfigurationWorker(unittest.TestCase):
     """Test cases for _ConfigurationWorker class."""
 
@@ -17,11 +17,11 @@ class TestConfigurationWorker(unittest.TestCase):
         self.mock_configuration_manager = Mock()
         self.mock_configuration_manager.get_configuration_and_refresh_interval.return_value = 1800
 
-    def tearDown(self):
+    def tearDown(self): # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Clean up after each test."""
         # Ensure any workers created during tests are shut down
         # This prevents hanging tests and resource leaks
-        pass
+        pass # pylint: disable=unnecessary-pass
 
     def test_init_with_default_refresh_interval(self):
         """Test worker initialization with default refresh interval."""
@@ -213,7 +213,7 @@ class TestConfigurationWorker(unittest.TestCase):
             # Second shutdown should not cause errors
             try:
                 worker.shutdown()
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-exception-caught
                 self.fail(f"Second shutdown raised an exception: {e}")
 
             # State should remain shutdown
@@ -253,7 +253,7 @@ class TestConfigurationWorker(unittest.TestCase):
                 try:
                     worker.shutdown()
                     shutdown_results.append("success")
-                except Exception as e:
+                except Exception as e: # pylint: disable=broad-exception-caught
                     shutdown_results.append(f"error: {e}")
 
             threads = [threading.Thread(target=shutdown_worker) for _ in range(5)]
@@ -346,7 +346,7 @@ class TestConfigurationWorker(unittest.TestCase):
             finally:
                 worker.shutdown()
 
-    def test_refresh_loop_continues_after_exception(self):
+    def test_refresh_loop_continues_after_exception(self): # pylint: disable=name-too-long
         """Test that refresh loop continues after exceptions."""
         # First call raises exception, second succeeds
         self.mock_configuration_manager.get_configuration_and_refresh_interval.side_effect = [

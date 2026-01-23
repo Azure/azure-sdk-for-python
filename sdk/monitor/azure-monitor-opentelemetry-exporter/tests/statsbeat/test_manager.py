@@ -3,9 +3,8 @@
 import os
 import unittest
 from unittest import mock
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatConfig, StatsbeatManager
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
@@ -13,12 +12,10 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
-    _DEFAULT_EU_STATS_CONNECTION_STRING,
-    _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
 )
 
 # cSpell:disable
-
+# pylint: disable=protected-access, docstring-missing-param
 
 class TestStatsbeatConfig(unittest.TestCase):
     def setUp(self):
@@ -49,7 +46,10 @@ class TestStatsbeatConfig(unittest.TestCase):
             disable_offline_storage=True,
             credential=mock.Mock(),
             distro_version="1.0.0",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            connection_string=(
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+            ),
         )
 
         self.assertEqual(config.endpoint, "https://westus-1.in.applicationinsights.azure.com/")
@@ -60,11 +60,14 @@ class TestStatsbeatConfig(unittest.TestCase):
         self.assertEqual(config.distro_version, "1.0.0")
         self.assertEqual(
             config.connection_string,
-            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            (
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+            ),
         )
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_stats_connection_string")
-    def test_init_invalid_connection_string_fallback(self, mock_get_stats_cs):
+    def test_init_invalid_connection_string_fallback(self, mock_get_stats_cs): # pylint: disable=name-too-long
         """Test that invalid connection string falls back to default."""
         mock_get_stats_cs.return_value = "InstrumentationKey=fallback;IngestionEndpoint=https://fallback.com/"
 
@@ -101,7 +104,7 @@ class TestStatsbeatConfig(unittest.TestCase):
             self.assertIsNotNone(config.credential)
             self.assertEqual(config.distro_version, "1.0.0")
 
-    def test_from_exporter_missing_instrumentation_key(self):
+    def test_from_exporter_missing_instrumentation_key(self): # pylint: disable=name-too-long
         """Test creating config from exporter missing instrumentation key."""
         exporter = mock.Mock()
         exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -134,7 +137,10 @@ class TestStatsbeatConfig(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
     def test_from_config_valid(self, mock_get_cs_for_region):
         """Test creating config from base config and dictionary."""
-        mock_get_cs_for_region.return_value = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+        mock_get_cs_for_region.return_value = (
+            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+        )
 
         base_config = StatsbeatConfig(
             endpoint="https://westus-1.in.applicationinsights.azure.com/",
@@ -159,11 +165,14 @@ class TestStatsbeatConfig(unittest.TestCase):
             self.assertEqual(new_config.distro_version, "1.0.0")
             self.assertEqual(
                 new_config.connection_string,
-                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+                (
+                    "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                    "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+                ),
             )
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
-    def test_from_config_fallback_connection_string(self, mock_get_cs_for_region):
+    def test_from_config_fallback_connection_string(self, mock_get_cs_for_region): # pylint: disable=name-too-long
         """Test that from_config falls back to base config connection string when needed."""
         mock_get_cs_for_region.return_value = None
 
@@ -182,7 +191,7 @@ class TestStatsbeatConfig(unittest.TestCase):
         if new_config:
             self.assertEqual(new_config.connection_string, base_config.connection_string)
 
-    def test_from_config_missing_instrumentation_key(self):
+    def test_from_config_missing_instrumentation_key(self): # pylint: disable=name-too-long
         """Test from_config with missing instrumentation key."""
         base_config = StatsbeatConfig(
             endpoint="https://westus-1.in.applicationinsights.azure.com/", region="westus", instrumentation_key=""
@@ -247,7 +256,7 @@ class TestStatsbeatConfig(unittest.TestCase):
         self.assertNotEqual(hash(config1), hash(config3))
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-public-methods
 class TestStatsbeatManager(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
@@ -277,17 +286,19 @@ class TestStatsbeatManager(unittest.TestCase):
         try:
             if hasattr(self, "manager"):
                 self.manager.shutdown()
-        except Exception:
+        except Exception: # pylint: disable=broad-exception-caught
             pass
         os.environ.pop(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL, None)
         # Reset singleton state - only clear StatsbeatManager instances
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
 
-    def _create_valid_config(
+    def _create_valid_config( # pylint: disable=docstring-missing-return, docstring-missing-rtype
         self,
-        connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
-        disable_offline_storage=False,
+        connection_string=(
+            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+        ),
     ):
         """Helper to create a valid StatsbeatConfig."""
         return StatsbeatConfig(
@@ -313,7 +324,7 @@ class TestStatsbeatManager(unittest.TestCase):
         """Test _validate_config with None configuration."""
         self.assertFalse(StatsbeatManager._validate_config(None))  # type: ignore
 
-    def test_validate_config_missing_instrumentation_key(self):
+    def test_validate_config_missing_instrumentation_key(self): # pylint: disable=name-too-long
         """Test _validate_config with missing instrumentation key."""
         config = StatsbeatConfig(
             endpoint="https://westus-1.in.applicationinsights.azure.com/", region="westus", instrumentation_key=""
@@ -332,7 +343,7 @@ class TestStatsbeatManager(unittest.TestCase):
         )
         self.assertFalse(StatsbeatManager._validate_config(config))
 
-    def test_validate_config_missing_connection_string(self):
+    def test_validate_config_missing_connection_string(self): # pylint: disable=name-too-long
         """Test _validate_config with missing connection string."""
         config = StatsbeatConfig(
             endpoint="https://westus-1.in.applicationinsights.azure.com/",
@@ -413,7 +424,7 @@ class TestStatsbeatManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
     def test_initialize_failure_exception(
-        self, mock_is_enabled, mock_exporter_class, mock_reader_class, mock_meter_provider_class
+        self, mock_is_enabled, mock_exporter_class, mock_reader_class, mock_meter_provider_class # pylint: disable=unused-argument
     ):
         """Test initialization failure due to exception."""
         mock_is_enabled.return_value = True
@@ -427,7 +438,7 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
-    def test_initialize_already_initialized_same_config(self, mock_is_enabled):
+    def test_initialize_already_initialized_same_config(self, mock_is_enabled): # pylint: disable=name-too-long
         """Test initialize when already initialized with same config."""
         mock_is_enabled.return_value = True
         config = self._create_valid_config()
@@ -441,7 +452,7 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertTrue(result)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled")
-    def test_initialize_already_initialized_different_config_cs(self, mock_is_enabled):
+    def test_initialize_already_initialized_different_config_cs(self, mock_is_enabled): # pylint: disable=name-too-long
         """Test initialize when already initialized with different config."""
         mock_is_enabled.return_value = True
 
@@ -450,7 +461,10 @@ class TestStatsbeatManager(unittest.TestCase):
             endpoint="https://eastus-1.in.applicationinsights.azure.com/",
             region="eastus",
             instrumentation_key="different-key",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://eastus-0.in.applicationinsights.azure.com/",
+            connection_string=(
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                "IngestionEndpoint=https://eastus-0.in.applicationinsights.azure.com/"
+            ),
         )
 
         # Mock initialized state
@@ -465,7 +479,7 @@ class TestStatsbeatManager(unittest.TestCase):
             mock_reconfigure.assert_called_once_with(new_config)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled")
-    def test_initialize_already_initialized_different_config_storage(self, mock_is_enabled):
+    def test_initialize_already_initialized_different_config_storage(self, mock_is_enabled): # pylint: disable=name-too-long
         """Test initialize when already initialized with different config."""
         mock_is_enabled.return_value = True
 

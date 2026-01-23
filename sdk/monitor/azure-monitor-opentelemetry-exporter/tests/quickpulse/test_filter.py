@@ -44,7 +44,10 @@ class TestFilter(unittest.TestCase):
     def test_parse_metric_filter_configuration(
         self, dict_mock, validate_mock, rename_mock, init_projection_mock, set_metric_info_mock
     ):
-        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
+        test_config_bytes = (
+            '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],'
+            '"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'
+        ).encode()
         test_config_dict = json.loads(test_config_bytes.decode())
         metric_info_mock = mock.Mock()
         filter_group_mock = mock.Mock()
@@ -66,10 +69,13 @@ class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_derived_metric_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DerivedMetricInfo")
-    def test_parse_metric_filter_configuration_invalid(
+    def test_parse_metric_filter_configuration_invalid( # pylint: disable=name-too-long
         self, dict_mock, validate_mock, rename_mock, init_projection_mock, set_metric_info_mock
     ):
-        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
+        test_config_bytes = (
+            '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],'
+            '"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'
+        ).encode()
         test_config_dict = json.loads(test_config_bytes.decode())
         metric_info_mock = mock.Mock()
         metric_info_mock.telemetry_type = TelemetryType.REQUEST
@@ -88,7 +94,16 @@ class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_document_filter_group_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DocumentStreamInfo")
     def test_parse_doc_filter_configuration(self, dict_mock, validate_mock, rename_mock, set_doc_info_mock):
-        test_config_bytes = '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, { "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, { "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, { "TelemetryType": "Exception", "Filters": { "Filters": [] } }, { "TelemetryType": "Event", "Filters": { "Filters": [] } }, { "TelemetryType": "Trace", "Filters": { "Filters": [] } }, { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}'.encode()
+        test_config_bytes = (
+            '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ '
+            '{ "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, ' # pylint: disable=line-too-long
+            '{ "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, '
+            '{ "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, ' # pylint: disable=line-too-long
+            '{ "TelemetryType": "Exception", "Filters": { "Filters": [] } }, '
+            '{ "TelemetryType": "Event", "Filters": { "Filters": [] } }, '
+            '{ "TelemetryType": "Trace", "Filters": { "Filters": [] } }, '
+            '{ "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}' # pylint: disable=line-too-long
+        ).encode()
         test_config_dict = json.loads(test_config_bytes.decode())
         doc_stream_mock = mock.Mock()
         doc_stream_mock.id = "26a.7cf471b0"
@@ -110,8 +125,17 @@ class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_document_filter_group_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DocumentStreamInfo")
-    def test_parse_doc_filter_configuration_invalid(self, dict_mock, validate_mock, rename_mock, set_doc_info_mock):
-        test_config_bytes = '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, { "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, { "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, { "TelemetryType": "Exception", "Filters": { "Filters": [] } }, { "TelemetryType": "Event", "Filters": { "Filters": [] } }, { "TelemetryType": "Trace", "Filters": { "Filters": [] } }, { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}'.encode()
+    def test_parse_doc_filter_configuration_invalid(self, dict_mock, validate_mock, rename_mock, set_doc_info_mock): # pylint: disable=name-too-long
+        test_config_bytes = (
+            '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ '
+            '{ "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, ' # pylint: disable=line-too-long
+            '{ "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, '
+            '{ "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, ' # pylint: disable=line-too-long
+            '{ "TelemetryType": "Exception", "Filters": { "Filters": [] } }, '
+            '{ "TelemetryType": "Event", "Filters": { "Filters": [] } }, '
+            '{ "TelemetryType": "Trace", "Filters": { "Filters": [] } }, '
+            '{ "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}' # pylint: disable=line-too-long
+        ).encode()
         test_config_dict = json.loads(test_config_bytes.decode())
         doc_stream_mock = mock.Mock()
         doc_stream_mock.id = "26a.7cf471b0"

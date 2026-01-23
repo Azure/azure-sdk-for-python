@@ -2,25 +2,23 @@
 # Licensed under the MIT License.
 
 import random
-import sys
 import threading
 import time
 import unittest
-from typing import List, Optional
+from typing import Optional
 from unittest.mock import patch, Mock
 
-from opentelemetry.context import Context
-from opentelemetry.trace import SpanContext, TraceFlags, set_span_in_context
-from opentelemetry.trace.span import NonRecordingSpan
+from opentelemetry.trace import SpanContext, TraceFlags
 
 from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
     Decision,
-    RateLimitedSamplingPercentage,
     RateLimitedSampler,
     SamplingResult,
 )
 
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
+
+# pylint: disable=protected-access
 
 
 def create_parent_span(sampled: bool, sample_rate: Optional[float] = None, is_remote: bool = False):
@@ -45,7 +43,7 @@ def create_parent_span(sampled: bool, sample_rate: Optional[float] = None, is_re
 
     return mock_span
 
-
+# pylint: disable=too-many-public-methods
 class TestRateLimitedSampler(unittest.TestCase):
     def setUp(self):
         # Use a mock for time.time_ns() instead of nano_time_supplier injection
@@ -111,7 +109,6 @@ class TestRateLimitedSampler(unittest.TestCase):
         num_spans = 500
         sampled_count = 0
 
-        import random
 
         random.seed(42)
         trace_ids = [random.getrandbits(128) for _ in range(num_spans)]
@@ -147,7 +144,6 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampled_phase1 = 0
         sampled_phase2 = 0
 
-        import random
 
         random.seed(123)
         trace_ids_phase1 = [random.getrandbits(128) for _ in range(phase1_spans)]
@@ -272,7 +268,7 @@ class TestRateLimitedSampler(unittest.TestCase):
                     result = sampler.should_sample(None, i, f"thread-span-{i}")
                     results.append(result)
                     time.sleep(0.001)
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-exception-caught
                 errors.append(e)
 
         threads = [threading.Thread(target=worker) for _ in range(5)]
@@ -295,7 +291,7 @@ class TestRateLimitedSampler(unittest.TestCase):
                 self.assertIsInstance(sample_rate, (int, float))
 
     # Test inheriting sampling decision from sampled parent span with sample rate
-    def test_parent_span_sampled_with_sample_rate(self):
+    def test_parent_span_sampled_with_sample_rate(self):  # pylint: disable=name-too-long
         sampler = RateLimitedSampler(10.0)
 
         parent_span = create_parent_span(sampled=True, sample_rate=75.0, is_remote=False)
@@ -311,7 +307,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 75.0)
 
     # Test inheriting sampling decision from non-sampled parent span with sample rate
-    def test_parent_span_not_sampled_with_sample_rate(self):
+    def test_parent_span_not_sampled_with_sample_rate(self):  # pylint: disable=name-too-long
         sampler = RateLimitedSampler(10.0)
 
         parent_span = create_parent_span(sampled=False, sample_rate=25.0, is_remote=False)
@@ -327,7 +323,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 0.0)
 
     # Test parent span with 100% sample rate maintains decision
-    def test_parent_span_sampled_with_100_percent_sample_rate(self):
+    def test_parent_span_sampled_with_100_percent_sample_rate(self):  # pylint: disable=name-too-long
         sampler = RateLimitedSampler(5.0)
 
         parent_span = create_parent_span(sampled=True, sample_rate=100.0, is_remote=False)
@@ -365,7 +361,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertNotEqual(result.attributes[_SAMPLE_RATE_KEY], 80.0)
 
     # Test parent span without sample rate attribute uses local sampling
-    def test_parent_span_no_sample_rate_attribute(self):
+    def test_parent_span_no_sample_rate_attribute(self):  # pylint: disable=name-too-long
         sampler = RateLimitedSampler(5.0)
 
         parent_span = create_parent_span(sampled=True, sample_rate=None, is_remote=False)
@@ -417,7 +413,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertIsInstance(sample_rate, (int, float))
 
     # Test sampling behavior when no parent context is provided
-    def test_no_parent_context_uses_local_sampling(self):
+    def test_no_parent_context_uses_local_sampling(self):  # pylint: disable=name-too-long
         sampler = RateLimitedSampler(5.0)
 
         from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
@@ -434,7 +430,7 @@ class TestRateLimitedSampler(unittest.TestCase):
         self.assertIsInstance(sample_rate, (int, float))
 
     # Test that original span attributes are preserved in sampling result
-    def test_parent_context_preserves_original_attributes(self):
+    def test_parent_context_preserves_original_attributes(self):  # pylint: disable=name-too-long
         sampler = RateLimitedSampler(10.0)
 
         parent_span = create_parent_span(sampled=True, sample_rate=50.0, is_remote=False)

@@ -116,7 +116,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(mdp.documents, documents)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_metrics_from_projections")
-    def test_metric_to_qp_data_point_process_filtered_metrics(self, projection_mock):
+    def test_metric_to_qp_data_point_process_filtered_metrics(self, projection_mock): # pylint: disable=name-too-long
         metric_data = mock.Mock()
         metric_data.resource_metrics = []
         projections = [("ID:1234", 5.0)]
@@ -206,7 +206,7 @@ class TestUtils(unittest.TestCase):
             ],
         )
 
-    def test_valid_time_stamp_with_decimal_seconds(self):
+    def test_valid_time_stamp_with_decimal_seconds(self): # pylint: disable=name-too-long
         time_stamp = "14.6:56:7.89"
         expected_ms = 1234567890  # Expected milliseconds
         self.assertEqual(_filter_time_stamp_to_ms(time_stamp), expected_ms)

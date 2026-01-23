@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 # cSpell:disable
 import collections
-import psutil
 import unittest
 from datetime import datetime, timedelta
 from unittest import mock
+import psutil
 
 from azure.monitor.opentelemetry.exporter._quickpulse._cpu import (
     _get_process_memory,

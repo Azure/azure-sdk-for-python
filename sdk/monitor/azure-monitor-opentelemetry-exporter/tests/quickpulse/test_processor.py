@@ -9,7 +9,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._processor import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
 
-
+# pylint: disable=protected-access
 class TestQuickpulseLogRecordProcessor(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

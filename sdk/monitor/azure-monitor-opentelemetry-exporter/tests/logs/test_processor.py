@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 import os
 import unittest
 from unittest import mock
@@ -28,24 +30,24 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorLogExporter()
 
-    def test_processor_initialization_without_trace_based_sampling(self):
+    def test_processor_initialization_without_trace_based_sampling(self): # pylint: disable=name-too-long
         """Test processor initialization without trace-based sampling enabled."""
         processor = _AzureBatchLogRecordProcessor(self._exporter, options={})
         self.assertFalse(processor._enable_trace_based_sampling_for_logs)
 
-    def test_processor_initialization_with_trace_based_sampling(self):
+    def test_processor_initialization_with_trace_based_sampling(self): # pylint: disable=name-too-long
         """Test processor initialization with trace-based sampling enabled."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter, options={"enable_trace_based_sampling_for_logs": True}
         )
         self.assertTrue(processor._enable_trace_based_sampling_for_logs)
 
-    def test_processor_initialization_without_options(self):
+    def test_processor_initialization_without_options(self): # pylint: disable=name-too-long
         """Test processor initialization without options."""
         processor = _AzureBatchLogRecordProcessor(self._exporter)
         self.assertIsNone(processor._enable_trace_based_sampling_for_logs)
 
-    def test_on_emit_with_trace_based_sampling_disabled(self):
+    def test_on_emit_with_trace_based_sampling_disabled(self): # pylint: disable=name-too-long
         """Test on_emit does not filter logs when trace-based sampling is disabled."""
         processor = _AzureBatchLogRecordProcessor(self._exporter, options={})
 
@@ -82,8 +84,8 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             # Parent on_emit should be called because trace-based sampling is disabled
             parent_on_emit_mock.assert_called_once()
 
-    def test_on_emit_with_trace_based_sampling_enabled_and_unsampled_trace(self):  # cspell:disable-line
-        """Test on_emit filters logs when trace-based sampling is enabled and trace is unsampled."""  # cspell:disable-line
+    def test_on_emit_with_trace_based_sampling_enabled_and_unsampled_trace(self):  # cspell:disable-line # pylint: disable=name-too-long
+        """Test on_emit filters logs when trace-based sampling is enabled and trace is unsampled."""  # cspell:disable-line # pylint: disable=line-too-long
         processor = _AzureBatchLogRecordProcessor(
             self._exporter, options={"enable_trace_based_sampling_for_logs": True}
         )
@@ -121,10 +123,10 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             # Mock only the parent class's on_emit method
             with mock.patch("opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit") as parent_on_emit_mock:
                 processor.on_emit(log_record)
-                # Parent on_emit should NOT be called because trace is unsampled and filtering is enabled # cspell:disable-line
+                # Parent on_emit should NOT be called because trace is unsampled and filtering is enabled # cspell:disable-line # pylint: disable=line-too-long
                 parent_on_emit_mock.assert_not_called()
 
-    def test_on_emit_with_trace_based_sampling_enabled_and_sampled_trace(self):
+    def test_on_emit_with_trace_based_sampling_enabled_and_sampled_trace(self): # pylint: disable=name-too-long
         """Test on_emit does not filter logs when trace-based sampling is enabled and trace is sampled."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter, options={"enable_trace_based_sampling_for_logs": True}
@@ -165,7 +167,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
                 # Parent on_emit should be called because trace is sampled
                 parent_on_emit_mock.assert_called_once()
 
-    def test_on_emit_with_trace_based_sampling_enabled_and_invalid_span_context(self):
+    def test_on_emit_with_trace_based_sampling_enabled_and_invalid_span_context(self): # pylint: disable=name-too-long
         """Test on_emit does not filter logs with invalid span context."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter, options={"enable_trace_based_sampling_for_logs": True}
@@ -205,7 +207,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
                 # Parent on_emit should be called because span context is invalid
                 parent_on_emit_mock.assert_called_once()
 
-    def test_on_emit_with_trace_based_sampling_enabled_and_no_context(self):
+    def test_on_emit_with_trace_based_sampling_enabled_and_no_context(self): # pylint: disable=name-too-long
         """Test on_emit does not filter logs when there is no log record context."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter, options={"enable_trace_based_sampling_for_logs": True}
@@ -227,7 +229,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             # Parent on_emit should be called because there's no context
             parent_on_emit_mock.assert_called_once()
 
-    def test_on_emit_integration_with_multiple_log_records(self):
+    def test_on_emit_integration_with_multiple_log_records(self): # pylint: disable=name-too-long
         """Integration test: verify processor handles multiple log records correctly with trace-based sampling."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter, options={"enable_trace_based_sampling_for_logs": True}

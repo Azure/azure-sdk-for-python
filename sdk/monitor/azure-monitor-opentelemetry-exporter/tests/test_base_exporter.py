@@ -8,8 +8,7 @@ from unittest import mock
 from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from requests import ReadTimeout
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import HttpResponse # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.monitor.opentelemetry.exporter.export._base import (
     _MONITOR_DOMAIN_MAPPING,
     _format_storage_telemetry_item,
@@ -25,7 +24,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
 )
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
-from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
     _REQ_DURATION_NAME,
@@ -34,9 +32,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
-    RetryCode,
-    _UNKNOWN,
-    _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -57,6 +52,10 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
 TEST_TEMP_DIR = "TEST_TEMP_DIR"
 TEST_USER_DIR = "test-user"
+TEST_CONNECTION_STRING = (
+    "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+    "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -75,7 +74,7 @@ def clean_folder(folder):
                     os.unlink(file_path)
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-exception-caught
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
@@ -122,7 +121,7 @@ class TestBaseExporter(unittest.TestCase):
         """Test the constructor."""
         base = BaseExporter(
             api_version="2021-02-10_Preview",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            connection_string=TEST_CONNECTION_STRING,
             disable_offline_storage=False,
             distro_version="1.0.0",
             storage_maintenance_period=30,
@@ -154,7 +153,7 @@ class TestBaseExporter(unittest.TestCase):
         mock_get_temp_dir.return_value = TEST_TEMP_DIR
         base = BaseExporter(
             api_version="2021-02-10_Preview",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            connection_string=TEST_CONNECTION_STRING,
             disable_offline_storage=False,
             distro_version="1.0.0",
             storage_maintenance_period=30,
@@ -182,11 +181,11 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_directory, storage_directory)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
-    def test_constructor_no_storage_directory_and_invalid_instrumentation_key(self, mock_get_temp_dir):
+    def test_constructor_no_storage_directory_and_invalid_instrumentation_key(self, mock_get_temp_dir): # pylint: disable=name-too-long
         mock_get_temp_dir.return_value = TEST_TEMP_DIR
         base = BaseExporter(
             api_version="2021-02-10_Preview",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            connection_string=TEST_CONNECTION_STRING,
             disable_offline_storage=False,
             distro_version="1.0.0",
             storage_maintenance_period=30,
@@ -215,12 +214,12 @@ class TestBaseExporter(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.getpass.getuser")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
-    def test_constructor_no_storage_directory_and_invalid_user_details(self, mock_get_temp_dir, mock_get_user):
+    def test_constructor_no_storage_directory_and_invalid_user_details(self, mock_get_temp_dir, mock_get_user): # pylint: disable=name-too-long
         mock_get_temp_dir.return_value = TEST_TEMP_DIR
         mock_get_user.side_effect = OSError("failed to resolve user")
         base = BaseExporter(
             api_version="2021-02-10_Preview",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            connection_string=TEST_CONNECTION_STRING,
             disable_offline_storage=False,
             distro_version="1.0.0",
             storage_maintenance_period=30,
@@ -253,7 +252,7 @@ class TestBaseExporter(unittest.TestCase):
         mock_get_temp_dir.side_effect = Exception()
         base = BaseExporter(
             api_version="2021-02-10_Preview",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            connection_string=TEST_CONNECTION_STRING,
             disable_offline_storage=True,
             distro_version="1.0.0",
             storage_maintenance_period=30,
@@ -279,11 +278,11 @@ class TestBaseExporter(unittest.TestCase):
         mock_get_temp_dir.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
-    def test_constructor_disable_offline_storage_with_storage_directory(self, mock_get_temp_dir):
+    def test_constructor_disable_offline_storage_with_storage_directory(self, mock_get_temp_dir): # pylint: disable=name-too-long
         mock_get_temp_dir.side_effect = Exception()
         base = BaseExporter(
             api_version="2021-02-10_Preview",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            connection_string=TEST_CONNECTION_STRING,
             disable_offline_storage=True,
             distro_version="1.0.0",
             storage_maintenance_period=30,
@@ -369,7 +368,7 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_not_called()
 
-    def test_transmit_from_storage_blob_get_returns_none(self):
+    def test_transmit_from_storage_blob_get_returns_none(self): # pylint: disable=name-too-long
         """Test that when blob.get() returns None, it's handled properly without TypeError."""
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
@@ -392,6 +391,7 @@ class TestBaseExporter(unittest.TestCase):
         transmit_mock.assert_not_called()  # No transmission should occur
 
     def test_format_storage_telemetry_item(self):
+        # pylint: disable=too-many-statements
         time = datetime.now()
         base = MonitorBase(base_type="", base_data=None)
         ti = TelemetryItem(
@@ -561,7 +561,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(format_ti.data.base_type, "RequestData")
         self.assertEqual(req_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
 
-    def test_handle_transmit_from_storage_success_result(self):
+    def test_handle_transmit_from_storage_success_result(self): # pylint: disable=name-too-long
         """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
         the method continues without any special handling."""
         exporter = BaseExporter(disable_offline_storage=False)
@@ -577,7 +577,7 @@ class TestBaseExporter(unittest.TestCase):
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
 
-    def test_handle_transmit_from_storage_success_triggers_transmit(self):
+    def test_handle_transmit_from_storage_success_triggers_transmit(self): # pylint: disable=name-too-long
         exporter = BaseExporter(disable_offline_storage=False)
 
         with mock.patch.object(exporter, "_transmit_from_storage") as mock_transmit_from_storage:
@@ -587,7 +587,7 @@ class TestBaseExporter(unittest.TestCase):
 
             mock_transmit_from_storage.assert_called_once()
 
-    def test_handle_transmit_from_storage_no_storage(self):
+    def test_handle_transmit_from_storage_no_storage(self): # pylint: disable=name-too-long
         exporter = BaseExporter(disable_offline_storage=True)
 
         self.assertIsNone(exporter.storage)
@@ -639,7 +639,7 @@ class TestBaseExporter(unittest.TestCase):
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
 
-    def test_transmit_http_error_redirect_missing_headers(self):
+    def test_transmit_http_error_redirect_missing_headers(self): # pylint: disable=name-too-long
         response = HttpResponse(None, None)
         response.status_code = 307
         response.headers = None
@@ -652,7 +652,7 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(post.call_count, 1)
             self.assertEqual(self._base.client._config.host, prev_host)
 
-    def test_transmit_http_error_redirect_invalid_location_header(self):
+    def test_transmit_http_error_redirect_invalid_location_header(self): # pylint: disable=name-too-long
         response = HttpResponse(None, None)
         response.status_code = 307
         response.headers = {"location": "123"}
@@ -825,7 +825,7 @@ class TestBaseExporter(unittest.TestCase):
         },
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
-    def test_transmit_request_exception_statsbeat(self, stats_mock):
+    def test_transmit_request_exception_statsbeat(self, stats_mock): # pylint: disable=name-too-long
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
             result = exporter._transmit(self._envelopes_to_export)
@@ -1168,7 +1168,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_get_auth_policy_invalid_credential(self):
         class InvalidTestCredential:
-            def invalid_get_token():
+            def invalid_get_token(self):
                 return "TEST_TOKEN"
 
         self.assertRaises(
@@ -1177,7 +1177,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_get_auth_policy_audience(self):
         class TestCredential:
-            def get_token():
+            def get_token(self):
                 return "TEST_TOKEN"
 
         credential = TestCredential()
@@ -1196,7 +1196,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_system_assigned(self, mock_managed_identity, mock_logger):
+    def test_get_authentication_credential_system_assigned(self, mock_managed_identity, mock_logger): # pylint: disable=name-too-long
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
@@ -1209,8 +1209,8 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_client_id(self, mock_managed_identity, mock_logger):
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
+    def test_get_authentication_credential_client_id(self, mock_managed_identity, mock_logger): # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
         mock_logger.assert_not_called()
@@ -1222,7 +1222,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_malformed(self, mock_managed_identity, mock_logger):
+    def test_get_authentication_credential_malformed(self, mock_managed_identity, mock_logger): # pylint: disable=name-too-long
         # Even a single malformed pair means Entra ID auth is skipped.
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
@@ -1233,8 +1233,8 @@ class TestBaseExporter(unittest.TestCase):
 
     @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "ClientId=TEST_CLIENT_ID"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_no_auth(self, mock_managed_identity):
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
+    def test_get_authentication_credential_no_auth(self, mock_managed_identity): # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
         self.assertIsNone(result)
@@ -1244,8 +1244,8 @@ class TestBaseExporter(unittest.TestCase):
         "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=foobar;ClientId=TEST_CLIENT_ID"}
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_no_aad(self, mock_managed_identity):
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
+    def test_get_authentication_credential_no_aad(self, mock_managed_identity): # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
         self.assertIsNone(result)
@@ -1255,8 +1255,8 @@ class TestBaseExporter(unittest.TestCase):
         "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"}
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_error(self, mock_managed_identity):
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
+    def test_get_authentication_credential_error(self, mock_managed_identity): # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         mock_managed_identity.side_effect = ValueError("TEST ERROR")
         result = _get_authentication_credential(foo="bar")
@@ -1283,10 +1283,10 @@ def validate_telemetry_item(item1, item2):
 
 
 class MockResponse:
-    def __init__(self, status_code, text, headers={}, reason="test", content="{}"):
+    def __init__(self, status_code, text, headers=None, reason="test", content="{}"):
         self.status_code = status_code
         self.text = text
-        self.headers = headers
+        self.headers = headers or {}
         self.reason = reason
         self.content = content
         self.raw = MockRaw()

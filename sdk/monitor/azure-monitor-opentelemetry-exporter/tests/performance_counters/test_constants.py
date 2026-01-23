@@ -86,7 +86,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
         self.assertEqual(_PROCESSOR_TIME[0], "azuremonitor.performancecounter.processortotalprocessortime")
         self.assertEqual(_PROCESSOR_TIME[1], "\\Processor(_Total)\\% Processor Time")
 
-    def test_performance_counter_metric_name_mappings(self):
+    def test_performance_counter_metric_name_mappings(self):  # pylint: disable=name-too-long
         """Test the performance counter metric name mappings dictionary."""
         expected_mappings = [
             _AVAILABLE_MEMORY,
@@ -108,7 +108,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
             self.assertIn(otel_name, _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS)
             self.assertEqual(_PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS[otel_name], quickpulse_name)
 
-    def test_all_constants_are_tuples_with_two_elements(self):
+    def test_all_constants_are_tuples_with_two_elements(self):  # pylint: disable=name-too-long
         """Test that all metric constants are tuples with exactly two elements."""
         constants = [
             _AVAILABLE_MEMORY,
@@ -129,7 +129,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
                 self.assertIsInstance(constant[0], str)
                 self.assertIsInstance(constant[1], str)
 
-    def test_opentelemetry_metric_names_are_unique(self):
+    def test_opentelemetry_metric_names_are_unique(self): # pylint: disable=name-too-long
         """Test that all OpenTelemetry metric names are unique."""
         constants = [
             _AVAILABLE_MEMORY,
@@ -148,13 +148,14 @@ class TestPerformanceCounterConstants(unittest.TestCase):
 
         self.assertEqual(len(otel_names), len(unique_names), "Duplicate OpenTelemetry metric names found")
 
-    def test_quickpulse_perf_counters_unique_otel(self):
+    def test_quickpulse_perf_counters_unique_otel(self): # pylint: disable=name-too-long
         """Test that all Quickpulse and Performance Counters metric names are unique."""
-        # Note that the breeze names of Performance Counters and Quickpulse may overlap as they are sent to different endpoints
+        # Note that the breeze names of Performance Counters and Quickpulse may overlap
+        # as they are sent to different endpoints
         for perf_counter_otel in _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS:
             self.assertNotIn(perf_counter_otel, _QUICKPULSE_METRIC_NAME_MAPPINGS)
 
-    def test_opentelemetry_metric_names_follow_convention(self):
+    def test_opentelemetry_metric_names_follow_convention(self): # pylint: disable=name-too-long
         """Test that all OpenTelemetry metric names follow the expected convention."""
         constants = [
             _AVAILABLE_MEMORY,
@@ -180,7 +181,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
                 # Check that it doesn't end with the prefix (i.e., has additional content)
                 self.assertGreater(len(otel_name), len(expected_prefix), f"Metric name '{otel_name}' is too short")
 
-    def test_quickpulse_metric_names_follow_convention(self):
+    def test_quickpulse_metric_names_follow_convention(self): # pylint: disable=name-too-long
         """Test that all Quickpulse metric names follow the expected Windows performance counter convention."""
         constants = [
             _AVAILABLE_MEMORY,

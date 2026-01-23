@@ -439,7 +439,7 @@ class BaseExporter:
 
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
-                    if exc_type is None or isinstance(exc_type, type(None)):
+                    if exc_type is None or exc_type is type(None): # pylint: disable=unidiomatic-typecheck
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE

@@ -3,10 +3,10 @@
 import json
 import os
 import platform
-import requests
 import sys
 import unittest
 from unittest import mock
+import requests # pylint: disable=networking-import-outside-azure-core-transport
 
 from opentelemetry.sdk.metrics import Meter, MeterProvider, ObservableGauge
 
@@ -49,14 +49,14 @@ def throw(exc_type, *args, **kwargs):
 
 
 # cSpell:disable
-
+# pylint: disable=protected-access
 _StatsbeatMetrics_COMMON_ATTRS = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
 _StatsbeatMetrics_NETWORK_ATTRS = dict(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
 _StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
 _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-public-methods
 class TestStatsbeatMetrics(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -127,7 +127,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(metric._feature_metric.name, _FEATURE_METRIC_NAME[0])
 
     @mock.patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled")
-    def test_statsbeat_metric_init_attach_enabled(self, attach_mock):
+    def test_statsbeat_metric_init_attach_enabled(self, attach_mock): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -180,7 +180,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]], 0)
 
     # pylint: disable=protected-access
-    def test_get_attach_metric_does_not_meet_threshold(self):
+    def test_get_attach_metric_does_not_meet_threshold(self): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -206,10 +206,10 @@ class TestStatsbeatMetrics(unittest.TestCase):
         },
     )
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata",
+        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata", # pylint: disable=line-too-long
         return_value=False,
     )
-    def test_get_attach_metric_appsvc(self, metadata_mock):
+    def test_get_attach_metric_appsvc(self, _metadata_mock):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.APP_SERVICE.value
@@ -231,10 +231,10 @@ class TestStatsbeatMetrics(unittest.TestCase):
         },
     )
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata",
+        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata", # pylint: disable=line-too-long
         return_value=False,
     )
-    def test_get_attach_metric_functions(self, metadata_mock):
+    def test_get_attach_metric_functions(self, _metadata_mock):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.FUNCTIONS.value
@@ -283,7 +283,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
 
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata"
+        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata", # pylint: disable=line-too-long
     )
     def test_get_attach_metric_vm(self, metadata_mock):
         mp = MeterProvider()
@@ -318,7 +318,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], "test_os")
 
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata",
+        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata", # pylint: disable=line-too-long
         return_value=False,
     )
     def test_get_attach_metric_vm_no_os(self, metadata_mock):
@@ -406,7 +406,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(len(metric._vm_data), 0)
             self.assertFalse(metric._vm_retry)
 
-    def test_get_azure_compute_metadata_not_vm_timeout(self):
+    def test_get_azure_compute_metadata_not_vm_timeout(self): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -461,7 +461,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]], 0)
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_does_not_meet_threshold(self):
+    def test_get_feature_metric_does_not_meet_threshold(self): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -556,7 +556,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.attributes, attributes)
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_custom_events_runtime(self):
+    def test_get_feature_metric_custom_events_runtime(self): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -610,7 +610,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.attributes, attributes)
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_live_metrics_runtime(self):
+    def test_get_feature_metric_live_metrics_runtime(self): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -641,7 +641,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_customer_sdkstats_feature_set"
     )
-    def test_get_feature_metric_customer_sdkstats(self, feature_mock):
+    def test_get_feature_metric_customer_sdkstats(self, feature_mock): # pylint: disable=name-too-long
         feature_mock.return_value = True
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
@@ -664,7 +664,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.attributes, attributes)
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_customer_sdkstats_runtime(self):
+    def test_get_feature_metric_customer_sdkstats_runtime(self): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -734,7 +734,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], 1026)
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_instrumentation_none(self):
+    def test_get_feature_metric_instrumentation_none(self): # pylint: disable=name-too-long
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"

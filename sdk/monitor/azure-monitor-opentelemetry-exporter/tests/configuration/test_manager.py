@@ -13,13 +13,11 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import OneSettin
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_PYTHON_KEY,
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
-    _RETRYABLE_STATUS_CODES,
 )
 
-
+# pylint: disable=protected-access, docstring-missing-param
 class TestConfigurationState(unittest.TestCase):
     """Test cases for _ConfigurationState immutable data class."""
 
@@ -137,7 +135,7 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_get_configuration_basic_success(self, mock_worker_class, mock_request):
+    def test_get_configuration_basic_success(self, _mock_worker_class, mock_request):
         """Test basic successful configuration retrieval without CONFIG fetch."""
         # Setup - Use version -1 to match initial state, no CONFIG fetch
         mock_response = OneSettingsResponse(
@@ -166,7 +164,7 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_etag_headers_included(self, mock_worker_class, mock_request):
+    def test_etag_headers_included(self, _mock_worker_class, mock_request):
         """Test that etag is included in request headers."""
         # Setup - first call sets etag
         mock_response1 = OneSettingsResponse(etag="test-etag", refresh_interval=1800, status_code=200)
@@ -192,7 +190,7 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_version_increase_triggers_config_fetch(self, mock_worker_class, mock_request):
+    def test_version_increase_triggers_config_fetch(self, _mock_worker_class, mock_request): #pylint: disable=name-too-long
         """Test that version increase triggers CONFIG endpoint fetch."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -204,10 +202,10 @@ class TestConfigurationManager(unittest.TestCase):
         config_response = OneSettingsResponse(settings={"key": "config_value"}, version=5, status_code=200)
 
         # Configure mock to return different responses for different URLs
-        def mock_request_side_effect(url, query_dict, headers=None):
+        def mock_request_side_effect(url, _query_dict, _headers=None):
             if url == _ONE_SETTINGS_CHANGE_URL:
                 return change_response
-            elif url == _ONE_SETTINGS_CONFIG_URL:
+            if url == _ONE_SETTINGS_CONFIG_URL:
                 return config_response
             return OneSettingsResponse()
 
@@ -234,7 +232,7 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_version_same_no_config_fetch(self, mock_worker_class, mock_request):
+    def test_version_same_no_config_fetch(self, _mock_worker_class, mock_request):
         """Test that same version does not trigger CONFIG fetch."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -259,7 +257,7 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     @patch("azure.monitor.opentelemetry.exporter._configuration.logger")
-    def test_version_decrease_warning(self, mock_logger, mock_worker_class, mock_request):
+    def test_version_decrease_warning(self, mock_logger, _mock_worker_class, mock_request):
         """Test warning when version decreases."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -294,7 +292,7 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_304_not_modified_response(self, mock_worker_class, mock_request):
+    def test_304_not_modified_response(self, _mock_worker_class, mock_request):
         """Test handling of 304 Not Modified response."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -305,10 +303,10 @@ class TestConfigurationManager(unittest.TestCase):
         )
         config_response = OneSettingsResponse(settings={"key": "config_value"}, version=2, status_code=200)
 
-        def first_call_side_effect(url, query_dict, headers=None):
+        def first_call_side_effect(url, _query_dict, _header=None):
             if url == _ONE_SETTINGS_CHANGE_URL:
                 return first_response
-            elif url == _ONE_SETTINGS_CONFIG_URL:
+            if url == _ONE_SETTINGS_CONFIG_URL:
                 return config_response
             return OneSettingsResponse()
 
@@ -341,7 +339,7 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     @patch("azure.monitor.opentelemetry.exporter._configuration.logger")
-    def test_transient_error_timeout(self, mock_logger, mock_worker_class, mock_request):
+    def test_transient_error_timeout(self, mock_logger, _mock_worker_class, mock_request):
         """Test transient error handling for timeout."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -375,7 +373,7 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     @patch("azure.monitor.opentelemetry.exporter._configuration.logger")
-    def test_transient_error_network_exception(self, mock_logger, mock_worker_class, mock_request):
+    def test_transient_error_network_exception(self, mock_logger, _mock_worker_class, mock_request):
         """Test transient error handling for network exception."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -402,7 +400,7 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     @patch("azure.monitor.opentelemetry.exporter._configuration.logger")
-    def test_transient_error_http_status_codes(self, mock_logger, mock_worker_class, mock_request):
+    def test_transient_error_http_status_codes(self, mock_logger, _mock_worker_class, mock_request):
         """Test transient error handling for various HTTP status codes."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -440,7 +438,7 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     @patch("azure.monitor.opentelemetry.exporter._configuration.logger")
-    def test_transient_error_refresh_interval_cap(self, mock_logger, mock_worker_class, mock_request):
+    def test_transient_error_refresh_interval_cap(self, mock_logger, _mock_worker_class, mock_request): # pylint: disable=name-too-long
         """Test that refresh interval is capped at 24 hours for transient errors."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -468,7 +466,7 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_non_transient_error_no_backoff(self, mock_worker_class, mock_request):
+    def test_non_transient_error_no_backoff(self, _mock_worker_class, mock_request):
         """Test that non-transient errors don't trigger backoff."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -496,7 +494,7 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_successful_request_after_transient_error(self, mock_worker_class, mock_request):
+    def test_successful_request_after_transient_error(self, _mock_worker_class, mock_request): # pylint: disable=name-too-long
         """Test that successful requests don't double refresh interval."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -535,7 +533,7 @@ class TestConfigurationManager(unittest.TestCase):
         self.assertIsNotNone(manager)
         self.assertIsInstance(manager, _ConfigurationManager)
 
-    def test_configuration_manager_enabled_by_default(self):
+    def test_configuration_manager_enabled_by_default(self): # pylint: disable=name-too-long
         """Test that configuration manager is enabled by default when no environment variable is set."""
 
         # Ensure env var is not set

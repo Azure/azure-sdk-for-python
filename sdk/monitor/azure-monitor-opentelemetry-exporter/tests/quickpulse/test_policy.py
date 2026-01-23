@@ -6,14 +6,16 @@ from unittest import mock
 
 from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 
-
+# pylint: disable=protected-access
 class TestQuickpulseRedirectPolicy(unittest.TestCase):
     def test_get_redirect_location(self):
         policy = _QuickpulseRedirectPolicy()
         pipeline_resp_mock = mock.Mock()
         http_resp_mock = mock.Mock()
         headers = {
-            "x-ms-qps-service-endpoint-redirect-v2": "https://eastus.livediagnostics.monitor.azure.com/QuickPulseService.svc"
+            "x-ms-qps-service-endpoint-redirect-v2": (
+                "https://eastus.livediagnostics.monitor.azure.com/QuickPulseService.svc"
+            )
         }
         http_resp_mock.headers = headers
         pipeline_resp_mock.http_response = http_resp_mock
@@ -43,7 +45,6 @@ class TestQuickpulseRedirectPolicy(unittest.TestCase):
         pipeline_resp_mock.http_response = http_resp_mock
         policy = _QuickpulseRedirectPolicy()
         self.assertIsNone(policy.get_redirect_location(pipeline_resp_mock))
-        redirect_location = policy.get_redirect_location(pipeline_resp_mock)
 
     def test_get_redirect_location_invalid_url(self):
         policy = _QuickpulseRedirectPolicy()
@@ -68,7 +69,9 @@ class TestQuickpulseRedirectPolicy(unittest.TestCase):
         pipeline_resp_mock = mock.Mock()
         http_resp_mock = mock.Mock()
         headers = {
-            "x-ms-qps-service-endpoint-redirect-v2": "https://eastus.livediagnostics.monitor.azure.com/QuickPulseService.svc"
+            "x-ms-qps-service-endpoint-redirect-v2": (
+                "https://eastus.livediagnostics.monitor.azure.com/QuickPulseService.svc"
+            )
         }
         http_resp_mock.headers = headers
         pipeline_resp_mock.http_response = http_resp_mock

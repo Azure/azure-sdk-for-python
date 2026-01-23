@@ -4,8 +4,7 @@
 import os
 import threading
 import unittest
-from unittest import mock
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
@@ -20,11 +19,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._manager import (
     CustomerSdkStatsStatus,
     _CustomerSdkStatsTelemetryCounters,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
-    get_customer_stats_manager,
-)
 
-
+# pylint: disable=protected-access, docstring-missing-param
+# pylint: disable=too-many-public-methods
 class TestCustomerSdkStatsManager(unittest.TestCase):
     """Test suite for CustomerSdkStatsManager."""
 
@@ -48,7 +45,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         # Shutdown manager if needed
         try:
             self.manager.shutdown()
-        except:
+        except: # pylint: disable=bare-except
             pass
 
         # Reset singleton state - only clear CustomerSdkStatsManager instances
@@ -270,7 +267,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             self.assertEqual(self.manager._counters.total_item_success_count[_REQUEST], 7)
             self.assertEqual(self.manager._counters.total_item_success_count[_CUSTOM_EVENT], 3)
 
-    def test_count_successful_items_uninitialized(self):
+    def test_count_successful_items_uninitialized(self): # pylint: disable=name-too-long
         """Test that counting successful items does nothing when not initialized."""
         self.manager.count_successful_items(5, _REQUEST)
 
@@ -392,7 +389,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
 
             # Define a function to run in threads
             def count_items():
-                for i in range(100):
+                for _ in range(100):
                     self.manager.count_successful_items(1, _REQUEST)
                     self.manager.count_dropped_items(1, _REQUEST, DropCode.UNKNOWN, True)
                     self.manager.count_retry_items(1, _REQUEST, RetryCode.CLIENT_TIMEOUT)

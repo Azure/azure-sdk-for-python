@@ -40,9 +40,8 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
-# pylint: disable=import-error
-# pylint: disable=protected-access
-# pylint: disable=too-many-lines
+# pylint: disable=import-error, disable=protected-access
+# pylint: disable=too-many-lines, too-many-public-methods
 class TestAzureMetricExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -280,7 +279,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_point_to_envelope_aks_amw(self, attach_mock, aks_mock):
+    def test_point_to_envelope_aks_amw(self, _attach_mock, _aks_mock):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
@@ -300,7 +299,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_point_to_envelope_statsbeat(self, attach_mock, aks_mock):
+    def test_point_to_envelope_statsbeat(self, _attach_mock, _aks_mock):
         exporter = AzureMonitorMetricExporter(
             is_sdkstats=True,
         )
@@ -320,7 +319,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_point_to_envelope_otlp_no_aks(self, attach_mock, aks_mock):
+    def test_point_to_envelope_otlp_no_aks(self, _attach_mock, _aks_mock):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         point = self._histogram_data_point
@@ -339,7 +338,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False
     )
-    def test_point_to_envelope_otlp_aks_no_attach(self, attach_mock, aks_mock):
+    def test_point_to_envelope_otlp_aks_no_attach(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         point = self._histogram_data_point
@@ -358,7 +357,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_point_to_envelope_aks_attach_no_otlp(self, attach_mock, aks_mock):
+    def test_point_to_envelope_aks_attach_no_otlp(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
@@ -377,7 +376,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_point_to_envelope_aks_attach_no_endpoint(self, attach_mock, aks_mock):
+    def test_point_to_envelope_aks_attach_no_endpoint(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         point = self._histogram_data_point
@@ -409,7 +408,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
-    def test_point_to_envelope_number_log_analytics_disabled(self):
+    def test_point_to_envelope_number_log_analytics_disabled(self): # pylint: disable=name-too-long
         exporter = self._exporter_log_analytics_disabled
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
@@ -417,7 +416,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertIsNone(envelope)
 
-    def test_point_to_envelope_histogram_log_analytics_disabled(self):
+    def test_point_to_envelope_histogram_log_analytics_disabled(self): # pylint: disable=name-too-long
         exporter = self._exporter_log_analytics_disabled
         resource = Resource.create(attributes={"asd": "test_resource"})
         point = self._histogram_data_point
@@ -425,7 +424,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertIsNone(envelope)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_target_and_path_for_http_dependency")
-    def test_point_to_envelope_std_metric_client_duration(self, target_mock):
+    def test_point_to_envelope_std_metric_client_duration(self, target_mock): # pylint: disable=name-too-long, too-many-statements
         exporter = self._exporter
         resource = Resource(
             {
@@ -501,7 +500,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.client.request.duration")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
-    def test_point_to_envelope_std_metric_server_duration(self):
+    def test_point_to_envelope_std_metric_server_duration(self): # pylint: disable=name-too-long, too-many-statements
         exporter = self._exporter
         resource = Resource(
             {
@@ -577,7 +576,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.server.request.duration")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
-    def test_point_to_envelope_std_metric_unsupported(self):
+    def test_point_to_envelope_std_metric_unsupported(self): # pylint: disable=name-too-long
         exporter = self._exporter
         resource = Resource(
             {
@@ -600,7 +599,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertIsNone(envelope)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_target_and_path_for_http_dependency")
-    def test_point_to_envelope_std_metric_client_duration_log_analytics_disabled(self, target_mock):
+    def test_point_to_envelope_std_metric_client_duration_log_analytics_disabled(self, target_mock): # pylint: disable=name-too-long, too-many-statements
         exporter = self._exporter_log_analytics_disabled
         resource = Resource(
             {
@@ -674,7 +673,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.client.request.duration")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
-    def test_point_to_envelope_std_metric_server_duration_log_analytics_disabled(self):
+    def test_point_to_envelope_std_metric_server_duration_log_analytics_disabled(self): # pylint: disable=name-too-long, too-many-statements
         exporter = self._exporter_log_analytics_disabled
         resource = Resource(
             {
@@ -748,7 +747,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.server.request.duration")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
-    def test_point_to_envelope_std_metric_unsupported_log_analytics_disabled(self):
+    def test_point_to_envelope_std_metric_unsupported_log_analytics_disabled(self): # pylint: disable=name-too-long
         exporter = self._exporter_log_analytics_disabled
         resource = Resource(
             {
@@ -770,7 +769,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
         self.assertIsNone(envelope)
 
-    def test_point_to_envelope_std_metric_log_analytics_disabled(self):
+    def test_point_to_envelope_std_metric_log_analytics_disabled(self): # pylint: disable=name-too-long
         exporter = self._exporter
         resource = Resource(
             {
@@ -796,7 +795,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_enabled_default_aks(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_enabled_default_aks(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
@@ -804,7 +803,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_enabled_default_off_aks(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_enabled_default_off_aks(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
@@ -813,7 +812,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_enabled_env_var(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_enabled_env_var(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
@@ -822,7 +821,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_disabled_env_var_off_aks(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_disabled_env_var_off_aks(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         # APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED is currently only specified for AKS Attach
         self.assertTrue(exporter._metrics_to_log_analytics)
@@ -832,7 +831,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False
     )
-    def test_constructor_log_analytics_disabled_env_var_manual_aks(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_disabled_env_var_manual_aks(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         # APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED is currently only specified for AKS Attach
         self.assertTrue(exporter._metrics_to_log_analytics)
@@ -842,7 +841,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_disabled_env_var(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_disabled_env_var(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         self.assertFalse(exporter._metrics_to_log_analytics)
 
@@ -851,7 +850,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_statsbeat(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_statsbeat(self, _attach_mock, _aks_mock):
         exporter = AzureMonitorMetricExporter(
             is_sdkstats=True,
         )
@@ -862,7 +861,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_invalid_env_var(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_invalid_env_var(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
@@ -871,7 +870,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
     )
-    def test_constructor_log_analytics_blank_env_var(self, attach_mock, aks_mock):
+    def test_constructor_log_analytics_blank_env_var(self, _attach_mock, _aks_mock): # pylint: disable=name-too-long
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
