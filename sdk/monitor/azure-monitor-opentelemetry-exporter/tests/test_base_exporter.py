@@ -8,7 +8,7 @@ from unittest import mock
 from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.core.pipeline.transport import HttpResponse # pylint: disable=no-legacy-azure-core-http-response-import
+from azure.core.pipeline.transport import HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.monitor.opentelemetry.exporter.export._base import (
     _MONITOR_DOMAIN_MAPPING,
     _format_storage_telemetry_item,
@@ -74,7 +74,7 @@ def clean_folder(folder):
                     os.unlink(file_path)
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
-            except Exception as e: # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
@@ -181,7 +181,9 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_directory, storage_directory)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
-    def test_constructor_no_storage_directory_and_invalid_instrumentation_key(self, mock_get_temp_dir): # pylint: disable=name-too-long
+    def test_constructor_no_storage_directory_and_invalid_instrumentation_key(
+        self, mock_get_temp_dir
+    ):  # pylint: disable=name-too-long
         mock_get_temp_dir.return_value = TEST_TEMP_DIR
         base = BaseExporter(
             api_version="2021-02-10_Preview",
@@ -214,7 +216,9 @@ class TestBaseExporter(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.getpass.getuser")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
-    def test_constructor_no_storage_directory_and_invalid_user_details(self, mock_get_temp_dir, mock_get_user): # pylint: disable=name-too-long
+    def test_constructor_no_storage_directory_and_invalid_user_details(
+        self, mock_get_temp_dir, mock_get_user
+    ):  # pylint: disable=name-too-long
         mock_get_temp_dir.return_value = TEST_TEMP_DIR
         mock_get_user.side_effect = OSError("failed to resolve user")
         base = BaseExporter(
@@ -278,7 +282,9 @@ class TestBaseExporter(unittest.TestCase):
         mock_get_temp_dir.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
-    def test_constructor_disable_offline_storage_with_storage_directory(self, mock_get_temp_dir): # pylint: disable=name-too-long
+    def test_constructor_disable_offline_storage_with_storage_directory(
+        self, mock_get_temp_dir
+    ):  # pylint: disable=name-too-long
         mock_get_temp_dir.side_effect = Exception()
         base = BaseExporter(
             api_version="2021-02-10_Preview",
@@ -368,7 +374,7 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_not_called()
 
-    def test_transmit_from_storage_blob_get_returns_none(self): # pylint: disable=name-too-long
+    def test_transmit_from_storage_blob_get_returns_none(self):  # pylint: disable=name-too-long
         """Test that when blob.get() returns None, it's handled properly without TypeError."""
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
@@ -561,7 +567,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(format_ti.data.base_type, "RequestData")
         self.assertEqual(req_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
 
-    def test_handle_transmit_from_storage_success_result(self): # pylint: disable=name-too-long
+    def test_handle_transmit_from_storage_success_result(self):  # pylint: disable=name-too-long
         """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
         the method continues without any special handling."""
         exporter = BaseExporter(disable_offline_storage=False)
@@ -577,7 +583,7 @@ class TestBaseExporter(unittest.TestCase):
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
 
-    def test_handle_transmit_from_storage_success_triggers_transmit(self): # pylint: disable=name-too-long
+    def test_handle_transmit_from_storage_success_triggers_transmit(self):  # pylint: disable=name-too-long
         exporter = BaseExporter(disable_offline_storage=False)
 
         with mock.patch.object(exporter, "_transmit_from_storage") as mock_transmit_from_storage:
@@ -587,7 +593,7 @@ class TestBaseExporter(unittest.TestCase):
 
             mock_transmit_from_storage.assert_called_once()
 
-    def test_handle_transmit_from_storage_no_storage(self): # pylint: disable=name-too-long
+    def test_handle_transmit_from_storage_no_storage(self):  # pylint: disable=name-too-long
         exporter = BaseExporter(disable_offline_storage=True)
 
         self.assertIsNone(exporter.storage)
@@ -639,7 +645,7 @@ class TestBaseExporter(unittest.TestCase):
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
 
-    def test_transmit_http_error_redirect_missing_headers(self): # pylint: disable=name-too-long
+    def test_transmit_http_error_redirect_missing_headers(self):  # pylint: disable=name-too-long
         response = HttpResponse(None, None)
         response.status_code = 307
         response.headers = None
@@ -652,7 +658,7 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(post.call_count, 1)
             self.assertEqual(self._base.client._config.host, prev_host)
 
-    def test_transmit_http_error_redirect_invalid_location_header(self): # pylint: disable=name-too-long
+    def test_transmit_http_error_redirect_invalid_location_header(self):  # pylint: disable=name-too-long
         response = HttpResponse(None, None)
         response.status_code = 307
         response.headers = {"location": "123"}
@@ -825,7 +831,7 @@ class TestBaseExporter(unittest.TestCase):
         },
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
-    def test_transmit_request_exception_statsbeat(self, stats_mock): # pylint: disable=name-too-long
+    def test_transmit_request_exception_statsbeat(self, stats_mock):  # pylint: disable=name-too-long
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
             result = exporter._transmit(self._envelopes_to_export)
@@ -1196,7 +1202,9 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_system_assigned(self, mock_managed_identity, mock_logger): # pylint: disable=name-too-long
+    def test_get_authentication_credential_system_assigned(
+        self, mock_managed_identity, mock_logger
+    ):  # pylint: disable=name-too-long
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
@@ -1209,8 +1217,12 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_client_id(self, mock_managed_identity, mock_logger): # pylint: disable=name-too-long
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
+    def test_get_authentication_credential_client_id(
+        self, mock_managed_identity, mock_logger
+    ):  # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (
+            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"  # pylint: disable=name-too-long
+        )
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
         mock_logger.assert_not_called()
@@ -1222,7 +1234,9 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_malformed(self, mock_managed_identity, mock_logger): # pylint: disable=name-too-long
+    def test_get_authentication_credential_malformed(
+        self, mock_managed_identity, mock_logger
+    ):  # pylint: disable=name-too-long
         # Even a single malformed pair means Entra ID auth is skipped.
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
@@ -1233,8 +1247,10 @@ class TestBaseExporter(unittest.TestCase):
 
     @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "ClientId=TEST_CLIENT_ID"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_no_auth(self, mock_managed_identity): # pylint: disable=name-too-long
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
+    def test_get_authentication_credential_no_auth(self, mock_managed_identity):  # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (
+            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"  # pylint: disable=name-too-long
+        )
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
         self.assertIsNone(result)
@@ -1244,8 +1260,10 @@ class TestBaseExporter(unittest.TestCase):
         "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=foobar;ClientId=TEST_CLIENT_ID"}
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_no_aad(self, mock_managed_identity): # pylint: disable=name-too-long
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
+    def test_get_authentication_credential_no_aad(self, mock_managed_identity):  # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (
+            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"  # pylint: disable=name-too-long
+        )
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
         self.assertIsNone(result)
@@ -1255,8 +1273,10 @@ class TestBaseExporter(unittest.TestCase):
         "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"}
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_error(self, mock_managed_identity): # pylint: disable=name-too-long
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL" # pylint: disable=name-too-long
+    def test_get_authentication_credential_error(self, mock_managed_identity):  # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (
+            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"  # pylint: disable=name-too-long
+        )
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         mock_managed_identity.side_effect = ValueError("TEST ERROR")
         result = _get_authentication_credential(foo="bar")

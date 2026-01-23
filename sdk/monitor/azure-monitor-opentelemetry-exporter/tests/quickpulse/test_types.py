@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _TelemetryData,
 )
 
+
 # pylint: disable=protected-access
 class TestTelemetryData(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._RequestData")

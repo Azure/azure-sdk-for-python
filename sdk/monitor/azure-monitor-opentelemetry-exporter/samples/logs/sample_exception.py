@@ -35,7 +35,7 @@ try:
     val = 1 / 0
     print(val)
 except ZeroDivisionError:
-    logger.exception("Error: Division by zero") # pylint: disable=do-not-use-logging-exception
+    logger.exception("Error: Division by zero")  # pylint: disable=do-not-use-logging-exception
 
 try:
     val = 1 / 0

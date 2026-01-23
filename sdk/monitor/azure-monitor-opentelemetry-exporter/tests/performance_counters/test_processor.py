@@ -17,8 +17,9 @@ from azure.monitor.opentelemetry.exporter._performance_counters._manager import 
 )
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
+
 # pylint: disable=protected-access, docstring-missing-param
-class TestPerformanceCountersLogRecordProcessor(unittest.TestCase): # pylint: disable=name-too-long
+class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):  # pylint: disable=name-too-long
     """Test performance counters log record processor."""
 
     def setUp(self):

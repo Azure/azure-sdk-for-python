@@ -41,6 +41,7 @@ def throw(exc_type, *args, **kwargs):
 
     return func
 
+
 # pylint: disable=protected-access
 class TestQuickpulse(unittest.TestCase):
     @classmethod
@@ -291,7 +292,7 @@ class TestQuickpulse(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter._ping")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
-    def test_quickpulsereader_ticker_ping_false_backoff(self, task_mock, ping_mock): # pylint: disable=name-too-long
+    def test_quickpulsereader_ticker_ping_false_backoff(self, task_mock, ping_mock):  # pylint: disable=name-too-long
         task_inst_mock = mock.Mock()
         task_mock.return_value = task_inst_mock
         reader = _QuickpulseMetricReader(
@@ -311,7 +312,7 @@ class TestQuickpulse(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter._ping")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
-    def test_ticker_erroneous_no_response_backoff(self, task_mock, ping_mock): # pylint: disable=name-too-long
+    def test_ticker_erroneous_no_response_backoff(self, task_mock, ping_mock):  # pylint: disable=name-too-long
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
         _set_quickpulse_etag("old-etag")
         task_inst_mock = mock.Mock()
@@ -383,7 +384,7 @@ class TestQuickpulse(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
-    def test_quickpulsereader_receive_metrics_exception(self, task_mock, export_mock): # pylint: disable=name-too-long
+    def test_quickpulsereader_receive_metrics_exception(self, task_mock, export_mock):  # pylint: disable=name-too-long
         task_inst_mock = mock.Mock()
         task_mock.return_value = task_inst_mock
         reader = _QuickpulseMetricReader(

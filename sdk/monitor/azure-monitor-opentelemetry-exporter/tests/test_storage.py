@@ -38,7 +38,7 @@ def clean_folder(folder):
                     os.unlink(file_path)
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
-            except Exception as e: # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
@@ -98,7 +98,7 @@ class TestLocalFileBlob(unittest.TestCase):
             self.assertIsInstance(result, str)
             self.assertIn("File already exists", result)
 
-    def test_put_json_serialization_error_returns_string(self): # pylint: disable=name-too-long
+    def test_put_json_serialization_error_returns_string(self):  # pylint: disable=name-too-long
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "json_error_blob"))
 
         import datetime
@@ -110,7 +110,7 @@ class TestLocalFileBlob(unittest.TestCase):
         # Should contain JSON serialization error
         self.assertTrue("not JSON serializable" in result or "Object of type" in result)
 
-    def test_put_various_exceptions_return_strings(self): # pylint: disable=name-too-long
+    def test_put_various_exceptions_return_strings(self):  # pylint: disable=name-too-long
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "various_errors_blob"))
         test_input = [1, 2, 3]
 
@@ -143,7 +143,7 @@ class TestLocalFileBlob(unittest.TestCase):
         self.assertTrue(blob.fullpath.endswith(".lock"))
 
     @unittest.skip("transient storage")
-    def test_put_with_lease_period_error_returns_string(self): # pylint: disable=name-too-long
+    def test_put_with_lease_period_error_returns_string(self):  # pylint: disable=name-too-long
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "lease_error_blob"))
         test_input = [1, 2, 3]
         lease_period = 60
@@ -329,7 +329,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 result = stor.put(test_input)
                 self.assertEqual(result, StorageExportResult.CLIENT_READONLY)
 
-    def test_put_storage_disabled_with_exception_state(self): # pylint: disable=name-too-long
+    def test_put_storage_disabled_with_exception_state(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         exception_message = "Previous storage error occurred"
         with mock.patch(
@@ -380,7 +380,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 self.assertIsInstance(result, str)
                 self.assertIn("Permission denied", result)
 
-    def test_put_exception_in_method_returns_string(self): # pylint: disable=name-too-long
+    def test_put_exception_in_method_returns_string(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "method_exception_test")) as stor:
             with mock.patch(
@@ -427,7 +427,7 @@ class TestLocalFileStorage(unittest.TestCase):
             # File should be created with lease (since default lease_period > 0)
             self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
 
-    def test_check_and_set_folder_permissions_oserror_sets_exception_state(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_oserror_sets_exception_state(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         test_error_message = "OSError: Permission denied creating directory"
 
@@ -459,7 +459,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_generic_exception_sets_exception_state(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_generic_exception_sets_exception_state(
+        self,
+    ):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         test_error_message = "RuntimeError: Unexpected error during setup"
 
@@ -491,7 +493,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_readonly_filesystem_sets_readonly_state(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_readonly_filesystem_sets_readonly_state(
+        self,
+    ):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
@@ -527,7 +531,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up - note: cannot easily reset readonly state, but test isolation should handle this
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_windows_icacls_failure_sets_exception_state(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_windows_icacls_failure_sets_exception_state(
+        self,
+    ):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
@@ -571,7 +577,7 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_windows_user_retrieval_failure(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_windows_user_retrieval_failure(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
@@ -605,7 +611,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_unix_chmod_exception_sets_exception_state(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_unix_chmod_exception_sets_exception_state(
+        self,
+    ):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         test_error_message = "OSError: Operation not permitted"
 
@@ -645,7 +653,7 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_exception_state_persistence_across_storage_instances(self): # pylint: disable=name-too-long
+    def test_exception_state_persistence_across_storage_instances(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         test_error_message = "Persistent storage setup error"
 
@@ -677,7 +685,7 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_exception_state_cleared_and_storage_recovery(self): # pylint: disable=name-too-long
+    def test_exception_state_cleared_and_storage_recovery(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         test_error_message = "Temporary storage setup error"
 
@@ -709,7 +717,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 retrieved_data = stor2.get().get()
                 self.assertEqual(retrieved_data, test_input)
 
-    def test_local_storage_state_readonly_get_set_operations(self): # pylint: disable=name-too-long
+    def test_local_storage_state_readonly_get_set_operations(self):  # pylint: disable=name-too-long
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
@@ -747,7 +755,7 @@ class TestLocalFileStorage(unittest.TestCase):
             # This is by design - once readonly is set, it stays set for the process
             pass
 
-    def test_readonly_state_interaction_with_storage_put_method(self): # pylint: disable=name-too-long
+    def test_readonly_state_interaction_with_storage_put_method(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
@@ -785,7 +793,7 @@ class TestLocalFileStorage(unittest.TestCase):
                     f"Expected StorageExportResult or str, got {type(result)}",
                 )
 
-    def test_readonly_state_priority_over_exception_state(self): # pylint: disable=name-too-long
+    def test_readonly_state_priority_over_exception_state(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
         test_exception_message = "Some storage exception"
 
@@ -834,7 +842,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 time.sleep(0.01)  # Small delay to encourage race conditions
                 value = get_local_storage_setup_state_readonly()
                 results.append(value)
-            except Exception as e: # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 errors.append(str(e))
 
         # Create multiple threads
@@ -859,7 +867,7 @@ class TestLocalFileStorage(unittest.TestCase):
         for result in results:
             self.assertTrue(result)
 
-    def test_readonly_state_persistence_across_storage_instances(self): # pylint: disable=name-too-long
+    def test_readonly_state_persistence_across_storage_instances(self):  # pylint: disable=name-too-long
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
@@ -888,7 +896,7 @@ class TestLocalFileStorage(unittest.TestCase):
         # Verify readonly state is still set
         self.assertTrue(get_local_storage_setup_state_readonly())
 
-    def test_readonly_state_direct_access_vs_function_access(self): # pylint: disable=name-too-long
+    def test_readonly_state_direct_access_vs_function_access(self):  # pylint: disable=name-too-long
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
@@ -908,7 +916,7 @@ class TestLocalFileStorage(unittest.TestCase):
         self.assertTrue(function_value)
         self.assertTrue(direct_value)
 
-    def test_readonly_state_idempotent_set_operations(self): # pylint: disable=name-too-long
+    def test_readonly_state_idempotent_set_operations(self):  # pylint: disable=name-too-long
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
@@ -922,7 +930,7 @@ class TestLocalFileStorage(unittest.TestCase):
         final_state = get_local_storage_setup_state_readonly()
         self.assertTrue(final_state)
 
-    def test_check_and_set_folder_permissions_unix_multiuser_scenario(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_unix_multiuser_scenario(self):  # pylint: disable=name-too-long
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             set_local_storage_setup_state_exception,
         )
@@ -966,7 +974,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_unix_multiuser_parent_permission_failure(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_unix_multiuser_parent_permission_failure(
+        self,
+    ):  # pylint: disable=name-too-long
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
@@ -997,7 +1007,9 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clean up
         set_local_storage_setup_state_exception("")
 
-    def test_check_and_set_folder_permissions_unix_multiuser_storage_permission_failure(self): # pylint: disable=name-too-long
+    def test_check_and_set_folder_permissions_unix_multiuser_storage_permission_failure(
+        self,
+    ):  # pylint: disable=name-too-long
         test_error_message = "PermissionError: Operation not permitted on storage directory"
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (

@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_CONFIG_URL,
 )
 
+
 # pylint: disable=protected-access, docstring-missing-param
 class TestConfigurationState(unittest.TestCase):
     """Test cases for _ConfigurationState immutable data class."""
@@ -190,7 +191,9 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_version_increase_triggers_config_fetch(self, _mock_worker_class, mock_request): #pylint: disable=name-too-long
+    def test_version_increase_triggers_config_fetch(
+        self, _mock_worker_class, mock_request
+    ):  # pylint: disable=name-too-long
         """Test that version increase triggers CONFIG endpoint fetch."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -438,7 +441,9 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     @patch("azure.monitor.opentelemetry.exporter._configuration.logger")
-    def test_transient_error_refresh_interval_cap(self, mock_logger, _mock_worker_class, mock_request): # pylint: disable=name-too-long
+    def test_transient_error_refresh_interval_cap(
+        self, mock_logger, _mock_worker_class, mock_request
+    ):  # pylint: disable=name-too-long
         """Test that refresh interval is capped at 24 hours for transient errors."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -494,7 +499,9 @@ class TestConfigurationManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_successful_request_after_transient_error(self, _mock_worker_class, mock_request): # pylint: disable=name-too-long
+    def test_successful_request_after_transient_error(
+        self, _mock_worker_class, mock_request
+    ):  # pylint: disable=name-too-long
         """Test that successful requests don't double refresh interval."""
         manager = _ConfigurationManager()
         manager.initialize()
@@ -533,7 +540,7 @@ class TestConfigurationManager(unittest.TestCase):
         self.assertIsNotNone(manager)
         self.assertIsInstance(manager, _ConfigurationManager)
 
-    def test_configuration_manager_enabled_by_default(self): # pylint: disable=name-too-long
+    def test_configuration_manager_enabled_by_default(self):  # pylint: disable=name-too-long
         """Test that configuration manager is enabled by default when no environment variable is set."""
 
         # Ensure env var is not set

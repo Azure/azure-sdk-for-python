@@ -6,6 +6,7 @@ from unittest import mock
 
 from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 
+
 # pylint: disable=protected-access
 class TestQuickpulseRedirectPolicy(unittest.TestCase):
     def test_get_redirect_location(self):

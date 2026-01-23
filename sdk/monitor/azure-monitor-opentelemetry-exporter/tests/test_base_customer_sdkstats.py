@@ -6,7 +6,10 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError # pylint: disable=networking-import-outside-azure-core-transport
+from azure.core.exceptions import (
+    HttpResponseError,
+    ServiceRequestError,
+)  # pylint: disable=networking-import-outside-azure-core-transport
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
@@ -38,6 +41,7 @@ class MockResponse:
         self.raw.enforce_content_length = True
         self.reason = "Mock Reason"  # Add the reason attribute
         self.url = "http://mock-url.com"  # Add the url attribute
+
 
 # pylint: disable=protected-access
 class TestBaseExporterCustomerSdkStats(unittest.TestCase):
@@ -99,7 +103,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         return exporter
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_successful_items")
-    def test_transmit_200_customer_sdkstats_track_successful_items(self, track_successful_mock): # pylint: disable=name-too-long
+    def test_transmit_200_customer_sdkstats_track_successful_items(
+        self, track_successful_mock
+    ):  # pylint: disable=name-too-long
         # Test that track_successful_items is called on 200 success response
 
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
@@ -117,7 +123,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.SUCCESS)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
-    def test_transmit_206_customer_sdkstats_track_retry_items(self, track_retry_mock): # pylint: disable=name-too-long
+    def test_transmit_206_customer_sdkstats_track_retry_items(self, track_retry_mock):  # pylint: disable=name-too-long
         # Test that _track_retry_items is called on 206 partial success with retryable errors
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:
@@ -135,7 +141,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_206_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_206_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that _track_dropped_items is called on 206 partial success with non-retryable errors
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:
@@ -152,7 +160,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
-    def test_transmit_retryable_http_error_customer_sdkstats_track_retry_items(self, track_retry_mock): # pylint: disable=name-too-long
+    def test_transmit_retryable_http_error_customer_sdkstats_track_retry_items(
+        self, track_retry_mock
+    ):  # pylint: disable=name-too-long
         # Test that _track_retry_items is called on retryable HTTP errors (e.g., 408, 502, 503, 504)
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch("requests.Session.request") as request_mock:
@@ -163,7 +173,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_throttle_http_error_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_throttle_http_error_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that _track_dropped_items is called on throttle HTTP errors (e.g., 402, 439)
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
@@ -181,7 +193,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_invalid_http_error_customer_sdkstats_track_dropped_items_and_shutdown(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_invalid_http_error_customer_sdkstats_track_dropped_items_and_shutdown(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that _track_dropped_items is called and customer sdkstats is shutdown on invalid HTTP errors (e.g., 400)
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch("requests.Session.request") as request_mock, mock.patch(
@@ -194,8 +208,10 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         shutdown_mock.assert_called_once()
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items") # pylint: disable=line-too-long
-    def test_transmit_service_request_error_customer_sdkstats_track_retry_items(self, track_retry_mock): # pylint: disable=name-too-long
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")  # pylint: disable=line-too-long
+    def test_transmit_service_request_error_customer_sdkstats_track_retry_items(
+        self, track_retry_mock
+    ):  # pylint: disable=name-too-long
         # Test that _track_retry_items is called on ServiceRequestError
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch.object(AzureMonitorClient, "track", side_effect=ServiceRequestError("Connection error")):
@@ -205,7 +221,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_general_exception_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_general_exception_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that _track_dropped_items is called on general exceptions
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch.object(
@@ -219,7 +237,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_storage_disabled_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_storage_disabled_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that _track_dropped_items is called when offline storage is disabled and items would be retried
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:
@@ -239,7 +259,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items_from_storage")
-    def test_transmit_from_storage_customer_sdkstats_track_dropped_items_from_storage( # pylint: disable=name-too-long
+    def test_transmit_from_storage_customer_sdkstats_track_dropped_items_from_storage(  # pylint: disable=name-too-long
         self, track_dropped_storage_mock, track_dropped_items_mock
     ):
 
@@ -280,7 +300,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)  # Storage makes it NOT_RETRYABLE
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_redirect_parsing_error_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_redirect_parsing_error_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that track_dropped_items is called on redirect errors with invalid headers/parsing errors
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
@@ -296,7 +318,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_circular_redirect_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_circular_redirect_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that track_dropped_items is called on circular redirect errors
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
@@ -315,7 +339,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
-    def test_transmit_403_forbidden_error_customer_sdkstats_track_retry_items(self, track_retry_mock): # pylint: disable=name-too-long
+    def test_transmit_403_forbidden_error_customer_sdkstats_track_retry_items(
+        self, track_retry_mock
+    ):  # pylint: disable=name-too-long
         # Test that track_retry_items is called on 403 Forbidden HTTP errors
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
@@ -330,7 +356,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
-    def test_transmit_401_unauthorized_error_customer_sdkstats_track_retry_items(self, track_retry_mock): # pylint: disable=name-too-long
+    def test_transmit_401_unauthorized_error_customer_sdkstats_track_retry_items(
+        self, track_retry_mock
+    ):  # pylint: disable=name-too-long
         # Test that track_retry_items is called on 401 Unauthorized HTTP errors
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
@@ -345,7 +373,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_redirect_invalid_location_header_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long
+    def test_transmit_redirect_invalid_location_header_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long
         # Test that track_dropped_items is called when redirect has invalid location header
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
@@ -361,7 +391,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
-    def test_transmit_from_storage_failure_customer_sdkstats_track_dropped_items(self, track_dropped_mock): # pylint: disable=name-too-long, unused-argument
+    def test_transmit_from_storage_failure_customer_sdkstats_track_dropped_items(
+        self, track_dropped_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         # Test that track_dropped_items is called when _transmit_from_storage operations fail
         exporter = self._create_exporter_with_customer_sdkstats_enabled(disable_offline_storage=False)
 

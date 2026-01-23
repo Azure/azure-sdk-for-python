@@ -3,7 +3,7 @@
 import json
 import unittest
 from unittest.mock import Mock, patch
-import requests # pylint: disable=networking-import-outside-azure-core-transport
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
 from azure.monitor.opentelemetry.exporter._configuration._utils import (
     _ConfigurationProfile,
@@ -20,6 +20,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_CHANGE_VERSION_KEY,
 )
+
 
 # pylint: disable=docstring-missing-param
 class TestConfigurationProfile(unittest.TestCase):

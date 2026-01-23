@@ -129,7 +129,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
                 self.assertIsInstance(constant[0], str)
                 self.assertIsInstance(constant[1], str)
 
-    def test_opentelemetry_metric_names_are_unique(self): # pylint: disable=name-too-long
+    def test_opentelemetry_metric_names_are_unique(self):  # pylint: disable=name-too-long
         """Test that all OpenTelemetry metric names are unique."""
         constants = [
             _AVAILABLE_MEMORY,
@@ -148,14 +148,14 @@ class TestPerformanceCounterConstants(unittest.TestCase):
 
         self.assertEqual(len(otel_names), len(unique_names), "Duplicate OpenTelemetry metric names found")
 
-    def test_quickpulse_perf_counters_unique_otel(self): # pylint: disable=name-too-long
+    def test_quickpulse_perf_counters_unique_otel(self):  # pylint: disable=name-too-long
         """Test that all Quickpulse and Performance Counters metric names are unique."""
         # Note that the breeze names of Performance Counters and Quickpulse may overlap
         # as they are sent to different endpoints
         for perf_counter_otel in _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS:
             self.assertNotIn(perf_counter_otel, _QUICKPULSE_METRIC_NAME_MAPPINGS)
 
-    def test_opentelemetry_metric_names_follow_convention(self): # pylint: disable=name-too-long
+    def test_opentelemetry_metric_names_follow_convention(self):  # pylint: disable=name-too-long
         """Test that all OpenTelemetry metric names follow the expected convention."""
         constants = [
             _AVAILABLE_MEMORY,
@@ -181,7 +181,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
                 # Check that it doesn't end with the prefix (i.e., has additional content)
                 self.assertGreater(len(otel_name), len(expected_prefix), f"Metric name '{otel_name}' is too short")
 
-    def test_quickpulse_metric_names_follow_convention(self): # pylint: disable=name-too-long
+    def test_quickpulse_metric_names_follow_convention(self):  # pylint: disable=name-too-long
         """Test that all Quickpulse metric names follow the expected Windows performance counter convention."""
         constants = [
             _AVAILABLE_MEMORY,

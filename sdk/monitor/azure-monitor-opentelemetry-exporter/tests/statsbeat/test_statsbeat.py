@@ -121,8 +121,13 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_registers_configuration_callback( # pylint: disable=name-too-long
-        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager # pylint: disable=docstring-missing-param
+    def test_collect_statsbeat_metrics_registers_configuration_callback(  # pylint: disable=name-too-long
+        self,
+        mock_exporter,
+        mock_reader,
+        mock_meter_provider,
+        mock_get_manager,
+        mock_get_configuration_manager,  # pylint: disable=docstring-missing-param
     ):
         """Test that collect_statsbeat_metrics registers a configuration callback when initialized successfully."""
         # Arrange
@@ -168,8 +173,11 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig")
-    def test_get_statsbeat_configuration_callback_successful_update( # pylint: disable=name-too-long
-        self, mock_statsbeat_config_cls, mock_get_manager, mock_evaluate_feature # pylint: disable=docstring-missing-param
+    def test_get_statsbeat_configuration_callback_successful_update(  # pylint: disable=name-too-long
+        self,
+        mock_statsbeat_config_cls,
+        mock_get_manager,
+        mock_evaluate_feature,  # pylint: disable=docstring-missing-param
     ):
         """Test that configuration callback successfully updates configuration when statsbeat is initialized."""
         # Arrange
@@ -203,7 +211,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig")
-    def test_get_statsbeat_configuration_callback_disable_sdkstats( # pylint: disable=name-too-long
+    def test_get_statsbeat_configuration_callback_disable_sdkstats(  # pylint: disable=name-too-long
         self, mock_statsbeat_config_cls, mock_get_manager, mock_evaluate_feature
     ):
         """Test that configuration callback successfully updates configuration when statsbeat is initialized."""
@@ -238,7 +246,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig")
-    def test_get_statsbeat_configuration_callback_not_initialized( # pylint: disable=name-too-long
+    def test_get_statsbeat_configuration_callback_not_initialized(  # pylint: disable=name-too-long
         self, mock_statsbeat_config_cls, mock_get_manager, mock_evaluate_feature
     ):
         """Test that configuration callback handles case when statsbeat is not initialized."""
@@ -263,7 +271,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig")
-    def test_get_statsbeat_configuration_callback_no_updated_config( # pylint: disable=name-too-long
+    def test_get_statsbeat_configuration_callback_no_updated_config(  # pylint: disable=name-too-long
         self, mock_statsbeat_config_cls, mock_get_manager, mock_evaluate_feature
     ):
         """Test that configuration callback handles case when StatsbeatConfig.from_config returns None."""
@@ -296,8 +304,13 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_no_callback_when_init_fails( # pylint: disable=name-too-long
-        self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics, mock_config_manager_cls # pylint: disable=unused-argument
+    def test_collect_statsbeat_metrics_no_callback_when_init_fails(  # pylint: disable=name-too-long
+        self,
+        mock_exporter,
+        mock_reader,
+        mock_meter_provider,
+        mock_statsbeat_metrics,
+        mock_config_manager_cls,  # pylint: disable=unused-argument
     ):
         """Test that configuration callback is not registered when initialization fails."""
         # Arrange
@@ -331,7 +344,7 @@ class TestStatsbeat(unittest.TestCase):
     def test_collect_statsbeat_metrics_exists(
         self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics, mock_get_manager
     ):
-        """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config.""" # pylint: disable=line-too-long
+        """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config."""  # pylint: disable=line-too-long
         # Arrange
         exporter = mock.Mock()
         exporter._endpoint = "test endpoint"
@@ -434,7 +447,7 @@ class TestStatsbeat(unittest.TestCase):
         call_args = mock_exporter.call_args
         # The connection string should be the non-EU default since the endpoint is non-EU
         expected_connection_string = call_args[1]["connection_string"]
-        self.assertIn(_DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(';', maxsplit=1)[0], expected_connection_string)
+        self.assertIn(_DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";", maxsplit=1)[0], expected_connection_string)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
@@ -484,13 +497,15 @@ class TestStatsbeat(unittest.TestCase):
         call_args = mock_exporter.call_args
         # The connection string should be the EU default since the endpoint is EU
         expected_connection_string = call_args[1]["connection_string"]
-        self.assertIn(_DEFAULT_EU_STATS_CONNECTION_STRING.split(';', maxsplit=1)[0], expected_connection_string)
+        self.assertIn(_DEFAULT_EU_STATS_CONNECTION_STRING.split(";", maxsplit=1)[0], expected_connection_string)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager): # pylint: disable=unused-argument
+    def test_collect_statsbeat_metrics_aad(
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager
+    ):  # pylint: disable=unused-argument
         """Test collect_statsbeat_metrics with AAD credentials."""
         # Arrange
         exporter = mock.Mock()
@@ -520,7 +535,9 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_no_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager): # pylint: disable=line-too-long, unused-argument
+    def test_collect_statsbeat_metrics_no_aad(
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager
+    ):  # pylint: disable=line-too-long, unused-argument
         """Test collect_statsbeat_metrics without AAD credentials."""
         # Arrange
         exporter = mock.Mock()
@@ -550,8 +567,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_distro_version( # pylint: disable=name-too-long
-        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager # pylint: disable=unused-argument
+    def test_collect_statsbeat_metrics_distro_version(  # pylint: disable=name-too-long
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager  # pylint: disable=unused-argument
     ):
         """Test collect_statsbeat_metrics with distribution version."""
         # Arrange
@@ -582,8 +599,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_local_storage( # pylint: disable=name-too-long
-        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager # pylint: disable=unused-argument
+    def test_collect_statsbeat_metrics_local_storage(  # pylint: disable=name-too-long
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager  # pylint: disable=unused-argument
     ):
         """Test collect_statsbeat_metrics with local storage."""
         # Arrange
@@ -666,7 +683,7 @@ class TestStatsbeat(unittest.TestCase):
         assert mock_get_manager.call_count == 2
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
-    def test_shutdown_statsbeat_metrics_not_initialized(self, mock_get_manager): # pylint: disable=name-too-long
+    def test_shutdown_statsbeat_metrics_not_initialized(self, mock_get_manager):  # pylint: disable=name-too-long
         """Test shutdown when statsbeat is not initialized."""
         # Arrange
         manager = StatsbeatManager()

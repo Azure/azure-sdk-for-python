@@ -17,7 +17,7 @@ class TestConnectionStringParser(unittest.TestCase):
 
     def test_validate_connection_String(self):
         parser = ConnectionStringParser(connection_string=self._valid_connection_string)
-        self.assertEqual(parser._connection_string, self._valid_connection_string) # pylint: disable=protected-access
+        self.assertEqual(parser._connection_string, self._valid_connection_string)  # pylint: disable=protected-access
 
     def test_invalid_key_empty(self):
         self.assertRaises(ValueError, lambda: ConnectionStringParser(connection_string=""))
@@ -160,7 +160,7 @@ class TestConnectionStringParser(unittest.TestCase):
         )
         self.assertEqual(parser.endpoint, "https://dc.services.visualstudio.com")
 
-    def test_process_options_live_endpoint_code_cs(self): # pylint: disable=name-too-long
+    def test_process_options_live_endpoint_code_cs(self):  # pylint: disable=name-too-long
         os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = (
             "Authorization=ikey;IngestionEndpoint=456;InstrumentationKey=" + self._valid_instrumentation_key
         )
@@ -170,7 +170,7 @@ class TestConnectionStringParser(unittest.TestCase):
         self.assertEqual(parser.endpoint, "123")
         self.assertEqual(parser.live_endpoint, "111")
 
-    def test_process_options_live_endpoint_env_cs(self): # pylint: disable=name-too-long
+    def test_process_options_live_endpoint_env_cs(self):  # pylint: disable=name-too-long
         os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = (
             "Authorization=ikey;IngestionEndpoint=456;LiveEndpoint=111;InstrumentationKey="
             + self._valid_instrumentation_key
@@ -181,7 +181,7 @@ class TestConnectionStringParser(unittest.TestCase):
         self.assertEqual(parser.endpoint, "456")
         self.assertEqual(parser.live_endpoint, "111")
 
-    def test_process_options_live_endpoint_default(self): # pylint: disable=name-too-long
+    def test_process_options_live_endpoint_default(self):  # pylint: disable=name-too-long
         parser = ConnectionStringParser(
             connection_string=self._valid_connection_string,
         )
@@ -190,7 +190,7 @@ class TestConnectionStringParser(unittest.TestCase):
     def test_parse_connection_string_invalid(self):
         self.assertRaises(ValueError, lambda: ConnectionStringParser(connection_string="asd"))
 
-    def test_parse_connection_string_invalid_auth(self): # pylint: disable=name-too-long
+    def test_parse_connection_string_invalid_auth(self):  # pylint: disable=name-too-long
         self.assertRaises(
             ValueError,
             lambda: ConnectionStringParser(
@@ -205,7 +205,7 @@ class TestConnectionStringParser(unittest.TestCase):
         )
         self.assertEqual(parser.endpoint, "https://US.dc.123")
 
-    def test_parse_connection_string_suffix_no_location(self): # pylint: disable=name-too-long
+    def test_parse_connection_string_suffix_no_location(self):  # pylint: disable=name-too-long
         parser = ConnectionStringParser(
             connection_string="Authorization=ikey;EndpointSuffix=123;InstrumentationKey="
             + self._valid_instrumentation_key,
@@ -213,7 +213,7 @@ class TestConnectionStringParser(unittest.TestCase):
         self.assertEqual(parser.endpoint, "https://dc.123")
 
     # Region extraction tests
-    def test_region_extraction_from_endpoint_with_number(self): # pylint: disable=name-too-long
+    def test_region_extraction_from_endpoint_with_number(self):  # pylint: disable=name-too-long
         """Test region extraction from endpoint URL with number suffix."""
         parser = ConnectionStringParser(
             connection_string="InstrumentationKey="
@@ -222,7 +222,7 @@ class TestConnectionStringParser(unittest.TestCase):
         )
         self.assertEqual(parser.region, "westeurope")
 
-    def test_region_extraction_from_endpoint_without_number(self): # pylint: disable=name-too-long
+    def test_region_extraction_from_endpoint_without_number(self):  # pylint: disable=name-too-long
         """Test region extraction from endpoint URL without number suffix."""
         parser = ConnectionStringParser(
             connection_string="InstrumentationKey="
@@ -231,7 +231,7 @@ class TestConnectionStringParser(unittest.TestCase):
         )
         self.assertEqual(parser.region, "westeurope")
 
-    def test_region_extraction_from_endpoint_two_digit_number(self): # pylint: disable=name-too-long
+    def test_region_extraction_from_endpoint_two_digit_number(self):  # pylint: disable=name-too-long
         """Test region extraction from endpoint URL with two-digit number."""
         parser = ConnectionStringParser(
             connection_string="InstrumentationKey="
@@ -240,7 +240,7 @@ class TestConnectionStringParser(unittest.TestCase):
         )
         self.assertEqual(parser.region, "eastus")
 
-    def test_region_extraction_from_endpoint_three_digit_number(self): # pylint: disable=name-too-long
+    def test_region_extraction_from_endpoint_three_digit_number(self):  # pylint: disable=name-too-long
         """Test region extraction from endpoint URL with three-digit number."""
         parser = ConnectionStringParser(
             connection_string="InstrumentationKey="
@@ -269,7 +269,7 @@ class TestConnectionStringParser(unittest.TestCase):
                 )
                 self.assertEqual(parser.region, expected_region)
 
-    def test_region_extraction_no_region_global_endpoint(self): # pylint: disable=name-too-long
+    def test_region_extraction_no_region_global_endpoint(self):  # pylint: disable=name-too-long
         """Test that no region is extracted from global endpoints."""
         parser = ConnectionStringParser(
             connection_string="InstrumentationKey="
@@ -278,12 +278,12 @@ class TestConnectionStringParser(unittest.TestCase):
         )
         self.assertIsNone(parser.region)
 
-    def test_region_extraction_no_region_default_endpoint(self): # pylint: disable=name-too-long
+    def test_region_extraction_no_region_default_endpoint(self):  # pylint: disable=name-too-long
         """Test that no region is extracted when using default endpoint."""
         parser = ConnectionStringParser(connection_string="InstrumentationKey=" + self._valid_instrumentation_key)
         self.assertIsNone(parser.region)
 
-    def test_region_extraction_invalid_endpoint_format(self): # pylint: disable=name-too-long
+    def test_region_extraction_invalid_endpoint_format(self):  # pylint: disable=name-too-long
         """Test that no region is extracted from invalid endpoint formats."""
         invalid_endpoints = [
             "https://invalid.endpoint.com",
@@ -301,7 +301,7 @@ class TestConnectionStringParser(unittest.TestCase):
                 )
                 self.assertIsNone(parser.region)
 
-    def test_region_extraction_from_environment_endpoint(self): # pylint: disable=name-too-long
+    def test_region_extraction_from_environment_endpoint(self):  # pylint: disable=name-too-long
         """Test region extraction from endpoint set via environment variable."""
         os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = (
             "InstrumentationKey="
@@ -311,7 +311,7 @@ class TestConnectionStringParser(unittest.TestCase):
         parser = ConnectionStringParser(connection_string=None)
         self.assertEqual(parser.region, "westeurope")
 
-    def test_region_extraction_code_endpoint_takes_priority(self): # pylint: disable=name-too-long
+    def test_region_extraction_code_endpoint_takes_priority(self):  # pylint: disable=name-too-long
         """Test that endpoint from code connection string takes priority over environment."""
         os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = (
             "InstrumentationKey="
@@ -325,7 +325,7 @@ class TestConnectionStringParser(unittest.TestCase):
         )
         self.assertEqual(parser.region, "westeurope")
 
-    def test_region_extraction_with_trailing_slash(self): # pylint: disable=name-too-long
+    def test_region_extraction_with_trailing_slash(self):  # pylint: disable=name-too-long
         """Test region extraction works with and without trailing slash."""
         test_cases = [
             "https://westeurope-5.in.applicationinsights.azure.com/",
@@ -341,7 +341,7 @@ class TestConnectionStringParser(unittest.TestCase):
                 )
                 self.assertEqual(parser.region, "westeurope")
 
-    def test_region_extraction_alphanumeric_regions(self): # pylint: disable=name-too-long
+    def test_region_extraction_alphanumeric_regions(self):  # pylint: disable=name-too-long
         """Test region extraction for regions with numbers in the name."""
         test_cases = [
             ("westus2-1.in.applicationinsights.azure.com", "westus2"),

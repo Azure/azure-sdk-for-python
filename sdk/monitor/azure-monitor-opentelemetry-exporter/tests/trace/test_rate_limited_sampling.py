@@ -43,6 +43,7 @@ def create_parent_span(sampled: bool, sample_rate: Optional[float] = None, is_re
 
     return mock_span
 
+
 # pylint: disable=too-many-public-methods
 class TestRateLimitedSampler(unittest.TestCase):
     def setUp(self):
@@ -109,7 +110,6 @@ class TestRateLimitedSampler(unittest.TestCase):
         num_spans = 500
         sampled_count = 0
 
-
         random.seed(42)
         trace_ids = [random.getrandbits(128) for _ in range(num_spans)]
 
@@ -143,7 +143,6 @@ class TestRateLimitedSampler(unittest.TestCase):
 
         sampled_phase1 = 0
         sampled_phase2 = 0
-
 
         random.seed(123)
         trace_ids_phase1 = [random.getrandbits(128) for _ in range(phase1_spans)]
@@ -268,7 +267,7 @@ class TestRateLimitedSampler(unittest.TestCase):
                     result = sampler.should_sample(None, i, f"thread-span-{i}")
                     results.append(result)
                     time.sleep(0.001)
-            except Exception as e: # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 errors.append(e)
 
         threads = [threading.Thread(target=worker) for _ in range(5)]

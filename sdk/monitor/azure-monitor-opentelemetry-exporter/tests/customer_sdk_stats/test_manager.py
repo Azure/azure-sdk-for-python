@@ -20,6 +20,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._manager import (
     _CustomerSdkStatsTelemetryCounters,
 )
 
+
 # pylint: disable=protected-access, docstring-missing-param
 # pylint: disable=too-many-public-methods
 class TestCustomerSdkStatsManager(unittest.TestCase):
@@ -45,7 +46,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         # Shutdown manager if needed
         try:
             self.manager.shutdown()
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             pass
 
         # Reset singleton state - only clear CustomerSdkStatsManager instances
@@ -267,7 +268,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             self.assertEqual(self.manager._counters.total_item_success_count[_REQUEST], 7)
             self.assertEqual(self.manager._counters.total_item_success_count[_CUSTOM_EVENT], 3)
 
-    def test_count_successful_items_uninitialized(self): # pylint: disable=name-too-long
+    def test_count_successful_items_uninitialized(self):  # pylint: disable=name-too-long
         """Test that counting successful items does nothing when not initialized."""
         self.manager.count_successful_items(5, _REQUEST)
 

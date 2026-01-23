@@ -42,7 +42,9 @@ class TestCustomerSdkStats(unittest.TestCase):
         """Test collecting customer SDK stats initializes the manager."""
         # Create a mock exporter
         mock_exporter = mock.Mock()
-        mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd" # pylint: disable=protected-access
+        mock_exporter._connection_string = (
+            "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"  # pylint: disable=protected-access
+        )
 
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)
@@ -51,11 +53,13 @@ class TestCustomerSdkStats(unittest.TestCase):
         manager = get_customer_stats_manager()
         self.assertTrue(manager.is_initialized)
 
-    def test_collect_customer_sdkstats_multiple_calls(self): # pylint: disable=name-too-long
+    def test_collect_customer_sdkstats_multiple_calls(self):  # pylint: disable=name-too-long
         """Test that multiple calls to collect_customer_sdkstats don't cause issues."""
         # Create a mock exporter
         mock_exporter = mock.Mock()
-        mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd" # pylint: disable=protected-access
+        mock_exporter._connection_string = (
+            "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"  # pylint: disable=protected-access
+        )
 
         # Call collect multiple times
         collect_customer_sdkstats(mock_exporter)
@@ -79,7 +83,7 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Verify shutdown
         self.assertFalse(manager.is_initialized)
 
-    def test_shutdown_customer_sdkstats_metrics_when_not_initialized(self): # pylint: disable=name-too-long
+    def test_shutdown_customer_sdkstats_metrics_when_not_initialized(self):  # pylint: disable=name-too-long
         """Test shutting down customer SDK stats when not initialized doesn't cause issues."""
         # Ensure manager is not initialized
         manager = get_customer_stats_manager()
@@ -96,7 +100,9 @@ class TestCustomerSdkStats(unittest.TestCase):
         """Test a complete cycle of collect and shutdown operations."""
         # Create a mock exporter
         mock_exporter = mock.Mock()
-        mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd" # pylint: disable=protected-access
+        mock_exporter._connection_string = (
+            "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"  # pylint: disable=protected-access
+        )
 
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)

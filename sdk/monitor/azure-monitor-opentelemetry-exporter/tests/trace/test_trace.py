@@ -832,7 +832,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
 
-    def test_span_to_envelope_client_internal_gen_ai_type(self): # pylint: disable=name-too-long
+    def test_span_to_envelope_client_internal_gen_ai_type(self):  # pylint: disable=name-too-long
         exporter = self._exporter
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
@@ -855,7 +855,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
 
-    def test_span_to_envelope_client_multiple_types_with_gen_ai(self): # pylint: disable=name-too-long
+    def test_span_to_envelope_client_multiple_types_with_gen_ai(self):  # pylint: disable=name-too-long
         exporter = self._exporter
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
@@ -1505,7 +1505,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         json_dict = json.loads(envelope.data.base_data.properties["_MS.links"])[0]
         self.assertEqual(json_dict["id"], "a6f5d48acb4d31da")
 
-    def test_span_to_envelope_properties_std_metrics(self): # pylint: disable=name-too-long
+    def test_span_to_envelope_properties_std_metrics(self):  # pylint: disable=name-too-long
         exporter = self._exporter
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
@@ -1668,7 +1668,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
-    def test_span_events_to_envelopes_sample_rate(self): # pylint: disable=name-too-long
+    def test_span_events_to_envelopes_sample_rate(self):  # pylint: disable=name-too-long
         exporter = self._exporter
         time = 1575494316027613500
 
@@ -1832,7 +1832,7 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             _check_instrumentation_span(span)
             add.assert_called_once_with("test")
 
-    def test_check_instrumentation_span_not_instrumentation(self): # pylint: disable=name-too-long
+    def test_check_instrumentation_span_not_instrumentation(self):  # pylint: disable=name-too-long
         span = mock.Mock()
         span.attributes = {}
         span.instrumentation_scope.name = "__main__"
@@ -1840,7 +1840,7 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             _check_instrumentation_span(span)
             add.assert_not_called()
 
-    def test_check_instrumentation_span_azure_sdk(self): # pylint: disable=name-too-long
+    def test_check_instrumentation_span_azure_sdk(self):  # pylint: disable=name-too-long
         span = mock.Mock()
         span.attributes = {}
         span.instrumentation_scope.name = "azure.foo.bar.__init__"
@@ -1850,7 +1850,9 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
 
     @mock.patch("opentelemetry.trace.get_tracer_provider")
-    def test_check_instrumentation_span_azure_sdk_otel_span(self, mock_get_tracer_provider): # pylint: disable=name-too-long
+    def test_check_instrumentation_span_azure_sdk_otel_span(
+        self, mock_get_tracer_provider
+    ):  # pylint: disable=name-too-long
         mock_get_tracer_provider.return_value = self.get_tracer_provider()
 
         with OpenTelemetrySpan() as azure_sdk_span:
@@ -1869,7 +1871,9 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
                 add.assert_called_once_with(_AZURE_AI_SDK_NAME)
 
     @mock.patch("opentelemetry.trace.get_tracer_provider")
-    def test_check_instrumentation_span_azure_sdk_span_impl(self, mock_get_tracer_provider): #pylint: disable=name-too-long
+    def test_check_instrumentation_span_azure_sdk_span_impl(
+        self, mock_get_tracer_provider
+    ):  # pylint: disable=name-too-long
         mock_get_tracer_provider.return_value = self.get_tracer_provider()
 
         settings.tracing_implementation = "opentelemetry"
@@ -1894,7 +1898,9 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             settings.tracing_implementation = None
 
     @mock.patch("opentelemetry.trace.get_tracer_provider")
-    def test_check_instrumentation_span_azure_sdk_get_tracer(self, mock_get_tracer_provider): # pylint: disable=name-too-long
+    def test_check_instrumentation_span_azure_sdk_get_tracer(
+        self, mock_get_tracer_provider
+    ):  # pylint: disable=name-too-long
         mock_get_tracer_provider.return_value = self.get_tracer_provider()
 
         if not get_azure_sdk_tracer:

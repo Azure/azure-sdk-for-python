@@ -10,6 +10,7 @@ from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import enable_live_metrics
 
+
 # pylint: disable=docstring-missing-param
 class TestLiveMetrics(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
@@ -40,7 +41,9 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_initialization_fails(self, manager_mock, statsbeat_mock): # pylint: disable=name-too-long
+    def test_enable_live_metrics_initialization_fails(
+        self, manager_mock, statsbeat_mock
+    ):  # pylint: disable=name-too-long
         """Test enable_live_metrics when manager initialization fails."""
         mock_manager_instance = mock.Mock()
         mock_manager_instance.initialize.return_value = False
@@ -59,7 +62,7 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_with_minimal_args(self, manager_mock, statsbeat_mock): # pylint: disable=name-too-long
+    def test_enable_live_metrics_with_minimal_args(self, manager_mock, statsbeat_mock):  # pylint: disable=name-too-long
         """Test enable_live_metrics with minimal arguments."""
         mock_manager_instance = mock.Mock()
         mock_manager_instance.initialize.return_value = True
@@ -78,7 +81,9 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_with_all_parameters(self, manager_mock, statsbeat_mock): # pylint: disable=name-too-long, unused-argument
+    def test_enable_live_metrics_with_all_parameters(
+        self, manager_mock, statsbeat_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         """Test enable_live_metrics with all possible parameters."""
         mock_resource = Resource.create(
             {"service.name": "test-service", "service.version": "1.0.0", "deployment.environment": "test"}
@@ -108,7 +113,9 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_with_none_values(self, manager_mock, statsbeat_mock): # pylint: disable=name-too-long, unused-argument
+    def test_enable_live_metrics_with_none_values(
+        self, manager_mock, statsbeat_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         """Test enable_live_metrics with None values for optional parameters."""
         mock_manager_instance = mock.Mock()
         mock_manager_instance.initialize.return_value = True
@@ -124,7 +131,9 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_empty_string_connection(self, manager_mock, statsbeat_mock): # pylint: disable=name-too-long
+    def test_enable_live_metrics_empty_string_connection(
+        self, manager_mock, statsbeat_mock
+    ):  # pylint: disable=name-too-long
         """Test enable_live_metrics with empty string connection string."""
         mock_manager_instance = mock.Mock()
         mock_manager_instance.initialize.return_value = True
@@ -143,7 +152,7 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_complex_resource(self, manager_mock, statsbeat_mock): # pylint: disable=name-too-long
+    def test_enable_live_metrics_complex_resource(self, manager_mock, statsbeat_mock):  # pylint: disable=name-too-long
         """Test enable_live_metrics with complex resource attributes."""
         mock_resource = Resource.create(
             {
@@ -206,7 +215,9 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_kwargs_preservation(self, manager_mock, statsbeat_mock): # pylint: disable=name-too-long
+    def test_enable_live_metrics_kwargs_preservation(
+        self, manager_mock, statsbeat_mock
+    ):  # pylint: disable=name-too-long
         """Test that all kwargs are properly passed through to initialize."""
         mock_manager_instance = mock.Mock()
         mock_manager_instance.initialize.return_value = True

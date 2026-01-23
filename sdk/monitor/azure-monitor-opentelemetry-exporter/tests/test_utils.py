@@ -29,12 +29,13 @@ TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
+
 # pylint: disable=protected-access, too-many-public-methods
 class TestUtils(unittest.TestCase):
     def setUp(self):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
-    def test_filter_custom_properties_truncates_and_drops_invalid_entries(self): # pylint: disable=name-too-long
+    def test_filter_custom_properties_truncates_and_drops_invalid_entries(self):  # pylint: disable=name-too-long
         oversized_value = "v" * 9000
         properties = {
             "valid_key": oversized_value,
@@ -97,7 +98,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.application.ver"), "testApplicationVer")
 
     # Default service.name fields should be used when kubernetes values are not present
-    def test_populate_part_a_fields_unknown_service(self): # pylint: disable=name-too-long
+    def test_populate_part_a_fields_unknown_service(self):  # pylint: disable=name-too-long
         resource = Resource(
             {
                 "service.name": "unknown_servicefoobar",
@@ -221,7 +222,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Test that undefined fields are ignored.
-    def test_populate_part_a_fields_aks_undefined(self): # pylint: disable=name-too-long
+    def test_populate_part_a_fields_aks_undefined(self):  # pylint: disable=name-too-long
         resource = Resource(
             {
                 "k8s.deployment.name": "",
@@ -239,7 +240,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-    def test_populate_part_a_fields_aks_with_service(self): # pylint: disable=name-too-long
+    def test_populate_part_a_fields_aks_with_service(self):  # pylint: disable=name-too-long
         resource = Resource(
             {
                 "service.name": "testServiceName",
@@ -260,7 +261,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Default service.name fields should be ignored when kubernetes values are present
-    def test_populate_part_a_fields_aks_with_unknown_service(self): # pylint: disable=name-too-long
+    def test_populate_part_a_fields_aks_with_unknown_service(self):  # pylint: disable=name-too-long
         resource = Resource(
             {
                 "service.name": "unknown_servicefoobar",
@@ -362,7 +363,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Windows",
     )
-    def test_get_sdk_version_prefix_attach_windows(self, _mock_system, _mock_isdir): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_attach_windows(self, _mock_system, _mock_isdir):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uwi_")
 
@@ -389,7 +390,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Linux",
     )
-    def test_get_sdk_version_prefix_app_service_linux(self, _mock_system, _mock_isdir): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_app_service_linux(self, _mock_system, _mock_isdir):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "alm_")
 
@@ -403,7 +404,9 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Windows",
     )
-    def test_get_sdk_version_prefix_app_service_windows(self, _mock_system, _mock_isdir): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_app_service_windows(
+        self, _mock_system, _mock_isdir
+    ):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awm_")
 
@@ -414,7 +417,9 @@ class TestUtils(unittest.TestCase):
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
-    def test_get_sdk_version_prefix_app_service_attach(self, _mock_system, _mock_isdir): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_app_service_attach(
+        self, _mock_system, _mock_isdir
+    ):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "aui_")
 
@@ -428,7 +433,9 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Linux",
     )
-    def test_get_sdk_version_prefix_app_service_linux_attach(self, _mock_system, _mock_isdir): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_app_service_linux_attach(
+        self, _mock_system, _mock_isdir
+    ):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "ali_")
 
@@ -442,7 +449,9 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Windows",
     )
-    def test_get_sdk_version_prefix_app_service_windows_attach(self, _mock_system, _mock_isdir): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_app_service_windows_attach(
+        self, _mock_system, _mock_isdir
+    ):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awi_")
 
@@ -473,7 +482,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Linux",
     )
-    def test_get_sdk_version_prefix_function_linux(self, _mock_system): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_function_linux(self, _mock_system):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "flm_")
 
@@ -489,7 +498,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Windows",
     )
-    def test_get_sdk_version_prefix_function_windows(self, _mock_system): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_function_windows(self, _mock_system):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fwm_")
 
@@ -503,7 +512,7 @@ class TestUtils(unittest.TestCase):
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
-    def test_get_sdk_version_prefix_function_attach(self, _mock_system): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_function_attach(self, _mock_system):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fui_")
 
@@ -520,7 +529,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Linux",
     )
-    def test_get_sdk_version_prefix_function_linux_attach(self, _mock_system): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_function_linux_attach(self, _mock_system):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fli_")
 
@@ -537,7 +546,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Windows",
     )
-    def test_get_sdk_version_prefix_function_windows_attach(self, _mock_system): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_function_windows_attach(self, _mock_system):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fwi_")
 
@@ -608,7 +617,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Linux",
     )
-    def test_get_sdk_version_prefix_aks_linux_attach(self, _mock_system): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_aks_linux_attach(self, _mock_system):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "kli_")
 
@@ -623,7 +632,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.platform.system",
         return_value="Windows",
     )
-    def test_get_sdk_version_prefix_aks_windows_attach(self, _mock_system): # pylint: disable=name-too-long
+    def test_get_sdk_version_prefix_aks_windows_attach(self, _mock_system):  # pylint: disable=name-too-long
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "kwi_")
 
@@ -705,11 +714,11 @@ class TestUtils(unittest.TestCase):
         properties = {"http.user_agent": "Mozilla/5.0 AlwaysOn"}
         self.assertTrue(_utils._is_synthetic_load(properties))
 
-    def test_is_synthetic_load_always_on_new_convention(self): # pylint: disable=name-too-long
+    def test_is_synthetic_load_always_on_new_convention(self):  # pylint: disable=name-too-long
         properties = {"user_agent.original": "Azure-Load-Testing/1.0 AlwaysOn"}
         self.assertTrue(_utils._is_synthetic_load(properties))
 
-    def test_is_synthetic_load_always_on_case_sensitive(self): # pylint: disable=name-too-long
+    def test_is_synthetic_load_always_on_case_sensitive(self):  # pylint: disable=name-too-long
         properties = {"http.user_agent": "Mozilla/5.0 alwayson"}
         self.assertFalse(_utils._is_synthetic_load(properties))
 

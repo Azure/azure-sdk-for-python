@@ -141,7 +141,9 @@ class _ConfigurationWorker:
                     # Capture interval while we have the lock
                     interval = self._refresh_interval
             except Exception as ex:  # pylint: disable=broad-exception-caught
-                logger.warning("Configuration refresh failed: %s", ex) # pylint: disable=do-not-log-exceptions-if-not-debug
+                logger.warning(
+                    "Configuration refresh failed: %s", ex
+                )  # pylint: disable=do-not-log-exceptions-if-not-debug
                 # Use current interval on error
                 interval = self.get_refresh_interval()
 

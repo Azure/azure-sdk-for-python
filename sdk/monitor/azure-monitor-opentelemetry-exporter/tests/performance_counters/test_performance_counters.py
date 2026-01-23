@@ -310,7 +310,7 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.exceptionssec")
         self.assertEqual(counter.NAME[1], "\\.NET CLR Exceptions(??APP_CLR_PROC??)\\# of Exceps Thrown / sec")
 
-    def test_request_execution_time_initialization(self): # pylint: disable=name-too-long
+    def test_request_execution_time_initialization(self):  # pylint: disable=name-too-long
         """Test RequestExecutionTime class initialization."""
         counter = RequestExecutionTime(self.meter)
 
@@ -334,7 +334,7 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processtime")
         self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time")
 
-    def test_process_cpu_normalized_initialization(self): # pylint: disable=name-too-long
+    def test_process_cpu_normalized_initialization(self):  # pylint: disable=name-too-long
         """Test ProcessCpuNormalized class initialization."""
         counter = ProcessCpuNormalized(self.meter)
 
@@ -350,7 +350,7 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processiobytessec")
         self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec")
 
-    def test_process_private_bytes_initialization(self): # pylint: disable=name-too-long
+    def test_process_private_bytes_initialization(self):  # pylint: disable=name-too-long
         """Test ProcessPrivateBytes class initialization."""
         counter = ProcessPrivateBytes(self.meter)
 
@@ -402,7 +402,7 @@ class TestPerformanceCountersManager(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._IO_AVAILABLE", False)
     @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
-    def test_manager_initialization_success_no_io(self, mock_get_meter_provider): # pylint: disable=name-too-long
+    def test_manager_initialization_success_no_io(self, mock_get_meter_provider):  # pylint: disable=name-too-long
         """Test successful manager initialization."""
         mock_meter_provider = MagicMock()
         mock_meter = MagicMock()
@@ -419,7 +419,7 @@ class TestPerformanceCountersManager(unittest.TestCase):
         self.assertEqual(len(manager._performance_counters), len(PERFORMANCE_COUNTER_METRICS) - 1)
         mock_meter_provider.get_meter.assert_called_once()
 
-    def test_manager_initialization_with_custom_meter_provider(self): # pylint: disable=name-too-long
+    def test_manager_initialization_with_custom_meter_provider(self):  # pylint: disable=name-too-long
         """Test manager initialization with custom meter provider."""
         mock_meter_provider = MagicMock()
         mock_meter = MagicMock()
@@ -539,7 +539,7 @@ class TestPerformanceCountersManager(unittest.TestCase):
         # Check that exception was counted
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions + 1)
 
-    def test_record_span_non_server_consumer_kind(self): # pylint: disable=name-too-long
+    def test_record_span_non_server_consumer_kind(self):  # pylint: disable=name-too-long
         """Test recording span that's not a server/consumer kind."""
         manager = _PerformanceCountersManager()
 
@@ -619,7 +619,7 @@ class TestEnablePerformanceCounters(unittest.TestCase):
         if _PerformanceCountersManager in Singleton._instances:
             del Singleton._instances[_PerformanceCountersManager]
 
-    def test_enable_performance_counters_default_provider(self): # pylint: disable=name-too-long
+    def test_enable_performance_counters_default_provider(self):  # pylint: disable=name-too-long
         """Test enabling performance counters with default provider."""
         # Create a proper meter provider for testing
         meter_provider = MeterProvider()
@@ -634,7 +634,7 @@ class TestEnablePerformanceCounters(unittest.TestCase):
         # self.assertIsNotNone(_PerformanceCountersManager._instance)
         self.assertIn(_PerformanceCountersManager, Singleton._instances)
 
-    def test_enable_performance_counters_custom_provider(self): # pylint: disable=name-too-long
+    def test_enable_performance_counters_custom_provider(self):  # pylint: disable=name-too-long
         """Test enabling performance counters with custom provider."""
         # Create a proper meter provider for testing
         meter_provider = MeterProvider()
@@ -681,7 +681,7 @@ class TestPerformanceCounterMetricsConstants(unittest.TestCase):
             self.assertIsInstance(metric_class.NAME[1], str)
 
 
-class TestPerformanceCountersMetricsIntegration(unittest.TestCase): # pylint: disable=name-too-long
+class TestPerformanceCountersMetricsIntegration(unittest.TestCase):  # pylint: disable=name-too-long
     """Test actual metrics generation from performance counters."""
 
     def setUp(self):
@@ -699,7 +699,7 @@ class TestPerformanceCountersMetricsIntegration(unittest.TestCase): # pylint: di
         if _PerformanceCountersManager in Singleton._instances:
             del Singleton._instances[_PerformanceCountersManager]
 
-    def _get_metric_names(self, metrics_data): # pylint: disable=docstring-missing-return, docstring-missing-rtype
+    def _get_metric_names(self, metrics_data):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Helper to extract metric names from metrics data."""
         metric_names = []
         for resource_metrics in metrics_data.resource_metrics:
@@ -708,7 +708,9 @@ class TestPerformanceCountersMetricsIntegration(unittest.TestCase): # pylint: di
                     metric_names.append(metric.name)
         return metric_names
 
-    def _get_metric_value(self, metrics_data, metric_name): # pylint: disable=docstring-missing-return, docstring-missing-rtype
+    def _get_metric_value(
+        self, metrics_data, metric_name
+    ):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Helper to extract metric value from metrics data."""
         for resource_metrics in metrics_data.resource_metrics:
             for scope_metrics in resource_metrics.scope_metrics:

@@ -65,6 +65,7 @@ from azure.monitor.opentelemetry.exporter._utils import (
     _populate_part_a_fields,
 )
 
+
 # pylint: disable=protected-access, docstring-missing-param, too-many-public-methods
 class TestQuickpulseManager(unittest.TestCase):
     def setUp(self):
@@ -81,7 +82,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
-        cls.connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/" # pylint: disable=line-too-long
+        cls.connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"  # pylint: disable=line-too-long
         cls.resource = Resource.create(
             {
                 ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance",
@@ -285,7 +286,7 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertFalse(qpm.is_initialized())
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._logger")
-    def test_shutdown_meter_provider_exception(self, logger_mock): # pylint: disable=unused-argument
+    def test_shutdown_meter_provider_exception(self, logger_mock):  # pylint: disable=unused-argument
         """Test shutdown handling meter provider exception."""
         qpm = _QuickpulseManager()
 
@@ -682,7 +683,9 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._create_projections")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_metric_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
-    def test_derive_metrics_from_telemetry_data_filter_false(self, get_derived_mock, filter_mock, projection_mock): # pylint: disable=name-too-long
+    def test_derive_metrics_from_telemetry_data_filter_false(
+        self, get_derived_mock, filter_mock, projection_mock
+    ):  # pylint: disable=name-too-long
         metric_infos = [mock.Mock()]
         get_derived_mock.return_value = {
             TelemetryType.DEPENDENCY: metric_infos,
@@ -707,7 +710,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
-    def test_apply_doc_filters_from_telemetry_data( # pylint: disable=name-too-long
+    def test_apply_doc_filters_from_telemetry_data(  # pylint: disable=name-too-long
         self,
         get_doc_stream_mock,
         filter_mock,
@@ -743,7 +746,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
-    def test_apply_doc_filters_from_telemetry_data_all_streams( # pylint: disable=name-too-long
+    def test_apply_doc_filters_from_telemetry_data_all_streams(  # pylint: disable=name-too-long
         self,
         get_doc_stream_mock,
         filter_mock,
@@ -778,7 +781,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_span_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_filters")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_doc_stream_infos")
-    def test_apply_doc_filters_from_telemetry_data_false_filter( # pylint: disable=name-too-long
+    def test_apply_doc_filters_from_telemetry_data_false_filter(  # pylint: disable=name-too-long
         self,
         get_doc_stream_mock,
         filter_mock,
@@ -868,7 +871,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
     def test_record_span_exception_handling(
-        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock # pylint: disable=unused-argument
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock  # pylint: disable=unused-argument
     ):
         """Test _record_span exception handling."""
         post_state_mock.return_value = True
@@ -933,8 +936,8 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
-    def test_record_log_record_exception_handling( # pylint: disable=name-too-long
-        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock # pylint: disable=unused-argument
+    def test_record_log_record_exception_handling(  # pylint: disable=name-too-long
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock  # pylint: disable=unused-argument
     ):
         """Test _record_log_record exception handling."""
         post_state_mock.return_value = True
