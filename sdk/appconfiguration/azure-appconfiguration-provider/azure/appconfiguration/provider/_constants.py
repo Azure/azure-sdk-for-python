@@ -27,3 +27,25 @@ FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
 # Mime profiles
 APP_CONFIG_AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/"
 APP_CONFIG_AICC_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/chat-completion"
+
+# Startup retry constants
+# Default startup timeout in seconds
+DEFAULT_STARTUP_TIMEOUT = 100
+
+# Minimum and maximum backoff durations for retry after failover
+MIN_BACKOFF_DURATION = 30  # seconds
+MAX_BACKOFF_DURATION = 600  # 10 minutes in seconds
+
+# Minimum backoff duration for retries that occur after the fixed backoff window during startup
+MIN_STARTUP_BACKOFF_DURATION = 30  # seconds
+
+# Jitter ratio for randomizing backoff durations (25% jitter means +/- 25% variation)
+JITTER_RATIO = 0.25
+
+# Fixed backoff intervals for startup retries: (elapsed_time_threshold, backoff_duration)
+# These define the fixed backoff durations to use based on how long startup has been attempting
+STARTUP_BACKOFF_INTERVALS = [
+    (100, 5),   # Within first 100 seconds: 5 second backoff
+    (200, 10),  # Within first 200 seconds: 10 second backoff
+    (600, MIN_STARTUP_BACKOFF_DURATION),  # Within first 600 seconds: 30 second backoff
+]

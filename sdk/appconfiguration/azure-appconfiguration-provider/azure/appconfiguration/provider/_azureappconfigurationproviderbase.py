@@ -8,6 +8,7 @@ import hashlib
 import json
 import time
 import datetime
+import random
 from threading import Lock
 import logging
 from typing import (
@@ -29,6 +30,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
+from azure.core.exceptions import HttpResponseError
 from ._models import SettingSelector
 from ._constants import (
     NULL_CHAR,
@@ -41,6 +43,11 @@ from ._constants import (
     APP_CONFIG_AICC_MIME_PROFILE,
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    DEFAULT_STARTUP_TIMEOUT,
+    MIN_STARTUP_BACKOFF_DURATION,
+    MAX_BACKOFF_DURATION,
+    JITTER_RATIO,
+    STARTUP_BACKOFF_INTERVALS,
 )
 from ._refresh_timer import _RefreshTimer
 from ._request_tracing_context import _RequestTracingContext
@@ -132,12 +139,18 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
         or kwargs.get("uses_key_vault", False)
     )
 
+    # Get startup timeout
+    startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
+    if startup_timeout < MIN_STARTUP_BACKOFF_DURATION:
+        raise ValueError(f"Startup timeout must be at least {MIN_STARTUP_BACKOFF_DURATION} seconds.")
+
     return {
         "endpoint": endpoint,
         "credential": credential,
         "connection_string": connection_string,
         "uses_key_vault": uses_key_vault,
         "start_time": start_time,
+        "startup_timeout": startup_timeout,
         "kwargs": kwargs,
     }
 
@@ -206,6 +219,114 @@ def sdk_allowed_kwargs(kwargs):
         "connection_data_block_size",
     ]
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
+
+
+def _jitter(duration: float, ratio: float = JITTER_RATIO) -> float:
+    """
+    Apply jitter to a duration value.
+
+    :param duration: The base duration in seconds.
+    :type duration: float
+    :param ratio: The jitter ratio (0 to 1). Default is 0.25 (25% jitter means +/- 25% variation).
+    :type ratio: float
+    :return: The jittered duration in seconds.
+    :rtype: float
+    """
+    if ratio < 0 or ratio > 1:
+        raise ValueError("Jitter ratio must be between 0 and 1.")
+    if ratio == 0:
+        return duration
+    jitter = ratio * (random.random() * 2 - 1)
+    return duration * (1 + jitter)
+
+
+def _try_get_fixed_backoff(elapsed_seconds: float) -> Optional[float]:
+    """
+    Try to get a fixed backoff duration based on elapsed startup time.
+
+    :param elapsed_seconds: The time elapsed since startup began, in seconds.
+    :type elapsed_seconds: float
+    :return: The fixed backoff duration in seconds if within the fixed backoff window, None otherwise.
+    :rtype: Optional[float]
+    """
+    for threshold, backoff in STARTUP_BACKOFF_INTERVALS:
+        if elapsed_seconds < threshold:
+            return backoff
+    return None
+
+
+def _calculate_backoff_duration(min_duration: float, max_duration: float, attempts: int) -> float:
+    """
+    Calculate the jittered exponential backoff duration.
+
+    :param min_duration: The minimum backoff duration in seconds.
+    :type min_duration: float
+    :param max_duration: The maximum backoff duration in seconds.
+    :type max_duration: float
+    :param attempts: The number of retry attempts made (1-based).
+    :type attempts: int
+    :return: The calculated backoff duration with jitter applied.
+    :rtype: float
+    """
+    if min_duration <= 0:
+        raise ValueError("Minimum backoff duration must be greater than 0.")
+    if max_duration < min_duration:
+        raise ValueError("Maximum backoff duration must be greater than or equal to minimum.")
+    if attempts < 1:
+        raise ValueError("Number of attempts must be at least 1.")
+
+    if attempts == 1:
+        return min_duration
+
+    # Calculate exponential backoff: min * 2^(attempts-1)
+    # Cap the shift amount to prevent overflow
+    safe_shift = min(attempts - 1, 63)
+    calculated = max(1.0, min_duration) * (1 << safe_shift)
+
+    # Cap at max duration
+    if calculated > max_duration or calculated <= 0:  # Check for overflow
+        calculated = max_duration
+
+    return _jitter(calculated, JITTER_RATIO)
+
+
+def _is_failoverable(exception: Exception) -> bool:
+    """
+    Determine if an exception is failoverable (should trigger retry).
+
+    :param exception: The exception to check.
+    :type exception: Exception
+    :return: True if the exception is failoverable, False otherwise.
+    :rtype: bool
+    """
+    if isinstance(exception, HttpResponseError):
+        # Check for retryable HTTP status codes
+        status_code = getattr(exception, "status_code", None)
+        if status_code:
+            # TooManyRequests (429), RequestTimeout (408), or Server errors (5xx)
+            if status_code == 429 or status_code == 408 or status_code >= 500:
+                return True
+
+    # Check for network-related exceptions
+    # These indicate transient failures that may succeed on retry
+    exception_types_to_check = (
+        "ConnectionError",
+        "TimeoutError",
+        "OSError",
+        "IOError",
+    )
+    exception_type_name = type(exception).__name__
+    if exception_type_name in exception_types_to_check:
+        return True
+
+    # Check inner exception if available
+    inner = getattr(exception, "__cause__", None) or getattr(exception, "__context__", None)
+    if inner:
+        inner_type_name = type(inner).__name__
+        if inner_type_name in exception_types_to_check:
+            return True
+
+    return False
 
 
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
