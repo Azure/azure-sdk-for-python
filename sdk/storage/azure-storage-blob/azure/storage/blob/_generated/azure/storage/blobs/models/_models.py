@@ -253,7 +253,7 @@ class BlobItemInternal(_Model):
     """The metadata of the blob."""
     blob_tags: Optional["_models.BlobTags"] = rest_field(name="blobTags", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'BlobTags', 'text': False, 'unwrapped': False})
     """The tags of the blob."""
-    object_replication_metadata: Optional["_models.ObjectReplicationMetadata"] = rest_field(name="objectReplicationMetadata", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ObjectReplicationMetadata', 'text': False, 'unwrapped': False})
+    object_replication_metadata: Optional["_models.ObjectReplicationMetadata"] = rest_field(name="objectReplicationMetadata", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'OrMetadata', 'text': False, 'unwrapped': False})
     """The object replication metadata of the blob."""
     has_versions_only: Optional[bool] = rest_field(name="hasVersionsOnly", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HasVersionsOnly', 'text': False, 'unwrapped': False})
     """Whether the blob has versions only."""
@@ -480,9 +480,8 @@ class BlobPropertiesInternal(_Model):
     :ivar immutability_policy_expires_on: The immutability policy until time of the blob.
     :vartype immutability_policy_expires_on: ~datetime.datetime
     :ivar immutability_policy_mode: The immutability policy mode of the blob. Known values are:
-     "Mutable", "Locked", and "Unlocked".
-    :vartype immutability_policy_mode: str or
-     ~azure.storage.blobs.models.BlobImmutabilityPolicyMode
+     "mutable", "locked", and "unlocked".
+    :vartype immutability_policy_mode: str or ~azure.storage.blobs.models.ImmutabilityPolicyMode
     :ivar legal_hold: Whether the blob is under legal hold.
     :vartype legal_hold: bool
     """
@@ -568,9 +567,9 @@ class BlobPropertiesInternal(_Model):
     """The last access time of the blob."""
     immutability_policy_expires_on: Optional[datetime.datetime] = rest_field(name="ImmutabilityPolicyExpiresOn", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'ImmutabilityPolicyUntilDate', 'text': False, 'unwrapped': False})
     """The immutability policy until time of the blob."""
-    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = rest_field(name="immutabilityPolicyMode", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ImmutabilityPolicyMode', 'text': False, 'unwrapped': False})
-    """The immutability policy mode of the blob. Known values are: \"Mutable\", \"Locked\", and
-     \"Unlocked\"."""
+    immutability_policy_mode: Optional[Union[str, "_models.ImmutabilityPolicyMode"]] = rest_field(name="immutabilityPolicyMode", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ImmutabilityPolicyMode', 'text': False, 'unwrapped': False})
+    """The immutability policy mode of the blob. Known values are: \"mutable\", \"locked\", and
+     \"unlocked\"."""
     legal_hold: Optional[bool] = rest_field(name="legalHold", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LegalHold', 'text': False, 'unwrapped': False})
     """Whether the blob is under legal hold."""
 
@@ -620,8 +619,71 @@ class BlobPropertiesInternal(_Model):
         rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
         last_accessed_on: Optional[datetime.datetime] = None,
         immutability_policy_expires_on: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.ImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobServiceProperties(_Model):
+    """The service properties.
+
+    :ivar logging: The logging properties.
+    :vartype logging: ~azure.storage.blobs.models.Logging
+    :ivar hour_metrics: The hour metrics properties.
+    :vartype hour_metrics: ~azure.storage.blobs.models.Metrics
+    :ivar minute_metrics: The minute metrics properties.
+    :vartype minute_metrics: ~azure.storage.blobs.models.Metrics
+    :ivar cors: The CORS properties.
+    :vartype cors: ~azure.storage.blobs.models.CorsRule
+    :ivar default_service_version: The default service version.
+    :vartype default_service_version: str
+    :ivar delete_retention_policy: The delete retention policy.
+    :vartype delete_retention_policy: ~azure.storage.blobs.models.RetentionPolicy
+    :ivar static_website: The static website properties.
+    :vartype static_website: ~azure.storage.blobs.models.StaticWebsite
+    """
+
+    logging: Optional["_models.Logging"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Logging', 'text': False, 'unwrapped': False})
+    """The logging properties."""
+    hour_metrics: Optional["_models.Metrics"] = rest_field(name="hourMetrics", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HourMetrics', 'text': False, 'unwrapped': False})
+    """The hour metrics properties."""
+    minute_metrics: Optional["_models.Metrics"] = rest_field(name="minuteMetrics", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'MinuteMetrics', 'text': False, 'unwrapped': False})
+    """The minute metrics properties."""
+    cors: Optional[list["_models.CorsRule"]] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'CorsRule', 'name': 'Cors', 'text': False, 'unwrapped': False})
+    """The CORS properties."""
+    default_service_version: Optional[str] = rest_field(name="defaultServiceVersion", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DefaultServiceVersion', 'text': False, 'unwrapped': False})
+    """The default service version."""
+    delete_retention_policy: Optional["_models.RetentionPolicy"] = rest_field(name="deleteRetentionPolicy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DeleteRetentionPolicy', 'text': False, 'unwrapped': False})
+    """The delete retention policy."""
+    static_website: Optional["_models.StaticWebsite"] = rest_field(name="staticWebsite", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'StaticWebsite', 'text': False, 'unwrapped': False})
+    """The static website properties."""
+
+
+    _xml = {'attribute': False, 'name': 'StorageServiceProperties', 'text': False, 'unwrapped': False}
+
+
+    @overload
+    def __init__(
+        self,
+        *,
+        logging: Optional["_models.Logging"] = None,
+        hour_metrics: Optional["_models.Metrics"] = None,
+        minute_metrics: Optional["_models.Metrics"] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
+        default_service_version: Optional[str] = None,
+        delete_retention_policy: Optional["_models.RetentionPolicy"] = None,
+        static_website: Optional["_models.StaticWebsite"] = None,
     ) -> None:
         ...
 
@@ -1770,6 +1832,39 @@ class SignedIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SignedIdentifiers(_Model):
+    """Represents an array of signed identifiers.
+
+    :ivar items_property: The array of signed identifiers. Required.
+    :vartype items_property: ~azure.storage.blobs.models.SignedIdentifier
+    """
+
+    items_property: list["_models.SignedIdentifier"] = rest_field(name="items", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'SignedIdentifier', 'name': 'SignedIdentifier', 'text': False, 'unwrapped': True}, original_tsp_name="items")
+    """The array of signed identifiers. Required."""
+
+
+    _xml = {'attribute': False, 'name': 'SignedIdentifiers', 'text': False, 'unwrapped': False}
+
+
+    @overload
+    def __init__(
+        self,
+        *,
+        items_property: list["_models.SignedIdentifier"],
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class StaticWebsite(_Model):
     """The properties that enable an account to host a static website.
 
@@ -1857,69 +1952,6 @@ class StorageError(_Model):
         copy_source_status_code: Optional[int] = None,
         copy_source_error_code: Optional[str] = None,
         copy_source_error_message: Optional[str] = None,
-    ) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class StorageServiceProperties(_Model):
-    """The service properties.
-
-    :ivar logging: The logging properties.
-    :vartype logging: ~azure.storage.blobs.models.Logging
-    :ivar hour_metrics: The hour metrics properties.
-    :vartype hour_metrics: ~azure.storage.blobs.models.Metrics
-    :ivar minute_metrics: The minute metrics properties.
-    :vartype minute_metrics: ~azure.storage.blobs.models.Metrics
-    :ivar cors: The CORS properties.
-    :vartype cors: ~azure.storage.blobs.models.CorsRule
-    :ivar default_service_version: The default service version.
-    :vartype default_service_version: str
-    :ivar delete_retention_policy: The delete retention policy.
-    :vartype delete_retention_policy: ~azure.storage.blobs.models.RetentionPolicy
-    :ivar static_website: The static website properties.
-    :vartype static_website: ~azure.storage.blobs.models.StaticWebsite
-    """
-
-    logging: Optional["_models.Logging"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Logging', 'text': False, 'unwrapped': False})
-    """The logging properties."""
-    hour_metrics: Optional["_models.Metrics"] = rest_field(name="hourMetrics", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HourMetrics', 'text': False, 'unwrapped': False})
-    """The hour metrics properties."""
-    minute_metrics: Optional["_models.Metrics"] = rest_field(name="minuteMetrics", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'MinuteMetrics', 'text': False, 'unwrapped': False})
-    """The minute metrics properties."""
-    cors: Optional[list["_models.CorsRule"]] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'CorsRule', 'name': 'Cors', 'text': False, 'unwrapped': False})
-    """The CORS properties."""
-    default_service_version: Optional[str] = rest_field(name="defaultServiceVersion", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DefaultServiceVersion', 'text': False, 'unwrapped': False})
-    """The default service version."""
-    delete_retention_policy: Optional["_models.RetentionPolicy"] = rest_field(name="deleteRetentionPolicy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DeleteRetentionPolicy', 'text': False, 'unwrapped': False})
-    """The delete retention policy."""
-    static_website: Optional["_models.StaticWebsite"] = rest_field(name="staticWebsite", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'StaticWebsite', 'text': False, 'unwrapped': False})
-    """The static website properties."""
-
-
-    _xml = {'attribute': False, 'name': 'StorageServiceProperties', 'text': False, 'unwrapped': False}
-
-
-    @overload
-    def __init__(
-        self,
-        *,
-        logging: Optional["_models.Logging"] = None,
-        hour_metrics: Optional["_models.Metrics"] = None,
-        minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[list["_models.CorsRule"]] = None,
-        default_service_version: Optional[str] = None,
-        delete_retention_policy: Optional["_models.RetentionPolicy"] = None,
-        static_website: Optional["_models.StaticWebsite"] = None,
     ) -> None:
         ...
 

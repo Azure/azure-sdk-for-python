@@ -24,6 +24,7 @@ from ._models import (  # type: ignore
     BlobName,
     BlobPrefix,
     BlobPropertiesInternal,
+    BlobServiceProperties,
     BlobTag,
     BlobTags,
     Block,
@@ -50,9 +51,9 @@ from ._models import (  # type: ignore
     QuerySerialization,
     RetentionPolicy,
     SignedIdentifier,
+    SignedIdentifiers,
     StaticWebsite,
     StorageError,
-    StorageServiceProperties,
     StorageServiceStats,
     SubmitBatchRequest,
     UserDelegationKey,
@@ -65,7 +66,6 @@ from ._enums import (  # type: ignore
     BlobCopySourceTags,
     BlobDeleteType,
     BlobExpiryOptions,
-    BlobImmutabilityPolicyMode,
     BlobType,
     BlockListType,
     CopyStatus,
@@ -87,6 +87,7 @@ from ._enums import (  # type: ignore
     RehydratePriority,
     SequenceNumberActionType,
     SkuName,
+    StorageErrorCode,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -102,6 +103,7 @@ __all__ = [
     'BlobName',
     'BlobPrefix',
     'BlobPropertiesInternal',
+    'BlobServiceProperties',
     'BlobTag',
     'BlobTags',
     'Block',
@@ -128,9 +130,9 @@ __all__ = [
     'QuerySerialization',
     'RetentionPolicy',
     'SignedIdentifier',
+    'SignedIdentifiers',
     'StaticWebsite',
     'StorageError',
-    'StorageServiceProperties',
     'StorageServiceStats',
     'SubmitBatchRequest',
     'UserDelegationKey',
@@ -140,7 +142,6 @@ __all__ = [
     'BlobCopySourceTags',
     'BlobDeleteType',
     'BlobExpiryOptions',
-    'BlobImmutabilityPolicyMode',
     'BlobType',
     'BlockListType',
     'CopyStatus',
@@ -162,6 +163,7 @@ __all__ = [
     'RehydratePriority',
     'SequenceNumberActionType',
     'SkuName',
+    'StorageErrorCode',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__]) # pyright: ignore
 _patch_sdk()

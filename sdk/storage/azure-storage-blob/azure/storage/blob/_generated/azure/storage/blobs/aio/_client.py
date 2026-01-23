@@ -15,26 +15,20 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import BlobClientConfiguration
-from .operations import ContainerOperations, _BlobClientOperationsMixin
+from ._configuration import AppendBlobClientConfiguration, BlobClientConfiguration, BlockBlobClientConfiguration, ContainerClientConfiguration, PageBlobClientConfiguration, ServiceClientConfiguration
+from ._operations import _AppendBlobClientOperationsMixin, _BlobClientOperationsMixin, _BlockBlobClientOperationsMixin, _ContainerClientOperationsMixin, _PageBlobClientOperationsMixin, _ServiceClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
-    """BlobClient.
+class ServiceClient(_ServiceClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """ServiceClient.
 
-    :ivar container: ContainerOperations operations
-    :vartype container: azure.storage.blobs.aio.operations.ContainerOperations
     :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
      Required.
     :type url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param container_name: The name of the container. Required.
-    :type container_name: str
-    :param blob_name: The name of the blob. Required.
-    :type blob_name: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
@@ -44,12 +38,10 @@ class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-
         self,
         url: str,
         credential: "AsyncTokenCredential",
-        container_name: str,
-        blob_name: str,
         **kwargs: Any
     ) -> None:
         _endpoint = '{url}'
-        self._config = BlobClientConfiguration(url=url, credential=credential, container_name=container_name, blob_name=blob_name, **kwargs)
+        self._config = ServiceClientConfiguration(url=url, credential=credential, **kwargs)
 
         _policies = kwargs.pop('policies', None)
         if _policies is None:
@@ -60,9 +52,366 @@ class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.container = ContainerOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+
+
+    def send_request(
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
+class ContainerClient(_ContainerClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """ContainerClient.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{url}'
+        self._config = ContainerClientConfiguration(url=url, credential=credential, **kwargs)
+
+        _policies = kwargs.pop('policies', None)
+        if _policies is None:
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+
+    def send_request(
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
+class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """BlobClient.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{url}'
+        self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
+
+        _policies = kwargs.pop('policies', None)
+        if _policies is None:
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+
+    def send_request(
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
+class PageBlobClient(_PageBlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """PageBlobClient.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{url}'
+        self._config = PageBlobClientConfiguration(url=url, credential=credential, **kwargs)
+
+        _policies = kwargs.pop('policies', None)
+        if _policies is None:
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+
+    def send_request(
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
+class AppendBlobClient(_AppendBlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """AppendBlobClient.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{url}'
+        self._config = AppendBlobClientConfiguration(url=url, credential=credential, **kwargs)
+
+        _policies = kwargs.pop('policies', None)
+        if _policies is None:
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+
+    def send_request(
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
+class BlockBlobClient(_BlockBlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """BlockBlobClient.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{url}'
+        self._config = BlockBlobClientConfiguration(url=url, credential=credential, **kwargs)
+
+        _policies = kwargs.pop('policies', None)
+        if _policies is None:
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
 
 
     def send_request(

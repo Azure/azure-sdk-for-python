@@ -12,30 +12,17 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import ServiceClient  # type: ignore
-from ._client import ContainerClient  # type: ignore
-from ._client import BlobClient  # type: ignore
-from ._client import PageBlobClient  # type: ignore
-from ._client import AppendBlobClient  # type: ignore
-from ._client import BlockBlobClient  # type: ignore
-from ._version import VERSION
+from ._operations import _ServiceClientOperationsMixin # type: ignore # pylint: disable=unused-import
+from ._operations import _ContainerClientOperationsMixin # type: ignore # pylint: disable=unused-import
+from ._operations import _BlobClientOperationsMixin # type: ignore # pylint: disable=unused-import
+from ._operations import _PageBlobClientOperationsMixin # type: ignore # pylint: disable=unused-import
+from ._operations import _AppendBlobClientOperationsMixin # type: ignore # pylint: disable=unused-import
+from ._operations import _BlockBlobClientOperationsMixin # type: ignore # pylint: disable=unused-import
 
-__version__ = VERSION
-
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *
-except ImportError:
-    _patch_all = []
+from ._patch import __all__ as _patch_all
+from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'ServiceClient',
-    'ContainerClient',
-    'BlobClient',
-    'PageBlobClient',
-    'AppendBlobClient',
-    'BlockBlobClient',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__]) # pyright: ignore
-
 _patch_sdk()

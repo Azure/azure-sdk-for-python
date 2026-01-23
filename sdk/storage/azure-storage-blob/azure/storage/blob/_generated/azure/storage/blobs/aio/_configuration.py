@@ -16,6 +16,112 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
+class ServiceClientConfiguration:    # pylint: disable=too-many-instance-attributes
+    """Configuration for ServiceClient.
+
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        version: str = kwargs.pop('version', "2026-04-06")
+
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+
+        self.url = url
+        self.credential = credential
+        self.version = version
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+class ContainerClientConfiguration:    # pylint: disable=too-many-instance-attributes
+    """Configuration for ContainerClient.
+
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        version: str = kwargs.pop('version', "2026-04-06")
+
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+
+        self.url = url
+        self.credential = credential
+        self.version = version
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
 class BlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
     """Configuration for BlobClient.
 
@@ -27,10 +133,6 @@ class BlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
     :type url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param container_name: The name of the container. Required.
-    :type container_name: str
-    :param blob_name: The name of the blob. Required.
-    :type blob_name: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
@@ -40,8 +142,6 @@ class BlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
         self,
         url: str,
         credential: "AsyncTokenCredential",
-        container_name: str,
-        blob_name: str,
         **kwargs: Any
     ) -> None:
         version: str = kwargs.pop('version', "2026-04-06")
@@ -50,15 +150,168 @@ class BlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
             raise ValueError("Parameter 'url' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if container_name is None:
-            raise ValueError("Parameter 'container_name' must not be None.")
-        if blob_name is None:
-            raise ValueError("Parameter 'blob_name' must not be None.")
 
         self.url = url
         self.credential = credential
-        self.container_name = container_name
-        self.blob_name = blob_name
+        self.version = version
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+class PageBlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
+    """Configuration for PageBlobClient.
+
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        version: str = kwargs.pop('version', "2026-04-06")
+
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+
+        self.url = url
+        self.credential = credential
+        self.version = version
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+class AppendBlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
+    """Configuration for AppendBlobClient.
+
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        version: str = kwargs.pop('version', "2026-04-06")
+
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+
+        self.url = url
+        self.credential = credential
+        self.version = version
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+class BlockBlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
+    """Configuration for BlockBlobClient.
+
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self,
+        url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        version: str = kwargs.pop('version', "2026-04-06")
+
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+
+        self.url = url
+        self.credential = credential
         self.version = version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
