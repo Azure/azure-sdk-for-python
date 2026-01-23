@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Literal
+from typing import Any
 
 from azure.core.pipeline import policies
 
@@ -22,16 +22,15 @@ class AzureQueueStorageConfiguration:  # pylint: disable=too-many-instance-attri
     :param url: The URL of the service account, queue or message that is the target of the desired
      operation. Required.
     :type url: str
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2026-04-06". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
+    :param version: Specifies the version of the operation to use for this request. Required.
+    :type version: str
     """
 
-    def __init__(self, url: str, **kwargs: Any) -> None:
-        version: Literal["2026-04-06"] = kwargs.pop("version", "2026-04-06")
-
+    def __init__(self, url: str, version: str, **kwargs: Any) -> None:
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
+        if version is None:
+            raise ValueError("Parameter 'version' must not be None.")
 
         self.url = url
         self.version = version
