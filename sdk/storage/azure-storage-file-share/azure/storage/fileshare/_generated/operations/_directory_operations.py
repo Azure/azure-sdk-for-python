@@ -37,6 +37,7 @@ _SERIALIZER.client_side_validation = False
 def build_create_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     file_permission: str = "inherit",
@@ -58,7 +59,6 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -116,6 +116,7 @@ def build_create_request(
 def build_get_properties_request(
     url: str,
     *,
+    version: str,
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     allow_trailing_dot: Optional[bool] = None,
@@ -126,7 +127,6 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -158,6 +158,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -167,7 +168,6 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -197,6 +197,7 @@ def build_delete_request(
 def build_set_properties_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
@@ -217,7 +218,6 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -270,6 +270,7 @@ def build_set_properties_request(
 def build_set_metadata_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
@@ -281,7 +282,6 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -314,6 +314,7 @@ def build_set_metadata_request(
 def build_list_files_and_directories_segment_request(  # pylint: disable=name-too-long
     url: str,
     *,
+    version: str,
     prefix: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
     marker: Optional[str] = None,
@@ -330,7 +331,6 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -373,6 +373,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
 def build_list_handles_request(
     url: str,
     *,
+    version: str,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
     timeout: Optional[int] = None,
@@ -386,7 +387,6 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -425,6 +425,7 @@ def build_force_close_handles_request(
     url: str,
     *,
     handle_id: str,
+    version: str,
     timeout: Optional[int] = None,
     marker: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
@@ -437,7 +438,6 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -471,10 +471,11 @@ def build_force_close_handles_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rename_request(
+def build_rename_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     rename_source: str,
+    version: str,
     timeout: Optional[int] = None,
     replace_if_exists: Optional[bool] = None,
     ignore_read_only: Optional[bool] = None,
@@ -498,7 +499,6 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -579,7 +579,7 @@ class DirectoryOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         timeout: Optional[int] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -669,6 +669,7 @@ class DirectoryOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
@@ -685,7 +686,6 @@ class DirectoryOperations:
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -776,12 +776,12 @@ class DirectoryOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -869,11 +869,11 @@ class DirectoryOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -903,7 +903,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def set_properties(  # pylint: disable=inconsistent-return-statements
+    def set_properties(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         timeout: Optional[int] = None,
         file_permission: str = "inherit",
@@ -984,6 +984,7 @@ class DirectoryOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             file_permission=file_permission,
             file_permission_format=file_permission_format,
@@ -999,7 +1000,6 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1088,13 +1088,13 @@ class DirectoryOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1188,6 +1188,7 @@ class DirectoryOperations:
 
         _request = build_list_files_and_directories_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             sharesnapshot=sharesnapshot,
             marker=marker,
@@ -1199,7 +1200,6 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1285,6 +1285,7 @@ class DirectoryOperations:
 
         _request = build_list_handles_request(
             url=self._config.url,
+            version=self._config.version,
             marker=marker,
             maxresults=maxresults,
             timeout=timeout,
@@ -1293,7 +1294,6 @@ class DirectoryOperations:
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1379,6 +1379,7 @@ class DirectoryOperations:
         _request = build_force_close_handles_request(
             url=self._config.url,
             handle_id=handle_id,
+            version=self._config.version,
             timeout=timeout,
             marker=marker,
             sharesnapshot=sharesnapshot,
@@ -1386,7 +1387,6 @@ class DirectoryOperations:
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1423,7 +1423,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def rename(  # pylint: disable=inconsistent-return-statements
+    def rename(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -1526,6 +1526,7 @@ class DirectoryOperations:
         _request = build_rename_request(
             url=self._config.url,
             rename_source=rename_source,
+            version=self._config.version,
             timeout=timeout,
             replace_if_exists=replace_if_exists,
             ignore_read_only=ignore_read_only,
@@ -1544,7 +1545,6 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
