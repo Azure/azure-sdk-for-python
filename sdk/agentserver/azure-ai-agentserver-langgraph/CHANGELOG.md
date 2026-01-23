@@ -1,6 +1,22 @@
 # Release History
 
 
+## 1.0.0b9 (2026-01-23)
+
+- Integrated with Foundry Tools
+
+- Support Human-in-the-Loop
+
+- Added Response API converters for request conversion and orchestration.
+
+
+## 1.0.0b8 (2026-01-21)
+
+### Features Added
+
+- Support keep alive for long-running streaming responses.
+
+
 ## 1.0.0b7 (2025-12-05)
 
 ### Features Added

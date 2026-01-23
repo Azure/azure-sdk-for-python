@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=no-name-in-module,import-error
 from __future__ import annotations
 
 import inspect
@@ -24,7 +26,7 @@ def _attach_signature_from_pydantic_model(func, input_model) -> None:
         ann = field.annotation or Any
         annotations[name] = ann
 
-        default = inspect._empty if field.is_required() else field.default
+        default = inspect._empty if field.is_required() else field.default  # pylint: disable=protected-access
         params.append(
             inspect.Parameter(
                 name=name,
@@ -50,7 +52,7 @@ class FoundryToolClient:
         foundry_tool_catalog = server_context.tools.catalog
         resolved_tools = await foundry_tool_catalog.list(self._allowed_tools)
         return [self._to_aifunction(tool) for tool in resolved_tools]
-    
+
     def _to_aifunction(self, foundry_tool: "ResolvedFoundryTool") -> AIFunction:
         """Convert an FoundryTool to an Agent Framework AI Function
 

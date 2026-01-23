@@ -1,6 +1,25 @@
 # Release History
 
 
+## 1.0.0b9 (2026-01-23)
+
+- Integrated with Foundry Tools
+- Add persistence for agent thread and checkpoint
+- Fixed WorkflowAgent concurrency issue
+- Support Human-in-the-Loop
+
+
+## 1.0.0b8 (2026-01-21)
+
+### Features Added
+
+- Support keep alive for long-running streaming responses.
+
+### Bugs Fixed
+
+- Fixed AgentFramework breaking change and pin version to >=1.0.0b251112,<=1.0.0b260107
+
+
 ## 1.0.0b7 (2025-12-05)
 
 ### Features Added

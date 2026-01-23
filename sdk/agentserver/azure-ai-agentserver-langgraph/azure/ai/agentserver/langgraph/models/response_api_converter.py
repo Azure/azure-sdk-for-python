@@ -61,14 +61,16 @@ class ResponseAPIConverter(ABC):
         """
 
     @abstractmethod
-    async def convert_response_non_stream(self, output: Any, context: LanggraphRunContext) -> Response:
+    async def convert_response_non_stream(
+            self, output: Union[dict[str, Any], Any], context: LanggraphRunContext
+        ) -> Response:
         """Convert the completed LangGraph state into a final non-streaming Response object.
 
         This is a convenience wrapper around state_to_response that retrieves
         the current state snapshot asynchronously.
 
         :param output: The LangGraph output to convert.
-        :type output: Any
+        :type output: Union[dict[str, Any], Any],
         :param context: The context for the agent run.
         :type context: LanggraphRunContext
 

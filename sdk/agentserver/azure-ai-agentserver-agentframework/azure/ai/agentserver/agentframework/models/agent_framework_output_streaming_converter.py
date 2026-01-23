@@ -1,16 +1,19 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=attribute-defined-outside-init,protected-access
+# pylint: disable=attribute-defined-outside-init,protected-access,unnecessary-lambda-assignment
 # mypy: disable-error-code="call-overload,assignment,arg-type,override"
 from __future__ import annotations
 
-from ast import arguments
 import datetime
 import json
 from typing import Any, AsyncIterable, List, Union
 
-from agent_framework import AgentRunResponseUpdate, BaseContent, FunctionApprovalRequestContent, FunctionResultContent
+from agent_framework import (
+    AgentRunResponseUpdate,
+    BaseContent,
+    FunctionResultContent,
+)
 from agent_framework._types import (
     ErrorContent,
     FunctionCallContent,
@@ -24,8 +27,6 @@ from azure.ai.agentserver.core.models import (
     ResponseStreamEvent,
 )
 from azure.ai.agentserver.core.models.projects import (
-    AgentId,
-    CreatedBy,
     FunctionToolCallItemResource,
     FunctionToolCallOutputItemResource,
     ItemContentOutputText,
@@ -52,7 +53,12 @@ from .utils.async_iter import chunk_on_change, peek
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
 
-    async def convert_contents(self, contents: AsyncIterable[BaseContent], author_name: str) -> AsyncIterable[ResponseStreamEvent]:  # pylint: disable=unused-argument
+    async def convert_contents(
+        self,
+        contents: AsyncIterable[BaseContent],
+        author_name: str,
+    ) -> AsyncIterable[ResponseStreamEvent]:
+        # pylint: disable=unused-argument
         raise NotImplementedError
 
 
@@ -62,7 +68,11 @@ class _TextContentStreamingState(_BaseStreamingState):
     def __init__(self, parent: AgentFrameworkOutputStreamingConverter):
         self._parent = parent
 
-    async def convert_contents(self, contents: AsyncIterable[TextContent], author_name: str) -> AsyncIterable[ResponseStreamEvent]:
+    async def convert_contents(
+        self,
+        contents: AsyncIterable[TextContent],
+        author_name: str,
+    ) -> AsyncIterable[ResponseStreamEvent]:
         item_id = self._parent.context.id_generator.generate_message_id()
         output_index = self._parent.next_output_index()
 
@@ -116,8 +126,8 @@ class _TextContentStreamingState(_BaseStreamingState):
         )
 
         item = ResponsesAssistantMessageItemResource(
-            id=item_id, 
-            status="completed", 
+            id=item_id,
+            status="completed",
             content=[content_part],
             created_by=self._parent._build_created_by(author_name),
         )
@@ -209,7 +219,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             )
 
             self._parent.add_completed_output_item(item)  # pylint: disable=protected-access
-        
+
         # process HITL contents after function calls
         for content in hitl_contents:
             item_id = self._parent.context.id_generator.generate_function_call_id()
@@ -260,7 +270,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             return arguments
         try:
             return json.dumps(arguments)
-        except Exception as e:
+        except Exception: # pylint: disable=broad-exception-caught
             return str(arguments)
 
 
@@ -363,7 +373,7 @@ class AgentFrameworkOutputStreamingConverter:
         is_changed = (
             lambda a, b: a is not None \
                 and b is not None \
-                and a.message_id != b.message_id  # pylint: disable=unnecessary-lambda-assignment
+                and a.message_id != b.message_id
         )
 
         async for group in chunk_on_change(updates, is_changed):
@@ -381,15 +391,19 @@ class AgentFrameworkOutputStreamingConverter:
             elif isinstance(first, FunctionResultContent):
                 state = _FunctionCallOutputStreamingState(self)
             elif isinstance(first, ErrorContent):
-                raise ValueError(f"ErrorContent received: code={first.error_code}, message={first.message}")
+                error_msg = (
+                    f"ErrorContent received: code={first.error_code}, "
+                    f"message={first.message}"
+                )
+                raise ValueError(error_msg)
             if not state:
                 continue
 
             # Extract just the content from (content, author_name) tuples using async generator
             async def extract_contents():
-                async for content, _ in contents_with_author:
+                async for content, _ in contents_with_author:  # pylint: disable=cell-var-from-loop
                     yield content
-            
+
             async for content in state.convert_contents(extract_contents(), author_name):
                 yield content
 
@@ -404,13 +418,16 @@ class AgentFrameworkOutputStreamingConverter:
             "name": author_name or "",
             "version": "",
         }
-        
+
         return {
             "agent": agent_dict,
             "response_id": self._response_id,
         }
 
-    async def _read_updates(self, updates: AsyncIterable[AgentRunResponseUpdate]) -> AsyncIterable[tuple[BaseContent, str]]:
+    async def _read_updates(
+        self,
+        updates: AsyncIterable[AgentRunResponseUpdate],
+    ) -> AsyncIterable[tuple[BaseContent, str]]:
         async for update in updates:
             if not update.contents:
                 continue

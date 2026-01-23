@@ -19,7 +19,7 @@ from azure.ai.agentserver.core.models import (
     ResponseStreamEvent,
 )
 from azure.ai.agentserver.core.models.projects import ResponseErrorEvent, ResponseFailedEvent
-from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
+from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint: disable=import-error
 
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
@@ -98,7 +98,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
                 logger.info("Observability setup completed with provided exporters.")
             elif project_endpoint:
                 self._setup_tracing_with_azure_ai_client(project_endpoint)
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-exception-caught
             logger.warning(f"Failed to initialize tracing: {e}", exc_info=True)
         self.tracer = trace.get_tracer(__name__)
 
@@ -107,21 +107,21 @@ class AgentFrameworkAgent(FoundryCBAgent):
             from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
             return AzureMonitorTraceExporter.from_connection_string(connection_string)
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-exception-caught
             logger.error(f"Failed to create Application Insights exporter: {e}", exc_info=True)
             return None
 
     def _create_otlp_exporter(self, endpoint, protocol=None):
         try:
             if protocol and protocol.lower() in ("http", "http/protobuf", "http/json"):
-                    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-
-                    return OTLPSpanExporter(endpoint=endpoint)
-            else:
-                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+                from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 
                 return OTLPSpanExporter(endpoint=endpoint)
-        except Exception as e:
+
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+
+            return OTLPSpanExporter(endpoint=endpoint)
+        except Exception as e: # pylint: disable=broad-exception-caught
             logger.error(f"Failed to create OTLP exporter: {e}", exc_info=True)
             return None
 
@@ -182,8 +182,12 @@ class AgentFrameworkAgent(FoundryCBAgent):
         AsyncGenerator[ResponseStreamEvent, Any],
     ]:
         raise NotImplementedError("This method is implemented in the base class.")
-    
-    async def _load_agent_thread(self, context: AgentRunContext, agent: Union[AgentProtocol, WorkflowAgent]) -> Optional[AgentThread]:
+
+    async def _load_agent_thread(
+        self,
+        context: AgentRunContext,
+        agent: Union[AgentProtocol, WorkflowAgent],
+    ) -> Optional[AgentThread]:
         """Load the agent thread for a given conversation ID.
 
         :param context: The agent run context.
@@ -209,6 +213,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :type context: AgentRunContext
         :param agent_thread: The agent thread to save.
         :type agent_thread: AgentThread
+
+        :return: None
+        :rtype: None
         """
         if agent_thread and self._thread_repository:
             await self._thread_repository.set(context.conversation_id, agent_thread)
@@ -216,14 +223,28 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
     def _run_streaming_updates(
         self,
-        *,
         context: AgentRunContext,
         run_stream: Callable[[], AsyncGenerator[Any, None]],
         agent_thread: Optional[AgentThread] = None,
     ) -> AsyncGenerator[ResponseStreamEvent, Any]:
-        """Execute a streaming run with shared OAuth/error handling."""
+        """
+        Execute a streaming run with shared OAuth/error handling.
+        
+        :param context: The agent run context.
+        :type context: AgentRunContext
+        :param run_stream: A callable that invokes the agent in stream mode
+        :type run_stream: Callable[[], AsyncGenerator[Any, None]]
+        :param agent_thread: The agent thread to use during streaming updates.
+        :type agent_thread: Optional[AgentThread]
+
+        :return: An async generator yielding streaming events.
+        :rtype: AsyncGenerator[ResponseStreamEvent, Any]
+        """
         logger.info("Running agent in streaming mode")
-        streaming_converter = AgentFrameworkOutputStreamingConverter(context, hitl_helper=self._hitl_helper)
+        streaming_converter = AgentFrameworkOutputStreamingConverter(
+            context,
+            hitl_helper=self._hitl_helper,
+        )
 
         async def stream_updates():
             try:
@@ -250,7 +271,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
                         )
                         yield ResponseFailedEvent(
                             sequence_number=streaming_converter.next_sequence(),
-                            response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
+                            response=streaming_converter._build_response(  # pylint: disable=protected-access
+                                status="failed"
+                            ),
                         )
                 except Exception as e:  # pylint: disable=broad-exception-caught
                     logger.error("Unhandled exception during streaming updates: %s", e, exc_info=True)
@@ -262,7 +285,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
                     )
                     yield ResponseFailedEvent(
                         sequence_number=streaming_converter.next_sequence(),
-                        response=streaming_converter._build_response(status="failed"),  # pylint: disable=protected-access
+                        response=streaming_converter._build_response(  # pylint: disable=protected-access
+                            status="failed"
+                        ),
                     )
             finally:
                 # No request-scoped resources to clean up today, but keep hook for future use.

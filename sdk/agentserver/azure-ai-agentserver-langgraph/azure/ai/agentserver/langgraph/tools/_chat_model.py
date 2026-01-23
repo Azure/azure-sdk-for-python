@@ -52,12 +52,13 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         """Get the Foundry tool call wrappers for this chat model.
 
         Example::
-        >>> from langgraph.prebuilt import ToolNode
-        >>> foundry_tool_bound_chat_model = FoundryToolLateBindingChatModel(...)
-        >>> ToolNode([...], **foundry_tool_bound_chat_model.as_wrappers())
+            >>> from langgraph.prebuilt import ToolNode
+            >>> foundry_tool_bound_chat_model = FoundryToolLateBindingChatModel(...)
+            >>> ToolNode([...], **foundry_tool_bound_chat_model.as_wrappers())
 
         :return: The Foundry tool call wrappers.
         :rtype: FoundryToolNodeWrappers
+
         """
         return FoundryToolCallWrapper(self._foundry_tools_to_bind).as_wrappers()
 

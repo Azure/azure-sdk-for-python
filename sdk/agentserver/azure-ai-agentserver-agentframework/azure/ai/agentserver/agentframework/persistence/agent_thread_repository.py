@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 from abc import ABC, abstractmethod
 import json
 import os
@@ -10,7 +13,11 @@ class AgentThreadRepository(ABC):
     """AgentThread repository to manage saved thread messages of agent threads and workflows."""
 
     @abstractmethod
-    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
+    async def get(
+        self,
+        conversation_id: str,
+        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
+    ) -> Optional[AgentThread]:
         """Retrieve the savedt thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
@@ -22,7 +29,7 @@ class AgentThreadRepository(ABC):
         :rtype: Optional[AgentThread]
         """
 
-    @abstractmethod    
+    @abstractmethod
     async def set(self, conversation_id: str, thread: AgentThread) -> None:
         """Save the thread for a given conversation ID.
 
@@ -38,7 +45,11 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
     def __init__(self) -> None:
         self._inventory: dict[str, AgentThread] = {}
 
-    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
+    async def get(
+        self,
+        conversation_id: str,
+        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
+    ) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
@@ -69,13 +80,17 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
     def __init__(self, agent: AgentProtocol) -> None:
         """
         Initialize the repository with the given agent.
-        
+
         :param agent: The agent instance.
         :type agent: AgentProtocol
         """
         self._agent = agent
 
-    async def get(self, conversation_id: str, agent: Optional[Union[AgentProtocol, WorkflowAgent]]=None) -> Optional[AgentThread]:
+    async def get(
+        self,
+        conversation_id: str,
+        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
+    ) -> Optional[AgentThread]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
@@ -115,7 +130,7 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         :rtype: Optional[Any]
         """
         raise NotImplementedError("read_from_storage is not implemented.")
-    
+
     async def write_to_storage(self, conversation_id: str, serialized_thread: Any) -> None:
         """Write the serialized thread to storage.
 
@@ -123,9 +138,11 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         :type conversation_id: str
         :param serialized_thread: The serialized thread to save.
         :type serialized_thread: Any
+        :return: None
+        :rtype: None
         """
         raise NotImplementedError("write_to_storage is not implemented.")
-    
+
 
 class JsonLocalFileAgentThreadRepository(SerializedAgentThreadRepository):
     """Json based implementation of AgentThreadRepository using local file storage."""

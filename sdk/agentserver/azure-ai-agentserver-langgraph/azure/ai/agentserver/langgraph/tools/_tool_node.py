@@ -18,9 +18,9 @@ class FoundryToolNodeWrappers(TypedDict):
     """A TypedDict for Foundry tool node wrappers.
 
     Example::
-    >>> from langgraph.prebuilt import ToolNode
-    >>> call_wrapper = FoundryToolCallWrapper(...)
-    >>> ToolNode([...], **call_wrapper.as_wrappers())
+        >>> from langgraph.prebuilt import ToolNode
+        >>> call_wrapper = FoundryToolCallWrapper(...)
+        >>> ToolNode([...], **call_wrapper.as_wrappers())
 
     :param wrap_tool_call: The synchronous tool call wrapper.
     :type wrap_tool_call: ToolCallWrapper

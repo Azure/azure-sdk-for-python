@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=no-name-in-module,import-error
 from __future__ import annotations
 
 from typing import Any, AsyncGenerator, Optional, Union
@@ -40,7 +41,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
         AsyncGenerator[ResponseStreamEvent, Any],
     ]:
         try:
-            logger.info(f"Starting AIAgent agent_run with stream={context.stream}")
+            logger.info("Starting AIAgent agent_run with stream=%s", context.stream)
             request_input = context.request.get("input")
 
             agent_thread = await self._load_agent_thread(context, self._agent)
@@ -49,8 +50,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             message = await input_converter.transform_input(
                 request_input,
                 agent_thread=agent_thread)
-            logger.debug(f"Transformed input message type: {type(message)}")
-
+            logger.debug("Transformed input message type: %s", type(message))
             # Use split converters
             if context.stream:
                 return self._run_streaming_updates(
@@ -67,7 +67,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             result = await self.agent.run(
                 message,
                 thread=agent_thread)
-            logger.debug(f"Agent run completed, result type: {type(result)}")
+            logger.debug("Agent run completed, result type: %s", type(result))
             await self._save_agent_thread(context, agent_thread)
 
             non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
