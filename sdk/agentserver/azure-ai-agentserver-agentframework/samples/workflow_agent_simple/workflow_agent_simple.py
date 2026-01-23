@@ -45,7 +45,7 @@ async def main() -> None:
         # Or create a factory function for the workflow pass the workflow factory to the adapter 
         def workflow_factory() -> Workflow:
             return builder.build()
-        await from_agent_framework(workflow=workflow_factory).run_async()
+        await from_agent_framework(workflow_factory).run_async()
 
 
 if __name__ == "__main__":

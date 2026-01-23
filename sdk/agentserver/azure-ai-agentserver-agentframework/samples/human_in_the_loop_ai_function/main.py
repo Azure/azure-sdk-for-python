@@ -78,7 +78,7 @@ def build_agent():
 async def main() -> None:
     agent = build_agent()
     thread_repository = JsonLocalFileAgentThreadRepository(agent=agent, storage_path="./thread_storage")
-    await from_agent_framework(agent=agent, thread_repository=thread_repository).run_async()
+    await from_agent_framework(agent, thread_repository=thread_repository).run_async()
 
 if __name__ == "__main__":
     asyncio.run(main())
