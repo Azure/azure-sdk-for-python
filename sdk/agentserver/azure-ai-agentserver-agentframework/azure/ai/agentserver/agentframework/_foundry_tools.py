@@ -71,7 +71,7 @@ class FoundryToolClient:
         # Build field definitions for the Pydantic model
         field_definitions: Dict[str, Any] = {}
         for field_name, field_info in properties.items():
-            field_type = self._json_schema_type_to_python(field_info.type or "string")
+            field_type = field_info.type.py_type
             field_description = field_info.description or ""
             is_required = field_name in required_fields
 
@@ -106,24 +106,6 @@ class FoundryToolClient:
             func=tool_func,
             input_model=input_model
         )
-
-    def _json_schema_type_to_python(self, json_type: str) -> type:
-        """Convert JSON schema type to Python type.
-
-        :param json_type: The JSON schema type string.
-        :type json_type: str
-        :return: The corresponding Python type.
-        :rtype: type
-        """
-        type_map = {
-            "string": str,
-            "number": float,
-            "integer": int,
-            "boolean": bool,
-            "array": list,
-            "object": dict,
-        }
-        return type_map.get(json_type, str)
 
 
 class FoundryToolsChatMiddleware(ChatMiddleware):
