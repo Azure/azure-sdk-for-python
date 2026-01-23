@@ -5,6 +5,10 @@
 # ------------------------------------
 
 """
+
+TODO: Use a strongly typed class to specify input message, and update pyproject.toml and 
+pyrightconfig.json to re-enable type checking for samples/memories folder.
+
 DESCRIPTION:
     This sample demonstrates how to interact with the memory store to add and retrieve memory.
 
@@ -39,7 +43,6 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
-    EasyInputMessage,
 )
 
 load_dotenv()
@@ -82,9 +85,7 @@ with (
     scope = "user_123"
 
     # Add memories to the memory store
-    user_message = EasyInputMessage(
-        role="user", content="I prefer dark roast coffee and usually drink it in the morning"
-    )
+    user_message={"type": "message", "role": "user", "content": "I prefer dark roast coffee and usually drink it in the morning"}
     update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
@@ -101,7 +102,7 @@ with (
         )
 
     # Retrieve memories from the memory store
-    query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
+    query_message = {"type": "message", "role": "user", "content": "What are my coffee preferences?"}
     search_response = project_client.memory_stores.search_memories(
         name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
     )

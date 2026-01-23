@@ -66,3 +66,11 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 verifytypes = false
+
+[tool.mypy]
+exclude = [
+    "samples/memories/sample_memory_advanced.py",
+    "samples/memories/sample_memory_advanced_async.py",
+    "samples/memories/sample_memory_basic.py",
+    "samples/memories/sample_memory_basic_async.py"
+]

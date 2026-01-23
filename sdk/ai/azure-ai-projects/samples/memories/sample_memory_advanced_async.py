@@ -5,6 +5,10 @@
 # ------------------------------------
 
 """
+
+TODO: Use a strongly typed class to specify input message, and update pyproject.toml and 
+pyrightconfig.json to re-enable type checking for samples/memories folder.
+
 DESCRIPTION:
     This sample demonstrates how to interact with the memory store to add and retrieve memory
     using the asynchronous AIProjectClient. It uses some additional operations compared
@@ -42,8 +46,6 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
-    ResponsesUserMessageItemParam,
-    ResponsesAssistantMessageItemParam,
 )
 
 load_dotenv()
@@ -89,9 +91,7 @@ async def main() -> None:
         scope = "user_123"
 
         # Extract memories from messages and add them to the memory store
-        user_message = ResponsesUserMessageItemParam(
-            content="I prefer dark roast coffee and usually drink it in the morning"
-        )
+        user_message={"type": "message", "role": "user", "content": "I prefer dark roast coffee and usually drink it in the morning"}
         update_poller = await project_client.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
@@ -103,7 +103,7 @@ async def main() -> None:
         )
 
         # Extend the previous update with another update and more messages
-        new_message = ResponsesUserMessageItemParam(content="I also like cappuccinos in the afternoon")
+        new_message = {"type": "message", "role": "user", "content": "I also like cappuccinos in the afternoon"}
         new_update_poller = await project_client.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
@@ -130,7 +130,7 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = ResponsesUserMessageItemParam(content="What are my morning coffee preferences?")
+        query_message = {"type": "message", "role": "user", "content": "What are my morning coffee preferences?"}
         search_response = await project_client.memory_stores.search_memories(
             name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
         )
@@ -139,12 +139,8 @@ async def main() -> None:
             print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
         # Perform another search using the previous search as context
-        agent_message = ResponsesAssistantMessageItemParam(
-            content="You previously indicated a preference for dark roast coffee in the morning."
-        )
-        followup_query = ResponsesUserMessageItemParam(
-            content="What about afternoon?"  # Follow-up assuming context from previous messages
-        )
+        agent_message = {"type": "message", "role": "assistant", "content": "You previously indicated a preference for dark roast coffee in the morning."}
+        followup_query = {"type": "message", "role": "user", "content": "What about afternoon?"}
         followup_search_response = await project_client.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,

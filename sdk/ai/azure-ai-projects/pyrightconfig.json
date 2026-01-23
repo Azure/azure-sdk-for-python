@@ -3,6 +3,10 @@
   "reportMissingImports": false,
   "pythonVersion": "3.11",
   "exclude": [
+    "**/samples/memories/sample_memory_advanced.py",
+    "**/samples/memories/sample_memory_advanced_async.py",
+    "**/samples/memories/sample_memory_basic.py",
+    "**/samples/memories/sample_memory_basic_async.py"
   ],
   "extraPaths": [
     "./../../core/azure-core",
