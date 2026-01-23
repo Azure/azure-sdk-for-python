@@ -251,9 +251,7 @@ fields = [
     SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True),
     SimpleField(name="HotelName", type=SearchFieldDataType.STRING, searchable=True),
     SimpleField(name="BaseRate", type=SearchFieldDataType.DOUBLE),
-    SearchableField(
-        name="Description", type=SearchFieldDataType.STRING, collection=True
-    ),
+    SearchableField(name="Description", type=SearchFieldDataType.STRING, collection=True),
     ComplexField(
         name="Address",
         fields=[

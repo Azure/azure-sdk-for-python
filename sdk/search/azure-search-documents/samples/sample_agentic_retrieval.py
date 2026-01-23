@@ -30,11 +30,11 @@ from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
 from azure.search.documents.knowledgebases.models import (
     KnowledgeBaseRetrievalRequest,
     KnowledgeRetrievalSemanticIntent,
+    KnowledgeRetrievalMinimalReasoningEffort,
 )
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
     KnowledgeSourceReference,
-    KnowledgeRetrievalMinimalReasoningEffort,
     SearchIndexFieldReference,
     SearchIndexKnowledgeSource,
     SearchIndexKnowledgeSourceParameters,

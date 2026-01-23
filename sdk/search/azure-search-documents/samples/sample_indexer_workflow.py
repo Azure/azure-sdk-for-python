@@ -43,7 +43,7 @@ def sample_indexer_workflow():
         SearchIndexer,
         SimpleField,
         SearchFieldDataType,
-        EntityRecognitionSkill,
+        EntityRecognitionSkillV3,
         InputFieldMappingEntry,
         OutputFieldMappingEntry,
         SearchIndexerSkillset,
@@ -96,7 +96,7 @@ def sample_indexer_workflow():
     # 3. Create a skillset
     inp = InputFieldMappingEntry(name="text", source="/document/lastRenovationDate")
     output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
-    skill = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
+    skill = EntityRecognitionSkillV3(name="merge-skill", inputs=[inp], outputs=[output])
     skillset = SearchIndexerSkillset(name=skillset_name, skills=[skill], description="example skillset")
     indexer_client.create_skillset(skillset)
     print(f"Created: skillset '{skillset_name}'")
