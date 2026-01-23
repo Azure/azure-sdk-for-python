@@ -17,8 +17,8 @@ from ._deserialize import (
     load_xml_string,
     parse_tags
 )
-from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
-from ._generated._utils.serialization import Deserializer
+from ._generated.azure.storage.blobs.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
+from ._generated.azure.storage.blobs._utils.serialization import Deserializer
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
 from ._shared.response_handlers import (

@@ -35,7 +35,7 @@ from .._encryption import (
 if TYPE_CHECKING:
     from codecs import IncrementalDecoder
     from .._encryption import _EncryptionData
-    from .._generated.aio import AzureBlobStorage
+    from .._generated.azure.storage.blobs.aio import BlobClient as AzureBlobStorage
     from .._models import BlobProperties
     from .._shared.models import StorageConfiguration
 

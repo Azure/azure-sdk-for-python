@@ -29,8 +29,8 @@ from ._container_client_helpers import (
 from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
-from ._generated import AzureBlobStorage
-from ._generated.models import SignedIdentifier
+from ._generated.azure.storage.blobs import BlobClient as AzureBlobStorage
+from ._generated.azure.storage.blobs.models import SignedIdentifier
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
     BlobNamesPaged,

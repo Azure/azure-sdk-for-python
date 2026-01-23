@@ -29,7 +29,7 @@ from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
-    from ._generated.models import (
+    from ._generated.azure.storage.blobs.models import (
         BlobItemInternal,
         BlobTags,
         PageList,

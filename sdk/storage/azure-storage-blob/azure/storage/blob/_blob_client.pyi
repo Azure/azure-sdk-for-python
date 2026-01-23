@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._container_client import ContainerClient
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
-from ._generated.models import RehydratePriority
+from ._generated.azure.storage.blobs.models import RehydratePriority
 from ._lease import BlobLeaseClient
 from ._models import (
     ArrowDialect,

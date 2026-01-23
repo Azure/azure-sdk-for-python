@@ -15,7 +15,7 @@ from urllib.parse import quote, unquote, urlparse
 
 from ._deserialize import deserialize_blob_stream
 from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from ._generated.models import (
+from ._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
     BlobHTTPHeaders,
     BlockList,
@@ -60,7 +60,7 @@ from ._upload_helpers import _any_conditions
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
-    from ._generated import AzureBlobStorage
+    from ._generated.azure.storage.blobs import BlobClient as AzureBlobStorage
     from ._models import ContentSettings
     from ._shared.models import StorageConfiguration
 

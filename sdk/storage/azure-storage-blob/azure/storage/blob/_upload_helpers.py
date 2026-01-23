@@ -18,7 +18,7 @@ from ._encryption import (
     get_adjusted_upload_size,
     get_blob_encryptor_and_padder
 )
-from ._generated.models import (
+from ._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
     BlockLookupList,
     ModifiedAccessConditions
@@ -34,7 +34,7 @@ from ._shared.uploads import (
 )
 
 if TYPE_CHECKING:
-    from ._generated.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
+    from ._generated.azure.storage.blobs.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
     from ._shared.models import StorageConfiguration
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
