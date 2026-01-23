@@ -5,6 +5,7 @@ from subprocess import CalledProcessError
 from typing import Dict, List, Optional
 
 from .Check import Check, DEPENDENCY_TOOLS_REQUIREMENTS, PACKAGING_REQUIREMENTS, TEST_TOOLS_REQUIREMENTS
+from .proxy_ports import get_proxy_url_for_check
 
 from ci_tools.functions import install_into_venv, is_error_code_5_allowed
 from ci_tools.scenario.generation import create_package_and_install
@@ -28,8 +29,16 @@ class DependencyCheck(Check):
     ) -> None:
         super().__init__()
         self.dependency_type = dependency_type
-        self.proxy_url = proxy_url
         self.display_name = display_name
+        resolved_proxy = get_proxy_url_for_check(display_name)
+        if proxy_url and proxy_url != resolved_proxy:
+            logger.debug(
+                "Overriding provided proxy_url %s with mapping value %s for check %s",
+                proxy_url,
+                resolved_proxy,
+                display_name,
+            )
+        self.proxy_url = resolved_proxy
         self.additional_packages = list(additional_packages or [])
 
     def register(

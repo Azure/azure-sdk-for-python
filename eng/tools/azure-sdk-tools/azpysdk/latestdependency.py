@@ -2,13 +2,14 @@ import argparse
 from typing import List, Optional
 
 from .dependency_check import DependencyCheck
+from .proxy_ports import get_proxy_url_for_check
 
 
 class latestdependency(DependencyCheck):
     def __init__(self) -> None:
         super().__init__(
             dependency_type="Latest",
-            proxy_url="http://localhost:5012",
+            proxy_url=get_proxy_url_for_check("latestdependency"),
             display_name="latestdependency",
         )
 

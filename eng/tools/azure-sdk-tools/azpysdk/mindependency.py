@@ -2,13 +2,14 @@ import argparse
 from typing import List, Optional
 
 from .dependency_check import DependencyCheck
+from .proxy_ports import get_proxy_url_for_check
 
 
 class mindependency(DependencyCheck):
     def __init__(self) -> None:
         super().__init__(
             dependency_type="Minimum",
-            proxy_url="http://localhost:5013",
+            proxy_url=get_proxy_url_for_check("mindependency"),
             display_name="mindependency",
             additional_packages=[
                 "azure-mgmt-keyvault<7.0.0",

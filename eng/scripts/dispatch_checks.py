@@ -11,7 +11,7 @@ import urllib.request
 from dataclasses import dataclass
 from typing import IO, List, Optional
 
-from azpysdk.proxy_ports import get_proxy_port_for_check, get_proxy_url_for_check
+from azpysdk.proxy_ports import get_proxy_port_for_check
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
@@ -170,8 +170,6 @@ async def run_check(
         cmd = base_args + [check, "--isolate", package]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
-        proxy_url = get_proxy_url_for_check(check)
-        env["PROXY_URL"] = proxy_url
         env["PROXY_MANUAL_START"] = "1"
         try:
             proc = await asyncio.create_subprocess_exec(

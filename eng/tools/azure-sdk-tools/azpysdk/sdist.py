@@ -2,13 +2,14 @@ import argparse
 from typing import List, Optional
 
 from .install_and_test import InstallAndTest
+from .proxy_ports import get_proxy_url_for_check
 
 
 class sdist(InstallAndTest):
     def __init__(self) -> None:
         super().__init__(
             package_type="sdist",
-            proxy_url="http://localhost:5005",
+            proxy_url=get_proxy_url_for_check("sdist"),
             display_name="sdist",
         )
 

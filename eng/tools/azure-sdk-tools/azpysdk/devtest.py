@@ -14,6 +14,7 @@ from ci_tools.variables import discover_repo_root
 from ci_tools.logging import logger
 
 from .install_and_test import InstallAndTest
+from .proxy_ports import get_proxy_url_for_check
 
 REPO_ROOT = discover_repo_root()
 common_task_path = os.path.abspath(os.path.join(REPO_ROOT, "scripts", "devops_tasks"))
@@ -122,7 +123,11 @@ def install_dev_build_packages(executable: str, pkg_name_to_exclude: str, workin
 
 class devtest(InstallAndTest):
     def __init__(self) -> None:
-        super().__init__(package_type="sdist", proxy_url="http://localhost:5002", display_name="devtest")
+        super().__init__(
+            package_type="sdist",
+            proxy_url=get_proxy_url_for_check("devtest"),
+            display_name="devtest",
+        )
 
     def register(
         self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None

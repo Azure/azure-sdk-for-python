@@ -2,13 +2,14 @@ import argparse
 from typing import List, Optional
 
 from .install_and_test import InstallAndTest
+from .proxy_ports import get_proxy_url_for_check
 
 
 class whl(InstallAndTest):
     def __init__(self) -> None:
         super().__init__(
             package_type="wheel",
-            proxy_url="http://localhost:5001",
+            proxy_url=get_proxy_url_for_check("whl"),
             display_name="whl",
         )
 
