@@ -33,7 +33,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         results_per_page = 10
         change_feed = cf_client.list_changes(results_per_page=results_per_page).by_page()
 
@@ -69,7 +69,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         change_feed = cf_client.list_changes()
         all_events = list(change_feed)
         total_events = len(all_events)
@@ -93,7 +93,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         # To get the total events number
         start_time = datetime(2022, 11, 15)
         end_time = datetime(2022, 11, 18)
@@ -122,7 +122,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         start_time = datetime(2022, 11, 15)
         end_time = datetime(2022, 11, 18)
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=2).by_page()
@@ -138,7 +138,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         start_time = datetime(2300, 1, 1)
         change_feed = cf_client.list_changes(start_time=start_time)
 
@@ -151,7 +151,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         start_time = datetime(2022, 11, 27)
         end_time = datetime(2022, 11, 29)
@@ -210,7 +210,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         start_time = datetime(2022, 11, 27)
         end_time = datetime(2022, 11, 29)
@@ -248,7 +248,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         # to get continuation token
         start_time = datetime(2022, 11, 27)
@@ -280,7 +280,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
     def test_read_3_shards_change_feed_during_a_time_range_in_multiple_times_gives_same_result_as_reading_all(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         # to read until the end
         start_time = datetime(2022, 11, 27)
@@ -344,7 +344,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         start_time = datetime(2022, 11, 27)
         end_time = datetime(2022, 11, 29)
         change_feed = cf_client.list_changes(results_per_page=1, start_time=start_time, end_time=end_time).by_page()

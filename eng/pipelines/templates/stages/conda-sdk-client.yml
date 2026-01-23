@@ -1,8 +1,4 @@
 parameters:
-  - name: release_msrest
-    displayName: 'msrest'
-    type: boolean
-    default: true
   - name: release_msal
     displayName: 'msal'
     type: boolean
@@ -47,10 +43,6 @@ parameters:
     displayName: 'azure-ai-language-questionanswering'
     type: boolean
     default: true
-  - name: release_azure_ai_metricsadvisor
-    displayName: 'azure-ai-metricsadvisor'
-    type: boolean
-    default: false
   - name: release_azure_ai_ml
     displayName: 'azure-ai-ml'
     type: boolean
@@ -77,6 +69,10 @@ parameters:
     default: true
   - name: release_azure_appconfiguration
     displayName: 'azure-appconfiguration'
+    type: boolean
+    default: true
+  - name: release_azure_appconfiguration_provider
+    displayName: 'azure-appconfiguration-provider'
     type: boolean
     default: true
   - name: release_azure_communication
@@ -175,6 +171,10 @@ parameters:
     displayName: 'azure-monitor-querymetrics'
     type: boolean
     default: true
+  - name: release_azure_monitor_opentelemetry
+    displayName: 'azure-monitor-opentelemetry'
+    type: boolean
+    default: true
   - name: release_azure_mgmt
     displayName: 'azure-mgmt'
     type: boolean
@@ -214,11 +214,6 @@ extends:
                           version: 1.6.0
                         - package: azure-common
                           version: 1.1.28
-                    - name: msrest
-                      in_batch: true
-                      checkout:
-                        - package: msrest
-                          download_uri: https://files.pythonhosted.org/packages/68/77/8397c8fb8fc257d8ea0fa66f8068e073278c65f05acb17dcb22a02bfdc42/msrest-0.7.1.zip
                     - name: msal
                       in_batch: true
                       checkout:
@@ -298,12 +293,6 @@ extends:
                       checkout:
                         - package: azure-ai-language-questionanswering
                           version: 1.1.0
-                    - name: azure-ai-metricsadvisor
-                      service: cognitivelanguage
-                      in_batch: ${{ parameters.release_azure_ai_metricsadvisor }}
-                      checkout:
-                        - package: azure-ai-metricsadvisor
-                          version: 1.0.1
                     - name: azure-ai-textanalytics
                       service: textanalytics
                       in_batch: ${{ parameters.release_azure_ai_textanalytics }}
@@ -335,6 +324,12 @@ extends:
                       checkout:
                         - package: azure-appconfiguration
                           version: 1.7.2
+                    - name: azure-appconfiguration-provider
+                      service: appconfiguration
+                      in_batch: ${{ parameters.release_azure_appconfiguration_provider }}
+                      checkout:
+                        - package: azure-appconfiguration-provider
+                          version: 2.3.1
                     - name: azure-communication
                       service: communication
                       common_root: azure/communication
@@ -448,6 +443,12 @@ extends:
                       checkout:
                         - package: azure-monitor-ingestion
                           version: 1.1.0
+                    - name: azure-monitor-opentelemetry
+                      service: monitor
+                      in_batch: ${{ parameters.release_azure_monitor_opentelemetry }}
+                      checkout:
+                        - package: azure-monitor-opentelemetry
+                          version: 1.8.4
                     - name: azure-monitor-query
                       service: monitor
                       in_batch: ${{ parameters.release_azure_monitor_query }}
@@ -828,6 +829,8 @@ extends:
                           version: 2.3.0
                         - package: azure-mgmt-resource
                           version: 24.0.0
+                        - package: azure-mgmt-resourcegraph
+                          version: 8.0.1
                         - package: azure-mgmt-resourceconnector
                           version: 1.0.0
                         - package: azure-mgmt-resourcemover
