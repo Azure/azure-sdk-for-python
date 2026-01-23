@@ -40,6 +40,7 @@ Respond with true if:
 
 Always respond with `reason` indicating the reason for the response."""
 
+
 class TestSamplesEvaluations(AzureRecordedTestCase):
     """
     Tests for evaluation samples.
