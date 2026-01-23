@@ -105,7 +105,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
       "azure-data-table",
       "azure-appconfig",
       "azure-keyvault-keys",
-      "azure-keyvault-admin",
+      "azure-keyvault-administration",
       "azure-identity",
       "azure-mgmt-core",
       "azure-core-experimental",
