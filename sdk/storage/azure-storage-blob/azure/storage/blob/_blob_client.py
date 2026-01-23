@@ -58,8 +58,8 @@ from ._deserialize import (
 )
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from ._generated import AzureBlobStorage
-from ._generated.models import CpkInfo
+from ._generated.azure.storage.blobs import BlobClient as AzureBlobStorage
+from ._generated.azure.storage.blobs.models import CpkInfo
 from ._lease import BlobLeaseClient
 from ._models import BlobBlock, BlobProperties, BlobQueryError, BlobType, PageRange, PageRangePaged
 from ._quick_query_helper import BlobQueryReader

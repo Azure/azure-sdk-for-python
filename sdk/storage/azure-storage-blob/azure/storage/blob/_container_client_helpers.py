@@ -10,14 +10,14 @@ from urllib.parse import quote, urlparse
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import HttpRequest
 from ._blob_client_helpers import _generic_delete_blob_options
-from ._generated import AzureBlobStorage
+from ._generated.azure.storage.blobs import BlobClient as AzureBlobStorage
 from ._models import BlobProperties
 from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
     from azure.storage.blob import RehydratePriority
     from urllib.parse import ParseResult
-    from ._generated.models import LeaseAccessConditions, ModifiedAccessConditions
+    from ._generated.azure.storage.blobs.models import LeaseAccessConditions, ModifiedAccessConditions
     from ._models import PremiumPageBlobTier, StandardBlobTier
 
 

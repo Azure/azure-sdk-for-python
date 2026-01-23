@@ -69,8 +69,8 @@ from .._deserialize import (
     parse_tags
 )
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from .._generated.aio import AzureBlobStorage
-from .._generated.models import CpkInfo
+from .._generated.azure.storage.blobs.aio import BlobClient as AzureBlobStorage
+from .._generated.azure.storage.blobs.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
 from .._shared.base_client import StorageAccountHostsMixin
