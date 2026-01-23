@@ -26,7 +26,7 @@ from azure.codetransparency import CodeTransparencyClient
 def main():
     client = CodeTransparencyClient(
         endpoint="ENDPOINT",
-        credential=AzureKeyCredential(key=os.getenv("AZURE_KEY")),
+        credential=AzureKeyCredential(key=os.getenv("AZURE_KEY")),  # type: ignore[arg-type]
     )
 
     response = client.get_public_keys()
