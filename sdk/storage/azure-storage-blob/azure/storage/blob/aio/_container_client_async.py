@@ -143,7 +143,8 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -161,6 +162,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :rtype: None
         """
         await self._client.close()
+
+    def _build_generated_client(self) -> AzureBlobStorage:
+        return AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         return _format_url(
