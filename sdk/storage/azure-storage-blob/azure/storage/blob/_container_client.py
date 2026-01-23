@@ -167,7 +167,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        client = AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
         client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 

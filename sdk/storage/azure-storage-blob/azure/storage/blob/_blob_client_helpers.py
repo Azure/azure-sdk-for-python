@@ -24,7 +24,8 @@ from ._generated.models import (
     DeleteSnapshotsOptionType,
     ModifiedAccessConditions,
     QueryRequest,
-    SequenceNumberAccessConditions
+    SequenceNumberAccessConditions,
+    SourceCpkInfo
 )
 from ._models import (
     BlobBlock,
@@ -215,6 +216,13 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -231,17 +239,12 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'source_modified_access_conditions': get_source_conditions(kwargs),
         'cpk_info': cpk_info,
         'cpk_scope_info': get_cpk_scope_info(kwargs),
+        'source_cpk_info': source_cpk_info,
         'headers': headers,
     }
     options.update(kwargs)
     if not overwrite and not _any_conditions(**options):
         options['modified_access_conditions'].if_none_match = '*'
-    if source_cpk:
-        options.update({
-            'source_encryption_key': source_cpk.key_value,
-            'source_encryption_key_sha256': source_cpk.key_hash,
-            'source_encryption_algorithm': source_cpk.algorithm
-        })
     return options
 
 def _download_blob_options(
@@ -766,6 +769,14 @@ def _stage_block_from_url_options(
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
+
     options = {
         'copy_source_authorization': source_authorization,
         'file_request_intent': source_token_intent,
@@ -778,15 +789,10 @@ def _stage_block_from_url_options(
         'lease_access_conditions': access_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
+        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers,
     }
     options.update(kwargs)
-    if source_cpk:
-        options.update({
-            'source_encryption_key': source_cpk.key_value,
-            'source_encryption_key_sha256': source_cpk.key_hash,
-            'source_encryption_algorithm': source_cpk.algorithm
-        })
     return options
 
 def _get_block_list_result(blocks: BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]:
@@ -1056,6 +1062,13 @@ def _upload_pages_from_url_options(
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1072,15 +1085,10 @@ def _upload_pages_from_url_options(
         'source_modified_access_conditions': source_mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
+        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers
     }
     options.update(kwargs)
-    if source_cpk:
-        options.update({
-            'source_encryption_key': source_cpk.key_value,
-            'source_encryption_key_sha256': source_cpk.key_hash,
-            'source_encryption_algorithm': source_cpk.algorithm
-        })
     return options
 
 def _clear_page_options(
@@ -1210,6 +1218,13 @@ def _append_block_from_url_options(
             encryption_algorithm=cpk.algorithm
         )
     source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1225,6 +1240,7 @@ def _append_block_from_url_options(
         'source_modified_access_conditions': source_mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
+        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers,
         'timeout': kwargs.pop('timeout', None)
     }
