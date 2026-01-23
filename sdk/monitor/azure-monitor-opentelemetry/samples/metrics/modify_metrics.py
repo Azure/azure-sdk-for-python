@@ -6,7 +6,6 @@
 
 from time import sleep
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import metrics
 from opentelemetry.sdk.metrics.export import (
     MetricExportResult,
@@ -14,12 +13,13 @@ from opentelemetry.sdk.metrics.export import (
     MetricsData,
     PeriodicExportingMetricReader,
 )
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 
 class PrintMetricExporter(MetricExporter):
     """Minimal exporter that prints metric data."""
 
-    def export(self, metrics_data: MetricsData, **kwargs) -> MetricExportResult:  # type: ignore[override]
+    def export(self, metrics_data: MetricsData, **kwargs) -> MetricExportResult:  # pylint: disable=unused-argument
         # In a real exporter, send metrics_data to your backend
         print(f"exported metrics: {metrics_data}")
         return MetricExportResult.SUCCESS
@@ -27,7 +27,9 @@ class PrintMetricExporter(MetricExporter):
     def shutdown(self, timeout_millis: float = 30000, **kwargs) -> None:  # type: ignore[override]
         return None
 
-    def force_flush(self, timeout_millis: float = 30000, **kwargs) -> bool:  # type: ignore[override]
+    def force_flush(
+        self, timeout_millis: float = 30000, **kwargs
+    ) -> bool:  # pylint: disable=unused-argument # type: ignore[override]
         return True
 
 

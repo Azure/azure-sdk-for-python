@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import logging
 import os
 from importlib import reload
 from json import loads
@@ -25,13 +24,13 @@ MESSAGE3 = "MESSAGE3"
 
 
 def clear_file(file_path):
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.seek(0)
         f.truncate()
 
 
 def check_file_for_messages(file_path, level, messages):
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         f.seek(0)
         for message, message_id in messages:
             json = loads(f.readline())
@@ -51,11 +50,12 @@ def check_file_for_messages(file_path, level, messages):
 
 
 def check_file_is_empty(file_path):
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         f.seek(0)
         assert not f.read()
 
 
+# pylint: disable=protected-access
 def set_up(
     file_path,
     is_diagnostics_enabled,
@@ -97,6 +97,7 @@ def set_up(
     ).start()
 
 
+# pylint: disable=protected-access, docstring-missing-param
 class TestDiagnosticLogger:
     def test_initialized(self, temp_file_path):
         set_up(temp_file_path, is_diagnostics_enabled=True)
@@ -183,7 +184,7 @@ class TestDiagnosticLogger:
             # Verify that the error was logged
             mock_logger.error.assert_called_once()
 
-    def test_initialize_makedirs_exception_not_file_exists(self, temp_file_path):
+    def test_initialize_makedirs_exception_not_file_exists(self, temp_file_path):  # pylint: disable=name-too-long
         """Test that initialization fails gracefully when makedirs raises a non-FileExistsError exception."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
         # Mock makedirs to raise a PermissionError
@@ -199,13 +200,15 @@ class TestDiagnosticLogger:
             # Verify that the error was logged
             mock_logger.error.assert_called_once()
 
-    def test_initialize_makedirs_file_exists_error_handled(self, temp_file_path):
+    def test_initialize_makedirs_file_exists_error_handled(self, temp_file_path):  # pylint: disable=name-too-long
         """Test that FileExistsError from makedirs is handled gracefully and initialization continues."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
         # Mock makedirs to raise FileExistsError (this should be handled gracefully)
         with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, patch(
             "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False
-        ), patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
+        ), patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger"
+        ) as mock_logger:  # pylint: disable=unused-variable
             mock_makedirs.side_effect = FileExistsError("Directory already exists")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")

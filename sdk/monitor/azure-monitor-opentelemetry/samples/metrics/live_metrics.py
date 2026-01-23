@@ -5,13 +5,14 @@ This example shows how configure live metrics to be enabled. It sets up a minima
 trace and exception telemetry to demonstrate the capabilities and collection set of live metrics.
 """
 import logging
-import requests  # type: ignore[import-untyped]
 import time
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
+
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry import configure_azure_monitor
-from opentelemetry import trace
 
-from opentelemetry.sdk.resources import Resource
 
 configure_azure_monitor(
     resource=Resource.create(
