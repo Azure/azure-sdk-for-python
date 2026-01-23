@@ -70,3 +70,4 @@ verify_keywords = false
 #depends = false
 #pylint = false
 whl_no_aio = false
+apistub = false  # skip because of sdk-tools issue
