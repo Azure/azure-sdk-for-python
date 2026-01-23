@@ -3818,6 +3818,10 @@ class DataDisk(_serialization.Model):
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.mgmt.compute.models.ManagedDiskParameters
     :ivar source_resource: The source resource identifier. It can be a snapshot, or disk restore
@@ -3862,6 +3866,7 @@ class DataDisk(_serialization.Model):
         "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
         "create_option": {"key": "createOption", "type": "str"},
         "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_fault_domain_alignment": {"key": "storageFaultDomainAlignment", "type": "str"},
         "managed_disk": {"key": "managedDisk", "type": "ManagedDiskParameters"},
         "source_resource": {"key": "sourceResource", "type": "ApiEntityReference"},
         "to_be_detached": {"key": "toBeDetached", "type": "bool"},
@@ -3882,6 +3887,7 @@ class DataDisk(_serialization.Model):
         caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         source_resource: Optional["_models.ApiEntityReference"] = None,
         to_be_detached: Optional[bool] = None,
@@ -3925,6 +3931,10 @@ class DataDisk(_serialization.Model):
          be used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB'
          is the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
         :paramtype disk_size_gb: int
+        :keyword storage_fault_domain_alignment: Specifies the storage fault domain alignment type for
+         the disk. Known values are: "Aligned" and "BestEffortAligned".
+        :paramtype storage_fault_domain_alignment: str or
+         ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
         :keyword managed_disk: The managed disk parameters.
         :paramtype managed_disk: ~azure.mgmt.compute.models.ManagedDiskParameters
         :keyword source_resource: The source resource identifier. It can be a snapshot, or disk restore
@@ -3963,6 +3973,7 @@ class DataDisk(_serialization.Model):
         self.write_accelerator_enabled = write_accelerator_enabled
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb
+        self.storage_fault_domain_alignment = storage_fault_domain_alignment
         self.managed_disk = managed_disk
         self.source_resource = source_resource
         self.to_be_detached = to_be_detached
@@ -4977,11 +4988,15 @@ class DiffDiskSettings(_serialization.Model):
      cache disk. Minimum api-version for NvmeDisk: 2024-03-01. Known values are: "CacheDisk",
      "ResourceDisk", and "NvmeDisk".
     :vartype placement: str or ~azure.mgmt.compute.models.DiffDiskPlacement
+    :ivar enable_full_caching: Specifies whether or not to enable full caching for this VM which
+     will cache the OS disk locally on the host and make this VM more resilient to storage outages.
+    :vartype enable_full_caching: bool
     """
 
     _attribute_map = {
         "option": {"key": "option", "type": "str"},
         "placement": {"key": "placement", "type": "str"},
+        "enable_full_caching": {"key": "enableFullCaching", "type": "bool"},
     }
 
     def __init__(
@@ -4989,6 +5004,7 @@ class DiffDiskSettings(_serialization.Model):
         *,
         option: Optional[Union[str, "_models.DiffDiskOptions"]] = None,
         placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = None,
+        enable_full_caching: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5003,10 +5019,14 @@ class DiffDiskSettings(_serialization.Model):
          cache disk. Minimum api-version for NvmeDisk: 2024-03-01. Known values are: "CacheDisk",
          "ResourceDisk", and "NvmeDisk".
         :paramtype placement: str or ~azure.mgmt.compute.models.DiffDiskPlacement
+        :keyword enable_full_caching: Specifies whether or not to enable full caching for this VM which
+         will cache the OS disk locally on the host and make this VM more resilient to storage outages.
+        :paramtype enable_full_caching: bool
         """
         super().__init__(**kwargs)
         self.option = option
         self.placement = placement
+        self.enable_full_caching = enable_full_caching
 
 
 class Disallowed(_serialization.Model):
@@ -5885,12 +5905,16 @@ class DiskInstanceView(_serialization.Model):
     :vartype encryption_settings: list[~azure.mgmt.compute.models.DiskEncryptionSettings]
     :ivar statuses: The resource status information.
     :vartype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
+    :ivar storage_alignment_status: Specifies the storage alignment status for the disk. Known
+     values are: "Unaligned" and "Aligned".
+    :vartype storage_alignment_status: str or ~azure.mgmt.compute.models.StorageAlignmentStatus
     """
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "encryption_settings": {"key": "encryptionSettings", "type": "[DiskEncryptionSettings]"},
         "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
+        "storage_alignment_status": {"key": "storageAlignmentStatus", "type": "str"},
     }
 
     def __init__(
@@ -5899,6 +5923,7 @@ class DiskInstanceView(_serialization.Model):
         name: Optional[str] = None,
         encryption_settings: Optional[list["_models.DiskEncryptionSettings"]] = None,
         statuses: Optional[list["_models.InstanceViewStatus"]] = None,
+        storage_alignment_status: Optional[Union[str, "_models.StorageAlignmentStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5909,11 +5934,15 @@ class DiskInstanceView(_serialization.Model):
         :paramtype encryption_settings: list[~azure.mgmt.compute.models.DiskEncryptionSettings]
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
+        :keyword storage_alignment_status: Specifies the storage alignment status for the disk. Known
+         values are: "Unaligned" and "Aligned".
+        :paramtype storage_alignment_status: str or ~azure.mgmt.compute.models.StorageAlignmentStatus
         """
         super().__init__(**kwargs)
         self.name = name
         self.encryption_settings = encryption_settings
         self.statuses = statuses
+        self.storage_alignment_status = storage_alignment_status
 
 
 class DiskList(_serialization.Model):
@@ -7046,6 +7075,8 @@ class EventGridAndResourceGraph(_serialization.Model):
 class ExecutedValidation(_serialization.Model):
     """This is the executed Validation.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar type: This property specifies the type of image version validation.
     :vartype type: str
     :ivar status: This property specifies the status of the validationProfile of the image version.
@@ -7056,6 +7087,10 @@ class ExecutedValidation(_serialization.Model):
     :ivar execution_time: This property specifies the starting timestamp.
     :vartype execution_time: ~datetime.datetime
     """
+
+    _validation = {
+        "status": {"readonly": True},
+    }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
@@ -7068,7 +7103,6 @@ class ExecutedValidation(_serialization.Model):
         self,
         *,
         type: Optional[str] = None,
-        status: Optional[Union[str, "_models.ValidationStatus"]] = None,
         version: Optional[str] = None,
         execution_time: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -7076,9 +7110,6 @@ class ExecutedValidation(_serialization.Model):
         """
         :keyword type: This property specifies the type of image version validation.
         :paramtype type: str
-        :keyword status: This property specifies the status of the validationProfile of the image
-         version. Known values are: "Unknown", "Failed", and "Succeeded".
-        :paramtype status: str or ~azure.mgmt.compute.models.ValidationStatus
         :keyword version: This property specifies the valid version of the validation.
         :paramtype version: str
         :keyword execution_time: This property specifies the starting timestamp.
@@ -7086,7 +7117,7 @@ class ExecutedValidation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type = type
-        self.status = status
+        self.status: Optional[Union[str, "_models.ValidationStatus"]] = None
         self.version = version
         self.execution_time = execution_time
 
@@ -7818,8 +7849,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "PremiumV2_LRS".
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -7828,6 +7859,11 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
      to be replicated to. This property is updatable.
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
     """
 
     _validation = {
@@ -7843,6 +7879,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
         "replication_mode": {"key": "replicationMode", "type": "str"},
         "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
+        "storage_account_strategy": {"key": "storageAccountStrategy", "type": "str"},
     }
 
     def __init__(
@@ -7855,6 +7892,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         target_extended_locations: Optional[list["_models.GalleryTargetExtendedLocation"]] = None,
+        storage_account_strategy: Optional[Union[str, "_models.StorageAccountStrategy"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7872,8 +7910,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "PremiumV2_LRS".
+         image. Cannot be specified along with storageAccountStrategy. This property is not updatable.
+         Known values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
         :paramtype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
          replication. This property is not updatable. Known values are: "Full" and "Shallow".
@@ -7882,6 +7920,11 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
          going to be replicated to. This property is updatable.
         :paramtype target_extended_locations:
          list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+        :keyword storage_account_strategy: Specifies the strategy to be used when selecting the storage
+         account type. Cannot be specified along with storageAccountType, but can be overridden per
+         region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+         values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+        :paramtype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
         """
         super().__init__(**kwargs)
         self.target_regions = target_regions
@@ -7892,6 +7935,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         self.storage_account_type = storage_account_type
         self.replication_mode = replication_mode
         self.target_extended_locations = target_extended_locations
+        self.storage_account_strategy = storage_account_strategy
 
 
 class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):  # pylint: disable=name-too-long
@@ -7917,8 +7961,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "PremiumV2_LRS".
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -7927,6 +7971,11 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      to be replicated to. This property is updatable.
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
     :ivar source: The source image from which the Image Version is going to be created. Required.
     :vartype source: ~azure.mgmt.compute.models.UserArtifactSource
     :ivar manage_actions:
@@ -7958,6 +8007,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
         "replication_mode": {"key": "replicationMode", "type": "str"},
         "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
+        "storage_account_strategy": {"key": "storageAccountStrategy", "type": "str"},
         "source": {"key": "source", "type": "UserArtifactSource"},
         "manage_actions": {"key": "manageActions", "type": "UserArtifactManage"},
         "settings": {"key": "settings", "type": "UserArtifactSettings"},
@@ -7977,6 +8027,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         target_extended_locations: Optional[list["_models.GalleryTargetExtendedLocation"]] = None,
+        storage_account_strategy: Optional[Union[str, "_models.StorageAccountStrategy"]] = None,
         manage_actions: Optional["_models.UserArtifactManage"] = None,
         settings: Optional["_models.UserArtifactSettings"] = None,
         advanced_settings: Optional[dict[str, str]] = None,
@@ -7999,8 +8050,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "PremiumV2_LRS".
+         image. Cannot be specified along with storageAccountStrategy. This property is not updatable.
+         Known values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
         :paramtype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
          replication. This property is not updatable. Known values are: "Full" and "Shallow".
@@ -8009,6 +8060,11 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
          going to be replicated to. This property is updatable.
         :paramtype target_extended_locations:
          list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+        :keyword storage_account_strategy: Specifies the strategy to be used when selecting the storage
+         account type. Cannot be specified along with storageAccountType, but can be overridden per
+         region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+         values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+        :paramtype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
         :keyword source: The source image from which the Image Version is going to be created.
          Required.
         :paramtype source: ~azure.mgmt.compute.models.UserArtifactSource
@@ -8034,6 +8090,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
             storage_account_type=storage_account_type,
             replication_mode=replication_mode,
             target_extended_locations=target_extended_locations,
+            storage_account_strategy=storage_account_strategy,
             **kwargs
         )
         self.source = source
@@ -9108,8 +9165,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "PremiumV2_LRS".
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -9118,6 +9175,11 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      to be replicated to. This property is updatable.
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
     """
 
 
@@ -10052,6 +10114,764 @@ class GalleryOSDiskImage(GalleryDiskImage):
     """
 
 
+class GalleryScript(TrackedResource):
+    """Specifies information about the gallery Script Definition that you want to create or update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Describes the properties of a gallery Script Definition.
+    :vartype properties: ~azure.mgmt.compute.models.GalleryScriptProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "GalleryScriptProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.GalleryScriptProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Describes the properties of a gallery Script Definition.
+        :paramtype properties: ~azure.mgmt.compute.models.GalleryScriptProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class GalleryScriptList(_serialization.Model):
+    """The List Gallery Script operation response.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The GalleryScript items on this page. Required.
+    :vartype value: list[~azure.mgmt.compute.models.GalleryScript]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[GalleryScript]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: list["_models.GalleryScript"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The GalleryScript items on this page. Required.
+        :paramtype value: list[~azure.mgmt.compute.models.GalleryScript]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class GenericGalleryParameter(_serialization.Model):
+    """The definition of a generic gallery parameter.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the parameter. Required.
+    :vartype name: str
+    :ivar required: Indicates whether this parameter must be passed.
+    :vartype required: bool
+    :ivar default_value: The default value of the parameter, only applies to string types.
+    :vartype default_value: str
+    :ivar description: A description to help users understand what this parameter means.
+    :vartype description: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "required": {"key": "required", "type": "bool"},
+        "default_value": {"key": "defaultValue", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        required: Optional[bool] = None,
+        default_value: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the parameter. Required.
+        :paramtype name: str
+        :keyword required: Indicates whether this parameter must be passed.
+        :paramtype required: bool
+        :keyword default_value: The default value of the parameter, only applies to string types.
+        :paramtype default_value: str
+        :keyword description: A description to help users understand what this parameter means.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.required = required
+        self.default_value = default_value
+        self.description = description
+
+
+class GalleryScriptParameter(GenericGalleryParameter):
+    """The definition of a parameter that can be passed to a script of a Gallery Script Version.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the parameter. Required.
+    :vartype name: str
+    :ivar required: Indicates whether this parameter must be passed.
+    :vartype required: bool
+    :ivar default_value: The default value of the parameter, only applies to string types.
+    :vartype default_value: str
+    :ivar description: A description to help users understand what this parameter means.
+    :vartype description: str
+    :ivar type: Specifies the type of the Gallery Script parameter. Possible values are: String,
+     Int, Double, Boolean, Enum. Known values are: "String", "Int", "Double", "Boolean", "Enum", and
+     "Int".
+    :vartype type: str or ~azure.mgmt.compute.models.GalleryScriptParameterType
+    :ivar min_value: The minimum value of parameter.
+    :vartype min_value: str
+    :ivar max_value: The minimum value of parameter.
+    :vartype max_value: str
+    :ivar enum_values: A list of permissible values. Only applicable values are from 'enum' values
+     defined in 'GalleryScriptParameter'.
+    :vartype enum_values: list[str]
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "required": {"key": "required", "type": "bool"},
+        "default_value": {"key": "defaultValue", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "min_value": {"key": "minValue", "type": "str"},
+        "max_value": {"key": "maxValue", "type": "str"},
+        "enum_values": {"key": "enumValues", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        required: Optional[bool] = None,
+        default_value: Optional[str] = None,
+        description: Optional[str] = None,
+        type: Optional[Union[str, "_models.GalleryScriptParameterType"]] = None,
+        min_value: Optional[str] = None,
+        max_value: Optional[str] = None,
+        enum_values: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the parameter. Required.
+        :paramtype name: str
+        :keyword required: Indicates whether this parameter must be passed.
+        :paramtype required: bool
+        :keyword default_value: The default value of the parameter, only applies to string types.
+        :paramtype default_value: str
+        :keyword description: A description to help users understand what this parameter means.
+        :paramtype description: str
+        :keyword type: Specifies the type of the Gallery Script parameter. Possible values are: String,
+         Int, Double, Boolean, Enum. Known values are: "String", "Int", "Double", "Boolean", "Enum", and
+         "Int".
+        :paramtype type: str or ~azure.mgmt.compute.models.GalleryScriptParameterType
+        :keyword min_value: The minimum value of parameter.
+        :paramtype min_value: str
+        :keyword max_value: The minimum value of parameter.
+        :paramtype max_value: str
+        :keyword enum_values: A list of permissible values. Only applicable values are from 'enum'
+         values defined in 'GalleryScriptParameter'.
+        :paramtype enum_values: list[str]
+        """
+        super().__init__(name=name, required=required, default_value=default_value, description=description, **kwargs)
+        self.type = type
+        self.min_value = min_value
+        self.max_value = max_value
+        self.enum_values = enum_values
+
+
+class GalleryScriptProperties(_serialization.Model):
+    """Describes the properties of a gallery script definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar description: The description of this gallery script definition resource. This property is
+     updatable.
+    :vartype description: str
+    :ivar eula: The Eula agreement (End User License Agreement) for the gallery Script Definition.
+    :vartype eula: str
+    :ivar privacy_statement_uri: The privacy statement uri.
+    :vartype privacy_statement_uri: str
+    :ivar release_note_uri: The release note uri.
+    :vartype release_note_uri: str
+    :ivar end_of_life_date: The end of life date of the gallery Script Definition. This property
+     can be used for decommissioning purposes. This property is updatable.
+    :vartype end_of_life_date: ~datetime.datetime
+    :ivar supported_os_type: This property allows you to specify the supported type of the OS that
+     application is built for. Possible values are: **Windows,** **Linux.**. Required. Known values
+     are: "Windows" and "Linux".
+    :vartype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    """
+
+    _validation = {
+        "supported_os_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "eula": {"key": "eula", "type": "str"},
+        "privacy_statement_uri": {"key": "privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "supportedOSType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        supported_os_type: Union[str, "_models.OperatingSystemTypes"],
+        description: Optional[str] = None,
+        eula: Optional[str] = None,
+        privacy_statement_uri: Optional[str] = None,
+        release_note_uri: Optional[str] = None,
+        end_of_life_date: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: The description of this gallery script definition resource. This property
+         is updatable.
+        :paramtype description: str
+        :keyword eula: The Eula agreement (End User License Agreement) for the gallery Script
+         Definition.
+        :paramtype eula: str
+        :keyword privacy_statement_uri: The privacy statement uri.
+        :paramtype privacy_statement_uri: str
+        :keyword release_note_uri: The release note uri.
+        :paramtype release_note_uri: str
+        :keyword end_of_life_date: The end of life date of the gallery Script Definition. This property
+         can be used for decommissioning purposes. This property is updatable.
+        :paramtype end_of_life_date: ~datetime.datetime
+        :keyword supported_os_type: This property allows you to specify the supported type of the OS
+         that application is built for. Possible values are: **Windows,** **Linux.**. Required. Known
+         values are: "Windows" and "Linux".
+        :paramtype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.end_of_life_date = end_of_life_date
+        self.supported_os_type = supported_os_type
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+
+
+class GalleryScriptUpdate(UpdateResourceDefinition):
+    """Specifies information about the gallery Script Definition that you want to update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar description: The description of this gallery script definition resource. This property is
+     updatable.
+    :vartype description: str
+    :ivar eula: The Eula agreement (End User License Agreement) for the gallery Script Definition.
+    :vartype eula: str
+    :ivar privacy_statement_uri: The privacy statement uri.
+    :vartype privacy_statement_uri: str
+    :ivar release_note_uri: The release note uri.
+    :vartype release_note_uri: str
+    :ivar end_of_life_date: The end of life date of the gallery Script Definition. This property
+     can be used for decommissioning purposes. This property is updatable.
+    :vartype end_of_life_date: ~datetime.datetime
+    :ivar supported_os_type: This property allows you to specify the supported type of the OS that
+     application is built for. Possible values are: **Windows,** **Linux.**. Known values are:
+     "Windows" and "Linux".
+    :vartype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "properties.supportedOSType", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        description: Optional[str] = None,
+        eula: Optional[str] = None,
+        privacy_statement_uri: Optional[str] = None,
+        release_note_uri: Optional[str] = None,
+        end_of_life_date: Optional[datetime.datetime] = None,
+        supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword description: The description of this gallery script definition resource. This property
+         is updatable.
+        :paramtype description: str
+        :keyword eula: The Eula agreement (End User License Agreement) for the gallery Script
+         Definition.
+        :paramtype eula: str
+        :keyword privacy_statement_uri: The privacy statement uri.
+        :paramtype privacy_statement_uri: str
+        :keyword release_note_uri: The release note uri.
+        :paramtype release_note_uri: str
+        :keyword end_of_life_date: The end of life date of the gallery Script Definition. This property
+         can be used for decommissioning purposes. This property is updatable.
+        :paramtype end_of_life_date: ~datetime.datetime
+        :keyword supported_os_type: This property allows you to specify the supported type of the OS
+         that application is built for. Possible values are: **Windows,** **Linux.**. Known values are:
+         "Windows" and "Linux".
+        :paramtype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.end_of_life_date = end_of_life_date
+        self.supported_os_type = supported_os_type
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+
+
+class GalleryScriptVersion(TrackedResource):
+    """Concrete tracked resource types can be created by aliasing this type using a specific property
+    type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Describes the properties of a gallery Script Version.
+    :vartype properties: ~azure.mgmt.compute.models.GalleryScriptVersionProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "GalleryScriptVersionProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.GalleryScriptVersionProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Describes the properties of a gallery Script Version.
+        :paramtype properties: ~azure.mgmt.compute.models.GalleryScriptVersionProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class GalleryScriptVersionList(_serialization.Model):
+    """Paged collection of GalleryScriptVersion items.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The GalleryScriptVersion items on this page. Required.
+    :vartype value: list[~azure.mgmt.compute.models.GalleryScriptVersion]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[GalleryScriptVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: list["_models.GalleryScriptVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The GalleryScriptVersion items on this page. Required.
+        :paramtype value: list[~azure.mgmt.compute.models.GalleryScriptVersion]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class GalleryScriptVersionProperties(_serialization.Model):
+    """Describes the properties of a gallery script version.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar publishing_profile: The publishing profile of a gallery image version. Required.
+    :vartype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+    :ivar safety_profile: The safety profile of the Gallery Script Version.
+    :vartype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    :ivar replication_status: This is the replication status of the gallery image version.
+    :vartype replication_status: ~azure.mgmt.compute.models.ReplicationStatus
+    """
+
+    _validation = {
+        "publishing_profile": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "publishing_profile": {"key": "publishingProfile", "type": "GalleryScriptVersionPublishingProfile"},
+        "safety_profile": {"key": "safetyProfile", "type": "GalleryScriptVersionSafetyProfile"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "replication_status": {"key": "replicationStatus", "type": "ReplicationStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        publishing_profile: "_models.GalleryScriptVersionPublishingProfile",
+        safety_profile: Optional["_models.GalleryScriptVersionSafetyProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword publishing_profile: The publishing profile of a gallery image version. Required.
+        :paramtype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+        :keyword safety_profile: The safety profile of the Gallery Script Version.
+        :paramtype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+        """
+        super().__init__(**kwargs)
+        self.publishing_profile = publishing_profile
+        self.safety_profile = safety_profile
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
+
+
+class GalleryScriptVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+    """The publishing profile of a gallery image version.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_regions: The target regions where the Image Version is going to be replicated to.
+     This property is updatable.
+    :vartype target_regions: list[~azure.mgmt.compute.models.TargetRegion]
+    :ivar replica_count: The number of replicas of the Image Version to be created per region. This
+     property would take effect for a region when regionalReplicaCount is not specified. This
+     property is updatable.
+    :vartype replica_count: int
+    :ivar exclude_from_latest: If set to true, Virtual Machines deployed from the latest version of
+     the Image Definition won't use this Image Version.
+    :vartype exclude_from_latest: bool
+    :ivar published_date: The timestamp for when the gallery image version is published.
+    :vartype published_date: ~datetime.datetime
+    :ivar end_of_life_date: The end of life date of the gallery image version. This property can be
+     used for decommissioning purposes. This property is updatable.
+    :vartype end_of_life_date: ~datetime.datetime
+    :ivar storage_account_type: Specifies the storage account type to be used to store the image.
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
+    :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
+    :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
+     This property is not updatable. Known values are: "Full" and "Shallow".
+    :vartype replication_mode: str or ~azure.mgmt.compute.models.ReplicationMode
+    :ivar target_extended_locations: The target extended locations where the Image Version is going
+     to be replicated to. This property is updatable.
+    :vartype target_extended_locations:
+     list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
+    :ivar source: The source script from which the Script Version is going to be created. Required.
+    :vartype source: ~azure.mgmt.compute.models.ScriptSource
+    """
+
+    _validation = {
+        "published_date": {"readonly": True},
+        "source": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "replication_mode": {"key": "replicationMode", "type": "str"},
+        "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
+        "storage_account_strategy": {"key": "storageAccountStrategy", "type": "str"},
+        "source": {"key": "source", "type": "ScriptSource"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source: "_models.ScriptSource",
+        target_regions: Optional[list["_models.TargetRegion"]] = None,
+        replica_count: Optional[int] = None,
+        exclude_from_latest: Optional[bool] = None,
+        end_of_life_date: Optional[datetime.datetime] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[list["_models.GalleryTargetExtendedLocation"]] = None,
+        storage_account_strategy: Optional[Union[str, "_models.StorageAccountStrategy"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_regions: The target regions where the Image Version is going to be replicated
+         to. This property is updatable.
+        :paramtype target_regions: list[~azure.mgmt.compute.models.TargetRegion]
+        :keyword replica_count: The number of replicas of the Image Version to be created per region.
+         This property would take effect for a region when regionalReplicaCount is not specified. This
+         property is updatable.
+        :paramtype replica_count: int
+        :keyword exclude_from_latest: If set to true, Virtual Machines deployed from the latest version
+         of the Image Definition won't use this Image Version.
+        :paramtype exclude_from_latest: bool
+        :keyword end_of_life_date: The end of life date of the gallery image version. This property can
+         be used for decommissioning purposes. This property is updatable.
+        :paramtype end_of_life_date: ~datetime.datetime
+        :keyword storage_account_type: Specifies the storage account type to be used to store the
+         image. Cannot be specified along with storageAccountStrategy. This property is not updatable.
+         Known values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
+        :paramtype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
+        :keyword replication_mode: Optional parameter which specifies the mode to be used for
+         replication. This property is not updatable. Known values are: "Full" and "Shallow".
+        :paramtype replication_mode: str or ~azure.mgmt.compute.models.ReplicationMode
+        :keyword target_extended_locations: The target extended locations where the Image Version is
+         going to be replicated to. This property is updatable.
+        :paramtype target_extended_locations:
+         list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+        :keyword storage_account_strategy: Specifies the strategy to be used when selecting the storage
+         account type. Cannot be specified along with storageAccountType, but can be overridden per
+         region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+         values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+        :paramtype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
+        :keyword source: The source script from which the Script Version is going to be created.
+         Required.
+        :paramtype source: ~azure.mgmt.compute.models.ScriptSource
+        """
+        super().__init__(
+            target_regions=target_regions,
+            replica_count=replica_count,
+            exclude_from_latest=exclude_from_latest,
+            end_of_life_date=end_of_life_date,
+            storage_account_type=storage_account_type,
+            replication_mode=replication_mode,
+            target_extended_locations=target_extended_locations,
+            storage_account_strategy=storage_account_strategy,
+            **kwargs
+        )
+        self.source = source
+
+
+class GalleryScriptVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+    """The safety profile of the Gallery Script Version.
+
+    :ivar allow_deletion_of_replicated_locations: Indicates whether or not removing this Gallery
+     Image Version from replicated regions is allowed.
+    :vartype allow_deletion_of_replicated_locations: bool
+    """
+
+
+class GalleryScriptVersionUpdate(UpdateResourceDefinition):
+    """Specifies information about the gallery Script Version that you want to update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar publishing_profile: The publishing profile of a gallery image version.
+    :vartype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+    :ivar safety_profile: The safety profile of the Gallery Script Version.
+    :vartype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    :ivar replication_status: This is the replication status of the gallery image version.
+    :vartype replication_status: ~azure.mgmt.compute.models.ReplicationStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {"key": "properties.publishingProfile", "type": "GalleryScriptVersionPublishingProfile"},
+        "safety_profile": {"key": "properties.safetyProfile", "type": "GalleryScriptVersionSafetyProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        publishing_profile: Optional["_models.GalleryScriptVersionPublishingProfile"] = None,
+        safety_profile: Optional["_models.GalleryScriptVersionSafetyProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword publishing_profile: The publishing profile of a gallery image version.
+        :paramtype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+        :keyword safety_profile: The safety profile of the Gallery Script Version.
+        :paramtype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.publishing_profile = publishing_profile
+        self.safety_profile = safety_profile
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
+
+
 class GallerySoftDeletedResource(TrackedResource):
     """The details information of soft-deleted resource.
 
@@ -10432,11 +11252,16 @@ class HardwareProfile(_serialization.Model):
      supported for VirtualMachineScaleSet. Please follow the instructions in `VM Customization
      <https://aka.ms/vmcustomization>`_ for more details.
     :vartype vm_size_properties: ~azure.mgmt.compute.models.VMSizeProperties
+    :ivar vm_size_policy: Specifies the VM size policy for the virtual machine. Either vmSize or
+     vmSizePolicy should be specified in the request, but not both. When vmSizePolicy is used, the
+     allocated VM size will be returned in the vmSize property in the response.
+    :vartype vm_size_policy: ~azure.mgmt.compute.models.VMSizePolicy
     """
 
     _attribute_map = {
         "vm_size": {"key": "vmSize", "type": "str"},
         "vm_size_properties": {"key": "vmSizeProperties", "type": "VMSizeProperties"},
+        "vm_size_policy": {"key": "vmSizePolicy", "type": "VMSizePolicy"},
     }
 
     def __init__(
@@ -10444,6 +11269,7 @@ class HardwareProfile(_serialization.Model):
         *,
         vm_size: Optional[Union[str, "_models.VirtualMachineSizeTypes"]] = None,
         vm_size_properties: Optional["_models.VMSizeProperties"] = None,
+        vm_size_policy: Optional["_models.VMSizePolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10499,10 +11325,15 @@ class HardwareProfile(_serialization.Model):
          supported for VirtualMachineScaleSet. Please follow the instructions in `VM Customization
          <https://aka.ms/vmcustomization>`_ for more details.
         :paramtype vm_size_properties: ~azure.mgmt.compute.models.VMSizeProperties
+        :keyword vm_size_policy: Specifies the VM size policy for the virtual machine. Either vmSize or
+         vmSizePolicy should be specified in the request, but not both. When vmSizePolicy is used, the
+         allocated VM size will be returned in the vmSize property in the response.
+        :paramtype vm_size_policy: ~azure.mgmt.compute.models.VMSizePolicy
         """
         super().__init__(**kwargs)
         self.vm_size = vm_size
         self.vm_size_properties = vm_size_properties
+        self.vm_size_policy = vm_size_policy
 
 
 class HostEndpointSettings(_serialization.Model):
@@ -12882,6 +13713,10 @@ class OSDisk(_serialization.Model):
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.mgmt.compute.models.ManagedDiskParameters
     :ivar delete_option: Specifies whether OS Disk should be deleted or detached upon VM deletion.
@@ -12908,6 +13743,7 @@ class OSDisk(_serialization.Model):
         "diff_disk_settings": {"key": "diffDiskSettings", "type": "DiffDiskSettings"},
         "create_option": {"key": "createOption", "type": "str"},
         "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_fault_domain_alignment": {"key": "storageFaultDomainAlignment", "type": "str"},
         "managed_disk": {"key": "managedDisk", "type": "ManagedDiskParameters"},
         "delete_option": {"key": "deleteOption", "type": "str"},
     }
@@ -12925,6 +13761,7 @@ class OSDisk(_serialization.Model):
         write_accelerator_enabled: Optional[bool] = None,
         diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
         **kwargs: Any
@@ -12967,6 +13804,10 @@ class OSDisk(_serialization.Model):
          be used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB'
          is the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
         :paramtype disk_size_gb: int
+        :keyword storage_fault_domain_alignment: Specifies the storage fault domain alignment type for
+         the disk. Known values are: "Aligned" and "BestEffortAligned".
+        :paramtype storage_fault_domain_alignment: str or
+         ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
         :keyword managed_disk: The managed disk parameters.
         :paramtype managed_disk: ~azure.mgmt.compute.models.ManagedDiskParameters
         :keyword delete_option: Specifies whether OS Disk should be deleted or detached upon VM
@@ -12988,6 +13829,7 @@ class OSDisk(_serialization.Model):
         self.diff_disk_settings = diff_disk_settings
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb
+        self.storage_fault_domain_alignment = storage_fault_domain_alignment
         self.managed_disk = managed_disk
         self.delete_option = delete_option
 
@@ -14960,6 +15802,27 @@ class ResiliencyPolicy(_serialization.Model):
         self.resilient_vm_deletion_policy = resilient_vm_deletion_policy
         self.automatic_zone_rebalancing_policy = automatic_zone_rebalancing_policy
         self.zone_allocation_policy = zone_allocation_policy
+
+
+class ResiliencyProfile(_serialization.Model):
+    """Gets resiliency solutions enabled on the VM. This includes backup or disaster recovery
+    solutions.
+
+    :ivar zone_movement: Zone movement configuration.
+    :vartype zone_movement: ~azure.mgmt.compute.models.ZoneMovement
+    """
+
+    _attribute_map = {
+        "zone_movement": {"key": "zoneMovement", "type": "ZoneMovement"},
+    }
+
+    def __init__(self, *, zone_movement: Optional["_models.ZoneMovement"] = None, **kwargs: Any) -> None:
+        """
+        :keyword zone_movement: Zone movement configuration.
+        :paramtype zone_movement: ~azure.mgmt.compute.models.ZoneMovement
+        """
+        super().__init__(**kwargs)
+        self.zone_movement = zone_movement
 
 
 class ResilientVMCreationPolicy(_serialization.Model):
@@ -17363,6 +18226,44 @@ class ScheduleProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.start = start
         self.end = end
+
+
+class ScriptSource(_serialization.Model):
+    """The source script from which the Script Version is going to be created.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar script_link: Required. The link of the source script, it must be a readable storage blob
+     with SAS URI or publicly accessible URI or managed identity enabled. Required.
+    :vartype script_link: str
+    :ivar parameters: Optional. Any input parameters that needs to passed to the script and are
+     accessed within the script for its execution.
+    :vartype parameters: list[~azure.mgmt.compute.models.GalleryScriptParameter]
+    """
+
+    _validation = {
+        "script_link": {"required": True},
+    }
+
+    _attribute_map = {
+        "script_link": {"key": "scriptLink", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[GalleryScriptParameter]"},
+    }
+
+    def __init__(
+        self, *, script_link: str, parameters: Optional[list["_models.GalleryScriptParameter"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword script_link: Required. The link of the source script, it must be a readable storage
+         blob with SAS URI or publicly accessible URI or managed identity enabled. Required.
+        :paramtype script_link: str
+        :keyword parameters: Optional. Any input parameters that needs to passed to the script and are
+         accessed within the script for its execution.
+        :paramtype parameters: list[~azure.mgmt.compute.models.GalleryScriptParameter]
+        """
+        super().__init__(**kwargs)
+        self.script_link = script_link
+        self.parameters = parameters
 
 
 class SecurityPostureReference(_serialization.Model):
@@ -20491,6 +21392,8 @@ class VirtualMachine(TrackedResource):
     :ivar time_created: Specifies the time at which the Virtual Machine resource was created.
      Minimum api-version: 2021-11-01.
     :vartype time_created: ~datetime.datetime
+    :ivar resiliency_profile: Resiliency profile for the virtual machine.
+    :vartype resiliency_profile: ~azure.mgmt.compute.models.ResiliencyProfile
     """
 
     _validation = {
@@ -20550,6 +21453,7 @@ class VirtualMachine(TrackedResource):
         "capacity_reservation": {"key": "properties.capacityReservation", "type": "CapacityReservationProfile"},
         "application_profile": {"key": "properties.applicationProfile", "type": "ApplicationProfile"},
         "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "resiliency_profile": {"key": "properties.resiliencyProfile", "type": "ResiliencyProfile"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -20585,6 +21489,7 @@ class VirtualMachine(TrackedResource):
         user_data: Optional[str] = None,
         capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
         application_profile: Optional["_models.ApplicationProfile"] = None,
+        resiliency_profile: Optional["_models.ResiliencyProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -20706,6 +21611,8 @@ class VirtualMachine(TrackedResource):
         :keyword application_profile: Specifies the gallery applications that should be made available
          to the VM/VMSS.
         :paramtype application_profile: ~azure.mgmt.compute.models.ApplicationProfile
+        :keyword resiliency_profile: Resiliency profile for the virtual machine.
+        :paramtype resiliency_profile: ~azure.mgmt.compute.models.ResiliencyProfile
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.plan = plan
@@ -20743,6 +21650,7 @@ class VirtualMachine(TrackedResource):
         self.capacity_reservation = capacity_reservation
         self.application_profile = application_profile
         self.time_created: Optional[datetime.datetime] = None
+        self.resiliency_profile = resiliency_profile
 
 
 class VirtualMachineAgentInstanceView(_serialization.Model):
@@ -23254,8 +24162,7 @@ class VirtualMachineScaleSet(TrackedResource):
      customer can supply it in the header to ensure optimistic updates.
     :vartype etag: str
     :ivar placement: Placement section specifies the user-defined constraints for virtual machine
-     scale set hardware placement. This property cannot be changed once VMSS is provisioned. Minimum
-     api-version: 2025-04-01.
+     scale set hardware placement. Minimum api-version: 2025-04-01.
     :vartype placement: ~azure.mgmt.compute.models.Placement
     :ivar upgrade_policy: The upgrade policy.
     :vartype upgrade_policy: ~azure.mgmt.compute.models.UpgradePolicy
@@ -23318,7 +24225,8 @@ class VirtualMachineScaleSet(TrackedResource):
     :ivar resiliency_policy: Policy for Resiliency.
     :vartype resiliency_policy: ~azure.mgmt.compute.models.ResiliencyPolicy
     :ivar zonal_platform_fault_domain_align_mode: Specifies the align mode between Virtual Machine
-     Scale Set compute and storage Fault Domain count. Known values are: "Aligned" and "Unaligned".
+     Scale Set compute and storage Fault Domain count. Known values are: "Aligned", "Unaligned", and
+     "BestEffortAligned".
     :vartype zonal_platform_fault_domain_align_mode: str or
      ~azure.mgmt.compute.models.ZonalPlatformFaultDomainAlignMode
     :ivar sku_profile: Specifies the sku profile for the virtual machine scale set.
@@ -23446,8 +24354,7 @@ class VirtualMachineScaleSet(TrackedResource):
         :keyword extended_location: The extended location of the Virtual Machine Scale Set.
         :paramtype extended_location: ~azure.mgmt.compute.models.ExtendedLocation
         :keyword placement: Placement section specifies the user-defined constraints for virtual
-         machine scale set hardware placement. This property cannot be changed once VMSS is provisioned.
-         Minimum api-version: 2025-04-01.
+         machine scale set hardware placement. Minimum api-version: 2025-04-01.
         :paramtype placement: ~azure.mgmt.compute.models.Placement
         :keyword upgrade_policy: The upgrade policy.
         :paramtype upgrade_policy: ~azure.mgmt.compute.models.UpgradePolicy
@@ -23504,8 +24411,8 @@ class VirtualMachineScaleSet(TrackedResource):
         :keyword resiliency_policy: Policy for Resiliency.
         :paramtype resiliency_policy: ~azure.mgmt.compute.models.ResiliencyPolicy
         :keyword zonal_platform_fault_domain_align_mode: Specifies the align mode between Virtual
-         Machine Scale Set compute and storage Fault Domain count. Known values are: "Aligned" and
-         "Unaligned".
+         Machine Scale Set compute and storage Fault Domain count. Known values are: "Aligned",
+         "Unaligned", and "BestEffortAligned".
         :paramtype zonal_platform_fault_domain_align_mode: str or
          ~azure.mgmt.compute.models.ZonalPlatformFaultDomainAlignMode
         :keyword sku_profile: Specifies the sku profile for the virtual machine scale set.
@@ -23574,6 +24481,10 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
      used to overwrite the size of the disk in a virtual machine image. The property diskSizeGB is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.mgmt.compute.models.VirtualMachineScaleSetManagedDiskParameters
     :ivar disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk. Should be used
@@ -23606,6 +24517,7 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
         "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
         "create_option": {"key": "createOption", "type": "str"},
         "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_fault_domain_alignment": {"key": "storageFaultDomainAlignment", "type": "str"},
         "managed_disk": {"key": "managedDisk", "type": "VirtualMachineScaleSetManagedDiskParameters"},
         "disk_iops_read_write": {"key": "diskIOPSReadWrite", "type": "int"},
         "disk_m_bps_read_write": {"key": "diskMBpsReadWrite", "type": "int"},
@@ -23621,6 +24533,7 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
         caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
@@ -23648,6 +24561,10 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
          be used to overwrite the size of the disk in a virtual machine image. The property diskSizeGB
          is the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
         :paramtype disk_size_gb: int
+        :keyword storage_fault_domain_alignment: Specifies the storage fault domain alignment type for
+         the disk. Known values are: "Aligned" and "BestEffortAligned".
+        :paramtype storage_fault_domain_alignment: str or
+         ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
         :keyword managed_disk: The managed disk parameters.
         :paramtype managed_disk: ~azure.mgmt.compute.models.VirtualMachineScaleSetManagedDiskParameters
         :keyword disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk. Should be
@@ -23674,6 +24591,7 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
         self.write_accelerator_enabled = write_accelerator_enabled
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb
+        self.storage_fault_domain_alignment = storage_fault_domain_alignment
         self.managed_disk = managed_disk
         self.disk_iops_read_write = disk_iops_read_write
         self.disk_m_bps_read_write = disk_m_bps_read_write
@@ -24806,6 +25724,10 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. Possible values are: **Windows,**
      **Linux.**. Known values are: "Windows" and "Linux".
@@ -24839,6 +25761,7 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
         "create_option": {"key": "createOption", "type": "str"},
         "diff_disk_settings": {"key": "diffDiskSettings", "type": "DiffDiskSettings"},
         "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_fault_domain_alignment": {"key": "storageFaultDomainAlignment", "type": "str"},
         "os_type": {"key": "osType", "type": "str"},
         "image": {"key": "image", "type": "VirtualHardDisk"},
         "vhd_containers": {"key": "vhdContainers", "type": "[str]"},
@@ -24855,6 +25778,7 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
         write_accelerator_enabled: Optional[bool] = None,
         diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[list[str]] = None,
@@ -24886,6 +25810,10 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
          be used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB'
          is the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
         :paramtype disk_size_gb: int
+        :keyword storage_fault_domain_alignment: Specifies the storage fault domain alignment type for
+         the disk. Known values are: "Aligned" and "BestEffortAligned".
+        :paramtype storage_fault_domain_alignment: str or
+         ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk if creating a VM from user-image or a specialized VHD. Possible values are:
          **Windows,** **Linux.**. Known values are: "Windows" and "Linux".
@@ -24914,6 +25842,7 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
         self.create_option = create_option
         self.diff_disk_settings = diff_disk_settings
         self.disk_size_gb = disk_size_gb
+        self.storage_fault_domain_alignment = storage_fault_domain_alignment
         self.os_type = os_type
         self.image = image
         self.vhd_containers = vhd_containers
@@ -25497,6 +26426,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :vartype identity: ~azure.mgmt.compute.models.VirtualMachineScaleSetIdentity
     :ivar zones: The virtual machine scale set zones.
     :vartype zones: list[str]
+    :ivar placement: User-defined constraints for virtual machine scale set hardware placement.
+    :vartype placement: ~azure.mgmt.compute.models.Placement
     :ivar upgrade_policy: The upgrade policy.
     :vartype upgrade_policy: ~azure.mgmt.compute.models.UpgradePolicy
     :ivar automatic_repairs_policy: Policy for automatic repairs.
@@ -25535,7 +26466,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :ivar resiliency_policy: Policy for Resiliency.
     :vartype resiliency_policy: ~azure.mgmt.compute.models.ResiliencyPolicy
     :ivar zonal_platform_fault_domain_align_mode: Specifies the align mode between Virtual Machine
-     Scale Set compute and storage Fault Domain count. Known values are: "Aligned" and "Unaligned".
+     Scale Set compute and storage Fault Domain count. Known values are: "Aligned", "Unaligned", and
+     "BestEffortAligned".
     :vartype zonal_platform_fault_domain_align_mode: str or
      ~azure.mgmt.compute.models.ZonalPlatformFaultDomainAlignMode
     :ivar sku_profile: Specifies the sku profile for the virtual machine scale set.
@@ -25548,6 +26480,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         "plan": {"key": "plan", "type": "Plan"},
         "identity": {"key": "identity", "type": "VirtualMachineScaleSetIdentity"},
         "zones": {"key": "zones", "type": "[str]"},
+        "placement": {"key": "placement", "type": "Placement"},
         "upgrade_policy": {"key": "properties.upgradePolicy", "type": "UpgradePolicy"},
         "automatic_repairs_policy": {"key": "properties.automaticRepairsPolicy", "type": "AutomaticRepairsPolicy"},
         "virtual_machine_profile": {
@@ -25581,6 +26514,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         plan: Optional["_models.Plan"] = None,
         identity: Optional["_models.VirtualMachineScaleSetIdentity"] = None,
         zones: Optional[list[str]] = None,
+        placement: Optional["_models.Placement"] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
         automatic_repairs_policy: Optional["_models.AutomaticRepairsPolicy"] = None,
         virtual_machine_profile: Optional["_models.VirtualMachineScaleSetUpdateVMProfile"] = None,
@@ -25611,6 +26545,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         :paramtype identity: ~azure.mgmt.compute.models.VirtualMachineScaleSetIdentity
         :keyword zones: The virtual machine scale set zones.
         :paramtype zones: list[str]
+        :keyword placement: User-defined constraints for virtual machine scale set hardware placement.
+        :paramtype placement: ~azure.mgmt.compute.models.Placement
         :keyword upgrade_policy: The upgrade policy.
         :paramtype upgrade_policy: ~azure.mgmt.compute.models.UpgradePolicy
         :keyword automatic_repairs_policy: Policy for automatic repairs.
@@ -25650,8 +26586,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         :keyword resiliency_policy: Policy for Resiliency.
         :paramtype resiliency_policy: ~azure.mgmt.compute.models.ResiliencyPolicy
         :keyword zonal_platform_fault_domain_align_mode: Specifies the align mode between Virtual
-         Machine Scale Set compute and storage Fault Domain count. Known values are: "Aligned" and
-         "Unaligned".
+         Machine Scale Set compute and storage Fault Domain count. Known values are: "Aligned",
+         "Unaligned", and "BestEffortAligned".
         :paramtype zonal_platform_fault_domain_align_mode: str or
          ~azure.mgmt.compute.models.ZonalPlatformFaultDomainAlignMode
         :keyword sku_profile: Specifies the sku profile for the virtual machine scale set.
@@ -25662,6 +26598,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.plan = plan
         self.identity = identity
         self.zones = zones
+        self.placement = placement
         self.upgrade_policy = upgrade_policy
         self.automatic_repairs_policy = automatic_repairs_policy
         self.virtual_machine_profile = virtual_machine_profile
@@ -25987,6 +26924,10 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
      diskSizeGB is the number of bytes x 1024^3 for the disk and the value cannot be larger than
      1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar image: The Source User Image VirtualHardDisk. This VirtualHardDisk will be copied before
      using it to attach to the Virtual Machine. If SourceImage is provided, the destination
      VirtualHardDisk should not exist.
@@ -26011,6 +26952,7 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
         "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
         "diff_disk_settings": {"key": "diffDiskSettings", "type": "DiffDiskSettings"},
         "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_fault_domain_alignment": {"key": "storageFaultDomainAlignment", "type": "str"},
         "image": {"key": "image", "type": "VirtualHardDisk"},
         "vhd_containers": {"key": "vhdContainers", "type": "[str]"},
         "managed_disk": {"key": "managedDisk", "type": "VirtualMachineScaleSetManagedDiskParameters"},
@@ -26024,6 +26966,7 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
         write_accelerator_enabled: Optional[bool] = None,
         diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[list[str]] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
@@ -26044,6 +26987,10 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
          :code:`<br>` diskSizeGB is the number of bytes x 1024^3 for the disk and the value cannot be
          larger than 1023.
         :paramtype disk_size_gb: int
+        :keyword storage_fault_domain_alignment: Specifies the storage fault domain alignment type for
+         the disk. Known values are: "Aligned" and "BestEffortAligned".
+        :paramtype storage_fault_domain_alignment: str or
+         ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
         :keyword image: The Source User Image VirtualHardDisk. This VirtualHardDisk will be copied
          before using it to attach to the Virtual Machine. If SourceImage is provided, the destination
          VirtualHardDisk should not exist.
@@ -26067,6 +27014,7 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
         self.write_accelerator_enabled = write_accelerator_enabled
         self.diff_disk_settings = diff_disk_settings
         self.disk_size_gb = disk_size_gb
+        self.storage_fault_domain_alignment = storage_fault_domain_alignment
         self.image = image
         self.vhd_containers = vhd_containers
         self.managed_disk = managed_disk
@@ -27812,6 +28760,8 @@ class VirtualMachineUpdate(UpdateResource):
     :ivar time_created: Specifies the time at which the Virtual Machine resource was created.
      Minimum api-version: 2021-11-01.
     :vartype time_created: ~datetime.datetime
+    :ivar resiliency_profile: Resiliency profile for the virtual machine.
+    :vartype resiliency_profile: ~azure.mgmt.compute.models.ResiliencyProfile
     """
 
     _validation = {
@@ -27853,6 +28803,7 @@ class VirtualMachineUpdate(UpdateResource):
         "capacity_reservation": {"key": "properties.capacityReservation", "type": "CapacityReservationProfile"},
         "application_profile": {"key": "properties.applicationProfile", "type": "ApplicationProfile"},
         "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "resiliency_profile": {"key": "properties.resiliencyProfile", "type": "ResiliencyProfile"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -27885,6 +28836,7 @@ class VirtualMachineUpdate(UpdateResource):
         user_data: Optional[str] = None,
         capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
         application_profile: Optional["_models.ApplicationProfile"] = None,
+        resiliency_profile: Optional["_models.ResiliencyProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -27998,6 +28950,8 @@ class VirtualMachineUpdate(UpdateResource):
         :keyword application_profile: Specifies the gallery applications that should be made available
          to the VM/VMSS.
         :paramtype application_profile: ~azure.mgmt.compute.models.ApplicationProfile
+        :keyword resiliency_profile: Resiliency profile for the virtual machine.
+        :paramtype resiliency_profile: ~azure.mgmt.compute.models.ResiliencyProfile
         """
         super().__init__(tags=tags, **kwargs)
         self.plan = plan
@@ -28030,6 +28984,7 @@ class VirtualMachineUpdate(UpdateResource):
         self.capacity_reservation = capacity_reservation
         self.application_profile = application_profile
         self.time_created: Optional[datetime.datetime] = None
+        self.resiliency_profile = resiliency_profile
 
 
 class VMDiskSecurityProfile(_serialization.Model):
@@ -28270,6 +29225,43 @@ class VMScaleSetScaleOutInputProperties(_serialization.Model):
         self.zone = zone
 
 
+class VMSizePolicy(_serialization.Model):
+    """Specifies the VM size policy for the virtual machine. With this property the customer is able
+    to specify a list of VM sizes and an allocation strategy.
+
+    :ivar vm_sizes: Specifies the VM sizes for the virtual machine.
+    :vartype vm_sizes: list[~azure.mgmt.compute.models.VMSizeWithRank]
+    :ivar allocation_strategy: Specifies the allocation strategy for the virtual machine based on
+     which the VM will be allocated. Known values are: "LowestPrice", "CapacityOptimized", and
+     "Prioritized".
+    :vartype allocation_strategy: str or ~azure.mgmt.compute.models.AllocationStrategy
+    """
+
+    _attribute_map = {
+        "vm_sizes": {"key": "vmSizes", "type": "[VMSizeWithRank]"},
+        "allocation_strategy": {"key": "allocationStrategy", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        vm_sizes: Optional[list["_models.VMSizeWithRank"]] = None,
+        allocation_strategy: Optional[Union[str, "_models.AllocationStrategy"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword vm_sizes: Specifies the VM sizes for the virtual machine.
+        :paramtype vm_sizes: list[~azure.mgmt.compute.models.VMSizeWithRank]
+        :keyword allocation_strategy: Specifies the allocation strategy for the virtual machine based
+         on which the VM will be allocated. Known values are: "LowestPrice", "CapacityOptimized", and
+         "Prioritized".
+        :paramtype allocation_strategy: str or ~azure.mgmt.compute.models.AllocationStrategy
+        """
+        super().__init__(**kwargs)
+        self.vm_sizes = vm_sizes
+        self.allocation_strategy = allocation_strategy
+
+
 class VMSizeProperties(_serialization.Model):
     """Specifies VM Size Property settings on the virtual machine.
 
@@ -28310,6 +29302,38 @@ class VMSizeProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.v_cpus_available = v_cpus_available
         self.v_cpus_per_core = v_cpus_per_core
+
+
+class VMSizeWithRank(_serialization.Model):
+    """Specifies the VM Size with priority rank.
+
+    :ivar name: Specifies the name of the VM Size. This must be a valid Azure VM size (e.g.,
+     Standard_D2s_v3).
+    :vartype name: str
+    :ivar rank: Specifies the rank (a.k.a priority) associated with the VM Size. Lower rank values
+     have higher priority. Ranks should be non-negative integers and typically contiguous starting
+     from 0.
+    :vartype rank: int
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "rank": {"key": "rank", "type": "int"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, rank: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Specifies the name of the VM Size. This must be a valid Azure VM size (e.g.,
+         Standard_D2s_v3).
+        :paramtype name: str
+        :keyword rank: Specifies the rank (a.k.a priority) associated with the VM Size. Lower rank
+         values have higher priority. Ranks should be non-negative integers and typically contiguous
+         starting from 0.
+        :paramtype rank: int
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.rank = rank
 
 
 class WindowsConfiguration(_serialization.Model):
@@ -28653,3 +29677,26 @@ class ZoneAllocationPolicy(_serialization.Model):
         super().__init__(**kwargs)
         self.max_zone_count = max_zone_count
         self.max_instance_percent_per_zone_policy = max_instance_percent_per_zone_policy
+
+
+class ZoneMovement(_serialization.Model):
+    """Describes zone movement configuration. This allows VM to be moved across availability zones
+    during an outage.
+
+    :ivar is_enabled: Indicates if zone movement is enabled. By default isEnabled is set to false
+     i.e VM can't be moved from one zone to another.
+    :vartype is_enabled: bool
+    """
+
+    _attribute_map = {
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+    }
+
+    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword is_enabled: Indicates if zone movement is enabled. By default isEnabled is set to
+         false i.e VM can't be moved from one zone to another.
+        :paramtype is_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.is_enabled = is_enabled

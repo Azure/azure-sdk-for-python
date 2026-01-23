@@ -1,5 +1,9 @@
 # Release History
 
+## 37.2.0 (2026-01-23)
+
+change log generation was timeout!!! You need to write it manually!!!
+
 ## 37.1.0 (2025-11-17)
 
 ### Features Added

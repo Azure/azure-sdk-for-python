@@ -24,7 +24,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
         response = self.client.capacity_reservations.list_by_capacity_reservation_group(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
                 "virtualMachinesAssociated": [{"id": "str"}],
                 "zones": ["str"],
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
                 "timeCreated": "2020-02-20 00:00:00",
                 "virtualMachinesAssociated": [{"id": "str"}],
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -135,7 +135,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

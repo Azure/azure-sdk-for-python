@@ -25,7 +25,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
                 "treatFailureAsDeploymentFailure": bool,
                 "type": "str",
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -161,7 +161,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
                 "timeoutInSeconds": 0,
                 "treatFailureAsDeploymentFailure": bool,
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -175,7 +175,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
