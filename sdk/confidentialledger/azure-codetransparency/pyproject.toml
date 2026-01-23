@@ -63,5 +63,6 @@ exclude = [
 pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
+pylint = false  # Disable pylint as it fails on azure.core imports
 pyright = false
 type_check_samples = false
