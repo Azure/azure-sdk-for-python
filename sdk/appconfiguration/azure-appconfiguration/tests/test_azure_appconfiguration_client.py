@@ -1067,7 +1067,8 @@ class TestAppConfigurationClient(AppConfigTestCase):
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         self.set_up(appconfiguration_connection_string)
 
-        result = self.client.list_snapshots()
+        # Only list "ready" snapshots to avoid counting archived snapshots that may expire during test runs
+        result = self.client.list_snapshots(status=["ready"])
         initial_snapshots = len(list(result))
 
         variables = kwargs.pop("variables", {})
@@ -1085,7 +1086,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         created_snapshot2 = response2.result()
         assert created_snapshot2.status == "ready"
 
-        result = self.client.list_snapshots()
+        result = self.client.list_snapshots(status=["ready"])
         assert len(list(result)) == initial_snapshots + 2
 
         self.tear_down()
