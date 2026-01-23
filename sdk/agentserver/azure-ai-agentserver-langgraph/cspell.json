@@ -5,7 +5,8 @@
       "mslearn",
       "envtemplate",
       "ainvoke",
-      "asetup"
+      "asetup",
+      "mcptools"
     ],
     "ignorePaths": [
       "*.csv",
