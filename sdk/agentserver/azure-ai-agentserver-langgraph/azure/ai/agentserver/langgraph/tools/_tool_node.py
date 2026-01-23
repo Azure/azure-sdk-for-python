@@ -78,7 +78,7 @@ class FoundryToolCallWrapper:
 
         if (request.tool
                 or not self._allowed_foundry_tools
-                or (context := LanggraphRunContext.from_runtime(request.runtime)) is None):
+                or not (context := LanggraphRunContext.resolve(runtime=request.runtime))):
             # tool is already resolved
             return request
 
