@@ -64,7 +64,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         message = "<message1>"
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
@@ -78,7 +78,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         message = "  mess\t age1\n"
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
@@ -92,7 +92,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Action.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = self._get_queue_reference(qsc)
         message = "\u0001"
 
@@ -107,11 +107,11 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             message_encode_policy=TextBase64EncodePolicy(),
             message_decode_policy=TextBase64DecodePolicy(),
         )
@@ -128,11 +128,11 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
         )
@@ -149,7 +149,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = await self._create_queue(qsc)
         # Action.
         with pytest.raises(TypeError) as e:
@@ -169,11 +169,11 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
         )
@@ -193,11 +193,11 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             message_encode_policy=None,
             message_decode_policy=BinaryBase64DecodePolicy(),
         )

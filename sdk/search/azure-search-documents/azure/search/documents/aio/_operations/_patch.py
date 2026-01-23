@@ -235,9 +235,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
-                :start-after: [START upload_document]
-                :end-before: [END upload_document]
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+                :start-after: [START get_document_async]
+                :end-before: [END get_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Upload new documents to an index
@@ -519,7 +519,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_simple_query_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_simple_async.py
                 :start-after: [START simple_query_async]
                 :end-before: [END simple_query_async]
                 :language: python
@@ -528,7 +528,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_filter_query_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_filter_async.py
                 :start-after: [START filter_query_async]
                 :end-before: [END filter_query_async]
                 :language: python
@@ -537,7 +537,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_facet_query_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_facets_async.py
                 :start-after: [START facet_query_async]
                 :end-before: [END facet_query_async]
                 :language: python
@@ -646,9 +646,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_autocomplete_async.py
-                :start-after: [START autocomplete_query_async]
-                :end-before: [END autocomplete_query_async]
+            .. literalinclude:: ../samples/async_samples/sample_query_suggestions_async.py
+                :start-after: [START suggest_query_async]
+                :end-before: [END suggest_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Get autocomplete suggestions.
@@ -725,9 +725,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_suggestions_async.py
-                :start-after: [START suggest]
-                :end-before: [END suggest]
+            .. literalinclude:: ../samples/async_samples/sample_query_autocomplete_async.py
+                :start-after: [START autocomplete_query_async]
+                :end-before: [END autocomplete_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Get search suggestions.
