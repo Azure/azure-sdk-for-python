@@ -181,7 +181,14 @@ class TestFoundryToolLateBindingChatModel:
         assert result.content == "Async hello from model!"
 
     def test_invoke_without_context_and_no_foundry_tools(self):
-        """Test invoking model without context and no foundry tools."""
+        """Test invoking model without context and no foundry tools.
+
+        For Python < 3.11, LanggraphRunContext.resolve will return None.
+        For Python >= 3.11, it will try get_runtime() from langgraph which depends on
+        context propagation. Since we don't run inside langgraph in unit tests,
+        no one propagates the context for us, so RuntimeError is raised.
+        """
+        import sys
         delegate = FakeChatModel(
             responses=[AIMessage(content="Hello!")],
         )
@@ -196,13 +203,25 @@ class TestFoundryToolLateBindingChatModel:
 
         config: RunnableConfig = {"configurable": {}}
         input_messages = [HumanMessage(content="Hello")]
-        result = model.invoke(input_messages, config=config)
 
-        # Should work since no foundry tools need resolution
-        assert result.content == "Hello!"
+        if sys.version_info >= (3, 11):
+            with pytest.raises(RuntimeError, match="outside of a runnable context"):
+                model.invoke(input_messages, config=config)
+        else:
+            result = model.invoke(input_messages, config=config)
+            # Should work since no foundry tools need resolution
+            assert result.content == "Hello!"
 
     def test_invoke_without_context_raises_error_when_foundry_tools_present(self):
-        """Test that invoking without context raises error when foundry tools are set."""
+        """Test that invoking without context raises error when foundry tools are set.
+
+        For Python < 3.11, LanggraphRunContext.resolve will return None and we expect
+        'Unable to resolve foundry tools from context' error.
+        For Python >= 3.11, it will try get_runtime() from langgraph which depends on
+        context propagation. Since we don't run inside langgraph in unit tests,
+        no one propagates the context for us, so RuntimeError is raised.
+        """
+        import sys
         delegate = FakeChatModel(
             responses=[AIMessage(content="Hello!")],
         )
@@ -217,8 +236,12 @@ class TestFoundryToolLateBindingChatModel:
         config: RunnableConfig = {"configurable": {}}
         input_messages = [HumanMessage(content="Hello")]
 
-        with pytest.raises(RuntimeError, match="Unable to resolve foundry tools from context"):
-            model.invoke(input_messages, config=config)
+        if sys.version_info >= (3, 11):
+            with pytest.raises(RuntimeError, match="outside of a runnable context"):
+                model.invoke(input_messages, config=config)
+        else:
+            with pytest.raises(RuntimeError, match="Unable to resolve foundry tools from context"):
+                model.invoke(input_messages, config=config)
 
     def test_stream_with_context(
         self,

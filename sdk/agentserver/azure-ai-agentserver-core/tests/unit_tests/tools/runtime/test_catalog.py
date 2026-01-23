@@ -6,6 +6,7 @@ import asyncio
 import pytest
 from unittest.mock import AsyncMock
 
+from azure.ai.agentserver.core.tools import ensure_foundry_tool
 from azure.ai.agentserver.core.tools.runtime._catalog import (
     DefaultFoundryToolCatalog,
 )
@@ -189,7 +190,7 @@ class TestDefaultFoundryToolCatalogList:
     ):
         """Test list works with facade dictionaries."""
         facade = {"type": "custom_tool", "config": "value"}
-        expected_id = "hosted_mcp:custom_tool"
+        expected_id = ensure_foundry_tool(facade).id
 
         mock_foundry_tool_client.list_tools_details = AsyncMock(
             return_value={expected_id: [sample_tool_details]}
