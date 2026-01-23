@@ -48,34 +48,19 @@ class AgentFrameworkAgent(FoundryCBAgent):
         - Supports both streaming and non-streaming responses based on the `stream` flag.
     """
 
-    def __init__(self, agent: AgentProtocol,
+    def __init__(self,
                  credentials: "Optional[AsyncTokenCredential]" = None,
-                 *,
-                 thread_repository: Optional[AgentThreadRepository] = None,
-                 **kwargs: Any,
-                ):
+                 thread_repository: Optional[AgentThreadRepository] = None):
         """Initialize the AgentFrameworkAgent with an AgentProtocol.
 
-        :param agent: The Agent Framework agent to adapt.
-        :type agent: AgentProtocol
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
         :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
         :type thread_repository: Optional[AgentThreadRepository]
         """
-        super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
-        self._agent: AgentProtocol = agent
+        super().__init__(credentials=credentials)  # pylint: disable=unexpected-keyword-arg
         self._thread_repository = thread_repository
         self._hitl_helper = HumanInTheLoopHelper()
-
-    @property
-    def agent(self) -> "AgentProtocol":
-        """Get the resolved agent. This property provides backward compatibility.
-
-        :return: The resolved AgentProtocol if available, None otherwise.
-        :rtype: AgentProtocol
-        """
-        return self._agent
 
     def init_tracing(self):
         try:

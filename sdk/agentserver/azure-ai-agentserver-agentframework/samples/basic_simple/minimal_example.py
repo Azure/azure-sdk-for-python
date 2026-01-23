@@ -26,7 +26,7 @@ def main() -> None:
         tools=get_weather,
     )
 
-    from_agent_framework(agent=agent).run()
+    from_agent_framework(agent).run()
 
 
 if __name__ == "__main__":

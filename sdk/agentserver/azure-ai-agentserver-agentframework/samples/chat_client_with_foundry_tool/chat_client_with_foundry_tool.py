@@ -28,7 +28,7 @@ def main():
                 instructions="You are a helpful assistant with access to various tools.",
         )
 
-    from_agent_framework(agent=agent).run()
+    from_agent_framework(agent).run()
 
 if __name__ == "__main__":
     main()

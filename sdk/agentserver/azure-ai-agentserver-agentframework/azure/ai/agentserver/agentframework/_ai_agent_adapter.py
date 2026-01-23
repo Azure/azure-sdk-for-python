@@ -7,6 +7,8 @@ from __future__ import annotations
 from typing import Any, AsyncGenerator, Optional, Union
 
 from agent_framework import AgentProtocol
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
@@ -27,12 +29,10 @@ logger = get_logger()
 
 class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
     def __init__(self, agent: AgentProtocol,
-                 *,
-                 thread_repository: Optional[AgentThreadRepository]=None,
-                 **kwargs) -> None:
-        super().__init__(agent=agent, **kwargs)
+                 credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
+                 thread_repository: Optional[AgentThreadRepository] = None) -> None:
+        super().__init__(credentials, thread_repository)
         self._agent = agent
-        self._thread_repository = thread_repository
 
     async def agent_run(  # pylint: disable=too-many-statements
         self, context: AgentRunContext
@@ -55,7 +55,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             if context.stream:
                 return self._run_streaming_updates(
                     context=context,
-                    run_stream=lambda: self.agent.run_stream(
+                    run_stream=lambda: self._agent.run_stream(
                         message,
                         thread=agent_thread,
                     ),
@@ -64,7 +64,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
 
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
-            result = await self.agent.run(
+            result = await self._agent.run(
                 message,
                 thread=agent_thread)
             logger.debug("Agent run completed, result type: %s", type(result))

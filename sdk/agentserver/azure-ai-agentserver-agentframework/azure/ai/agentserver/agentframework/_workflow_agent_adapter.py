@@ -12,6 +12,8 @@ from typing import (
 
 from agent_framework import Workflow, CheckpointStorage, WorkflowAgent, WorkflowCheckpoint
 from agent_framework._workflows import get_checkpoint_summary
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
@@ -34,14 +36,12 @@ logger = get_logger()
 class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
     """Adapter to run WorkflowBuilder agents within the Agent Framework CBAgent structure."""
     def __init__(self,
-                workflow_factory: Callable[[], Workflow],
-                *,
-                thread_repository: Optional[AgentThreadRepository] = None,
-                checkpoint_repository: Optional[CheckpointRepository] = None,
-                **kwargs: Any) -> None:
-        super().__init__(agent=None, **kwargs)
+                 workflow_factory: Callable[[], Workflow],
+                 credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
+                 thread_repository: Optional[AgentThreadRepository] = None,
+                 checkpoint_repository: Optional[CheckpointRepository] = None) -> None:
+        super().__init__(credentials, thread_repository)
         self._workflow_factory = workflow_factory
-        self._thread_repository = thread_repository
         self._checkpoint_repository = checkpoint_repository
 
     async def agent_run(  # pylint: disable=too-many-statements
