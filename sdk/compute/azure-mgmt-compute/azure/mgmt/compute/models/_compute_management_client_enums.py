@@ -63,7 +63,7 @@ class AlternativeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Architecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The architecture of the image. Applicable to OS disks only."""
+    """CPU architecture supported by an OS disk."""
 
     X64 = "x64"
     ARM64 = "Arm64"
@@ -581,6 +581,25 @@ class GalleryProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MIGRATING = "Migrating"
 
 
+class GalleryScriptParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of the Gallery Script parameter. Possible values are: String, Int, Double,
+    Boolean, Enum.
+    """
+
+    STRING = "String"
+    """String gallery script parameter type"""
+    INT = "Int"
+    """Int gallery script parameter type"""
+    DOUBLE = "Double"
+    """Double gallery script parameter type"""
+    BOOLEAN = "Boolean"
+    """Boolean gallery script parameter type"""
+    ENUM = "Enum"
+    """Enum gallery script parameter type"""
+    INT_ENUM = "Int"
+    """Int gallery script parameter type"""
+
+
 class GallerySharingPermissionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the permission of sharing gallery. Possible values are:
     **Private,** **Groups,** **Community.**.
@@ -795,9 +814,7 @@ class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This property allows you to specify the supported type of the OS that application is built for.
-    Possible values are: **Windows,** **Linux.**.
-    """
+    """The Operating System type."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
@@ -1266,6 +1283,20 @@ class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "Error"
 
 
+class StorageAccountStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the strategy to be used when selecting the storage account type. Cannot be specified
+    along with storageAccountType, but can be overridden per region by specifying
+    targetRegions[].storageAccountType. This property is not updatable.
+    """
+
+    PREFER_STANDARD_ZRS = "PreferStandard_ZRS"
+    """Choose Standard_ZRS storage if the region supports it, else choose Standard_LRS storage, unless
+    overridden by specifying regional storageAccountType. If no storageAccountStrategy is
+    specified, this is the default strategy (from API version 2025-03-03 onwards)."""
+    DEFAULT_STANDARD_LRS = "DefaultStandard_LRS"
+    """Choose Standard_LRS storage unless overridden by specifying regional storageAccountType."""
+
+
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the storage account type to be used to store the image. This property is not
     updatable.
@@ -1295,6 +1326,28 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREMIUM_ZRS = "Premium_ZRS"
     STANDARD_SSD_ZRS = "StandardSSD_ZRS"
     PREMIUM_V2_LRS = "PremiumV2_LRS"
+
+
+class StorageAlignmentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the storage alignment status for the disk."""
+
+    UNALIGNED = "Unaligned"
+    """Disk does not have Storage Fault Domain to Compute Fault Domain mapping. A single Storage Fault
+    Domain failure may impact all VMs that reference this disk profile."""
+    ALIGNED = "Aligned"
+    """Disk has Storage Fault Domain to Compute Fault Domain mapping. Storage Fault Domain failure is
+    contained to VMs in a single Compute Fault Domain."""
+
+
+class StorageFaultDomainAlignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the storage fault domain alignment type for the disk."""
+
+    ALIGNED = "Aligned"
+    """Disk Storage Fault Domains are mapped to Compute Fault Domains. Deployment fails if disk does
+    not support enough Fault Domains."""
+    BEST_EFFORT_ALIGNED = "BestEffortAligned"
+    """Attempt to map Storage Fault Domains to Compute Fault Domains. Disks are unaligned if disk does
+    not support enough Fault Domains."""
 
 
 class SupportedSecurityOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1678,6 +1731,9 @@ class ZonalPlatformFaultDomainAlignMode(str, Enum, metaclass=CaseInsensitiveEnum
 
     ALIGNED = "Aligned"
     UNALIGNED = "Unaligned"
+    BEST_EFFORT_ALIGNED = "BestEffortAligned"
+    """Offload Alignment to VMSS. VMSS aligns disks that support enough Storage Fault Domains, while
+    keeping others unaligned."""
 
 
 class ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

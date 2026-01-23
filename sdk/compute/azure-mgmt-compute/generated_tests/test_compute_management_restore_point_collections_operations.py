@@ -22,7 +22,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_restore_point_collections_list_all(self, resource_group):
         response = self.client.restore_point_collections.list_all(
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
     def test_restore_point_collections_list(self, resource_group):
         response = self.client.restore_point_collections.list(
             resource_group_name=resource_group.name,
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
         response = self.client.restore_point_collections.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -103,6 +103,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                             "hardwareProfile": {
                                 "vmSize": "str",
+                                "vmSizePolicy": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                                 "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
                             },
                             "hyperVGeneration": "str",
@@ -254,7 +255,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -309,6 +310,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                             "hardwareProfile": {
                                 "vmSize": "str",
+                                "vmSizePolicy": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                                 "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
                             },
                             "hyperVGeneration": "str",
@@ -451,7 +453,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "source": {"id": "str", "location": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -463,7 +465,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
         response = self.client.restore_point_collections.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

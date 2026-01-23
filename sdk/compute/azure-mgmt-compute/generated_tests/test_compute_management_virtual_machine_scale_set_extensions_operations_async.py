@@ -25,7 +25,7 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperationsAsync(Azure
         response = self.client.virtual_machine_scale_set_extensions.list(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperationsAsync(Azure
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             vmss_extension_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperationsAsync(Azure
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -99,7 +99,7 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperationsAsync(Azure
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -114,7 +114,7 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 vmss_extension_name="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

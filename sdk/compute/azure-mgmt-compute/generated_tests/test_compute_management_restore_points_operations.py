@@ -25,7 +25,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,11 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                 "provisioningState": "str",
                 "sourceMetadata": {
                     "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
-                    "hardwareProfile": {"vmSize": "str", "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
+                    "hardwareProfile": {
+                        "vmSize": "str",
+                        "vmSizePolicy": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
+                        "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
+                    },
                     "hyperVGeneration": "str",
                     "licenseType": "str",
                     "location": "str",
@@ -211,7 +215,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                 "timeCreated": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -224,7 +228,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

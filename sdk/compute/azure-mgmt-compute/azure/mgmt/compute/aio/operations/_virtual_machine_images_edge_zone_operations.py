@@ -83,7 +83,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_publishers_request(
@@ -142,7 +142,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_offers_request(
@@ -204,7 +204,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_skus_request(
@@ -286,7 +286,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_request(
@@ -356,7 +356,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
         cls: ClsType[_models.VirtualMachineImage] = kwargs.pop("cls", None)
 
         _request = build_get_request(

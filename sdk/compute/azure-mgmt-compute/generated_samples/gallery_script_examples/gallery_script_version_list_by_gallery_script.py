@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_deallocate_maximum_set_gen.py
+    python gallery_script_version_list_by_gallery_script.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +31,15 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    client.virtual_machines.begin_deallocate(
-        resource_group_name="rgcompute",
-        vm_name="aaaaaaaaaa",
-    ).result()
+    response = client.gallery_script_versions.list_by_gallery_script(
+        resource_group_name="myResourceGroupName",
+        gallery_name="myGalleryName",
+        gallery_script_name="myGalleryScriptName",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2025-04-01/examples/virtualMachineExamples/VirtualMachine_Deallocate_MaximumSet_Gen.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/GalleryRP/stable/2025-03-03/examples/galleryScriptExamples/GalleryScriptVersion_ListByGalleryScript.json
 if __name__ == "__main__":
     main()
