@@ -119,9 +119,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         )
         self._message_encode_policy = message_encode_policy or NoEncodePolicy()
         self._message_decode_policy = message_decode_policy or NoDecodePolicy()
-        self._api_version = get_api_version(api_version)
-        self._client = AzureQueueStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = self._api_version  # type: ignore [assignment]
+        self._client = AzureQueueStorage(
+            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline
+        )
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
