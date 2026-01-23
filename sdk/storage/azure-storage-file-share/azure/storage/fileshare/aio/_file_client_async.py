@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, too-many-public-methods, docstring-keyword-should-match-keyword-only
+# pylint: disable=too-many-instance-attributes
 
 import functools
 import sys
