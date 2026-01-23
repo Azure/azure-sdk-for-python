@@ -273,7 +273,9 @@ class TestReactAgentWithFoundryTools:
         result = use_foundry_tools(mock_model, foundry_tools)  # type: ignore
 
         assert isinstance(result, FoundryToolLateBindingChatModel)
-        assert result._foundry_tools_to_bind == foundry_tools
+        assert len(result._foundry_tools_to_bind) == 1
+        assert isinstance(result._foundry_tools_to_bind[0], FoundryHostedMcpTool)
+        assert result._foundry_tools_to_bind[0].name == "code_interpreter"
 
 
 @pytest.mark.unit
