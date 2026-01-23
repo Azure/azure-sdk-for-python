@@ -174,11 +174,7 @@ with (
             sampling_params={
                 "temperature": 0.8,
             },
-            modalities=[
-                "text",
-                "audio"
-            ],
-        ),
+        )
     )
     print(f"Eval Run created (id: {eval_run_object.id}, name: {eval_run_object.name})")
     pprint(eval_run_object)
