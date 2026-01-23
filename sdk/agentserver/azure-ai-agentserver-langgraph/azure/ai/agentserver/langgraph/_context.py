@@ -29,8 +29,12 @@ class LanggraphRunContext:
         """Resolve the LanggraphRunContext from either a RunnableConfig or a Runtime.
 
         :param config: Optional RunnableConfig to extract the context from.
+        :type config: Optional[RunnableConfig]
         :param runtime: Optional Runtime or ToolRuntime to extract the context from.
+        :type runtime: Optional[Union[Runtime, ToolRuntime]]
+
         :return: An instance of LanggraphRunContext if found, otherwise None.
+        :rtype: Optional[LanggraphRunContext]
         """
         context: Optional["LanggraphRunContext"] = None
         if config:
