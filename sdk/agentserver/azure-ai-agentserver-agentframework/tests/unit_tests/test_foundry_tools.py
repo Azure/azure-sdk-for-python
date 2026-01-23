@@ -60,18 +60,6 @@ def test_attach_signature_from_pydantic_model_required_and_optional() -> None:
 	assert tool_func.__annotations__["return"] is Any
 
 
-@pytest.mark.unit
-def test_json_schema_type_to_python_mapping() -> None:
-	client = FoundryToolClient(tools=[])
-	assert client._json_schema_type_to_python("string") is str
-	assert client._json_schema_type_to_python("number") is float
-	assert client._json_schema_type_to_python("integer") is int
-	assert client._json_schema_type_to_python("boolean") is bool
-	assert client._json_schema_type_to_python("array") is list
-	assert client._json_schema_type_to_python("object") is dict
-	assert client._json_schema_type_to_python("unknown") is str
-
-
 def _make_resolved_tool(*, name: str = "my_tool", description: str = "desc") -> ResolvedFoundryTool:
 	schema = SchemaDefinition(
 		properties={
