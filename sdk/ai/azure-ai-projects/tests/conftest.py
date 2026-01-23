@@ -126,6 +126,13 @@ def add_sanitizers(test_proxy, sanitized_values):
         value="eval-data-sanitized-timestamp"
     )
 
+    # Sanitize Unix timestamps (10-digit numbers) in eval names
+    # These appear in patterns like "Evaluation -1769111901" or "Eval Run for agent-test -1769111901"
+    add_general_regex_sanitizer(
+        regex=r"-17\d{8}",
+        value="-SANITIZED-TS"
+    )
+
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 

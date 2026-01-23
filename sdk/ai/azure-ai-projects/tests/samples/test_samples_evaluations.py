@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+import os
 import pytest
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport, EnvironmentVariableLoader
 from sample_executor import (
@@ -43,7 +44,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     """
     Tests for evaluation samples.
 
-    Included samples (9):
+    Included samples (25):
+
+    Main evaluation samples (10):
     - sample_agent_evaluation.py
     - sample_model_evaluation.py
     - sample_agent_response_evaluation.py
@@ -53,8 +56,24 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_eval_catalog_code_based_evaluators.py
     - sample_eval_catalog_prompt_based_evaluators.py
     - sample_evaluation_compare_insight.py
+    - sample_redteam_evaluations.py
 
-    More samples will be added in the future.
+    Agentic evaluator samples (15):
+    - sample_coherence.py
+    - sample_fluency.py
+    - sample_groundedness.py
+    - sample_intent_resolution.py
+    - sample_relevance.py
+    - sample_response_completeness.py
+    - sample_task_adherence.py
+    - sample_task_completion.py
+    - sample_task_navigation_efficiency.py
+    - sample_tool_call_accuracy.py
+    - sample_tool_call_success.py
+    - sample_tool_input_accuracy.py
+    - sample_tool_output_utilization.py
+    - sample_tool_selection.py
+    - sample_generic_agentic_evaluator.py
 
     Excluded samples and reasons:
 
@@ -75,13 +94,11 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_evaluations_builtin_with_traces.py: Requires Azure Application Insights and
       uses azure-monitor-query to fetch traces.
     - sample_scheduled_evaluations.py: Requires Azure RBAC assignment via
-      azure-mgmt-authorization and azure-mgmt-resource.
+      azure-mgmt-authorization and azure-mgmt-resource, AND uploads Dataset.
 
     Complex prerequisites (require manual portal setup):
     - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
       Portal to enable continuous evaluation.
-    - sample_redteam_evaluations.py: Red team evaluations may require special
-      permissions or setup.
     """
 
     # To run this test with a specific sample, use:
@@ -101,12 +118,75 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_eval_catalog_prompt_based_evaluators.py",
                 "sample_evaluation_compare_insight.py",
                 "sample_agent_response_evaluation_with_function_tool.py",
+                "sample_redteam_evaluations.py",
             ],
         ),
     )
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_evaluation_samples(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm(
+            instructions=evaluations_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
+
+    # To run this test with a specific sample, use:
+    # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_agentic_evaluator_samples[sample_coherence]
+    @evaluationsPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "evaluations/agentic_evaluators",
+            samples_to_test=[
+                "sample_coherence.py",
+                "sample_fluency.py",
+                "sample_groundedness.py",
+                "sample_intent_resolution.py",
+                "sample_relevance.py",
+                "sample_response_completeness.py",
+                "sample_task_adherence.py",
+                "sample_task_completion.py",
+                "sample_task_navigation_efficiency.py",
+                "sample_tool_call_accuracy.py",
+                "sample_tool_call_success.py",
+                "sample_tool_input_accuracy.py",
+                "sample_tool_output_utilization.py",
+                "sample_tool_selection.py",
+            ],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_agentic_evaluator_samples(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm(
+            instructions=evaluations_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
+
+    # To run this test, use:
+    # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_generic_agentic_evaluator_sample
+    @evaluationsPreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_generic_agentic_evaluator_sample(self, **kwargs) -> None:
+        # Manually construct path to nested sample
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        samples_folder = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
+        sample_path = os.path.join(
+            samples_folder,
+            "samples",
+            "evaluations",
+            "agentic_evaluators",
+            "sample_generic_agentic_evaluator",
+            "sample_generic_agentic_evaluator.py",
+        )
         env_var_mapping = get_sample_environment_variables_map(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
         executor.execute()

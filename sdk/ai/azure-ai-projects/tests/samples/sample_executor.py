@@ -11,6 +11,7 @@ import pytest
 import inspect
 import importlib.util
 import functools
+
 from dataclasses import dataclass, field
 from typing import overload, Union, Optional
 from pydantic import BaseModel
@@ -22,7 +23,12 @@ from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
+from devtools_testutils import is_live
 from azure.ai.projects import AIProjectClient
+
+# Fixed timestamp for playback mode (Nov 2023).
+# Must match the sanitizer regex `-17\d{8}` in conftest.py which replaces it with `-SANITIZED-TS`.
+PLAYBACK_TIMESTAMP = 1700000000
 from pytest import MonkeyPatch
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
@@ -312,6 +318,16 @@ class SyncSampleExecutor(BaseSampleExecutor):
                 mock.patch("builtins.open", side_effect=patched_open_fn),
             ):
                 self.spec.loader.exec_module(self.module)
+                # In playback mode, patch time functions on the module:
+                # - time.sleep: avoid waiting for polling loops (instant)
+                # - time.time: return fixed value for deterministic request bodies
+                # Must be done after exec_module so the module's 'time' reference can be patched.
+                if not is_live() and hasattr(self.module, "time"):
+                    self.module.time.sleep = lambda _: None
+                    self.module.time.time = lambda: PLAYBACK_TIMESTAMP
+                # Call main() if it exists (samples wrap their code in main())
+                if hasattr(self.module, "main") and callable(self.module.main):
+                    self.module.main()
 
     def validate_print_calls_by_llm(
         self,
@@ -379,6 +395,13 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
             self.spec.loader.exec_module(self.module)
+            # In playback mode, patch time functions on the module:
+            # - time.sleep: avoid waiting for polling loops (instant)
+            # - time.time: return fixed value for deterministic request bodies
+            # Must be done after exec_module so the module's 'time' reference can be patched.
+            if not is_live() and hasattr(self.module, "time"):
+                self.module.time.sleep = lambda _: None
+                self.module.time.time = lambda: PLAYBACK_TIMESTAMP
             await self.module.main()
 
     async def validate_print_calls_by_llm_async(
