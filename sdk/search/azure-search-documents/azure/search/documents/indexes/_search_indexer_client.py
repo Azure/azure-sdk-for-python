@@ -97,7 +97,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
+            .. literalinclude:: ../samples/sample_indexer_crud.py
                 :start-after: [START create_indexer]
                 :end-before: [END create_indexer]
                 :language: python
@@ -160,7 +160,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
+            .. literalinclude:: ../samples/sample_indexer_crud.py
                 :start-after: [START get_indexer]
                 :end-before: [END get_indexer]
                 :language: python
@@ -184,9 +184,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
-                :start-after: [START list_indexer]
-                :end-before: [END list_indexer]
+            .. literalinclude:: ../samples/sample_indexer_crud.py
+                :start-after: [START list_indexers]
+                :end-before: [END list_indexers]
                 :language: python
                 :dedent: 4
                 :caption: List all the SearchIndexers
@@ -208,9 +208,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
-                :start-after: [START list_indexer]
-                :end-before: [END list_indexer]
+            .. literalinclude:: ../samples/sample_indexer_crud.py
+                :start-after: [START list_indexers]
+                :end-before: [END list_indexers]
                 :language: python
                 :dedent: 4
                 :caption: List all the SearchIndexers
@@ -239,7 +239,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
+            .. literalinclude:: ../samples/sample_indexer_crud.py
                 :start-after: [START delete_indexer]
                 :end-before: [END delete_indexer]
                 :language: python
@@ -264,7 +264,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
+            .. literalinclude:: ../samples/sample_indexer_crud.py
                 :start-after: [START run_indexer]
                 :end-before: [END run_indexer]
                 :language: python
@@ -283,7 +283,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
+            .. literalinclude:: ../samples/sample_indexer_crud.py
                 :start-after: [START reset_indexer]
                 :end-before: [END reset_indexer]
                 :language: python
@@ -363,7 +363,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
+            .. literalinclude:: ../samples/sample_indexer_crud.py
                 :start-after: [START get_indexer_status]
                 :end-before: [END get_indexer_status]
                 :language: python
@@ -386,7 +386,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_source_operations.py
+            .. literalinclude:: ../samples/sample_indexer_datasource_crud.py
                 :start-after: [START create_data_source_connection]
                 :end-before: [END create_data_source_connection]
                 :language: python
@@ -447,7 +447,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_source_operations.py
+            .. literalinclude:: ../samples/sample_indexer_datasource_crud.py
                 :start-after: [START get_data_source_connection]
                 :end-before: [END get_data_source_connection]
                 :language: python
@@ -474,9 +474,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_source_operations.py
-                :start-after: [START list_data_source_connection]
-                :end-before: [END list_data_source_connection]
+            .. literalinclude:: ../samples/sample_indexer_datasource_crud.py
+                :start-after: [START list_data_source_connections]
+                :end-before: [END list_data_source_connections]
                 :language: python
                 :dedent: 4
                 :caption: List all the SearchIndexerDataSourceConnections
@@ -524,7 +524,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_source_operations.py
+            .. literalinclude:: ../samples/sample_indexer_datasource_crud.py
                 :start-after: [START delete_data_source_connection]
                 :end-before: [END delete_data_source_connection]
                 :language: python
