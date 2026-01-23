@@ -28,14 +28,13 @@ from _shared.testcase import CodeTransparencyPreparer, CodeTransparencyClientTes
 
 
 class TestCodetransparencyClient(CodeTransparencyClientTestBase):
-    def create_confidentialledger_client(
+    def create_client(
         self, endpoint, ledger_id
     ) -> CodeTransparencyClient:
         # Always explicitly fetch the TLS certificate.
         network_cert = self.set_ledger_identity(ledger_id)
 
-        # The ACL instance should already have the potential AAD user added as an Administrator.
-        aad_based_client = self.create_client_from_credential(
+        client = self.create_client_from_credential(
             CodeTransparencyClient,
             credential=None,
             endpoint=endpoint,
@@ -70,14 +69,14 @@ class TestCodetransparencyClient(CodeTransparencyClientTestBase):
                 self.network_certificate_path,
             )
 
-        return aad_based_client
+        return client
 
     @CodeTransparencyPreparer()
     @recorded_by_proxy
     def test_register_signature_fails(self, **kwargs):
         codetransparency_endpoint = kwargs.pop("codetransparency_endpoint")
         codetransparency_id = kwargs.pop("codetransparency_id")
-        client = self.create_confidentialledger_client(
+        client = self.create_client(
             codetransparency_endpoint, codetransparency_id
         )
         with pytest.raises(exceptions.HttpResponseError) as ex:
@@ -104,7 +103,7 @@ class TestCodetransparencyClient(CodeTransparencyClientTestBase):
     def test_register_signature_returns_pending_operation(self, **kwargs):
         codetransparency_endpoint = kwargs.pop("codetransparency_endpoint")
         codetransparency_id = kwargs.pop("codetransparency_id")
-        client = self.create_confidentialledger_client(
+        client = self.create_client(
             codetransparency_endpoint, codetransparency_id
         )
         register_result = client.create_entry(
