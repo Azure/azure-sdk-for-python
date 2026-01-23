@@ -56,7 +56,8 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             context=context,
         )
 
-    async def convert_response_non_stream(self, output: Any, context: LanggraphRunContext) -> Response:
+    async def convert_response_non_stream(
+            self, output: Union[dict[str, Any], Any], context: LanggraphRunContext) -> Response:
         agent_run_context = context.agent_run
         converter = self._create_non_stream_response_converter(context)
         converted_output = converter.convert(output)

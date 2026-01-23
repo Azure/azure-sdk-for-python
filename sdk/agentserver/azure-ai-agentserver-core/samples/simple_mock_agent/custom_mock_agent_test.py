@@ -97,7 +97,7 @@ async def agent_run(context: AgentRunContext):
     return response
 
 
-my_agent = FoundryCBAgent()
+my_agent = FoundryCBAgent(project_endpoint="mock-endpoint")
 my_agent.agent_run = agent_run
 
 if __name__ == "__main__":

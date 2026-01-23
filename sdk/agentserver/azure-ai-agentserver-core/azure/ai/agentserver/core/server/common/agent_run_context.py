@@ -13,6 +13,9 @@ logger = get_logger()
 
 
 class AgentRunContext:
+    """
+    :meta private:
+    """
     def __init__(self, payload: dict, **kwargs: Any) -> None:
         self._raw_payload = payload
         self._request = _deserialize_create_response(payload)

@@ -43,12 +43,13 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: di
     This client provides access to tools from both MCP (Model Context Protocol) servers
     and Azure AI Tools API endpoints, enabling unified tool discovery and invocation.
 
-    :param str endpoint:
-        The fully qualified endpoint for the Azure AI Agents service.
-        Example: "https://<resource-name>.api.azureml.ms"
+    :param endpoint:
+                        The fully qualified endpoint for the Azure AI Agents service.
+                        Example: "https://<resource-name>.api.azureml.ms"
+    :type endpoint: str
     :param credential:
-        Credential for authenticating requests to the service.
-        Use credentials from azure-identity like DefaultAzureCredential.
+                        Credential for authenticating requests to the service.
+                        Use credentials from azure-identity like DefaultAzureCredential.
     :type credential: ~azure.core.credentials.TokenCredential
     :param api_version: The API version to use for this operation.
     :type api_version: str or None
@@ -87,18 +88,21 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: di
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
         returning them as ResolvedFoundryTool instances ready for invocation.
+
         :param tools: Collection of FoundryTool instances to resolve.
         :type tools: Collection[~FoundryTool]
         :param user: Information about the user requesting the tools.
         :type user: Optional[UserInfo]
         :param agent_name: Name of the agent requesting the tools.
         :type agent_name: str
+
         :return: List of resolved Foundry tools.
         :rtype: List[ResolvedFoundryTool]
         :raises ~azure.ai.agentserver.core.tools._exceptions.OAuthConsentRequiredError:
-            Raised when the service requires user OAuth consent.
+                Raised when the service requires user OAuth consent.
         :raises ~azure.core.exceptions.HttpResponseError:
-            Raised for HTTP communication failures.
+                Raised for HTTP communication failures.
+
         """
         _ = kwargs  # Reserved for future use
         resolved_tools: List[ResolvedFoundryTool] = []
@@ -119,18 +123,21 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: di
 
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
         returning them as ResolvedFoundryTool instances ready for invocation.
+
         :param tools: Collection of FoundryTool instances to resolve.
         :type tools: Collection[~FoundryTool]
         :param user: Information about the user requesting the tools.
         :type user: Optional[UserInfo]
         :param agent_name: Name of the agent requesting the tools.
         :type agent_name: str
+
         :return: Mapping of tool IDs to lists of FoundryToolDetails.
         :rtype: Mapping[str, List[FoundryToolDetails]]
         :raises ~azure.ai.agentserver.core.tools._exceptions.OAuthConsentRequiredError:
-            Raised when the service requires user OAuth consent.
+                Raised when the service requires user OAuth consent.
         :raises ~azure.core.exceptions.HttpResponseError:
-            Raised for HTTP communication failures.
+                Raised for HTTP communication failures.
+
         """
         _ = kwargs  # Reserved for future use
         resolved_tools: Dict[str, List[FoundryToolDetails]] = defaultdict(list)
@@ -187,6 +194,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: di
             Raised for HTTP communication failures.
         :raises ~ToolInvocationError:
             Raised when the tool invocation fails or source is not supported.
+
         """
         _ = kwargs  # Reserved for future use
         if tool.source is FoundryToolSource.HOSTED_MCP:

@@ -3,7 +3,7 @@ from langchain_core import messages as langgraph_messages
 
 from azure.ai.agentserver.core import models
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.langgraph import models as langgraph_models
+from azure.ai.agentserver.langgraph.models.response_api_request_converter import ResponseAPIMessageRequestConverter
 
 
 @pytest.mark.unit
@@ -16,7 +16,7 @@ def test_convert_implicit_user_message():
         input=[implicit_user_message],
     )
 
-    converter = langgraph_models.LangGraphRequestConverter(create_response)
+    converter = ResponseAPIMessageRequestConverter(create_response)
     res = converter.convert()
 
     assert "messages" in res
@@ -34,7 +34,7 @@ def test_convert_implicit_user_message_with_contents():
     ]
     create_response = models.CreateResponse(input=[{"content": input_data}])
 
-    converter = langgraph_models.LangGraphRequestConverter(create_response)
+    converter = ResponseAPIMessageRequestConverter(create_response)
     res = converter.convert()
 
     assert "messages" in res
@@ -61,7 +61,7 @@ def test_convert_item_param_message():
     create_response = models.CreateResponse(
         input=input_data,
     )
-    converter = langgraph_models.LangGraphRequestConverter(create_response)
+    converter = ResponseAPIMessageRequestConverter(create_response)
     res = converter.convert()
 
     assert "messages" in res
@@ -103,7 +103,7 @@ def test_convert_item_param_function_call_and_function_call_output():
     create_response = models.CreateResponse(
         input=input_data,
     )
-    converter = langgraph_models.LangGraphRequestConverter(create_response)
+    converter = ResponseAPIMessageRequestConverter(create_response)
     res = converter.convert()
     assert "messages" in res
     assert len(res["messages"]) == len(input_data)

@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 from typing import Any, List, Dict, Optional, Union
 import json
 
@@ -30,10 +33,10 @@ class HumanInTheLoopHelper:
                     request_obj = RequestInfoEvent.from_dict(request)
                 res[call_id] = request_obj
             return res
-        
+
         if not thread_messages:
             return res
-        
+
         # if no checkpoint (Agent), find user input request and pair the feedbacks
         for message in thread_messages:
             for content in message.contents:
@@ -59,7 +62,7 @@ class HumanInTheLoopHelper:
                     if call_id and call_id in res:
                         res.pop(call_id)
         return res
-        
+
     def convert_user_input_request_content(self, content: UserInputRequestContents) -> dict:
         function_call = content.function_call
         call_id = getattr(function_call, "call_id", "")
@@ -69,7 +72,7 @@ class HumanInTheLoopHelper:
             "name": HUMAN_IN_THE_LOOP_FUNCTION_NAME,
             "arguments": arguments or "",
         }
-    
+
     def convert_request_arguments(self, arguments: Any) -> str:
         # convert data to payload if possible
         if isinstance(arguments, dict):
@@ -85,16 +88,16 @@ class HumanInTheLoopHelper:
             except Exception:  # pragma: no cover - fallback # pylint: disable=broad-exception-caught
                 arguments = str(arguments)
         return arguments
-    
+
     def validate_and_convert_hitl_response(self,
-            input: str | List[Dict] | None,
+            input: Union[str, List[Dict], None],
             pending_requests: Dict[str, RequestInfoEvent],
-        ) -> List[ChatMessage] | None:
+        ) -> Optional[List[ChatMessage]]:
 
         if input is None or isinstance(input, str):
             logger.warning("Expected list input for HitL response validation, got str.")
             return None
-        
+
         res = []
         for item in input:
             if item.get("type") != "function_call_output":

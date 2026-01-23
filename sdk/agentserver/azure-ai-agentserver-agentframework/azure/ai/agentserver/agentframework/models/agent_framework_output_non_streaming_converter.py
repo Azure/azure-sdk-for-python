@@ -19,12 +19,7 @@ from agent_framework._types import UserInputRequestContents
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
-from azure.ai.agentserver.core.models.projects import (
-    AgentId,
-    CreatedBy,
-    ItemContentOutputText,
-    ResponsesAssistantMessageItemResource,
-)
+from azure.ai.agentserver.core.models.projects import ItemContentOutputText
 
 from .agent_id_generator import AgentIdGenerator
 from .constants import Constants
@@ -53,13 +48,13 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
 
     def _build_created_by(self, author_name: str) -> dict:
         self._ensure_response_started()
-        
+
         agent_dict = {
             "type": "agent_id",
             "name": author_name or "",
             "version": "",  # Default to empty string
         }
-        
+
         return {
             "agent": agent_dict,
             "response_id": self._response_id,
@@ -189,7 +184,12 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             len(arguments or ""),
         )
 
-    def _append_function_result_content(self, content: FunctionResultContent, sink: List[dict], author_name: str) -> None:
+    def _append_function_result_content(
+        self,
+        content: FunctionResultContent,
+        sink: List[dict],
+        author_name: str,
+    ) -> None:
         # Coerce the function result into a simple display string.
         result = []
         raw = getattr(content, "result", None)
@@ -211,13 +211,19 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             }
         )
         logger.debug(
-            "added function_call_output item id=%s call_id=%s output_len=%d",
+            "added function_call_output item id=%s call_id=%s "
+            "output_len=%d",
             func_out_id,
             call_id,
             len(result),
         )
-    
-    def _append_user_input_request_contents(self, content: UserInputRequestContents, sink: List[dict], author_name: str) -> None:
+
+    def _append_user_input_request_contents(
+        self,
+        content: UserInputRequestContents,
+        sink: List[dict],
+        author_name: str,
+    ) -> None:
         item_id = self._context.id_generator.generate_function_call_id()
         content = self._hitl_helper.convert_user_input_request_content(content)
         sink.append(
@@ -231,7 +237,11 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 "created_by": self._build_created_by(author_name),
             }
         )
-        logger.debug("    added user_input_request item id=%s call_id=%s", item_id, content["call_id"])
+        logger.debug(
+            "    added user_input_request item id=%s call_id=%s",
+            item_id,
+            content["call_id"],
+        )
 
     # ------------- simple normalization helper -------------------------
     def _coerce_result_text(self, value: Any) -> str | dict:
