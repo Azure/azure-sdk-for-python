@@ -403,7 +403,7 @@ See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the
   # You can also use "{{$userId}}" to take the oid of the request authentication header
   scope = "user_123"
 
-  tool = MemorySearchTool(
+  tool = MemorySearchPreviewTool(
       memory_store_name=memory_store.name,
       scope=scope,
       update_delay=1,  # Wait 1 second of inactivity before updating memories

@@ -13,7 +13,7 @@ from devtools_testutils import RecordedTransport, is_live, is_live_and_not_recor
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
-    MemorySearchTool,
+    MemorySearchPreviewTool,
     PromptAgentDefinition,
     MemoryStoreDefaultOptions,
 )
@@ -79,7 +79,7 @@ class TestAgentMemorySearchAsync(TestBase):
                 assert memory_store.description == "Test memory store for agent conversations"
 
                 # Create memory search tool
-                tool = MemorySearchTool(
+                tool = MemorySearchPreviewTool(
                     memory_store_name=memory_store.name,
                     scope=scope,
                     update_delay=1,  # Wait 1 second for testing; use higher value (300) in production
