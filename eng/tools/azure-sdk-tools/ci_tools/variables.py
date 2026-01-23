@@ -117,8 +117,7 @@ def set_environment_from_dictionary(settings: Dict[str, str]) -> None:
         settings (Dict[str, str]): A dictionary of environment variable names and their default values.
     """
     for key, value in settings.items():
-        if key not in os.environ:
-            os.environ.setdefault(key, value)
+        os.environ.setdefault(key, value)
 
 
 def set_envvar_defaults(settings: Optional[Dict[str, str]] = None) -> None:
