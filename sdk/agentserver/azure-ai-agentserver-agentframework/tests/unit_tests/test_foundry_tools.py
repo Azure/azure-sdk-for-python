@@ -9,6 +9,8 @@ import pytest
 from agent_framework import AIFunction, ChatOptions
 from pydantic import Field, create_model
 
+# Import schema models directly from client._models to avoid heavy azure.identity import
+# chain triggered by azure.ai.agentserver.core.__init__.py
 from azure.ai.agentserver.core.tools.client._models import (
 	FoundryHostedMcpTool,
 	FoundryToolDetails,
@@ -18,7 +20,17 @@ from azure.ai.agentserver.core.tools.client._models import (
 	SchemaType,
 )
 
-foundry_tools_module = importlib.import_module("azure.ai.agentserver.agentframework._foundry_tools")
+# Load _foundry_tools module directly without triggering parent __init__ which has heavy deps
+import importlib.util
+import sys
+from pathlib import Path
+
+foundry_tools_path = Path(__file__).parent.parent.parent / "azure" / "ai" / "agentserver" / "agentframework" / "_foundry_tools.py"
+spec = importlib.util.spec_from_file_location("_foundry_tools", foundry_tools_path)
+foundry_tools_module = importlib.util.module_from_spec(spec)
+sys.modules["_foundry_tools"] = foundry_tools_module
+spec.loader.exec_module(foundry_tools_module)
+
 FoundryToolClient = foundry_tools_module.FoundryToolClient
 FoundryToolsChatMiddleware = foundry_tools_module.FoundryToolsChatMiddleware
 _attach_signature_from_pydantic_model = foundry_tools_module._attach_signature_from_pydantic_model
