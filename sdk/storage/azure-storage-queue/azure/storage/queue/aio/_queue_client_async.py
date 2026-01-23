@@ -134,11 +134,7 @@ class QueueClient(  # type: ignore [misc]
         self._message_decode_policy = message_decode_policy or NoDecodePolicy()
         self._api_version = get_api_version(api_version)
         self._client = AzureQueueStorage(
-            self.url,
-            self._api_version,
-            base_url=self.url,
-            pipeline=self._pipeline,
-            loop=loop
+            self.url, self._api_version, base_url=self.url, pipeline=self._pipeline, loop=loop
         )
         self._client._config.version = self._api_version  # type: ignore [assignment]
         self._loop = loop
