@@ -77,7 +77,7 @@ async def create_index_async():
         SearchableField(name="Description", type=SearchFieldDataType.STRING),
         SearchField(
             name="DescriptionVector",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),
+            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),      # type: ignore[operator]
             searchable=True,
             vector_search_dimensions=1536,
             vector_search_profile_name="my-vector-profile",
