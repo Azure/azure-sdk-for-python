@@ -320,7 +320,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     ),
                     uefi_settings=models.BatchUefiSettings(
                         secure_boot_enabled=True,
-                        v_tpm_enabled=True,
+                        vtpm_enabled=True,
                     ),
                 ),
                 image_reference=models.BatchVmImageReference(
@@ -398,7 +398,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     ),
                     uefi_settings=models.BatchUefiSettings(
                         secure_boot_enabled=True,
-                        v_tpm_enabled=True,
+                        vtpm_enabled=True,
                     ),
                 ),
                 image_reference=models.BatchVmImageReference(
