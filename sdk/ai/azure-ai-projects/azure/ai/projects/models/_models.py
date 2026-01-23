@@ -59,7 +59,7 @@ class Tool(_Model):
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationPreviewTool,
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerUsePreviewTool, CustomToolParam,
     MicrosoftFabricPreviewTool, FileSearchTool, FunctionTool, ImageGenTool, LocalShellToolParam,
-    MCPTool, MemorySearchTool, OpenApiTool, SharepointPreviewTool, FunctionShellToolParam,
+    MCPTool, MemorySearchPreviewTool, OpenApiTool, SharepointPreviewTool, FunctionShellToolParam,
     WebSearchTool, WebSearchPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer_use_preview",
@@ -10017,7 +10017,7 @@ class MemorySearchOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemorySearchTool(Tool, discriminator="memory_search"):
+class MemorySearchPreviewTool(Tool, discriminator="memory_search"):
     """A tool for integrating memories into the agent.
 
     :ivar type: The type of the tool. Always ``memory_search``. Required.

@@ -223,7 +223,7 @@
         "azure.ai.projects.models.MemoryOperation": "Azure.AI.Projects.MemoryOperation",
         "azure.ai.projects.models.MemorySearchItem": "Azure.AI.Projects.MemorySearchItem",
         "azure.ai.projects.models.MemorySearchOptions": "Azure.AI.Projects.MemorySearchOptions",
-        "azure.ai.projects.models.MemorySearchTool": "Azure.AI.Projects.MemorySearchTool",
+        "azure.ai.projects.models.MemorySearchPreviewTool": "Azure.AI.Projects.MemorySearchPreviewTool",
         "azure.ai.projects.models.MemorySearchToolCallItemParam": "Azure.AI.Projects.MemorySearchToolCallItemParam",
         "azure.ai.projects.models.MemorySearchToolCallItemResource": "Azure.AI.Projects.MemorySearchToolCallItemResource",
         "azure.ai.projects.models.MemoryStoreDefinition": "Azure.AI.Projects.MemoryStoreDefinition",
