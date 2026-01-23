@@ -9,7 +9,7 @@ ignore-paths=
     azure/mixedreality/remoterendering/_api_version.py,
     (?:.*[/\\]|^).*[/\\](projects|agents)[/\\](models/_models.py|_model_base.py|operations/_operations.py|aio/operations/_operations.py)$,
     # Exclude any path that contains the following directory names
-    (?:.*[/\\]|^)(?:_vendor|_generated|_restclient|examples|doc|\.tox)(?:[/\\]|$)
+    (?:.*[/\\]|^)(?:_vendor|_generated|_restclient|examples|samples|doc|\.tox)(?:[/\\]|$)
 
 load-plugins=pylint_guidelines_checker
 

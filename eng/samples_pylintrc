@@ -9,7 +9,7 @@ ignore-paths=
     azure/mixedreality/remoterendering/_api_version.py,
     (?:.*[/\\]|^).*[/\\](projects|agents)[/\\](models/_models.py|_model_base.py|operations/_operations.py|aio/operations/_operations.py)$,
     # Exclude any path that contains the following directory names
-    (?:.*[/\\]|^)(?:_vendor|_generated|_restclient|samples|tests|test|examples|doc|\.tox)(?:[/\\]|$)
+    (?:.*[/\\]|^)(?:_vendor|_generated|_restclient|examples|doc|\.tox)(?:[/\\]|$)
 
 load-plugins=pylint_guidelines_checker
 
@@ -20,8 +20,8 @@ load-plugins=pylint_guidelines_checker
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
 # Let's black deal with bad-continuation
 
-# Added disables from super-with-arguments
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,consider-using-max-builtin,too-many-lines,possibly-used-before-assignment,do-not-hardcode-dedent,arguments-differ,signature-differs,deprecated-class,too-many-positional-arguments
+# Added disables from super-with-arguments and do-not-import-asyncio for samples
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,consider-using-max-builtin,too-many-lines,possibly-used-before-assignment,do-not-hardcode-dedent,arguments-differ,signature-differs,deprecated-class,too-many-positional-arguments,do-not-import-asyncio
 
 
 [FORMAT]
