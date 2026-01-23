@@ -27,7 +27,7 @@ from devtools_testutils import is_live
 from azure.ai.projects import AIProjectClient
 
 # Fixed timestamp for playback mode (Nov 2023).
-# Must match the sanitizer regex `-17\d{8}` in conftest.py which replaces it with `-SANITIZED-TS`.
+# Must match the sanitizer regex `-\d{10}` in conftest.py which replaces it with `-SANITIZED-TS`.
 PLAYBACK_TIMESTAMP = 1700000000
 from pytest import MonkeyPatch
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
@@ -402,7 +402,9 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             if not is_live() and hasattr(self.module, "time"):
                 self.module.time.sleep = lambda _: None
                 self.module.time.time = lambda: PLAYBACK_TIMESTAMP
-            await self.module.main()
+            # Call main() if it exists (samples wrap their code in main())
+            if hasattr(self.module, "main") and callable(self.module.main):
+                await self.module.main()
 
     async def validate_print_calls_by_llm_async(
         self,
