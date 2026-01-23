@@ -67,9 +67,7 @@ async def main():
         ConfigurationSettingsFilter(key=".appconfig.featureflag/*"),
     ]
 
-    poller = await client.begin_create_snapshot(
-        name=snapshot_name, filters=snapshot_filters, retention_period=3600
-    )
+    poller = await client.begin_create_snapshot(name=snapshot_name, filters=snapshot_filters, retention_period=3600)
     created_snapshot = await poller.result()
     print(f"Created snapshot: {created_snapshot.name} with status: {created_snapshot.status}")
 

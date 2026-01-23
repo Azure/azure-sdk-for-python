@@ -12,11 +12,7 @@ from azure.appconfiguration import (  # type:ignore
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
-from azure.identity import DefaultAzureCredential
-import os
-import uuid
-
-endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+= os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 credential = DefaultAzureCredential()
 
 # Step 1: Create a snapshot
