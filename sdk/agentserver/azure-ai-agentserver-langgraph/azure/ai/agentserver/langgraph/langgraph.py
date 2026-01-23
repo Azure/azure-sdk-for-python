@@ -12,8 +12,8 @@ from langgraph.graph.state import CompiledStateGraph
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.server.base import FoundryCBAgent
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
+from azure.ai.agentserver.core import AgentRunContext
+from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:disable=import-error,no-name-in-module
 from ._context import LanggraphRunContext
 from .models.response_api_converter import GraphInputArguments, ResponseAPIConverter
 from .models.response_api_default_converter import ResponseAPIDefaultConverter
@@ -128,7 +128,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
         try:
             result = await self._graph.ainvoke(**input_arguments)
-            output = self.converter.convert_response_non_stream(result, input_arguments["context"])
+            output = await self.converter.convert_response_non_stream(result, input_arguments["context"])
             return output
         except Exception as e:
             logger.error(f"Error during agent run: {e}", exc_info=True)
@@ -167,8 +167,9 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         config = input_arguments.get("config", {})
         configurable = config.get("configurable", {})
-        config["configurable"] = configurable
         configurable["thread_id"] = input_arguments["context"].agent_run.conversation_id
+        config["configurable"] = configurable
+        context.attach_to_config(config)
 
         callbacks = config.get("callbacks", [])
         if self.azure_ai_tracer and self.azure_ai_tracer not in callbacks:

@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import re
 from typing import Any, Dict, Union
 
 from .. import FoundryConnectedTool, FoundryHostedMcpTool
@@ -45,6 +46,48 @@ def ensure_foundry_tool(tool: FoundryToolLike) -> FoundryTool:
         if not isinstance(project_connection_id, str) or not project_connection_id:
             raise InvalidToolFacadeError(f"project_connection_id is required for tool protocol {protocol}.")
 
-        return FoundryConnectedTool(protocol=protocol, project_connection_id=project_connection_id)
+        # Parse the connection identifier to extract the connection name
+        connection_name = _parse_connection_id(project_connection_id)
+        return FoundryConnectedTool(protocol=protocol, project_connection_id=connection_name)
     except ValueError:
         return FoundryHostedMcpTool(name=tool_type, configuration=tool)
+
+
+# Pattern for Azure resource ID format:
+# /subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<account>/projects/<project>/connections/<name>
+_RESOURCE_ID_PATTERN = re.compile(
+    r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\.CognitiveServices/"
+    r"accounts/[^/]+/projects/[^/]+/connections/(?P<name>[^/]+)$",
+    re.IGNORECASE,
+)
+
+
+def _parse_connection_id(connection_id: str) -> str:
+    """Parse the connection identifier and extract the connection name.
+
+    Supports two formats:
+    1. Simple name: "my-connection-name"
+    2. Resource ID: "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<account>/projects/<project>/connections/<name>"
+
+    :param connection_id: The connection identifier, either a simple name or a full resource ID.
+    :type connection_id: str
+    :return: The connection name extracted from the identifier.
+    :rtype: str
+    :raises InvalidToolFacadeError: If the connection_id format is invalid.
+    """
+    if not connection_id:
+        raise InvalidToolFacadeError("Connection identifier cannot be empty.")
+
+    # Check if it's a resource ID format (starts with /)
+    if connection_id.startswith("/"):
+        match = _RESOURCE_ID_PATTERN.match(connection_id)
+        if not match:
+            raise InvalidToolFacadeError(
+                f"Invalid resource ID format for connection: '{connection_id}'. "
+                "Expected format: /subscriptions/<sub>/resourceGroups/<rg>/providers/"
+                "Microsoft.CognitiveServices/accounts/<account>/projects/<project>/connections/<name>"
+            )
+        return match.group("name")
+
+    # Otherwise, treat it as a simple connection name
+    return connection_id

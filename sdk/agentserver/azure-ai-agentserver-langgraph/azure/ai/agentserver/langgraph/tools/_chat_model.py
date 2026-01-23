@@ -30,7 +30,7 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
     :type foundry_tools: List[FoundryToolLike]
     """
 
-    def __init__(self, delegate: BaseChatModel, runtime: Runtime, foundry_tools: List[FoundryToolLike]):
+    def __init__(self, delegate: BaseChatModel, runtime: Optional[Runtime], foundry_tools: List[FoundryToolLike]):
         super().__init__()
         self._delegate = delegate
         self._runtime = runtime
@@ -52,12 +52,13 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         """Get the Foundry tool call wrappers for this chat model.
 
         Example::
-        >>> from langgraph.prebuilt import ToolNode
-        >>> foundry_tool_bound_chat_model = FoundryToolLateBindingChatModel(...)
-        >>> ToolNode([...], **foundry_tool_bound_chat_model.as_wrappers())
+            >>> from langgraph.prebuilt import ToolNode
+            >>> foundry_tool_bound_chat_model = FoundryToolLateBindingChatModel(...)
+            >>> ToolNode([...], **foundry_tool_bound_chat_model.as_wrappers())
 
         :return: The Foundry tool call wrappers.
         :rtype: FoundryToolNodeWrappers
+
         """
         return FoundryToolCallWrapper(self._foundry_tools_to_bind).as_wrappers()
 
@@ -87,12 +88,17 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
 
         return self
 
-    def _bound_delegate_for_call(self) -> Runnable[LanguageModelInput, AIMessage]:
+    def _bound_delegate_for_call(self, config: Optional[RunnableConfig]) -> Runnable[LanguageModelInput, AIMessage]:
         from .._context import LanggraphRunContext
 
         foundry_tools: Iterable[BaseTool] = []
-        if (context := LanggraphRunContext.from_runtime(self._runtime)) is not None:
+        if context := LanggraphRunContext.resolve(config, self._runtime):
             foundry_tools = context.tools.resolved_tools.get(self._foundry_tools_to_bind)
+        elif self._foundry_tools_to_bind:
+            raise RuntimeError("Unable to resolve foundry tools from context, "
+                               "if you are running in python < 3.11, "
+                               "make sure you are passing RunnableConfig when calling model.")
+
         all_tools = self._bound_tools.copy()
         all_tools.extend(foundry_tools)
 
@@ -103,16 +109,16 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         return self._delegate.bind_tools(all_tools, **bound_kwargs)
 
     def invoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:
-        return self._bound_delegate_for_call().invoke(input, config=config, **kwargs)
+        return self._bound_delegate_for_call(config).invoke(input, config=config, **kwargs)
 
     async def ainvoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:
-        return await self._bound_delegate_for_call().ainvoke(input, config=config, **kwargs)
+        return await self._bound_delegate_for_call(config).ainvoke(input, config=config, **kwargs)
 
     def stream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any):
-        yield from self._bound_delegate_for_call().stream(input, config=config, **kwargs)
+        yield from self._bound_delegate_for_call(config).stream(input, config=config, **kwargs)
 
     async def astream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any):
-        async for x in self._bound_delegate_for_call().astream(input, config=config, **kwargs):
+        async for x in self._bound_delegate_for_call(config).astream(input, config=config, **kwargs):
             yield x
 
     @property

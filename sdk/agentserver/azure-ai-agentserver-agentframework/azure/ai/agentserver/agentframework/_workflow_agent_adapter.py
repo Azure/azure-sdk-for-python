@@ -1,18 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Callable, Optional, Protocol, Union, List
+# pylint: disable=no-name-in-module,import-error
+from typing import (
+    Any,
+    AsyncGenerator,
+    Callable,
+    Optional,
+    Union,
+)
 
 from agent_framework import Workflow, CheckpointStorage, WorkflowAgent, WorkflowCheckpoint
 from agent_framework._workflows import get_checkpoint_summary
 
-from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
+from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
 
 from ._agent_framework import AgentFrameworkAgent
 from .models.agent_framework_input_converters import AgentFrameworkInputConverter
@@ -46,7 +53,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         try:
             agent = self._build_agent()
 
-            logger.info(f"Starting WorkflowAgent agent_run with stream={context.stream}")
+            logger.info("Starting WorkflowAgent agent_run with stream=%s", context.stream)
             request_input = context.request.get("input")
 
             agent_thread = await self._load_agent_thread(context, agent)
@@ -59,18 +66,21 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             if selected_checkpoint:
                 summary = get_checkpoint_summary(selected_checkpoint)
                 if summary.status == "completed":
-                    logger.warning(f"Selected checkpoint {selected_checkpoint.checkpoint_id} is completed. Will not resume from it.")
+                    logger.warning(
+                        "Selected checkpoint %s is completed. Will not resume from it.",
+                        selected_checkpoint.checkpoint_id,
+                    )
                     selected_checkpoint = None  # Do not resume from completed checkpoints
                 else:
                     await self._load_checkpoint(agent, selected_checkpoint, checkpoint_storage)
-                    logger.info(f"Loaded checkpoint with ID: {selected_checkpoint.checkpoint_id}")
+                    logger.info("Loaded checkpoint with ID: %s", selected_checkpoint.checkpoint_id)
 
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
                 request_input,
                 agent_thread=agent_thread,
                 checkpoint=selected_checkpoint)
-            logger.debug(f"Transformed input message type: {type(message)}")
+            logger.debug("Transformed input message type: %s", type(message))
 
             # Use split converters
             if context.stream:
@@ -90,7 +100,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
                 message,
                 thread=agent_thread,
                 checkpoint_storage=checkpoint_storage)
-            logger.debug(f"WorkflowAgent run completed, result type: {type(result)}")
+            logger.debug("WorkflowAgent run completed, result type: %s", type(result))
 
             await self._save_agent_thread(context, agent_thread)
 
@@ -130,13 +140,21 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             return latest_checkpoint
         return None
 
-    async def _load_checkpoint(self, agent: WorkflowAgent,
+    async def _load_checkpoint(self,
+                               agent: WorkflowAgent,
                               checkpoint: WorkflowCheckpoint,
                               checkpoint_storage: CheckpointStorage) -> None:
         """Load the checkpoint data from the given WorkflowCheckpoint.
 
+        :param agent: The WorkflowAgent to load the checkpoint into.
+        :type agent: WorkflowAgent
         :param checkpoint: The WorkflowCheckpoint to load data from.
         :type checkpoint: WorkflowCheckpoint
+        :param checkpoint_storage: The storage to load the checkpoint from.
+        :type checkpoint_storage: CheckpointStorage
+        
+        :return: None
+        :rtype: None
         """
         await agent.run(checkpoint_id=checkpoint.checkpoint_id,
                         checkpoint_storage=checkpoint_storage)

@@ -18,9 +18,9 @@ class FoundryToolNodeWrappers(TypedDict):
     """A TypedDict for Foundry tool node wrappers.
 
     Example::
-    >>> from langgraph.prebuilt import ToolNode
-    >>> call_wrapper = FoundryToolCallWrapper(...)
-    >>> ToolNode([...], **call_wrapper.as_wrappers())
+        >>> from langgraph.prebuilt import ToolNode
+        >>> call_wrapper = FoundryToolCallWrapper(...)
+        >>> ToolNode([...], **call_wrapper.as_wrappers())
 
     :param wrap_tool_call: The synchronous tool call wrapper.
     :type wrap_tool_call: ToolCallWrapper
@@ -78,7 +78,7 @@ class FoundryToolCallWrapper:
 
         if (request.tool
                 or not self._allowed_foundry_tools
-                or (context := LanggraphRunContext.from_runtime(request.runtime)) is None):
+                or not (context := LanggraphRunContext.resolve(runtime=request.runtime))):
             # tool is already resolved
             return request
 

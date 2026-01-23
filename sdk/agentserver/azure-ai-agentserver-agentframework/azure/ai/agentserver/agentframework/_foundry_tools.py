@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=no-name-in-module,import-error
 from __future__ import annotations
 
 import inspect
@@ -11,7 +13,7 @@ from pydantic import Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.tools import FoundryToolLike, ResolvedFoundryTool
+from azure.ai.agentserver.core.tools import FoundryToolLike, ResolvedFoundryTool, ensure_foundry_tool
 
 logger = get_logger()
 
@@ -24,7 +26,7 @@ def _attach_signature_from_pydantic_model(func, input_model) -> None:
         ann = field.annotation or Any
         annotations[name] = ann
 
-        default = inspect._empty if field.is_required() else field.default
+        default = inspect._empty if field.is_required() else field.default  # pylint: disable=protected-access
         params.append(
             inspect.Parameter(
                 name=name,
@@ -43,14 +45,14 @@ class FoundryToolClient:
         self,
         tools: Sequence[FoundryToolLike],
     ) -> None:
-        self._allowed_tools: List[FoundryToolLike] = list(tools)
+        self._allowed_tools: List[FoundryToolLike] = [ensure_foundry_tool(tool) for tool in tools]
 
     async def list_tools(self) -> List[AIFunction]:
         server_context = AgentServerContext.get()
         foundry_tool_catalog = server_context.tools.catalog
         resolved_tools = await foundry_tool_catalog.list(self._allowed_tools)
         return [self._to_aifunction(tool) for tool in resolved_tools]
-    
+
     def _to_aifunction(self, foundry_tool: "ResolvedFoundryTool") -> AIFunction:
         """Convert an FoundryTool to an Agent Framework AI Function
 
@@ -69,7 +71,7 @@ class FoundryToolClient:
         # Build field definitions for the Pydantic model
         field_definitions: Dict[str, Any] = {}
         for field_name, field_info in properties.items():
-            field_type = self._json_schema_type_to_python(field_info.type or "string")
+            field_type = field_info.type.py_type
             field_description = field_info.description or ""
             is_required = field_name in required_fields
 
@@ -104,24 +106,6 @@ class FoundryToolClient:
             func=tool_func,
             input_model=input_model
         )
-
-    def _json_schema_type_to_python(self, json_type: str) -> type:
-        """Convert JSON schema type to Python type.
-
-        :param json_type: The JSON schema type string.
-        :type json_type: str
-        :return: The corresponding Python type.
-        :rtype: type
-        """
-        type_map = {
-            "string": str,
-            "number": float,
-            "integer": int,
-            "boolean": bool,
-            "array": list,
-            "object": dict,
-        }
-        return type_map.get(json_type, str)
 
 
 class FoundryToolsChatMiddleware(ChatMiddleware):

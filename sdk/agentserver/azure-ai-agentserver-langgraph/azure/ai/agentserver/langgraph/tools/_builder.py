@@ -5,7 +5,7 @@ from typing import List, Optional, Union, overload
 
 from langchain_core.language_models import BaseChatModel
 
-from azure.ai.agentserver.core.tools import FoundryToolLike
+from azure.ai.agentserver.core.tools import FoundryToolLike, ensure_foundry_tool
 from ._chat_model import FoundryToolLateBindingChatModel
 from ._middleware import FoundryToolBindingMiddleware
 from ._resolver import get_registry
@@ -54,7 +54,10 @@ def use_foundry_tools(  # pylint: disable=C4743
     if isinstance(model_or_tools, BaseChatModel):
         if tools is None:
             raise ValueError("Tools must be provided when a model is given.")
-        get_registry().extend(tools)
-        return FoundryToolLateBindingChatModel(model_or_tools, foundry_tools=tools)
-    get_registry().extend(model_or_tools)
-    return FoundryToolBindingMiddleware(model_or_tools)
+        foundry_tools = [ensure_foundry_tool(tool) for tool in tools]
+        get_registry().extend(foundry_tools)
+        return FoundryToolLateBindingChatModel(model_or_tools, runtime=None, foundry_tools=foundry_tools)
+
+    foundry_tools = [ensure_foundry_tool(tool) for tool in model_or_tools]
+    get_registry().extend(foundry_tools)
+    return FoundryToolBindingMiddleware(foundry_tools)

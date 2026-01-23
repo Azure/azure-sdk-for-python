@@ -1,6 +1,9 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 from abc import ABC, abstractmethod
 import os
-from typing import Any, Optional
+from typing import Optional
 
 from agent_framework import (
     CheckpointStorage,
@@ -57,6 +60,6 @@ class FileCheckpointRepository(CheckpointRepository):
         if conversation_id not in self._inventory:
             self._inventory[conversation_id] = FileCheckpointStorage(self._get_dir_path(conversation_id))
         return self._inventory[conversation_id]
-    
+
     def _get_dir_path(self, conversation_id: str) -> str:
         return os.path.join(self._storage_path, conversation_id)
