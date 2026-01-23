@@ -132,9 +132,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
-        self._api_version = get_api_version(kwargs)
         self._client = AzureFileStorage(
-            version=self._api_version,
+            version=get_api_version(kwargs),
             url=self.url,
             base_url=self.url,
             pipeline=self._pipeline,
@@ -142,7 +141,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             allow_source_trailing_dot=self.allow_source_trailing_dot,
             file_request_intent=self.file_request_intent
         )
-        self._client._config.version = self._api_version  # type: ignore [assignment]
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
