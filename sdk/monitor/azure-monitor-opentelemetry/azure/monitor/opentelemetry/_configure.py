@@ -42,6 +42,8 @@ from azure.monitor.opentelemetry._constants import (
     METRIC_READERS_ARG,
     VIEWS_ARG,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
+    SAMPLING_ARG,
+    SAMPLER_TYPE,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
@@ -75,6 +77,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
+    _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
@@ -130,32 +133,40 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_metrics = configurations[DISABLE_METRICS_ARG]
     enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
-    # Setup live metrics
-    if enable_live_metrics_config:
-        _setup_live_metrics(configurations)
-
-    # Setup tracing pipeline
-    if not disable_tracing:
-        _setup_tracing(configurations)
-
-    # Setup logging pipeline
-    if not disable_logging:
-        _setup_logging(configurations)
-
-    # Setup metrics pipeline
+    # Set up metrics pipeline
+    # Set up metrics with Performance Counters before _PerformanceCountersSpanProcessor and
+    # _PerformanceCountersLogRecordProcessor. This avoids a circular dependency in the case that Performance Counter
+    # setup produces a log.
     if not disable_metrics:
         _setup_metrics(configurations)
 
-    # Setup instrumentations
-    # Instrumentations need to be setup last so to use the global providers
-    # instanstiated in the other setup steps
+    # Set up live metrics
+    if enable_live_metrics_config:
+        _setup_live_metrics(configurations)
+
+    # Set up tracing pipeline
+    if not disable_tracing:
+        _setup_tracing(configurations)
+
+    # Set up logging pipeline
+    if not disable_logging:
+        _setup_logging(configurations)
+
+    # Set up instrumentations
+    # Instrumentations need to be set up last so to use the global providers
+    # instantiated in the other setup steps
     _setup_instrumentations(configurations)
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
-    if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
+    if SAMPLING_ARG in configurations:
+        sampler_arg = configurations[SAMPLING_ARG]
+        sampler_type = configurations[SAMPLER_TYPE]
+        sampler = _get_sampler_from_name(sampler_type, sampler_arg)
+        tracer_provider = TracerProvider(sampler=sampler, resource=resource)
+    elif SAMPLING_TRACES_PER_SECOND_ARG in configurations:
         traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
             sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
@@ -349,9 +360,17 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
 
 def _send_attach_warning():
     if _is_attach_enabled() and not _is_on_functions():
+        # TODO: When AKS attach is public, update this message with disablement instructions for AKS
+        message = (
+            "Distro detected that automatic instrumentation may have occurred. Only use autoinstrumentation if you "
+            "are not using manual instrumentation of OpenTelemetry in your code, such as with "
+            "azure-monitor-opentelemetry or azure-monitor-opentelemetry-exporter. For App Service resources, disable "
+            "autoinstrumentation in the Application Insights experience on your App Service resource or by setting "
+            "the ApplicationInsightsAgent_EXTENSION_VERSION app setting to 'disabled'."
+        )
+        _logger.warning(message)
         AzureDiagnosticLogging.warning(
-            "Distro detected that automatic attach may have occurred. Check your data to ensure "
-            "that telemetry is not being duplicated. This may impact your cost.",
+            message,
             _DISTRO_DETECTS_ATTACH,
         )
 
