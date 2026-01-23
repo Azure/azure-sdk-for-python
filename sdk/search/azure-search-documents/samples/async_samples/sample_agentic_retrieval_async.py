@@ -155,14 +155,13 @@ async def retrieve_knowledge_base_async():
     # [START retrieve_knowledge_base_async]
     retrieval_client = KnowledgeBaseRetrievalClient(
         service_endpoint,
-        knowledge_base_name=knowledge_base_name,
         credential=AzureKeyCredential(key),
     )
 
     request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
     try:
-        result = await retrieval_client.retrieve(request)
+        result = await retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, request=request)
     finally:
         await retrieval_client.close()
 

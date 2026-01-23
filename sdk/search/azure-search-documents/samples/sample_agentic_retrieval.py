@@ -147,13 +147,12 @@ def retrieve_knowledge_base():
     # [START retrieve_knowledge_base]
     retrieval_client = KnowledgeBaseRetrievalClient(
         service_endpoint,
-        knowledge_base_name=knowledge_base_name,
         credential=AzureKeyCredential(key),
     )
 
     request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
-    result = retrieval_client.retrieve(request)
+    result = retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, request=request)
     print("Results: knowledge base retrieval")
 
     response_parts = []

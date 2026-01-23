@@ -100,8 +100,8 @@ async def create_index_async():
 
     vector_search = VectorSearch(
         algorithms=[
-            HnswAlgorithmConfiguration(name="my-hnsw-vector-config-1", kind="hnsw"),
-            ExhaustiveKnnAlgorithmConfiguration(name="my-eknn-vector-config", kind="exhaustiveKnn"),
+            HnswAlgorithmConfiguration(name="my-hnsw-vector-config-1"),
+            ExhaustiveKnnAlgorithmConfiguration(name="my-eknn-vector-config"),
         ],
         profiles=[
             VectorSearchProfile(
@@ -160,7 +160,7 @@ async def single_vector_search_async():
 
     vector_query = VectorizedQuery(
         vector=vector,
-        k=5,
+        k_nearest_neighbors=5,
         fields="DescriptionVector",
     )
 
@@ -187,7 +187,7 @@ async def single_vector_search_with_filter_async():
 
     vector_query = VectorizedQuery(
         vector=vector,
-        k=5,
+        k_nearest_neighbors=5,
         fields="DescriptionVector",
     )
 
@@ -212,7 +212,7 @@ async def simple_hybrid_search_async():
 
     vector_query = VectorizedQuery(
         vector=vector,
-        k=5,
+        k_nearest_neighbors=5,
         fields="DescriptionVector",
     )
 
