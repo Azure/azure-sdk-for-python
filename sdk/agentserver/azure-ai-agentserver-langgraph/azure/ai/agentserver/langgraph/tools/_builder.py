@@ -55,6 +55,6 @@ def use_foundry_tools(  # pylint: disable=C4743
         if tools is None:
             raise ValueError("Tools must be provided when a model is given.")
         get_registry().extend(tools)
-        return FoundryToolLateBindingChatModel(model_or_tools, foundry_tools=tools)
+        return FoundryToolLateBindingChatModel(model_or_tools, runtime=None, foundry_tools=tools)
     get_registry().extend(model_or_tools)
     return FoundryToolBindingMiddleware(model_or_tools)
