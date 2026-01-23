@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.storage.blob import BlobServiceClient, StandardBlobTier
-from azure.storage.blob._generated.models import RehydratePriority
+from azure.storage.blob._generated.azure.storage.blobs.models import RehydratePriority
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
