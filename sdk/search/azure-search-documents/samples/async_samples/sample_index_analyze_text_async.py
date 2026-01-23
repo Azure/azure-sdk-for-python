@@ -35,18 +35,14 @@ async def simple_analyze_text_async():
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
-    analyze_request = AnalyzeTextOptions(
-        text="One's <two/>", analyzer_name="standard.lucene"
-    )
+    analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
 
     async with index_client:
         analysis_result = await index_client.analyze_text(index_name, analyze_request)
 
     print("Results:")
     for token in analysis_result.tokens:
-        print(
-            f"  Token: {token.token}, Start: {token.start_offset}, End: {token.end_offset}"
-        )
+        print(f"  Token: {token.token}, Start: {token.start_offset}, End: {token.end_offset}")
     # [END simple_analyze_text_async]
 
 

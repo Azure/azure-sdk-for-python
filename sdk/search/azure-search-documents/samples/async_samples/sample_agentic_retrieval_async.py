@@ -55,15 +55,11 @@ async def create_knowledge_source_async():
 
     knowledge_source = SearchIndexKnowledgeSource(
         name=knowledge_source_name,
-        search_index_parameters=SearchIndexKnowledgeSourceParameters(
-            search_index_name=index_name
-        ),
+        search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
     )
 
     async with index_client:
-        await index_client.create_or_update_knowledge_source(
-            knowledge_source=knowledge_source
-        )
+        await index_client.create_or_update_knowledge_source(knowledge_source=knowledge_source)
     print(f"Created: knowledge source '{knowledge_source_name}'")
     # [END create_knowledge_source_async]
 
@@ -73,9 +69,7 @@ async def get_knowledge_source_async():
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
     async with index_client:
-        knowledge_source = await index_client.get_knowledge_source(
-            knowledge_source_name
-        )
+        knowledge_source = await index_client.get_knowledge_source(knowledge_source_name)
     print(f"Retrieved: knowledge source '{knowledge_source.name}'")
     # [END get_knowledge_source_async]
 
@@ -99,9 +93,7 @@ async def update_knowledge_source_async():
     )
 
     async with index_client:
-        await index_client.create_or_update_knowledge_source(
-            knowledge_source=knowledge_source
-        )
+        await index_client.create_or_update_knowledge_source(knowledge_source=knowledge_source)
     print(f"Updated: knowledge source '{knowledge_source_name}'")
     # [END update_knowledge_source_async]
 
@@ -167,9 +159,7 @@ async def retrieve_knowledge_base_async():
         credential=AzureKeyCredential(key),
     )
 
-    request = KnowledgeBaseRetrievalRequest(
-        intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")]
-    )
+    request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
     try:
         result = await retrieval_client.retrieve(request)

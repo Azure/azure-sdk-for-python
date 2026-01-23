@@ -48,8 +48,8 @@ def create_indexer():
 
     # create an index
     fields = [
-        SimpleField(name="HotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="BaseRate", type=SearchFieldDataType.Double),
+        SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="BaseRate", type=SearchFieldDataType.DOUBLE),
     ]
     index = SearchIndex(name=index_name, fields=fields)
     index_client.create_index(index)

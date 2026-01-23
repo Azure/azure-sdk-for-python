@@ -353,12 +353,12 @@ class KnowledgeBaseActivityRecord(_Model):
      "azureBlob", "indexedSharePoint", "indexedOneLake", "web", "remoteSharePoint",
      "modelQueryPlanning", "modelAnswerSynthesis", and "agenticReasoning".
     :vartype type: str or
-     ~azure.search.documents.knowledgebase.models.KnowledgeBaseActivityRecordType
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
      included when the activity does not succeed.
-    :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
+    :vartype error: ~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -408,14 +408,14 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
      included when the activity does not succeed.
-    :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
+    :vartype error: ~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail
     :ivar type: The discriminator value. Required. Agentic reasoning activity.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.AGENTIC_REASONING
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.AGENTIC_REASONING
     :ivar reasoning_tokens: The number of input tokens for agentic reasoning.
     :vartype reasoning_tokens: int
     :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
     :vartype retrieval_reasoning_effort:
-     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffort
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort
     """
 
     type: Literal[KnowledgeBaseActivityRecordType.AGENTIC_REASONING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -462,7 +462,7 @@ class KnowledgeBaseReference(_Model):
 
     :ivar type: The type of the reference. Required. Known values are: "searchIndex", "azureBlob",
      "indexedSharePoint", "indexedOneLake", "web", and "remoteSharePoint".
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.KnowledgeBaseReferenceType
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.KnowledgeBaseReferenceType
     :ivar id: The ID of the reference. Required.
     :vartype id: str
     :ivar activity_source: The source activity ID for the reference. Required.
@@ -524,7 +524,7 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Azure Blob document reference.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.AZURE_BLOB
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.AZURE_BLOB
     :ivar blob_url: The blob URL for the reference.
     :vartype blob_url: str
     """
@@ -582,10 +582,10 @@ class KnowledgeBaseErrorDetail(_Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail]
+    :vartype details: list[~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorAdditionalInfo]
+     list[~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorAdditionalInfo]
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -642,7 +642,7 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Indexed OneLake document reference.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.INDEXED_ONE_LAKE
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.INDEXED_ONE_LAKE
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
     """
@@ -687,7 +687,7 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Indexed SharePoint document reference.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.INDEXED_SHARE_POINT
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.INDEXED_SHARE_POINT
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
     """
@@ -727,7 +727,7 @@ class KnowledgeBaseMessage(_Model):
     :vartype role: str
     :ivar content: The content of the message. Required.
     :vartype content:
-     list[~azure.search.documents.knowledgebase.models.KnowledgeBaseMessageContent]
+     list[~azure.search.documents.knowledgebases.models.KnowledgeBaseMessageContent]
     """
 
     role: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -764,7 +764,7 @@ class KnowledgeBaseMessageContent(_Model):
 
     :ivar type: The type of the message. Required. Known values are: "text" and "image".
     :vartype type: str or
-     ~azure.search.documents.knowledgebase.models.KnowledgeBaseMessageContentType
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseMessageContentType
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -793,9 +793,9 @@ class KnowledgeBaseMessageImageContent(KnowledgeBaseMessageContent, discriminato
     """Image message type.
 
     :ivar type: The discriminator value. Required. Image message content kind.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.IMAGE
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.IMAGE
     :ivar image: The image content. Required.
-    :vartype image: ~azure.search.documents.knowledgebase.models.KnowledgeBaseImageContent
+    :vartype image: ~azure.search.documents.knowledgebases.models.KnowledgeBaseImageContent
     """
 
     type: Literal[KnowledgeBaseMessageContentType.IMAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -826,7 +826,7 @@ class KnowledgeBaseMessageTextContent(KnowledgeBaseMessageContent, discriminator
     """Text message type.
 
     :ivar type: The discriminator value. Required. Text message content kind.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.TEXT
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.TEXT
     :ivar text: The text content. Required.
     :vartype text: str
     """
@@ -866,9 +866,9 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
      included when the activity does not succeed.
-    :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
+    :vartype error: ~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail
     :ivar type: The discriminator value. Required. LLM answer synthesis activity.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.MODEL_ANSWER_SYNTHESIS
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.MODEL_ANSWER_SYNTHESIS
     :ivar input_tokens: The number of input tokens for the LLM answer synthesis activity.
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM answer synthesis activity.
@@ -920,9 +920,9 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
      included when the activity does not succeed.
-    :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
+    :vartype error: ~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail
     :ivar type: The discriminator value. Required. LLM query planning activity.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.MODEL_QUERY_PLANNING
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.MODEL_QUERY_PLANNING
     :ivar input_tokens: The number of input tokens for the LLM query planning activity.
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM query planning activity.
@@ -975,13 +975,13 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Remote SharePoint document reference.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.REMOTE_SHARE_POINT
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.REMOTE_SHARE_POINT
     :ivar web_url: The url the reference data originated from.
     :vartype web_url: str
     :ivar search_sensitivity_label_info: Information about the sensitivity label applied to the
      SharePoint document.
     :vartype search_sensitivity_label_info:
-     ~azure.search.documents.knowledgebase.models.SharePointSensitivityLabelInfo
+     ~azure.search.documents.knowledgebases.models.SharePointSensitivityLabelInfo
     """
 
     type: Literal[KnowledgeBaseReferenceType.REMOTE_SHARE_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1021,25 +1021,25 @@ class KnowledgeBaseRetrievalRequest(_Model):
     """The input contract for the retrieval request.
 
     :ivar messages: A list of chat message style input.
-    :vartype messages: list[~azure.search.documents.knowledgebase.models.KnowledgeBaseMessage]
+    :vartype messages: list[~azure.search.documents.knowledgebases.models.KnowledgeBaseMessage]
     :ivar intents: A list of intended queries to execute without model query planning.
-    :vartype intents: list[~azure.search.documents.knowledgebase.models.KnowledgeRetrievalIntent]
+    :vartype intents: list[~azure.search.documents.knowledgebases.models.KnowledgeRetrievalIntent]
     :ivar max_runtime_in_seconds: The maximum runtime in seconds.
     :vartype max_runtime_in_seconds: int
     :ivar max_output_size: Limits the maximum size of the content in the output.
     :vartype max_output_size: int
     :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
     :vartype retrieval_reasoning_effort:
-     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffort
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort
     :ivar include_activity: Indicates retrieval results should include activity information.
     :vartype include_activity: bool
     :ivar output_mode: The output configuration for this retrieval. Known values are:
      "extractiveData" and "answerSynthesis".
     :vartype output_mode: str or
-     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalOutputMode
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalOutputMode
     :ivar knowledge_source_params: A list of runtime parameters for the knowledge sources.
     :vartype knowledge_source_params:
-     list[~azure.search.documents.knowledgebase.models.KnowledgeSourceParams]
+     list[~azure.search.documents.knowledgebases.models.KnowledgeSourceParams]
     """
 
     messages: Optional[list["_models.KnowledgeBaseMessage"]] = rest_field(
@@ -1105,12 +1105,12 @@ class KnowledgeBaseRetrievalResponse(_Model):
     """The output contract for the retrieval response.
 
     :ivar response: The response messages.
-    :vartype response: list[~azure.search.documents.knowledgebase.models.KnowledgeBaseMessage]
+    :vartype response: list[~azure.search.documents.knowledgebases.models.KnowledgeBaseMessage]
     :ivar activity: The activity records for tracking progress and billing implications.
     :vartype activity:
-     list[~azure.search.documents.knowledgebase.models.KnowledgeBaseActivityRecord]
+     list[~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord]
     :ivar references: The references for the retrieval data used in the response.
-    :vartype references: list[~azure.search.documents.knowledgebase.models.KnowledgeBaseReference]
+    :vartype references: list[~azure.search.documents.knowledgebases.models.KnowledgeBaseReference]
     """
 
     response: Optional[list["_models.KnowledgeBaseMessage"]] = rest_field(
@@ -1158,7 +1158,7 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Search index document reference.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.SEARCH_INDEX
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.SEARCH_INDEX
     :ivar doc_key: The document key for the reference.
     :vartype doc_key: str
     """
@@ -1203,7 +1203,7 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Web document reference.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.WEB
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.WEB
     :ivar url: The url the reference data originated from.
     :vartype url: str
     :ivar title: The title of the web document.
@@ -1248,7 +1248,8 @@ class KnowledgeRetrievalIntent(_Model):
     KnowledgeRetrievalSemanticIntent
 
     :ivar type: The type of the intent. Required. "semantic"
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalIntentType
+    :vartype type: str or
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalIntentType
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -1283,7 +1284,7 @@ class KnowledgeRetrievalReasoningEffort(_Model):
     :ivar kind: The kind of reasoning effort. Required. Known values are: "minimal", "low", and
      "medium".
     :vartype kind: str or
-     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffortKind
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffortKind
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -1312,7 +1313,7 @@ class KnowledgeRetrievalLowReasoningEffort(KnowledgeRetrievalReasoningEffort, di
     """Run knowledge retrieval with low reasoning effort.
 
     :ivar kind: The discriminator value. Required. Use low reasoning during retrieval.
-    :vartype kind: str or ~azure.search.documents.knowledgebase.models.LOW
+    :vartype kind: str or ~azure.search.documents.knowledgebases.models.LOW
     """
 
     kind: Literal[KnowledgeRetrievalReasoningEffortKind.LOW] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1340,7 +1341,7 @@ class KnowledgeRetrievalMediumReasoningEffort(KnowledgeRetrievalReasoningEffort,
 
     :ivar kind: The discriminator value. Required. Use a moderate amount of reasoning during
      retrieval.
-    :vartype kind: str or ~azure.search.documents.knowledgebase.models.MEDIUM
+    :vartype kind: str or ~azure.search.documents.knowledgebases.models.MEDIUM
     """
 
     kind: Literal[KnowledgeRetrievalReasoningEffortKind.MEDIUM] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1368,7 +1369,7 @@ class KnowledgeRetrievalMinimalReasoningEffort(KnowledgeRetrievalReasoningEffort
 
     :ivar kind: The discriminator value. Required. Does not perform any source selections, query
      planning, or iterative search.
-    :vartype kind: str or ~azure.search.documents.knowledgebase.models.MINIMAL
+    :vartype kind: str or ~azure.search.documents.knowledgebases.models.MINIMAL
     """
 
     kind: Literal[KnowledgeRetrievalReasoningEffortKind.MINIMAL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1396,7 +1397,7 @@ class KnowledgeRetrievalSemanticIntent(KnowledgeRetrievalIntent, discriminator="
     """A semantic query intent.
 
     :ivar type: The discriminator value. Required. A natural language semantic query intent.
-    :vartype type: str or ~azure.search.documents.knowledgebase.models.SEMANTIC
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.SEMANTIC
     :ivar search: The semantic query to execute. Required.
     :vartype search: str
     """
@@ -1507,7 +1508,7 @@ class KnowledgeSourceIngestionParameters(_Model):
     :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar embedding_model: Optional vectorizer configuration for vectorizing content.
     :vartype embedding_model:
-     ~azure.search.documents.knowledgebase.models.KnowledgeSourceVectorizer
+     ~azure.search.documents.knowledgebases.models.KnowledgeSourceVectorizer
     :ivar chat_completion_model: Optional chat completion model for image verbalization or context
      extraction.
     :vartype chat_completion_model: ~azure.search.documents.indexes.models.KnowledgeBaseModel
@@ -1525,7 +1526,7 @@ class KnowledgeSourceIngestionParameters(_Model):
     :vartype content_extraction_mode: str or
      ~azure.search.documents.indexes.models.KnowledgeSourceContentExtractionMode
     :ivar ai_services: Optional AI Services configuration for content processing.
-    :vartype ai_services: ~azure.search.documents.knowledgebase.models.AIServices
+    :vartype ai_services: ~azure.search.documents.knowledgebases.models.AIServices
     """
 
     identity: Optional["_indexes_models3.SearchIndexerDataIdentity"] = rest_field(
@@ -1649,14 +1650,14 @@ class KnowledgeSourceStatus(_Model):
     :ivar current_synchronization_state: Current synchronization state that spans multiple indexer
      runs.
     :vartype current_synchronization_state:
-     ~azure.search.documents.knowledgebase.models.SynchronizationState
+     ~azure.search.documents.knowledgebases.models.SynchronizationState
     :ivar last_synchronization_state: Details of the last completed synchronization. Null on first
      sync.
     :vartype last_synchronization_state:
-     ~azure.search.documents.knowledgebase.models.CompletedSynchronizationState
+     ~azure.search.documents.knowledgebases.models.CompletedSynchronizationState
     :ivar statistics: Statistical information about the knowledge source synchronization history.
      Null on first sync.
-    :vartype statistics: ~azure.search.documents.knowledgebase.models.KnowledgeSourceStatistics
+    :vartype statistics: ~azure.search.documents.knowledgebases.models.KnowledgeSourceStatistics
     """
 
     synchronization_status: Union[str, "_indexes_models3.KnowledgeSourceSynchronizationStatus"] = rest_field(

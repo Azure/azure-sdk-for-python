@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +11,7 @@ from io import IOBase
 import json
 from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -22,79 +23,43 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models1
 from ... import models as _models2
-from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from ..._utils.serialization import Serializer
-from ..._utils.utils import ClientMixinABC
+from .... import models as _models3
+from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ...._utils.utils import ClientMixinABC
+from ..._operations._operations import build_knowledge_base_retrieval_retrieve_request
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-
-def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too-long
-    knowledge_base_name: str, *, query_source_authorization: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
-
-    # Construct URL
-    _url = "/retrieve/{knowledgeBaseName}"
-    path_format_arguments = {
-        "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-    if query_source_authorization is not None:
-        _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
-            "query_source_authorization", query_source_authorization, "str"
-        )
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class _KnowledgeBaseRetrievalClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], KnowledgeBaseRetrievalClientConfiguration]
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], KnowledgeBaseRetrievalClientConfiguration]
 ):
 
     @overload
-    def retrieve(
+    async def retrieve(
         self,
         knowledge_base_name: str,
-        retrieval_request: _models1.KnowledgeBaseRetrievalRequest,
+        retrieval_request: _models2.KnowledgeBaseRetrievalRequest,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models1.KnowledgeBaseRetrievalResponse:
+    ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
         :param knowledge_base_name: The name of the knowledge base. Required.
         :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request:
-         ~azure.search.documents.knowledgebase.models.KnowledgeBaseRetrievalRequest
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -104,12 +69,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :paramtype content_type: str
         :return: KnowledgeBaseRetrievalResponse. The KnowledgeBaseRetrievalResponse is compatible with
          MutableMapping
-        :rtype: ~azure.search.documents.knowledgebase.models.KnowledgeBaseRetrievalResponse
+        :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def retrieve(
+    async def retrieve(
         self,
         knowledge_base_name: str,
         retrieval_request: JSON,
@@ -117,7 +82,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models1.KnowledgeBaseRetrievalResponse:
+    ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
         :param knowledge_base_name: The name of the knowledge base. Required.
@@ -133,12 +98,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :paramtype content_type: str
         :return: KnowledgeBaseRetrievalResponse. The KnowledgeBaseRetrievalResponse is compatible with
          MutableMapping
-        :rtype: ~azure.search.documents.knowledgebase.models.KnowledgeBaseRetrievalResponse
+        :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def retrieve(
+    async def retrieve(
         self,
         knowledge_base_name: str,
         retrieval_request: IO[bytes],
@@ -146,7 +111,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models1.KnowledgeBaseRetrievalResponse:
+    ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
         :param knowledge_base_name: The name of the knowledge base. Required.
@@ -162,19 +127,19 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :paramtype content_type: str
         :return: KnowledgeBaseRetrievalResponse. The KnowledgeBaseRetrievalResponse is compatible with
          MutableMapping
-        :rtype: ~azure.search.documents.knowledgebase.models.KnowledgeBaseRetrievalResponse
+        :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def retrieve(
+    @distributed_trace_async
+    async def retrieve(
         self,
         knowledge_base_name: str,
-        retrieval_request: Union[_models1.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
+        retrieval_request: Union[_models2.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> _models1.KnowledgeBaseRetrievalResponse:
+    ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
         :param knowledge_base_name: The name of the knowledge base. Required.
@@ -182,14 +147,15 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :param retrieval_request: The retrieval request to process. Is one of the following types:
          KnowledgeBaseRetrievalRequest, JSON, IO[bytes] Required.
         :type retrieval_request:
-         ~azure.search.documents.knowledgebase.models.KnowledgeBaseRetrievalRequest or JSON or IO[bytes]
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest or JSON or
+         IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
         :return: KnowledgeBaseRetrievalResponse. The KnowledgeBaseRetrievalResponse is compatible with
          MutableMapping
-        :rtype: ~azure.search.documents.knowledgebase.models.KnowledgeBaseRetrievalResponse
+        :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -204,7 +170,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models1.KnowledgeBaseRetrievalResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models2.KnowledgeBaseRetrievalResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -228,7 +194,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -237,12 +203,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         if response.status_code not in [200, 206]:
             if _stream:
                 try:
-                    response.read()  # Load the body in memory and close the socket
+                    await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models2.ErrorResponse,
+                _models3.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -250,7 +216,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models1.KnowledgeBaseRetrievalResponse, response.json())
+            deserialized = _deserialize(_models2.KnowledgeBaseRetrievalResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

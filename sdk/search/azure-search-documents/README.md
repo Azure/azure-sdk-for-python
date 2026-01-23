@@ -248,17 +248,17 @@ from azure.search.documents.indexes.models import (
 
 index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 fields = [
-    SimpleField(name="HotelId", type=SearchFieldDataType.String, key=True),
-    SimpleField(name="HotelName", type=SearchFieldDataType.String, searchable=True),
-    SimpleField(name="BaseRate", type=SearchFieldDataType.Double),
+    SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True),
+    SimpleField(name="HotelName", type=SearchFieldDataType.STRING, searchable=True),
+    SimpleField(name="BaseRate", type=SearchFieldDataType.DOUBLE),
     SearchableField(
-        name="Description", type=SearchFieldDataType.String, collection=True
+        name="Description", type=SearchFieldDataType.STRING, collection=True
     ),
     ComplexField(
         name="Address",
         fields=[
-            SimpleField(name="StreetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="City", type=SearchFieldDataType.String),
+            SimpleField(name="StreetAddress", type=SearchFieldDataType.STRING),
+            SimpleField(name="City", type=SearchFieldDataType.STRING),
         ],
         collection=True,
     ),

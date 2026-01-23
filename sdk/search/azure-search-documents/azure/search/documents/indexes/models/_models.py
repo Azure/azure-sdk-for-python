@@ -22,7 +22,7 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from .. import models as _models
-    from ...knowledgebase import models as _knowledgebase_models3
+    from ...knowledgebases import models as _knowledgebases_models3
 
 
 class CognitiveServicesAccount(_Model):
@@ -747,7 +747,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
     :vartype is_adls_gen2: bool
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
-     ~azure.search.documents.knowledgebase.models.KnowledgeSourceIngestionParameters
+     ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -766,7 +766,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         name="isADLSGen2", visibility=["read", "create", "update", "delete", "query"]
     )
     """Set to true if connecting to an ADLS Gen2 storage account. Default is false."""
-    ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = rest_field(
+    ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = rest_field(
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
@@ -781,7 +781,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         container_name: str,
         folder_path: Optional[str] = None,
         is_adls_gen2: Optional[bool] = None,
-        ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = None,
+        ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -4526,7 +4526,7 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
     :vartype target_path: str
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
-     ~azure.search.documents.knowledgebase.models.KnowledgeSourceIngestionParameters
+     ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4541,7 +4541,7 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
         name="targetPath", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional OneLakehouse folder or shortcut to filter OneLake content."""
-    ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = rest_field(
+    ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = rest_field(
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
@@ -4555,7 +4555,7 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
         fabric_workspace_id: str,
         lakehouse_id: str,
         target_path: Optional[str] = None,
-        ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = None,
+        ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -4640,7 +4640,7 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
     :vartype query: str
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
-     ~azure.search.documents.knowledgebase.models.KnowledgeSourceIngestionParameters
+     ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4658,7 +4658,7 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
      \"defaultSiteLibrary\", \"allSiteLibraries\", and \"useQuery\"."""
     query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional query to filter SharePoint content."""
-    ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = rest_field(
+    ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = rest_field(
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
@@ -4672,7 +4672,7 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
         connection_string: str,
         container_name: Union[str, "_models.IndexedSharePointContainerName"],
         query: Optional[str] = None,
-        ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = None,
+        ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -5579,11 +5579,11 @@ class KnowledgeBase(_Model):
     :vartype models: list[~azure.search.documents.indexes.models.KnowledgeBaseModel]
     :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
     :vartype retrieval_reasoning_effort:
-     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffort
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort
     :ivar output_mode: The output mode for the knowledge base. Known values are: "extractiveData"
      and "answerSynthesis".
     :vartype output_mode: str or
-     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalOutputMode
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalOutputMode
     :ivar e_tag: The ETag of the knowledge base.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -5608,11 +5608,11 @@ class KnowledgeBase(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains configuration options on how to connect to AI models."""
-    retrieval_reasoning_effort: Optional["_knowledgebase_models3.KnowledgeRetrievalReasoningEffort"] = rest_field(
+    retrieval_reasoning_effort: Optional["_knowledgebases_models3.KnowledgeRetrievalReasoningEffort"] = rest_field(
         name="retrievalReasoningEffort", visibility=["read", "create", "update", "delete", "query"]
     )
     """The retrieval reasoning effort configuration."""
-    output_mode: Optional[Union[str, "_knowledgebase_models3.KnowledgeRetrievalOutputMode"]] = rest_field(
+    output_mode: Optional[Union[str, "_knowledgebases_models3.KnowledgeRetrievalOutputMode"]] = rest_field(
         name="outputMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The output mode for the knowledge base. Known values are: \"extractiveData\" and
@@ -5641,8 +5641,8 @@ class KnowledgeBase(_Model):
         name: str,
         knowledge_sources: list["_models.KnowledgeSourceReference"],
         models: Optional[list["_models.KnowledgeBaseModel"]] = None,
-        retrieval_reasoning_effort: Optional["_knowledgebase_models3.KnowledgeRetrievalReasoningEffort"] = None,
-        output_mode: Optional[Union[str, "_knowledgebase_models3.KnowledgeRetrievalOutputMode"]] = None,
+        retrieval_reasoning_effort: Optional["_knowledgebases_models3.KnowledgeRetrievalReasoningEffort"] = None,
+        output_mode: Optional[Union[str, "_knowledgebases_models3.KnowledgeRetrievalOutputMode"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         description: Optional[str] = None,

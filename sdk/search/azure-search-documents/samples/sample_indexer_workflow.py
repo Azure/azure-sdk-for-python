@@ -62,24 +62,20 @@ def sample_indexer_workflow():
     fields = [
         SimpleField(
             name="HotelId",
-            type=SearchFieldDataType.String,
+            type=SearchFieldDataType.STRING,
             filterable=True,
             sortable=True,
             key=True,
         ),
-        SearchableField(name="HotelName", type=SearchFieldDataType.String),
-        SimpleField(name="Description", type=SearchFieldDataType.String),
-        SimpleField(name="Description_fr", type=SearchFieldDataType.String),
-        SimpleField(name="Category", type=SearchFieldDataType.String),
-        SimpleField(
-            name="ParkingIncluded", type=SearchFieldDataType.Boolean, filterable=True
-        ),
-        SimpleField(
-            name="SmokingAllowed", type=SearchFieldDataType.Boolean, filterable=True
-        ),
-        SimpleField(name="LastRenovationDate", type=SearchFieldDataType.String),
-        SimpleField(name="Rating", type=SearchFieldDataType.Double, sortable=True),
-        SimpleField(name="Location", type=SearchFieldDataType.GeographyPoint),
+        SearchableField(name="HotelName", type=SearchFieldDataType.STRING),
+        SimpleField(name="Description", type=SearchFieldDataType.STRING),
+        SimpleField(name="Description_fr", type=SearchFieldDataType.STRING),
+        SimpleField(name="Category", type=SearchFieldDataType.STRING),
+        SimpleField(name="ParkingIncluded", type=SearchFieldDataType.BOOLEAN, filterable=True),
+        SimpleField(name="SmokingAllowed", type=SearchFieldDataType.BOOLEAN, filterable=True),
+        SimpleField(name="LastRenovationDate", type=SearchFieldDataType.STRING),
+        SimpleField(name="Rating", type=SearchFieldDataType.DOUBLE, sortable=True),
+        SimpleField(name="Location", type=SearchFieldDataType.GEOGRAPHY_POINT),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     index = SearchIndex(name=index_name, fields=fields, cors_options=cors_options)
@@ -101,9 +97,7 @@ def sample_indexer_workflow():
     inp = InputFieldMappingEntry(name="text", source="/document/lastRenovationDate")
     output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
     skill = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
-    skillset = SearchIndexerSkillset(
-        name=skillset_name, skills=[skill], description="example skillset"
-    )
+    skillset = SearchIndexerSkillset(name=skillset_name, skills=[skill], description="example skillset")
     indexer_client.create_skillset(skillset)
     print(f"Created: skillset '{skillset_name}'")
 

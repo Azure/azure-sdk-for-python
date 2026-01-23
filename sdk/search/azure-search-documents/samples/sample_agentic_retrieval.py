@@ -54,9 +54,7 @@ def create_knowledge_source():
 
     knowledge_source = SearchIndexKnowledgeSource(
         name=knowledge_source_name,
-        search_index_parameters=SearchIndexKnowledgeSourceParameters(
-            search_index_name=index_name
-        ),
+        search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
     )
 
     index_client.create_or_update_knowledge_source(knowledge_source=knowledge_source)
@@ -153,9 +151,7 @@ def retrieve_knowledge_base():
         credential=AzureKeyCredential(key),
     )
 
-    request = KnowledgeBaseRetrievalRequest(
-        intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")]
-    )
+    request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
     result = retrieval_client.retrieve(request)
     print("Results: knowledge base retrieval")

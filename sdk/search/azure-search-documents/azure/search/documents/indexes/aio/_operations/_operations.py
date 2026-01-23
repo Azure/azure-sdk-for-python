@@ -35,7 +35,7 @@ from ... import models as _models2
 from .... import models as _models3
 from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ...._utils.utils import ClientMixinABC
-from ....knowledgebase import models as _knowledgebase_models4
+from ....knowledgebases import models as _knowledgebases_models4
 from ..._operations._operations import (
     build_search_index_analyze_text_request,
     build_search_index_create_alias_request,
@@ -2646,13 +2646,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace_async
     async def get_knowledge_source_status(
         self, name: str, **kwargs: Any
-    ) -> _knowledgebase_models4.KnowledgeSourceStatus:
+    ) -> _knowledgebases_models4.KnowledgeSourceStatus:
         """Retrieves the status of a knowledge source.
 
         :param name: The name of the knowledge source. Required.
         :type name: str
         :return: KnowledgeSourceStatus. The KnowledgeSourceStatus is compatible with MutableMapping
-        :rtype: ~azure.search.documents.knowledgebase.models.KnowledgeSourceStatus
+        :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeSourceStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2666,7 +2666,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_knowledgebase_models4.KnowledgeSourceStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_knowledgebases_models4.KnowledgeSourceStatus] = kwargs.pop("cls", None)
 
         _request = build_search_index_get_knowledge_source_status_request(
             name=name,
@@ -2702,7 +2702,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_knowledgebase_models4.KnowledgeSourceStatus, response.json())
+            deserialized = _deserialize(_knowledgebases_models4.KnowledgeSourceStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

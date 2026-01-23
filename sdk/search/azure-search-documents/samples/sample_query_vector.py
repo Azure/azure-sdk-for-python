@@ -69,30 +69,26 @@ def create_index():
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
     fields = [
-        SimpleField(
-            name="HotelId", type=SearchFieldDataType.String, key=True, filterable=True
-        ),
-        SearchableField(
-            name="HotelName", type=SearchFieldDataType.String, sortable=True
-        ),
-        SearchableField(name="Description", type=SearchFieldDataType.String),
+        SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True, filterable=True),
+        SearchableField(name="HotelName", type=SearchFieldDataType.STRING, sortable=True),
+        SearchableField(name="Description", type=SearchFieldDataType.STRING),
         SearchField(
             name="DescriptionVector",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),
             searchable=True,
             vector_search_dimensions=1536,
             vector_search_profile_name="my-vector-profile",
         ),
         SearchableField(
             name="Category",
-            type=SearchFieldDataType.String,
+            type=SearchFieldDataType.STRING,
             sortable=True,
             filterable=True,
             facetable=True,
         ),
         SearchField(
             name="Tags",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+            type=SearchFieldDataType.Collection(SearchFieldDataType.STRING),
             searchable=True,
             filterable=True,
             facetable=True,
@@ -102,9 +98,7 @@ def create_index():
     vector_search = VectorSearch(
         algorithms=[
             HnswAlgorithmConfiguration(name="my-hnsw-vector-config-1", kind="hnsw"),
-            ExhaustiveKnnAlgorithmConfiguration(
-                name="my-eknn-vector-config", kind="exhaustiveKnn"
-            ),
+            ExhaustiveKnnAlgorithmConfiguration(name="my-eknn-vector-config", kind="exhaustiveKnn"),
         ],
         profiles=[
             VectorSearchProfile(
@@ -174,8 +168,7 @@ def single_vector_search():
     print("Results: single vector search")
     for result in results:
         print(
-            f"  HotelId: {result['HotelId']}, HotelName: {result['HotelName']}, "
-            f"Category: {result.get('Category')}"
+            f"  HotelId: {result['HotelId']}, HotelName: {result['HotelName']}, " f"Category: {result.get('Category')}"
         )
     # [END single_vector_search]
 
@@ -200,10 +193,7 @@ def single_vector_search_with_filter():
 
     print("Results: vector search with filter")
     for result in results:
-        print(
-            f"  HotelId: {result['HotelId']}, HotelName: {result['HotelName']}, "
-            f"Tags: {result.get('Tags')}"
-        )
+        print(f"  HotelId: {result['HotelId']}, HotelName: {result['HotelName']}, " f"Tags: {result.get('Tags')}")
     # [END single_vector_search_with_filter]
 
 
