@@ -64,6 +64,15 @@ def _wait_for_proxy(port: int, timeout: int = PROXY_STARTUP_TIMEOUT) -> bool:
     return _proxy_is_running(port)
 
 
+def _wait_for_proxy_shutdown(port: int, timeout: int = 15) -> bool:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if not _proxy_is_running(port):
+            return True
+        time.sleep(0.5)
+    return not _proxy_is_running(port)
+
+
 def _start_proxy(port: int, tool_path: str) -> ProxyProcess:
     env = os.environ.copy()
     log_handle: Optional[IO[str]] = None
@@ -79,11 +88,14 @@ def _start_proxy(port: int, tool_path: str) -> ProxyProcess:
     command = shlex.split(
         f'{tool_path} start --storage-location="{root_dir}" -- --urls "http://localhost:{port}"'
     )
+    creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
+
     process = subprocess.Popen(
         command,
         stdout=log_handle or subprocess.DEVNULL,
         stderr=log_handle or subprocess.STDOUT,
         env=env,
+        creationflags=creationflags,
     )
 
     if not _wait_for_proxy(port):
@@ -100,13 +112,29 @@ def _stop_proxy_instances(instances: List[ProxyProcess]) -> None:
     for instance in instances:
         proc = instance.process
         if proc.poll() is None:
-            proc.terminate()
             try:
-                proc.wait(timeout=15)
+                if os.name == "nt" and hasattr(signal, "CTRL_BREAK_EVENT"):
+                    proc.send_signal(signal.CTRL_BREAK_EVENT)
+                else:
+                    proc.send_signal(signal.SIGINT)
+                proc.wait(timeout=20)
+            except (ProcessLookupError, PermissionError):
+                pass
+            except (ValueError, OSError):
+                pass
             except subprocess.TimeoutExpired:
-                proc.kill()
+                proc.terminate()
+                try:
+                    proc.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+            except Exception:
+                proc.terminate()
         if instance.log_handle:
             instance.log_handle.close()
+        if _proxy_is_running(instance.port):
+            if not _wait_for_proxy_shutdown(instance.port, timeout=10):
+                logger.warning(f"Test proxy on port {instance.port} did not stop cleanly.")
 
 
 def ensure_proxies_for_checks(checks: List[str]) -> List[ProxyProcess]:
