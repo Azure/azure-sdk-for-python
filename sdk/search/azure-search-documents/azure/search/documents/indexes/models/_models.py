@@ -876,12 +876,11 @@ class SearchIndexerSkill(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureMachineLearningSkill, ChatCompletionSkill, WebApiSkill, AzureOpenAIEmbeddingSkill,
-    CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill,
-    LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill,
-    TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3,
-    ConditionalSkill, ContentUnderstandingSkill, DocumentExtractionSkill,
-    DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill,
-    VisionVectorizeSkill
+    CustomEntityLookupSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill,
+    PIIDetectionSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill,
+    EntityRecognitionSkillV3, SentimentSkillV3, ConditionalSkill, ContentUnderstandingSkill,
+    DocumentExtractionSkill, DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill,
+    OcrSkill, VisionVectorizeSkill
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -3849,100 +3848,6 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Skills.Text.V3.EntityLinkingSkill"  # type: ignore
-
-
-class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.EntityRecognitionSkill"):
-    """This skill is deprecated. Use the V3.EntityRecognitionSkill instead.
-
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character '#'.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
-     an upstream skill. Required.
-    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
-     be consumed as an input by another skill. Required.
-    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar categories: A list of entity categories that should be extracted.
-    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-     Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
-     "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
-    :vartype default_language_code: str or
-     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
-    :ivar include_typeless_entities: Determines whether or not to include entities which are well
-     known but don't conform to a pre-defined type. If this configuration is not set (default), set
-     to null or set to false, entities which don't conform to one of the pre-defined types will not
-     be surfaced.
-    :vartype include_typeless_entities: bool
-    :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
-     confidence score is greater than the value specified. If not set (default), or if explicitly
-     set to null, all entities will be included.
-    :vartype minimum_precision: float
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
-     "#Microsoft.Skills.Text.EntityRecognitionSkill".
-    :vartype odata_type: str
-    """
-
-    categories: Optional[list[Union[str, "_models.EntityCategory"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A list of entity categories that should be extracted."""
-    default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating which language code to use. Default is ``en``. Known values are: \"ar\",
-     \"cs\", \"zh-Hans\", \"zh-Hant\", \"da\", \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\",
-     \"hu\", \"it\", \"ja\", \"ko\", \"no\", \"pl\", \"pt-PT\", \"pt-BR\", \"ru\", \"es\", \"sv\",
-     and \"tr\"."""
-    include_typeless_entities: Optional[bool] = rest_field(
-        name="includeTypelessEntities", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Determines whether or not to include entities which are well known but don't conform to a
-     pre-defined type. If this configuration is not set (default), set to null or set to false,
-     entities which don't conform to one of the pre-defined types will not be surfaced."""
-    minimum_precision: Optional[float] = rest_field(
-        name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value between 0 and 1 that be used to only include entities whose confidence score is greater
-     than the value specified. If not set (default), or if explicitly set to null, all entities will
-     be included."""
-    odata_type: Literal["#Microsoft.Skills.Text.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """A URI fragment specifying the type of skill. Required. Default value is
-     \"#Microsoft.Skills.Text.EntityRecognitionSkill\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        inputs: list["_models.InputFieldMappingEntry"],
-        outputs: list["_models.OutputFieldMappingEntry"],
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        context: Optional[str] = None,
-        categories: Optional[list[Union[str, "_models.EntityCategory"]]] = None,
-        default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = None,
-        include_typeless_entities: Optional[bool] = None,
-        minimum_precision: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Skills.Text.EntityRecognitionSkill"  # type: ignore
 
 
 class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"):
@@ -6983,7 +6888,8 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     :ivar pattern: A regular expression pattern to match token separators. Default is an expression
      that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: Regular expression flags.
+    :ivar flags: Regular expression flags, specified as a '|' separated string of RegexFlags
+     values.
     :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
@@ -7002,7 +6908,7 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     flags: Optional[list[Union[str, "_models.RegexFlags"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="pipeDelimited"
     )
-    """Regular expression flags."""
+    """Regular expression flags, specified as a '|' separated string of RegexFlags values."""
     stopwords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stopwords."""
     odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7191,7 +7097,8 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     :ivar pattern: A regular expression pattern to match token separators. Default is an expression
      that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: Regular expression flags.
+    :ivar flags: Regular expression flags, specified as a '|' separated string of RegexFlags
+     values.
     :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
     :ivar group: The zero-based ordinal of the matching group in the regular expression pattern to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
@@ -7208,7 +7115,7 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     flags: Optional[list[Union[str, "_models.RegexFlags"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="pipeDelimited"
     )
-    """Regular expression flags."""
+    """Regular expression flags, specified as a '|' separated string of RegexFlags values."""
     group: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The zero-based ordinal of the matching group in the regular expression pattern to extract into
      tokens. Use -1 if you want to use the entire pattern to split the input into tokens,
@@ -10224,69 +10131,6 @@ class SemanticSearch(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.SentimentSkill"):
-    """This skill is deprecated. Use the V3.SentimentSkill instead.
-
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character '#'.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
-     an upstream skill. Required.
-    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
-     be consumed as an input by another skill. Required.
-    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-     Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
-     "es", "sv", and "tr".
-    :vartype default_language_code: str or
-     ~azure.search.documents.indexes.models.SentimentSkillLanguage
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
-     "#Microsoft.Skills.Text.SentimentSkill".
-    :vartype odata_type: str
-    """
-
-    default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
-     \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\", \"it\", \"no\", \"pl\", \"pt-PT\", \"ru\",
-     \"es\", \"sv\", and \"tr\"."""
-    odata_type: Literal["#Microsoft.Skills.Text.SentimentSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """A URI fragment specifying the type of skill. Required. Default value is
-     \"#Microsoft.Skills.Text.SentimentSkill\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        inputs: list["_models.InputFieldMappingEntry"],
-        outputs: list["_models.OutputFieldMappingEntry"],
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        context: Optional[str] = None,
-        default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Skills.Text.SentimentSkill"  # type: ignore
 
 
 class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"):

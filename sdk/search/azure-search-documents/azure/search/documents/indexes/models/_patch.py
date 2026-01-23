@@ -25,7 +25,7 @@ if TYPE_CHECKING:
         SearchIndexerDataIdentity,
         SearchResourceEncryptionKey,
     )
-    from ._enums import IndexerPermissionOption,SearchIndexerDataSourceType
+    from ._enums import IndexerPermissionOption, SearchIndexerDataSourceType
 
 
 class SearchField(_SearchField):
@@ -164,7 +164,7 @@ def SimpleField(
     filterable: bool = False,
     sortable: bool = False,
     facetable: bool = False,
-    **kw  # pylint:disable=unused-argument
+    **kw,  # pylint:disable=unused-argument
 ) -> SearchField:
     """Configure a simple field for an Azure Search Index
 
@@ -241,7 +241,7 @@ def SearchableField(
     search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
     index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
     synonym_map_names: Optional[List[str]] = None,
-    **kw  # pylint:disable=unused-argument
+    **kw,  # pylint:disable=unused-argument
 ) -> SearchField:
     """Configure a searchable text field for an Azure Search Index
 
@@ -386,7 +386,7 @@ def ComplexField(
     name: str,
     collection: bool = False,
     fields: Optional[List[SearchField]] = None,
-    **kw  # pylint:disable=unused-argument
+    **kw,  # pylint:disable=unused-argument
 ) -> SearchField:
     """Configure a Complex or Complex collection field for an Azure Search Index
 
