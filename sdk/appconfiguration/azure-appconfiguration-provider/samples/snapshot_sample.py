@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+import os
+import uuid
+from azure.identity import DefaultAzureCredential
 from azure.appconfiguration.provider import load, SettingSelector
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
@@ -12,7 +14,8 @@ from azure.appconfiguration import (  # type:ignore
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
-= os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+
+endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 credential = DefaultAzureCredential()
 
 # Step 1: Create a snapshot
