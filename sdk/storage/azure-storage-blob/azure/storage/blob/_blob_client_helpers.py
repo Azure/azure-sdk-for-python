@@ -1245,14 +1245,6 @@ def _append_block_from_url_options(
         'timeout': kwargs.pop('timeout', None)
     }
     options.update(kwargs)
-
-    if source_cpk:
-        options.update({
-            'source_encryption_key': source_cpk.key_value,
-            'source_encryption_key_sha256': source_cpk.key_hash,
-            'source_encryption_algorithm': source_cpk.algorithm
-        })
-
     return options
 
 def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
