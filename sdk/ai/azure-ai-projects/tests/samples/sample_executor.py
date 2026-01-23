@@ -27,7 +27,7 @@ from devtools_testutils import is_live
 from azure.ai.projects import AIProjectClient
 
 # Fixed timestamp for playback mode (Nov 2023).
-# Must match the sanitizer regex `-\d{10}` in conftest.py which replaces it with `-SANITIZED-TS`.
+# Must match the timestamp sanitizers in conftest.py (e.g., `Evaluation -\d{10}`).
 PLAYBACK_TIMESTAMP = 1700000000
 from pytest import MonkeyPatch
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
