@@ -40,7 +40,6 @@ class HumanInTheLoopHelper:
         # if no checkpoint (Agent), find user input request and pair the feedbacks
         for message in thread_messages:
             for content in message.contents:
-                print(f"    Content {type(content)}: {content.to_dict()}")
                 if isinstance(content, UserInputRequestContents):
                     # is a human input request
                     function_call = content.function_call
