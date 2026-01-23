@@ -13,7 +13,7 @@ from azure.ai.agentserver.core.tools.client._models import (
 )
 from azure.ai.agentserver.core.tools._exceptions import ToolInvocationError
 
-from .conftest import create_mock_http_response
+from ..conftest import create_mock_http_response
 
 
 class TestFoundryToolClientInit:
@@ -22,7 +22,7 @@ class TestFoundryToolClientInit:
     @patch("azure.ai.agentserver.core.tools.client._client.AsyncPipelineClient")
     def test_init_with_valid_endpoint_and_credential(self, mock_pipeline_client_class, mock_credential):
         """Test client can be initialized with valid endpoint and credential."""
-        endpoint = "https://test.api.azureml.ms"
+        endpoint = "https://fake-project-endpoint.site"
 
         client = FoundryToolClient(endpoint, mock_credential)
 
@@ -43,7 +43,7 @@ class TestFoundryToolClientListTools:
         mock_credential
     ):
         """Test list_tools returns empty list when given empty collection."""
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
 
         result = await client.list_tools([], agent_name="test-agent")
 
@@ -79,7 +79,7 @@ class TestFoundryToolClientListTools:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.list_tools([sample_hosted_mcp_tool], agent_name="test-agent")
 
         assert len(result) == 1
@@ -122,7 +122,7 @@ class TestFoundryToolClientListTools:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.list_tools(
             [sample_connected_tool],
             agent_name="test-agent",
@@ -187,7 +187,7 @@ class TestFoundryToolClientListTools:
         ]
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.list_tools(
             [sample_hosted_mcp_tool, sample_connected_tool],
             agent_name="test-agent",
@@ -234,7 +234,7 @@ class TestFoundryToolClientListTools:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.list_tools([sample_hosted_mcp_tool], agent_name="test-agent")
 
         # Should only return the requested tool
@@ -274,7 +274,7 @@ class TestFoundryToolClientListToolsDetails:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.list_tools_details([sample_hosted_mcp_tool], agent_name="test-agent")
 
         assert isinstance(result, dict)
@@ -312,7 +312,7 @@ class TestFoundryToolClientListToolsDetails:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.list_tools_details([sample_hosted_mcp_tool], agent_name="test-agent")
 
         # All tools should be grouped under the same definition ID
@@ -339,7 +339,7 @@ class TestFoundryToolClientInvokeTool:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.invoke_tool(
             sample_resolved_mcp_tool,
             arguments={"input": "test"},
@@ -367,7 +367,7 @@ class TestFoundryToolClientInvokeTool:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         result = await client.invoke_tool(
             sample_resolved_connected_tool,
             arguments={"input": "test"},
@@ -393,7 +393,7 @@ class TestFoundryToolClientInvokeTool:
         mock_client_instance.send_request.return_value = mock_response
         mock_client_instance.post.return_value = MagicMock()
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         complex_args = {
             "string_param": "value",
             "number_param": 42,
@@ -431,7 +431,7 @@ class TestFoundryToolClientInvokeTool:
         mock_tool.source = "unsupported_source"
         mock_tool.details = sample_tool_details
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
 
         with pytest.raises(ToolInvocationError) as exc_info:
             await client.invoke_tool(
@@ -457,7 +457,7 @@ class TestFoundryToolClientClose:
         mock_client_instance = AsyncMock()
         mock_pipeline_client_class.return_value = mock_client_instance
 
-        client = FoundryToolClient("https://test.api.azureml.ms", mock_credential)
+        client = FoundryToolClient("https://fake-project-endpoint.site", mock_credential)
         await client.close()
 
         mock_client_instance.close.assert_called_once()
@@ -477,7 +477,7 @@ class TestFoundryToolClientContextManager:
         mock_client_instance = AsyncMock()
         mock_pipeline_client_class.return_value = mock_client_instance
 
-        async with FoundryToolClient("https://test.api.azureml.ms", mock_credential) as client:
+        async with FoundryToolClient("https://fake-project-endpoint.site", mock_credential) as client:
             assert client is not None
             mock_client_instance.__aenter__.assert_called_once()
 

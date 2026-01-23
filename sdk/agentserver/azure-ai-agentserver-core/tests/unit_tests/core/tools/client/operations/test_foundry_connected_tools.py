@@ -14,7 +14,7 @@ from azure.ai.agentserver.core.tools.client.operations._foundry_connected_tools 
 )
 from azure.ai.agentserver.core.tools._exceptions import OAuthConsentRequiredError, ToolInvocationError
 
-from ..conftest import create_mock_http_response
+from ...conftest import create_mock_http_response
 
 
 class TestFoundryConnectedToolsOperationsListTools:

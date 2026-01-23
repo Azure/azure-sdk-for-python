@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Shared fixtures for unit tests."""
+"""Shared fixtures for tools unit tests."""
 import json
 from typing import Any, Dict, Optional
 from unittest.mock import AsyncMock, MagicMock
@@ -125,4 +125,3 @@ def create_mock_http_response(
     response.__aexit__ = AsyncMock(return_value=None)
 
     return response
-

@@ -13,7 +13,7 @@ from pydantic import Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.tools import FoundryToolLike, ResolvedFoundryTool
+from azure.ai.agentserver.core.tools import FoundryToolLike, ResolvedFoundryTool, ensure_foundry_tool
 
 logger = get_logger()
 
@@ -45,7 +45,7 @@ class FoundryToolClient:
         self,
         tools: Sequence[FoundryToolLike],
     ) -> None:
-        self._allowed_tools: List[FoundryToolLike] = list(tools)
+        self._allowed_tools: List[FoundryToolLike] = [ensure_foundry_tool(tool) for tool in tools]
 
     async def list_tools(self) -> List[AIFunction]:
         server_context = AgentServerContext.get()
