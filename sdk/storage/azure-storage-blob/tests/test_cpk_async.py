@@ -669,7 +669,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
         await self._setup(bsc)
 
         source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
@@ -714,7 +717,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
         await self._setup(bsc)
 
         source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
@@ -758,7 +764,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
         await self._setup(bsc)
 
         source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
@@ -803,7 +812,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
         await self._setup(bsc)
 
         source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))

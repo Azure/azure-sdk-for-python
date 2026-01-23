@@ -2513,6 +2513,54 @@ class SignedIdentifier(_serialization.Model):
         self.access_policy = access_policy
 
 
+class SourceCpkInfo(_serialization.Model):
+    """Parameter group.
+
+    :ivar source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
+     the source data provided in the request.
+    :vartype source_encryption_key: str
+    :ivar source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
+     Must be provided if the x-ms-source-encryption-key header is provided.
+    :vartype source_encryption_key_sha256: str
+    :ivar source_encryption_algorithm: The algorithm used to produce the source encryption key
+     hash. Currently, the only accepted value is "AES256". Must be provided if the
+     x-ms-source-encryption-key is provided. Known values are: "None" and "AES256".
+    :vartype source_encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+    """
+
+    _attribute_map = {
+        "source_encryption_key": {"key": "sourceEncryptionKey", "type": "str"},
+        "source_encryption_key_sha256": {"key": "sourceEncryptionKeySha256", "type": "str"},
+        "source_encryption_algorithm": {"key": "sourceEncryptionAlgorithm", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_encryption_key: Optional[str] = None,
+        source_encryption_key_sha256: Optional[str] = None,
+        source_encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
+         the source data provided in the request.
+        :paramtype source_encryption_key: str
+        :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
+         Must be provided if the x-ms-source-encryption-key header is provided.
+        :paramtype source_encryption_key_sha256: str
+        :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
+         hash. Currently, the only accepted value is "AES256". Must be provided if the
+         x-ms-source-encryption-key is provided. Known values are: "None" and "AES256".
+        :paramtype source_encryption_algorithm: str or
+         ~azure.storage.blob.models.EncryptionAlgorithmType
+        """
+        super().__init__(**kwargs)
+        self.source_encryption_key = source_encryption_key
+        self.source_encryption_key_sha256 = source_encryption_key_sha256
+        self.source_encryption_algorithm = source_encryption_algorithm
+
+
 class SourceModifiedAccessConditions(_serialization.Model):
     """Parameter group.
 

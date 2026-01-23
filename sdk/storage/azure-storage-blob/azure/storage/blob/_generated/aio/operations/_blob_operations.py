@@ -177,6 +177,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_download_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -194,7 +195,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -482,6 +482,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -495,7 +496,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -706,6 +706,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -720,7 +721,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             blob_delete_type=blob_delete_type,
             access_tier_if_modified_since=access_tier_if_modified_since,
             access_tier_if_unmodified_since=access_tier_if_unmodified_since,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -787,10 +787,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_undelete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -868,11 +868,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_expiry_request(
             url=self._config.url,
             expiry_options=expiry_options,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -981,6 +981,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_http_headers_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
             blob_content_type=_blob_content_type,
@@ -996,7 +997,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             blob_content_disposition=_blob_content_disposition,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1098,6 +1098,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_immutability_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             if_unmodified_since=_if_unmodified_since,
@@ -1106,7 +1107,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1194,12 +1194,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_immutability_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1285,12 +1285,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_legal_hold_request(
             url=self._config.url,
             legal_hold=legal_hold,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1408,6 +1408,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
@@ -1422,7 +1423,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1531,6 +1531,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1542,7 +1543,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1636,6 +1636,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1645,7 +1646,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1738,6 +1738,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1747,7 +1748,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1847,6 +1847,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1856,7 +1857,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1955,6 +1955,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -1965,7 +1966,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2084,6 +2084,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_create_snapshot_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             encryption_key=_encryption_key,
@@ -2098,7 +2099,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2138,7 +2138,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def start_copy_from_url(
+    async def start_copy_from_url(  # pylint: disable=too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -2254,6 +2254,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_start_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             tier=tier,
@@ -2275,7 +2276,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2313,7 +2313,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def copy_from_url(
+    async def copy_from_url(  # pylint: disable=too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -2445,6 +2445,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             tier=tier,
@@ -2469,7 +2470,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_tags=copy_source_tags,
             file_request_intent=file_request_intent,
             x_ms_requires_sync=x_ms_requires_sync,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2567,12 +2567,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_abort_copy_from_url_request(
             url=self._config.url,
             copy_id=copy_id,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2681,6 +2681,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_tier_request(
             url=self._config.url,
             tier=tier,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -2689,7 +2690,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             if_tags=_if_tags,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2756,11 +2756,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2881,6 +2881,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_query_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             lease_id=_lease_id,
@@ -2895,7 +2896,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -3124,6 +3124,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_tags_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
@@ -3135,7 +3136,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_match=_if_match,
             if_none_match=_if_none_match,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3256,6 +3256,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_tags_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             version_id=version_id,
             transactional_content_md5=transactional_content_md5,
@@ -3269,7 +3270,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,

@@ -35,11 +35,12 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_upload_request(
+def build_upload_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     content_length: int,
     content: IO[bytes],
+    version: str,
     timeout: Optional[int] = None,
     transactional_content_md5: Optional[bytes] = None,
     blob_content_type: Optional[str] = None,
@@ -75,7 +76,6 @@ def build_upload_request(
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -173,11 +173,12 @@ def build_upload_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_put_blob_from_url_request(
+def build_put_blob_from_url_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     content_length: int,
     copy_source: str,
+    version: str,
     timeout: Optional[int] = None,
     transactional_content_md5: Optional[bytes] = None,
     blob_content_type: Optional[str] = None,
@@ -219,7 +220,6 @@ def build_put_blob_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -342,6 +342,7 @@ def build_stage_block_request(
     block_id: str,
     content_length: int,
     content: IO[bytes],
+    version: str,
     transactional_content_md5: Optional[bytes] = None,
     transactional_content_crc64: Optional[bytes] = None,
     timeout: Optional[int] = None,
@@ -360,7 +361,6 @@ def build_stage_block_request(
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -415,12 +415,13 @@ def build_stage_block_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_stage_block_from_url_request(
+def build_stage_block_from_url_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     block_id: str,
     content_length: int,
     source_url: str,
+    version: str,
     source_range: Optional[str] = None,
     source_content_md5: Optional[bytes] = None,
     source_contentcrc64: Optional[bytes] = None,
@@ -446,7 +447,6 @@ def build_stage_block_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -524,10 +524,11 @@ def build_stage_block_from_url_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_commit_block_list_request(
+def build_commit_block_list_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     content: Any,
+    version: str,
     timeout: Optional[int] = None,
     blob_cache_control: Optional[str] = None,
     blob_content_type: Optional[str] = None,
@@ -561,7 +562,6 @@ def build_commit_block_list_request(
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -655,6 +655,7 @@ def build_commit_block_list_request(
 def build_get_block_list_request(
     url: str,
     *,
+    version: str,
     snapshot: Optional[str] = None,
     list_type: Union[str, _models.BlockListType] = "committed",
     timeout: Optional[int] = None,
@@ -667,7 +668,6 @@ def build_get_block_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -719,7 +719,7 @@ class BlockBlobOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def upload(  # pylint: disable=inconsistent-return-statements
+    def upload(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         content_length: int,
         body: IO[bytes],
@@ -868,6 +868,7 @@ class BlockBlobOperations:
         _request = build_upload_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
             blob_content_type=_blob_content_type,
@@ -898,7 +899,6 @@ class BlockBlobOperations:
             structured_content_length=structured_content_length,
             blob_type=blob_type,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -948,7 +948,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def put_blob_from_url(  # pylint: disable=inconsistent-return-statements
+    def put_blob_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         content_length: int,
         copy_source: str,
@@ -963,15 +963,13 @@ class BlockBlobOperations:
         copy_source_authorization: Optional[str] = None,
         copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
         file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
-        source_encryption_key: Optional[str] = None,
-        source_encryption_key_sha256: Optional[str] = None,
-        source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        source_cpk_info: Optional[_models.SourceCpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
@@ -1029,17 +1027,6 @@ class BlockBlobOperations:
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :param file_request_intent: Valid value is backup. "backup" Default value is None.
         :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
-        :param source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
-        :type source_encryption_key: str
-        :param source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
-        :type source_encryption_key_sha256: str
-        :param source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. Known values are: "None" and "AES256". Default value is
-         None.
-        :type source_encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1053,6 +1040,8 @@ class BlockBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :param source_cpk_info: Parameter group. Default value is None.
+        :type source_cpk_info: ~azure.storage.blob.models.SourceCpkInfo
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1092,6 +1081,9 @@ class BlockBlobOperations:
         _source_if_match = None
         _source_if_none_match = None
         _source_if_tags = None
+        _source_encryption_key = None
+        _source_encryption_key_sha256 = None
+        _source_encryption_algorithm = None
         if blob_http_headers is not None:
             _blob_cache_control = blob_http_headers.blob_cache_control
             _blob_content_disposition = blob_http_headers.blob_content_disposition
@@ -1119,11 +1111,16 @@ class BlockBlobOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_tags = source_modified_access_conditions.source_if_tags
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if source_cpk_info is not None:
+            _source_encryption_algorithm = source_cpk_info.source_encryption_algorithm
+            _source_encryption_key = source_cpk_info.source_encryption_key
+            _source_encryption_key_sha256 = source_cpk_info.source_encryption_key_sha256
 
         _request = build_put_blob_from_url_request(
             url=self._config.url,
             content_length=content_length,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
             blob_content_type=_blob_content_type,
@@ -1156,11 +1153,10 @@ class BlockBlobOperations:
             copy_source_authorization=copy_source_authorization,
             copy_source_tags=copy_source_tags,
             file_request_intent=file_request_intent,
-            source_encryption_key=source_encryption_key,
-            source_encryption_key_sha256=source_encryption_key_sha256,
-            source_encryption_algorithm=source_encryption_algorithm,
+            source_encryption_key=_source_encryption_key,
+            source_encryption_key_sha256=_source_encryption_key_sha256,
+            source_encryption_algorithm=_source_encryption_algorithm,
             blob_type=blob_type,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1206,7 +1202,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def stage_block(  # pylint: disable=inconsistent-return-statements
+    def stage_block(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         block_id: str,
         content_length: int,
@@ -1298,6 +1294,7 @@ class BlockBlobOperations:
             url=self._config.url,
             block_id=block_id,
             content_length=content_length,
+            version=self._config.version,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
             timeout=timeout,
@@ -1311,7 +1308,6 @@ class BlockBlobOperations:
             structured_content_length=structured_content_length,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1361,7 +1357,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def stage_block_from_url(  # pylint: disable=inconsistent-return-statements
+    def stage_block_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         block_id: str,
         content_length: int,
@@ -1373,13 +1369,11 @@ class BlockBlobOperations:
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
         file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
-        source_encryption_key: Optional[str] = None,
-        source_encryption_key_sha256: Optional[str] = None,
-        source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        source_cpk_info: Optional[_models.SourceCpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """The Stage Block operation creates a new block to be committed as part of a blob where the
@@ -1415,17 +1409,6 @@ class BlockBlobOperations:
         :type copy_source_authorization: str
         :param file_request_intent: Valid value is backup. "backup" Default value is None.
         :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
-        :param source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
-        :type source_encryption_key: str
-        :param source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
-        :type source_encryption_key_sha256: str
-        :param source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. Known values are: "None" and "AES256". Default value is
-         None.
-        :type source_encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -1435,6 +1418,8 @@ class BlockBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :param source_cpk_info: Parameter group. Default value is None.
+        :type source_cpk_info: ~azure.storage.blob.models.SourceCpkInfo
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1462,6 +1447,9 @@ class BlockBlobOperations:
         _source_if_unmodified_since = None
         _source_if_match = None
         _source_if_none_match = None
+        _source_encryption_key = None
+        _source_encryption_key_sha256 = None
+        _source_encryption_algorithm = None
         if cpk_info is not None:
             _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
@@ -1475,12 +1463,17 @@ class BlockBlobOperations:
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if source_cpk_info is not None:
+            _source_encryption_algorithm = source_cpk_info.source_encryption_algorithm
+            _source_encryption_key = source_cpk_info.source_encryption_key
+            _source_encryption_key_sha256 = source_cpk_info.source_encryption_key_sha256
 
         _request = build_stage_block_from_url_request(
             url=self._config.url,
             block_id=block_id,
             content_length=content_length,
             source_url=source_url,
+            version=self._config.version,
             source_range=source_range,
             source_content_md5=source_content_md5,
             source_contentcrc64=source_contentcrc64,
@@ -1497,11 +1490,10 @@ class BlockBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             file_request_intent=file_request_intent,
-            source_encryption_key=source_encryption_key,
-            source_encryption_key_sha256=source_encryption_key_sha256,
-            source_encryption_algorithm=source_encryption_algorithm,
+            source_encryption_key=_source_encryption_key,
+            source_encryption_key_sha256=_source_encryption_key_sha256,
+            source_encryption_algorithm=_source_encryption_algorithm,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1547,7 +1539,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def commit_block_list(  # pylint: disable=inconsistent-return-statements
+    def commit_block_list(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         blocks: _models.BlockLookupList,
         timeout: Optional[int] = None,
@@ -1685,6 +1677,7 @@ class BlockBlobOperations:
 
         _request = build_commit_block_list_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
             blob_content_type=_blob_content_type,
@@ -1713,7 +1706,6 @@ class BlockBlobOperations:
             legal_hold=legal_hold,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1826,6 +1818,7 @@ class BlockBlobOperations:
 
         _request = build_get_block_list_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             list_type=list_type,
             timeout=timeout,
@@ -1833,7 +1826,6 @@ class BlockBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

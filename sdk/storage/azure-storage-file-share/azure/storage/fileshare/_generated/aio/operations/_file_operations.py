@@ -76,7 +76,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(
+    async def create(  # pylint: disable=too-many-locals
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
@@ -216,6 +216,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_request(
             url=self._config.url,
             file_content_length=file_content_length,
+            version=self._config.version,
             timeout=timeout,
             file_content_type=_file_content_type,
             file_content_encoding=_file_content_encoding,
@@ -243,7 +244,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -352,6 +352,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_download_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             range=range,
             range_get_content_md5=range_get_content_md5,
@@ -359,7 +360,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -497,12 +497,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -619,11 +619,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -654,7 +654,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_http_headers(
+    async def set_http_headers(  # pylint: disable=too-many-locals
         self,
         timeout: Optional[int] = None,
         file_content_length: Optional[int] = None,
@@ -762,6 +762,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_http_headers_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             file_content_length=file_content_length,
             file_content_type=_file_content_type,
@@ -784,7 +785,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -883,13 +883,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -972,6 +972,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -980,7 +981,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1055,13 +1055,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1144,6 +1144,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             proposed_lease_id=proposed_lease_id,
             request_id_parameter=request_id_parameter,
@@ -1151,7 +1152,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1233,6 +1233,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
@@ -1240,7 +1241,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1276,7 +1276,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def upload_range(
+    async def upload_range(  # pylint: disable=too-many-locals
         self,
         range: str,
         content_length: int,
@@ -1364,6 +1364,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             url=self._config.url,
             range=range,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             file_range_write=file_range_write,
             content_md5=content_md5,
@@ -1375,7 +1376,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1501,6 +1501,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             range=range,
             copy_source=copy_source,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             source_range=source_range,
             source_content_crc64=source_content_crc64,
@@ -1514,7 +1515,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             file_range_write_from_url=self._config.file_range_write_from_url,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1614,6 +1614,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_range_list_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             prevsharesnapshot=prevsharesnapshot,
             timeout=timeout,
@@ -1623,7 +1624,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1660,7 +1660,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def start_copy(
+    async def start_copy(  # pylint: disable=too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -1775,6 +1775,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_start_copy_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
@@ -1796,7 +1797,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1878,13 +1878,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_abort_copy_request(
             url=self._config.url,
             copy_id=copy_id,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1961,6 +1961,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_list_handles_request(
             url=self._config.url,
+            version=self._config.version,
             marker=marker,
             maxresults=maxresults,
             timeout=timeout,
@@ -1968,7 +1969,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2050,13 +2050,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_force_close_handles_request(
             url=self._config.url,
             handle_id=handle_id,
+            version=self._config.version,
             timeout=timeout,
             marker=marker,
             sharesnapshot=sharesnapshot,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2093,7 +2093,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def rename(
+    async def rename(  # pylint: disable=too-many-locals
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -2201,6 +2201,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_rename_request(
             url=self._config.url,
             rename_source=rename_source,
+            version=self._config.version,
             timeout=timeout,
             replace_if_exists=replace_if_exists,
             ignore_read_only=ignore_read_only,
@@ -2219,7 +2220,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2341,6 +2341,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_symbolic_link_request(
             url=self._config.url,
             link_text=link_text,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_creation_time=file_creation_time,
@@ -2351,7 +2352,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             group=group,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2442,12 +2442,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_symbolic_link_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2534,13 +2534,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_hard_link_request(
             url=self._config.url,
             target_file=target_file,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             file_type_constant=file_type_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

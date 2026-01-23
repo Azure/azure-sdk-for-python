@@ -8,6 +8,21 @@
 This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which has been deprecated.
 - Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
 conditionally perform `BlobClient.delete_blob` operation.
+- Added support for the keyword `source_cpk` for `BlobClient`'s `upload_blob_from_url`, 
+`stage_block_from_url`, `upload_pages_from_url`, and `append_block_from_url` APIs
+to re-encrypt data automatically by the service through a `CustomerProvidedEncryptionKey`.
+- Added support for the keyword `user_delegation_tid` to `BlobServiceClient.get_user_delegation_key` API, which
+can be used in `generate_blob_sas` and `generate_container_sas` to specify the Tenant ID that is authorized
+to use the generated SAS URL. Note that `user_delegation_tid` must be used together with `user_delegation_oid`.
+- Added support for the keyword `request_headers` to `generate_blob_sas` and `generate_container_sas`, 
+which specifies a set of headers and their corresponding values that must be 
+present in the request header when using the generated SAS.
+- Added support for the keyword `request_query_params` to `generate_blob_sas` and `generate_container_sas`, 
+which specifies a set of query parameters and their corresponding values that must be 
+present in the request URL when using the generated SAS.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
 
 ## 12.28.0 (2026-01-06)
 

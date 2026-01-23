@@ -35,11 +35,12 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_request(
+def build_create_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     content_length: int,
     blob_content_length: int,
+    version: str,
     timeout: Optional[int] = None,
     tier: Optional[Union[str, _models.PremiumPageBlobAccessTier]] = None,
     blob_content_type: Optional[str] = None,
@@ -71,7 +72,6 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -156,11 +156,12 @@ def build_create_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_upload_pages_request(
+def build_upload_pages_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     content_length: int,
     content: IO[bytes],
+    version: str,
     transactional_content_md5: Optional[bytes] = None,
     transactional_content_crc64: Optional[bytes] = None,
     timeout: Optional[int] = None,
@@ -189,7 +190,6 @@ def build_upload_pages_request(
     comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -268,10 +268,11 @@ def build_upload_pages_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_clear_pages_request(
+def build_clear_pages_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     content_length: int,
+    version: str,
     timeout: Optional[int] = None,
     range: Optional[str] = None,
     lease_id: Optional[str] = None,
@@ -295,7 +296,6 @@ def build_clear_pages_request(
 
     comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
     page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -358,13 +358,14 @@ def build_clear_pages_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_upload_pages_from_url_request(
+def build_upload_pages_from_url_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     source_url: str,
     source_range: str,
     content_length: int,
     range: str,
+    version: str,
     source_content_md5: Optional[bytes] = None,
     source_contentcrc64: Optional[bytes] = None,
     timeout: Optional[int] = None,
@@ -398,7 +399,6 @@ def build_upload_pages_from_url_request(
 
     comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -501,6 +501,7 @@ def build_upload_pages_from_url_request(
 def build_get_page_ranges_request(
     url: str,
     *,
+    version: str,
     snapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     range: Optional[str] = None,
@@ -519,7 +520,6 @@ def build_get_page_ranges_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -567,6 +567,7 @@ def build_get_page_ranges_request(
 def build_get_page_ranges_diff_request(
     url: str,
     *,
+    version: str,
     snapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     prevsnapshot: Optional[str] = None,
@@ -587,7 +588,6 @@ def build_get_page_ranges_diff_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -640,6 +640,7 @@ def build_resize_request(
     url: str,
     *,
     blob_content_length: int,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     encryption_key: Optional[str] = None,
@@ -658,7 +659,6 @@ def build_resize_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -710,6 +710,7 @@ def build_update_sequence_number_request(
     url: str,
     *,
     sequence_number_action: Union[str, _models.SequenceNumberActionType],
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -725,7 +726,6 @@ def build_update_sequence_number_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -771,6 +771,7 @@ def build_copy_incremental_request(
     url: str,
     *,
     copy_source: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -784,7 +785,6 @@ def build_copy_incremental_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["incrementalcopy"] = kwargs.pop("comp", _params.pop("comp", "incrementalcopy"))
-    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -840,7 +840,7 @@ class PageBlobOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         content_length: int,
         blob_content_length: int,
@@ -972,6 +972,7 @@ class PageBlobOperations:
             url=self._config.url,
             content_length=content_length,
             blob_content_length=blob_content_length,
+            version=self._config.version,
             timeout=timeout,
             tier=tier,
             blob_content_type=_blob_content_type,
@@ -998,7 +999,6 @@ class PageBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             blob_type=blob_type,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1044,7 +1044,7 @@ class PageBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def upload_pages(  # pylint: disable=inconsistent-return-statements
+    def upload_pages(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         content_length: int,
         body: IO[bytes],
@@ -1161,6 +1161,7 @@ class PageBlobOperations:
         _request = build_upload_pages_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
             timeout=timeout,
@@ -1184,7 +1185,6 @@ class PageBlobOperations:
             comp=comp,
             page_write=page_write,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1334,6 +1334,7 @@ class PageBlobOperations:
         _request = build_clear_pages_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             range=range,
             lease_id=_lease_id,
@@ -1352,7 +1353,6 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             comp=comp,
             page_write=page_write,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1394,7 +1394,7 @@ class PageBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements
+    def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         source_url: str,
         source_range: str,
@@ -1406,15 +1406,13 @@ class PageBlobOperations:
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
         file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
-        source_encryption_key: Optional[str] = None,
-        source_encryption_key_sha256: Optional[str] = None,
-        source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         sequence_number_access_conditions: Optional[_models.SequenceNumberAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        source_cpk_info: Optional[_models.SourceCpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
@@ -1450,17 +1448,6 @@ class PageBlobOperations:
         :type copy_source_authorization: str
         :param file_request_intent: Valid value is backup. "backup" Default value is None.
         :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
-        :param source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
-        :type source_encryption_key: str
-        :param source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
-        :type source_encryption_key_sha256: str
-        :param source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. Known values are: "None" and "AES256". Default value is
-         None.
-        :type source_encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -1475,6 +1462,8 @@ class PageBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :param source_cpk_info: Parameter group. Default value is None.
+        :type source_cpk_info: ~azure.storage.blob.models.SourceCpkInfo
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1511,6 +1500,9 @@ class PageBlobOperations:
         _source_if_unmodified_since = None
         _source_if_match = None
         _source_if_none_match = None
+        _source_encryption_key = None
+        _source_encryption_key_sha256 = None
+        _source_encryption_algorithm = None
         if cpk_info is not None:
             _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
@@ -1536,6 +1528,10 @@ class PageBlobOperations:
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if source_cpk_info is not None:
+            _source_encryption_algorithm = source_cpk_info.source_encryption_algorithm
+            _source_encryption_key = source_cpk_info.source_encryption_key
+            _source_encryption_key_sha256 = source_cpk_info.source_encryption_key_sha256
 
         _request = build_upload_pages_from_url_request(
             url=self._config.url,
@@ -1543,6 +1539,7 @@ class PageBlobOperations:
             source_range=source_range,
             content_length=content_length,
             range=range,
+            version=self._config.version,
             source_content_md5=source_content_md5,
             source_contentcrc64=source_contentcrc64,
             timeout=timeout,
@@ -1566,12 +1563,11 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             file_request_intent=file_request_intent,
-            source_encryption_key=source_encryption_key,
-            source_encryption_key_sha256=source_encryption_key_sha256,
-            source_encryption_algorithm=source_encryption_algorithm,
+            source_encryption_key=_source_encryption_key,
+            source_encryption_key_sha256=_source_encryption_key_sha256,
+            source_encryption_algorithm=_source_encryption_algorithm,
             comp=comp,
             page_write=page_write,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1704,6 +1700,7 @@ class PageBlobOperations:
 
         _request = build_get_page_ranges_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             range=range,
@@ -1717,7 +1714,6 @@ class PageBlobOperations:
             marker=marker,
             maxresults=maxresults,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1858,6 +1854,7 @@ class PageBlobOperations:
 
         _request = build_get_page_ranges_diff_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             prevsnapshot=prevsnapshot,
@@ -1873,7 +1870,6 @@ class PageBlobOperations:
             marker=marker,
             maxresults=maxresults,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1994,6 +1990,7 @@ class PageBlobOperations:
         _request = build_resize_request(
             url=self._config.url,
             blob_content_length=blob_content_length,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             encryption_key=_encryption_key,
@@ -2007,7 +2004,6 @@ class PageBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2115,6 +2111,7 @@ class PageBlobOperations:
         _request = build_update_sequence_number_request(
             url=self._config.url,
             sequence_number_action=sequence_number_action,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             if_modified_since=_if_modified_since,
@@ -2125,7 +2122,6 @@ class PageBlobOperations:
             blob_sequence_number=blob_sequence_number,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2226,6 +2222,7 @@ class PageBlobOperations:
         _request = build_copy_incremental_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -2234,7 +2231,6 @@ class PageBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

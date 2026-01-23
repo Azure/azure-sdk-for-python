@@ -3558,7 +3558,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await blob1.set_standard_blob_tier('Cool')
         await blob2.set_standard_blob_tier('Hot')
 
-        late = self.get_datetime_variable(variables, 'late', datetime.utcnow())
+        late = self.get_datetime_variable(variables, 'late', datetime.utcnow() + timedelta(hours=1))
 
         with pytest.raises(HttpResponseError):
             await blob1.delete_blob(access_tier_if_modified_since=late)
