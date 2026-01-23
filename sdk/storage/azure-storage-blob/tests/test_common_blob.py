@@ -3625,7 +3625,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob1.set_standard_blob_tier('Cool')
         blob2.set_standard_blob_tier('Hot')
 
-        late = self.get_datetime_variable(variables, 'late', datetime.utcnow())
+        late = self.get_datetime_variable(variables, 'late', datetime.utcnow() + timedelta(hours=1))
 
         with pytest.raises(HttpResponseError):
             blob1.delete_blob(access_tier_if_modified_since=late)
