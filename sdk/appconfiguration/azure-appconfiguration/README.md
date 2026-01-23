@@ -71,13 +71,25 @@ client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 
 <!-- END SNIPPET -->
 
-#### Use AAD token
+#### Use Entra ID token
 
 Here we demonstrate using [DefaultAzureCredential][default_cred_ref]
 to authenticate as a service principal. However, [AzureAppConfigurationClient][configuration_client_class]
 accepts any [azure-identity][azure_identity] credential. See the
 [azure-identity][azure_identity] documentation for more information about other
 credentials.
+
+<!-- SNIPPET:hello_world_entra_id_sample.create_app_config_client -->
+
+```python
+
+    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT"]
+    credential = DefaultAzureCredential()
+    # Create app config client
+    client = AzureAppConfigurationClient(base_url=ENDPOINT, credential=credential)
+```
+
+<!-- END SNIPPET -->
 
 ##### Create a service principal (optional)
 This [Azure CLI][azure_cli] snippet shows how to create a

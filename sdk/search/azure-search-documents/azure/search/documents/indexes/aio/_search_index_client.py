@@ -148,7 +148,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_async.py
                 :start-after: [START get_index_async]
                 :end-before: [END get_index_async]
                 :language: python
@@ -193,7 +193,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_async.py
                 :start-after: [START delete_index_async]
                 :end-before: [END delete_index_async]
                 :language: python
@@ -221,7 +221,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_async.py
                 :start-after: [START create_index_async]
                 :end-before: [END create_index_async]
                 :language: python
@@ -264,7 +264,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_async.py
                 :start-after: [START update_index_async]
                 :end-before: [END update_index_async]
                 :language: python
@@ -299,7 +299,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_text_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_analyze_text_async.py
                 :start-after: [START simple_analyze_text_async]
                 :end-before: [END simple_analyze_text_async]
                 :language: python
@@ -328,7 +328,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_synonym_map_crud_async.py
                 :start-after: [START get_synonym_maps_async]
                 :end-before: [END get_synonym_maps_async]
                 :language: python
@@ -370,7 +370,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_synonym_map_crud_async.py
                 :start-after: [START get_synonym_map_async]
                 :end-before: [END get_synonym_map_async]
                 :language: python
@@ -401,7 +401,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_synonym_map_crud_async.py
                 :start-after: [START delete_synonym_map_async]
                 :end-before: [END delete_synonym_map_async]
                 :language: python
@@ -429,7 +429,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_synonym_map_crud_async.py
                 :start-after: [START create_synonym_map_async]
                 :end-before: [END create_synonym_map_async]
                 :language: python
@@ -560,7 +560,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_async.py
                 :start-after: [START delete_alias_async]
                 :end-before: [END delete_alias_async]
                 :language: python
@@ -588,7 +588,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_async.py
                 :start-after: [START create_alias_async]
                 :end-before: [END create_alias_async]
                 :language: python
@@ -619,7 +619,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_async.py
                 :start-after: [START update_alias_async]
                 :end-before: [END update_alias_async]
                 :language: python
