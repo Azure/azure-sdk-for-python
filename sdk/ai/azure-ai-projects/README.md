@@ -1128,7 +1128,15 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The SDK logs HTTP request and response details, which may be useful in troubleshooting. To log to stdout, add the following at the top of your Python script:
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
+
+#### Default console logging
+
+To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Note that the log is not redacted and contains sensitive information such as your authentication token. Be sure to remove any sensitive information before sharing this log.
+
+#### Customizing your log
+
+Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format and destination. To log to `stdout`, add the following at the top of your Python script:
 
 ```python
 import sys
