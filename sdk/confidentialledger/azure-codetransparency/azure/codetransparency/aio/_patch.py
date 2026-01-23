@@ -39,7 +39,7 @@ class CodeTransparencyClient(GeneratedClient):
      https://contoso.confidentialledger.azure.com.
     :type endpoint: str
     :param credential: A credential object for authenticating with the Ledger.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword ledger_certificate_path: The path to the Ledger's TLS certificate. If this
         file does not exist yet, the Ledger's TLS certificate will be fetched and saved
         to this file.
@@ -51,7 +51,7 @@ class CodeTransparencyClient(GeneratedClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        credential: AzureKeyCredential,
         *,
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
