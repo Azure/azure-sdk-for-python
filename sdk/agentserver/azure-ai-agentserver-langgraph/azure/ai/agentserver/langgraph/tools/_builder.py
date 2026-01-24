@@ -60,4 +60,4 @@ def use_foundry_tools(  # pylint: disable=C4743
 
     foundry_tools = [ensure_foundry_tool(tool) for tool in model_or_tools]
     get_registry().extend(foundry_tools)
-    return FoundryToolBindingMiddleware(foundry_tools) 
+    return FoundryToolBindingMiddleware(foundry_tools)
