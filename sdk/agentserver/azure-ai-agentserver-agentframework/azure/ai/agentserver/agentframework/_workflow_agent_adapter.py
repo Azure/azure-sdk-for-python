@@ -28,8 +28,7 @@ from .models.agent_framework_input_converters import AgentFrameworkInputConverte
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
-from .persistence.agent_thread_repository import AgentThreadRepository
-from .persistence.checkpoint_repository import CheckpointRepository
+from .persistence import AgentThreadRepository, CheckpointRepository
 
 logger = get_logger()
 
