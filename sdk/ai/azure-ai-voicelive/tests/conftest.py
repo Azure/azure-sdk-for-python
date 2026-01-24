@@ -25,9 +25,7 @@ def pytest_runtest_setup(item):
 
 @pytest.fixture
 def test_data_dir() -> Path:
-    base = Path(locate_assets(current_test_file=Path(__file__)))  # ensure Path
-    full = base / "python" / "sdk" / "ai" / "azure-ai-voicelive" / "tests" / "data"
-    return full
+    return Path(__file__).parent / "asset"
 
 
 @pytest.fixture(scope="session", autouse=True)
