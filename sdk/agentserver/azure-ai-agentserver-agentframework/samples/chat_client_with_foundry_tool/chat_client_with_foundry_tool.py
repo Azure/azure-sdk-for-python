@@ -22,7 +22,7 @@ def main():
     agent = AzureOpenAIChatClient(
         credential=DefaultAzureCredential(), 
         middleware=FoundryToolsChatMiddleware(
-            tools=[{"type": "mcp", "project_connection_id": tool_connection_id}]
+            tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}]
             )).create_agent(
                 name="FoundryToolAgent",
                 instructions="You are a helpful assistant with access to various tools.",
