@@ -3,18 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import (
-    SettingSelector,
-    AzureAppConfigurationKeyVaultOptions,
-    AzureAppConfigurationProvider,
-)
+import datetime
+from unittest.mock import MagicMock, patch
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase, has_feature_flag
-import datetime
-from unittest.mock import patch
 from test_constants import FEATURE_MANAGEMENT_KEY
-from unittest.mock import MagicMock, patch
+from azure.appconfiguration.provider import (
+    SettingSelector,
+    AzureAppConfigurationKeyVaultOptions
+)
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     delay_failure,
 )
@@ -126,7 +124,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
 
     # method: delay_failure
     @patch("time.sleep", side_effect=sleep)
-    def test_delay_failure(self, mock_sleep, **kwargs):
+    def test_delay_failure(self, mock_sleep):
         start_time = datetime.datetime.now()
         delay_failure(start_time)
         assert mock_sleep.call_count == 1

@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import pytest
 import time
-from azure.appconfiguration.provider._models import SettingSelector
-from azure.appconfiguration.provider._constants import NULL_CHAR
-from azure.appconfiguration.provider.aio import load
-from azure.appconfiguration.provider import WatchKey
+import pytest
+from devtools_testutils import is_live
+from devtools_testutils.aio import recorded_by_proxy_async
+from async_preparers import app_config_decorator_async
+from asynctestcase import AppConfigTestCase
 from azure.appconfiguration import (
     ConfigurationSetting,
     ConfigurationSettingsFilter,
@@ -17,10 +16,10 @@ from azure.appconfiguration import (
     SnapshotStatus,
 )
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import is_live
-from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase
+from azure.appconfiguration.provider._models import SettingSelector
+from azure.appconfiguration.provider._constants import NULL_CHAR
+from azure.appconfiguration.provider.aio import load
+from azure.appconfiguration.provider import WatchKey
 
 
 class TestSnapshotSupport:

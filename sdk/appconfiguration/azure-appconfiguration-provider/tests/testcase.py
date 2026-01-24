@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
+from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
@@ -13,7 +14,6 @@ from azure.appconfiguration import (
 )
 from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
 from azure.appconfiguration.provider._constants import NULL_CHAR
-from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
 
 class AppConfigTestCase(AzureRecordedTestCase):

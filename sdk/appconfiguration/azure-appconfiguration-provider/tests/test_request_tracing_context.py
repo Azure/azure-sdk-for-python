@@ -33,7 +33,7 @@ from azure.appconfiguration.provider._constants import (
 )
 
 
-class TestRequestTracingContext(unittest.TestCase):
+class TestRequestTracingContext(unittest.TestCase): # pylint: disable=too-many-public-methods
     """Test the _RequestTracingContext class."""
 
     def setUp(self):
