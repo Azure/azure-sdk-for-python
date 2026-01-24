@@ -3,12 +3,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import copy
 import json
 import re
 import time
+from uuid import uuid4
 from datetime import datetime, timezone
+from devtools_testutils import set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
+from async_preparers import app_config_decorator_async
+import pytest
+from asynctestcase import AsyncAppConfigTestCase
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -17,7 +31,6 @@ from azure.core.exceptions import (
     AzureError,
     HttpResponseError,
 )
-from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
@@ -29,23 +42,9 @@ from azure.appconfiguration import (
     FILTER_TIME_WINDOW,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from asynctestcase import AsyncAppConfigTestCase
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
-)
-from devtools_testutils import set_custom_default_matcher
-from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
-from uuid import uuid4
 
 
-class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
+class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disable=too-many-public-methods
     # method: add_configuration_setting
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -243,7 +242,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             await self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("None", key_filter="MyKey")
@@ -255,7 +256,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             await self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
 
         await self.tear_down()
@@ -1279,7 +1282,8 @@ class TestAppConfigurationClientUnitTest:
                 response.status_code = 429
                 return response
 
-        def new_method(self, request):
+        @staticmethod
+        def new_method(request):
             request.http_request.headers["Authorization"] = str(uuid4())
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy

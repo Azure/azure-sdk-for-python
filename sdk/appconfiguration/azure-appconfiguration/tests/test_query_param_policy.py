@@ -4,11 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
+import pytest
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline import PipelineRequest
 from azure.appconfiguration._query_param_policy import QueryParamPolicy
-import pytest
 
 TEST_URL = "https://example.com"
 
@@ -62,7 +61,6 @@ def test_query_parameters_with_special_characters():
 
         def send(self, request):
             self.captured_url = request.http_request.url
-            return None
 
     mock_next = MockNext()
     query_param_policy.next = mock_next
@@ -183,7 +181,9 @@ def test_comprehensive_query_parameter_normalization():
     original_url = (
         "?$TOP=10&API-Version=2023-10-01&$select=key,value&label=prod&$filter=startsWith(key,'app')&maxItems=100"
     )
-    expected_url = "?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&%24top=10&api-version=2023-10-01&label=prod&maxitems=100"
+    expected_url = """
+    ?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&%24top=10&api-version=2023-10-01&label=prod&maxitems=100
+    """
 
     run_query_param_policy_test(original_url, expected_url)
 
@@ -211,8 +211,14 @@ def test_tags_parameters_with_complex_values():
 
 def test_tags_parameters_mixed_with_other_parameters():
     """Test that tags parameters mixed with other parameters are handled correctly."""
-    original_url = "?$select=key,value&tags=feature%3Dauth&label=*&api-version=2023-11-01&$filter=startsWith(key,'app')&tags=env%3Dtest"  # cspell:disable-line
-    expected_url = "?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&api-version=2023-11-01&label=%2A&tags=feature%3Dauth&tags=env%3Dtest"  # cspell:disable-line
+    # cspell:disable-line
+    original_url = """
+    ?$select=key,value&tags=feature%3Dauth&label=*&api-version=2023-11-01&$filter=startsWith(key,'app')&tags=env%3Dtest
+    """
+
+    expected_url = """
+    ?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&api-version=2023-11-01&label=%2A&tags=feature%3Dauth&tags=env%3Dtest
+    """
 
     run_query_param_policy_test(original_url, expected_url)
 
@@ -268,7 +274,6 @@ def run_query_param_policy_test(original_url, expected_url):
 
         def send(self, request):
             self.captured_url = request.http_request.url
-            return None
 
     mock_next = MockNext()
     query_param_policy.next = mock_next

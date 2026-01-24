@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import pytest
 from azure.core.exceptions import ClientAuthenticationError
 from azure.appconfiguration._audience_error_handling_policy import (
     AudienceErrorHandlingPolicy,
@@ -10,7 +11,6 @@ from azure.appconfiguration._audience_error_handling_policy import (
     NO_AUDIENCE_ERROR_MESSAGE,
     INCORRECT_AUDIENCE_ERROR_MESSAGE,
 )
-import pytest
 
 
 def test_on_exception_no_audience():

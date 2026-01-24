@@ -3,15 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import json
+import pytest
+from testcase import AppConfigTestCase
+from preparers import app_config_decorator
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
     FILTER_PERCENTAGE,
 )
-from testcase import AppConfigTestCase
-from preparers import app_config_decorator
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
-import json
-import pytest
 
 
 class TestAppConfigurationConsistency(AppConfigTestCase):

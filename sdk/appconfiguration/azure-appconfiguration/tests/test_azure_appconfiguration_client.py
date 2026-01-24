@@ -3,12 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import copy
 import json
 import re
 import time
 from datetime import datetime, timezone
+from uuid import uuid4
+import pytest
+from testcase import AppConfigTestCase
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
+from preparers import app_config_decorator
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
@@ -17,7 +30,6 @@ from azure.core.exceptions import (
     ResourceExistsError,
     HttpResponseError,
 )
-from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     AzureAppConfigurationClient,
@@ -29,22 +41,9 @@ from azure.appconfiguration import (
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
 )
-from testcase import AppConfigTestCase
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
-)
-from uuid import uuid4
-from preparers import app_config_decorator
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
 
-class TestAppConfigurationClient(AppConfigTestCase):
+class TestAppConfigurationClient(AppConfigTestCase):  # pylint: disable=too-many-public-methods
     # method: add_configuration_setting
     @app_config_decorator
     @recorded_by_proxy
@@ -242,7 +241,9 @@ class TestAppConfigurationClient(AppConfigTestCase):
             self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("None", key_filter="MyKey")
@@ -254,7 +255,9 @@ class TestAppConfigurationClient(AppConfigTestCase):
             self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
 
         self.tear_down()
@@ -1221,7 +1224,7 @@ class TestAppConfigurationClientUnitTest:
         with pytest.raises(TypeError):
             _ = FeatureFlagConfigurationSetting("blah", value="blah")
         with pytest.raises(TypeError):
-            _ = SecretReferenceConfigurationSetting("blah", value="blah")
+            _ = SecretReferenceConfigurationSetting("blah", "blah")
 
     def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, HttpTransport
@@ -1248,7 +1251,8 @@ class TestAppConfigurationClientUnitTest:
                 response.status_code = 429
                 return response
 
-        def new_method(self, request):
+        @staticmethod
+        def new_method(request):
             request.http_request.headers["Authorization"] = str(uuid4())
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy

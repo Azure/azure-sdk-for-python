@@ -10,8 +10,8 @@
 FILE: hello_world_sample_entra_id_and_bleu.py
 
 DESCRIPTION:
-    This sample demos how to add/update/retrieve/delete configuration settings synchronously using Entra ID authentication
-    with Azure Bleu (French Sovereign Cloud).
+    This sample demos how to add/update/retrieve/delete configuration settings synchronously using Entra ID
+    authentication with Azure Bleu (French Sovereign Cloud).
 
 USAGE: python hello_world_sample_entra_id_and_bleu.py
 
@@ -41,7 +41,7 @@ from azure.appconfiguration import ConfigurationSetting
 
 def main():
     # [START create_app_config_client_entra_id]
-    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT"]
+    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 
     # Create app config client with Entra ID authentication
     credential = DefaultAzureCredential()

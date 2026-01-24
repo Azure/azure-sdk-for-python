@@ -3,11 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import copy
 import json
 import re
 from datetime import datetime, timezone
+import pytest
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
+from preparers import app_config_aad_decorator
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from testcase import AppConfigTestCase
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
@@ -24,21 +36,9 @@ from azure.appconfiguration import (
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
 )
-from testcase import AppConfigTestCase
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
-)
-from preparers import app_config_aad_decorator
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
 
-class TestAppConfigurationClientAAD(AppConfigTestCase):
+class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-many-public-methods
     # method: add_configuration_setting
     @app_config_aad_decorator
     @recorded_by_proxy
@@ -236,7 +236,9 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
             self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("None", key_filter="MyKey")
@@ -248,7 +250,9 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
             self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
 
         self.tear_down()

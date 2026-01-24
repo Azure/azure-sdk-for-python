@@ -3,11 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import copy
 import json
 import re
 from datetime import datetime, timezone
+import pytest
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
+from async_preparers import app_config_aad_decorator_async
+from devtools_testutils import set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
+from asynctestcase import AsyncAppConfigTestCase
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -24,22 +37,9 @@ from azure.appconfiguration import (
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
 )
-from asynctestcase import AsyncAppConfigTestCase
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
-)
-from async_preparers import app_config_aad_decorator_async
-from devtools_testutils import set_custom_default_matcher
-from devtools_testutils.aio import recorded_by_proxy_async
 
 
-class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
+class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: disable=too-many-public-methods
     # method: add_configuration_setting
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
@@ -237,7 +237,9 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             await self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("None", key_filter="MyKey")
@@ -249,7 +251,9 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             await self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
         assert (
             str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            == """
+            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
+            """
         )
 
         await self.tear_down()
@@ -315,7 +319,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             assert all(x.label == LABEL_RESERVED_CHARS for x in items)
             await client.delete_configuration_setting(reserved_char_kv.key)
 
-    # NOTE: Label filter does not support wildcard at beginning on filters. https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters
+    # NOTE: Label filter does not support wildcard at beginning on filters.
+    # https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
