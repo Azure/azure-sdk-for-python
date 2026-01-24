@@ -42,7 +42,7 @@ class ContainerRegistryConfiguration:  # pylint: disable=too-many-instance-attri
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", [])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://containerregistry.azure.net/.default"])
         kwargs.setdefault("sdk_moniker", "containerregistry/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -57,8 +57,6 @@ class ContainerRegistryConfiguration:  # pylint: disable=too-many-instance-attri
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
-        if not self.credential_scopes and not self.authentication_policy:
-            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
                 self.credential, *self.credential_scopes, **kwargs

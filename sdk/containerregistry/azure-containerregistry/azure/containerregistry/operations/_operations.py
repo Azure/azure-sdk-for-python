@@ -31,7 +31,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import ContainerRegistryConfiguration
-from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 
@@ -810,9 +810,13 @@ class ContainerRegistryOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -875,7 +879,11 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -894,7 +902,7 @@ class ContainerRegistryOperations:
         reference: str,
         payload: _models.Manifest,
         *,
-        content_type: str = "application/json",
+        content_type: str = "application/vnd.docker.distribution.manifest.v2+json",
         **kwargs: Any,
     ) -> None:
         """Put the manifest identified by ``name`` and ``reference`` where ``reference`` can be
@@ -907,7 +915,7 @@ class ContainerRegistryOperations:
         :param payload: Manifest body, can take v1 or v2 values depending on accept header. Required.
         :type payload: ~azure.containerregistry.models.Manifest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/vnd.docker.distribution.manifest.v2+json".
         :paramtype content_type: str
         :return: None
         :rtype: None
@@ -916,7 +924,13 @@ class ContainerRegistryOperations:
 
     @overload
     def create_manifest(
-        self, name: str, reference: str, payload: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        reference: str,
+        payload: JSON,
+        *,
+        content_type: str = "application/vnd.docker.distribution.manifest.v2+json",
+        **kwargs: Any,
     ) -> None:
         """Put the manifest identified by ``name`` and ``reference`` where ``reference`` can be
         a tag or digest.
@@ -928,7 +942,7 @@ class ContainerRegistryOperations:
         :param payload: Manifest body, can take v1 or v2 values depending on accept header. Required.
         :type payload: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/vnd.docker.distribution.manifest.v2+json".
         :paramtype content_type: str
         :return: None
         :rtype: None
@@ -937,7 +951,13 @@ class ContainerRegistryOperations:
 
     @overload
     def create_manifest(
-        self, name: str, reference: str, payload: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        reference: str,
+        payload: IO[bytes],
+        *,
+        content_type: str = "application/vnd.docker.distribution.manifest.v2+json",
+        **kwargs: Any,
     ) -> None:
         """Put the manifest identified by ``name`` and ``reference`` where ``reference`` can be
         a tag or digest.
@@ -949,7 +969,7 @@ class ContainerRegistryOperations:
         :param payload: Manifest body, can take v1 or v2 values depending on accept header. Required.
         :type payload: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/vnd.docker.distribution.manifest.v2+json".
         :paramtype content_type: str
         :return: None
         :rtype: None
@@ -988,7 +1008,7 @@ class ContainerRegistryOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/vnd.docker.distribution.manifest.v2+json"
         _content = None
         if isinstance(payload, (IOBase, bytes)):
             _content = payload
@@ -1018,7 +1038,11 @@ class ContainerRegistryOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
@@ -1079,7 +1103,11 @@ class ContainerRegistryOperations:
 
         if response.status_code not in [202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1167,7 +1195,11 @@ class ContainerRegistryOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(
+                    _models.AcrErrors,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -1222,7 +1254,11 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1277,7 +1313,11 @@ class ContainerRegistryOperations:
 
         if response.status_code not in [202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1419,7 +1459,11 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1502,7 +1546,14 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1510,7 +1561,7 @@ class ContainerRegistryOperations:
             deserialized = _deserialize(_models.TagList, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1565,7 +1616,11 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1729,7 +1784,11 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1789,7 +1848,11 @@ class ContainerRegistryOperations:
 
         if response.status_code not in [202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1861,7 +1924,14 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1869,7 +1939,7 @@ class ContainerRegistryOperations:
             deserialized = _deserialize(_models.AcrManifests, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1925,7 +1995,11 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2093,7 +2167,11 @@ class ContainerRegistryOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2174,7 +2252,11 @@ class ContainerRegistryBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = None
         response_headers = {}
@@ -2240,7 +2322,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [200, 307]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 200:
@@ -2304,7 +2390,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Docker-Content-Digest"] = self._deserialize(
@@ -2365,7 +2455,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
@@ -2425,7 +2519,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
@@ -2488,7 +2586,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
@@ -2560,7 +2662,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
@@ -2620,7 +2726,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -2668,7 +2778,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
@@ -2736,7 +2850,11 @@ class ContainerRegistryBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
@@ -2799,7 +2917,11 @@ class ContainerRegistryBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
@@ -2882,11 +3004,10 @@ class AuthenticationOperations:
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = []
         _data_fields: list[str] = ["grantType", "service", "tenant", "refreshToken", "accessToken"]
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_authentication_exchange_aad_access_token_for_acr_refresh_token_request(
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )
@@ -2909,7 +3030,11 @@ class AuthenticationOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2976,11 +3101,10 @@ class AuthenticationOperations:
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = []
         _data_fields: list[str] = ["grantType", "service", "tenant", "refreshToken", "accessToken"]
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_authentication_exchange_acr_refresh_token_for_acr_access_token_request(
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )
@@ -3003,7 +3127,11 @@ class AuthenticationOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3068,7 +3196,11 @@ class AuthenticationOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.AcrErrors,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()

@@ -53,14 +53,14 @@ class AcrErrorInfo(_Model):
     :ivar message: Error message.
     :vartype message: str
     :ivar detail: Error details.
-    :vartype detail: dict[str, str]
+    :vartype detail: any
     """
 
     code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error code."""
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error message."""
-    detail: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    detail: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error details."""
 
     @overload
@@ -69,7 +69,7 @@ class AcrErrorInfo(_Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        detail: Optional[dict[str, str]] = None,
+        detail: Optional[Any] = None,
     ) -> None: ...
 
     @overload
