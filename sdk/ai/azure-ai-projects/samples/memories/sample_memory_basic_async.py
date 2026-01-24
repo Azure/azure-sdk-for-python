@@ -5,10 +5,6 @@
 # ------------------------------------
 
 """
-
-TODO: Use a strongly typed class to specify input message, and update pyproject.toml and
-pyrightconfig.json to re-enable type checking for samples/memories folder.
-
 DESCRIPTION:
     This sample demonstrates how to interact with the memory store to add and retrieve memory
     using the asynchronous AIProjectClient.
@@ -42,6 +38,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    EasyInputMessage,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
@@ -89,12 +86,8 @@ async def main() -> None:
         # You can also use "{{$userId}}" to take the oid of the request authentication header
         scope = "user_123"
 
-        # Add memories to the memory store
-        user_message = {
-            "type": "message",
-            "role": "user",
-            "content": "I prefer dark roast coffee and usually drink it in the morning",
-        }
+        # Add a memory to the memory store
+        user_message = EasyInputMessage(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
         update_poller = await project_client.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
@@ -111,7 +104,7 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = {"type": "message", "role": "user", "content": "What are my coffee preferences?"}
+        query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
         search_response = await project_client.memory_stores.search_memories(
             name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
         )

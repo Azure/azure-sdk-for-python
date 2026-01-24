@@ -2550,7 +2550,7 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models._models.Item]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -2635,7 +2635,7 @@ class MemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models._models.Item]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -2656,7 +2656,7 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models._models.Item]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -2671,7 +2671,7 @@ class MemoryStoresOperations:
          Required.
         :paramtype scope: str
         :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models._models.Item]
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str

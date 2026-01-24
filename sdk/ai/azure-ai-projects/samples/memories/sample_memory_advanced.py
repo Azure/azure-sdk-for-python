@@ -5,10 +5,6 @@
 # ------------------------------------
 
 """
-
-TODO: Use a strongly typed class to specify input message, and update pyproject.toml and
-pyrightconfig.json to re-enable type checking for samples/memories folder.
-
 DESCRIPTION:
     This sample demonstrates how to interact with the memory store to add and retrieve memory
     using the synchronous AIProjectClient. It uses some additional operations compared
@@ -42,6 +38,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    EasyInputMessage,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
@@ -87,11 +84,7 @@ with (
     scope = "user_123"
 
     # Extract memories from messages and add them to the memory store
-    user_message = {
-        "type": "message",
-        "role": "user",
-        "content": "I prefer dark roast coffee and usually drink it in the morning",
-    }
+    user_message = EasyInputMessage(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
     update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
@@ -101,7 +94,7 @@ with (
     print(f"Scheduled memory update operation (Update ID: {update_poller.update_id}, Status: {update_poller.status()})")
 
     # Extend the previous update with another update and more messages
-    new_message = {"type": "message", "role": "user", "content": "I also like cappuccinos in the afternoon"}
+    new_message = EasyInputMessage(role="user", content="I also like cappuccinos in the afternoon")
     new_update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
@@ -128,7 +121,7 @@ with (
         )
 
     # Retrieve memories from the memory store
-    query_message = {"type": "message", "role": "user", "content": "What are my morning coffee preferences?"}
+    query_message = EasyInputMessage(role="user", content="What are my morning coffee preferences?")
     search_response = project_client.memory_stores.search_memories(
         name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
     )
@@ -137,12 +130,8 @@ with (
         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
     # Perform another search using the previous search as context
-    agent_message = {
-        "type": "message",
-        "role": "assistant",
-        "content": "You previously indicated a preference for dark roast coffee in the morning.",
-    }
-    followup_query = {"type": "message", "role": "user", "content": "What about afternoon?"}
+    agent_message = EasyInputMessage(role="assistant", content="You previously indicated a preference for dark roast coffee in the morning.")
+    followup_query = EasyInputMessage(role="user", content="What about afternoon?")
     followup_search_response = project_client.memory_stores.search_memories(
         name=memory_store.name,
         scope=scope,
