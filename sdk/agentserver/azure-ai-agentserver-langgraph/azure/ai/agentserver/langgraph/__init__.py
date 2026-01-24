@@ -18,6 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def from_langgraph(
     agent,
+    /,
     credentials: Optional["AsyncTokenCredential"] = None,
     converter: Optional["ResponseAPIConverter"] = None
 ) -> "LangGraphAdapter":
