@@ -8,16 +8,7 @@
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
-from azure.ai.projects.models import (
-    #    ResponsesUserMessageItemParam,
-    #    ResponsesSystemMessageItemParam,
-    #    ItemContentInputText,
-    ItemType,
-    InputContentType,
-)
 
-
-# TODO: Emitter did not produce the output class OpenAI.ConversationResource. Validating service response as Dict for now.
 class TestConversationItemsCrudAsync(TestBase):
 
     @servicePreparer()
@@ -48,16 +39,16 @@ class TestConversationItemsCrudAsync(TestBase):
                 assert len(item_list) == 2
                 self._validate_conversation_item(
                     item_list[0],
-                    expected_type=ItemType.MESSAGE,
+                    expected_type="message",
                     expected_role="user",
-                    expected_content_type=InputContentType.INPUT_TEXT,
+                    expected_content_type="input_text",
                     expected_content_text="first message",
                 )
                 self._validate_conversation_item(
                     item_list[1],
-                    expected_type=ItemType.MESSAGE,
+                    expected_type="message",
                     expected_role="user",
-                    expected_content_type=InputContentType.INPUT_TEXT,
+                    expected_content_type="input_text",
                     expected_content_text="second message",
                 )
                 item1_id = item_list[0].id
@@ -96,10 +87,10 @@ class TestConversationItemsCrudAsync(TestBase):
                 item = await client.conversations.items.retrieve(conversation_id=conversation.id, item_id=item1_id)
                 self._validate_conversation_item(
                     item,
-                    expected_type=ItemType.MESSAGE,
+                    expected_type="message",
                     expected_id=item1_id,
                     expected_role="user",
-                    expected_content_type=InputContentType.INPUT_TEXT,
+                    expected_content_type="input_text",
                     expected_content_text="first message",
                 )
 

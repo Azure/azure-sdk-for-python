@@ -477,6 +477,36 @@ class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOW = "low"
 
 
+class InputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputItemType."""
+
+    MESSAGE = "message"
+    OUTPUT_MESSAGE = "output_message"
+    FILE_SEARCH_CALL = "file_search_call"
+    COMPUTER_CALL = "computer_call"
+    COMPUTER_CALL_OUTPUT = "computer_call_output"
+    WEB_SEARCH_CALL = "web_search_call"
+    FUNCTION_CALL = "function_call"
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    REASONING = "reasoning"
+    COMPACTION = "compaction"
+    IMAGE_GENERATION_CALL = "image_generation_call"
+    CODE_INTERPRETER_CALL = "code_interpreter_call"
+    LOCAL_SHELL_CALL = "local_shell_call"
+    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
+    SHELL_CALL = "shell_call"
+    SHELL_CALL_OUTPUT = "shell_call_output"
+    APPLY_PATCH_CALL = "apply_patch_call"
+    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    MCP_CALL = "mcp_call"
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    ITEM_REFERENCE = "item_reference"
+
+
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The request of the insights."""
 

@@ -26,7 +26,7 @@ from azure.ai.projects.models import (
     IndexType,
     InputContentType,
     ItemResource,
-    ItemType,
+    InputItemType,
     ModelDeployment,
 )
 from openai.types.responses import Response
@@ -544,7 +544,7 @@ class TestBase(AzureRecordedTestCase):
         self,
         item: ConversationItem,
         *,
-        expected_type: Optional[ItemType] = None,
+        expected_type: Optional[str] = None,
         expected_id: Optional[str] = None,
         expected_role: Optional[str] = None,
         expected_content_type: Optional[InputContentType] = None,
@@ -563,7 +563,7 @@ class TestBase(AzureRecordedTestCase):
             assert item.id
 
         # From ResponsesMessageItemResource:
-        if expected_type == ItemType.MESSAGE:
+        if expected_type == "message":
             assert item.status == "completed"
             if expected_role:
                 assert item.role == expected_role
@@ -579,7 +579,7 @@ class TestBase(AzureRecordedTestCase):
             if expected_content_text:
                 assert item.content[0].text == expected_content_text
         print(
-            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == ItemType.MESSAGE else 'N/A'})"
+            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == 'message' else 'N/A'})"
         )
 
     @classmethod

@@ -6,7 +6,7 @@
 
 """
 
-TODO: Use a strongly typed class to specify input message, and update pyproject.toml and 
+TODO: Use a strongly typed class to specify input message, and update pyproject.toml and
 pyrightconfig.json to re-enable type checking for samples/memories folder.
 
 DESCRIPTION:
@@ -85,7 +85,11 @@ with (
     scope = "user_123"
 
     # Add memories to the memory store
-    user_message={"type": "message", "role": "user", "content": "I prefer dark roast coffee and usually drink it in the morning"}
+    user_message = {
+        "type": "message",
+        "role": "user",
+        "content": "I prefer dark roast coffee and usually drink it in the morning",
+    }
     update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
