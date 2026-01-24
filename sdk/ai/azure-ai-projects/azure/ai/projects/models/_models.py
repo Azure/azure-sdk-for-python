@@ -5709,9 +5709,9 @@ class FunctionShellCallOutputContent(_Model):
     )
     """Represents either an exit outcome (with an exit code) or a timeout outcome for a shell call
      output chunk. Required."""
-    created_by: Optional[str] = rest_field(
+    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
         visibility=["read", "create", "update", "delete", "query"]
-    )  # pyright: ignore[reportIncompatibleVariableOverride]
+    )
     """The identifier of the actor that created the item."""
 
     @overload
@@ -8394,9 +8394,9 @@ class ItemResourceApplyPatchToolCall(ItemResource, discriminator="apply_patch_ca
     )
     """One of the create_file, delete_file, or update_file operations applied via apply_patch.
      Required."""
-    created_by: Optional[str] = rest_field(
+    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
         visibility=["read", "create", "update", "delete", "query"]
-    )  # pyright: ignore[reportIncompatibleVariableOverride]
+    )
     """The ID of the entity that created this tool call."""
 
     @overload
@@ -8454,9 +8454,9 @@ class ItemResourceApplyPatchToolCallOutput(ItemResource, discriminator="apply_pa
     """The status of the apply patch tool call output. One of ``completed`` or ``failed``. Required.
      Known values are: \"completed\" and \"failed\"."""
     output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    created_by: Optional[str] = rest_field(
+    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
         visibility=["read", "create", "update", "delete", "query"]
-    )  # pyright: ignore[reportIncompatibleVariableOverride]
+    )
     """The ID of the entity that created this tool call output."""
 
     @overload
@@ -8781,9 +8781,9 @@ class ItemResourceFunctionShellCall(ItemResource, discriminator="shell_call"):
     )
     """The status of the shell call. One of ``in_progress``, ``completed``, or ``incomplete``.
      Required. Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
-    created_by: Optional[str] = rest_field(
+    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
         visibility=["read", "create", "update", "delete", "query"]
-    )  # pyright: ignore[reportIncompatibleVariableOverride]
+    )
     """The ID of the entity that created this tool call."""
 
     @overload
@@ -8839,9 +8839,9 @@ class ItemResourceFunctionShellCallOutput(ItemResource, discriminator="shell_cal
     """An array of shell call output contents. Required."""
     max_output_length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
-    created_by: Optional[str] = rest_field(
+    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
         visibility=["read", "create", "update", "delete", "query"]
-    )  # pyright: ignore[reportIncompatibleVariableOverride]
+    )
     """The identifier of the actor that created the item."""
 
     @overload
