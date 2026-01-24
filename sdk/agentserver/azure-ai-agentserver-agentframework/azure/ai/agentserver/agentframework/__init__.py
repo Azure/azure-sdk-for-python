@@ -1,9 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=docstring-should-be-keyword
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from typing import TYPE_CHECKING, Any, Callable, Optional, Union, overload
+from typing import Callable, Optional, Union, overload
 
 from agent_framework import AgentProtocol, BaseAgent, Workflow, WorkflowBuilder
 from azure.core.credentials_async import AsyncTokenCredential
@@ -31,9 +32,9 @@ def from_agent_framework(
 
     :param agent: The agent to adapt.
     :type agent: Union[BaseAgent, AgentProtocol]
-    :keyword credentials: Optional asynchronous token credential for authentication.
-    :type credentials: Optional[AsyncTokenCredential]
-    :keyword thread_repository: Optional thread repository for agent thread management.
+    :param credentials: Optional asynchronous token credential for authentication.
+    :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
+    :param thread_repository: Optional thread repository for agent thread management.
     :type thread_repository: Optional[AgentThreadRepository]
 
     :return: An instance of AgentFrameworkAIAgentAdapter.
@@ -60,11 +61,11 @@ def from_agent_framework(
 
     :param workflow: The workflow builder or factory function to adapt.
     :type workflow: Union[WorkflowBuilder, Callable[[], Workflow]]
-    :keyword credentials: Optional asynchronous token credential for authentication.
-    :type credentials: Optional[AsyncTokenCredential]
-    :keyword thread_repository: Optional thread repository for agent thread management.
+    :param credentials: Optional asynchronous token credential for authentication.
+    :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
+    :param thread_repository: Optional thread repository for agent thread management.
     :type thread_repository: Optional[AgentThreadRepository]
-    :keyword checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
+    :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
     :type checkpoint_repository: Optional[CheckpointRepository]
     :return: An instance of AgentFrameworkWorkflowAdapter.
     :rtype: AgentFrameworkWorkflowAdapter
@@ -85,11 +86,11 @@ def from_agent_framework(
 
     :param agent_or_workflow: The agent to adapt.
     :type agent_or_workflow: Optional[Union[BaseAgent, AgentProtocol]]
-    :keyword credentials: Optional asynchronous token credential for authentication.
-    :type credentials: Optional[AsyncTokenCredential]
-    :keyword thread_repository: Optional thread repository for agent thread management.
+    :param credentials: Optional asynchronous token credential for authentication.
+    :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
+    :param thread_repository: Optional thread repository for agent thread management.
     :type thread_repository: Optional[AgentThreadRepository]
-    :keyword checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
+    :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
     :type checkpoint_repository: Optional[CheckpointRepository]
     :return: An instance of AgentFrameworkAgent.
     :rtype: AgentFrameworkAgent

@@ -34,7 +34,7 @@ from ._models import (
 )
 from .operations._foundry_connected_tools import FoundryConnectedToolsOperations
 from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
-from .._exceptions import OAuthConsentRequiredError, ToolInvocationError
+from .._exceptions import ToolInvocationError
 
 
 class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: disable=C4748

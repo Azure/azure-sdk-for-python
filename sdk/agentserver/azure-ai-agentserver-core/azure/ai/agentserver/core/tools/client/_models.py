@@ -7,8 +7,6 @@ from enum import Enum
 from typing import (
     Annotated,
     Any,
-    Awaitable,
-    Callable,
     ClassVar,
     Dict,
     Iterable,
@@ -302,7 +300,7 @@ class SchemaDefinition(BaseModel):
     """
 
     type: SchemaType = SchemaType.OBJECT
-    properties: Mapping[str, SchemaProperty] = field(default_factory=dict)
+    properties: Mapping[str, SchemaProperty] = field(default_factory=dict)  # pylint: disable=E3701
     required: Optional[Set[str]] = None
 
     def extract_from(self,
