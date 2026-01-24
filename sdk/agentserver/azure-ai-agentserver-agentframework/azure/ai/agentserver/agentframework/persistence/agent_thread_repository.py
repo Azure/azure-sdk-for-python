@@ -22,7 +22,7 @@ class AgentThreadRepository(ABC):
         conversation_id: str,
         agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
     ) -> Optional[AgentThread]:
-        """Retrieve the savedt thread for a given conversation ID.
+        """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: str

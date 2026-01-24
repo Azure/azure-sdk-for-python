@@ -37,7 +37,7 @@ class FoundryIdGenerator(IdGenerator):
         if isinstance(conv_id_raw, str):
             conv_id = conv_id_raw
         elif isinstance(conv_id_raw, dict):
-            conv_id = conv_id_raw.get("id", None)
+            conv_id = conv_id_raw.get("id", None)  # type: ignore[assignment]
         else:
             conv_id = None
         return cls(response_id, conv_id)

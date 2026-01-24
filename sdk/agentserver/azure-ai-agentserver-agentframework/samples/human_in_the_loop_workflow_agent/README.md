@@ -128,7 +128,7 @@ Respond by sending a `CreateResponse` request with `function_call_output` messag
 {
   "agent": {"name": "local_agent", "type": "agent_reference"},
   "stream": false,
-  "convseration": {"id": "<conversation_id>"},
+  "conversation": {"id": "<conversation_id>"},
   "input": [
     {
       "call_id": "<call_id>",

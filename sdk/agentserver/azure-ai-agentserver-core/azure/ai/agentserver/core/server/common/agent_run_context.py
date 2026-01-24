@@ -23,8 +23,6 @@ class AgentRunContext:
         self._response_id = self._id_generator.response_id
         self._conversation_id = self._id_generator.conversation_id
         self._stream = self.request.get("stream", False)
-        self._user_info = kwargs.get("user_info", None)
-        self._agent_tools = kwargs.get("agent_tools", [])
 
     @property
     def raw_payload(self) -> dict:
@@ -66,18 +64,6 @@ class AgentRunContext:
         if not self._conversation_id:
             return None  # type: ignore
         return ResponseConversation1(id=self._conversation_id)
-
-    def get_tools(self) -> list:
-        # request tools take precedence over agent tools
-        # TODO: remove this method
-        request_tools = self.request.get("tools", [])
-        if not request_tools:
-            return self._agent_tools
-        return request_tools
-
-    def get_user_info(self) -> UserInfo:
-        # TODO: remove this method
-        return self._user_info
 
 
 def _deserialize_create_response(payload: dict) -> CreateResponse:

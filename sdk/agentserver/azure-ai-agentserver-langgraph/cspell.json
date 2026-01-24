@@ -6,7 +6,9 @@
       "envtemplate",
       "ainvoke",
       "asetup",
-      "mcptools"
+      "hitl",
+      "HITL",
+      "awrap"
     ],
     "ignorePaths": [
       "*.csv",

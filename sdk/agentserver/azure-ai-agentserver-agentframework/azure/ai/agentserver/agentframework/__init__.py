@@ -52,7 +52,7 @@ def from_agent_framework(
     ) -> "AgentFrameworkWorkflowAdapter":
     """
     Create an Agent Framework Workflow Adapter.
-    The arugument `workflow` can be either a WorkflowBuilder or a factory function
+    The argument `workflow` can be either a WorkflowBuilder or a factory function
     that returns a Workflow.
     It will be called to create a new Workflow instance and `.as_agent()` will be
     called as well for each incoming CreateResponse request. Please ensure that the
