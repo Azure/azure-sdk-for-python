@@ -59,7 +59,7 @@ The core pattern used by this sample:
 agent = AzureOpenAIChatClient(
     credential=DefaultAzureCredential(),
     middleware=FoundryToolsChatMiddleware(
-        tools=[{"type": "mcp", "project_connection_id": tool_connection_id}],
+        tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}],
     ),
 ).create_agent(
     name="FoundryToolAgent",
