@@ -54,7 +54,8 @@ def ensure_foundry_tool(tool: FoundryToolLike) -> FoundryTool:
 
 
 # Pattern for Azure resource ID format:
-# /subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<account>/projects/<project>/connections/<name>
+# /subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts
+#    /<account>/projects/<project>/connections/<name>
 _RESOURCE_ID_PATTERN = re.compile(
     r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\.CognitiveServices/"
     r"accounts/[^/]+/projects/[^/]+/connections/(?P<name>[^/]+)$",
@@ -67,7 +68,8 @@ def _parse_connection_id(connection_id: str) -> str:
 
     Supports two formats:
     1. Simple name: "my-connection-name"
-    2. Resource ID: "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<account>/projects/<project>/connections/<name>"
+    2. Resource ID: "/subscriptions/<sub>/resourceGroups/<rg>/providers
+            /Microsoft.CognitiveServices/accounts/<account>/projects/<project>/connections/<name>"
 
     :param connection_id: The connection identifier, either a simple name or a full resource ID.
     :type connection_id: str

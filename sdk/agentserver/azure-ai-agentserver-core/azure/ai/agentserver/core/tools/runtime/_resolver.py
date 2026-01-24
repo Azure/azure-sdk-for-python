@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Union
 
 from ._catalog import FoundryToolCatalog
 from ._facade import FoundryToolLike, ensure_foundry_tool
