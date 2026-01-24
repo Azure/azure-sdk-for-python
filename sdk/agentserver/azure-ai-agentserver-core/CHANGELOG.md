@@ -3,6 +3,8 @@
 
 ## 1.0.0b9 (2026-01-23)
 
+### Features Added
+
 - Integrated with Foundry Tools
 
 

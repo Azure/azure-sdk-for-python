@@ -8,6 +8,7 @@ authors = [
 ]
 license = "MIT"
 classifiers = [
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -75,3 +76,4 @@ breaking = false   # incompatible python version
 pyright = false
 verifytypes = false
 latestdependency = false
+dependencies = false
