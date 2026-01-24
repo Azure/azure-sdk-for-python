@@ -161,7 +161,7 @@ async def retrieve_knowledge_base_async():
     request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
     try:
-        result = await retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, request=request)
+        result = await retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, retrieval_request=request)
     finally:
         await retrieval_client.close()
 

@@ -152,7 +152,7 @@ def retrieve_knowledge_base():
 
     request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
-    result = retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, request=request)
+    result = retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, retrieval_request=request)
     print("Results: knowledge base retrieval")
 
     response_parts = []
