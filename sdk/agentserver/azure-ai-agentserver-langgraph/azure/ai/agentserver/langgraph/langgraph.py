@@ -171,7 +171,7 @@ class LangGraphAdapter(FoundryCBAgent):
         config["configurable"] = configurable
         context.attach_to_config(config)
 
-        callbacks = config.get("callbacks", [])
+        callbacks = config.get("callbacks", [])  # mypy: ignore-errors
         if self.azure_ai_tracer and self.azure_ai_tracer not in callbacks:
             callbacks.append(self.azure_ai_tracer)
             config["callbacks"] = callbacks
