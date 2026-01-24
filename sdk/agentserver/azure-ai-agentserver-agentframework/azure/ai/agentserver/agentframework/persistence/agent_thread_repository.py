@@ -10,7 +10,11 @@ from agent_framework import AgentThread, AgentProtocol, WorkflowAgent
 
 
 class AgentThreadRepository(ABC):
-    """AgentThread repository to manage saved thread messages of agent threads and workflows."""
+    """
+    AgentThread repository to manage saved thread messages of agent threads and workflows.
+    
+    :meta private:
+    """
 
     @abstractmethod
     async def get(

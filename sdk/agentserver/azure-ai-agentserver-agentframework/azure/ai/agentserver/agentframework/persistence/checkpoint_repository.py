@@ -12,7 +12,11 @@ from agent_framework import (
 )
 
 class CheckpointRepository(ABC):
-    """Repository interface for storing and retrieving checkpoints."""
+    """
+    Repository interface for storing and retrieving checkpoints.
+    
+    :meta private:
+    """
     @abstractmethod
     async def get_or_create(self, conversation_id: str) -> Optional[CheckpointStorage]:
         """Retrieve or create a checkpoint storage by conversation ID.
