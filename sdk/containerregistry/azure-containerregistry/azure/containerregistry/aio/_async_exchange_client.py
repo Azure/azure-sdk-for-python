@@ -10,7 +10,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from .._generated.aio import ContainerRegistry
+from .._generated.aio import ContainerRegistryClient as ContainerRegistry
 from .._generated.aio.operations._patch import AuthenticationOperations
 from .._generated.models import PostContentSchemaGrantType
 from .._helpers import _parse_challenge, _parse_exp_time

@@ -8,7 +8,7 @@ from typing import Any, Optional, Union, cast
 from azure.core.credentials import TokenCredential, AccessToken
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
-from ._generated import ContainerRegistry
+from ._generated import ContainerRegistryClient as ContainerRegistry
 from ._generated.models import TokenGrantType
 from ._generated.operations._patch import AuthenticationOperations
 from ._helpers import _parse_challenge

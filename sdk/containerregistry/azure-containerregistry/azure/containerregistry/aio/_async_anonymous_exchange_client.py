@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
-from .._generated.aio import ContainerRegistry
+from .._generated.aio import ContainerRegistryClient as ContainerRegistry
 from .._generated.aio.operations._patch import AuthenticationOperations
 from .._generated.models import TokenGrantType
 from .._helpers import _parse_challenge

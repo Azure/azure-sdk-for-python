@@ -12,7 +12,7 @@ from azure.core.pipeline.transport import HttpTransport
 
 from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._anonymous_exchange_client import AnonymousAccessCredential
-from ._generated import ContainerRegistry
+from ._generated import ContainerRegistryClient as ContainerRegistry
 from ._user_agent import USER_AGENT
 
 ClientType = TypeVar("ClientType", bound="ContainerRegistryBaseClient")
