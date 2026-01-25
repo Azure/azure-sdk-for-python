@@ -4,7 +4,7 @@ from os import environ
 import json
 import logging
 from time import time_ns
-from typing import no_type_check, Any, Dict, List, Sequence
+from typing import no_type_check, Any, Dict, List, Sequence, Optional
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.attributes.client_attributes import CLIENT_ADDRESS
@@ -38,6 +38,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQUEST_ENVELOPE_NAME,
     _EXCEPTION_ENVELOPE_NAME,
     _REMOTE_DEPENDENCY_ENVELOPE_NAME,
+    _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -124,6 +125,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def __init__(self, **kwargs: Any):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
+        self.application_id = _utils._get_application_id(self._connection_string)
 
     def export(self, spans: Sequence[ReadableSpan], **_kwargs: Any) -> SpanExportResult:
         """Export span data.
@@ -134,12 +136,13 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = []
+
         if spans and self._should_collect_otel_resource_metric():
             resource = None
             try:
                 tracer_provider = self._tracer_provider or get_tracer_provider()
                 resource = tracer_provider.resource  # type: ignore
-                envelopes.append(self._get_otel_resource_envelope(resource))
+                envelopes.append(self._get_otel_resource_envelope(resource, self.application_id))
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)  # pylint: disable=C4769
         for span in spans:
@@ -162,14 +165,18 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             self.storage.close()
 
     # pylint: disable=protected-access
-    def _get_otel_resource_envelope(self, resource: Resource) -> TelemetryItem:
-        attributes: Dict[str, str] = {}
+    def _get_otel_resource_envelope(self, resource: Resource, application_id: Optional[str]) -> TelemetryItem:
+        attributes: Dict[str, Any] = {}
         if resource:
-            attributes = resource.attributes
+            attributes = dict(resource.attributes)
         envelope = _utils._create_telemetry_item(time_ns())
         envelope.name = _METRIC_ENVELOPE_NAME
         envelope.tags.update(_utils._populate_part_a_fields(resource))  # pylint: disable=W0212
         envelope.instrumentation_key = self._instrumentation_key
+
+        if application_id and attributes.get(_APPLICATION_ID_RESOURCE_KEY) is None:
+            attributes[_APPLICATION_ID_RESOURCE_KEY] = application_id
+
         data_point = MetricDataPoint(
             name="_OTELRESOURCE_"[:1024],
             value=0,

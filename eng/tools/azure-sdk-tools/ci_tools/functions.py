@@ -593,8 +593,8 @@ def pip_install_requirements_file(requirements_file: str, python_executable: Opt
     return pip_install(["-r", requirements_file], True, python_executable)
 
 
-def get_pip_list_output(python_executable: Optional[str] = None):
-    """Uses the invoking python executable to get the output from pip list."""
+def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
+    """Uses the invoking python executable to get the output from pip freeze."""
     exe = python_executable or sys.executable
 
     pip_cmd = get_pip_command(exe)
@@ -607,16 +607,27 @@ def get_pip_list_output(python_executable: Optional[str] = None):
 
     stdout, stderr = out.communicate()
 
-    collected_output = {}
+    collected_output = []
 
     if stdout and (stderr is None):
-        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
-        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
-            if line and "==" in line:
-                package, version = re.split("==", line)
-                collected_output[package] = version
+        for line in stdout.decode("utf-8").split(os.linesep):
+            if line:
+                collected_output.append(line)
     else:
         raise Exception(stderr)
+
+    return collected_output
+
+
+def get_pip_list_output(python_executable: Optional[str] = None):
+    """Uses the invoking python executable to get the output from pip list."""
+    pip_output = run_pip_freeze(python_executable)
+
+    collected_output = {}
+    for line in pip_output:
+        if "==" in line:
+            package, version = re.split("==", line)
+            collected_output[package] = version
 
     return collected_output
 

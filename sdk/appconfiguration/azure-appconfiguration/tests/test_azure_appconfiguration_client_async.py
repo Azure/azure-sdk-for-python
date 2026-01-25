@@ -1013,10 +1013,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.name == snapshot_name
         assert created_snapshot.status == "ready"
+        assert created_snapshot.retention_period == 3600
         assert len(created_snapshot.filters) == 1
         assert created_snapshot.filters[0].key == KEY
         assert created_snapshot.filters[0].label == LABEL
@@ -1040,7 +1041,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
@@ -1066,7 +1067,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
 
         # test update with wrong etag
@@ -1098,11 +1099,15 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
 
         filters1 = [ConfigurationSettingsFilter(key=KEY)]
-        response1 = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
+        response1 = await self.client.begin_create_snapshot(
+            name=snapshot_name1, filters=filters1, retention_period=3600
+        )
         created_snapshot1 = await response1.result()
         assert created_snapshot1.status == "ready"
         filters2 = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response2 = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
+        response2 = await self.client.begin_create_snapshot(
+            name=snapshot_name2, filters=filters2, retention_period=3600
+        )
         created_snapshot2 = await response2.result()
         assert created_snapshot2.status == "ready"
 
@@ -1125,7 +1130,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
@@ -1135,7 +1140,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
-        response = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
