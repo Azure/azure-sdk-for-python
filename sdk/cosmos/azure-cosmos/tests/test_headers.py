@@ -381,8 +381,8 @@ class TestHeaders(unittest.TestCase):
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
             side_effect=self.side_effect_shard_key)
         try:
-            self.container.read_item(item="id-1", partition_key="pk-1", 
-                                   dedicated_gateway_shard_key="test-shard-123")
+            self.container.read_item(item="id-1", partition_key="pk-1",
+                                     dedicated_gateway_shard_key="test-shard-123")
         except StopIteration:
             pass
 
@@ -418,9 +418,9 @@ class TestHeaders(unittest.TestCase):
         cosmos_client_connection._CosmosClientConnection__Post = MagicMock(
             side_effect=self.side_effect_query_with_bypass_and_shard_key)
         try:
-            list(self.container.query_items(query=query, partition_key="pk-1", 
-                                           bypass_integrated_cache=True,
-                                           dedicated_gateway_shard_key="query-shard-456"))
+            list(self.container.query_items(query=query, partition_key="pk-1",
+                                            bypass_integrated_cache=True,
+                                            dedicated_gateway_shard_key="query-shard-456"))
         except StopIteration:
             pass
         finally:
