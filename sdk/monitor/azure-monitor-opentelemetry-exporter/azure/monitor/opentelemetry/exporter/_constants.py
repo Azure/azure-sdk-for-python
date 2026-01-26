@@ -158,7 +158,7 @@ _UNKNOWN = "UNKNOWN"
 
 # Customer Facing SDKStats
 
-_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
+_APPLICATIONINSIGHTS_SDKSTATS_DISABLED = "APPLICATIONINSIGHTS_SDKSTATS_DISABLED"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
 
@@ -184,9 +184,9 @@ RetryCodeType = Union[RetryCode, int]
 
 
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ITEM_SUCCESS_COUNT = "preview.item.success.count"
-    ITEM_DROP_COUNT = "preview.item.dropped.count"
-    ITEM_RETRY_COUNT = "preview.item.retry.count"
+    ITEM_SUCCESS_COUNT = "Item_Success_Count"
+    ITEM_DROP_COUNT = "Item_Dropped_Count"
+    ITEM_RETRY_COUNT = "Item_Retry_Count"
 
 
 ## Map from Azure Monitor envelope base_types to TelemetryType
