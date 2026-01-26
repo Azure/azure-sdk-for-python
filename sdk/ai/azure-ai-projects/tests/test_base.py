@@ -24,13 +24,13 @@ from azure.ai.projects.models import (
     DeploymentType,
     Index,
     IndexType,
-    ItemContentType,
+    InputContentType,
     ItemResource,
-    ItemType,
+    InputItemType,
     ModelDeployment,
-    ResponsesMessageRole,
 )
 from openai.types.responses import Response
+from openai.types.conversations import ConversationItem
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
@@ -542,17 +542,17 @@ class TestBase(AzureRecordedTestCase):
 
     def _validate_conversation_item(
         self,
-        item: ItemResource,
+        item: ConversationItem,
         *,
-        expected_type: Optional[ItemType] = None,
+        expected_type: Optional[str] = None,
         expected_id: Optional[str] = None,
-        expected_role: Optional[ResponsesMessageRole] = None,
-        expected_content_type: Optional[ItemContentType] = None,
+        expected_role: Optional[str] = None,
+        expected_content_type: Optional[InputContentType] = None,
         expected_content_text: Optional[str] = None,
     ) -> None:
         assert item
 
-        # From ItemResource:
+        # From ConversationItem:
         if expected_type:
             assert item.type == expected_type
         else:
@@ -563,7 +563,7 @@ class TestBase(AzureRecordedTestCase):
             assert item.id
 
         # From ResponsesMessageItemResource:
-        if expected_type == ItemType.MESSAGE:
+        if expected_type == "message":
             assert item.status == "completed"
             if expected_role:
                 assert item.role == expected_role
@@ -579,7 +579,7 @@ class TestBase(AzureRecordedTestCase):
             if expected_content_text:
                 assert item.content[0].text == expected_content_text
         print(
-            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == ItemType.MESSAGE else 'N/A'})"
+            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == 'message' else 'N/A'})"
         )
 
     @classmethod

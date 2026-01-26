@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live, is
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
-    MemorySearchTool,
+    MemorySearchPreviewTool,
     PromptAgentDefinition,
     MemoryStoreDefaultOptions,
 )
@@ -28,7 +28,7 @@ class TestAgentMemorySearch(TestBase):
 
         This test verifies that an agent can:
         1. Create a memory store with chat and embedding models
-        2. Use MemorySearchTool to store user preferences/information
+        2. Use MemorySearchPreviewTool to store user preferences/information
         3. Retrieve stored memories across different conversations
         4. Answer questions based on previously stored context
 
@@ -42,7 +42,7 @@ class TestAgentMemorySearch(TestBase):
         POST   /conversations                                openai_client.conversations.create()
 
         # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (with MemorySearchTool)
+        POST   /openai/responses                             openai_client.responses.create() (with MemorySearchPreviewTool)
 
         # Teardown:
         DELETE /conversations/{conversation_id}              openai_client.conversations.delete()
@@ -104,7 +104,7 @@ class TestAgentMemorySearch(TestBase):
                 assert memory_store.description == "Test memory store for agent conversations"
 
                 # Create memory search tool
-                tool = MemorySearchTool(
+                tool = MemorySearchPreviewTool(
                     memory_store_name=memory_store.name,
                     scope=scope,
                     update_delay=1,  # Wait 1 second for testing; use higher value (300) in production

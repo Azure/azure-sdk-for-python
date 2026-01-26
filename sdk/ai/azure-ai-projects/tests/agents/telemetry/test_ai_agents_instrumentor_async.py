@@ -13,7 +13,7 @@ from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitio
 from azure.ai.projects.models import (
     Reasoning,
     FunctionTool,
-    ResponseTextFormatConfigurationText,
+    # ResponseTextFormatConfigurationText,
 )
 
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -394,7 +394,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
 
@@ -415,7 +415,7 @@ trigger:
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
                     )
@@ -484,7 +484,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="agents", **kwargs)
 
@@ -504,7 +504,7 @@ trigger:
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
                     )
@@ -561,7 +561,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
 
@@ -580,7 +580,7 @@ trigger:
                 model=model,
                 # No instructions provided
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
                     )
@@ -644,7 +644,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="agents", **kwargs)
 
@@ -663,7 +663,7 @@ trigger:
                 model=model,
                 # No instructions provided
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
                     )
