@@ -11,7 +11,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from ._async_container_registry_client import ContainerRegistryClient
 from ._async_download_stream import AsyncDownloadBlobStream
 
-
 __all__: list[str] = [
     "ContainerRegistryClient",
     "AsyncDownloadBlobStream",

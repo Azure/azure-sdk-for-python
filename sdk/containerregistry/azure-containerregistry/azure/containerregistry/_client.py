@@ -16,7 +16,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ContainerRegistryConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import AuthenticationOperations, ContainerRegistryBlobOperations, ContainerRegistryOperations
+from .operations import (
+    AuthenticationOperations,
+    ContainerRegistryBlobOperations,
+    ContainerRegistryOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -41,9 +45,13 @@ class ContainerRegistry:
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "TokenCredential", **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = ContainerRegistryConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = ContainerRegistryConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -59,10 +67,16 @@ class ContainerRegistry:
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: PipelineClient = PipelineClient(
+            base_url=_endpoint, policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -73,9 +87,13 @@ class ContainerRegistry:
         self.container_registry_blob = ContainerRegistryBlobOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.authentication = AuthenticationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.authentication = AuthenticationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -95,10 +113,14 @@ class ContainerRegistry:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:

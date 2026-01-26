@@ -24,7 +24,9 @@ class AcrAccessToken(_Model):
     :vartype access_token: str
     """
 
-    access_token: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    access_token: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The access token for performing authenticated requests."""
 
     @overload
@@ -56,11 +58,17 @@ class AcrErrorInfo(_Model):
     :vartype detail: any
     """
 
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Error code."""
-    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    message: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Error message."""
-    detail: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    detail: Optional[Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Error details."""
 
     @overload
@@ -132,13 +140,17 @@ class AcrManifests(_Model):
     )
     """Registry login server name. This is likely to be similar to
      {registry-name}.azurecr.io."""
-    repository: Optional[str] = rest_field(name="imageName", visibility=["read", "create", "update", "delete", "query"])
+    repository: Optional[str] = rest_field(
+        name="imageName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Image name."""
     manifests: Optional[list["_models.ManifestAttributesBase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of manifests."""
-    link: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    link: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Link to the next page of results."""
 
     @overload
@@ -169,7 +181,9 @@ class AcrRefreshToken(_Model):
     :vartype refresh_token: str
     """
 
-    refresh_token: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    refresh_token: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The refresh token to be used for generating access tokens."""
 
     @overload
@@ -232,49 +246,60 @@ class Annotations(_Model):
      `https://tools.ietf.org/html/rfc3339#section-5.6
      <https://tools.ietf.org/html/rfc3339#section-5.6>`_)."""
     authors: Optional[str] = rest_field(
-        name="org.opencontainers.image.authors", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.authors",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Contact details of the people or organization responsible for the image."""
     url: Optional[str] = rest_field(
-        name="org.opencontainers.image.url", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.url",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """URL to find more information on the image."""
     documentation: Optional[str] = rest_field(
-        name="org.opencontainers.image.documentation", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.documentation",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """URL to get documentation on the image."""
     source: Optional[str] = rest_field(
-        name="org.opencontainers.image.source", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.source",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """URL to get source code for building the image."""
     version: Optional[str] = rest_field(
-        name="org.opencontainers.image.version", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.version",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Version of the packaged software. The version MAY match a label or tag in the
      source code repository, may also be Semantic versioning-compatible."""
     revision: Optional[str] = rest_field(
-        name="org.opencontainers.image.revision", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.revision",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Source control revision identifier for the packaged software."""
     vendor: Optional[str] = rest_field(
-        name="org.opencontainers.image.vendor", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.vendor",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Name of the distributing entity, organization or individual."""
     licenses: Optional[str] = rest_field(
-        name="org.opencontainers.image.licenses", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.licenses",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """License(s) under which contained software is distributed as an SPDX License
      Expression."""
     name: Optional[str] = rest_field(
-        name="org.opencontainers.image.ref.name", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.ref.name",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Name of the reference for a target."""
     title: Optional[str] = rest_field(
-        name="org.opencontainers.image.title", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.title",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Human-readable title of the image."""
     description: Optional[str] = rest_field(
-        name="org.opencontainers.image.description", visibility=["read", "create", "update", "delete", "query"]
+        name="org.opencontainers.image.description",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Human-readable description of the software packaged in the image."""
 
@@ -323,12 +348,14 @@ class ArtifactManifestPlatform(_Model):
 
     digest: str = rest_field(visibility=["read"])
     """Manifest digest. Required."""
-    architecture: Optional[Union[str, "_models.ArtifactArchitecture"]] = rest_field(visibility=["read"])
+    architecture: Optional[Union[str, "_models.ArtifactArchitecture"]] = rest_field(
+        visibility=["read"]
+    )
     """CPU architecture. Known values are: \"386\", \"amd64\", \"arm\", \"arm64\", \"mips\",
      \"mipsle\", \"mips64\", \"mips64le\", \"ppc64\", \"ppc64le\", \"riscv64\", \"s390x\", and
      \"wasm\"."""
-    operating_system: Optional[Union[str, "_models.ArtifactOperatingSystem"]] = rest_field(
-        name="os", visibility=["read"]
+    operating_system: Optional[Union[str, "_models.ArtifactOperatingSystem"]] = (
+        rest_field(name="os", visibility=["read"])
     )
     """Operating system. Known values are: \"aix\", \"android\", \"darwin\", \"dragonfly\",
      \"freebsd\", \"illumos\", \"ios\", \"js\", \"linux\", \"netbsd\", \"openbsd\", \"plan9\",
@@ -347,7 +374,9 @@ class ArtifactManifestProperties(_Model):
     :vartype manifest: ~azure.containerregistry.models.ManifestAttributesBase
     """
 
-    registry_login_server: Optional[str] = rest_field(name="registry", visibility=["read"])
+    registry_login_server: Optional[str] = rest_field(
+        name="registry", visibility=["read"]
+    )
     """Registry login server name. This is likely to be similar to
      {registry-name}.azurecr.io."""
     repository_name: Optional[str] = rest_field(name="imageName", visibility=["read"])
@@ -402,16 +431,21 @@ class ContainerRepositoryProperties(_Model):
      {registry-name}.azurecr.io. Required."""
     name: str = rest_field(name="imageName", visibility=["read"])
     """Image name. Required."""
-    created_on: datetime.datetime = rest_field(name="createdTime", visibility=["read"], format="rfc3339")
+    created_on: datetime.datetime = rest_field(
+        name="createdTime", visibility=["read"], format="rfc3339"
+    )
     """Image created time. Required."""
-    last_updated_on: datetime.datetime = rest_field(name="lastUpdateTime", visibility=["read"], format="rfc3339")
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read"], format="rfc3339"
+    )
     """Image last update time. Required."""
     manifest_count: int = rest_field(name="manifestCount", visibility=["read"])
     """Number of the manifests. Required."""
     tag_count: int = rest_field(name="tagCount", visibility=["read"])
     """Number of the tags. Required."""
     changeable_attributes: "_models.RepositoryWriteableProperties" = rest_field(
-        name="changeableAttributes", visibility=["read", "create", "update", "delete", "query"]
+        name="changeableAttributes",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Writeable properties of the resource. Required."""
 
@@ -448,13 +482,21 @@ class Descriptor(_Model):
     :vartype annotations: ~azure.containerregistry.models.Annotations
     """
 
-    media_type: Optional[str] = rest_field(name="mediaType", visibility=["read", "create", "update", "delete", "query"])
+    media_type: Optional[str] = rest_field(
+        name="mediaType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Layer media type."""
-    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    size: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Layer size."""
-    digest: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    digest: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Layer digest."""
-    urls: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    urls: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies a list of URIs from which this object may be downloaded."""
     annotations: Optional["_models.Annotations"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -490,7 +532,9 @@ class FsLayer(_Model):
     :vartype blob_sum: str
     """
 
-    blob_sum: Optional[str] = rest_field(name="blobSum", visibility=["read", "create", "update", "delete", "query"])
+    blob_sum: Optional[str] = rest_field(
+        name="blobSum", visibility=["read", "create", "update", "delete", "query"]
+    )
     """SHA of an image layer."""
 
     @overload
@@ -519,7 +563,8 @@ class History(_Model):
     """
 
     v1_compatibility: Optional[str] = rest_field(
-        name="v1Compatibility", visibility=["read", "create", "update", "delete", "query"]
+        name="v1Compatibility",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The raw v1 compatibility information."""
 
@@ -552,11 +597,17 @@ class ImageSignature(_Model):
     :vartype protected: str
     """
 
-    header: Optional["_models.JWK"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    header: Optional["_models.JWK"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A JSON web signature."""
-    signature: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    signature: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A signature for the image manifest, signed by a libtrust private key."""
-    protected: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    protected: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The signed protected header."""
 
     @overload
@@ -588,9 +639,13 @@ class JWK(_Model):
     :vartype alg: str
     """
 
-    jwk: Optional["_models.JWKHeader"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    jwk: Optional["_models.JWKHeader"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """JSON web key parameter."""
-    alg: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    alg: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The algorithm used to sign or encrypt the JWT."""
 
     @overload
@@ -627,15 +682,25 @@ class JWKHeader(_Model):
     :vartype y: str
     """
 
-    crv: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    crv: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """crv value."""
-    kid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    kid: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """kid value."""
-    kty: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    kty: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """kty value."""
-    x: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    x: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """x value."""
-    y: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    y: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """y value."""
 
     @overload
@@ -725,16 +790,22 @@ class ManifestAttributesBase(_Model):
     """Manifest. Required."""
     size: Optional[int] = rest_field(name="imageSize", visibility=["read"])
     """Image size."""
-    created_on: datetime.datetime = rest_field(name="createdTime", visibility=["read"], format="rfc3339")
+    created_on: datetime.datetime = rest_field(
+        name="createdTime", visibility=["read"], format="rfc3339"
+    )
     """Created time. Required."""
-    last_updated_on: datetime.datetime = rest_field(name="lastUpdateTime", visibility=["read"], format="rfc3339")
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read"], format="rfc3339"
+    )
     """Last update time. Required."""
-    architecture: Optional[Union[str, "_models.ArtifactArchitecture"]] = rest_field(visibility=["read"])
+    architecture: Optional[Union[str, "_models.ArtifactArchitecture"]] = rest_field(
+        visibility=["read"]
+    )
     """CPU architecture. Known values are: \"386\", \"amd64\", \"arm\", \"arm64\", \"mips\",
      \"mipsle\", \"mips64\", \"mips64le\", \"ppc64\", \"ppc64le\", \"riscv64\", \"s390x\", and
      \"wasm\"."""
-    operating_system: Optional[Union[str, "_models.ArtifactOperatingSystem"]] = rest_field(
-        name="os", visibility=["read"]
+    operating_system: Optional[Union[str, "_models.ArtifactOperatingSystem"]] = (
+        rest_field(name="os", visibility=["read"])
     )
     """Operating system. Known values are: \"aix\", \"android\", \"darwin\", \"dragonfly\",
      \"freebsd\", \"illumos\", \"ios\", \"js\", \"linux\", \"netbsd\", \"openbsd\", \"plan9\",
@@ -746,13 +817,15 @@ class ManifestAttributesBase(_Model):
      about the platform each supports.  This list will be empty if this is a leaf
      manifest and not a manifest list."""
     config_media_type: Optional[str] = rest_field(
-        name="configMediaType", visibility=["read", "create", "update", "delete", "query"]
+        name="configMediaType",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Config blob media type."""
     tags: Optional[list[str]] = rest_field(visibility=["read"])
     """List of tags."""
     changeable_attributes: Optional["_models.ManifestWriteableProperties"] = rest_field(
-        name="changeableAttributes", visibility=["read", "create", "update", "delete", "query"]
+        name="changeableAttributes",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Writeable properties of the resource."""
 
@@ -792,15 +865,23 @@ class ManifestListAttributes(_Model):
     :vartype platform: ~azure.containerregistry.models.Platform
     """
 
-    media_type: Optional[str] = rest_field(name="mediaType", visibility=["read", "create", "update", "delete", "query"])
+    media_type: Optional[str] = rest_field(
+        name="mediaType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The MIME type of the referenced object. This will generally be
      application/vnd.docker.image.manifest.v2+json, but it could also be
      application/vnd.docker.image.manifest.v1+json."""
-    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    size: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The size in bytes of the object."""
-    digest: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    digest: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The digest of the content, as defined by the Registry V2 HTTP API Specification."""
-    platform: Optional["_models.Platform"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    platform: Optional["_models.Platform"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The platform object describes the platform which the image in the manifest runs
      on. A full list of valid operating system and architecture values are listed in
      the Go language documentation for $GOOS and $GOARCH."""
@@ -855,13 +936,17 @@ class ManifestWrapper(Manifest):
     :vartype signatures: list[~azure.containerregistry.models.ImageSignature]
     """
 
-    media_type: Optional[str] = rest_field(name="mediaType", visibility=["read", "create", "update", "delete", "query"])
+    media_type: Optional[str] = rest_field(
+        name="mediaType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Media type for this Manifest."""
     manifests: Optional[list["_models.ManifestListAttributes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """(ManifestList, OCIIndex) List of V2 image layer information."""
-    config: Optional["_models.Descriptor"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    config: Optional["_models.Descriptor"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """(V2, OCI) Image config descriptor."""
     layers: Optional[list["_models.Descriptor"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -871,17 +956,25 @@ class ManifestWrapper(Manifest):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """(OCI, OCIIndex) Additional metadata."""
-    architecture: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    architecture: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """(V1) CPU architecture."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """(V1) Image name."""
-    tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tag: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """(V1) Image tag."""
     fs_layers: Optional[list["_models.FsLayer"]] = rest_field(
         name="fsLayers", visibility=["read", "create", "update", "delete", "query"]
     )
     """(V1) List of layer information."""
-    history: Optional[list["_models.History"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    history: Optional[list["_models.History"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """(V1) Image history."""
     signatures: Optional[list["_models.ImageSignature"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -995,9 +1088,13 @@ class MultipartBodyParameter(_Model):
     """Can take a value of access_token_refresh_token, or access_token, or
      refresh_token. Required. Known values are: \"access_token_refresh_token\", \"access_token\",
      and \"refresh_token\"."""
-    service: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    service: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates the name of your Azure container registry. Required."""
-    tenant: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tenant: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """AAD tenant associated to the AAD credentials."""
     refresh_token: Optional[str] = rest_field(
         name="refreshToken", visibility=["read", "create", "update", "delete", "query"]
@@ -1055,9 +1152,13 @@ class Platform(_Model):
     :vartype features: list[str]
     """
 
-    architecture: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    architecture: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the CPU architecture, for example amd64 or ppc64le."""
-    os: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    os: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The os field specifies the operating system, for example linux or windows."""
     os_version: Optional[str] = rest_field(
         name="os.version", visibility=["read", "create", "update", "delete", "query"]
@@ -1069,10 +1170,14 @@ class Platform(_Model):
     )
     """The optional os.features field specifies an array of strings, each listing a
      required OS feature (for example on Windows win32k."""
-    variant: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    variant: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The optional variant field specifies a variant of the CPU, for example armv6l
      to specify a particular CPU variant of the ARM CPU."""
-    features: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    features: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The optional features field specifies an array of strings, each listing a
      required CPU feature (for example sse4 or aes."""
 
@@ -1171,14 +1276,21 @@ class TagAttributesBase(_Model):
     """Tag name. Required."""
     digest: str = rest_field(visibility=["read"])
     """Tag digest. Required."""
-    created_on: datetime.datetime = rest_field(name="createdTime", visibility=["read"], format="rfc3339")
+    created_on: datetime.datetime = rest_field(
+        name="createdTime", visibility=["read"], format="rfc3339"
+    )
     """Tag created time. Required."""
-    last_updated_on: datetime.datetime = rest_field(name="lastUpdateTime", visibility=["read"], format="rfc3339")
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read"], format="rfc3339"
+    )
     """Tag last update time. Required."""
-    signed: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    signed: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Is signed."""
     changeable_attributes: "_models.TagWriteableProperties" = rest_field(
-        name="changeableAttributes", visibility=["read", "create", "update", "delete", "query"]
+        name="changeableAttributes",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Writeable properties of the resource. Required."""
 
@@ -1215,16 +1327,22 @@ class TagList(_Model):
     :vartype link: str
     """
 
-    registry_login_server: str = rest_field(name="registry", visibility=["read", "create", "update", "delete", "query"])
+    registry_login_server: str = rest_field(
+        name="registry", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Registry login server name. This is likely to be similar to
      {registry-name}.azurecr.io. Required."""
-    repository: str = rest_field(name="imageName", visibility=["read", "create", "update", "delete", "query"])
+    repository: str = rest_field(
+        name="imageName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Image name. Required."""
     tag_attribute_bases: list["_models.TagAttributesBase"] = rest_field(
         name="tags", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of tag attribute details. Required."""
-    link: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    link: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Link to the next page of results."""
 
     @overload

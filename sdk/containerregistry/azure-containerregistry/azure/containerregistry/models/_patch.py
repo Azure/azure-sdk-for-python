@@ -7,7 +7,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+
+__all__: list[str] = (
+    []
+)  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
