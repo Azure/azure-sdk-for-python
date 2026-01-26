@@ -23,6 +23,7 @@ def get_package_wheel_path(pkg_root: str) -> str:
     # Check if wheel is already built and available for current package
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:
+        logger.info("Using prebuilt wheel directory: {}".format(prebuilt_dir))
         found_whl = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
         pkg_path = os.path.join(prebuilt_dir, found_whl) if found_whl else None
         if not pkg_path:
@@ -96,17 +97,18 @@ class apistub(Check):
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
 
-            create_package_and_install(
-                distribution_directory=staging_directory,
-                target_setup=package_dir,
-                skip_install=True,
-                cache_dir=None,
-                work_dir=staging_directory,
-                force_create=False,
-                package_type="wheel",
-                pre_download_disabled=False,
-                python_executable=executable,
-            )
+            if not os.getenv("PREBUILT_WHEEL_DIR"):
+                create_package_and_install(
+                    distribution_directory=staging_directory,
+                    target_setup=package_dir,
+                    skip_install=True,
+                    cache_dir=None,
+                    work_dir=staging_directory,
+                    force_create=False,
+                    package_type="wheel",
+                    pre_download_disabled=False,
+                    python_executable=executable,
+                )
 
             self.pip_freeze(executable)
 
@@ -120,6 +122,7 @@ class apistub(Check):
                 cross_language_mapping_path = os.path.abspath(cross_language_mapping_path)
 
             cmds = ["-m", "apistub", "--pkg-path", pkg_path]
+            # cmds = ["-m", "apistub", "--verbose", "--pkg-path", pkg_path]
 
             if out_token_path:
                 cmds.extend(["--out-path", out_token_path])
