@@ -26,13 +26,13 @@ class CosmosDBManagementClientConfiguration:  # pylint: disable=too-many-instanc
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2025-10-15". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -43,7 +43,7 @@ class CosmosDBManagementClientConfiguration:  # pylint: disable=too-many-instanc
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-10-15")
+        api_version: str = kwargs.pop("api_version", "2025-11-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

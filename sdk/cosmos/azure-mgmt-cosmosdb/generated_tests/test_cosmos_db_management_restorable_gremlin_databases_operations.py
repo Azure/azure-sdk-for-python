@@ -24,7 +24,7 @@ class TestCosmosDBManagementRestorableGremlinDatabasesOperations(AzureMgmtRecord
         response = self.client.restorable_gremlin_databases.list(
             location="str",
             instance_id="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
