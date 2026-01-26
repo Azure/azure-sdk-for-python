@@ -33,7 +33,7 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "isodate>=0.6.1",
-    "azure-core>=1.35.0",
+    "azure-core>=1.36.0",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [

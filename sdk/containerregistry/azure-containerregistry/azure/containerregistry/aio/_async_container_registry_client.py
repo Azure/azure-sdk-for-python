@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression
+# pylint: disable=too-many-lines,line-too-long,useless-suppression,protected-access
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
