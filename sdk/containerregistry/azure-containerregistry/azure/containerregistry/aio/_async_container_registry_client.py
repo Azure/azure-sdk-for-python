@@ -495,7 +495,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = cast(
-                str, self._get_digest_from_tag(repository, tag_or_digest)
+                str, await self._get_digest_from_tag(repository, tag_or_digest)
             )
 
         manifest_properties = (
@@ -1246,7 +1246,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = cast(
-                str, self._get_digest_from_tag(repository, tag_or_digest)
+                str, await self._get_digest_from_tag(repository, tag_or_digest)
             )
 
         await self._client.container_registry.delete_manifest(
