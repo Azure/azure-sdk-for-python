@@ -127,7 +127,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs
         )
 
-    async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
+    async def _get_digest_from_tag(self, repository: str, tag: str) -> Optional[str]:
         tag_props = await self.get_tag_properties(repository, tag)
         return tag_props.digest
 
@@ -442,7 +442,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 properties = await client.get_manifest_properties("my_repository", artifact.digest)
         """
         if _is_tag(tag_or_digest):
-            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
+            tag_or_digest = cast(str, self._get_digest_from_tag(repository, tag_or_digest))
 
         manifest_properties = await self._client.container_registry.get_manifest_properties(
             repository, tag_or_digest, **kwargs
@@ -781,8 +781,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         if _is_tag(tag_or_digest):
-            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
-
+            tag_or_digest = cast(str, await self._get_digest_from_tag(repository, tag_or_digest))
+    
         manifest_properties = await self._client.container_registry.update_manifest_properties(
             repository, tag_or_digest, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
@@ -1109,7 +1109,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             await client.delete_manifest("my_repository", "my_tag_or_digest")
         """
         if _is_tag(tag_or_digest):
-            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
+            tag_or_digest = cast(str, self._get_digest_from_tag(repository, tag_or_digest))
 
         await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
