@@ -1,6 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import json
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader

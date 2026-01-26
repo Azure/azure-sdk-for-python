@@ -27,7 +27,7 @@ OPTIONAL ENV VARS:
 # [START text_authoring_cancel_training_job_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 
 
