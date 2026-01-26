@@ -284,7 +284,7 @@ class NodeLogWriter(TextIOBase):
 
     def _resolve_prev_out(self) -> Optional[TextIOBase]:
         current = self._prev_out
-        visited: set[int] = set()
+        visited: Set[int] = set()
         while isinstance(current, NodeLogWriter):
             current_id = id(current)
             if current_id in visited:
