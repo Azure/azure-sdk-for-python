@@ -27,7 +27,7 @@ USAGE:
     2) AZURE_TEXT_KEY - your Text Analytics API key
 """
 
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 
 async def sample_authentication_api_key_async():
@@ -39,11 +39,11 @@ async def sample_authentication_api_key_async():
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     key = os.environ["AZURE_TEXT_KEY"]
 
-    text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
+    text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key)) # pylint:disable=unused-variable
     # [END create_ta_client_with_key_async]
 
 
-async def sample_authentication_with_azure_active_directory():
+async def sample_authentication_with_aad():
     """DefaultAzureCredential will use the values from these environment
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
@@ -56,13 +56,13 @@ async def sample_authentication_with_azure_active_directory():
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    text_client = TextAnalysisClient(endpoint, credential=credential)
+    text_client = TextAnalysisClient(endpoint, credential=credential) # pylint:disable=unused-variable
     # [END create_ta_client_with_aad_async]
 
 
 async def main():
     await sample_authentication_api_key_async()
-    await sample_authentication_with_azure_active_directory()
+    await sample_authentication_with_aad()
 
 
 if __name__ == "__main__":

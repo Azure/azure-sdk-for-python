@@ -41,7 +41,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-def sample_recognize_pii_entities_with_confidence_score():
+def sample_pii_with_confidence_score():
     # Settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -49,7 +49,7 @@ def sample_recognize_pii_entities_with_confidence_score():
     client = TextAnalysisClient(endpoint, credential=credential)
 
     # Input text
-    text = "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. " "John Doe is my name."
+    text = "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. John Doe is my name."
 
     # Confidence score threshold configuration:
     # - Default threshold is 0.3
@@ -97,7 +97,7 @@ def sample_recognize_pii_entities_with_confidence_score():
 
 
 def main():
-    sample_recognize_pii_entities_with_confidence_score()
+    sample_pii_with_confidence_score()
 
 
 if __name__ == "__main__":

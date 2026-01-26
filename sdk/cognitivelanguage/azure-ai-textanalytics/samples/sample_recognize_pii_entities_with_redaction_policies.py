@@ -42,7 +42,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-def sample_recognize_pii_entities_with_redaction_policies():
+def sample_pii_with_redaction_policies():
     # Settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -105,7 +105,7 @@ def sample_recognize_pii_entities_with_redaction_policies():
 
 
 def main():
-    sample_recognize_pii_entities_with_redaction_policies()
+    sample_pii_with_redaction_policies()
 
 
 if __name__ == "__main__":

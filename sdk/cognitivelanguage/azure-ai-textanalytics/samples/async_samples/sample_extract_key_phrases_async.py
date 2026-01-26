@@ -27,7 +27,7 @@ NOTE:
 
 # [START extract_key_phrases_async]
 import os
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient

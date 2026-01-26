@@ -5,14 +5,14 @@
 # ------------------------------------
 
 """
-FILE: sample_recognize_pii_entities_with_confidence_score_async.py
+FILE: sample_pii_with_confidence_score_async.py
 
 DESCRIPTION:
     This sample demonstrates how to run **PII entity recognition** with confidence score
     thresholds (async), including entity-specific overrides.
 
 USAGE:
-    python sample_recognize_pii_entities_with_confidence_score_async.py
+    python sample_pii_with_confidence_score_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -28,7 +28,7 @@ NOTE:
 
 # [START recognize_pii_entities_with_confidence_score_async]
 import os
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
@@ -43,14 +43,14 @@ from azure.ai.textanalytics.models import (
 )
 
 
-async def sample_recognize_pii_entities_with_confidence_score_async():
+async def sample_pii_with_confidence_score_async():
     # Settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
 
     async with TextAnalysisClient(endpoint, credential=credential) as client:
         # Input text
-        text = "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. " "John Doe is my name."
+        text = "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. John Doe is my name."
 
         # Confidence score thresholds:
         # - Default threshold is 0.3
@@ -102,7 +102,7 @@ async def sample_recognize_pii_entities_with_confidence_score_async():
 
 
 async def main():
-    await sample_recognize_pii_entities_with_confidence_score_async()
+    await sample_pii_with_confidence_score_async()
 
 
 if __name__ == "__main__":

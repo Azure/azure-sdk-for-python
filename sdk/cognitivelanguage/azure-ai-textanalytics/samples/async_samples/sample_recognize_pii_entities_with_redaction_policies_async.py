@@ -28,7 +28,7 @@ NOTE:
 
 # [START recognize_pii_entities_with_redaction_policies_async]
 import os
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
@@ -44,7 +44,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-async def sample_recognize_pii_entities_with_redaction_policies_async():
+async def sample_pii_with_redaction_policies_async():
     # Settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -112,7 +112,7 @@ async def sample_recognize_pii_entities_with_redaction_policies_async():
 
 
 async def main():
-    await sample_recognize_pii_entities_with_redaction_policies_async()
+    await sample_pii_with_redaction_policies_async()
 
 
 if __name__ == "__main__":

@@ -29,7 +29,7 @@ OPTIONAL ENV VARS:
 
 # [START text_custom_entities_async]
 import os
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
@@ -117,8 +117,8 @@ async def sample_text_custom_entities_async():
                             f"\n[Other action] name={op_result.task_name}, "
                             f"status={op_result.status}, kind={op_result.kind}"
                         )
-                    except Exception:
-                        print("\n[Other action present]")
+                    except (AttributeError, TypeError) as e:
+                        print(f"\n[Other action present] Error: {e}")
 
 
 # [END text_custom_entities_async]

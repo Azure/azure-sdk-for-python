@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_text_custom_multi_label_classification.py
+FILE: sample_multi_label_classify.py
 
 DESCRIPTION:
     This sample demonstrates how to run a **custom multi-label classification** action over text.
@@ -42,7 +42,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-def sample_text_custom_multi_label_classification():
+def sample_multi_label_classify():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -121,15 +121,15 @@ def sample_text_custom_multi_label_classification():
                         f"\n[Non-CMLC action] name={op_result.task_name}, "
                         f"status={op_result.status}, kind={op_result.kind}"
                     )
-                except Exception:
-                    print("\n[Non-CMLC action present]")
+                except (AttributeError, TypeError) as e:
+                    print(f"\n[Non-CMLC action present] Error: {e}")
 
 
 # [END text_custom_multi_label_classification]
 
 
 def main():
-    sample_text_custom_multi_label_classification()
+    sample_multi_label_classify()
 
 
 if __name__ == "__main__":
