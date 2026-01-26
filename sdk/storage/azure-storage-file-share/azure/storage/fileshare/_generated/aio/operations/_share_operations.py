@@ -71,7 +71,7 @@ class ShareOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(
+    async def create(  # pylint: disable=too-many-locals
         self,
         timeout: Optional[int] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -157,6 +157,7 @@ class ShareOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             quota=quota,
@@ -172,7 +173,6 @@ class ShareOperations:
             enable_smb_directory_lease=enable_smb_directory_lease,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -261,12 +261,12 @@ class ShareOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -404,13 +404,13 @@ class ShareOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             delete_snapshots=delete_snapshots,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -500,6 +500,7 @@ class ShareOperations:
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -509,7 +510,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -593,6 +593,7 @@ class ShareOperations:
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
@@ -600,7 +601,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -688,6 +688,7 @@ class ShareOperations:
         _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
@@ -696,7 +697,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -780,6 +780,7 @@ class ShareOperations:
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
@@ -787,7 +788,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -883,6 +883,7 @@ class ShareOperations:
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             lease_id=_lease_id,
@@ -892,7 +893,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -963,12 +963,12 @@ class ShareOperations:
 
         _request = build_create_snapshot_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1096,12 +1096,12 @@ class ShareOperations:
 
         _request = build_create_permission_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -1181,12 +1181,12 @@ class ShareOperations:
         _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
+            version=self._config.version,
             file_permission_format=file_permission_format,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1220,7 +1220,7 @@ class ShareOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def set_properties(
+    async def set_properties(  # pylint: disable=too-many-locals
         self,
         timeout: Optional[int] = None,
         quota: Optional[int] = None,
@@ -1306,6 +1306,7 @@ class ShareOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             quota=quota,
             access_tier=access_tier,
@@ -1321,7 +1322,6 @@ class ShareOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1419,13 +1419,13 @@ class ShareOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1497,12 +1497,12 @@ class ShareOperations:
 
         _request = build_get_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1590,13 +1590,13 @@ class ShareOperations:
 
         _request = build_set_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1669,12 +1669,12 @@ class ShareOperations:
 
         _request = build_get_statistics_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1756,6 +1756,7 @@ class ShareOperations:
 
         _request = build_restore_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             deleted_share_name=deleted_share_name,
@@ -1763,7 +1764,6 @@ class ShareOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

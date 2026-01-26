@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    OpenApiAgentTool,
+    OpenApiTool,
     OpenApiFunctionDefinition,
     OpenApiAnonymousAuthDetails,
 )
@@ -46,7 +46,7 @@ class TestAgentOpenApiAsync(TestBase):
                 openapi_weather = jsonref.loads(f.read())
 
             # Create OpenAPI tool
-            tool = OpenApiAgentTool(
+            tool = OpenApiTool(
                 openapi=OpenApiFunctionDefinition(
                     name="get_weather",
                     spec=openapi_weather,

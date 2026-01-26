@@ -42,7 +42,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
-    MemorySearchTool,
+    MemorySearchPreviewTool,
     PromptAgentDefinition,
     MemoryStoreDefaultOptions,
 )
@@ -85,7 +85,7 @@ with (
     # You can also use "{{$userId}}" to take the oid of the request authentication header
     scope = "user_123"
 
-    tool = MemorySearchTool(
+    tool = MemorySearchPreviewTool(
         memory_store_name=memory_store.name,
         scope=scope,
         update_delay=1,  # Wait 1 second of inactivity before updating memories
