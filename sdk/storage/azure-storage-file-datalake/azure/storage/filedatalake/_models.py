@@ -999,6 +999,7 @@ class UserDelegationKey(BlobUserDelegationKey):
         delegation_key = cls()
         delegation_key.signed_oid = generated.signed_oid
         delegation_key.signed_tid = generated.signed_tid
+        delegation_key.signed_delegated_user_tid = generated.signed_delegated_user_tid
         delegation_key.signed_start = generated.signed_start
         delegation_key.signed_expiry = generated.signed_expiry
         delegation_key.signed_service = generated.signed_service

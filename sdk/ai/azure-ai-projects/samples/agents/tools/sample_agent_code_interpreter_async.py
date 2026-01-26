@@ -29,7 +29,7 @@ import asyncio
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto
+from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterContainerAuto
 
 load_dotenv()
 
@@ -61,7 +61,7 @@ async def main() -> None:
                 definition=PromptAgentDefinition(
                     model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )
