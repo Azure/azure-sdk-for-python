@@ -37,6 +37,7 @@ _SERIALIZER.client_side_validation = False
 def build_dequeue_request(
     url: str,
     *,
+    version: str,
     number_of_messages: Optional[int] = None,
     visibilitytimeout: Optional[int] = None,
     timeout: Optional[int] = None,
@@ -46,7 +47,6 @@ def build_dequeue_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -77,12 +77,11 @@ def build_dequeue_request(
 
 
 def build_clear_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -110,6 +109,7 @@ def build_enqueue_request(
     url: str,
     *,
     content: Any,
+    version: str,
     visibilitytimeout: Optional[int] = None,
     message_time_to_live: Optional[int] = None,
     timeout: Optional[int] = None,
@@ -120,7 +120,6 @@ def build_enqueue_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -155,6 +154,7 @@ def build_enqueue_request(
 def build_peek_request(
     url: str,
     *,
+    version: str,
     number_of_messages: Optional[int] = None,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
@@ -164,7 +164,6 @@ def build_peek_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     peekonly: Literal["true"] = kwargs.pop("peekonly", _params.pop("peekonly", "true"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -259,11 +258,11 @@ class MessagesOperations:
 
         _request = build_dequeue_request(
             url=self._config.url,
+            version=self._config.version,
             number_of_messages=number_of_messages,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -329,9 +328,9 @@ class MessagesOperations:
 
         _request = build_clear_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -421,12 +420,12 @@ class MessagesOperations:
 
         _request = build_enqueue_request(
             url=self._config.url,
+            version=self._config.version,
             visibilitytimeout=visibilitytimeout,
             message_time_to_live=message_time_to_live,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -504,11 +503,11 @@ class MessagesOperations:
 
         _request = build_peek_request(
             url=self._config.url,
+            version=self._config.version,
             number_of_messages=number_of_messages,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             peekonly=peekonly,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
