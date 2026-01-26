@@ -35,7 +35,7 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def recognize_pii(self, text_analysis_endpoint, text_analysis_key):
+    def test_recognize_pii(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
         text_a = (

@@ -44,7 +44,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def custom_single_label_class_lro_async(
+    async def test_single_label_classify_async(
         self, text_analysis_endpoint, text_analysis_key
     ):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:

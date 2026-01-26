@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,10 +18,12 @@ from azure.ai.textanalytics.aio import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
-    TextPiiEntitiesRecognitionInput,
-    AnalyzeTextPiiResult,
-    PiiResultWithDetectedLanguage,
-    PiiEntity,
+    TextEntityLinkingInput,
+    EntityLinkingActionContent,
+    AnalyzeTextEntityLinkingResult,
+    EntityLinkingActionResult,
+    LinkedEntity,
+    EntityLinkingMatch,
 )
 
 TextAnalysisPreparer = functools.partial(
@@ -42,38 +43,48 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def recognize_pii_async(self, text_analysis_endpoint, text_analysis_key):
+    async def test_recognize_linked_entities_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = (
-                "Parker Doe has repaid all of their loans as of 2020-04-25. Their SSN is 859-98-0987. To contact them, "
-                "use their phone number 800-102-1100. They are originally from Brazil and have document ID number "
-                "998.214.865-68."
+                "Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends, Steve "
+                "Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped down as "
+                "CEO of Microsoft, and was succeeded by Satya Nadella. Microsoft originally moved its headquarters "
+                "to Bellevue, Washington in January 1979, but is now headquartered in Redmond"
             )
 
-            body = TextPiiEntitiesRecognitionInput(
+            body = TextEntityLinkingInput(
                 text_input=MultiLanguageTextInput(
                     multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-                )
+                ),
+                action_content=EntityLinkingActionContent(model_version="latest"),
             )
 
             # Async (non-LRO) call
             result = await client.analyze_text(body=body)
 
             assert result is not None
-            assert isinstance(result, AnalyzeTextPiiResult)
+            assert isinstance(result, AnalyzeTextEntityLinkingResult)
 
             assert result.results is not None
             assert result.results.documents is not None
 
             for doc in result.results.documents:
-                assert isinstance(doc, PiiResultWithDetectedLanguage)
+                assert isinstance(doc, EntityLinkingActionResult)
                 assert doc.id is not None
                 assert doc.entities is not None
 
-                for entity in doc.entities:
-                    assert isinstance(entity, PiiEntity)
-                    assert entity.text is not None
-                    assert entity.category is not None
-                    assert entity.offset is not None
-                    assert entity.length is not None
-                    assert entity.confidence_score is not None
+                for linked in doc.entities:
+                    assert isinstance(linked, LinkedEntity)
+                    assert linked.name is not None
+                    assert linked.language is not None
+                    assert linked.data_source is not None
+                    assert linked.url is not None
+                    assert linked.id is not None
+                    assert linked.matches is not None
+
+                    for match in linked.matches:
+                        assert isinstance(match, EntityLinkingMatch)
+                        assert match.confidence_score is not None
+                        assert match.text is not None
+                        assert match.offset is not None
+                        assert match.length is not None

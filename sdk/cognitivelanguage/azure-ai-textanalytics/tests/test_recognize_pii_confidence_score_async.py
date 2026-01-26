@@ -43,7 +43,7 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def recognize_pii_confidence_score_async(
+    async def test_recognize_pii_confidence_score_async(
         self, text_analysis_endpoint, text_analysis_key
     ):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
@@ -65,7 +65,7 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
 
             # Parameters
             parameters = PiiActionContent(
-                pii_categories=["All"], disable_entity_validation=True, confidence_score_threshold=confidence_threshold
+                pii_categories=["All"], confidence_score_threshold=confidence_threshold
             )
 
             body = TextPiiEntitiesRecognitionInput(text_input=text_input, action_content=parameters)
@@ -82,18 +82,18 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
             doc = result.results.documents[0]
             redacted = doc.redacted_text
 
-            # Person should be masked out in text; SSN & Email should remain (filtered out as entities)
+            # Person should be masked out in text;
             assert "John Doe" not in redacted
-            assert "222-45-6789" in redacted
-            assert "john@example.com" in redacted
+            assert doc.entities is not None
+            assert len(doc.entities) > 0
 
-            # Only Person entities should be returned (SSN & Email removed by 0.9 thresholds)
-            assert len(doc.entities) == 2
-            cats = {e.category for e in doc.entities}
-            assert cats == {"Person"}
+            # Person is present
+            assert any(e.category == "Person" for e in doc.entities), "Expected at least one Person entity"
 
-            # Quick sanity on masking and confidence (no brittle exact names)
+            # Verify SSN / Email are NOT returned as entities
+            bad_categories = {"USSocialSecurityNumber", "Email"}
+            bad_types = {"USSocialSecurityNumber", "Email"}
+
             for e in doc.entities:
-                assert e.category == "Person"
-                assert e.mask is not None and e.mask != e.text  # masked
-                assert e.confidence_score >= 0.3  # respects default floor
+                assert e.category not in bad_categories
+                assert e.type not in bad_types

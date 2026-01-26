@@ -44,7 +44,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def abstractive_summarization_lro_async(
+    async def test_abstract_summary_async(
         self, text_analysis_endpoint, text_analysis_key
     ):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:

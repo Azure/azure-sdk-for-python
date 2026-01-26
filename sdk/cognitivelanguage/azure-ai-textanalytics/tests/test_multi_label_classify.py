@@ -38,7 +38,7 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def custom_multi_label_classification_lro(self, text_analysis_endpoint, text_analysis_key):
+    def test_multi_label_classify(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
         project_name = "multi-class-project"

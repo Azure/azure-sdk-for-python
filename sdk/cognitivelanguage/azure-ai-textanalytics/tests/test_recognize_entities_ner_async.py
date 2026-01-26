@@ -19,12 +19,13 @@ from azure.ai.textanalytics.aio import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
-    CustomMultiLabelClassificationActionContent,
-    CustomMultiLabelClassificationOperationAction,
+    AnalyzeTextOperationAction,
+    CustomEntitiesActionContent,
+    CustomEntitiesLROTask,
     TextActions,
-    CustomMultiLabelClassificationOperationResult,
-    ClassificationActionResult,
-    ClassificationResult,
+    CustomEntityRecognitionOperationResult,  # subclass of AnalyzeTextLROResult
+    CustomEntityActionResult,
+    NamedEntity,
 )
 
 TextAnalysisPreparer = functools.partial(
@@ -44,65 +45,74 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def custom_multi_label_class_lro_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_recognize_entities_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
-            project_name = "multi-class-project"
-            deployment_name = "multiclassdeployment"
-
+            project_name = "Example-ner-project"
+            deployment_name = "TestDeployment"
             text_a = (
-                "I need a reservation for an indoor restaurant in China. Please don't stop the music. "
-                "Play music and add it to my playlist."
+                "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
+                "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was "
+                "amazing. Everyone in my family liked the trail although it was too challenging for the less "
+                "athletic among us."
             )
 
             text_input = MultiLanguageTextInput(
                 multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
             )
 
-            # Start LRO (async)
+            action_content = CustomEntitiesActionContent(
+                project_name=project_name,
+                deployment_name=deployment_name,
+            )
+
+            actions: list[AnalyzeTextOperationAction] = [
+                CustomEntitiesLROTask(
+                    name="CustomEntitiesOperationActionSample",
+                    parameters=action_content,
+                )
+            ]
+
+            # Start LRO (async) – poller returns AsyncItemPaged[TextActions]
             poller = await client.begin_analyze_text_job(
                 text_input=text_input,
-                actions=[
-                    CustomMultiLabelClassificationOperationAction(
-                        name="CMCOperationActionSample",
-                        action_content=CustomMultiLabelClassificationActionContent(
-                            project_name=project_name,
-                            deployment_name=deployment_name,
-                        ),
-                    )
-                ],
+                actions=actions,
             )
 
             assert poller is not None
+
             paged_actions = await poller.result()
             details = poller.details
             assert "operation_id" in details
             assert details.get("status") is not None
             assert paged_actions is not None
 
-            found_cmc = False
+            found_custom_entities = False
 
             async for actions_page in paged_actions:
-                # Page container holding job results
+                # page payload container
                 assert isinstance(actions_page, TextActions)
                 assert actions_page.items_property is not None  # wire: "items"
 
                 for op_result in actions_page.items_property:
-                    if isinstance(op_result, CustomMultiLabelClassificationOperationResult):
-                        found_cmc = True
+                    if isinstance(op_result, CustomEntityRecognitionOperationResult):
+                        found_custom_entities = True
                         result = op_result.results
                         assert result is not None
                         assert result.documents is not None
 
                         for doc in result.documents:
-                            assert isinstance(doc, ClassificationActionResult)
+                            assert isinstance(doc, CustomEntityActionResult)
                             assert doc.id is not None
+                            assert doc.entities is not None
 
-                            assert doc.class_property is not None
-                            for cls_item in doc.class_property:
-                                assert isinstance(cls_item, ClassificationResult)
-                                assert cls_item.category is not None
-                                assert cls_item.confidence_score is not None
+                            for entity in doc.entities:
+                                assert isinstance(entity, NamedEntity)
+                                assert entity.text is not None
+                                assert entity.category is not None
+                                assert entity.offset is not None
+                                assert entity.length is not None
+                                assert entity.confidence_score is not None
 
-            assert found_cmc, "Expected a CustomMultiLabelClassificationOperationResult in TextActions.items_property"
+            assert (
+                found_custom_entities
+            ), "Expected a CustomEntityRecognitionOperationResult in TextActions.items_property"

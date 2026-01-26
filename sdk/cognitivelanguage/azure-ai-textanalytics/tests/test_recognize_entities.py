@@ -13,12 +13,11 @@ from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
-    TextEntityLinkingInput,
-    EntityLinkingActionContent,
-    AnalyzeTextEntityLinkingResult,
-    EntityLinkingActionResult,
-    LinkedEntity,
-    EntityLinkingMatch,
+    TextEntityRecognitionInput,
+    EntitiesActionContent,
+    AnalyzeTextEntitiesResult,
+    EntityActionResult,
+    NamedEntityWithMetadata,
 )
 
 TextAnalysisPreparer = functools.partial(
@@ -37,49 +36,42 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def recognize_linked_entities(self, text_analysis_endpoint, text_analysis_key):
+    def test_recognize_entities(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
         text_a = (
-            "Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends, Steve "
-            "Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped down as "
-            "CEO of Microsoft, and was succeeded by Satya Nadella. Microsoft originally moved its headquarters "
-            "to Bellevue, Washington in January 1979, but is now headquartered in Redmond"
+            "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
+            "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was "
+            "amazing. Everyone in my family liked the trail although it was too challenging for the less "
+            "athletic among us. Not necessarily recommended for small children. A hotel close to the trail "
+            "offers services for childcare in case you want that."
         )
 
-        body = TextEntityLinkingInput(
+        body = TextEntityRecognitionInput(
             text_input=MultiLanguageTextInput(
                 multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
             ),
-            action_content=EntityLinkingActionContent(model_version="latest"),
+            action_content=EntitiesActionContent(model_version="latest"),
         )
 
         # Sync (non-LRO) call
         result = client.analyze_text(body=body)
 
         assert result is not None
-        assert isinstance(result, AnalyzeTextEntityLinkingResult)
+        assert isinstance(result, AnalyzeTextEntitiesResult)
 
         assert result.results is not None
         assert result.results.documents is not None
 
         for doc in result.results.documents:
-            assert isinstance(doc, EntityLinkingActionResult)
+            assert isinstance(doc, EntityActionResult)
             assert doc.id is not None
             assert doc.entities is not None
 
-            for linked in doc.entities:
-                assert isinstance(linked, LinkedEntity)
-                assert linked.name is not None
-                assert linked.language is not None
-                assert linked.data_source is not None
-                assert linked.url is not None
-                assert linked.id is not None
-                assert linked.matches is not None
-
-                for match in linked.matches:
-                    assert isinstance(match, EntityLinkingMatch)
-                    assert match.confidence_score is not None
-                    assert match.text is not None
-                    assert match.offset is not None
-                    assert match.length is not None
+            for entity in doc.entities:
+                assert isinstance(entity, NamedEntityWithMetadata)
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.length is not None
+                assert entity.confidence_score is not None

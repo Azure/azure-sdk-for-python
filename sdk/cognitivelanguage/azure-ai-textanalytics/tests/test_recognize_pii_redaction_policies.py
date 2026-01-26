@@ -37,7 +37,7 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def recognize_pii_redaction_policies(self, text_analysis_endpoint, text_analysis_key):
+    def test_recognize_pii_redaction_policies(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
         # Documents
