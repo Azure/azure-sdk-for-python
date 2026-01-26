@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 # pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=no-name-in-module,import-error
-from __future__ import annotations
 
 import inspect
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence

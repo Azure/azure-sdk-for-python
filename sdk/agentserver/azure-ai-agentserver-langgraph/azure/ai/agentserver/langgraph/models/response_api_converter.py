@@ -18,7 +18,6 @@ Do NOT perform network I/O directly inside these methods (other than awaiting th
 provided async iterator). Keep them pure transformation layers so they are testable.
 """
 
-from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Any, AsyncIterable, AsyncIterator, Dict, TypedDict, Union

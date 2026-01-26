@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=no-name-in-module,import-error
-from __future__ import annotations
 
 from typing import Any, AsyncGenerator, Optional, Union
 

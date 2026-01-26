@@ -1,7 +1,6 @@
 # mypy: ignore-errors
 """Bilingual weekend planner sample with full GenAI telemetry capture."""
 
-from __future__ import annotations
 
 import json
 import logging

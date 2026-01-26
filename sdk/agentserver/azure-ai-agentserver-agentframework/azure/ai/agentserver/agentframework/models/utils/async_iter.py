@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from __future__ import annotations
 
 from collections.abc import AsyncIterable, AsyncIterator, Callable
 from typing import TypeVar, Optional, Tuple
