@@ -652,7 +652,7 @@ class TestEvaluate:
         }
         aggregation = _aggregate_metrics(data_df, evaluators)
 
-        assert len(aggregation) == 4
+        assert len(aggregation) == 8  # 4 defect rates + 4 average scores
         assert aggregation["content_safety.violence_defect_rate"] == 0.5
         assert aggregation["content_safety.sexual_defect_rate"] == 0.25
         assert aggregation["content_safety.self_harm_defect_rate"] == 0.0

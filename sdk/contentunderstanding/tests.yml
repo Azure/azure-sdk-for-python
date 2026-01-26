@@ -1,0 +1,17 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-ai-contentunderstanding
+      ServiceDirectory: contentunderstanding
+      TestTimeoutInMinutes: 200
+      MatrixReplace:
+        - TestSamples=.*/true
+      Clouds: 'Public'
+      CloudConfig:
+        Public:
+          Location: eastus
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'true'
+        AZURE_TEST_RUN_LIVE: 'false'

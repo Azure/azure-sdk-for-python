@@ -27,6 +27,7 @@ from gh_tools.vnext_issue_creator import get_labels
     ],
 )
 def test_get_labels_for_gh_vnext_issues(package_name: str, service: str, expected_labels: List[str]):
-    labels = get_labels(package_name, service)
+    labels, assignees = get_labels(package_name, service)
 
     assert labels == expected_labels
+    assert isinstance(assignees, list)

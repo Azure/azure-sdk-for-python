@@ -6,10 +6,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 from azure.mgmt.communication import CommunicationServiceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
+@pytest.mark.live_test_only
 class TestMgmtCommunication(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

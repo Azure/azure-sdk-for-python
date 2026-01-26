@@ -8,6 +8,9 @@ from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluatio
 from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
 
 # Mapping of risk categories to their corresponding evaluation metrics
+# Note: For HateUnfairness, the mapping defaults to HATE_FAIRNESS, but the Sync API
+# (used for all projects) requires HATE_UNFAIRNESS instead.
+# This is handled dynamically in _evaluation_processor.py.
 RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Violence: EvaluationMetrics.VIOLENCE,
     RiskCategory.HateUnfairness: EvaluationMetrics.HATE_FAIRNESS,

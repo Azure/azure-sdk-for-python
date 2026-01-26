@@ -168,6 +168,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 feature_flag_selectors=[SettingSelector(snapshot_name="test-snapshot")],
             )
 
+    @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):

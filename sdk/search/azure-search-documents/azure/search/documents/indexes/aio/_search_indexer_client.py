@@ -92,7 +92,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_crud_async.py
                 :start-after: [START create_indexer_async]
                 :end-before: [END create_indexer_async]
                 :language: python
@@ -155,7 +155,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_crud_async.py
                 :start-after: [START get_indexer_async]
                 :end-before: [END get_indexer_async]
                 :language: python
@@ -179,9 +179,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
-                :start-after: [START list_indexer_async]
-                :end-before: [END list_indexer_async]
+            .. literalinclude:: ../samples/async_samples/sample_indexer_crud_async.py
+                :start-after: [START list_indexers_async]
+                :end-before: [END list_indexers_async]
                 :language: python
                 :dedent: 4
                 :caption: List all the SearchIndexers
@@ -225,7 +225,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_crud_async.py
                 :start-after: [START delete_indexer_async]
                 :end-before: [END delete_indexer_async]
                 :language: python
@@ -250,7 +250,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_crud_async.py
                 :start-after: [START run_indexer_async]
                 :end-before: [END run_indexer_async]
                 :language: python
@@ -269,7 +269,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_crud_async.py
                 :start-after: [START reset_indexer_async]
                 :end-before: [END reset_indexer_async]
                 :language: python
@@ -351,7 +351,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_crud_async.py
                 :start-after: [START get_indexer_status_async]
                 :end-before: [END get_indexer_status_async]
                 :language: python
@@ -374,7 +374,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_datasource_crud_async.py
                 :start-after: [START create_data_source_connection_async]
                 :end-before: [END create_data_source_connection_async]
                 :language: python
@@ -445,7 +445,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_datasource_crud_async.py
                 :start-after: [START delete_data_source_connection_async]
                 :end-before: [END delete_data_source_connection_async]
                 :language: python
@@ -481,7 +481,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_indexer_datasource_crud_async.py
                 :start-after: [START get_data_source_connection_async]
                 :end-before: [END get_data_source_connection_async]
                 :language: python
@@ -504,9 +504,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
-                :start-after: [START list_data_source_connection_async]
-                :end-before: [END list_data_source_connection_async]
+            .. literalinclude:: ../samples/async_samples/sample_indexer_datasource_crud_async.py
+                :start-after: [START list_data_source_connections_async]
+                :end-before: [END list_data_source_connections_async]
                 :language: python
                 :dedent: 4
                 :caption: List all SearchIndexerDataSourceConnections

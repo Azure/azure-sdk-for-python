@@ -336,4 +336,7 @@ _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
 # Default message for messages(MessageData) with empty body
 _DEFAULT_LOG_MESSAGE = "n/a"
 
+# Resource attribute applicationId
+_APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
+
 # cSpell:disable

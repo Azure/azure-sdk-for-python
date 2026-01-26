@@ -145,6 +145,7 @@ class OrchestratorManager:
         retry_config,
         scan_output_dir=None,
         red_team=None,
+        _use_legacy_endpoint=False,
     ):
         """Initialize the orchestrator manager.
 
@@ -156,6 +157,7 @@ class OrchestratorManager:
         :param retry_config: Retry configuration for network errors
         :param scan_output_dir: Directory for scan outputs
         :param red_team: Reference to RedTeam instance for accessing prompt mappings
+        :param _use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
         """
         self.logger = logger
         self.generated_rai_client = generated_rai_client
@@ -165,6 +167,7 @@ class OrchestratorManager:
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
         self.red_team = red_team
+        self._use_legacy_endpoint = _use_legacy_endpoint
 
     def _calculate_timeout(self, base_timeout: int, orchestrator_type: str) -> int:
         """Calculate appropriate timeout based on orchestrator type.
@@ -741,6 +744,7 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
+                    _use_legacy_endpoint=self._use_legacy_endpoint,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -771,6 +775,7 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
+                    _use_legacy_endpoint=self._use_legacy_endpoint,
                 )
 
                 try:

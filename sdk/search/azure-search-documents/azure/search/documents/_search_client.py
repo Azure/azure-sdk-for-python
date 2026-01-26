@@ -57,8 +57,8 @@ class SearchClient(HeadersMixin):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/sample_authentication.py
-            :start-after: [START create_search_client_with_key]
-            :end-before: [END create_search_client_with_key]
+            :start-after: [START authenticate_search_client_with_api_key]
+            :end-before: [END authenticate_search_client_with_api_key]
             :language: python
             :dedent: 4
             :caption: Creating the SearchClient with an API key.
@@ -130,7 +130,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_document.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START get_document]
                 :end-before: [END get_document]
                 :language: python
@@ -323,7 +323,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_simple_query.py
+            .. literalinclude:: ../samples/sample_query_simple.py
                 :start-after: [START simple_query]
                 :end-before: [END simple_query]
                 :language: python
@@ -332,7 +332,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_filter_query.py
+            .. literalinclude:: ../samples/sample_query_filter.py
                 :start-after: [START filter_query]
                 :end-before: [END filter_query]
                 :language: python
@@ -341,7 +341,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_facet_query.py
+            .. literalinclude:: ../samples/sample_query_facets.py
                 :start-after: [START facet_query]
                 :end-before: [END facet_query]
                 :language: python
@@ -466,7 +466,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_suggestions.py
+            .. literalinclude:: ../samples/sample_query_suggestions.py
                 :start-after: [START suggest_query]
                 :end-before: [END suggest_query]
                 :language: python
@@ -548,7 +548,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_autocomplete.py
+            .. literalinclude:: ../samples/sample_query_autocomplete.py
                 :start-after: [START autocomplete_query]
                 :end-before: [END autocomplete_query]
                 :language: python
@@ -593,7 +593,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START upload_document]
                 :end-before: [END upload_document]
                 :language: python
@@ -627,7 +627,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START delete_document]
                 :end-before: [END delete_document]
                 :language: python
@@ -657,7 +657,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START merge_document]
                 :end-before: [END merge_document]
                 :language: python

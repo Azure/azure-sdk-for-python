@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-from typing import List, Any, Optional
+from typing import List, Any
 from openai import OpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
@@ -19,22 +19,6 @@ from .operations import TelemetryOperations
 
 
 logger = logging.getLogger(__name__)
-
-
-def _patch_user_agent(user_agent: Optional[str]) -> str:
-    # All authenticated external clients exposed by this client will have this application id
-    # set on their user-agent. For more info on user-agent HTTP header, see:
-    # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
-    USER_AGENT_APP_ID = "AIProjectClient"
-
-    if user_agent:
-        # If the calling application has set "user_agent" when constructing the AIProjectClient,
-        # take that value and prepend it to USER_AGENT_APP_ID.
-        patched_user_agent = f"{user_agent}-{USER_AGENT_APP_ID}"
-    else:
-        patched_user_agent = USER_AGENT_APP_ID
-
-    return patched_user_agent
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -78,6 +62,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
+    :keyword user_agent: Optional string identifying the caller. This string will show up at the front of the "User-Agent" HTTP request header in all network calls this client makes. If an OpenAI client was obtained by calling get_openai_client(), this string will also show up at the front of the "User-Agent" request header in network calls that OpenAI client makes.
     """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
@@ -103,7 +88,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
         self._kwargs = kwargs.copy()
-        self._patched_user_agent = _patch_user_agent(self._kwargs.pop("user_agent", None))
+        self._custom_user_agent = self._kwargs.get("user_agent", None)
 
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
@@ -142,6 +127,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         )
 
         http_client = None
+
+        kwargs = kwargs.copy() if kwargs else {}
 
         if self._console_logging_enabled:
             try:
@@ -241,16 +228,38 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
             http_client = httpx.Client(transport=OpenAILoggingTransport())
 
-        client = OpenAI(
-            # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
-            api_key=get_bearer_token_provider(
-                self._config.credential,  # pylint: disable=protected-access
-                "https://ai.azure.com/.default",
-            ),
-            base_url=base_url,
-            http_client=http_client,
-            **kwargs,
-        )
+        default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
+
+        openai_custom_user_agent = default_headers.get("User-Agent", None)
+
+        def _create_openai_client(**kwargs) -> OpenAI:
+            return OpenAI(
+                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
+                api_key=get_bearer_token_provider(
+                    self._config.credential,  # pylint: disable=protected-access
+                    "https://ai.azure.com/.default",
+                ),
+                base_url=base_url,
+                http_client=http_client,
+                **kwargs,
+            )
+
+        dummy_client = _create_openai_client()
+
+        openai_default_user_agent = dummy_client.user_agent
+
+        if openai_custom_user_agent:
+            final_user_agent = openai_custom_user_agent
+        else:
+            final_user_agent = (
+                "-".join(ua for ua in [self._custom_user_agent, "AIProjectClient"] if ua)
+                + " "
+                + openai_default_user_agent
+            )
+
+        default_headers["User-Agent"] = final_user_agent
+
+        client = _create_openai_client(default_headers=default_headers, **kwargs)
 
         return client
 

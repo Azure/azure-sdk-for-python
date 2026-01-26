@@ -17,25 +17,25 @@
     Absolute path string where SDK code is. Optional.
 #>
 param(
-    [Parameter(Mandatory=$true, HelpMessage="Path to the package")]
+    [Parameter(Mandatory = $true, HelpMessage = "Path to the package")]
     [string]
     $PackagePath,
 
-    [Parameter(Mandatory=$false, HelpMessage="Release type (stable or beta)")]
+    [Parameter(Mandatory = $false, HelpMessage = "Release type (stable or beta)")]
     [ValidateSet("stable", "beta")]
     [string]
     $ReleaseType,
 
-    [Parameter(Mandatory=$false, HelpMessage="Version string")]
+    [Parameter(Mandatory = $false, HelpMessage = "Version string")]
     [string]
     $Version,
 
-    [Parameter(Mandatory=$false, HelpMessage="Release date in YYYY-MM-DD format")]
+    [Parameter(Mandatory = $false, HelpMessage = "Release date in YYYY-MM-DD format")]
     [ValidatePattern('^\d{4}-\d{2}-\d{2}$')]
     [string]
     $ReleaseDate,
 
-    [Parameter(Mandatory=$false, HelpMessage="Absolute path string where SDK code is")]
+    [Parameter(Mandatory = $false, HelpMessage = "Absolute path string where SDK code is")]
     [string]
     $SdkRepoPath
 )
@@ -62,8 +62,23 @@ if (-not (Test-Path $PackagePath)) {
 $absolutePackagePath = Resolve-Path -Path $PackagePath
 Write-Host "absolutePackagePath: $absolutePackagePath"
 
+# Determine the correct Python path based on OS
+if ($IsWindows -or ($PSVersionTable.PSEdition -eq 'Desktop')) {
+    $venvPythonPath = ".venv\Scripts\python.exe"
+}
+else {
+    $venvPythonPath = ".venv/bin/python"
+}
+
+if (Test-Path $venvPythonPath) {
+    $pythonPath = $venvPythonPath
+}
+else {
+    Write-Host "Virtual environment Python not found at '$venvPythonPath'. Falling back to 'python' on PATH."
+    $pythonPath = "python"
+}
 # Build the command with required parameter
-$command = "python -m packaging_tools.sdk_update_version --package-path $absolutePackagePath"
+$command = "$pythonPath -m packaging_tools.sdk_update_version --package-path $absolutePackagePath"
 
 # Add optional parameters if provided
 if ($ReleaseType) {
@@ -91,6 +106,7 @@ $outputString = $output | Out-String
 
 if ($outputString -match "\[ERROR\]") {
     exit 1
-} else {
+}
+else {
     exit 0
 }

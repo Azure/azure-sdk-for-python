@@ -13,6 +13,7 @@ from azure.ai.evaluation._common.rai_service import (
     _get_service_discovery_url,
     ensure_service_availability,
     evaluate_with_rai_service,
+    evaluate_with_rai_service_sync,
     fetch_or_reuse_token,
     fetch_result,
     get_rai_svc_url,
@@ -394,47 +395,61 @@ class TestContentSafetyEvaluator:
         )
 
     @pytest.mark.asyncio
-    @patch(
-        "azure.ai.evaluation._common.rai_service.fetch_or_reuse_token",
-        return_value="dummy-token",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.get_rai_svc_url",
-        return_value="www.rai_url.com",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.ensure_service_availability",
-        return_value=None,
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.submit_request",
-        return_value="op_id",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.fetch_result",
-        return_value="response_object",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.parse_response",
-        return_value="wow-that's-a-lot-of-patches",
-    )
     @patch("azure.identity.DefaultAzureCredential")
-    async def test_evaluate_with_rai_service(
-        self, cred_mock, fetch_token_mock, scv_mock, avail_mock, submit_mock, fetch_result_mock, parse_mock
+    @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
+    @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
+    @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
+    @patch("azure.ai.evaluation._common.rai_service.get_sync_http_client_with_retry")
+    async def test_evaluate_with_rai_service_sync(
+        self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock, cred_mock
     ):
-        result = await evaluate_with_rai_service(
-            "what is the weather outside?",
-            EvaluationMetrics.HATE_FAIRNESS,
-            {"subscription_id": "fake-id", "project_name": "fake-name", "resource_group_name": "fake-group"},
-            DefaultAzureCredential(),
+        # Mock token fetch
+        fetch_token_mock.return_value = "fake-token"
+
+        # Mock RAI service URL
+        get_url_mock.return_value = "https://fake-rai-url.com"
+
+        # Mock service availability (returns None)
+        ensure_avail_mock.return_value = None
+
+        # Mock the HTTP response
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "results": [
+                {
+                    "name": "hate_unfairness",
+                    "score": 2,
+                    "label": "Medium",
+                    "reason": "Test reason",
+                }
+            ]
+        }
+
+        # Mock the HTTP client's post method
+        mock_client = MagicMock()
+        mock_client.post.return_value = mock_response
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        http_client_mock.return_value = mock_client
+
+        result = await evaluate_with_rai_service_sync(
+            data={"query": "what is the weather outside?", "response": "test response"},
+            metric_name=EvaluationMetrics.HATE_UNFAIRNESS,
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            annotation_task="content harm",
         )
-        assert result == "wow-that's-a-lot-of-patches"
-        assert fetch_token_mock._mock_call_count == 1
-        assert scv_mock._mock_call_count == 1
-        assert avail_mock._mock_call_count == 1
-        assert submit_mock._mock_call_count == 1
-        assert fetch_result_mock._mock_call_count == 1
-        assert parse_mock._mock_call_count == 1
+
+        assert "results" in result
+        assert mock_client.post.call_count == 1
+        fetch_token_mock.assert_called_once()
+        get_url_mock.assert_called_once()
+        ensure_avail_mock.assert_called_once()
 
     # RAI service templates are so different that it's not worth trying to test them all in one test.
     # Groundedness is JSON
@@ -470,3 +485,152 @@ class TestContentSafetyEvaluator:
             }
             formatted_payload = get_formatted_template(input_kwargs, "DEFAULT")
             assert html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1]) == text
+
+
+class TestParseEvalResult:
+    """Tests for _parse_eval_result function that handles sync_evals response format."""
+
+    def test_parse_eval_result_with_dict_results(self):
+        """Test parsing when results are plain dicts."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # Mock a sync_evals response with dict results
+        eval_result = {
+            "results": [
+                {
+                    "type": "azure_ai_evaluator",
+                    "name": "violence",
+                    "metric": "violence",
+                    "score": 0,
+                    "label": "pass",
+                    "reason": "No violent content detected.",
+                    "threshold": 3,
+                    "passed": True,
+                }
+            ],
+            "status": "completed",
+        }
+
+        # Create a mock evaluator to test _parse_eval_result
+        class MockViolenceEvaluator(RaiServiceEvaluatorBase):
+            def __init__(self):
+                self._eval_metric = EvaluationMetrics.VIOLENCE
+
+        evaluator = MockViolenceEvaluator.__new__(MockViolenceEvaluator)
+        evaluator._eval_metric = EvaluationMetrics.VIOLENCE
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["violence"] == "Very low"  # Score 0 maps to "Very low"
+        assert result["violence_score"] == 0
+        assert result["violence_reason"] == "No violent content detected."
+
+    def test_parse_eval_result_with_model_like_objects(self):
+        """Test parsing when results are Model-like objects with dict-like access."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # Create a Model-like object that supports dict-like access via .get()
+        class ModelLikeObject:
+            def __init__(self, data):
+                self._data = data
+
+            def get(self, key, default=None):
+                return self._data.get(key, default)
+
+            def __getitem__(self, key):
+                return self._data[key]
+
+        # Mock a sync_evals response with Model-like result objects
+        result_item = ModelLikeObject(
+            {
+                "type": "azure_ai_evaluator",
+                "name": "violence",
+                "metric": "violence",
+                "score": 2,
+                "label": "pass",
+                "reason": "Low violence detected.",
+                "threshold": 3,
+                "passed": True,
+            }
+        )
+
+        # Create a mock eval_result with Model-like results attribute
+        class MockEvalRunOutputItem:
+            def __init__(self):
+                self.results = [result_item]
+                self.status = "completed"
+
+        eval_result = MockEvalRunOutputItem()
+
+        # Create a mock evaluator to test _parse_eval_result
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.VIOLENCE
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["violence"] == "Low"  # Score 2 maps to "Low"
+        assert result["violence_score"] == 2
+        assert result["violence_reason"] == "Low violence detected."
+
+    def test_parse_eval_result_severity_not_from_label(self):
+        """Test that severity is calculated from score, not from the 'label' field."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # In sync_evals, label is "pass"/"fail", not the severity
+        eval_result = {
+            "results": [
+                {
+                    "metric": "violence",
+                    "score": 4,  # Medium severity
+                    "label": "fail",  # This is pass/fail, NOT severity
+                    "reason": "Medium violence detected.",
+                }
+            ]
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.VIOLENCE
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        # Severity should be "Medium" (from score 4), not "fail" (from label)
+        assert result["violence"] == "Medium"
+        assert result["violence_score"] == 4
+
+    def test_parse_eval_result_with_builtin_prefix(self):
+        """Test parsing when metric has 'builtin.' prefix (actual API response format)."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # Actual sync_evals API returns metric with "builtin." prefix
+        eval_result = {
+            "results": [
+                {
+                    "name": "violence",
+                    "type": "azure_ai_evaluator",
+                    "metric": "builtin.violence",  # API returns this format
+                    "score": 0.0,
+                    "label": None,
+                    "reason": "No violent content detected.",
+                    "properties": {
+                        "outcome": "pass",
+                        "metrics": {"promptTokens": "15", "completionTokens": "55"},
+                    },
+                }
+            ]
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.VIOLENCE
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["violence"] == "Very low"
+        assert result["violence_score"] == 0.0
+        assert result["violence_reason"] == "No violent content detected."
+        # Token counts should be extracted from properties.metrics
+        assert result["violence_prompt_tokens"] == "15"
+        assert result["violence_completion_tokens"] == "55"

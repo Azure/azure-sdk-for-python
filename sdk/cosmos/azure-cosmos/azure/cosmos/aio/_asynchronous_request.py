@@ -56,6 +56,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     """
     # pylint: disable=protected-access, too-many-branches
     kwargs.pop(_Constants.OperationStartTime, None)
+    # Pop internal flags that should not be passed to the HTTP layer
+    kwargs.pop("_internal_pk_range_fetch", None)
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
