@@ -19,6 +19,7 @@ _STATSBEAT_STATE = {
     "CUSTOM_EVENTS_FEATURE_SET": False,
     "LIVE_METRICS_FEATURE_SET": False,
     "CUSTOMER_SDKSTATS_FEATURE_SET": False,
+    "BROWSER_SDK_LOADER_FEATURE_SET": False,
 }
 _STATSBEAT_STATE_LOCK = threading.Lock()
 _STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
@@ -105,3 +106,12 @@ def get_statsbeat_customer_sdkstats_feature_set():  # pylint: disable=name-too-l
 def set_statsbeat_customer_sdkstats_feature_set():  # pylint: disable=name-too-long
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = True
+
+
+def get_statsbeat_browser_sdk_loader_feature_set():  # pylint: disable=name-too-long
+    return _STATSBEAT_STATE["BROWSER_SDK_LOADER_FEATURE_SET"]
+
+
+def set_statsbeat_browser_sdk_loader_feature_set():  # pylint: disable=name-too-long
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["BROWSER_SDK_LOADER_FEATURE_SET"] = True

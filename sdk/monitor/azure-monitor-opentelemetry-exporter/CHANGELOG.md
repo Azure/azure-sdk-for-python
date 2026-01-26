@@ -8,6 +8,8 @@
 - Add support for user id and authId
 ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
 
+- Add Browser SDK loader SDK Stats feature bit
+
 ### Breaking Changes
 
 ### Bugs Fixed
