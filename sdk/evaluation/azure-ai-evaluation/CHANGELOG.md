@@ -1,5 +1,11 @@
 # Release History
 
+## 1.14.1 (Unreleased)
+
+### Bugs Fixed
+
+- Prevent recursive stdout/stderr forwarding when NodeLogManager is nested, avoiding RecursionError in concurrent evaluation runs.
+
 ## 1.14.0 (2026-01-05)
 
 ### Bugs Fixed

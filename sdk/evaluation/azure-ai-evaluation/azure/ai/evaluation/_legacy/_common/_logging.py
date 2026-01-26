@@ -171,8 +171,10 @@ class NodeLogManager:
     """
 
     def __init__(self, record_datetime: bool = True):
-        self.stdout_logger = NodeLogWriter(sys.stdout, record_datetime)
-        self.stderr_logger = NodeLogWriter(sys.stderr, record_datetime, is_stderr=True)
+        self.stdout_logger = sys.stdout if isinstance(sys.stdout, NodeLogWriter) else NodeLogWriter(sys.stdout, record_datetime)
+        self.stderr_logger = (
+            sys.stderr if isinstance(sys.stderr, NodeLogWriter) else NodeLogWriter(sys.stderr, record_datetime, is_stderr=True)
+        )
 
     def __enter__(self) -> "NodeLogManager":
         """Replace sys.stdout and sys.stderr with NodeLogWriter."""
@@ -215,6 +217,7 @@ class NodeLogWriter(TextIOBase):
         self._prev_out: Union[TextIOBase, Any] = prev_stdout
         self._record_datetime: bool = record_datetime
         self._is_stderr: bool = is_stderr
+        self._fallback_out: Optional[TextIOBase] = sys.__stderr__ if is_stderr else sys.__stdout__
 
     def set_node_info(self, run_id: str, node_name: str, line_number: int) -> None:
         """Set node info to a context variable.
@@ -252,7 +255,8 @@ class NodeLogWriter(TextIOBase):
         log_info: Optional[NodeInfo] = self._context.get()
         s = scrub_credentials(s)  # Remove credential from string.
         if log_info is None:
-            return self._prev_out.write(s)
+            out = self._resolve_prev_out()
+            return out.write(s) if out is not None else 0
         else:
             self._write_to_flow_log(log_info, s)
             stdout: Optional[StringIO] = self.run_id_to_stdout.get(log_info.run_id)
@@ -270,11 +274,24 @@ class NodeLogWriter(TextIOBase):
         """Override TextIO's flush method."""
         node_info: Optional[NodeInfo] = self._context.get()
         if node_info is None:
-            self._prev_out.flush()
+            out = self._resolve_prev_out()
+            if out is not None:
+                out.flush()
         else:
             string_io = self.run_id_to_stdout.get(node_info.run_id)
             if string_io is not None:
                 string_io.flush()
+
+    def _resolve_prev_out(self) -> Optional[TextIOBase]:
+        current = self._prev_out
+        visited: Set[int] = set()
+        while isinstance(current, NodeLogWriter):
+            current_id = id(current)
+            if current_id in visited:
+                return self._fallback_out
+            visited.add(current_id)
+            current = current._prev_out
+        return current if current is not None else self._fallback_out
 
     def _write_to_flow_log(self, log_info: NodeInfo, s: str):
         """Save stdout log to flow_logger and stderr log to logger."""
