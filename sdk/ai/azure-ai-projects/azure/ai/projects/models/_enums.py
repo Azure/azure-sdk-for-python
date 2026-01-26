@@ -31,8 +31,52 @@ class AnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FILE_CITATION = "file_citation"
     URL_CITATION = "url_citation"
-    FILE_PATH = "file_path"
     CONTAINER_FILE_CITATION = "container_file_citation"
+    FILE_PATH = "file_path"
+
+
+class ApplyPatchCallOutputStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ApplyPatchCallOutputStatus."""
+
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class ApplyPatchCallOutputStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Apply patch call output status."""
+
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class ApplyPatchCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ApplyPatchCallStatus."""
+
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+
+
+class ApplyPatchCallStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Apply patch call status."""
+
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+
+
+class ApplyPatchFileOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ApplyPatchFileOperationType."""
+
+    CREATE_FILE = "create_file"
+    DELETE_FILE = "delete_file"
+    UPDATE_FILE = "update_file"
+
+
+class ApplyPatchOperationParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ApplyPatchOperationParamType."""
+
+    CREATE_FILE = "create_file"
+    DELETE_FILE = "delete_file"
+    UPDATE_FILE = "update_file"
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -121,31 +165,38 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_semantic_hybrid``"""
 
 
-class CodeInterpreterOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of CodeInterpreterOutputType."""
+class ClickButtonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ClickButtonType."""
 
-    LOGS = "logs"
-    IMAGE = "image"
+    LEFT = "left"
+    RIGHT = "right"
+    WHEEL = "wheel"
+    BACK = "back"
+    FORWARD = "forward"
 
 
 class ComputerActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ComputerActionType."""
 
-    SCREENSHOT = "screenshot"
     CLICK = "click"
     DOUBLE_CLICK = "double_click"
+    DRAG = "drag"
+    KEYPRESS = "keypress"
+    MOVE = "move"
+    SCREENSHOT = "screenshot"
     SCROLL = "scroll"
     TYPE = "type"
     WAIT = "wait"
-    KEYPRESS = "keypress"
-    DRAG = "drag"
-    MOVE = "move"
 
 
-class ComputerToolCallOutputItemOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A computer screenshot image used with the computer use tool."""
+class ComputerEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ComputerEnvironment."""
 
-    SCREENSHOT = "computer_screenshot"
+    WINDOWS = "windows"
+    MAC = "mac"
+    LINUX = "linux"
+    UBUNTU = "ubuntu"
+    BROWSER = "browser"
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -173,6 +224,24 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Remote tool"""
 
 
+class ContainerLogKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of logs to stream from a container."""
+
+    CONSOLE = "console"
+    """Console logs from the container."""
+    SYSTEM = "system"
+    """System logs from the container."""
+
+
+class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerMemoryLimit."""
+
+    ENUM_1_G = "1g"
+    ENUM_4_G = "4g"
+    ENUM_16_G = "16g"
+    ENUM_64_G = "64g"
+
+
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The credential type used by the connection."""
 
@@ -188,6 +257,13 @@ class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No credential"""
     AGENTIC_IDENTITY = "AgenticIdentityToken"
     """Agentic identity credential"""
+
+
+class CustomToolParamFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CustomToolParamFormatType."""
+
+    TEXT = "text"
+    GRAMMAR = "grammar"
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -223,6 +299,14 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MODEL_DEPLOYMENT = "ModelDeployment"
     """Model deployment"""
+
+
+class DetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DetailEnum."""
+
+    LOW = "low"
+    HIGH = "high"
+    AUTO = "auto"
 
 
 class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -311,6 +395,59 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom evaluator"""
 
 
+class FunctionAndCustomToolCallOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionAndCustomToolCallOutputType."""
+
+    INPUT_TEXT = "input_text"
+    INPUT_IMAGE = "input_image"
+    INPUT_FILE = "input_file"
+
+
+class FunctionCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionCallItemStatus."""
+
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    INCOMPLETE = "incomplete"
+
+
+class FunctionShellCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Shell call status."""
+
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    INCOMPLETE = "incomplete"
+
+
+class FunctionShellCallOutputOutcomeParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionShellCallOutputOutcomeParamType."""
+
+    TIMEOUT = "timeout"
+    EXIT = "exit"
+
+
+class FunctionShellCallOutputOutcomeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionShellCallOutputOutcomeType."""
+
+    TIMEOUT = "timeout"
+    EXIT = "exit"
+
+
+class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of GrammarSyntax1."""
+
+    LARK = "lark"
+    REGEX = "regex"
+
+
+class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageDetail."""
+
+    LOW = "low"
+    HIGH = "high"
+    AUTO = "auto"
+
+
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of IndexType."""
 
@@ -320,6 +457,31 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CosmosDB"""
     MANAGED_AZURE_SEARCH = "ManagedAzureSearch"
     """Managed Azure Search"""
+
+
+class InputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputContentType."""
+
+    INPUT_TEXT = "input_text"
+    INPUT_IMAGE = "input_image"
+    INPUT_FILE = "input_file"
+
+
+class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Control how much effort the model will exert to match the style and features, especially facial
+    features, of input images. This parameter is only supported for ``gpt-image-1``. Unsupported
+    for ``gpt-image-1-mini``. Supports ``high`` and ``low``. Defaults to ``low``.
+    """
+
+    HIGH = "high"
+    LOW = "low"
+
+
+class InputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputItemType."""
+
+    MESSAGE = "message"
+    ITEM_REFERENCE = "item_reference"
 
 
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -333,48 +495,80 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
-class ItemContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Multi-modal input and output contents."""
+class ItemResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ItemResourceType."""
 
-    INPUT_TEXT = "input_text"
-    INPUT_AUDIO = "input_audio"
-    INPUT_IMAGE = "input_image"
-    INPUT_FILE = "input_file"
-    OUTPUT_TEXT = "output_text"
-    OUTPUT_AUDIO = "output_audio"
-    REFUSAL = "refusal"
+    MESSAGE = "message"
+    OUTPUT_MESSAGE = "output_message"
+    FILE_SEARCH_CALL = "file_search_call"
+    COMPUTER_CALL = "computer_call"
+    COMPUTER_CALL_OUTPUT = "computer_call_output"
+    WEB_SEARCH_CALL = "web_search_call"
+    FUNCTION_CALL = "function_call"
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    IMAGE_GENERATION_CALL = "image_generation_call"
+    CODE_INTERPRETER_CALL = "code_interpreter_call"
+    LOCAL_SHELL_CALL = "local_shell_call"
+    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
+    SHELL_CALL = "shell_call"
+    SHELL_CALL_OUTPUT = "shell_call_output"
+    APPLY_PATCH_CALL = "apply_patch_call"
+    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    MCP_CALL = "mcp_call"
 
 
 class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ItemType."""
 
     MESSAGE = "message"
+    OUTPUT_MESSAGE = "output_message"
     FILE_SEARCH_CALL = "file_search_call"
-    FUNCTION_CALL = "function_call"
-    FUNCTION_CALL_OUTPUT = "function_call_output"
     COMPUTER_CALL = "computer_call"
     COMPUTER_CALL_OUTPUT = "computer_call_output"
     WEB_SEARCH_CALL = "web_search_call"
+    FUNCTION_CALL = "function_call"
+    FUNCTION_CALL_OUTPUT = "function_call_output"
     REASONING = "reasoning"
-    ITEM_REFERENCE = "item_reference"
+    COMPACTION = "compaction"
     IMAGE_GENERATION_CALL = "image_generation_call"
     CODE_INTERPRETER_CALL = "code_interpreter_call"
     LOCAL_SHELL_CALL = "local_shell_call"
     LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
+    SHELL_CALL = "shell_call"
+    SHELL_CALL_OUTPUT = "shell_call_output"
+    APPLY_PATCH_CALL = "apply_patch_call"
+    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
     MCP_LIST_TOOLS = "mcp_list_tools"
     MCP_APPROVAL_REQUEST = "mcp_approval_request"
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
     MCP_CALL = "mcp_call"
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    CUSTOM_TOOL_CALL = "custom_tool_call"
     STRUCTURED_OUTPUTS = "structured_outputs"
     WORKFLOW_ACTION = "workflow_action"
     MEMORY_SEARCH_CALL = "memory_search_call"
     OAUTH_CONSENT_REQUEST = "oauth_consent_request"
 
 
-class LocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of LocationType."""
+class LocalShellCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LocalShellCallStatus."""
 
-    APPROXIMATE = "approximate"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    INCOMPLETE = "incomplete"
+
+
+class MCPToolCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MCPToolCallStatus."""
+
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    INCOMPLETE = "incomplete"
+    CALLING = "calling"
+    FAILED = "failed"
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -442,6 +636,51 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
+class OutputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OutputContentType."""
+
+    OUTPUT_TEXT = "output_text"
+    REFUSAL = "refusal"
+    REASONING_TEXT = "reasoning_text"
+
+
+class OutputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OutputItemType."""
+
+    OUTPUT_MESSAGE = "output_message"
+    FILE_SEARCH_CALL = "file_search_call"
+    FUNCTION_CALL = "function_call"
+    WEB_SEARCH_CALL = "web_search_call"
+    COMPUTER_CALL = "computer_call"
+    REASONING = "reasoning"
+    COMPACTION = "compaction"
+    IMAGE_GENERATION_CALL = "image_generation_call"
+    CODE_INTERPRETER_CALL = "code_interpreter_call"
+    LOCAL_SHELL_CALL = "local_shell_call"
+    SHELL_CALL = "shell_call"
+    SHELL_CALL_OUTPUT = "shell_call_output"
+    APPLY_PATCH_CALL = "apply_patch_call"
+    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
+    MCP_CALL = "mcp_call"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+
+
+class OutputMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OutputMessageContentType."""
+
+    OUTPUT_TEXT = "output_text"
+    REFUSAL = "refusal"
+
+
+class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of PageOrder."""
+
+    ASC = "asc"
+    DESC = "desc"
+
+
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of pending upload."""
 
@@ -451,34 +690,11 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Blob Reference is the only supported type."""
 
 
-class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Constrains effort on reasoning for reasoning models.
+class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RankerVersionType."""
 
-    Currently supported values are none, minimal, low, medium, and high.
-
-    Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-    a response.
-
-    gpt-5.1 defaults to none, which does not perform reasoning. The supported reasoning values for
-    gpt-5.1 are none, low, medium, and high. Tool calls are supported for all reasoning values in
-    gpt-5.1.
-
-    All models before gpt-5.1 default to medium reasoning effort, and do not support none.
-
-    The gpt-5-pro model defaults to (and only supports) high reasoning effort.
-    """
-
-    NONE = "none"
-    MINIMAL = "minimal"
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-
-
-class ReasoningItemSummaryPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ReasoningItemSummaryPartType."""
-
-    SUMMARY_TEXT = "summary_text"
+    AUTO = "auto"
+    DEFAULT2024_11_15 = "default-2024-11-15"
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -515,94 +731,6 @@ class ResponseErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EMPTY_IMAGE_FILE = "empty_image_file"
     FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image"
     IMAGE_FILE_NOT_FOUND = "image_file_not_found"
-
-
-class ResponsesMessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The collection of valid roles for responses message items."""
-
-    SYSTEM = "system"
-    DEVELOPER = "developer"
-    USER = "user"
-    ASSISTANT = "assistant"
-
-
-class ResponseStreamEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ResponseStreamEventType."""
-
-    RESPONSE_AUDIO_DELTA = "response.audio.delta"
-    RESPONSE_AUDIO_DONE = "response.audio.done"
-    RESPONSE_AUDIO_TRANSCRIPT_DELTA = "response.audio_transcript.delta"
-    RESPONSE_AUDIO_TRANSCRIPT_DONE = "response.audio_transcript.done"
-    RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA = "response.code_interpreter_call_code.delta"
-    RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE = "response.code_interpreter_call_code.done"
-    RESPONSE_CODE_INTERPRETER_CALL_COMPLETED = "response.code_interpreter_call.completed"
-    RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS = "response.code_interpreter_call.in_progress"
-    RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING = "response.code_interpreter_call.interpreting"
-    RESPONSE_COMPLETED = "response.completed"
-    RESPONSE_CONTENT_PART_ADDED = "response.content_part.added"
-    RESPONSE_CONTENT_PART_DONE = "response.content_part.done"
-    RESPONSE_CREATED = "response.created"
-    ERROR = "error"
-    RESPONSE_FILE_SEARCH_CALL_COMPLETED = "response.file_search_call.completed"
-    RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS = "response.file_search_call.in_progress"
-    RESPONSE_FILE_SEARCH_CALL_SEARCHING = "response.file_search_call.searching"
-    RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
-    RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
-    RESPONSE_IN_PROGRESS = "response.in_progress"
-    RESPONSE_FAILED = "response.failed"
-    RESPONSE_INCOMPLETE = "response.incomplete"
-    RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
-    RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
-    RESPONSE_REFUSAL_DELTA = "response.refusal.delta"
-    RESPONSE_REFUSAL_DONE = "response.refusal.done"
-    RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED = "response.output_text.annotation.added"
-    RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
-    RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
-    RESPONSE_REASONING_SUMMARY_PART_ADDED = "response.reasoning_summary_part.added"
-    RESPONSE_REASONING_SUMMARY_PART_DONE = "response.reasoning_summary_part.done"
-    RESPONSE_REASONING_SUMMARY_TEXT_DELTA = "response.reasoning_summary_text.delta"
-    RESPONSE_REASONING_SUMMARY_TEXT_DONE = "response.reasoning_summary_text.done"
-    RESPONSE_WEB_SEARCH_CALL_COMPLETED = "response.web_search_call.completed"
-    RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS = "response.web_search_call.in_progress"
-    RESPONSE_WEB_SEARCH_CALL_SEARCHING = "response.web_search_call.searching"
-    RESPONSE_IMAGE_GENERATION_CALL_COMPLETED = "response.image_generation_call.completed"
-    RESPONSE_IMAGE_GENERATION_CALL_GENERATING = "response.image_generation_call.generating"
-    RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS = "response.image_generation_call.in_progress"
-    RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE = "response.image_generation_call.partial_image"
-    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call.arguments_delta"
-    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call.arguments_done"
-    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
-    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
-    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
-    RESPONSE_MCP_LIST_TOOLS_COMPLETED = "response.mcp_list_tools.completed"
-    RESPONSE_MCP_LIST_TOOLS_FAILED = "response.mcp_list_tools.failed"
-    RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS = "response.mcp_list_tools.in_progress"
-    RESPONSE_QUEUED = "response.queued"
-    RESPONSE_REASONING_DELTA = "response.reasoning.delta"
-    RESPONSE_REASONING_DONE = "response.reasoning.done"
-    RESPONSE_REASONING_SUMMARY_DELTA = "response.reasoning_summary.delta"
-    RESPONSE_REASONING_SUMMARY_DONE = "response.reasoning_summary.done"
-
-
-class ResponseTextFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An object specifying the format that the model must output.
-
-    Configuring ``{ "type": "json_schema" }`` enables Structured Outputs,
-    which ensures the model will match your supplied JSON schema. Learn more in the
-    `Structured Outputs guide <https://platform.openai.com/docs/guides/structured-outputs>`_.
-
-    The default format is ``{ "type": "text" }`` with no additional options.
-
-    **Not recommended for gpt-4o and newer models:**
-
-    Setting to ``{ "type": "json_object" }`` enables the older JSON mode, which
-    ensures the message the model generates is valid JSON. Using ``json_schema``
-    is preferred for models that support it.
-    """
-
-    TEXT = "text"
-    JSON_SCHEMA = "json_schema"
-    JSON_OBJECT = "json_object"
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -661,73 +789,54 @@ class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Insight task."""
 
 
-class ServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the processing type used for serving the request.
+class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of SearchContextSize."""
 
-    * If set to 'auto', then the request will be processed with the service tier
-      configured in the Project settings. Unless otherwise configured, the Project will use
-      'default'.
-    * If set to 'default', then the request will be processed with the standard
-      pricing and performance for the selected model.
-    * If set to '[flex](https://platform.openai.com/docs/guides/flex-processing)'
-      or 'priority', then the request will be processed with the corresponding service
-      tier. [Contact sales](https://openai.com/contact-sales) to learn more about Priority
-      processing.
-    * When not set, the default behavior is 'auto'.
-
-    When the ``service_tier`` parameter is set, the response body will include the ``service_tier``
-    value based on the processing mode actually used to serve the request. This response value
-    may be different from the value set in the parameter.
-    """
-
-    AUTO = "auto"
-    DEFAULT = "default"
-    FLEX = "flex"
-    SCALE = "scale"
-    PRIORITY = "priority"
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
 
 
-class ToolChoiceObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates that the model should use a built-in tool to generate a response.
-    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
-    """
+class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextResponseFormatConfigurationType."""
 
-    FILE_SEARCH = "file_search"
+    TEXT = "text"
+    JSON_SCHEMA = "json_schema"
+    JSON_OBJECT = "json_object"
+
+
+class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolChoiceParamType."""
+
+    ALLOWED_TOOLS = "allowed_tools"
     FUNCTION = "function"
-    COMPUTER = "computer_use_preview"
-    WEB_SEARCH = "web_search_preview"
+    MCP = "mcp"
+    CUSTOM = "custom"
+    APPLY_PATCH = "apply_patch"
+    SHELL = "shell"
+    FILE_SEARCH = "file_search"
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
     IMAGE_GENERATION = "image_generation"
     CODE_INTERPRETER = "code_interpreter"
-    MCP = "mcp"
-
-
-class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Controls which (if any) tool is called by the model.
-
-    ``none`` means the model will not call any tool and instead generates a message.
-
-    ``auto`` means the model can pick between generating a message or calling one or
-    more tools.
-
-    ``required`` means the model must call one or more tools.
-    """
-
-    NONE = "none"
-    AUTO = "auto"
-    REQUIRED = "required"
 
 
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A tool that can be used to generate a response."""
+    """Type of ToolType."""
 
-    FILE_SEARCH = "file_search"
     FUNCTION = "function"
+    FILE_SEARCH = "file_search"
     COMPUTER_USE_PREVIEW = "computer_use_preview"
-    WEB_SEARCH_PREVIEW = "web_search_preview"
+    WEB_SEARCH = "web_search"
     MCP = "mcp"
     CODE_INTERPRETER = "code_interpreter"
     IMAGE_GENERATION = "image_generation"
     LOCAL_SHELL = "local_shell"
+    SHELL = "shell"
+    CUSTOM = "custom"
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    APPLY_PATCH = "apply_patch"
     BING_GROUNDING = "bing_grounding"
     BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
     FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
@@ -765,11 +874,3 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
-
-
-class WebSearchActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of WebSearchActionType."""
-
-    SEARCH = "search"
-    OPEN_PAGE = "open_page"
-    FIND = "find"

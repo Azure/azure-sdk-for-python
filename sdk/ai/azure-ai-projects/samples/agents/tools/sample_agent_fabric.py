@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Microsoft Fabric capabilities
-    using the MicrosoftFabricAgentTool and synchronous Azure AI Projects client. The agent can query
+    using the MicrosoftFabricPreviewTool and synchronous Azure AI Projects client. The agent can query
     Fabric data sources and provide responses based on data analysis.
 
 USAGE:
@@ -31,9 +31,9 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    PromptAgentDefinition,
-    MicrosoftFabricAgentTool,
     FabricDataAgentToolParameters,
+    MicrosoftFabricPreviewTool,
+    PromptAgentDefinition,
     ToolProjectConnection,
 )
 
@@ -47,7 +47,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # [START tool_declaration]
-    tool = MicrosoftFabricAgentTool(
+    tool = MicrosoftFabricPreviewTool(
         fabric_dataagent_preview=FabricDataAgentToolParameters(
             project_connections=[
                 ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])

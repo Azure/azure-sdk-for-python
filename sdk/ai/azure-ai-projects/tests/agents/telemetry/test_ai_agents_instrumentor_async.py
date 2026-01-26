@@ -10,18 +10,12 @@ from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
-from azure.ai.projects.models import (
-    Reasoning,
-    FunctionTool,
-    ResponseTextFormatConfigurationText,
-)
 
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from test_base import servicePreparer
 from test_ai_instrumentor_base import (
     TestAiAgentsInstrumentorBase,
-    MessageCreationMode,
     CONTENT_TRACING_ENV_VARIABLE,
 )
 
@@ -394,7 +388,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
 
@@ -415,7 +409,7 @@ trigger:
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
                     )
@@ -484,7 +478,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="agents", **kwargs)
 
@@ -504,7 +498,7 @@ trigger:
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
                     )
@@ -561,7 +555,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
 
@@ -580,7 +574,7 @@ trigger:
                 model=model,
                 # No instructions provided
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
                     )
@@ -644,7 +638,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         project_client = self.create_async_client(operation_group="agents", **kwargs)
 
@@ -663,7 +657,7 @@ trigger:
                 model=model,
                 # No instructions provided
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
                     )

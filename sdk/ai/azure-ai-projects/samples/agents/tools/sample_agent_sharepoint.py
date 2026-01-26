@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with SharePoint capabilities
-    using the SharepointAgentTool and synchronous Azure AI Projects client. The agent can search
+    using the SharepointPreviewTool and synchronous Azure AI Projects client. The agent can search
     SharePoint content and provide responses with relevant information from SharePoint sites.
 
 USAGE:
@@ -33,8 +33,8 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    SharepointAgentTool,
     SharepointGroundingToolParameters,
+    SharepointPreviewTool,
     ToolProjectConnection,
 )
 
@@ -48,7 +48,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # [START tool_declaration]
-    tool = SharepointAgentTool(
+    tool = SharepointPreviewTool(
         sharepoint_grounding_preview=SharepointGroundingToolParameters(
             project_connections=[
                 ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
