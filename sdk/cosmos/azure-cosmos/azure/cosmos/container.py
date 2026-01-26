@@ -459,7 +459,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning,
             )
             feed_options["populateQueryMetrics"] = populate_query_metrics
-        if max_integrated_cache_staleness_in_ms:
+        if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if bypass_integrated_cache is not None:

@@ -344,6 +344,13 @@ class ContainerProxy:
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword bool bypass_integrated_cache: If set to True, the read will be served by the backend and won't be
+            cached in the dedicated gateway. If set to False or not provided, the integrated cache will be used if
+            configured. This option only applies to accounts configured with dedicated gateway.
+        :keyword str dedicated_gateway_shard_key: The shard key to use for the dedicated gateway request. Specifying
+            the shard key will help route the request to an instance that has cached data for this shard or bypass
+            the SQLx cache if the correlated instance is down. If not specified, the request will fall back to
+            randomly selecting an instance. This option only applies to accounts configured with dedicated gateway.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -451,7 +458,7 @@ class ContainerProxy:
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if max_integrated_cache_staleness_in_ms:
+        if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if bypass_integrated_cache is not None:
