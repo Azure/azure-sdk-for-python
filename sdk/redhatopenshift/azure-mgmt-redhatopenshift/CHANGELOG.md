@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0 (2026-02-16)
+## 3.0.0 (2026-02-09)
 
 ### Features Added
 
@@ -20,8 +20,8 @@
   - Added model `PlatformWorkloadIdentityRoleSet`
   - Added model `PlatformWorkloadIdentityRoleSetList`
   - Added model `UserAssignedIdentity`
-  - Added model `PlatformWorkloadIdentityRoleSetOperations`
-  - Added model `PlatformWorkloadIdentityRoleSetsOperations`
+  - Added operation group `PlatformWorkloadIdentityRoleSetOperations`
+  - Added operation group `PlatformWorkloadIdentityRoleSetsOperations`
 
 ### Breaking Changes
 
@@ -42,10 +42,10 @@
   - Deleted or renamed model `SyncSet`
   - Deleted or renamed model `SyncSetList`
   - Deleted or renamed model `SyncSetUpdate`
-  - Deleted or renamed model `MachinePoolsOperations`
-  - Deleted or renamed model `SecretsOperations`
-  - Deleted or renamed model `SyncIdentityProvidersOperations`
-  - Deleted or renamed model `SyncSetsOperations`
+  - Deleted or renamed operation group `MachinePoolsOperations`
+  - Deleted or renamed operation group `SecretsOperations`
+  - Deleted or renamed operation group `SyncIdentityProvidersOperations`
+  - Deleted or renamed operation group `SyncSetsOperations`
 
 ## 2.0.0 (2024-10-30)
 
