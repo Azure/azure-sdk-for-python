@@ -114,11 +114,9 @@ class TestHeaders(unittest.TestCase):
             cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
 
     def test_negative_max_integrated_cache_staleness(self):
-        try:
+        with pytest.raises(ValueError):
             self.container.read_item(item="id-1", partition_key="pk-1",
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_negative)
-        except Exception as exception:
-            assert isinstance(exception, ValueError)
 
     def test_client_id(self):
         # Client ID should be sent on every request, Verify it is sent on a read_item request
@@ -400,16 +398,12 @@ class TestHeaders(unittest.TestCase):
 
     def test_invalid_shard_key(self):
         # Test with empty string
-        try:
+        with pytest.raises(ValueError):
             self.container.read_item(item="id-1", partition_key="pk-1", dedicated_gateway_shard_key="")
-        except Exception as exception:
-            assert isinstance(exception, ValueError)
 
         # Test with invalid characters
-        try:
+        with pytest.raises(ValueError):
             self.container.read_item(item="id-1", partition_key="pk-1", dedicated_gateway_shard_key="test@shard")
-        except Exception as exception:
-            assert isinstance(exception, ValueError)
 
     def side_effect_query_with_bypass_and_shard_key(self, *args, **kwargs):
         # Extract request headers from args - for query it's args[3]

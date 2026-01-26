@@ -421,7 +421,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
 
     if "bypassIntegratedCache" in options:
-        headers[http_constants.HttpHeaders.DedicatedGatewayBypassCache] = str(options["bypassIntegratedCache"]).lower()
+        headers[http_constants.HttpHeaders.DedicatedGatewayBypassCache] = 'true' if options["bypassIntegratedCache"] else 'false'
 
     if options.get("dedicatedGatewayShardKey"):
         headers[http_constants.HttpHeaders.DedicatedGatewayShardKey] = options["dedicatedGatewayShardKey"]
