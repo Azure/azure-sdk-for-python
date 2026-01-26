@@ -171,10 +171,14 @@ class NodeLogManager:
     """
 
     def __init__(self, record_datetime: bool = True):
-        self.stdout_logger = sys.stdout if isinstance(sys.stdout, NodeLogWriter) else NodeLogWriter(sys.stdout, record_datetime)
-        self.stderr_logger = (
-            sys.stderr if isinstance(sys.stderr, NodeLogWriter) else NodeLogWriter(sys.stderr, record_datetime, is_stderr=True)
-        )
+        if isinstance(sys.stdout, NodeLogWriter):
+            self.stdout_logger = sys.stdout
+        else:
+            self.stdout_logger = NodeLogWriter(sys.stdout, record_datetime)
+        if isinstance(sys.stderr, NodeLogWriter):
+            self.stderr_logger = sys.stderr
+        else:
+            self.stderr_logger = NodeLogWriter(sys.stderr, record_datetime, is_stderr=True)
 
     def __enter__(self) -> "NodeLogManager":
         """Replace sys.stdout and sys.stderr with NodeLogWriter."""
@@ -290,7 +294,7 @@ class NodeLogWriter(TextIOBase):
             if current_id in visited:
                 return self._fallback_out
             visited.add(current_id)
-            current = current._prev_out
+            current = current._prev_out  # pylint: disable=protected-access
         return current if current is not None else self._fallback_out
 
     def _write_to_flow_log(self, log_info: NodeInfo, s: str):
