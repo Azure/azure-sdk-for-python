@@ -51,6 +51,7 @@ def is_customer_sdkstats_enabled() -> bool:
     disabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_DISABLED)
     return disabled is None or disabled.lower() != "true"
 
+
 def categorize_status_code(status_code: int) -> str:
     """Categorize HTTP status codes into human-readable messages.
 
