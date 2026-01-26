@@ -1,0 +1,4 @@
+directory: specification/ai/Foundry
+commit: 51415f0131fc0e65f88e8a75b4b729a528e8e959
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
