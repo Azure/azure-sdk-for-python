@@ -36,7 +36,7 @@ from azure.ai.textanalytics.authoring.models import (
 )
 
 
-async def sample_get_model_evaluation_summary_async():
+async def sample_get_model_eval_summary_async():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -98,7 +98,7 @@ async def sample_get_model_evaluation_summary_async():
 
 
 async def main():
-    await sample_get_model_evaluation_summary_async()
+    await sample_get_model_eval_summary_async()
 
 
 if __name__ == "__main__":
