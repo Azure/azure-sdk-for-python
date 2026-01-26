@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Optional
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
@@ -22,7 +22,7 @@ class CodeTransparencyClientConfiguration:  # pylint: disable=too-many-instance-
 
     :param endpoint: Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
+    :param credential: Credential used to authenticate requests to the service.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-01-31-preview". Note that overriding this default value may result in unsupported
@@ -30,7 +30,7 @@ class CodeTransparencyClientConfiguration:  # pylint: disable=too-many-instance-
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Optional[AzureKeyCredential], **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2025-01-31-preview")
 
         if endpoint is None:

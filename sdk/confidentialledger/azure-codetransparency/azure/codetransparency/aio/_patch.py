@@ -8,6 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import os
+import re
+import tempfile
+import random
 from typing import Any, Union
 
 from azure.core.credentials import AzureKeyCredential
@@ -53,9 +56,26 @@ class CodeTransparencyClient(GeneratedClient):
         endpoint: str,
         credential: AzureKeyCredential,
         *,
-        ledger_certificate_path: Union[bytes, str, os.PathLike],
+        ledger_certificate_path: Union[bytes, str, os.PathLike, None] = None,
         **kwargs: Any,
     ) -> None:
+        
+        if ledger_certificate_path is None:
+            # Create a temporary file path for the ledger certificate based on the endpoint.
+            # Use the ledger id from the endpoint to create a deterministic filename
+            # so the certificate can be reused across client instances.
+            ledger_id = endpoint.replace("https://", "").split(".")[0]
+            # Normalize the ledger_id to ensure it's a valid filename on any OS
+            # by replacing any non-alphanumeric characters (except hyphen) with underscore
+            normalized_ledger_id = re.sub(r"[^a-zA-Z0-9\-]", "_", ledger_id)
+            suffix_random = "".join(
+                random.Random().choices("abcdefghijklmnopqrstuvwxyz0123456789", k=8)
+            )
+            ledger_certificate_path = os.path.join(
+                tempfile.gettempdir(),
+                f"{normalized_ledger_id}_ledger_cert_{suffix_random}.pem",
+            )
+
         if not os.path.isfile(ledger_certificate_path):
             # We'll need to fetch the TLS certificate.
             identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
