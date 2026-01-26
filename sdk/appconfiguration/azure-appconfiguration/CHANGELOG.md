@@ -7,7 +7,7 @@
 - Fixed AudiencePolicy to correctly handle AAD audience errors and return ClientAuthenticationError as expected.
 - Added `match_conditions` parameter to `by_page()` method in `list_configuration_settings()` to efficiently monitor configuration changes using etags without fetching unchanged data.
 - Added query parameter normalization to support Azure Front Door as a CDN. Query parameter keys are now converted to lowercase and sorted alphabetically.
-- Added support for custom authentication audiences via the `audience` keyword argument in `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
+- Added support for providing Entra ID authentication audiences via the `audience` keyword argument in the `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
 
 ### Other Changes
 
