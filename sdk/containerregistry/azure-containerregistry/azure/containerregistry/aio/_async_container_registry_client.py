@@ -782,7 +782,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         if _is_tag(tag_or_digest):
             tag_or_digest = cast(str, await self._get_digest_from_tag(repository, tag_or_digest))
-    
+
         manifest_properties = await self._client.container_registry.update_manifest_properties(
             repository, tag_or_digest, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
