@@ -4,6 +4,7 @@
 
 ### Features Added
 - Rename metric names for customer sdk stats and set it on by default
+  ([#44849](https://github.com/Azure/azure-sdk-for-python/pull/44849))
 - Add auto detection for application ID from connection string if not set 
   ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
 - Add support for user id and authId
