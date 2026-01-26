@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, Optional
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
@@ -25,7 +25,7 @@ class CodeTransparencyClient(_CodeTransparencyClientOperationsMixin):
 
     :param endpoint: Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
+    :param credential: Credential used to authenticate requests to the service.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-01-31-preview". Note that overriding this default value may result in unsupported
@@ -33,7 +33,7 @@ class CodeTransparencyClient(_CodeTransparencyClientOperationsMixin):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Optional[AzureKeyCredential], **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = CodeTransparencyClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
