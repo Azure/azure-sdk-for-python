@@ -39,7 +39,7 @@ from ._scripts import ScriptsProxy
 from .. import _utils as utils
 from .._availability_strategy_config import _validate_hedging_config
 from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
-                     build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
+                     build_options as _build_options, GenerateGuidId, validate_cache_staleness_value, validate_shard_key_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList
@@ -321,6 +321,8 @@ class ContainerProxy:
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        bypass_integrated_cache: Optional[bool] = None,
+        dedicated_gateway_shard_key: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy_config: Optional[dict[str, Any]] = _Unset,
@@ -386,6 +388,11 @@ class ContainerProxy:
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if bypass_integrated_cache is not None:
+            request_options["bypassIntegratedCache"] = bypass_integrated_cache
+        if dedicated_gateway_shard_key is not None:
+            validate_shard_key_value(dedicated_gateway_shard_key)
+            request_options["dedicatedGatewayShardKey"] = dedicated_gateway_shard_key
         await self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
@@ -399,6 +406,8 @@ class ContainerProxy:
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        bypass_integrated_cache: Optional[bool] = None,
+        dedicated_gateway_shard_key: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy_config: Optional[dict[str, Any]] = _Unset,
@@ -445,6 +454,11 @@ class ContainerProxy:
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if bypass_integrated_cache is not None:
+            feed_options["bypassIntegratedCache"] = bypass_integrated_cache
+        if dedicated_gateway_shard_key is not None:
+            validate_shard_key_value(dedicated_gateway_shard_key)
+            feed_options["dedicatedGatewayShardKey"] = dedicated_gateway_shard_key
         response_hook = kwargs.pop("response_hook", None)
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -537,6 +551,8 @@ class ContainerProxy:
             enable_scan_in_query: Optional[bool] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            bypass_integrated_cache: Optional[bool] = None,
+            dedicated_gateway_shard_key: Optional[str] = None,
             max_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             partition_key: PartitionKeyType,
@@ -868,6 +884,13 @@ class ContainerProxy:
             max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if utils.valid_key_value_exist(kwargs, "bypass_integrated_cache"):
+            bypass_integrated_cache = kwargs.pop("bypass_integrated_cache")
+            feed_options["bypassIntegratedCache"] = bypass_integrated_cache
+        if utils.valid_key_value_exist(kwargs, "dedicated_gateway_shard_key"):
+            dedicated_gateway_shard_key = kwargs.pop("dedicated_gateway_shard_key")
+            validate_shard_key_value(dedicated_gateway_shard_key)
+            feed_options["dedicatedGatewayShardKey"] = dedicated_gateway_shard_key
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
 

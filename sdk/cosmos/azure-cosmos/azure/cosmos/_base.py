@@ -420,6 +420,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("maxIntegratedCacheStaleness"):
         headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
 
+    if options.get("bypassIntegratedCache"):
+        headers[http_constants.HttpHeaders.DedicatedGatewayBypassCache] = str(options["bypassIntegratedCache"]).lower()
+
+    if options.get("dedicatedGatewayShardKey"):
+        headers[http_constants.HttpHeaders.DedicatedGatewayShardKey] = options["dedicatedGatewayShardKey"]
+
     if options.get("autoUpgradePolicy"):
         headers[http_constants.HttpHeaders.AutoscaleSettings] = options["autoUpgradePolicy"]
 
@@ -902,6 +908,15 @@ def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
     if max_integrated_cache_staleness < 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
                          "integer greater than or equal to zero")
+
+
+def validate_shard_key_value(shard_key: str) -> None:
+    """Validate that shard key contains only alphanumeric characters and hyphens."""
+    if not shard_key:
+        raise ValueError("Parameter 'dedicated_gateway_shard_key' cannot be empty")
+    if not all(c.isalnum() or c == '-' for c in shard_key):
+        raise ValueError("Parameter 'dedicated_gateway_shard_key' can only contain "
+                         "alphanumeric characters and hyphens")
 
 
 def _validate_resource(resource: Mapping[str, Any]) -> None:
