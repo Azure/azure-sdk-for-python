@@ -28,8 +28,8 @@ class PrintMetricExporter(MetricExporter):
         return None
 
     def force_flush(
-        self, timeout_millis: float = 30000, **kwargs
-    ) -> bool:  # pylint: disable=unused-argument # type: ignore[override]
+        self, timeout_millis: float = 30000, **kwargs # pylint: disable=unused-argument
+    ) -> bool: # type: ignore[override]
         return True
 
 
