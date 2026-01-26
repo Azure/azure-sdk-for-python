@@ -320,5 +320,118 @@ class TestHeaders(unittest.TestCase):
             priority=request_priority,
             raw_response_hook=request_priority_raw_response_hook)
 
+    def side_effect_bypass_cache_true(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[2]["x-ms-dedicatedgateway-bypass-cache"] == "true"
+        raise StopIteration
+
+    def side_effect_bypass_cache_false(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[2]["x-ms-dedicatedgateway-bypass-cache"] == "false"
+        raise StopIteration
+
+    def side_effect_bypass_cache_absent(self, *args, **kwargs):
+        # Extract request headers from args - should not have bypass header
+        assert "x-ms-dedicatedgateway-bypass-cache" not in args[2]
+        raise StopIteration
+
+    def test_bypass_integrated_cache(self):
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+
+        # Test with bypass_integrated_cache=True
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_bypass_cache_true)
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1", bypass_integrated_cache=True)
+        except StopIteration:
+            pass
+
+        # Test with bypass_integrated_cache=False
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_bypass_cache_false)
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1", bypass_integrated_cache=False)
+        except StopIteration:
+            pass
+
+        # Test without bypass_integrated_cache (should not include header)
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_bypass_cache_absent)
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1")
+        except StopIteration:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
+    def side_effect_shard_key(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[2]["x-ms-dedicatedgateway-shard-key"] == "test-shard-123"
+        raise StopIteration
+
+    def side_effect_shard_key_absent(self, *args, **kwargs):
+        # Extract request headers from args - should not have shard key header
+        assert "x-ms-dedicatedgateway-shard-key" not in args[2]
+        raise StopIteration
+
+    def test_dedicated_gateway_shard_key(self):
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+
+        # Test with dedicated_gateway_shard_key
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_shard_key)
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1", 
+                                   dedicated_gateway_shard_key="test-shard-123")
+        except StopIteration:
+            pass
+
+        # Test without dedicated_gateway_shard_key (should not include header)
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_shard_key_absent)
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1")
+        except StopIteration:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
+    def test_invalid_shard_key(self):
+        # Test with empty string
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1", dedicated_gateway_shard_key="")
+        except Exception as exception:
+            assert isinstance(exception, ValueError)
+
+        # Test with invalid characters
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1", dedicated_gateway_shard_key="test@shard")
+        except Exception as exception:
+            assert isinstance(exception, ValueError)
+
+    def side_effect_query_with_bypass_and_shard_key(self, *args, **kwargs):
+        # Extract request headers from args - for query it's args[3]
+        assert args[3]["x-ms-dedicatedgateway-bypass-cache"] == "true"
+        assert args[3]["x-ms-dedicatedgateway-shard-key"] == "query-shard-456"
+        raise StopIteration
+
+    def test_query_with_bypass_and_shard_key(self):
+        query = 'SELECT * from c'
+        cosmos_client_connection = self.container.client_connection
+        original_connection_post = cosmos_client_connection._CosmosClientConnection__Post
+        cosmos_client_connection._CosmosClientConnection__Post = MagicMock(
+            side_effect=self.side_effect_query_with_bypass_and_shard_key)
+        try:
+            list(self.container.query_items(query=query, partition_key="pk-1", 
+                                           bypass_integrated_cache=True,
+                                           dedicated_gateway_shard_key="query-shard-456"))
+        except StopIteration:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Post = original_connection_post
+
+
 if __name__ == "__main__":
     unittest.main()
