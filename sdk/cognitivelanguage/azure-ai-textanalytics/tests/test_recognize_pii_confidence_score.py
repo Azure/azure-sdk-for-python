@@ -23,7 +23,7 @@ from azure.ai.textanalytics.models import (
 TextAnalysisPreparer = functools.partial(
     EnvironmentVariableLoader,
     "text_analysis",
-    text_analysis_endpoint="https://Sanitized.azure-api.net/",
+    text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
     text_analysis_key="fake_key",
 )
 
