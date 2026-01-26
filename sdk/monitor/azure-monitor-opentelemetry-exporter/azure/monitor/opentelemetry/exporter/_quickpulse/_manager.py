@@ -202,9 +202,9 @@ class _QuickpulseManager(metaclass=Singleton):
             return True
 
         except Exception as e:  # pylint: disable=broad-except
-            _logger.warning(
+            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                 "Failed to initialize QuickpulseManager: %s", e
-            )  # pylint: disable=do-not-log-exceptions-if-not-debug
+            )
             # Ensure cleanup happens and state is consistent
             self._cleanup()
             return False

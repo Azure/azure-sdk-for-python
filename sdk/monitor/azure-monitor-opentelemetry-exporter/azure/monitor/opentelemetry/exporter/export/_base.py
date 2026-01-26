@@ -200,9 +200,9 @@ class BaseExporter:
 
                 collect_statsbeat_metrics(self)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning(
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Failed to initialize statsbeat metrics: %s", e
-                )  # pylint: disable=do-not-log-exceptions-if-not-debug
+                )
 
         # customer sdkstats initialization
         if self._should_collect_customer_sdkstats():

@@ -41,7 +41,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
     _AZURE_AI_SDK_NAME,
-    _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
@@ -135,7 +134,12 @@ class TestAzureTraceExporter(unittest.TestCase):
             transmit.return_value = ExportResult.FAILED_RETRYABLE
             storage_mock = mock.Mock()
             exporter.storage.put = storage_mock
-            exporter._connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=4321abcd-5678-4efa-8abc-1234567890ab"
+            exporter._connection_string = (
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                "IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;"
+                "LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;"
+                "ApplicationId=4321abcd-5678-4efa-8abc-1234567890ab"
+            )
             result = exporter.export([test_span])
         self.assertEqual(result, SpanExportResult.FAILURE)
         self.assertEqual(storage_mock.call_count, 1)

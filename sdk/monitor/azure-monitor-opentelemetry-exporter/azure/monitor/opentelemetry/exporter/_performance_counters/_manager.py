@@ -79,9 +79,9 @@ def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
         cpu_percent = _PROCESS.cpu_percent(interval=None)
         yield Observation(cpu_percent, {})
     except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception(
+        _logger.exception(  # pylint: disable=do-not-use-logging-exception
             "Error getting process CPU usage: %s", e
-        )  # pylint: disable=logging-not-lazy, do-not-use-logging-exception
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0.0, {})
 
 
@@ -112,9 +112,9 @@ def _get_process_cpu_normalized(options: CallbackOptions) -> Iterable[Observatio
 
         yield Observation(normalized_cpu_percent, {})
     except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception(
+        _logger.exception(  # pylint: disable=do-not-use-logging-exception
             "Error getting normalized process CPU usage: %s", e
-        )  # pylint: disable=logging-not-lazy, do-not-use-logging-exception
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0.0, {})
 
 
@@ -135,9 +135,9 @@ def _get_available_memory(options: CallbackOptions) -> Iterable[Observation]:
         available_memory = psutil.virtual_memory().available
         yield Observation(available_memory, {})
     except Exception as e:  # pylint: disable=broad-except
-        _logger.exception(
+        _logger.exception(  # pylint: disable=do-not-use-logging-exception
             "Error getting available memory: %s", e
-        )  # pylint: disable=logging-not-lazy, do-not-use-logging-exception
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0, {})
 
 
@@ -158,9 +158,9 @@ def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
         private_bytes = _PROCESS.memory_info().rss
         yield Observation(private_bytes, {})
     except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception(
+        _logger.exception(  # pylint: disable=do-not-use-logging-exception
             "Error getting process memory: %s", e
-        )  # pylint: disable=logging-not-lazy, do-not-use-logging-exception
+        )  # pylint: disable=logging-not-lazy
         yield Observation(0, {})
 
 
@@ -611,14 +611,14 @@ class _PerformanceCountersManager(metaclass=Singleton):
                     if metric_class == RequestExecutionTime:
                         self._request_duration_histogram = performance_counter.gauge
                 except Exception as e:  # pylint: disable=broad-except
-                    _logger.warning(
+                    _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                         "Failed to initialize performance counter %s: %s", metric_class.NAME[0], e
-                    )  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    )
 
         except Exception as e:  # pylint: disable=broad-except
-            _logger.warning(
+            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                 "Failed to setup performance counters: %s", e
-            )  # pylint: disable=do-not-log-exceptions-if-not-debug
+            )
 
     def _record_span(self, span: ReadableSpan) -> None:
         try:

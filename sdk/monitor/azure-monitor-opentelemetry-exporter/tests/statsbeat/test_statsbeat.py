@@ -306,10 +306,10 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_no_callback_when_init_fails(  # pylint: disable=name-too-long
         self,
-        mock_exporter,
-        mock_reader,
-        mock_meter_provider,
-        mock_statsbeat_metrics,
+        mock_exporter,  # pylint: disable=unused-argument
+        mock_reader,  # pylint: disable=unused-argument
+        mock_meter_provider,  # pylint: disable=unused-argument
+        mock_statsbeat_metrics,  # pylint: disable=unused-argument
         mock_config_manager_cls,  # pylint: disable=unused-argument
     ):
         """Test that configuration callback is not registered when initialization fails."""

@@ -428,7 +428,7 @@ class TestStatsbeatManager(unittest.TestCase):
         self,
         mock_is_enabled,
         mock_exporter_class,
-        mock_reader_class,
+        mock_reader_class,  # pylint: disable=unused-argument
         mock_meter_provider_class,  # pylint: disable=unused-argument
     ):
         """Test initialization failure due to exception."""

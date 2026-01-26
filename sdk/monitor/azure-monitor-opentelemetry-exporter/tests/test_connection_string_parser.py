@@ -358,16 +358,16 @@ class TestConnectionStringParser(unittest.TestCase):
                 )
                 self.assertEqual(parser.region, expected_region)
 
-    def test_application_id_extraction_from_connection_string(self):
+    def test_application_id_extraction_from_connection_string(self):  # pylint: disable=name-too-long
         parser = ConnectionStringParser(
             connection_string="InstrumentationKey="
             + self._valid_instrumentation_key
             + ";IngestionEndpoint=https://northeurope-999.in.applicationinsights.azure.com/"
-            + ";LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=3cd3dd3f-64cc-4d7c-9303-8d69a4bb8558"
+            + ";LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=3cd3dd3f-64cc-4d7c-9303-8d69a4bb8558"  # pylint: disable=line-too-long
         )
         self.assertEqual(parser.application_id, "3cd3dd3f-64cc-4d7c-9303-8d69a4bb8558")
 
-    def test_application_id_extraction_from_no_application_id(self):
+    def test_application_id_extraction_from_no_application_id(self):  # pylint: disable=name-too-long
         parser = ConnectionStringParser(
             connection_string="InstrumentationKey="
             + self._valid_instrumentation_key

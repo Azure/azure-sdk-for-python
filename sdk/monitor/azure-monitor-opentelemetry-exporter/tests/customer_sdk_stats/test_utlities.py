@@ -6,11 +6,11 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-from requests.exceptions import (
+from requests.exceptions import (  # pylint: disable=networking-import-outside-azure-core-transport
     ConnectionError,
     ReadTimeout,
     Timeout,
-)  # pylint: disable=networking-import-outside-azure-core-transport
+)
 from azure.core.exceptions import ServiceRequestTimeoutError, HttpResponseError
 
 from azure.monitor.opentelemetry.exporter._generated.models import (

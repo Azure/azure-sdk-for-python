@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._customer_sdkstats 
 )
 
 
+# pylint: disable=protected-access
 class TestCustomerSdkStats(unittest.TestCase):
     """Test suite for customer SDK stats core functionality."""
 

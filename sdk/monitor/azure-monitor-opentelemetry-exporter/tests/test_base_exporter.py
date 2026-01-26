@@ -1248,8 +1248,8 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "ClientId=TEST_CLIENT_ID"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_no_auth(self, mock_managed_identity):  # pylint: disable=name-too-long
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (
-            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"  # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (  # pylint: disable=name-too-long
+            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         )
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
@@ -1261,8 +1261,8 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_no_aad(self, mock_managed_identity):  # pylint: disable=name-too-long
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (
-            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"  # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (  # pylint: disable=name-too-long
+            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         )
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
@@ -1274,8 +1274,8 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_error(self, mock_managed_identity):  # pylint: disable=name-too-long
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (
-            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"  # pylint: disable=name-too-long
+        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = (  # pylint: disable=name-too-long
+            "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         )
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         mock_managed_identity.side_effect = ValueError("TEST ERROR")
