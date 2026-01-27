@@ -4,12 +4,13 @@
 # ------------------------------------
 import base64
 import functools
-import pickle
+import json
 from typing import Any, Callable, Optional, overload
 from urllib.parse import urlparse
 
 from typing_extensions import Literal
 
+from azure.core.pipeline import PipelineResponse
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
@@ -19,10 +20,53 @@ from ._internal import KeyVaultClientBase, parse_folder_url
 from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClientPollingMethod
 
 
-def _parse_status_url(url):
+def _parse_status_url(url: str) -> str:
     parsed = urlparse(url)
     job_id = parsed.path.split("/")[2]
     return job_id
+
+
+def _get_continuation_token(pipeline_response: PipelineResponse) -> str:
+    """Returns an opaque token which can be used by the user to rehydrate/restart the LRO.
+
+    Saves the initial state of the LRO so that polling can be resumed from that context. Because the service has
+    different operations for backup/restore starting vs. status checking, we need to use the status URL we get from the
+    initial response to then make a status request and use _that_ response to rehydrate the LRO.
+    """
+    # Headers needed for LRO rehydration - use an allowlist approach for security
+    lro_headers = {"azure-asyncoperation", "operation-location", "location", "content-type", "retry-after"}
+    response = pipeline_response.http_response
+    filtered_headers = {k: v for k, v in response.headers.items() if k.lower() in lro_headers}
+
+    request = response.request
+    # Serialize the essential parts of the PipelineResponse to JSON.
+    if request:
+        request_headers = {}
+        # Preserve x-ms-client-request-id for request correlation
+        if "x-ms-client-request-id" in request.headers:
+            request_headers["x-ms-client-request-id"] = request.headers["x-ms-client-request-id"]
+        request_state = {
+            "method": request.method,
+            "url": request.url,
+            "headers": request_headers,
+        }
+    else:
+        request_state = None
+
+    # Use a versioned token schema: {"version": <int>, "data": <your state>}
+    # This allows for future compatibility checking when deserializing
+    token = {
+        "version": 1,
+        "data": {
+            "request": request_state,
+            "response": {
+                "status_code": response.status_code,
+                "headers": filtered_headers,
+                "content": base64.b64encode(response.content).decode("ascii"),
+            },
+        },
+    }
+    return base64.b64encode(json.dumps(token).encode("utf-8")).decode("ascii")
 
 
 class KeyVaultBackupClient(KeyVaultClientBase):
@@ -56,7 +100,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         )
         if "azure-asyncoperation" not in pipeline_response.http_response.headers:
             pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
-        return base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
+        return _get_continuation_token(pipeline_response)
 
     @overload
     def begin_backup(
