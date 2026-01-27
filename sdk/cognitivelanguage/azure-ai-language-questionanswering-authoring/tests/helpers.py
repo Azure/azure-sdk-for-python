@@ -29,6 +29,7 @@ class AuthoringTestHelper:
             return AuthoringTestHelper.export_project(
                 client, project_name, delete_project=delete_old_project, **source_kwargs
             )
+        return None
 
     @staticmethod
     def add_sources(client, project_name, **kwargs):
@@ -57,8 +58,6 @@ class AuthoringTestHelper:
         if delete_project:
             delete_poller = client.begin_delete_project(project_name=project_name, **kwargs)
             delete_poller.result()
-        # No export URL available due to None payload; caller should not depend on return value.
-        return None
 
 
 class AuthoringAsyncTestHelper:

@@ -1,21 +1,21 @@
 import pytest
-from typing import Any, Dict, cast
+from helpers import AuthoringAsyncTestHelper
+from testcase import QuestionAnsweringAuthoringTestCase
+
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
-from helpers import AuthoringAsyncTestHelper
-from testcase import QuestionAnsweringAuthoringTestCase
 
 
 class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
     @pytest.mark.asyncio
-    async def test_create_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_create_project(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
         async with client:
-            await client.create_project(
+            await client.create_project( # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 options={
                     "description": "Biography of Sir Isaac Newton",
@@ -31,7 +31,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
             assert found
 
     @pytest.mark.asyncio
-    async def test_deploy_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_deploy_project(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -41,12 +41,12 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
                 client,
                 project_name=project_name,
                 is_deployable=True,
-                polling_interval=0 if self.is_playback else None,
+                polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
             )
             deployment_poller = await client.begin_deploy_project(
                 project_name=project_name,
                 deployment_name="production",
-                polling_interval=0 if self.is_playback else None,
+                polling_interval=0 if self.is_playback else None,  # pylint: disable=using-constant-test
             )
             # Preview LRO returns None; just await completion
             await deployment_poller.result()

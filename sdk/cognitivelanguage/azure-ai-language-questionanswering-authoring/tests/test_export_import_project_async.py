@@ -1,17 +1,17 @@
-import pytest
 import asyncio
-from typing import Any, Dict, cast
-from azure.ai.language.questionanswering.authoring import models as _models
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
+import pytest
 
 from helpers import AuthoringAsyncTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
+from azure.ai.language.questionanswering.authoring import models as _models
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
+
 
 class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
     @pytest.mark.asyncio
-    async def test_export_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_export_project(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -28,7 +28,7 @@ class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
             assert poller.done()
 
     @pytest.mark.asyncio
-    async def test_import_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_import_project(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )

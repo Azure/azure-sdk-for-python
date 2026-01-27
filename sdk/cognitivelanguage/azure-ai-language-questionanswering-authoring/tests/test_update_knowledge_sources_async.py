@@ -1,23 +1,24 @@
-import pytest
 from typing import cast
+import pytest
+from helpers import AuthoringAsyncTestHelper
+from testcase import QuestionAnsweringAuthoringTestCase
+
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 from azure.ai.language.questionanswering.authoring import models as _models
 
-from helpers import AuthoringAsyncTestHelper
-from testcase import QuestionAnsweringAuthoringTestCase
 
 
 class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
     @pytest.mark.asyncio
-    async def test_add_source(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_add_source(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
         async with client:
             await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None
+                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
             )
             update_source_ops = [
                 _models.UpdateSourceRecord(
@@ -34,11 +35,11 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
                     }
                 )
             ]
-            poller = await client.begin_update_sources(
+            poller = await client.begin_update_sources( # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 sources=cast(list[_models.UpdateSourceRecord], update_source_ops),
                 content_type="application/json",
-                polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type]
+                polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
             )
             await poller.result()
             found = False
@@ -48,14 +49,14 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
             assert found
 
     @pytest.mark.asyncio
-    async def test_add_qna(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_add_qna(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
         async with client:
             await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None
+                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
             )
             question = "What is the easiest way to use azure services in my .NET project?"
             answer = "Using Microsoft's Azure SDKs"
@@ -71,11 +72,11 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
                     }
                 )
             ]
-            poller = await client.begin_update_qnas(
+            poller = await client.begin_update_qnas( # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
                 content_type="application/json",
-                polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type]
+                polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
             )
             await poller.result()
             found = False
@@ -85,21 +86,21 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
             assert found
 
     @pytest.mark.asyncio
-    async def test_add_synonym(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_add_synonym(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
         async with client:
             await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None
+                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
             )
             synonyms_model = _models.SynonymAssets(
                 value=[
                     _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
                 ]
             )
-            await client.update_synonyms(
+            await client.update_synonyms( # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 synonyms=synonyms_model,
                 content_type="application/json",

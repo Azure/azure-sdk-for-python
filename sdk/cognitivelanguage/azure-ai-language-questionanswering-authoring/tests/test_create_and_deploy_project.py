@@ -1,11 +1,10 @@
 # pylint: disable=line-too-long,useless-suppression
-import pytest
-from typing import Any, Dict, cast
+from helpers import AuthoringTestHelper
+from testcase import QuestionAnsweringAuthoringTestCase
+
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 
-from helpers import AuthoringTestHelper
-from testcase import QuestionAnsweringAuthoringTestCase
 
 
 class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
@@ -20,12 +19,12 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         )
         assert client._config.polling_interval == 1
 
-    def test_create_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_create_project(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
-        client.create_project(
+        client.create_project( # pylint: disable=no-value-for-parameter
             project_name=project_name,
             options={
                 "description": "Biography of Sir Isaac Newton",
@@ -37,7 +36,7 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         found = any(p.get("projectName") == project_name for p in client.list_projects())
         assert found
 
-    def test_deploy_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_deploy_project(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -46,12 +45,12 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
             client,
             project_name=project_name,
             is_deployable=True,
-            polling_interval=0 if self.is_playback else None,
+            polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
         )
         deployment_poller = client.begin_deploy_project(
             project_name=project_name,
             deployment_name="production",
-            polling_interval=0 if self.is_playback else None,
+            polling_interval=0 if self.is_playback else None,  # pylint: disable=using-constant-test
         )
         # Preview LRO returns None; just ensure it completes without error
         deployment_poller.result()

@@ -1,14 +1,15 @@
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
-from azure.ai.language.questionanswering.authoring import models as _models
 from typing import cast
 
 from helpers import AuthoringTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import models as _models
+
 
 class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
-    def test_add_source(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_add_source(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -30,16 +31,16 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
                 }
             )
         ]
-        poller = client.begin_update_sources(
+        poller = client.begin_update_sources( # pylint: disable=no-value-for-parameter
             project_name=project_name,
             sources=cast(list[_models.UpdateSourceRecord], update_source_ops),
             content_type="application/json",
-            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type]
+            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
         )
         poller.result()
         assert any(s.get("displayName") == source_display_name for s in client.list_sources(project_name=project_name))
 
-    def test_add_qna(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_add_qna(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -59,11 +60,11 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
                 }
             )
         ]
-        poller = client.begin_update_qnas(
+        poller = client.begin_update_qnas( # pylint: disable=no-value-for-parameter
             project_name=project_name,
             qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
             content_type="application/json",
-            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type]
+            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
         )
         poller.result()
         assert any(
@@ -71,7 +72,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
             for q in client.list_qnas(project_name=project_name)
         )
 
-    def test_add_synonym(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_add_synonym(self, qna_authoring_creds):  # type: ignore[name-defined]
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -82,7 +83,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
                 _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
             ]
         )
-        client.update_synonyms(
+        client.update_synonyms( # pylint: disable=no-value-for-parameter
             project_name=project_name,
             synonyms=synonyms_model,
             content_type="application/json",
