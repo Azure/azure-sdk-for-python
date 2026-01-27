@@ -76,30 +76,26 @@ class TestQueryText(QuestionAnsweringTestCase):
         )
         # client default applies
         output = client.get_answers_from_text(
-            {
-                "question": "How long it takes to charge surface?",
-                "language": "es",
-                "records": [
-                    {
-                        "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.",
-                        "id": "doc1",
-                    }
-                ],
-            },
+            question="How long it takes to charge surface?",
+            language="es",
+            text_documents=[
+                TextDocument(
+                    id="doc1",
+                    text="Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.",
+                )
+            ],
             raw_response_hook=lambda r: _assert_request_language(r, "es"),
         )
         # override
         output = client.get_answers_from_text(
-            {
-                "question": "How long it takes to charge surface?",
-                "language": "en",
-                "records": [
-                    {
-                        "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.",
-                        "id": "doc1",
-                    }
-                ],
-            },
+            question="How long it takes to charge surface?",
+            language="en",
+            text_documents=[
+                TextDocument(
+                    id="doc1",
+                    text="Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.",
+                )
+            ],
             raw_response_hook=lambda r: _assert_request_language(r, "en"),
         )
         assert output is not None
