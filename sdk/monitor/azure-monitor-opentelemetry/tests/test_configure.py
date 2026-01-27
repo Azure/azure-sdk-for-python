@@ -109,7 +109,7 @@ class TestConfigure(unittest.TestCase):
                 "django": {"enabled": False},
                 "requests": {"enabled": False},
             },
-            "enable_live_metrics": False,
+            "enable_live_metrics": True,
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
@@ -160,7 +160,7 @@ class TestConfigure(unittest.TestCase):
             "disable_tracing": False,
             "disable_logging": True,
             "disable_metrics": False,
-            "enable_live_metrics": False,
+            "enable_live_metrics": True,
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
@@ -211,7 +211,7 @@ class TestConfigure(unittest.TestCase):
             "disable_tracing": False,
             "disable_logging": False,
             "disable_metrics": True,
-            "enable_live_metrics": False,
+            "enable_live_metrics": True,
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
