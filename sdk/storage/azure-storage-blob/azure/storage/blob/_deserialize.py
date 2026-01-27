@@ -156,11 +156,13 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
         blob.name = generated.name.content  #type: ignore
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type)
-    blob.etag = generated.properties.etag
+    blob.etag = generated.properties.e_tag
     blob.deleted = generated.deleted
     blob.snapshot = generated.snapshot
     blob.is_append_blob_sealed = generated.properties.is_sealed
-    blob.metadata = generated.metadata.additional_properties if generated.metadata else {}  # type: ignore [assignment]
+    blob.metadata = (  # type: ignore [assignment]
+        {k: v for k, v in generated.metadata.items() if k != 'Encrypted'} if generated.metadata else {}
+    )
     blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
     blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
     blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
@@ -182,7 +184,8 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.is_current_version = generated.is_current_version
     blob.tag_count = generated.properties.tag_count
     blob.tags = parse_tags(generated.blob_tags)
-    blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
+    blob.object_replication_source_properties = deserialize_ors_policies(
+        dict(generated.object_replication_metadata) if generated.object_replication_metadata else None)
     blob.last_accessed_on = generated.properties.last_accessed_on
     blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
     blob.has_legal_hold = generated.properties.legal_hold
