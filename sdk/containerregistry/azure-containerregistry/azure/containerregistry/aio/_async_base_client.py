@@ -11,7 +11,7 @@ from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from ._async_anonymous_exchange_client import AsyncAnonymousAccessCredential
-from ._client import ContainerRegistry
+from ._client import ContainerRegistryClient as ContainerRegistry
 from .._user_agent import USER_AGENT
 
 ClientType = TypeVar("ClientType", bound="ContainerRegistryBaseClient")
@@ -36,12 +36,8 @@ class ContainerRegistryBaseClient(object):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs: Any
-    ) -> None:
-        self._auth_policy = ContainerRegistryChallengePolicy(
-            credential, endpoint, **kwargs
-        )
+    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs: Any) -> None:
+        self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             endpoint=endpoint,
             credential=credential or AsyncAnonymousAccessCredential(),

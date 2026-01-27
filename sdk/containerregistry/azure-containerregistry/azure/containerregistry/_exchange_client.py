@@ -10,7 +10,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from ._client import ContainerRegistry
+from ._client import ContainerRegistryClient as ContainerRegistry
 from .models import PostContentSchemaGrantType
 from .operations import AuthenticationOperations
 from ._helpers import _parse_challenge, _parse_exp_time
@@ -40,15 +40,11 @@ class ACRExchangeClient(object):
     :paramtype credential_scopes: list[str]
     """
 
-    def __init__(
-        self, endpoint: str, credential: TokenCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self.credential_scopes = kwargs.get(
-            "credential_scopes", ["https://management.core.windows.net/.default"]
-        )
+        self.credential_scopes = kwargs.get("credential_scopes", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
             endpoint=endpoint,
             credential=credential,
@@ -66,19 +62,14 @@ class ACRExchangeClient(object):
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = self.get_refresh_token(parsed_challenge["service"], **kwargs)
         return self.exchange_refresh_token_for_access_token(
-            refresh_token,
-            service=parsed_challenge["service"],
-            scope=parsed_challenge["scope"],
-            **kwargs
+            refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
     def get_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, service: str, **kwargs: Any
     ) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
-            self._refresh_token = self.exchange_aad_token_for_refresh_token(
-                service, **kwargs
-            )
+            self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
@@ -92,11 +83,7 @@ class ACRExchangeClient(object):
             access_token=self._credential.get_token(*self.credential_scopes).token,
             **kwargs
         )
-        return (
-            refresh_token.refresh_token
-            if refresh_token.refresh_token is not None
-            else ""
-        )
+        return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
     def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, refresh_token: str, service: str, scope: str, **kwargs: Any
