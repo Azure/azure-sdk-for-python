@@ -1089,7 +1089,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
 
-        result = await self.convert_to_list(self.client.list_snapshots())
+        result = await self.convert_to_list(self.client.list_snapshots(status=["ready"]))
         initial_snapshots = len(result)
 
         variables = kwargs.pop("variables", {})
@@ -1111,7 +1111,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         created_snapshot2 = await response2.result()
         assert created_snapshot2.status == "ready"
 
-        result = await self.convert_to_list(self.client.list_snapshots())
+        result = await self.convert_to_list(self.client.list_snapshots(status=["ready"]))
         assert len(result) == initial_snapshots + 2
 
         await self.tear_down()
