@@ -395,7 +395,7 @@ class ParsedSetup:
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Attempts to update a pyproject.toml's [tools.azure-sdk-tools] section with a new check configuration.
+    Attempts to update a pyproject.toml's [tool.azure-sdk-tools] section with a new check configuration.
 
     This function can only append or override existing check values. It cannot delete them.
     """
