@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ServiceClientConfiguration:    # pylint: disable=too-many-instance-attributes
+class ServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for ServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -32,13 +32,8 @@ class ServiceClientConfiguration:    # pylint: disable=too-many-instance-attribu
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        version: str = kwargs.pop('version', "2026-04-06")
+    def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        version: str = kwargs.pop("version", "2026-04-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -48,28 +43,28 @@ class ServiceClientConfiguration:    # pylint: disable=too-many-instance-attribu
         self.url = url
         self.credential = credential
         self.version = version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-class ContainerClientConfiguration:    # pylint: disable=too-many-instance-attributes
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )
+
+
+class ContainerClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for ContainerClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -85,13 +80,8 @@ class ContainerClientConfiguration:    # pylint: disable=too-many-instance-attri
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        version: str = kwargs.pop('version', "2026-04-06")
+    def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        version: str = kwargs.pop("version", "2026-04-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -101,28 +91,28 @@ class ContainerClientConfiguration:    # pylint: disable=too-many-instance-attri
         self.url = url
         self.credential = credential
         self.version = version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-class BlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )
+
+
+class BlobClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for BlobClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -138,13 +128,8 @@ class BlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        version: str = kwargs.pop('version', "2026-04-06")
+    def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        version: str = kwargs.pop("version", "2026-04-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -154,28 +139,28 @@ class BlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
         self.url = url
         self.credential = credential
         self.version = version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-class PageBlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )
+
+
+class PageBlobClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for PageBlobClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -191,13 +176,8 @@ class PageBlobClientConfiguration:    # pylint: disable=too-many-instance-attrib
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        version: str = kwargs.pop('version', "2026-04-06")
+    def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        version: str = kwargs.pop("version", "2026-04-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -207,28 +187,28 @@ class PageBlobClientConfiguration:    # pylint: disable=too-many-instance-attrib
         self.url = url
         self.credential = credential
         self.version = version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-class AppendBlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )
+
+
+class AppendBlobClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for AppendBlobClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -244,13 +224,8 @@ class AppendBlobClientConfiguration:    # pylint: disable=too-many-instance-attr
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        version: str = kwargs.pop('version', "2026-04-06")
+    def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        version: str = kwargs.pop("version", "2026-04-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -260,28 +235,28 @@ class AppendBlobClientConfiguration:    # pylint: disable=too-many-instance-attr
         self.url = url
         self.credential = credential
         self.version = version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-class BlockBlobClientConfiguration:    # pylint: disable=too-many-instance-attributes
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )
+
+
+class BlockBlobClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for BlockBlobClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -297,13 +272,8 @@ class BlockBlobClientConfiguration:    # pylint: disable=too-many-instance-attri
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        version: str = kwargs.pop('version', "2026-04-06")
+    def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        version: str = kwargs.pop("version", "2026-04-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -313,24 +283,22 @@ class BlockBlobClientConfiguration:    # pylint: disable=too-many-instance-attri
         self.url = url
         self.credential = credential
         self.version = version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://storage.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'storage-blob/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

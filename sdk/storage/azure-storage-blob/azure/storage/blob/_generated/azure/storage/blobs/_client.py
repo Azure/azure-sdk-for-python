@@ -14,12 +14,27 @@ from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import AppendBlobClientConfiguration, BlobClientConfiguration, BlockBlobClientConfiguration, ContainerClientConfiguration, PageBlobClientConfiguration, ServiceClientConfiguration
-from ._operations import _AppendBlobClientOperationsMixin, _BlobClientOperationsMixin, _BlockBlobClientOperationsMixin, _ContainerClientOperationsMixin, _PageBlobClientOperationsMixin, _ServiceClientOperationsMixin
+from ._configuration import (
+    AppendBlobClientConfiguration,
+    BlobClientConfiguration,
+    BlockBlobClientConfiguration,
+    ContainerClientConfiguration,
+    PageBlobClientConfiguration,
+    ServiceClientConfiguration,
+)
+from ._operations import (
+    _AppendBlobClientOperationsMixin,
+    _BlobClientOperationsMixin,
+    _BlockBlobClientOperationsMixin,
+    _ContainerClientOperationsMixin,
+    _PageBlobClientOperationsMixin,
+    _ServiceClientOperationsMixin,
+)
 from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
 
 class ServiceClient(_ServiceClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """ServiceClient.
@@ -34,31 +49,34 @@ class ServiceClient(_ServiceClientOperationsMixin):  # pylint: disable=client-ac
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{url}'
+    def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{url}"
         self._config = ServiceClientConfiguration(url=url, credential=credential, **kwargs)
 
-        _policies = kwargs.pop('policies', None)
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -78,7 +96,7 @@ class ServiceClient(_ServiceClientOperationsMixin):  # pylint: disable=client-ac
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -93,6 +111,8 @@ class ServiceClient(_ServiceClientOperationsMixin):  # pylint: disable=client-ac
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
+
+
 class ContainerClient(_ContainerClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """ContainerClient.
 
@@ -106,31 +126,34 @@ class ContainerClient(_ContainerClientOperationsMixin):  # pylint: disable=clien
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{url}'
+    def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{url}"
         self._config = ContainerClientConfiguration(url=url, credential=credential, **kwargs)
 
-        _policies = kwargs.pop('policies', None)
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -150,7 +173,7 @@ class ContainerClient(_ContainerClientOperationsMixin):  # pylint: disable=clien
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -165,6 +188,8 @@ class ContainerClient(_ContainerClientOperationsMixin):  # pylint: disable=clien
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
+
+
 class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """BlobClient.
 
@@ -178,31 +203,34 @@ class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{url}'
+    def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
-        _policies = kwargs.pop('policies', None)
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -222,7 +250,7 @@ class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -237,6 +265,8 @@ class BlobClient(_BlobClientOperationsMixin):  # pylint: disable=client-accepts-
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
+
+
 class PageBlobClient(_PageBlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """PageBlobClient.
 
@@ -250,31 +280,34 @@ class PageBlobClient(_PageBlobClientOperationsMixin):  # pylint: disable=client-
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{url}'
+    def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{url}"
         self._config = PageBlobClientConfiguration(url=url, credential=credential, **kwargs)
 
-        _policies = kwargs.pop('policies', None)
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -294,7 +327,7 @@ class PageBlobClient(_PageBlobClientOperationsMixin):  # pylint: disable=client-
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -309,6 +342,8 @@ class PageBlobClient(_PageBlobClientOperationsMixin):  # pylint: disable=client-
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
+
+
 class AppendBlobClient(_AppendBlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """AppendBlobClient.
 
@@ -322,31 +357,34 @@ class AppendBlobClient(_AppendBlobClientOperationsMixin):  # pylint: disable=cli
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{url}'
+    def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{url}"
         self._config = AppendBlobClientConfiguration(url=url, credential=credential, **kwargs)
 
-        _policies = kwargs.pop('policies', None)
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -366,7 +404,7 @@ class AppendBlobClient(_AppendBlobClientOperationsMixin):  # pylint: disable=cli
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -381,6 +419,8 @@ class AppendBlobClient(_AppendBlobClientOperationsMixin):  # pylint: disable=cli
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
+
+
 class BlockBlobClient(_BlockBlobClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """BlockBlobClient.
 
@@ -394,31 +434,34 @@ class BlockBlobClient(_BlockBlobClientOperationsMixin):  # pylint: disable=clien
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{url}'
+    def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{url}"
         self._config = BlockBlobClientConfiguration(url=url, credential=credential, **kwargs)
 
-        _policies = kwargs.pop('policies', None)
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -438,7 +481,7 @@ class BlockBlobClient(_BlockBlobClientOperationsMixin):  # pylint: disable=clien
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

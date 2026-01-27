@@ -10,11 +10,8 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessTier(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The access tiers.
-    """
+class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The access tiers."""
 
     P4 = "P4"
     """The hot P4 tier."""
@@ -49,11 +46,9 @@ class AccessTier(
     COLD = "Cold"
     """The Cold access tier."""
 
-class AccountKind(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The account kind.
-    """
+
+class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The account kind."""
 
     STORAGE = "Storage"
     """The storage account is a general-purpose account."""
@@ -66,11 +61,9 @@ class AccountKind(
     BLOCK_BLOB_STORAGE = "BlockBlobStorage"
     """The storage account is a block blob storage account."""
 
-class ArchiveStatus(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The archive status.
-    """
+
+class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The archive status."""
 
     REHYDRATE_PENDING_TO_HOT = "rehydrate-pending-to-hot"
     """The archive status is rehydrating pending to hot."""
@@ -79,31 +72,25 @@ class ArchiveStatus(
     REHYDRATE_PENDING_TO_COLD = "rehydrate-pending-to-cold"
     """The archive status is rehydrating pending to archive."""
 
-class BlobCopySourceTags(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The blob copy source tags types.
-    """
+
+class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The blob copy source tags types."""
 
     REPLACE = "REPLACE"
     """The replace blob source tags option."""
     COPY = "COPY"
     """The copy blob source tags option."""
 
-class BlobDeleteType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The type of blob deletions.
-    """
+
+class BlobDeleteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of blob deletions."""
 
     PERMANENT = "Permanent"
     """Permanently delete the blob."""
 
-class BlobExpiryOptions(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The blob expiration options.
-    """
+
+class BlobExpiryOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The blob expiration options."""
 
     NEVER_EXPIRE = "NeverExpire"
     """Never expire."""
@@ -114,11 +101,9 @@ class BlobExpiryOptions(
     ABSOLUTE = "Absolute"
     """Absolute time."""
 
-class BlobType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The blob type.
-    """
+
+class BlobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The blob type."""
 
     BLOCK_BLOB = "BlockBlob"
     """The blob is a block blob."""
@@ -127,11 +112,9 @@ class BlobType(
     APPEND_BLOB = "AppendBlob"
     """The blob is an append blob."""
 
-class BlockListType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The block list types.
-    """
+
+class BlockListType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The block list types."""
 
     COMMITTED = "committed"
     """The list of committed blocks."""
@@ -140,11 +123,9 @@ class BlockListType(
     ALL = "all"
     """Both lists together."""
 
-class CopyStatus(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The copy status.
-    """
+
+class CopyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The copy status."""
 
     PENDING = "pending"
     """The copy operation is pending."""
@@ -155,20 +136,17 @@ class CopyStatus(
     ABORTED = "aborted"
     """The copy operation is aborted."""
 
-class DeleteSnapshotsOptionType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The delete snapshots option type.
-    """
+
+class DeleteSnapshotsOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The delete snapshots option type."""
 
     ONLY = "only"
     """The delete snapshots include option is only."""
     INCLUDE = "include"
     """The delete snapshots include option is include."""
 
-class EncryptionAlgorithmType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
+
+class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The algorithm used to produce the encryption key hash. Currently, the only accepted value is
     \\"AES256\\". Must be provided if the x-ms-encryption-key header is provided.
     """
@@ -176,31 +154,25 @@ class EncryptionAlgorithmType(
     AES256 = "AES256"
     """The AES256 encryption algorithm."""
 
-class FileShareTokenIntent(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The file share token intent types.
-    """
+
+class FileShareTokenIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The file share token intent types."""
 
     BACKUP = "backup"
     """The file share token intent is backup."""
 
-class FilterBlobsIncludeItem(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The filter blobs includes.
-    """
+
+class FilterBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The filter blobs includes."""
 
     NONE = "none"
     """The filter includes no versions."""
     VERSIONS = "versions"
     """The filter includes n versions."""
 
-class GeoReplicationStatusType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The geo replication status.
-    """
+
+class GeoReplicationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The geo replication status."""
 
     LIVE = "live"
     """The geo replication is live."""
@@ -209,11 +181,9 @@ class GeoReplicationStatusType(
     UNAVAILABLE = "unavailable"
     """The geo replication is unavailable."""
 
-class ImmutabilityPolicyMode(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The immutability policy mode used in requests and responses.
-    """
+
+class ImmutabilityPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The immutability policy mode used in requests and responses."""
 
     MUTABLE = "mutable"
     """The immutability policy is mutable. Should never be set, only returned."""
@@ -222,22 +192,18 @@ class ImmutabilityPolicyMode(
     UNLOCKED = "unlocked"
     """The immutability policy is unlocked."""
 
-class LeaseDuration(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The lease duration.
-    """
+
+class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lease duration."""
 
     INFINITE = "infinite"
     """The lease is of infinite duration."""
     FIXED = "fixed"
     """The lease is of fixed duration."""
 
-class LeaseState(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The lease state.
-    """
+
+class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lease state."""
 
     AVAILABLE = "available"
     """The lease is available."""
@@ -250,22 +216,18 @@ class LeaseState(
     BROKEN = "broken"
     """The lease is broken."""
 
-class LeaseStatus(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The lease status.
-    """
+
+class LeaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lease status."""
 
     UNLOCKED = "unlocked"
     """The lease is unlocked."""
     LOCKED = "locked"
     """The lease is locked."""
 
-class ListBlobsIncludeItem(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The list blob includes parameter values.
-    """
+
+class ListBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The list blob includes parameter values."""
 
     COPY = "copy"
     """The include copies."""
@@ -288,9 +250,8 @@ class ListBlobsIncludeItem(
     DELETED_WITH_VERSIONS = "deletedwithversions"
     """The include deleted with versions."""
 
-class ListContainersIncludeType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
+
+class ListContainersIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Include this parameter to specify that the container's metadata be returned as part of the
     response body.
     """
@@ -302,11 +263,9 @@ class ListContainersIncludeType(
     SYSTEM = "system"
     """Include system"""
 
-class PremiumPageBlobAccessTier(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The premium page blob access tier types.
-    """
+
+class PremiumPageBlobAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The premium page blob access tier types."""
 
     P4 = "P4"
     """The premium page blob access tier is P4."""
@@ -331,31 +290,25 @@ class PremiumPageBlobAccessTier(
     P80 = "P80"
     """The premium page blob access tier is P80."""
 
-class PublicAccessType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The public access types.
-    """
+
+class PublicAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The public access types."""
 
     BLOB = "blob"
     """Blob access."""
     CONTAINER = "container"
     """Container access."""
 
-class QueryRequestType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The query request, note only SQL supported.
-    """
+
+class QueryRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The query request, note only SQL supported."""
 
     SQL = "SQL"
     """The SQL request query type."""
 
-class QueryType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The query format type.
-    """
+
+class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The query format type."""
 
     DELIMITED = "delimited"
     """The query format type is delimited."""
@@ -366,9 +319,8 @@ class QueryType(
     PARQUET = "parquet"
     """The query format type is Parquet."""
 
-class RehydratePriority(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
+
+class RehydratePriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If an object is in rehydrate pending state then this header is returned with priority of
     rehydrate. Valid values are High and Standard.
     """
@@ -378,11 +330,9 @@ class RehydratePriority(
     STANDARD = "Standard"
     """The rehydrate priority is standard."""
 
-class SequenceNumberActionType(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The sequence number actions.
-    """
+
+class SequenceNumberActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sequence number actions."""
 
     INCREMENT = "increment"
     """Increment the sequence number."""
@@ -391,11 +341,9 @@ class SequenceNumberActionType(
     UPDATE = "update"
     """Update the sequence number."""
 
-class SkuName(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The SKU types.
-    """
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU types."""
 
     STANDARD_LRS = "Standard_LRS"
     """The standard LRS SKU."""
@@ -414,11 +362,9 @@ class SkuName(
     STANDARD_RAGZRS = "Standard_RAGZRS"
     """The standard RAGZRS SKU."""
 
-class StorageErrorCode(
-  str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """Error codes returned by the Azure Blob Storage service.
-    """
+
+class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error codes returned by the Azure Blob Storage service."""
 
     ACCOUNT_ALREADY_EXISTS = "AccountAlreadyExists"
     """Account already exists."""

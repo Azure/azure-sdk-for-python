@@ -28,14 +28,15 @@ try:
 except ImportError:
     _patch_all = []
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ServiceClient',
-    'ContainerClient',
-    'BlobClient',
-    'PageBlobClient',
-    'AppendBlobClient',
-    'BlockBlobClient',
+    "ServiceClient",
+    "ContainerClient",
+    "BlobClient",
+    "PageBlobClient",
+    "AppendBlobClient",
+    "BlockBlobClient",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__]) # pyright: ignore
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
 _patch_sdk()

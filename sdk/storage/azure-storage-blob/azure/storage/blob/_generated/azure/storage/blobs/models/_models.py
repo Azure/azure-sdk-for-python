@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -28,16 +29,25 @@ class AccessPolicy(_Model):
     :vartype permission: str
     """
 
-    start: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'Start', 'text': False, 'unwrapped': False})
+    start: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+    )
     """The date-time the policy is active. Required."""
-    expiry: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'Expiry', 'text': False, 'unwrapped': False})
+    expiry: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+    )
     """The date-time the policy expires. Required."""
-    permission: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Permission', 'text': False, 'unwrapped': False})
+    permission: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Permission", "text": False, "unwrapped": False},
+    )
     """The permissions for acl the policy. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'AccessPolicy', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -46,8 +56,7 @@ class AccessPolicy(_Model):
         start: datetime.datetime,
         expiry: datetime.datetime,
         permission: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -67,20 +76,20 @@ class ArrowConfiguration(_Model):
     :vartype schema: ~azure.storage.blobs.models.ArrowField
     """
 
-    schema: list["_models.ArrowField"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'Field', 'name': 'Schema', 'text': False, 'unwrapped': False})
+    schema: list["_models.ArrowField"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Field", "name": "Schema", "text": False, "unwrapped": False},
+    )
     """The Apache Arrow schema. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'ArrowConfiguration', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "ArrowConfiguration", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         schema: list["_models.ArrowField"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -106,18 +115,28 @@ class ArrowField(_Model):
     :vartype scale: int
     """
 
-    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Type', 'text': False, 'unwrapped': False})
+    type: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Type", "text": False, "unwrapped": False},
+    )
     """The arrow field type. Required."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Name', 'text': False, 'unwrapped': False})
+    name: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
     """The arrow field name."""
-    precision: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Precision', 'text': False, 'unwrapped': False})
+    precision: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Precision", "text": False, "unwrapped": False},
+    )
     """The arrow field precision."""
-    scale: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Scale', 'text': False, 'unwrapped': False})
+    scale: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Scale", "text": False, "unwrapped": False},
+    )
     """The arrow field scale."""
 
-
-    _xml = {'attribute': False, 'name': 'Field', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Field", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -127,8 +146,7 @@ class ArrowField(_Model):
         name: Optional[str] = None,
         precision: Optional[int] = None,
         scale: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -148,20 +166,21 @@ class BlobFlatListSegment(_Model):
     :vartype blob_items: ~azure.storage.blobs.models.BlobItemInternal
     """
 
-    blob_items: list["_models.BlobItemInternal"] = rest_field(name="blobItems", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'Blob', 'name': 'Blob', 'text': False, 'unwrapped': True})
+    blob_items: list["_models.BlobItemInternal"] = rest_field(
+        name="blobItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Blob", "name": "Blob", "text": False, "unwrapped": True},
+    )
     """The blob items. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'BlobFlatListSegment', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "BlobFlatListSegment", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         blob_items: list["_models.BlobItemInternal"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -183,14 +202,20 @@ class BlobHierarchyListSegment(_Model):
     :vartype blob_prefixes: ~azure.storage.blobs.models.BlobPrefix
     """
 
-    blob_items: list["_models.BlobItemInternal"] = rest_field(name="blobItems", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'Blob', 'name': 'Blob', 'text': False, 'unwrapped': True})
+    blob_items: list["_models.BlobItemInternal"] = rest_field(
+        name="blobItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Blob", "name": "Blob", "text": False, "unwrapped": True},
+    )
     """The blob items. Required."""
-    blob_prefixes: Optional[list["_models.BlobPrefix"]] = rest_field(name="blobPrefixes", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'BlobPrefix', 'name': 'BlobPrefix', 'text': False, 'unwrapped': True})
+    blob_prefixes: Optional[list["_models.BlobPrefix"]] = rest_field(
+        name="blobPrefixes",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "BlobPrefix", "name": "BlobPrefix", "text": False, "unwrapped": True},
+    )
     """The blob prefixes."""
 
-
-    _xml = {'attribute': False, 'name': 'BlobHierarchyListSegment', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "BlobHierarchyListSegment", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -198,8 +223,7 @@ class BlobHierarchyListSegment(_Model):
         *,
         blob_items: list["_models.BlobItemInternal"],
         blob_prefixes: Optional[list["_models.BlobPrefix"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -237,30 +261,63 @@ class BlobItemInternal(_Model):
     :vartype has_versions_only: bool
     """
 
-    name: "_models.BlobName" = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Name', 'text': False, 'unwrapped': False})
+    name: "_models.BlobName" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
     """The name of the blob. Required."""
-    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Deleted', 'text': False, 'unwrapped': False})
+    deleted: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Deleted", "text": False, "unwrapped": False},
+    )
     """Whether the blob is deleted. Required."""
-    snapshot: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Snapshot', 'text': False, 'unwrapped': False})
+    snapshot: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Snapshot", "text": False, "unwrapped": False},
+    )
     """The snapshot of the blob. Required."""
-    version_id: Optional[str] = rest_field(name="versionId", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'VersionId', 'text': False, 'unwrapped': False})
+    version_id: Optional[str] = rest_field(
+        name="versionId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "VersionId", "text": False, "unwrapped": False},
+    )
     """The version id of the blob."""
-    is_current_version: Optional[bool] = rest_field(name="isCurrentVersion", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'IsCurrentVersion', 'text': False, 'unwrapped': False})
+    is_current_version: Optional[bool] = rest_field(
+        name="isCurrentVersion",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "IsCurrentVersion", "text": False, "unwrapped": False},
+    )
     """Whether the blob is the current version."""
-    properties: "_models.BlobPropertiesInternal" = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Properties', 'text': False, 'unwrapped': False})
+    properties: "_models.BlobPropertiesInternal" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
+    )
     """The properties of the blob. Required."""
-    metadata: Optional["_models.BlobMetadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Metadata', 'text': False, 'unwrapped': False})
+    metadata: Optional["_models.BlobMetadata"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Metadata", "text": False, "unwrapped": False},
+    )
     """The metadata of the blob."""
-    blob_tags: Optional["_models.BlobTags"] = rest_field(name="blobTags", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'BlobTags', 'text': False, 'unwrapped': False})
+    blob_tags: Optional["_models.BlobTags"] = rest_field(
+        name="blobTags",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "BlobTags", "text": False, "unwrapped": False},
+    )
     """The tags of the blob."""
-    object_replication_metadata: Optional["_models.ObjectReplicationMetadata"] = rest_field(name="objectReplicationMetadata", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'OrMetadata', 'text': False, 'unwrapped': False})
+    object_replication_metadata: Optional["_models.ObjectReplicationMetadata"] = rest_field(
+        name="objectReplicationMetadata",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "OrMetadata", "text": False, "unwrapped": False},
+    )
     """The object replication metadata of the blob."""
-    has_versions_only: Optional[bool] = rest_field(name="hasVersionsOnly", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HasVersionsOnly', 'text': False, 'unwrapped': False})
+    has_versions_only: Optional[bool] = rest_field(
+        name="hasVersionsOnly",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "HasVersionsOnly", "text": False, "unwrapped": False},
+    )
     """Whether the blob has versions only."""
 
-
-    _xml = {'attribute': False, 'name': 'Blob', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Blob", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -276,8 +333,7 @@ class BlobItemInternal(_Model):
         blob_tags: Optional["_models.BlobTags"] = None,
         object_replication_metadata: Optional["_models.ObjectReplicationMetadata"] = None,
         has_versions_only: Optional[bool] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -297,20 +353,20 @@ class BlobMetadata(_Model):
     :vartype encrypted: str
     """
 
-    encrypted: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': True, 'name': 'Encrypted', 'text': False, 'unwrapped': False})
+    encrypted: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "Encrypted", "text": False, "unwrapped": False},
+    )
     """Whether the blob metadata is encrypted."""
 
-
-    _xml = {'attribute': False, 'name': 'BlobMetadata', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "BlobMetadata", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         encrypted: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -332,14 +388,18 @@ class BlobName(_Model):
     :vartype content: str
     """
 
-    encoded: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': True, 'name': 'Encoded', 'text': False, 'unwrapped': False})
+    encoded: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "Encoded", "text": False, "unwrapped": False},
+    )
     """Whether the blob name is encoded."""
-    content: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'content', 'text': True, 'unwrapped': False})
+    content: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "content", "text": True, "unwrapped": False},
+    )
     """The blob name."""
 
-
-    _xml = {'attribute': False, 'name': 'BlobName', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "BlobName", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -347,8 +407,7 @@ class BlobName(_Model):
         *,
         encoded: Optional[bool] = None,
         content: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -368,20 +427,20 @@ class BlobPrefix(_Model):
     :vartype name: ~azure.storage.blobs.models.BlobName
     """
 
-    name: "_models.BlobName" = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Name', 'text': False, 'unwrapped': False})
+    name: "_models.BlobName" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
     """The blob name. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'BlobPrefix', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "BlobPrefix", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         name: "_models.BlobName",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -486,96 +545,263 @@ class BlobPropertiesInternal(_Model):
     :vartype legal_hold: bool
     """
 
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'Creation-Time', 'text': False, 'unwrapped': False})
+    creation_time: Optional[datetime.datetime] = rest_field(
+        name="creationTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Creation-Time", "text": False, "unwrapped": False},
+    )
     """The date-time the blob was created in RFC1123 format."""
-    last_modified: datetime.datetime = rest_field(name="lastModified", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'Last-Modified', 'text': False, 'unwrapped': False})
+    last_modified: datetime.datetime = rest_field(
+        name="lastModified",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
+    )
     """The date-time the blob was last modified in RFC1123 format. Required."""
-    e_tag: str = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Etag', 'text': False, 'unwrapped': False})
+    e_tag: str = rest_field(
+        name="eTag",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
+    )
     """The blob ETag. Required."""
-    content_length: Optional[int] = rest_field(name="contentLength", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Content-Length', 'text': False, 'unwrapped': False})
+    content_length: Optional[int] = rest_field(
+        name="contentLength",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Content-Length", "text": False, "unwrapped": False},
+    )
     """The content length of the blob."""
-    content_type: Optional[str] = rest_field(name="contentType", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Content-Type', 'text': False, 'unwrapped': False})
+    content_type: Optional[str] = rest_field(
+        name="contentType",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Content-Type", "text": False, "unwrapped": False},
+    )
     """The content type of the blob."""
-    content_encoding: Optional[str] = rest_field(name="contentEncoding", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Content-Encoding', 'text': False, 'unwrapped': False})
+    content_encoding: Optional[str] = rest_field(
+        name="contentEncoding",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Content-Encoding", "text": False, "unwrapped": False},
+    )
     """The content encoding of the blob."""
-    content_language: Optional[str] = rest_field(name="contentLanguage", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Content-Language', 'text': False, 'unwrapped': False})
+    content_language: Optional[str] = rest_field(
+        name="contentLanguage",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Content-Language", "text": False, "unwrapped": False},
+    )
     """The content language of the blob."""
-    content_md5: Optional[bytes] = rest_field(name="contentMd5", visibility=["read", "create", "update", "delete", "query"], format="base64", xml={'attribute': False, 'name': 'Content-MD5', 'text': False, 'unwrapped': False})
+    content_md5: Optional[bytes] = rest_field(
+        name="contentMd5",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="base64",
+        xml={"attribute": False, "name": "Content-MD5", "text": False, "unwrapped": False},
+    )
     """The content MD5 of the blob."""
-    content_disposition: Optional[str] = rest_field(name="contentDisposition", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Content-Disposition', 'text': False, 'unwrapped': False})
+    content_disposition: Optional[str] = rest_field(
+        name="contentDisposition",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Content-Disposition", "text": False, "unwrapped": False},
+    )
     """The content disposition of the blob."""
-    cache_control: Optional[str] = rest_field(name="cacheControl", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Cache-Control', 'text': False, 'unwrapped': False})
+    cache_control: Optional[str] = rest_field(
+        name="cacheControl",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Cache-Control", "text": False, "unwrapped": False},
+    )
     """The cache control of the blob."""
-    blob_sequence_number: Optional[int] = rest_field(name="blobSequenceNumber", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'x-ms-blob-sequence-number', 'text': False, 'unwrapped': False})
+    blob_sequence_number: Optional[int] = rest_field(
+        name="blobSequenceNumber",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "x-ms-blob-sequence-number", "text": False, "unwrapped": False},
+    )
     """The sequence number of the blob."""
-    blob_type: Optional[Union[str, "_models.BlobType"]] = rest_field(name="blobType", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'BlobType', 'text': False, 'unwrapped': False})
+    blob_type: Optional[Union[str, "_models.BlobType"]] = rest_field(
+        name="blobType",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "BlobType", "text": False, "unwrapped": False},
+    )
     """The blob type. Known values are: \"BlockBlob\", \"PageBlob\", and \"AppendBlob\"."""
-    lease_status: Optional[Union[str, "_models.LeaseStatus"]] = rest_field(name="leaseStatus", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LeaseStatus', 'text': False, 'unwrapped': False})
+    lease_status: Optional[Union[str, "_models.LeaseStatus"]] = rest_field(
+        name="leaseStatus",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LeaseStatus", "text": False, "unwrapped": False},
+    )
     """The lease status of the blob. Known values are: \"unlocked\" and \"locked\"."""
-    lease_state: Optional[Union[str, "_models.LeaseState"]] = rest_field(name="leaseState", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LeaseState', 'text': False, 'unwrapped': False})
+    lease_state: Optional[Union[str, "_models.LeaseState"]] = rest_field(
+        name="leaseState",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LeaseState", "text": False, "unwrapped": False},
+    )
     """The lease state of the blob. Known values are: \"available\", \"leased\", \"expired\",
      \"breaking\", and \"broken\"."""
-    lease_duration: Optional[Union[str, "_models.LeaseDuration"]] = rest_field(name="leaseDuration", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LeaseDuration', 'text': False, 'unwrapped': False})
+    lease_duration: Optional[Union[str, "_models.LeaseDuration"]] = rest_field(
+        name="leaseDuration",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LeaseDuration", "text": False, "unwrapped": False},
+    )
     """The lease duration of the blob. Known values are: \"infinite\" and \"fixed\"."""
-    copy_id: Optional[str] = rest_field(name="copyId", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopyId', 'text': False, 'unwrapped': False})
+    copy_id: Optional[str] = rest_field(
+        name="copyId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopyId", "text": False, "unwrapped": False},
+    )
     """The copy ID of the blob."""
-    copy_status: Optional[Union[str, "_models.CopyStatus"]] = rest_field(name="copyStatus", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopyStatus', 'text': False, 'unwrapped': False})
+    copy_status: Optional[Union[str, "_models.CopyStatus"]] = rest_field(
+        name="copyStatus",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopyStatus", "text": False, "unwrapped": False},
+    )
     """The copy status of the blob. Known values are: \"pending\", \"success\", \"failed\", and
      \"aborted\"."""
-    copy_source: Optional[str] = rest_field(name="copySource", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopySource', 'text': False, 'unwrapped': False})
+    copy_source: Optional[str] = rest_field(
+        name="copySource",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySource", "text": False, "unwrapped": False},
+    )
     """The copy source of the blob."""
-    copy_progress: Optional[str] = rest_field(name="copyProgress", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopyProgress', 'text': False, 'unwrapped': False})
+    copy_progress: Optional[str] = rest_field(
+        name="copyProgress",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopyProgress", "text": False, "unwrapped": False},
+    )
     """The copy progress of the blob."""
-    copy_completion_time: Optional[datetime.datetime] = rest_field(name="copyCompletionTime", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'CopyCompletionTime', 'text': False, 'unwrapped': False})
+    copy_completion_time: Optional[datetime.datetime] = rest_field(
+        name="copyCompletionTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "CopyCompletionTime", "text": False, "unwrapped": False},
+    )
     """The copy completion time of the blob."""
-    copy_status_description: Optional[str] = rest_field(name="copyStatusDescription", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopyStatusDescription', 'text': False, 'unwrapped': False})
+    copy_status_description: Optional[str] = rest_field(
+        name="copyStatusDescription",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopyStatusDescription", "text": False, "unwrapped": False},
+    )
     """The copy status description of the blob."""
-    server_encrypted: Optional[bool] = rest_field(name="serverEncrypted", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ServerEncrypted', 'text': False, 'unwrapped': False})
+    server_encrypted: Optional[bool] = rest_field(
+        name="serverEncrypted",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ServerEncrypted", "text": False, "unwrapped": False},
+    )
     """Whether the blob is encrypted on the server."""
-    incremental_copy: Optional[bool] = rest_field(name="incrementalCopy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'IncrementalCopy', 'text': False, 'unwrapped': False})
+    incremental_copy: Optional[bool] = rest_field(
+        name="incrementalCopy",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "IncrementalCopy", "text": False, "unwrapped": False},
+    )
     """Whether the blob is incremental copy."""
-    destination_snapshot: Optional[str] = rest_field(name="destinationSnapshot", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DestinationSnapshot', 'text': False, 'unwrapped': False})
+    destination_snapshot: Optional[str] = rest_field(
+        name="destinationSnapshot",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DestinationSnapshot", "text": False, "unwrapped": False},
+    )
     """The name of the destination snapshot."""
-    deleted_time: Optional[datetime.datetime] = rest_field(name="deletedTime", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'DeletedTime', 'text': False, 'unwrapped': False})
+    deleted_time: Optional[datetime.datetime] = rest_field(
+        name="deletedTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "DeletedTime", "text": False, "unwrapped": False},
+    )
     """The time the blob was deleted."""
-    remaining_retention_days: Optional[int] = rest_field(name="remainingRetentionDays", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'RemainingRetentionDays', 'text': False, 'unwrapped': False})
+    remaining_retention_days: Optional[int] = rest_field(
+        name="remainingRetentionDays",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RemainingRetentionDays", "text": False, "unwrapped": False},
+    )
     """The remaining retention days of the blob."""
-    access_tier: Optional[Union[str, "_models.AccessTier"]] = rest_field(name="accessTier", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'AccessTier', 'text': False, 'unwrapped': False})
+    access_tier: Optional[Union[str, "_models.AccessTier"]] = rest_field(
+        name="accessTier",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AccessTier", "text": False, "unwrapped": False},
+    )
     """The access tier of the blob. Known values are: \"P4\", \"P6\", \"P10\", \"P15\", \"P20\",
      \"P30\", \"P40\", \"P50\", \"P60\", \"P70\", \"P80\", \"Hot\", \"Cool\", \"Archive\",
      \"Premium\", and \"Cold\"."""
-    access_tier_inferred: Optional[bool] = rest_field(name="accessTierInferred", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'AccessTierInferred', 'text': False, 'unwrapped': False})
+    access_tier_inferred: Optional[bool] = rest_field(
+        name="accessTierInferred",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AccessTierInferred", "text": False, "unwrapped": False},
+    )
     """Whether the access tier is inferred."""
-    archive_status: Optional[Union[str, "_models.ArchiveStatus"]] = rest_field(name="archiveStatus", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ArchiveStatus', 'text': False, 'unwrapped': False})
+    archive_status: Optional[Union[str, "_models.ArchiveStatus"]] = rest_field(
+        name="archiveStatus",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ArchiveStatus", "text": False, "unwrapped": False},
+    )
     """The archive status of the blob. Known values are: \"rehydrate-pending-to-hot\",
      \"rehydrate-pending-to-cool\", and \"rehydrate-pending-to-cold\"."""
-    customer_provided_key_sha256: Optional[str] = rest_field(name="customerProvidedKeySha256", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CustomerProvidedKeySha256', 'text': False, 'unwrapped': False})
+    customer_provided_key_sha256: Optional[str] = rest_field(
+        name="customerProvidedKeySha256",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CustomerProvidedKeySha256", "text": False, "unwrapped": False},
+    )
     """Customer provided key sha256."""
-    encryption_scope: Optional[str] = rest_field(name="encryptionScope", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'EncryptionScope', 'text': False, 'unwrapped': False})
+    encryption_scope: Optional[str] = rest_field(
+        name="encryptionScope",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "EncryptionScope", "text": False, "unwrapped": False},
+    )
     """The encryption scope of the blob."""
-    access_tier_change_time: Optional[datetime.datetime] = rest_field(name="accessTierChangeTime", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'AccessTierChangeTime', 'text': False, 'unwrapped': False})
+    access_tier_change_time: Optional[datetime.datetime] = rest_field(
+        name="accessTierChangeTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "AccessTierChangeTime", "text": False, "unwrapped": False},
+    )
     """The access tier change time of the blob."""
-    tag_count: Optional[int] = rest_field(name="tagCount", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'TagCount', 'text': False, 'unwrapped': False})
+    tag_count: Optional[int] = rest_field(
+        name="tagCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "TagCount", "text": False, "unwrapped": False},
+    )
     """The number of tags for the blob."""
-    expires_on: Optional[datetime.datetime] = rest_field(name="ExpiresOn", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'Expiry-Time', 'text': False, 'unwrapped': False})
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="ExpiresOn",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Expiry-Time", "text": False, "unwrapped": False},
+    )
     """The expire time of the blob."""
-    is_sealed: Optional[bool] = rest_field(name="IsSealed", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Sealed', 'text': False, 'unwrapped': False})
+    is_sealed: Optional[bool] = rest_field(
+        name="IsSealed",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Sealed", "text": False, "unwrapped": False},
+    )
     """Whether the blob is sealed."""
-    rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = rest_field(name="rehydratePriority", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'RehydratePriority', 'text': False, 'unwrapped': False})
+    rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = rest_field(
+        name="rehydratePriority",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RehydratePriority", "text": False, "unwrapped": False},
+    )
     """The rehydrate priority of the blob. Known values are: \"High\" and \"Standard\"."""
-    last_accessed_on: Optional[datetime.datetime] = rest_field(name="LastAccessedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'LastAccessTime', 'text': False, 'unwrapped': False})
+    last_accessed_on: Optional[datetime.datetime] = rest_field(
+        name="LastAccessedOn",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "LastAccessTime", "text": False, "unwrapped": False},
+    )
     """The last access time of the blob."""
-    immutability_policy_expires_on: Optional[datetime.datetime] = rest_field(name="ImmutabilityPolicyExpiresOn", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'ImmutabilityPolicyUntilDate', 'text': False, 'unwrapped': False})
+    immutability_policy_expires_on: Optional[datetime.datetime] = rest_field(
+        name="ImmutabilityPolicyExpiresOn",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "ImmutabilityPolicyUntilDate", "text": False, "unwrapped": False},
+    )
     """The immutability policy until time of the blob."""
-    immutability_policy_mode: Optional[Union[str, "_models.ImmutabilityPolicyMode"]] = rest_field(name="immutabilityPolicyMode", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ImmutabilityPolicyMode', 'text': False, 'unwrapped': False})
+    immutability_policy_mode: Optional[Union[str, "_models.ImmutabilityPolicyMode"]] = rest_field(
+        name="immutabilityPolicyMode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ImmutabilityPolicyMode", "text": False, "unwrapped": False},
+    )
     """The immutability policy mode of the blob. Known values are: \"mutable\", \"locked\", and
      \"unlocked\"."""
-    legal_hold: Optional[bool] = rest_field(name="legalHold", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LegalHold', 'text': False, 'unwrapped': False})
+    legal_hold: Optional[bool] = rest_field(
+        name="legalHold",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LegalHold", "text": False, "unwrapped": False},
+    )
     """Whether the blob is under legal hold."""
 
-
-    _xml = {'attribute': False, 'name': 'Properties', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Properties", "text": False, "unwrapped": False}
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -621,8 +847,7 @@ class BlobPropertiesInternal(_Model):
         immutability_policy_expires_on: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.ImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -654,24 +879,48 @@ class BlobServiceProperties(_Model):
     :vartype static_website: ~azure.storage.blobs.models.StaticWebsite
     """
 
-    logging: Optional["_models.Logging"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Logging', 'text': False, 'unwrapped': False})
+    logging: Optional["_models.Logging"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Logging", "text": False, "unwrapped": False},
+    )
     """The logging properties."""
-    hour_metrics: Optional["_models.Metrics"] = rest_field(name="hourMetrics", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HourMetrics', 'text': False, 'unwrapped': False})
+    hour_metrics: Optional["_models.Metrics"] = rest_field(
+        name="hourMetrics",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "HourMetrics", "text": False, "unwrapped": False},
+    )
     """The hour metrics properties."""
-    minute_metrics: Optional["_models.Metrics"] = rest_field(name="minuteMetrics", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'MinuteMetrics', 'text': False, 'unwrapped': False})
+    minute_metrics: Optional["_models.Metrics"] = rest_field(
+        name="minuteMetrics",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MinuteMetrics", "text": False, "unwrapped": False},
+    )
     """The minute metrics properties."""
-    cors: Optional[list["_models.CorsRule"]] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'CorsRule', 'name': 'Cors', 'text': False, 'unwrapped': False})
+    cors: Optional[list["_models.CorsRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "CorsRule", "name": "Cors", "text": False, "unwrapped": False},
+    )
     """The CORS properties."""
-    default_service_version: Optional[str] = rest_field(name="defaultServiceVersion", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DefaultServiceVersion', 'text': False, 'unwrapped': False})
+    default_service_version: Optional[str] = rest_field(
+        name="defaultServiceVersion",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DefaultServiceVersion", "text": False, "unwrapped": False},
+    )
     """The default service version."""
-    delete_retention_policy: Optional["_models.RetentionPolicy"] = rest_field(name="deleteRetentionPolicy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DeleteRetentionPolicy', 'text': False, 'unwrapped': False})
+    delete_retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
+        name="deleteRetentionPolicy",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DeleteRetentionPolicy", "text": False, "unwrapped": False},
+    )
     """The delete retention policy."""
-    static_website: Optional["_models.StaticWebsite"] = rest_field(name="staticWebsite", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'StaticWebsite', 'text': False, 'unwrapped': False})
+    static_website: Optional["_models.StaticWebsite"] = rest_field(
+        name="staticWebsite",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "StaticWebsite", "text": False, "unwrapped": False},
+    )
     """The static website properties."""
 
-
-    _xml = {'attribute': False, 'name': 'StorageServiceProperties', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "StorageServiceProperties", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -684,8 +933,7 @@ class BlobServiceProperties(_Model):
         default_service_version: Optional[str] = None,
         delete_retention_policy: Optional["_models.RetentionPolicy"] = None,
         static_website: Optional["_models.StaticWebsite"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -707,14 +955,18 @@ class BlobTag(_Model):
     :vartype value: str
     """
 
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Key', 'text': False, 'unwrapped': False})
+    key: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Key", "text": False, "unwrapped": False},
+    )
     """The key of the tag. Required."""
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Value', 'text': False, 'unwrapped': False})
+    value: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Value", "text": False, "unwrapped": False},
+    )
     """The value of the tag. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'Tag', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Tag", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -722,8 +974,7 @@ class BlobTag(_Model):
         *,
         key: str,
         value: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -743,20 +994,21 @@ class BlobTags(_Model):
     :vartype blob_tag_set: ~azure.storage.blobs.models.BlobTag
     """
 
-    blob_tag_set: list["_models.BlobTag"] = rest_field(name="blobTagSet", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'Tag', 'name': 'TagSet', 'text': False, 'unwrapped': False})
+    blob_tag_set: list["_models.BlobTag"] = rest_field(
+        name="blobTagSet",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Tag", "name": "TagSet", "text": False, "unwrapped": False},
+    )
     """Represents the blob tags. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'Tags', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Tags", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         blob_tag_set: list["_models.BlobTag"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -778,14 +1030,19 @@ class Block(_Model):
     :vartype size: int
     """
 
-    name: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64", xml={'attribute': False, 'name': 'Name', 'text': False, 'unwrapped': False})
+    name: bytes = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="base64",
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
     """The base64 encoded block ID. Required."""
-    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Size', 'text': False, 'unwrapped': False})
+    size: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Size", "text": False, "unwrapped": False},
+    )
     """The block size in bytes. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'Block', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Block", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -793,8 +1050,7 @@ class Block(_Model):
         *,
         name: bytes,
         size: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -816,14 +1072,20 @@ class BlockList(_Model):
     :vartype uncommitted_blocks: ~azure.storage.blobs.models.Block
     """
 
-    committed_blocks: Optional[list["_models.Block"]] = rest_field(name="committedBlocks", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'Block', 'name': 'CommittedBlocks', 'text': False, 'unwrapped': False})
+    committed_blocks: Optional[list["_models.Block"]] = rest_field(
+        name="committedBlocks",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Block", "name": "CommittedBlocks", "text": False, "unwrapped": False},
+    )
     """The list of committed blocks."""
-    uncommitted_blocks: Optional[list["_models.Block"]] = rest_field(name="uncommittedBlocks", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'Block', 'name': 'UncommittedBlocks', 'text': False, 'unwrapped': False})
+    uncommitted_blocks: Optional[list["_models.Block"]] = rest_field(
+        name="uncommittedBlocks",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Block", "name": "UncommittedBlocks", "text": False, "unwrapped": False},
+    )
     """The list of uncommitted blocks."""
 
-
-    _xml = {'attribute': False, 'name': 'BlockList', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "BlockList", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -831,8 +1093,7 @@ class BlockList(_Model):
         *,
         committed_blocks: Optional[list["_models.Block"]] = None,
         uncommitted_blocks: Optional[list["_models.Block"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -856,16 +1117,26 @@ class BlockLookupList(_Model):
     :vartype latest: list[bytes]
     """
 
-    committed: Optional[list[bytes]] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64", xml={'attribute': False, 'itemsName': 'Committed', 'name': 'Committed', 'text': False, 'unwrapped': True})
+    committed: Optional[list[bytes]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="base64",
+        xml={"attribute": False, "itemsName": "Committed", "name": "Committed", "text": False, "unwrapped": True},
+    )
     """The committed blocks."""
-    uncommitted: Optional[list[bytes]] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64", xml={'attribute': False, 'itemsName': 'Uncommitted', 'name': 'Uncommitted', 'text': False, 'unwrapped': True})
+    uncommitted: Optional[list[bytes]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="base64",
+        xml={"attribute": False, "itemsName": "Uncommitted", "name": "Uncommitted", "text": False, "unwrapped": True},
+    )
     """The uncommitted blocks."""
-    latest: Optional[list[bytes]] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64", xml={'attribute': False, 'itemsName': 'Latest', 'name': 'Latest', 'text': False, 'unwrapped': True})
+    latest: Optional[list[bytes]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="base64",
+        xml={"attribute": False, "itemsName": "Latest", "name": "Latest", "text": False, "unwrapped": True},
+    )
     """The latest blocks."""
 
-
-    _xml = {'attribute': False, 'name': 'BlockList', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "BlockList", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -874,8 +1145,7 @@ class BlockLookupList(_Model):
         committed: Optional[list[bytes]] = None,
         uncommitted: Optional[list[bytes]] = None,
         latest: Optional[list[bytes]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -897,14 +1167,18 @@ class ClearRange(_Model):
     :vartype end: int
     """
 
-    start: int = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Start', 'text': False, 'unwrapped': False})
+    start: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+    )
     """The start of the byte range. Required."""
-    end: int = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'End', 'text': False, 'unwrapped': False})
+    end: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "End", "text": False, "unwrapped": False},
+    )
     """The end of the byte range. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'ClearRange', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "ClearRange", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -912,8 +1186,7 @@ class ClearRange(_Model):
         *,
         start: int,
         end: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -941,20 +1214,33 @@ class ContainerItem(_Model):
     :vartype metadata: dict[str, str]
     """
 
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Name', 'text': False, 'unwrapped': False})
+    name: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
     """The name of the container. Required."""
-    delete: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Deleted', 'text': False, 'unwrapped': False})
+    delete: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Deleted", "text": False, "unwrapped": False},
+    )
     """Whether the container is deleted."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Version', 'text': False, 'unwrapped': False})
+    version: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+    )
     """The version of the container."""
-    properties: "_models.ContainerProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Properties', 'text': False, 'unwrapped': False})
+    properties: "_models.ContainerProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
+    )
     """The properties of the container. Required."""
-    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Metadata', 'text': False, 'unwrapped': False})
+    metadata: Optional[dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Metadata", "text": False, "unwrapped": False},
+    )
     """The metadata of the container."""
 
-
-    _xml = {'attribute': False, 'name': 'Container', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Container", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -965,8 +1251,7 @@ class ContainerItem(_Model):
         delete: Optional[bool] = None,
         version: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1015,37 +1300,89 @@ class ContainerProperties(_Model):
     :vartype is_immutable_storage_with_versioning_enabled: bool
     """
 
-    last_modified: datetime.datetime = rest_field(name="lastModified", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'Last-Modified', 'text': False, 'unwrapped': False})
+    last_modified: datetime.datetime = rest_field(
+        name="lastModified",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
+    )
     """The date-time the container was last modified in RFC1123 format. Required."""
-    e_tag: str = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ETag', 'text': False, 'unwrapped': False})
+    e_tag: str = rest_field(
+        name="eTag",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ETag", "text": False, "unwrapped": False},
+    )
     """The ETag of the container. Required."""
-    lease_status: Optional[Union[str, "_models.LeaseStatus"]] = rest_field(name="leaseStatus", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LeaseStatus', 'text': False, 'unwrapped': False})
+    lease_status: Optional[Union[str, "_models.LeaseStatus"]] = rest_field(
+        name="leaseStatus",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LeaseStatus", "text": False, "unwrapped": False},
+    )
     """The lease status of the container. Known values are: \"unlocked\" and \"locked\"."""
-    lease_state: Optional[Union[str, "_models.LeaseState"]] = rest_field(name="leaseState", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LeaseState', 'text': False, 'unwrapped': False})
+    lease_state: Optional[Union[str, "_models.LeaseState"]] = rest_field(
+        name="leaseState",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LeaseState", "text": False, "unwrapped": False},
+    )
     """The lease state of the container. Known values are: \"available\", \"leased\", \"expired\",
      \"breaking\", and \"broken\"."""
-    lease_duration: Optional[Union[str, "_models.LeaseDuration"]] = rest_field(name="leaseDuration", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'LeaseDuration', 'text': False, 'unwrapped': False})
+    lease_duration: Optional[Union[str, "_models.LeaseDuration"]] = rest_field(
+        name="leaseDuration",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LeaseDuration", "text": False, "unwrapped": False},
+    )
     """The lease duration of the container. Known values are: \"infinite\" and \"fixed\"."""
-    public_access: Optional[Union[str, "_models.PublicAccessType"]] = rest_field(name="publicAccess", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'PublicAccess', 'text': False, 'unwrapped': False})
+    public_access: Optional[Union[str, "_models.PublicAccessType"]] = rest_field(
+        name="publicAccess",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "PublicAccess", "text": False, "unwrapped": False},
+    )
     """The public access type of the container. Known values are: \"blob\" and \"container\"."""
-    has_immutability_policy: Optional[bool] = rest_field(name="hasImmutabilityPolicy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HasImmutabilityPolicy', 'text': False, 'unwrapped': False})
+    has_immutability_policy: Optional[bool] = rest_field(
+        name="hasImmutabilityPolicy",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "HasImmutabilityPolicy", "text": False, "unwrapped": False},
+    )
     """Whether it has an immutability policy."""
-    has_legal_hold: Optional[bool] = rest_field(name="hasLegalHold", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HasLegalHold', 'text': False, 'unwrapped': False})
+    has_legal_hold: Optional[bool] = rest_field(
+        name="hasLegalHold",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "HasLegalHold", "text": False, "unwrapped": False},
+    )
     """The has legal hold status of the container."""
-    default_encryption_scope: Optional[str] = rest_field(name="defaultEncryptionScope", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DefaultEncryptionScope', 'text': False, 'unwrapped': False})
+    default_encryption_scope: Optional[str] = rest_field(
+        name="defaultEncryptionScope",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DefaultEncryptionScope", "text": False, "unwrapped": False},
+    )
     """The default encryption scope of the container."""
-    prevent_encryption_scope_override: Optional[bool] = rest_field(name="PreventEncryptionScopeOverride", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DenyEncryptionScopeOverride', 'text': False, 'unwrapped': False})
+    prevent_encryption_scope_override: Optional[bool] = rest_field(
+        name="PreventEncryptionScopeOverride",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DenyEncryptionScopeOverride", "text": False, "unwrapped": False},
+    )
     """Whether to prevent encryption scope override."""
-    deleted_time: Optional[datetime.datetime] = rest_field(name="deletedTime", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'DeletedTime', 'text': False, 'unwrapped': False})
+    deleted_time: Optional[datetime.datetime] = rest_field(
+        name="deletedTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "DeletedTime", "text": False, "unwrapped": False},
+    )
     """The deleted time of the container."""
-    remaining_retention_days: Optional[int] = rest_field(name="remainingRetentionDays", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'RemainingRetentionDays', 'text': False, 'unwrapped': False})
+    remaining_retention_days: Optional[int] = rest_field(
+        name="remainingRetentionDays",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RemainingRetentionDays", "text": False, "unwrapped": False},
+    )
     """The remaining retention days of the container."""
-    is_immutable_storage_with_versioning_enabled: Optional[bool] = rest_field(name="IsImmutableStorageWithVersioningEnabled", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ImmutableStorageWithVersioningEnabled', 'text': False, 'unwrapped': False})
+    is_immutable_storage_with_versioning_enabled: Optional[bool] = rest_field(
+        name="IsImmutableStorageWithVersioningEnabled",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ImmutableStorageWithVersioningEnabled", "text": False, "unwrapped": False},
+    )
     """Whether immutable storage with versioning is enabled."""
 
-
-    _xml = {'attribute': False, 'name': 'ContainerProperties', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "ContainerProperties", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1064,8 +1401,7 @@ class ContainerProperties(_Model):
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
         is_immutable_storage_with_versioning_enabled: Optional[bool] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1096,20 +1432,38 @@ class CorsRule(_Model):
     :vartype max_age_in_seconds: int
     """
 
-    allowed_origins: str = rest_field(name="allowedOrigins", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'AllowedOrigins', 'text': False, 'unwrapped': False})
+    allowed_origins: str = rest_field(
+        name="allowedOrigins",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AllowedOrigins", "text": False, "unwrapped": False},
+    )
     """The allowed origins. Required."""
-    allowed_methods: str = rest_field(name="allowedMethods", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'AllowedMethods', 'text': False, 'unwrapped': False})
+    allowed_methods: str = rest_field(
+        name="allowedMethods",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AllowedMethods", "text": False, "unwrapped": False},
+    )
     """The allowed methods. Required."""
-    allowed_headers: str = rest_field(name="allowedHeaders", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'AllowedHeaders', 'text': False, 'unwrapped': False})
+    allowed_headers: str = rest_field(
+        name="allowedHeaders",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AllowedHeaders", "text": False, "unwrapped": False},
+    )
     """The allowed headers. Required."""
-    exposed_headers: str = rest_field(name="exposedHeaders", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ExposedHeaders', 'text': False, 'unwrapped': False})
+    exposed_headers: str = rest_field(
+        name="exposedHeaders",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ExposedHeaders", "text": False, "unwrapped": False},
+    )
     """The exposed headers. Required."""
-    max_age_in_seconds: int = rest_field(name="maxAgeInSeconds", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'MaxAgeInSeconds', 'text': False, 'unwrapped': False})
+    max_age_in_seconds: int = rest_field(
+        name="maxAgeInSeconds",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MaxAgeInSeconds", "text": False, "unwrapped": False},
+    )
     """The maximum age in seconds. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'CorsRule', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "CorsRule", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1120,8 +1474,7 @@ class CorsRule(_Model):
         allowed_headers: str,
         exposed_headers: str,
         max_age_in_seconds: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1149,20 +1502,38 @@ class DelimitedTextConfiguration(_Model):
     :vartype headers_present: bool
     """
 
-    column_separator: Optional[str] = rest_field(name="columnSeparator", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ColumnSeparator', 'text': False, 'unwrapped': False})
+    column_separator: Optional[str] = rest_field(
+        name="columnSeparator",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ColumnSeparator", "text": False, "unwrapped": False},
+    )
     """The string used to separate columns."""
-    field_quote: Optional[str] = rest_field(name="fieldQuote", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'FieldQuote', 'text': False, 'unwrapped': False})
+    field_quote: Optional[str] = rest_field(
+        name="fieldQuote",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "FieldQuote", "text": False, "unwrapped": False},
+    )
     """The string used to quote a specific field."""
-    record_separator: Optional[str] = rest_field(name="recordSeparator", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'RecordSeparator', 'text': False, 'unwrapped': False})
+    record_separator: Optional[str] = rest_field(
+        name="recordSeparator",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RecordSeparator", "text": False, "unwrapped": False},
+    )
     """The string used to separate records."""
-    escape_char: Optional[str] = rest_field(name="escapeChar", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'EscapeChar', 'text': False, 'unwrapped': False})
+    escape_char: Optional[str] = rest_field(
+        name="escapeChar",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "EscapeChar", "text": False, "unwrapped": False},
+    )
     """The string used to escape a quote character in a field."""
-    headers_present: Optional[bool] = rest_field(name="headersPresent", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'HasHeaders', 'text': False, 'unwrapped': False})
+    headers_present: Optional[bool] = rest_field(
+        name="headersPresent",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "HasHeaders", "text": False, "unwrapped": False},
+    )
     """Represents whether the data has headers."""
 
-
-    _xml = {'attribute': False, 'name': 'DelimitedTextConfiguration', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "DelimitedTextConfiguration", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1173,8 +1544,7 @@ class DelimitedTextConfiguration(_Model):
         record_separator: Optional[str] = None,
         escape_char: Optional[str] = None,
         headers_present: Optional[bool] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1202,20 +1572,36 @@ class FilterBlobItem(_Model):
     :vartype is_current_version: bool
     """
 
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Name', 'text': False, 'unwrapped': False})
+    name: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
     """The name of the blob. Required."""
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ContainerName', 'text': False, 'unwrapped': False})
+    container_name: str = rest_field(
+        name="containerName",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ContainerName", "text": False, "unwrapped": False},
+    )
     """The properties of the blob. Required."""
-    tags: Optional["_models.BlobTags"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'tags', 'text': True, 'unwrapped': False})
+    tags: Optional["_models.BlobTags"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "tags", "text": True, "unwrapped": False},
+    )
     """The metadata of the blob."""
-    version_id: Optional[str] = rest_field(name="versionId", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'VersionId', 'text': False, 'unwrapped': False})
+    version_id: Optional[str] = rest_field(
+        name="versionId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "VersionId", "text": False, "unwrapped": False},
+    )
     """The version ID of the blob."""
-    is_current_version: Optional[bool] = rest_field(name="isCurrentVersion", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'IsCurrentVersion', 'text': False, 'unwrapped': False})
+    is_current_version: Optional[bool] = rest_field(
+        name="isCurrentVersion",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "IsCurrentVersion", "text": False, "unwrapped": False},
+    )
     """Whether it is the current version of the blob."""
 
-
-    _xml = {'attribute': False, 'name': 'Blob', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Blob", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1226,8 +1612,7 @@ class FilterBlobItem(_Model):
         tags: Optional["_models.BlobTags"] = None,
         version_id: Optional[str] = None,
         is_current_version: Optional[bool] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1253,18 +1638,30 @@ class FilterBlobSegment(_Model):
     :vartype next_marker: str
     """
 
-    service_endpoint: str = rest_field(name="serviceEndpoint", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': True, 'name': 'ServiceEndpoint', 'text': False, 'unwrapped': False})
+    service_endpoint: str = rest_field(
+        name="serviceEndpoint",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+    )
     """The service endpoint. Required."""
-    where: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Where', 'text': False, 'unwrapped': False})
+    where: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Where", "text": False, "unwrapped": False},
+    )
     """The filter for the blobs. Required."""
-    blobs: list["_models.FilterBlobItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'Blob', 'name': 'Blobs', 'text': False, 'unwrapped': False})
+    blobs: list["_models.FilterBlobItem"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Blob", "name": "Blobs", "text": False, "unwrapped": False},
+    )
     """The blob segment. Required."""
-    next_marker: Optional[str] = rest_field(name="nextMarker", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'NextMarker', 'text': False, 'unwrapped': False})
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+    )
     """The next marker of the blobs."""
 
-
-    _xml = {'attribute': False, 'name': 'EnumerationResults', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "EnumerationResults", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1274,8 +1671,7 @@ class FilterBlobSegment(_Model):
         where: str,
         blobs: list["_models.FilterBlobItem"],
         next_marker: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1300,17 +1696,23 @@ class GeoReplication(_Model):
     :vartype last_sync_time: ~datetime.datetime
     """
 
-    status: Union[str, "_models.GeoReplicationStatusType"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Status', 'text': False, 'unwrapped': False})
+    status: Union[str, "_models.GeoReplicationStatusType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Status", "text": False, "unwrapped": False},
+    )
     """The status of the secondary location. Required. Known values are: \"live\", \"bootstrap\", and
      \"unavailable\"."""
-    last_sync_time: datetime.datetime = rest_field(name="lastSyncTime", visibility=["read", "create", "update", "delete", "query"], format="rfc7231", xml={'attribute': False, 'name': 'LastSyncTime', 'text': False, 'unwrapped': False})
+    last_sync_time: datetime.datetime = rest_field(
+        name="lastSyncTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "LastSyncTime", "text": False, "unwrapped": False},
+    )
     """A GMT date/time value, to the second. All primary writes preceding this value are guaranteed to
      be available for read operations at the secondary. Primary writes after this point in time may
      or may not be available for reads. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'GeoReplication', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "GeoReplication", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1318,8 +1720,7 @@ class GeoReplication(_Model):
         *,
         status: Union[str, "_models.GeoReplicationStatusType"],
         last_sync_time: datetime.datetime,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1339,20 +1740,21 @@ class JsonTextConfiguration(_Model):
     :vartype record_separator: str
     """
 
-    record_separator: Optional[str] = rest_field(name="recordSeparator", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'RecordSeparator', 'text': False, 'unwrapped': False})
+    record_separator: Optional[str] = rest_field(
+        name="recordSeparator",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RecordSeparator", "text": False, "unwrapped": False},
+    )
     """The string used to separate records."""
 
-
-    _xml = {'attribute': False, 'name': 'JsonTextConfiguration', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "JsonTextConfiguration", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         record_separator: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1376,16 +1778,24 @@ class KeyInfo(_Model):
     :vartype delegated_user_tid: str
     """
 
-    start: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Start', 'text': False, 'unwrapped': False})
+    start: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+    )
     """The date-time the key is active. Required."""
-    expiry: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Expiry', 'text': False, 'unwrapped': False})
+    expiry: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+    )
     """The date-time the key expires. Required."""
-    delegated_user_tid: Optional[str] = rest_field(name="delegatedUserTid", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DelegatedUserTid', 'text': False, 'unwrapped': False})
+    delegated_user_tid: Optional[str] = rest_field(
+        name="delegatedUserTid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DelegatedUserTid", "text": False, "unwrapped": False},
+    )
     """The delegated user tenant id in Azure AD."""
 
-
-    _xml = {'attribute': False, 'name': 'KeyInfo', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "KeyInfo", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1394,8 +1804,7 @@ class KeyInfo(_Model):
         start: str,
         expiry: str,
         delegated_user_tid: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1423,20 +1832,34 @@ class Logging(_Model):
     :vartype retention_policy: ~azure.storage.blobs.models.RetentionPolicy
     """
 
-    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Version', 'text': False, 'unwrapped': False})
+    version: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+    )
     """The version of the logging properties. Required."""
-    delete: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Delete', 'text': False, 'unwrapped': False})
+    delete: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Delete", "text": False, "unwrapped": False},
+    )
     """Whether delete operation is logged. Required."""
-    read: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Read', 'text': False, 'unwrapped': False})
+    read: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Read", "text": False, "unwrapped": False},
+    )
     """Whether read operation is logged. Required."""
-    write: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Write', 'text': False, 'unwrapped': False})
+    write: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Write", "text": False, "unwrapped": False},
+    )
     """Whether write operation is logged. Required."""
-    retention_policy: "_models.RetentionPolicy" = rest_field(name="retentionPolicy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'RetentionPolicy', 'text': False, 'unwrapped': False})
+    retention_policy: "_models.RetentionPolicy" = rest_field(
+        name="retentionPolicy",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RetentionPolicy", "text": False, "unwrapped": False},
+    )
     """The retention policy of the logs. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'Logging', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Logging", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1447,8 +1870,7 @@ class Logging(_Model):
         read: bool,
         write: bool,
         retention_policy: "_models.RetentionPolicy",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1474,18 +1896,30 @@ class Metrics(_Model):
     :vartype retention_policy: ~azure.storage.blobs.models.RetentionPolicy
     """
 
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Version', 'text': False, 'unwrapped': False})
+    version: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+    )
     """The version of the metrics properties."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Enabled', 'text': False, 'unwrapped': False})
+    enabled: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+    )
     """Whether it is enabled. Required."""
-    include_apis: Optional[bool] = rest_field(name="includeApis", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'IncludeAPIs', 'text': False, 'unwrapped': False})
+    include_apis: Optional[bool] = rest_field(
+        name="includeApis",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "IncludeAPIs", "text": False, "unwrapped": False},
+    )
     """Whether to include API in the metrics."""
-    retention_policy: Optional["_models.RetentionPolicy"] = rest_field(name="retentionPolicy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'RetentionPolicy', 'text': False, 'unwrapped': False})
+    retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
+        name="retentionPolicy",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RetentionPolicy", "text": False, "unwrapped": False},
+    )
     """The retention policy of the metrics."""
 
-
-    _xml = {'attribute': False, 'name': 'Metrics', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "Metrics", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1495,8 +1929,7 @@ class Metrics(_Model):
         version: Optional[str] = None,
         include_apis: Optional[bool] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1510,15 +1943,9 @@ class Metrics(_Model):
 
 
 class ObjectReplicationMetadata(_Model):
-    """The object replication metadata.
+    """The object replication metadata."""
 
-    """
-
-
-
-    _xml = {'attribute': False, 'name': 'OrMetadata', 'text': False, 'unwrapped': False}
-
-
+    _xml = {"attribute": False, "name": "OrMetadata", "text": False, "unwrapped": False}
 
 
 class PageList(_Model):
@@ -1532,16 +1959,26 @@ class PageList(_Model):
     :vartype next_marker: str
     """
 
-    page_range: Optional[list["_models.PageRange"]] = rest_field(name="pageRange", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'PageRange', 'name': 'PageRange', 'text': False, 'unwrapped': True})
+    page_range: Optional[list["_models.PageRange"]] = rest_field(
+        name="pageRange",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "PageRange", "name": "PageRange", "text": False, "unwrapped": True},
+    )
     """The page ranges."""
-    clear_range: Optional[list["_models.ClearRange"]] = rest_field(name="clearRange", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'ClearRange', 'name': 'ClearRange', 'text': False, 'unwrapped': True})
+    clear_range: Optional[list["_models.ClearRange"]] = rest_field(
+        name="clearRange",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "ClearRange", "name": "ClearRange", "text": False, "unwrapped": True},
+    )
     """The clear ranges."""
-    next_marker: Optional[str] = rest_field(name="nextMarker", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'NextMarker', 'text': False, 'unwrapped': False})
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+    )
     """The next marker."""
 
-
-    _xml = {'attribute': False, 'name': 'PageList', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "PageList", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1550,8 +1987,7 @@ class PageList(_Model):
         page_range: Optional[list["_models.PageRange"]] = None,
         clear_range: Optional[list["_models.ClearRange"]] = None,
         next_marker: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1573,14 +2009,18 @@ class PageRange(_Model):
     :vartype end: int
     """
 
-    start: int = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Start', 'text': False, 'unwrapped': False})
+    start: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+    )
     """The start of the byte range. Required."""
-    end: int = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'End', 'text': False, 'unwrapped': False})
+    end: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "End", "text": False, "unwrapped": False},
+    )
     """The end of the byte range. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'PageRange', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "PageRange", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1588,8 +2028,7 @@ class PageRange(_Model):
         *,
         start: int,
         end: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1603,15 +2042,9 @@ class PageRange(_Model):
 
 
 class ParquetConfiguration(_Model):
-    """Represents the Parquet configuration.
+    """Represents the Parquet configuration."""
 
-    """
-
-
-
-    _xml = {'attribute': False, 'name': 'ParquetConfiguration', 'text': False, 'unwrapped': False}
-
-
+    _xml = {"attribute": False, "name": "ParquetConfiguration", "text": False, "unwrapped": False}
 
 
 class QueryFormat(_Model):
@@ -1630,21 +2063,38 @@ class QueryFormat(_Model):
     :vartype parquet_text_configuration: ~azure.storage.blobs.models.ParquetConfiguration
     """
 
-    type: Union[str, "_models.QueryType"] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Type', 'text': False, 'unwrapped': False})
+    type: Union[str, "_models.QueryType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Type", "text": False, "unwrapped": False},
+    )
     """The query type. Required. Known values are: \"delimited\", \"json\", \"arrow\", and
      \"parquet\"."""
-    delimited_text_configuration: Optional["_models.DelimitedTextConfiguration"] = rest_field(name="delimitedTextConfiguration", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DelimitedTextConfiguration', 'text': False, 'unwrapped': False})
+    delimited_text_configuration: Optional["_models.DelimitedTextConfiguration"] = rest_field(
+        name="delimitedTextConfiguration",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DelimitedTextConfiguration", "text": False, "unwrapped": False},
+    )
     """The delimited text configuration."""
-    json_text_configuration: Optional["_models.JsonTextConfiguration"] = rest_field(name="jsonTextConfiguration", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'JsonTextConfiguration', 'text': False, 'unwrapped': False})
+    json_text_configuration: Optional["_models.JsonTextConfiguration"] = rest_field(
+        name="jsonTextConfiguration",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "JsonTextConfiguration", "text": False, "unwrapped": False},
+    )
     """The JSON text configuration."""
-    arrow_configuration: Optional["_models.ArrowConfiguration"] = rest_field(name="arrowConfiguration", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ArrowConfiguration', 'text': False, 'unwrapped': False})
+    arrow_configuration: Optional["_models.ArrowConfiguration"] = rest_field(
+        name="arrowConfiguration",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ArrowConfiguration", "text": False, "unwrapped": False},
+    )
     """The Apache Arrow configuration."""
-    parquet_text_configuration: Optional["_models.ParquetConfiguration"] = rest_field(name="parquetTextConfiguration", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ParquetConfiguration', 'text': False, 'unwrapped': False})
+    parquet_text_configuration: Optional["_models.ParquetConfiguration"] = rest_field(
+        name="parquetTextConfiguration",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ParquetConfiguration", "text": False, "unwrapped": False},
+    )
     """The Parquet configuration."""
 
-
-    _xml = {'attribute': False, 'name': 'QueryFormat', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "QueryFormat", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1655,8 +2105,7 @@ class QueryFormat(_Model):
         json_text_configuration: Optional["_models.JsonTextConfiguration"] = None,
         arrow_configuration: Optional["_models.ArrowConfiguration"] = None,
         parquet_text_configuration: Optional["_models.ParquetConfiguration"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1683,18 +2132,31 @@ class QueryRequest(_Model):
     :vartype output_serialization: ~azure.storage.blobs.models.QuerySerialization
     """
 
-    query_type: Union[str, "_models.QueryRequestType"] = rest_field(name="queryType", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'QueryType', 'text': False, 'unwrapped': False})
+    query_type: Union[str, "_models.QueryRequestType"] = rest_field(
+        name="queryType",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "QueryType", "text": False, "unwrapped": False},
+    )
     """Required. The type of the provided query expression. Required. \"SQL\""""
-    expression: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Expression', 'text': False, 'unwrapped': False})
+    expression: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Expression", "text": False, "unwrapped": False},
+    )
     """The query expression in SQL. The maximum size of the query expression is 256KiB. Required."""
-    input_serialization: Optional["_models.QuerySerialization"] = rest_field(name="inputSerialization", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'InputSerialization', 'text': False, 'unwrapped': False})
+    input_serialization: Optional["_models.QuerySerialization"] = rest_field(
+        name="inputSerialization",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "InputSerialization", "text": False, "unwrapped": False},
+    )
     """The input serialization settings."""
-    output_serialization: Optional["_models.QuerySerialization"] = rest_field(name="outputSerialization", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'OutputSerialization', 'text': False, 'unwrapped': False})
+    output_serialization: Optional["_models.QuerySerialization"] = rest_field(
+        name="outputSerialization",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "OutputSerialization", "text": False, "unwrapped": False},
+    )
     """The output serialization settings."""
 
-
-    _xml = {'attribute': False, 'name': 'QueryRequest', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "QueryRequest", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1704,8 +2166,7 @@ class QueryRequest(_Model):
         expression: str,
         input_serialization: Optional["_models.QuerySerialization"] = None,
         output_serialization: Optional["_models.QuerySerialization"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1725,20 +2186,20 @@ class QuerySerialization(_Model):
     :vartype format: ~azure.storage.blobs.models.QueryFormat
     """
 
-    format: "_models.QueryFormat" = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Format', 'text': False, 'unwrapped': False})
+    format: "_models.QueryFormat" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Format", "text": False, "unwrapped": False},
+    )
     """The query format. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'QuerySerialization', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "QuerySerialization", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         format: "_models.QueryFormat",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1762,16 +2223,24 @@ class RetentionPolicy(_Model):
     :vartype allow_permanent_delete: bool
     """
 
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Enabled', 'text': False, 'unwrapped': False})
+    enabled: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+    )
     """Whether to enable the retention policy. Required."""
-    days: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Days', 'text': False, 'unwrapped': False})
+    days: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Days", "text": False, "unwrapped": False},
+    )
     """The number of days to retain the logs."""
-    allow_permanent_delete: Optional[bool] = rest_field(name="allowPermanentDelete", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'AllowPermanentDelete', 'text': False, 'unwrapped': False})
+    allow_permanent_delete: Optional[bool] = rest_field(
+        name="allowPermanentDelete",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AllowPermanentDelete", "text": False, "unwrapped": False},
+    )
     """Whether to allow permanent delete."""
 
-
-    _xml = {'attribute': False, 'name': 'RetentionPolicy', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "RetentionPolicy", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1780,8 +2249,7 @@ class RetentionPolicy(_Model):
         enabled: bool,
         days: Optional[int] = None,
         allow_permanent_delete: Optional[bool] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1803,14 +2271,19 @@ class SignedIdentifier(_Model):
     :vartype access_policy: ~azure.storage.blobs.models.AccessPolicy
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Id', 'text': False, 'unwrapped': False})
+    id: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
+    )
     """The unique ID for the signed identifier. Required."""
-    access_policy: "_models.AccessPolicy" = rest_field(name="accessPolicy", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'AccessPolicy', 'text': False, 'unwrapped': False})
+    access_policy: "_models.AccessPolicy" = rest_field(
+        name="accessPolicy",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False},
+    )
     """The access policy for the signed identifier. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'SignedIdentifier', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "SignedIdentifier", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1818,8 +2291,7 @@ class SignedIdentifier(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         access_policy: "_models.AccessPolicy",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1839,20 +2311,28 @@ class SignedIdentifiers(_Model):
     :vartype items_property: ~azure.storage.blobs.models.SignedIdentifier
     """
 
-    items_property: list["_models.SignedIdentifier"] = rest_field(name="items", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'itemsName': 'SignedIdentifier', 'name': 'SignedIdentifier', 'text': False, 'unwrapped': True}, original_tsp_name="items")
+    items_property: list["_models.SignedIdentifier"] = rest_field(
+        name="items",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={
+            "attribute": False,
+            "itemsName": "SignedIdentifier",
+            "name": "SignedIdentifier",
+            "text": False,
+            "unwrapped": True,
+        },
+        original_tsp_name="items",
+    )
     """The array of signed identifiers. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'SignedIdentifiers', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "SignedIdentifiers", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         items_property: list["_models.SignedIdentifier"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1878,18 +2358,31 @@ class StaticWebsite(_Model):
     :vartype default_index_document_path: str
     """
 
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Enabled', 'text': False, 'unwrapped': False})
+    enabled: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+    )
     """Indicates whether this account is hosting a static website. Required."""
-    index_document: Optional[str] = rest_field(name="indexDocument", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'IndexDocument', 'text': False, 'unwrapped': False})
+    index_document: Optional[str] = rest_field(
+        name="indexDocument",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "IndexDocument", "text": False, "unwrapped": False},
+    )
     """The index document."""
-    error_document404_path: Optional[str] = rest_field(name="errorDocument404Path", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'ErrorDocument404Path', 'text': False, 'unwrapped': False})
+    error_document404_path: Optional[str] = rest_field(
+        name="errorDocument404Path",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ErrorDocument404Path", "text": False, "unwrapped": False},
+    )
     """The error document."""
-    default_index_document_path: Optional[str] = rest_field(name="defaultIndexDocumentPath", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'DefaultIndexDocumentPath', 'text': False, 'unwrapped': False})
+    default_index_document_path: Optional[str] = rest_field(
+        name="defaultIndexDocumentPath",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DefaultIndexDocumentPath", "text": False, "unwrapped": False},
+    )
     """Absolute path of the default index page."""
 
-
-    _xml = {'attribute': False, 'name': 'StaticWebsite', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "StaticWebsite", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1899,8 +2392,7 @@ class StaticWebsite(_Model):
         index_document: Optional[str] = None,
         error_document404_path: Optional[str] = None,
         default_index_document_path: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1928,20 +2420,36 @@ class StorageError(_Model):
     :vartype copy_source_error_message: str
     """
 
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Code', 'text': False, 'unwrapped': False})
+    code: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
+    )
     """The error code."""
-    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'Message', 'text': False, 'unwrapped': False})
+    message: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
+    )
     """The error message."""
-    copy_source_status_code: Optional[int] = rest_field(name="copySourceStatusCode", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopySourceStatusCode', 'text': False, 'unwrapped': False})
+    copy_source_status_code: Optional[int] = rest_field(
+        name="copySourceStatusCode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceStatusCode", "text": False, "unwrapped": False},
+    )
     """Copy source status code."""
-    copy_source_error_code: Optional[str] = rest_field(name="copySourceErrorCode", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopySourceErrorCode', 'text': False, 'unwrapped': False})
+    copy_source_error_code: Optional[str] = rest_field(
+        name="copySourceErrorCode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceErrorCode", "text": False, "unwrapped": False},
+    )
     """Copy source error code."""
-    copy_source_error_message: Optional[str] = rest_field(name="copySourceErrorMessage", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'CopySourceErrorMessage', 'text': False, 'unwrapped': False})
+    copy_source_error_message: Optional[str] = rest_field(
+        name="copySourceErrorMessage",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceErrorMessage", "text": False, "unwrapped": False},
+    )
     """Copy source error message."""
 
-
-    _xml = {'attribute': False, 'name': 'StorageError', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "StorageError", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1952,8 +2460,7 @@ class StorageError(_Model):
         copy_source_status_code: Optional[int] = None,
         copy_source_error_code: Optional[str] = None,
         copy_source_error_message: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1973,20 +2480,21 @@ class StorageServiceStats(_Model):
     :vartype geo_replication: ~azure.storage.blobs.models.GeoReplication
     """
 
-    geo_replication: Optional["_models.GeoReplication"] = rest_field(name="geoReplication", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'GeoReplication', 'text': False, 'unwrapped': False})
+    geo_replication: Optional["_models.GeoReplication"] = rest_field(
+        name="geoReplication",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "GeoReplication", "text": False, "unwrapped": False},
+    )
     """The geo replication stats."""
 
-
-    _xml = {'attribute': False, 'name': 'StorageServiceStats', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "StorageServiceStats", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
         geo_replication: Optional["_models.GeoReplication"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2010,11 +2518,10 @@ class SubmitBatchRequest(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
-    body: FileType = rest_field(visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True)
+    body: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
     """Required."""
-
-
-
 
     @overload
     def __init__(
@@ -2022,8 +2529,7 @@ class SubmitBatchRequest(_Model):
         *,
         name: str,
         body: FileType,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2058,26 +2564,56 @@ class UserDelegationKey(_Model):
     :vartype value: bytes
     """
 
-    signed_oid: str = rest_field(name="signedOid", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'SignedOid', 'text': False, 'unwrapped': False})
+    signed_oid: str = rest_field(
+        name="signedOid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedOid", "text": False, "unwrapped": False},
+    )
     """The Azure Active Directory object ID in GUID format. Required."""
-    signed_tid: str = rest_field(name="signedTid", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'SignedTid', 'text': False, 'unwrapped': False})
+    signed_tid: str = rest_field(
+        name="signedTid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
+    )
     """The Azure Active Directory tenant ID in GUID format. Required."""
-    signed_start: str = rest_field(name="signedStart", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'SignedStart', 'text': False, 'unwrapped': False})
+    signed_start: str = rest_field(
+        name="signedStart",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
+    )
     """The date-time the key is active. Required."""
-    signed_expiry: str = rest_field(name="signedExpiry", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'SignedExpiry', 'text': False, 'unwrapped': False})
+    signed_expiry: str = rest_field(
+        name="signedExpiry",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
+    )
     """The date-time the key expires. Required."""
-    signed_service: str = rest_field(name="signedService", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'SignedService', 'text': False, 'unwrapped': False})
+    signed_service: str = rest_field(
+        name="signedService",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedService", "text": False, "unwrapped": False},
+    )
     """Abbreviation of the Azure Storage service that accepts the key. Required."""
-    signed_version: str = rest_field(name="signedVersion", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'SignedVersion', 'text': False, 'unwrapped': False})
+    signed_version: str = rest_field(
+        name="signedVersion",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedVersion", "text": False, "unwrapped": False},
+    )
     """The service version that created the key. Required."""
-    signed_delegated_user_tid: Optional[str] = rest_field(name="signedDelegatedUserTid", visibility=["read", "create", "update", "delete", "query"], xml={'attribute': False, 'name': 'SignedDelegatedUserTid', 'text': False, 'unwrapped': False})
+    signed_delegated_user_tid: Optional[str] = rest_field(
+        name="signedDelegatedUserTid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedDelegatedUserTid", "text": False, "unwrapped": False},
+    )
     """The delegated user tenant id in Azure AD. Return if DelegatedUserTid is specified."""
-    value: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64", xml={'attribute': False, 'name': 'Value', 'text': False, 'unwrapped': False})
+    value: bytes = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="base64",
+        xml={"attribute": False, "name": "Value", "text": False, "unwrapped": False},
+    )
     """The key as a base64 string. Required."""
 
-
-    _xml = {'attribute': False, 'name': 'UserDelegationKey', 'text': False, 'unwrapped': False}
-
+    _xml = {"attribute": False, "name": "UserDelegationKey", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -2091,8 +2627,7 @@ class UserDelegationKey(_Model):
         signed_version: str,
         value: bytes,
         signed_delegated_user_tid: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:

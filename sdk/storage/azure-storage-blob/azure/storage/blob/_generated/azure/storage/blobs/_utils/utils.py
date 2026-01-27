@@ -20,12 +20,15 @@ if TYPE_CHECKING:
 TClient = TypeVar("TClient")
 TConfig = TypeVar("TConfig")
 
+
 class ClientMixinABC(ABC, Generic[TClient, TConfig]):
     """DO NOT use this class. It is for internal typing use only."""
+
     _client: TClient
     _config: TConfig
     _serialize: "Serializer"
     _deserialize: "Deserializer"
+
 
 def quote_etag(etag: Optional[str]) -> Optional[str]:
     if not etag or etag == "*":
@@ -55,6 +58,8 @@ def prep_if_none_match(etag: Optional[str], match_condition: Optional[MatchCondi
     if match_condition == MatchConditions.IfMissing:
         return "*"
     return None
+
+
 # file-like tuple could be `(filename, IO (or bytes))` or `(filename, IO (or bytes), content_type)`
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 
@@ -67,10 +72,12 @@ FileType = Union[
     tuple[Optional[str], FileContent, Optional[str]],
 ]
 
+
 def serialize_multipart_data_entry(data_entry: Any) -> Any:
     if isinstance(data_entry, (list, tuple, dict, Model)):
         return json.dumps(data_entry, cls=SdkJSONEncoder, exclude_readonly=True)
     return data_entry
+
 
 def prepare_multipart_form_data(
     body: Mapping[str, Any], multipart_fields: list[str], data_fields: list[str]
@@ -79,7 +86,7 @@ def prepare_multipart_form_data(
     for multipart_field in multipart_fields:
         multipart_entry = body.get(multipart_field)
         if isinstance(multipart_entry, list):
-            files.extend([(multipart_field, e) for e in multipart_entry ])
+            files.extend([(multipart_field, e) for e in multipart_entry])
         elif multipart_entry:
             files.append((multipart_field, multipart_entry))
 

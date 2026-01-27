@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 import functools
 
+
 def api_version_validation(**kwargs):
     params_added_on = kwargs.pop("params_added_on", {})
     method_added_on = kwargs.pop("method_added_on", "")
@@ -13,7 +14,7 @@ def api_version_validation(**kwargs):
 
     def _index_with_default(value: str, default: int = -1) -> int:
         """Get the index of value in lst, or return default if not found.
-        
+
         :param value: The value to search for in the api_versions_list.
         :type value: str
         :param default: The default value to return if the value is not found.
@@ -49,11 +50,17 @@ def api_version_validation(**kwargs):
                 if parameter in kwargs and _index_with_default(api_version) > _index_with_default(client_api_version)
             }
             if unsupported:
-                raise ValueError("".join([
-                    f"'{param}' is not available in API version {client_api_version}. "
-                    f"Use service API version {version} or newer.\n"
-                    for param, version in unsupported.items()
-                ]))
+                raise ValueError(
+                    "".join(
+                        [
+                            f"'{param}' is not available in API version {client_api_version}. "
+                            f"Use service API version {version} or newer.\n"
+                            for param, version in unsupported.items()
+                        ]
+                    )
+                )
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator

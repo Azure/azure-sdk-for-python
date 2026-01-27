@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,7 +38,6 @@ __all__ = ["SdkJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 TZ_UTC = timezone.utc
 _T = typing.TypeVar("_T")
 _NONE_TYPE = type(None)
-
 
 
 def _timedelta_as_isostr(td: timedelta) -> str:
@@ -179,12 +179,14 @@ _ARRAY_ENCODE_MAPPING = {
     "newlineDelimited": "\n",
 }
 
+
 def _deserialize_array_encoded(delimit: str, attr):
     if isinstance(attr, str):
         if attr == "":
             return []
         return attr.split(delimit)
     return attr
+
 
 def _deserialize_datetime(attr: typing.Union[str, datetime]) -> datetime:
     """Deserialize ISO-8601 formatted string into Datetime object.
@@ -384,7 +386,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
                         # If serialized form is same type (no transformation needed),
                         # return _data directly so mutations work
                         if isinstance(serialized, type(value)) and serialized == value:
-                          return self._data.get(key)
+                            return self._data.get(key)
                         # Otherwise return serialized copy and clear flag
                         try:
                             object.__delattr__(self, cache_attr)
@@ -562,9 +564,7 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
     return o
 
 
-def _get_rest_field(
-    attr_to_rest_field: dict[str, "_RestField"], rest_name: str
-) -> typing.Optional["_RestField"]:
+def _get_rest_field(attr_to_rest_field: dict[str, "_RestField"], rest_name: str) -> typing.Optional["_RestField"]:
     try:
         return next(rf for rf in attr_to_rest_field.values() if rf._rest_name == rest_name)
     except StopIteration:
@@ -689,8 +689,8 @@ class Model(_MyMutableMapping):
                     rf._rest_name_input = attr
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
             cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
-                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf for attr, rf in cls
-                ._attr_to_rest_field.items()
+                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
+                for attr, rf in cls._attr_to_rest_field.items()
             }
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
@@ -861,6 +861,7 @@ def _sorted_annotations(types: list[typing.Any]) -> list[typing.Any]:
         key=lambda x: hasattr(x, "__name__") and x.__name__.lower() in ("str", "float", "int", "bool"),
     )
 
+
 def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-statements, too-many-branches
     annotation: typing.Any,
     module: typing.Optional[str],
@@ -1028,34 +1029,32 @@ def _deserialize(
 
 
 def _failsafe_deserialize(
-  deserializer: typing.Any,
-  response: HttpResponse,
-  module: typing.Optional[str] = None,
-  rf: typing.Optional["_RestField"] = None,
-  format: typing.Optional[str] = None,
+    deserializer: typing.Any,
+    response: HttpResponse,
+    module: typing.Optional[str] = None,
+    rf: typing.Optional["_RestField"] = None,
+    format: typing.Optional[str] = None,
 ) -> typing.Any:
-  try:
-      return _deserialize(deserializer, response.json(), module, rf, format)
-  except DeserializationError:
-      _LOGGER.warning(
-          "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
-          exc_info=True
-      )
-      return None
+    try:
+        return _deserialize(deserializer, response.json(), module, rf, format)
+    except DeserializationError:
+        _LOGGER.warning(
+            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+        )
+        return None
 
 
 def _failsafe_deserialize_xml(
-  deserializer: typing.Any,
-  response: HttpResponse, 
+    deserializer: typing.Any,
+    response: HttpResponse,
 ) -> typing.Any:
-  try:
-      return _deserialize_xml(deserializer, response.text())
-  except DeserializationError:
-      _LOGGER.warning(
-          "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
-          exc_info=True
-      )
-      return None
+    try:
+        return _deserialize_xml(deserializer, response.text())
+    except DeserializationError:
+        _LOGGER.warning(
+            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+        )
+        return None
 
 
 # pylint: disable=too-many-instance-attributes
@@ -1316,7 +1315,7 @@ def _get_primitive_type_value(v) -> str:
 
 
 def _create_xml_element(
-  tag: typing.Any, prefix: typing.Optional[str] = None, ns: typing.Optional[str] = None
+    tag: typing.Any, prefix: typing.Optional[str] = None, ns: typing.Optional[str] = None
 ) -> ET.Element:
     if prefix and ns:
         ET.register_namespace(prefix, ns)
@@ -1329,7 +1328,7 @@ def _deserialize_xml(
     deserializer: typing.Any,
     value: str,
 ) -> typing.Any:
-    element = ET.fromstring(value) # nosec
+    element = ET.fromstring(value)  # nosec
     return _deserialize(deserializer, element)
 
 
