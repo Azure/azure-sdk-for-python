@@ -15,6 +15,7 @@ from urllib.parse import quote, unquote, urlparse
 
 from ._deserialize import deserialize_blob_stream
 from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from ._upload_helpers import _get_blob_http_headers_dict
 from ._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
     BlobHTTPHeaders,
@@ -202,14 +203,11 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     source_authorization = kwargs.pop('source_authorization', None)
     source_token_intent = kwargs.pop('source_token_intent', None)
     if content_settings:
-        kwargs['blob_http_headers'] = BlobHTTPHeaders(
-            blob_cache_control=content_settings.cache_control,
-            blob_content_type=content_settings.content_type,
-            blob_content_md5=None,
-            blob_content_encoding=content_settings.content_encoding,
-            blob_content_language=content_settings.content_language,
-            blob_content_disposition=content_settings.content_disposition
-        )
+        kwargs['blob_cache_control'] = content_settings.cache_control
+        kwargs['blob_content_type'] = content_settings.content_type
+        kwargs['blob_content_encoding'] = content_settings.content_encoding
+        kwargs['blob_content_language'] = content_settings.content_language
+        kwargs['blob_content_disposition'] = content_settings.content_disposition
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
@@ -438,7 +436,7 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
         )
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'blob_http_headers': blob_headers,
+        **_get_blob_http_headers_dict(blob_headers),
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cls': return_response_headers}
@@ -516,7 +514,7 @@ def _create_page_blob_options(
         'content_length': 0,
         'blob_content_length': size,
         'blob_sequence_number': sequence_number,
-        'blob_http_headers': blob_headers,
+        **_get_blob_http_headers_dict(blob_headers),
         'timeout': kwargs.pop('timeout', None),
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
@@ -565,7 +563,7 @@ def _create_append_blob_options(
 
     options = {
         'content_length': 0,
-        'blob_http_headers': blob_headers,
+        **_get_blob_http_headers_dict(blob_headers),
         'timeout': kwargs.pop('timeout', None),
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
@@ -855,7 +853,7 @@ def _commit_block_list_options(
 
     options = {
         'blocks': block_lookup,
-        'blob_http_headers': blob_headers,
+        **_get_blob_http_headers_dict(blob_headers),
         'lease_access_conditions': access_conditions,
         'timeout': kwargs.pop('timeout', None),
         'modified_access_conditions': mod_conditions,

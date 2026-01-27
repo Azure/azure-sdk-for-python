@@ -32,7 +32,7 @@ from .._shared.uploads_async import (
     upload_data_chunks,
     upload_substream_blocks
 )
-from .._upload_helpers import _any_conditions, _convert_mod_error
+from .._upload_helpers import _any_conditions, _convert_mod_error, _get_blob_http_headers_dict
 
 if TYPE_CHECKING:
     from .._generated.azure.storage.blobs.aio.operations import (
@@ -89,7 +89,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             response = cast(Dict[str, Any], await client.upload(
                 body=data,  # type: ignore [arg-type]
                 content_length=adjusted_count,
-                blob_http_headers=blob_headers,
+                **_get_blob_http_headers_dict(blob_headers),
                 headers=headers,
                 cls=return_response_headers,
                 validate_content=validate_content,
@@ -166,7 +166,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         block_lookup.latest = block_ids
         return cast(Dict[str, Any], await client.commit_block_list(
             block_lookup,
-            blob_http_headers=blob_headers,
+            **_get_blob_http_headers_dict(blob_headers),
             cls=return_response_headers,
             validate_content=validate_content,
             headers=headers,
@@ -226,7 +226,7 @@ async def upload_page_blob(
             content_length=0,
             blob_content_length=length,
             blob_sequence_number=None,  # type: ignore [arg-type]
-            blob_http_headers=kwargs.pop('blob_headers', None),
+            **_get_blob_http_headers_dict(kwargs.pop('blob_headers', None)),
             blob_tags_string=blob_tags_string,
             tier=tier,
             cls=return_response_headers,
@@ -289,7 +289,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
             if overwrite:
                 await client.create(
                     content_length=0,
-                    blob_http_headers=blob_headers,
+                    **_get_blob_http_headers_dict(blob_headers),
                     headers=headers,
                     blob_tags_string=blob_tags_string,
                     **kwargs)
@@ -318,7 +318,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                     raise error from exc
             await client.create(
                 content_length=0,
-                blob_http_headers=blob_headers,
+                **_get_blob_http_headers_dict(blob_headers),
                 headers=headers,
                 blob_tags_string=blob_tags_string,
                 **kwargs)

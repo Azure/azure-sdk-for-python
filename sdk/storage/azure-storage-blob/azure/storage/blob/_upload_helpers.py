@@ -42,6 +42,23 @@ _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
 
 
+def _get_blob_http_headers_dict(blob_headers):
+    """Expand BlobHTTPHeaders object into a dict of keyword arguments.
+
+    The new generated code expects individual parameters instead of a BlobHTTPHeaders object.
+    """
+    if blob_headers is None:
+        return {}
+    return {
+        'blob_cache_control': blob_headers.blob_cache_control,
+        'blob_content_type': blob_headers.blob_content_type,
+        'blob_content_md5': blob_headers.blob_content_md5,
+        'blob_content_encoding': blob_headers.blob_content_encoding,
+        'blob_content_language': blob_headers.blob_content_language,
+        'blob_content_disposition': blob_headers.blob_content_disposition,
+    }
+
+
 def _convert_mod_error(error):
     message = error.message.replace(
         "The condition specified using HTTP conditional header(s) is not met.",
@@ -105,7 +122,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             response = client.upload(
                 body=data,  # type: ignore [arg-type]
                 content_length=adjusted_count,
-                blob_http_headers=blob_headers,
+                **_get_blob_http_headers_dict(blob_headers),
                 headers=headers,
                 cls=return_response_headers,
                 validate_content=validate_content,
@@ -182,7 +199,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         block_lookup.latest = block_ids
         return cast(Dict[str, Any], client.commit_block_list(
             block_lookup,
-            blob_http_headers=blob_headers,
+            **_get_blob_http_headers_dict(blob_headers),
             cls=return_response_headers,
             validate_content=validate_content,
             headers=headers,
@@ -242,7 +259,7 @@ def upload_page_blob(
             content_length=0,
             blob_content_length=length,
             blob_sequence_number=None,  # type: ignore [arg-type]
-            blob_http_headers=kwargs.pop('blob_headers', None),
+            **_get_blob_http_headers_dict(kwargs.pop('blob_headers', None)),
             blob_tags_string=blob_tags_string,
             tier=tier,
             cls=return_response_headers,
@@ -305,7 +322,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
             if overwrite:
                 client.create(
                     content_length=0,
-                    blob_http_headers=blob_headers,
+                    **_get_blob_http_headers_dict(blob_headers),
                     headers=headers,
                     blob_tags_string=blob_tags_string,
                     **kwargs)
@@ -334,7 +351,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                     raise error from exc
             client.create(
                 content_length=0,
-                blob_http_headers=blob_headers,
+                **_get_blob_http_headers_dict(blob_headers),
                 headers=headers,
                 blob_tags_string=blob_tags_string,
                 **kwargs)
