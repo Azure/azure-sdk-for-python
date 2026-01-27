@@ -1,4 +1,8 @@
 parameters:
+  - name: conda_username
+    displayName: 'Conda Username'
+    type: string
+    default: 'azure-sdk'
   - name: release_msal
     displayName: 'msal'
     type: boolean
@@ -906,4 +910,86 @@ extends:
                         - package: azure-mgmt-workloadssapvirtualinstance
                           version: 1.0.0
 
+      - stage: Publish_To_Conda
+        displayName: Publish to Conda
+        dependsOn: Build_Universal_Dependencies
+        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'))
+        variables:
+          - template: /eng/pipelines/templates/variables/globals.yml@self
 
+        jobs:
+          - deployment: PublishCondaPackages
+            displayName: 'Publish Conda Packages'
+            environment: package-publish
+            timeoutInMinutes: 120
+
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - download: current
+                      artifact: conda
+                      displayName: 'Download Conda Artifacts'
+
+                    - task: UsePythonVersion@0
+                      displayName: 'Use Python 3.11'
+                      inputs:
+                        versionSpec: '3.11'
+
+                    - pwsh: |
+                        python -m pip install anaconda-client
+                      displayName: 'Install anaconda-client'
+
+                    # TODO get token from keyvault?
+
+                    - pwsh: |
+                        $packageDir = "$(Pipeline.Workspace)/conda"
+                        $packages = Get-ChildItem -Path $packageDir -Recurse -Include "*.tar.bz2", "*.conda"
+                        
+                        if ($packages.Count -eq 0) {
+                          Write-Error "No conda packages found in $packageDir"
+                          exit 1
+                        }
+                        
+                        Write-Host "Found $($packages.Count) packages to upload:"
+                        foreach ($pkg in $packages) {
+                          Write-Host "  - $($pkg.Name)"
+                        }
+                        
+                        $failed = @()
+                        foreach ($pkg in $packages) {
+                          Write-Host "Uploading $($pkg.FullName)..."
+                          $retries = 3
+                          $success = $false 
+
+                          for ($i = 1; $i -le $retries; $i++) {
+                            anaconda upload --user ${{ parameters.conda_username }} --skip-existing $($pkg.FullName)
+                            if ($LASTEXITCODE -eq 0) {
+                              Write-Host "Successfully uploaded $($pkg.Name) on attempt $i."
+                              $success = $true
+                              break
+                            }
+                            Write-Warning "Attempt $i failed, retrying..."
+                            Start-Sleep -Seconds 5
+                          }
+
+                          if (-not $success) {
+                            $failed += $pkg.Name
+                          }
+                        }
+                        
+                        if ($failed.Count -gt 0) {
+                          Write-Error "Failed to upload the following packages: $($failed -join ', ')"
+                          exit 1
+                        }
+
+                        Write-Host "Successfully uploaded all packages!"
+                      displayName: 'Publish to Conda'
+                      workingDirectory: $(Pipeline.Workspace)
+                      env:
+                        ANACONDA_API_TOKEN: $(AnacondaApiToken)
