@@ -39,9 +39,11 @@ from ._models import (
 from ._serialize import (
     get_access_conditions,
     get_blob_modify_conditions,
+    get_cpk_info,
     get_cpk_scope_info,
     get_modify_conditions,
     get_source_conditions,
+    get_source_cpk_info,
     serialize_blob_tags_header,
     serialize_blob_tags,
     serialize_query_format
@@ -139,17 +141,13 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     overwrite = kwargs.pop('overwrite', False)
     max_concurrency = kwargs.pop('max_concurrency', 1)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
-    kwargs['cpk_info'] = cpk_info
+    kwargs.update(get_cpk_info(cpk))
 
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     kwargs['lease_id'] = get_access_conditions(kwargs.pop('lease', None))
     kwargs.update(get_modify_conditions(kwargs))
-    kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
+    kwargs.update(get_cpk_scope_info(kwargs))
     if content_settings:
         kwargs['blob_headers'] = BlobHTTPHeaders(
             blob_cache_control=content_settings.cache_control,
@@ -208,18 +206,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         kwargs['blob_content_language'] = content_settings.content_language
         kwargs['blob_content_disposition'] = content_settings.content_disposition
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
     source_cpk = kwargs.pop('source_cpk', None)
-    source_cpk_info = None
-    if source_cpk:
-        source_cpk_info = SourceCpkInfo(
-            source_encryption_key=source_cpk.key_value,
-            source_encryption_key_sha256=source_cpk.key_hash,
-            source_encryption_algorithm=source_cpk.algorithm
-        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -234,9 +221,9 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'lease_id': get_access_conditions(kwargs.pop('destination_lease', None)),
         'tier': tier.value if tier else None,
         'source_modified_access_conditions': get_source_conditions(kwargs),
-        'cpk_info': cpk_info,
-        'cpk_scope_info': get_cpk_scope_info(kwargs),
-        'source_cpk_info': source_cpk_info,
+        **get_cpk_info(cpk),
+        **get_cpk_scope_info(kwargs),
+        **get_source_cpk_info(source_cpk),
         'headers': headers,
     }
     options.update(kwargs)
@@ -292,10 +279,6 @@ def _download_blob_options(
     mod_conditions = get_modify_conditions(kwargs)
 
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
 
     # Add feature flag to user agent for encryption
     if encryption_options['key'] or encryption_options['resolver']:
@@ -318,7 +301,7 @@ def _download_blob_options(
             'resolver': encryption_options['resolver']},
         'lease_id': access_conditions,
         **mod_conditions,
-        'cpk_info': cpk_info,
+        **get_cpk_info(cpk),
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
         'max_concurrency':kwargs.pop('max_concurrency', 1),
         'encoding': encoding,
@@ -372,18 +355,11 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
     mod_conditions = get_modify_conditions(kwargs)
 
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(
-            encryption_key=cpk.key_value,
-            encryption_key_sha256=cpk.key_hash,
-            encryption_algorithm=cpk.algorithm
-        )
     options = {
         'query_request': query_request,
         'lease_id': access_conditions,
         **mod_conditions,
-        'cpk_info': cpk_info,
+        **get_cpk_info(cpk),
         'snapshot': snapshot,
         'timeout': kwargs.pop('timeout', None),
         'cls': return_headers_and_deserialized,
@@ -447,19 +423,15 @@ def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwar
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
 
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
     options = {
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
         **mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'cls': return_response_headers,
         'headers': headers}
     options.update(kwargs)
@@ -476,7 +448,7 @@ def _create_page_blob_options(
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     blob_headers = None
     if content_settings:
         blob_headers = BlobHTTPHeaders(
@@ -490,10 +462,6 @@ def _create_page_blob_options(
 
     sequence_number = kwargs.pop('sequence_number', None)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
 
     immutability_policy = kwargs.pop('immutability_policy', None)
     if immutability_policy:
@@ -517,8 +485,8 @@ def _create_page_blob_options(
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
         **mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'blob_tags_string': blob_tags_string,
         'cls': return_response_headers,
         "tier": tier,
@@ -535,7 +503,7 @@ def _create_append_blob_options(
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     blob_headers = None
     if content_settings:
         blob_headers = BlobHTTPHeaders(
@@ -548,10 +516,6 @@ def _create_append_blob_options(
         )
 
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
 
     immutability_policy = kwargs.pop('immutability_policy', None)
     if immutability_policy:
@@ -566,8 +530,8 @@ def _create_append_blob_options(
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
         **mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'blob_tags_string': blob_tags_string,
         'cls': return_response_headers,
         'headers': headers}
@@ -579,19 +543,15 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
 
     options = {
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
         **mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'cls': return_response_headers,
         'headers': headers}
     options.update(kwargs)
@@ -717,12 +677,8 @@ def _stage_block_options(
         data = data[:length]
 
     validate_content = kwargs.pop('validate_content', False)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
 
     options = {
         'block_id': block_id,
@@ -732,8 +688,8 @@ def _stage_block_options(
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'cls': return_response_headers,
     }
     options.update(kwargs)
@@ -760,20 +716,9 @@ def _stage_block_from_url_options(
     if source_offset is not None:
         range_header, _ = validate_and_format_range_headers(source_offset, source_length)
 
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
     source_cpk = kwargs.pop('source_cpk', None)
-    source_cpk_info = None
-    if source_cpk:
-        source_cpk_info = SourceCpkInfo(
-            source_encryption_key=source_cpk.key_value,
-            source_encryption_key_sha256=source_cpk.key_hash,
-            source_encryption_algorithm=source_cpk.algorithm
-        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -785,9 +730,9 @@ def _stage_block_from_url_options(
         'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
-        'source_cpk_info': source_cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
+        **get_source_cpk_info(source_cpk),
         'cls': return_response_headers,
     }
     options.update(kwargs)
@@ -835,12 +780,8 @@ def _commit_block_list_options(
         )
 
     validate_content = kwargs.pop('validate_content', False)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
 
     immutability_policy = kwargs.pop('immutability_policy', None)
     if immutability_policy:
@@ -858,8 +799,8 @@ def _commit_block_list_options(
         **mod_conditions,
         'cls': return_response_headers,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'tier': tier.value if tier else None,
         'blob_tags_string': blob_tags_string,
         'headers': headers
@@ -963,16 +904,12 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
         raise ValueError("A content length must be specified for a Page Blob.")
 
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
     options = {
         'blob_content_length': size,
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
         **mod_conditions,
-        'cpk_info': cpk_info,
+        **get_cpk_info(cpk),
         'cls': return_response_headers}
     options.update(kwargs)
     return options
@@ -998,13 +935,9 @@ def _upload_page_options(
         if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
     )
     mod_conditions = get_modify_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     validate_content = kwargs.pop('validate_content', False)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
     options = {
         'body': page[:length],
         'content_length': length,
@@ -1015,8 +948,8 @@ def _upload_page_options(
         'sequence_number_access_conditions': seq_conditions,
         **mod_conditions,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'cls': return_response_headers}
     options.update(kwargs)
     return options
@@ -1052,21 +985,10 @@ def _upload_pages_from_url_options(
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     source_mod_conditions = get_source_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     source_content_md5 = kwargs.pop('source_content_md5', None)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
     source_cpk = kwargs.pop('source_cpk', None)
-    source_cpk_info = None
-    if source_cpk:
-        source_cpk_info = SourceCpkInfo(
-            source_encryption_key=source_cpk.key_value,
-            source_encryption_key_sha256=source_cpk.key_hash,
-            source_encryption_algorithm=source_cpk.algorithm
-        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1081,9 +1003,9 @@ def _upload_pages_from_url_options(
         'sequence_number_access_conditions': seq_conditions,
         **mod_conditions,
         'source_modified_access_conditions': source_mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
-        'source_cpk_info': source_cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
+        **get_source_cpk_info(source_cpk),
         'cls': return_response_headers
     }
     options.update(kwargs)
@@ -1109,10 +1031,6 @@ def _clear_page_options(
     content_range = f'bytes={offset}-{end_range}'
 
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
 
     options = {
         'content_length': 0,
@@ -1121,7 +1039,7 @@ def _clear_page_options(
         'lease_id': access_conditions,
         'sequence_number_access_conditions': seq_conditions,
         **mod_conditions,
-        'cpk_info': cpk_info,
+        **get_cpk_info(cpk),
         'cls': return_response_headers}
     options.update(kwargs)
     return options
@@ -1153,12 +1071,8 @@ def _append_block_options(
         )
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
     options = {
         'body': data,
         'content_length': length,
@@ -1168,8 +1082,8 @@ def _append_block_options(
         'append_position_access_conditions': append_conditions,
         **mod_conditions,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
         'cls': return_response_headers}
     options.update(kwargs)
     return options
@@ -1206,23 +1120,9 @@ def _append_block_from_url_options(
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     source_mod_conditions = get_source_conditions(kwargs)
-    cpk_scope_info = get_cpk_scope_info(kwargs)
+    cpk_scope = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
-    cpk_info = None
-    if cpk:
-        cpk_info = CpkInfo(
-            encryption_key=cpk.key_value,
-            encryption_key_sha256=cpk.key_hash,
-            encryption_algorithm=cpk.algorithm
-        )
     source_cpk = kwargs.pop('source_cpk', None)
-    source_cpk_info = None
-    if source_cpk:
-        source_cpk_info = SourceCpkInfo(
-            source_encryption_key=source_cpk.key_value,
-            source_encryption_key_sha256=source_cpk.key_hash,
-            source_encryption_algorithm=source_cpk.algorithm
-        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1236,9 +1136,9 @@ def _append_block_from_url_options(
         'append_position_access_conditions': append_conditions,
         **mod_conditions,
         'source_modified_access_conditions': source_mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
-        'source_cpk_info': source_cpk_info,
+        **cpk_scope,
+        **get_cpk_info(cpk),
+        **get_source_cpk_info(source_cpk),
         'cls': return_response_headers,
         'timeout': kwargs.pop('timeout', None)
     }

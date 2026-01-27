@@ -90,17 +90,6 @@ class CpkInfo:
         self.encryption_key_sha256 = encryption_key_sha256
         self.encryption_algorithm = encryption_algorithm
 
-
-class CpkScopeInfo:
-    """Parameter group for CPK scope info."""
-
-    def __init__(
-        self,
-        *,
-        encryption_scope: Optional[str] = None,
-    ):
-        self.encryption_scope = encryption_scope
-
 class ModifiedAccessConditions:
     """Parameter group for modified access conditions."""
 
@@ -184,7 +173,6 @@ __all__: list[str] = [
     "BlobModifiedAccessConditions",
     "ContainerCpkScopeInfo",
     "CpkInfo",
-    "CpkScopeInfo",
     "ModifiedAccessConditions",
     "QueryFormatType",
     "SequenceNumberAccessConditions",

@@ -18,7 +18,6 @@ from ._generated.azure.storage.blobs.models import (
     BlobTag,
     BlobTags,
     ContainerCpkScopeInfo,
-    CpkScopeInfo,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
     ParquetConfiguration,
@@ -135,10 +134,35 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditi
     )
 
 
-def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[CpkScopeInfo]:
-    if 'encryption_scope' in kwargs:
-        return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
-    return None
+def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns encryption_scope as a dict for the generated code."""
+    return {'encryption_scope': kwargs.pop('encryption_scope', None)}
+
+
+def get_cpk_info(cpk: Any) -> Dict[str, Any]:
+    """Returns CPK parameters as a dict for the generated code.
+    
+    The generated code expects individual parameters: encryption_key,
+    encryption_key_sha256, and encryption_algorithm instead of a CpkInfo object.
+    """
+    if cpk:
+        return {
+            'encryption_key': cpk.key_value,
+            'encryption_key_sha256': cpk.key_hash,
+            'encryption_algorithm': cpk.algorithm
+        }
+    return {}
+
+
+def get_source_cpk_info(source_cpk: Any) -> Dict[str, Any]:
+    """Returns source CPK parameters as a dict for the generated code."""
+    if source_cpk:
+        return {
+            'source_encryption_key': source_cpk.key_value,
+            'source_encryption_key_sha256': source_cpk.key_hash,
+            'source_encryption_algorithm': source_cpk.algorithm
+        }
+    return {}
 
 
 def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:
