@@ -6,7 +6,11 @@ import os
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from azure.ai.agentserver.core.tools.runtime._runtime import DefaultFoundryToolRuntime
+from azure.ai.agentserver.core.tools.runtime._runtime import (
+    create_tool_runtime,
+    DefaultFoundryToolRuntime,
+    ThrowingFoundryToolRuntime,
+)
 from azure.ai.agentserver.core.tools.runtime._catalog import DefaultFoundryToolCatalog
 from azure.ai.agentserver.core.tools.runtime._resolver import DefaultFoundryToolInvocationResolver
 from azure.ai.agentserver.core.tools.runtime._user import ContextVarUserProvider
@@ -281,3 +285,117 @@ class TestDefaultFoundryToolRuntimeContextManager:
                 raise ValueError("Test error")
 
         mock_client_instance.__aexit__.assert_called_once()
+
+
+class TestCreateToolRuntime:
+    """Tests for create_tool_runtime factory function."""
+
+    @patch("azure.ai.agentserver.core.tools.runtime._runtime.FoundryToolClient")
+    def test_create_tool_runtime_returns_default_runtime_with_valid_params(
+        self,
+        mock_client_class,
+        mock_credential
+    ):
+        """Test create_tool_runtime returns DefaultFoundryToolRuntime when both params are provided."""
+        mock_client_class.return_value = MagicMock()
+        endpoint = "https://test-project.azure.com"
+
+        runtime = create_tool_runtime(project_endpoint=endpoint, credential=mock_credential)
+
+        assert isinstance(runtime, DefaultFoundryToolRuntime)
+
+    def test_create_tool_runtime_returns_throwing_runtime_when_endpoint_is_none(
+        self,
+        mock_credential
+    ):
+        """Test create_tool_runtime returns ThrowingFoundryToolRuntime when endpoint is None."""
+        runtime = create_tool_runtime(project_endpoint=None, credential=mock_credential)
+
+        assert isinstance(runtime, ThrowingFoundryToolRuntime)
+
+    def test_create_tool_runtime_returns_throwing_runtime_when_credential_is_none(self):
+        """Test create_tool_runtime returns ThrowingFoundryToolRuntime when credential is None."""
+        runtime = create_tool_runtime(project_endpoint="https://test.azure.com", credential=None)
+
+        assert isinstance(runtime, ThrowingFoundryToolRuntime)
+
+    def test_create_tool_runtime_returns_throwing_runtime_when_both_are_none(self):
+        """Test create_tool_runtime returns ThrowingFoundryToolRuntime when both params are None."""
+        runtime = create_tool_runtime(project_endpoint=None, credential=None)
+
+        assert isinstance(runtime, ThrowingFoundryToolRuntime)
+
+    def test_create_tool_runtime_returns_throwing_runtime_when_endpoint_is_empty_string(
+        self,
+        mock_credential
+    ):
+        """Test create_tool_runtime returns ThrowingFoundryToolRuntime when endpoint is empty string."""
+        runtime = create_tool_runtime(project_endpoint="", credential=mock_credential)
+
+        assert isinstance(runtime, ThrowingFoundryToolRuntime)
+
+
+class TestThrowingFoundryToolRuntime:
+    """Tests for ThrowingFoundryToolRuntime."""
+
+    def test_catalog_raises_runtime_error(self):
+        """Test catalog property raises RuntimeError."""
+        runtime = ThrowingFoundryToolRuntime()
+
+        with pytest.raises(RuntimeError) as exc_info:
+            _ = runtime.catalog
+
+        assert "FoundryToolRuntime is not configured" in str(exc_info.value)
+        assert "project endpoint and credential" in str(exc_info.value)
+
+    def test_invocation_raises_runtime_error(self):
+        """Test invocation property raises RuntimeError."""
+        runtime = ThrowingFoundryToolRuntime()
+
+        with pytest.raises(RuntimeError) as exc_info:
+            _ = runtime.invocation
+
+        assert "FoundryToolRuntime is not configured" in str(exc_info.value)
+        assert "project endpoint and credential" in str(exc_info.value)
+
+    @pytest.mark.asyncio
+    async def test_invoke_raises_runtime_error(self):
+        """Test invoke method raises RuntimeError (via invocation property)."""
+        runtime = ThrowingFoundryToolRuntime()
+
+        with pytest.raises(RuntimeError) as exc_info:
+            await runtime.invoke({"type": "test"}, {"arg": "value"})
+
+        assert "FoundryToolRuntime is not configured" in str(exc_info.value)
+
+    @pytest.mark.asyncio
+    async def test_aenter_returns_self(self):
+        """Test __aenter__ returns the runtime instance."""
+        runtime = ThrowingFoundryToolRuntime()
+
+        async with runtime as r:
+            assert r is runtime
+
+    @pytest.mark.asyncio
+    async def test_aexit_completes_successfully(self):
+        """Test __aexit__ completes without error."""
+        runtime = ThrowingFoundryToolRuntime()
+
+        # Should not raise any exception
+        async with runtime:
+            pass
+
+    @pytest.mark.asyncio
+    async def test_context_manager_does_not_suppress_exceptions(self):
+        """Test context manager does not suppress exceptions."""
+        runtime = ThrowingFoundryToolRuntime()
+
+        with pytest.raises(ValueError):
+            async with runtime:
+                raise ValueError("Test error")
+
+    def test_error_message_is_class_variable(self):
+        """Test _ERROR_MESSAGE is defined as a class variable."""
+        assert hasattr(ThrowingFoundryToolRuntime, "_ERROR_MESSAGE")
+        assert isinstance(ThrowingFoundryToolRuntime._ERROR_MESSAGE, str)
+
