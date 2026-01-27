@@ -388,35 +388,29 @@ class TestToolCallAccuracyEvaluator:
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        # Test with no tool calls provided
-        query = "Where is the Eiffel Tower?"
-        tool_calls = []
-        tool_definitions = [
-            {
-                "name": "fetch_weather",
-                "type": "function",
-                "description": "Fetches the weather information for the specified location.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {
-                            "type": "string",
-                            "description": "The location to fetch weather for.",
-                        }
+        with pytest.raises(EvaluationException) as exc_info:
+            # Test with no tool calls provided
+            query = "Where is the Eiffel Tower?"
+            tool_calls = []
+            tool_definitions = [
+                {
+                    "name": "fetch_weather",
+                    "type": "function",
+                    "description": "Fetches the weather information for the specified location.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The location to fetch weather for.",
+                            }
+                        },
                     },
                 },
-            },
-        ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            ]
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
-        assert result[f"{key}_details"] == {}
+        assert "No tool calls found" in str(exc_info.value)
 
     def test_evaluate_bing_custom_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -434,7 +428,15 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "bing_custom_search",
+                "description": "Performs a Bing Custom Search query.",
+                "parameters": {
+                    "requesturl": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
@@ -458,7 +460,15 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "bing_grounding",
+                "description": "Performs a Bing grounding search.",
+                "parameters": {
+                    "requesturl": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
@@ -480,7 +490,15 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "file_search",
+                "description": "Searches files.",
+                "parameters": {
+                    "ranking_options": "object",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
@@ -502,7 +520,15 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"input": "3-bedroom apartment with garage"},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "azure_ai_search",
+                "description": "Performs Azure AI Search.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
@@ -524,7 +550,15 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"input": "unusual patterns in financial data"},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "fabric_dataagent",
+                "description": "Fabric Data Agent.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
@@ -548,7 +582,15 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "code_interpreter",
+                "description": "Executes Python code.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
@@ -570,7 +612,15 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"input": "monthly saving rules"},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "sharepoint_grounding",
+                "description": "Searches SharePoint for grounding.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
@@ -581,24 +631,25 @@ class TestToolCallAccuracyEvaluator:
     def test_evaluate_open_api(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
+        with pytest.raises(EvaluationException) as exc_info:
 
-        # Test OpenAPI function call for exchange rates - converter format
-        query = "What is the exchange rate from GBP to EUR?"
-        tool_calls = [
-            {
-                "type": "tool_call",
-                "tool_call_id": "call_builtin_good",
-                "name": "openapi",
-                "arguments": {"name": "exchange_rates_getExchangeRates", "arguments": '{"base":"GBP","symbols":"EUR"}'},
-            },
-        ]
-        tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+            # Test OpenAPI function call for exchange rates - converter format
+            query = "What is the exchange rate from GBP to EUR?"
+            tool_calls = [
+                {
+                    "type": "tool_call",
+                    "tool_call_id": "call_builtin_good",
+                    "name": "openapi",
+                    "arguments": {
+                        "name": "exchange_rates_getExchangeRates",
+                        "arguments": '{"base":"GBP","symbols":"EUR"}',
+                    },
+                },
+            ]
+            tool_definitions = []
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
+        assert "Tool definitions input is required" in str(exc_info.value)
 
     def test_evaluate_open_api_with_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
