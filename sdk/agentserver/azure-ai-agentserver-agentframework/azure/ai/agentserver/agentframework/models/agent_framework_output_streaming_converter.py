@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init,protected-access,unnecessary-lambda-assignment
 # mypy: disable-error-code="call-overload,assignment,arg-type,override"
+from __future__ import annotations
 
 import datetime
 import json
