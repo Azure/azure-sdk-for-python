@@ -49,7 +49,7 @@ class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_conversation_pii_async(self, conversations_endpoint, conversations_key):
+    async def test_conversation_pii_async(self, conversations_endpoint, conversations_key): # pylint: disable=too-many-statements
         client = await self.create_client(conversations_endpoint, conversations_key)
 
         try:

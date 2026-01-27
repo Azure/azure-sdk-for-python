@@ -47,7 +47,7 @@ class TestConversations(AzureRecordedTestCase):
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
-    def test_conversation_pii(self, conversations_endpoint, conversations_key):
+    def test_conversation_pii(self, conversations_endpoint, conversations_key): # pylint: disable=too-many-statements
         client = self.create_client(conversations_endpoint, conversations_key)
 
         entities_detected: List[NamedEntity] = []

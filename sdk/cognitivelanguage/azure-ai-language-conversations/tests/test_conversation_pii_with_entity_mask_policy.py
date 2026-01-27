@@ -22,7 +22,7 @@ from azure.ai.language.conversations.models import (
     ConversationPiiItemResult,
     ConversationError,
     AnalyzeConversationOperationAction,
-    EntityMaskTypePolicyType,  
+    EntityMaskTypePolicyType,
 )
 
 from azure.core.credentials import AzureKeyCredential
@@ -110,7 +110,7 @@ class TestConversationsCase(TestConversations):
                 print(f"  Code: {err.code} - {err.message}")
 
         # ---- Iterate results and validate redaction --------------------------
-        for actions_page in paged_actions:
+        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
             for action_result in actions_page.task_results or []:
                 ar = cast(AnalyzeConversationOperationResult, action_result)
                 print(f"\nAction Name: {getattr(ar, 'name', None)}")
