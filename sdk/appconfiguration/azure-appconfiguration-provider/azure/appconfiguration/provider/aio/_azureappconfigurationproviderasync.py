@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import datetime
 import logging
 from typing import (
@@ -501,7 +501,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 else:
                     # Non-failoverable exception, re-raise immediately
                     raise e
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 # For non-AzureError exceptions, check if they're failoverable
                 if _is_failoverable(e):
                     startup_exceptions.append(e)

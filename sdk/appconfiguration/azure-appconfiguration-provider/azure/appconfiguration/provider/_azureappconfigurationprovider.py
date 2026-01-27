@@ -485,7 +485,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 else:
                     # Non-failoverable exception, re-raise immediately
                     raise e
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 # For non-AzureError exceptions, check if they're failoverable
                 if _is_failoverable(e):
                     startup_exceptions.append(e)

@@ -45,7 +45,7 @@ JITTER_RATIO = 0.25
 # Fixed backoff intervals for startup retries: (elapsed_time_threshold, backoff_duration)
 # These define the fixed backoff durations to use based on how long startup has been attempting
 STARTUP_BACKOFF_INTERVALS = [
-    (100, 5),   # Within first 100 seconds: 5 second backoff
+    (100, 5),  # Within first 100 seconds: 5 second backoff
     (200, 10),  # Within first 200 seconds: 10 second backoff
     (600, MIN_STARTUP_BACKOFF_DURATION),  # Within first 600 seconds: 30 second backoff
 ]
