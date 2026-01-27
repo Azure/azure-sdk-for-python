@@ -46,12 +46,10 @@ from azure.ai.language.conversations.models import (
 )
 
 
-async def sample_conversation_pii_with_no_mask_policy_async():
+async def sample_conv_pii_no_mask_policy_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
-
-    detected_entities = []
 
     async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # build input
@@ -119,22 +117,14 @@ async def sample_conversation_pii_with_no_mask_policy_async():
                         for item in conversation.conversation_items or []:
                             # NoMaskPolicyType returns original text (no redaction)
                             returned_text = (item.redacted_content.text or "").strip()
-                            if not returned_text:
-                                continue
-
-                            if item.entities:
-                                for entity in item.entities:
-                                    ent_text = entity.text or ""
-                                    detected_entities.append(ent_text)
-                                    if ent_text not in returned_text:
-                                        print(f"WARNING: Expected entity '{ent_text}' in returned text but not found.")
+                            print(f"Returned text: '{returned_text}'")
 
 
 # [END conversation_pii_with_no_mask_policy_async]
 
 
 async def main():
-    await sample_conversation_pii_with_no_mask_policy_async()
+    await sample_conv_pii_no_mask_policy_async()
 
 
 if __name__ == "__main__":

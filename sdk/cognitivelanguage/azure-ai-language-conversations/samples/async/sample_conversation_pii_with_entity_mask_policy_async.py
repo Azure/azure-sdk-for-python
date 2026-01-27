@@ -30,7 +30,6 @@ NOTE:
 
 # [START conversation_pii_with_entity_mask_policy_async]
 import os
-import re
 import asyncio
 
 from azure.identity.aio import DefaultAzureCredential
@@ -48,12 +47,10 @@ from azure.ai.language.conversations.models import (
 )
 
 
-async def sample_conversation_pii_with_entity_mask_policy_async():
+async def sample_conv_pii_entity_mask_policy_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
-
-    redacted_verified = []
 
     async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # build input
@@ -121,36 +118,14 @@ async def sample_conversation_pii_with_entity_mask_policy_async():
                     for conversation in action_result.results.conversations or []:
                         for item in conversation.conversation_items or []:
                             redacted_text = (item.redacted_content.text or "").strip()
-                            if not redacted_text:
-                                continue
-                            if item.entities and redacted_text:
-                                all_ok = True
-                                for entity in item.entities:
-                                    original_text = entity.text or ""
-                                    # 1) original PII must be removed
-                                    if original_text and original_text in redacted_text:
-                                        print(
-                                            f"WARNING: Expected entity '{original_text}' to be redacted "
-                                            f"but found in: {redacted_text}"
-                                        )
-                                        all_ok = False
-                                    # 2) mask should appear like [Person] or [Person-1]
-                                    expected_mask_pattern = rf"\[{re.escape(entity.category)}-?\d*\]"
-                                    if not re.search(expected_mask_pattern, redacted_text, flags=re.IGNORECASE):
-                                        print(
-                                            f"WARNING: Expected entity mask similar to "
-                                            f"'[{entity.category}]' but got: {redacted_text}"
-                                        )
-                                        all_ok = False
-                                if all_ok:
-                                    redacted_verified.append(redacted_text)
+                            print(f"Redacted text: '{redacted_text}'")
 
 
 # [END conversation_pii_with_entity_mask_policy_async]
 
 
 async def main():
-    await sample_conversation_pii_with_entity_mask_policy_async()
+    await sample_conv_pii_entity_mask_policy_async()
 
 
 if __name__ == "__main__":

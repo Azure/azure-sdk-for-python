@@ -46,8 +46,6 @@ from azure.ai.language.conversations.models import (
     # Response/result discriminators
     ConversationalAITaskResult,
     ConversationalAIResult,
-    DateTimeResolution,
-    EntitySubtype,
 )
 
 
@@ -119,21 +117,6 @@ async def sample_conv_multi_turn_prediction_async():
                             f"    Conversation Item ID: {ent.conversation_item_id}, "
                             f"Index: {ent.conversation_item_index}"
                         )
-
-                        # Date/time resolutions
-                        for res in ent.resolutions or []:
-                            if isinstance(res, DateTimeResolution):
-                                print(
-                                    f"    - [DateTimeResolution] SubKind: {res.date_time_sub_kind}, "
-                                    f"Timex: {res.timex}, Value: {res.value}"
-                                )
-
-                        # Extra information (entity subtype + tags)
-                        for extra in ent.extra_information or []:
-                            if isinstance(extra, EntitySubtype):
-                                print(f"    - [EntitySubtype] Value: {extra.value}")
-                                for tag in extra.tags or []:
-                                    print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
                 print()
 
                 # Global entities
@@ -146,12 +129,6 @@ async def sample_conv_multi_turn_prediction_async():
                     print(
                         f"  Conversation Item ID: {ent.conversation_item_id}, " f"Index: {ent.conversation_item_index}"
                     )
-
-                    for extra in ent.extra_information or []:
-                        if isinstance(extra, EntitySubtype):
-                            print(f"    - [EntitySubtype] Value: {extra.value}")
-                            for tag in extra.tags or []:
-                                print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
                 print("-" * 40)
         else:
             print("No Conversational AI result returned.")

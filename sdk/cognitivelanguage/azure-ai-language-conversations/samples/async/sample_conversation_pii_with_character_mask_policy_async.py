@@ -48,14 +48,12 @@ from azure.ai.language.conversations.models import (
 )
 
 
-async def sample_conversation_pii_with_character_mask_policy_async():
+async def sample_conv_pii_char_mask_policy_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 
     # AAD credential
     credential = DefaultAzureCredential()
-
-    redacted_verified: list[str] = []
 
     async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # build input
@@ -123,26 +121,14 @@ async def sample_conversation_pii_with_character_mask_policy_async():
                     for conversation in action_result.results.conversations or []:
                         for item in conversation.conversation_items or []:
                             redacted_text = (item.redacted_content.text or "").strip()
-                            if not redacted_text:
-                                continue
-
-                            if item.entities:
-                                for entity in item.entities:
-                                    ent_text = entity.text or ""
-                                    if ent_text in redacted_text:
-                                        print(
-                                            f"WARNING: Expected '{ent_text}' to be redacted but found in: {redacted_text}"
-                                        )
-
-                                if "*" in redacted_text:
-                                    redacted_verified.append(redacted_text)
+                            print(f"Redacted text: '{redacted_text}'")
 
 
 # [END conversation_pii_with_character_mask_policy_async]
 
 
 async def main():
-    await sample_conversation_pii_with_character_mask_policy_async()
+    await sample_conv_pii_char_mask_policy_async()
 
 
 if __name__ == "__main__":

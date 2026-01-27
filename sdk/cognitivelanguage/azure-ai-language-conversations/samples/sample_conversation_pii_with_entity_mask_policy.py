@@ -30,7 +30,6 @@ NOTE:
 
 # [START conversation_pii_with_entity_mask_policy]
 import os
-import re
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations import ConversationAnalysisClient
@@ -51,8 +50,6 @@ def sample_conv_pii_entity_mask_policy():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
-
-    redacted_verified = []
 
     client = ConversationAnalysisClient(endpoint, credential=credential)
 
@@ -121,29 +118,7 @@ def sample_conv_pii_entity_mask_policy():
                 for conversation in action_result.results.conversations or []:
                     for item in conversation.conversation_items or []:
                         redacted_text = (item.redacted_content.text or "").strip()
-                        if not redacted_text:
-                            continue
-                        if item.entities and redacted_text:
-                            all_ok = True
-                            for entity in item.entities:
-                                original_text = entity.text or ""
-                                # 1) original PII must be removed
-                                if original_text and original_text in redacted_text:
-                                    print(
-                                        f"WARNING: Expected entity '{original_text}' to be redacted "
-                                        f"but found in: {redacted_text}"
-                                    )
-                                    all_ok = False
-                                # 2) mask should appear like [Person] or [Person-1]
-                                expected_mask_pattern = rf"\[{re.escape(entity.category)}-?\d*\]"
-                                if not re.search(expected_mask_pattern, redacted_text, flags=re.IGNORECASE):
-                                    print(
-                                        f"WARNING: Expected entity mask similar to "
-                                        f"'[{entity.category}]' but got: {redacted_text}"
-                                    )
-                                    all_ok = False
-                            if all_ok:
-                                redacted_verified.append(redacted_text)
+                        print(f"Redacted text: '{redacted_text}'")
 
 
 # [END conversation_pii_with_entity_mask_policy]
