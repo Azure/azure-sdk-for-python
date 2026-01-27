@@ -20,8 +20,7 @@ from ._encryption import (
 )
 from ._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
-    BlockLookupList,
-    ModifiedAccessConditions
+    BlockLookupList
 )
 from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import process_storage_error, return_response_headers
@@ -72,12 +71,12 @@ def _convert_mod_error(error):
     raise overwrite_error
 
 
-def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
+def _any_conditions(if_modified_since=None, if_unmodified_since=None, if_none_match=None, if_match=None, **kwargs):  # pylint: disable=unused-argument
     return any([
-        modified_access_conditions.if_modified_since,
-        modified_access_conditions.if_unmodified_since,
-        modified_access_conditions.if_none_match,
-        modified_access_conditions.if_match
+        if_modified_since,
+        if_unmodified_since,
+        if_none_match,
+        if_match
     ])
 
 
@@ -95,7 +94,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs['if_none_match'] = '*'
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
@@ -232,7 +231,7 @@ def upload_page_blob(
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs['if_none_match'] = '*'
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
@@ -274,7 +273,7 @@ def upload_page_blob(
                 kwargs['encryptor'] = encryptor
                 kwargs['padder'] = padder
 
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
+        kwargs['if_match'] = response['etag']
         return cast(Dict[str, Any], upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,

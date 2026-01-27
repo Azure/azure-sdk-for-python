@@ -17,7 +17,7 @@ from ._shared.base_client import parse_query
 if TYPE_CHECKING:
     from azure.storage.blob import RehydratePriority
     from urllib.parse import ParseResult
-    from ._generated.azure.storage.blobs.models import LeaseAccessConditions, ModifiedAccessConditions
+    from ._generated.azure.storage.blobs.models import ModifiedAccessConditions
     from ._models import PremiumPageBlobTier, StandardBlobTier
 
 

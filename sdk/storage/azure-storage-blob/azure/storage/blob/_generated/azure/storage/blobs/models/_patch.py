@@ -101,18 +101,6 @@ class CpkScopeInfo:
     ):
         self.encryption_scope = encryption_scope
 
-
-class LeaseAccessConditions:
-    """Parameter group for lease access conditions."""
-
-    def __init__(
-        self,
-        *,
-        lease_id: Optional[str] = None,
-    ):
-        self.lease_id = lease_id
-
-
 class ModifiedAccessConditions:
     """Parameter group for modified access conditions."""
 
@@ -197,7 +185,6 @@ __all__: list[str] = [
     "ContainerCpkScopeInfo",
     "CpkInfo",
     "CpkScopeInfo",
-    "LeaseAccessConditions",
     "ModifiedAccessConditions",
     "QueryFormatType",
     "SequenceNumberAccessConditions",

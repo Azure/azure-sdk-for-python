@@ -21,7 +21,6 @@ from ._generated.azure.storage.blobs.models import (
     CpkScopeInfo,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
-    LeaseAccessConditions,
     ModifiedAccessConditions,
     ParquetConfiguration,
     QueryFormat,
@@ -104,15 +103,15 @@ def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Opt
     return lease_id if lease_id else None
 
 
-def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
+def get_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
-    return ModifiedAccessConditions(
-        if_modified_since=kwargs.pop('if_modified_since', None),
-        if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
-        if_tags=kwargs.pop('if_tags_match_condition', None)
-    )
+    return {
+        'if_modified_since': kwargs.pop('if_modified_since', None),
+        'if_unmodified_since': kwargs.pop('if_unmodified_since', None),
+        'if_match': if_match or kwargs.pop('if_match', None),
+        'if_none_match': if_none_match or kwargs.pop('if_none_match', None),
+        'if_tags': kwargs.pop('if_tags_match_condition', None)
+    }
 
 
 def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessConditions:
