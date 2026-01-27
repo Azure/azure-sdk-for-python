@@ -56,7 +56,7 @@ class DeleteTags(object):
                     tag_count += 1
                     if tag_count > 3:
                         print(f"Deleting {repository_name}:{tag.name}")
-                        client.delete_tag(repository_name, tag.name)
+                        client.delete_tag(repository_name, tag.name)  # type: ignore[arg-type]
 
 
 if __name__ == "__main__":

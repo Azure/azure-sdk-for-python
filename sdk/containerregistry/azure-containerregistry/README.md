@@ -141,9 +141,9 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
             manifest_count += 1
             if manifest_count > 3:
                 # Make sure will have the permission to delete the manifest later
-                client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)
+                client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)  # type: ignore[arg-type]
                 print(f"Deleting {repository}:{manifest.digest}")
-                client.delete_manifest(repository, manifest.digest)
+                client.delete_manifest(repository, manifest.digest)  # type: ignore[arg-type]
 ```
 
 <!-- END SNIPPET -->

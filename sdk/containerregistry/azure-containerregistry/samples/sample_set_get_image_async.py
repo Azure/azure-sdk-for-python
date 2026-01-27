@@ -75,9 +75,6 @@ class SetGetImageAsync(object):
             # Set the image
             manifest_digest = await client.set_manifest(repository_name, oci_manifest, tag="latest")
             print(f"Uploaded manifest: digest - {manifest_digest}")
-            # [END upload_blob_and_manifest]
-
-            # [START download_blob_and_manifest]
             # Get the image
             get_manifest_result = await client.get_manifest(repository_name, "latest")
             received_manifest = get_manifest_result.manifest

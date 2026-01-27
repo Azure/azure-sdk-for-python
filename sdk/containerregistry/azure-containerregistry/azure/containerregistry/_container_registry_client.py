@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines,protected-access
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -8,7 +9,18 @@ import functools
 import hashlib
 import json
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, MutableMapping, TYPE_CHECKING
+from typing import (
+    Any,
+    Dict,
+    IO,
+    Optional,
+    overload,
+    Union,
+    cast,
+    Tuple,
+    MutableMapping,
+    TYPE_CHECKING,
+)
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
@@ -23,7 +35,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors
+from .models import AcrErrors
 from ._download_stream import DownloadBlobStream
 from ._helpers import (
     _compute_digest,
@@ -45,10 +57,14 @@ from ._models import (
     ArtifactManifestProperties,
     GetManifestResult,
     DigestValidationError,
+    TagAttributesBase,
+    ManifestAttributesBase,
 )
 
+from ._utils.model_base import _deserialize
+
 if TYPE_CHECKING:
-    from ._generated.models import ArtifactManifestOrder, ArtifactTagOrder
+    from .models import ArtifactManifestOrder, ArtifactTagOrder
 JSON = MutableMapping[str, Any]
 
 
@@ -109,10 +125,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._endpoint = endpoint
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(
-            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            credential_scopes=defaultScope,
+            **kwargs,
         )
 
-    def _get_digest_from_tag(self, repository: str, tag: str) -> str:
+    def _get_digest_from_tag(self, repository: str, tag: str) -> Optional[str]:
         tag_props = self.get_tag_properties(repository, tag)
         return tag_props.digest
 
@@ -158,7 +177,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         last = kwargs.pop("last", None)
         cls = kwargs.pop("cls", None)
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
@@ -173,9 +196,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 # Construct URL
                 url = "/acr/v1/_catalog"
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.endpoint",
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -199,9 +222,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.endpoint",
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -213,10 +236,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._client._deserialize(  # pylint: disable=protected-access
-                "Repositories", pipeline_response
+            list_of_elem = (
+                _deserialize(
+                    list[str],
+                    pipeline_response.http_response.internal_response.json().get("repositories", []),
+                )
+                or []
             )
-            list_of_elem = deserialized.repositories or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -236,7 +262,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
                     AcrErrors, response
                 )
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -288,7 +318,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             ],
         )
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
@@ -303,9 +337,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 # Construct URL
                 url = "/acr/v1/{name}/_manifests"
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -334,9 +368,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -349,10 +383,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._client._deserialize(  # pylint: disable=protected-access
-                "AcrManifests", pipeline_response
+            list_of_elem = _deserialize(
+                list[ManifestAttributesBase],
+                pipeline_response.http_response.internal_response.json().get("manifests", []),
             )
-            list_of_elem = deserialized.manifests or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -372,7 +406,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
                     AcrErrors, response
                 )
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -425,7 +463,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 properties = client.get_manifest_properties("my_repository", artifact.digest)
         """
         if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+            tag_or_digest = cast(str, self._get_digest_from_tag(repository, tag_or_digest))
 
         manifest_properties = self._client.container_registry.get_manifest_properties(
             repository, tag_or_digest, **kwargs
@@ -505,7 +543,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             ],
         )
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
 
@@ -520,9 +562,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 # Construct URL
                 url = "/acr/v1/{name}/_tags"
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.endpoint",
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -555,9 +597,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -570,8 +612,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._client._deserialize("TagList", pipeline_response)  # pylint: disable=protected-access
-            list_of_elem = deserialized.tag_attribute_bases or []
+            list_of_elem = (
+                _deserialize(
+                    list[TagAttributesBase],
+                    pipeline_response.http_response.internal_response.json().get("tags", []),
+                )
+                or []
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -591,7 +638,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
                     AcrErrors, response
                 )
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -600,7 +651,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
+        self,
+        repository: str,
+        tag_or_digest: str,
+        properties: ArtifactManifestProperties,
+        **kwargs: Any,
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -695,10 +750,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+            tag_or_digest = cast(str, self._get_digest_from_tag(repository, tag_or_digest))
 
         manifest_properties = self._client.container_registry.update_manifest_properties(
-            repository, tag_or_digest, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
+            repository,
+            tag_or_digest,
+            value=properties._to_generated(),
+            **kwargs,  # pylint: disable=protected-access
         )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             manifest_properties.manifest,  # type: ignore[arg-type] # The property "manifest" is required in response
@@ -708,7 +766,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_tag_properties(
-        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
+        self,
+        repository: str,
+        tag: str,
+        properties: ArtifactTagProperties,
+        **kwargs: Any,
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -797,7 +859,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         tag_attributes = self._client.container_registry.update_tag_attributes(
-            repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
+            repository,
+            tag,
+            value=properties._to_generated(),
+            **kwargs,  # pylint: disable=protected-access
         )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             tag_attributes.tag,  # type: ignore[arg-type] # The property "tag" is required in response
@@ -862,7 +927,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_properties(
-                repository, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
+                repository,
+                value=properties._to_generated(),
+                **kwargs,  # pylint: disable=protected-access
             )
         )
 
@@ -911,7 +978,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 cls=_return_response_headers,
                 **kwargs,
             )
-            digest = response_headers["Docker-Content-Digest"]
+            digest = response_headers["Docker-Content-Digest"]  # type: ignore[index]
             if not _validate_digest(data, digest):
                 raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
@@ -990,7 +1057,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             complete_upload_response_headers = cast(
                 Dict[str, str],
                 self._client.container_registry_blob.complete_upload(
-                    digest=digest, next_link=location, cls=_return_response_headers, **kwargs
+                    location, digest=digest, cls=_return_response_headers, **kwargs
                 ),
             )
             if digest != complete_upload_response_headers["Docker-Content-Digest"]:
@@ -1009,7 +1076,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             response_headers = cast(
                 Dict[str, str],
                 self._client.container_registry_blob.upload_chunk(
-                    location, BytesIO(buffer), cls=_return_response_headers, **kwargs
+                    location, BytesIO(buffer), cls=_return_response_headers, **kwargs  # type: ignore[arg-type]
                 ),
             )
             location = response_headers["Location"]
@@ -1034,7 +1101,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         first_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
             self._client.container_registry_blob.get_chunk(
-                repository, digest, range_header=f"bytes=0-{end_range}", cls=_return_response_and_headers, **kwargs
+                repository,
+                digest,
+                range=f"bytes=0-{end_range}",
+                cls=_return_response_and_headers,
+                **kwargs,
             ),
         )
         blob_size = _get_blob_size(headers)
@@ -1074,7 +1145,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client.delete_manifest("my_repository", "my_tag_or_digest")
         """
         if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+            tag_or_digest = cast(str, self._get_digest_from_tag(repository, tag_or_digest))
 
         self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
