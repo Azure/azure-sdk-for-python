@@ -29,9 +29,10 @@ def _parse_status_url(url: str) -> str:
 def _get_continuation_token(pipeline_response: PipelineResponse) -> str:
     """Returns an opaque token which can be used by the user to rehydrate/restart the LRO.
 
-    Saves the initial state of the LRO so that polling can be resumed from that context. Because the service has
-    different operations for backup/restore starting vs. status checking, we need to use the status URL we get from the
-    initial response to then make a status request and use _that_ response to rehydrate the LRO.
+    Saves the state of the LRO based on a status response so that polling can be resumed from that context. Because
+    the service has different operations for backup/restore starting vs. status checking, the caller is expected to
+    first use the status URL from the initial response to make a status request and then pass that status response to
+    this function to be serialized into a continuation token.
     """
     # Headers needed for LRO rehydration - use an allowlist approach for security
     lro_headers = {"azure-asyncoperation", "operation-location", "location", "content-type", "retry-after"}
