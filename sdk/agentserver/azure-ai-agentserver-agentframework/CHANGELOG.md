@@ -1,6 +1,13 @@
 # Release History
 
 
+## 1.0.0b10 (2026-01-27)
+
+### Bugs Fixed
+
+- Support implicit message item type.
+- Make AZURE_AI_PROJECTS_ENDPOINT optional.
+
 ## 1.0.0b9 (2026-01-23)
 
 ### Features Added
