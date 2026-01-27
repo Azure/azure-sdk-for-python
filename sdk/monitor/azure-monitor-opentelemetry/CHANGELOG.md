@@ -1,13 +1,11 @@
 # Release History
 
-## 1.8.5 (Unreleased)
+## 1.8.5 (2026-01-28)
 
 ### Features Added
 
 - In double-instrumentation scenarios, surface in the log stream instead of just in diagnostic logs.
   ([#44682](https://github.com/Azure/azure-sdk-for-python/pull/44682))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
