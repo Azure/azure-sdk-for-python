@@ -36,9 +36,7 @@ async def autocomplete_query_async():
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     async with search_client:
-        results = await search_client.autocomplete(
-            search_text="bo", suggester_name="sg"
-        )
+        results = await search_client.autocomplete(search_text="bo", suggester_name="sg")
 
         print("Results: autocomplete for 'bo'")
         for result in results:

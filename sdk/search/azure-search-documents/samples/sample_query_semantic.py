@@ -49,9 +49,7 @@ def create_semantic_configuration():
 
     index.semantic_search = SemanticSearch(configurations=[semantic_config])
     index_client.create_or_update_index(index)
-    print(
-        f"Updated: index '{index_name}' (semantic config '{semantic_configuration_name}')"
-    )
+    print(f"Updated: index '{index_name}' (semantic config '{semantic_configuration_name}')")
 
 
 def speller():
@@ -60,14 +58,8 @@ def speller():
     from azure.search.documents import SearchClient
 
     credential = AzureKeyCredential(key)
-    search_client = SearchClient(
-        endpoint=service_endpoint, index_name=index_name, credential=credential
-    )
-    results = list(
-        search_client.search(
-            search_text="luxury", query_language="en-us", query_speller="lexicon"
-        )
-    )
+    search_client = SearchClient(endpoint=service_endpoint, index_name=index_name, credential=credential)
+    results = list(search_client.search(search_text="luxury", query_language="en-us", query_speller="lexicon"))
 
     print("Results: speller")
     for result in results:
@@ -82,9 +74,7 @@ def semantic_ranking():
     from azure.search.documents import SearchClient
 
     credential = AzureKeyCredential(key)
-    search_client = SearchClient(
-        endpoint=service_endpoint, index_name=index_name, credential=credential
-    )
+    search_client = SearchClient(endpoint=service_endpoint, index_name=index_name, credential=credential)
     results = list(
         search_client.search(
             search_text="luxury",

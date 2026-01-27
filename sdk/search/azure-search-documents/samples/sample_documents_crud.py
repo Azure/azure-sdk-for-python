@@ -67,9 +67,7 @@ def merge_document():
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    result = search_client.merge_documents(
-        documents=[{"HotelId": "100", "HotelName": "Azure Sanctuary & Spa"}]
-    )
+    result = search_client.merge_documents(documents=[{"HotelId": "100", "HotelName": "Azure Sanctuary & Spa"}])
 
     print(f"Merged: document 100 (succeeded={result[0].succeeded})")
     # [END merge_document]

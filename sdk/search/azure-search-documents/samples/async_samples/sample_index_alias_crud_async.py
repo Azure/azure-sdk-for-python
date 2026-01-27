@@ -78,18 +78,16 @@ async def update_alias_async():
     # Create a new index with a different schema or settings
     # In a real scenario, this would be your updated index version (e.g., v2)
     fields = [
-        SimpleField(name="HotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="BaseRate", type=SearchFieldDataType.Double),
-        SearchableField(
-            name="Description", type=SearchFieldDataType.String, collection=True
-        ),
-        SearchableField(name="HotelName", type=SearchFieldDataType.String),
+        SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="BaseRate", type=SearchFieldDataType.DOUBLE),
+        SearchableField(name="Description", type=SearchFieldDataType.STRING, collection=True),
+        SearchableField(name="HotelName", type=SearchFieldDataType.STRING),
         ComplexField(
             name="Address",
             fields=[
-                SimpleField(name="StreetAddress", type=SearchFieldDataType.String),
-                SimpleField(name="City", type=SearchFieldDataType.String),
-                SimpleField(name="State", type=SearchFieldDataType.String),
+                SimpleField(name="StreetAddress", type=SearchFieldDataType.STRING),
+                SimpleField(name="City", type=SearchFieldDataType.STRING),
+                SimpleField(name="State", type=SearchFieldDataType.STRING),
             ],
             collection=True,
         ),

@@ -53,17 +53,13 @@ async def sample_batching_client_async():
         "Location": {"type": "Point", "coordinates": [-122.131577, 47.678581]},
     }
 
-    async with SearchIndexingBufferedSender(
-        service_endpoint, index_name, AzureKeyCredential(key)
-    ) as buffered_sender:
+    async with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as buffered_sender:
         # add upload actions
         await buffered_sender.upload_documents(documents=[document])
         print(f"Uploaded: document {document['HotelId']}")
 
         # add merge actions
-        await buffered_sender.merge_documents(
-            documents=[{"HotelId": "100", "Rating": 4.5}]
-        )
+        await buffered_sender.merge_documents(documents=[{"HotelId": "100", "Rating": 4.5}])
         print(f"Merged: document {document['HotelId']}")
 
         # add delete actions

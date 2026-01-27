@@ -15,13 +15,15 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
-    KnowledgeRetrievalMediumReasoningEffort,
-    KnowledgeRetrievalMinimalReasoningEffort,
     KnowledgeSourceReference,
     WebKnowledgeSource,
     WebKnowledgeSourceDomain,
     WebKnowledgeSourceDomains,
     WebKnowledgeSourceParameters,
+)
+from azure.search.documents.knowledgebase.models import (
+    KnowledgeRetrievalMediumReasoningEffort,
+    KnowledgeRetrievalMinimalReasoningEffort,
 )
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -94,9 +96,7 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
                 pass
             raise
 
-        return _AsyncTestContext(
-            index_client, source_name, created_source, base_name, created_base
-        )
+        return _AsyncTestContext(index_client, source_name, created_source, base_name, created_base)
 
     async def _cleanup(self, ctx: "_AsyncTestContext") -> None:
         try:

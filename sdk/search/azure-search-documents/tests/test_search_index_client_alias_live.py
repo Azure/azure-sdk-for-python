@@ -39,9 +39,7 @@ class TestSearchClientAlias(AzureRecordedTestCase):
 
         # point an old alias to a new index
         new_index_name = "hotel"
-        self._test_update_alias_to_new_index(
-            client, aliases[1], new_index_name, index_name
-        )
+        self._test_update_alias_to_new_index(client, aliases[1], new_index_name, index_name)
 
         self._test_get_alias(client, aliases)
 
@@ -94,8 +92,8 @@ class TestSearchClientAlias(AzureRecordedTestCase):
 
     def _create_index(self, client, index_name):
         fields = [
-            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
         ]
         scoring_profile = ScoringProfile(name="MyProfile")
         scoring_profiles = []
