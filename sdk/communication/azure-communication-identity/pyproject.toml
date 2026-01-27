@@ -7,7 +7,3 @@ bundle_name = "azure-communication"
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
-
-[tool.azure-sdk-conda]
-in_bundle = true
-bundle_name = "azure-communication"
