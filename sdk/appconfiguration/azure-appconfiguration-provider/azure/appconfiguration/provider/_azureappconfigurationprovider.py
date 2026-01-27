@@ -249,7 +249,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
 
-        self._startup_timeout: int = kwargs.pop("startup_timeout", 100)
+        self._startup_timeout: int = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
 
         self._replica_client_manager = ConfigurationClientManager(
             connection_string=kwargs.pop("connection_string"),
