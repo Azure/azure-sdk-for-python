@@ -61,8 +61,8 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         """Set up class-level resources including a single customer stats manager"""
         from azure.monitor.opentelemetry.exporter._generated.models import TelemetryEventData, MonitorBase
 
-        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", None)
-        os.environ["APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"] = "true"
+        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_DISABLED", None)
+        os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "false"
 
         # Patch _should_collect_customer_sdkstats instance method to always return True for all tests
         cls._should_collect_patch = mock.patch(
@@ -99,7 +99,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         cls._collect_customer_sdkstats_patch.stop()
 
         # Clean up environment
-        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", None)
+        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_DISABLED", None)
 
     def _create_exporter_with_customer_sdkstats_enabled(self, disable_offline_storage=True):
         """Helper method to create an exporter with customer sdkstats enabled"""

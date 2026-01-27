@@ -138,7 +138,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def upload_file(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,

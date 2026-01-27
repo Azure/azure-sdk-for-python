@@ -127,11 +127,15 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
-                                        allow_trailing_dot=self.allow_trailing_dot,
-                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
-                                        file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client = AzureFileStorage(
+            version=get_api_version(kwargs),
+            url=self.url,
+            base_url=self.url,
+            pipeline=self._pipeline,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            file_request_intent=self.file_request_intent
+        )
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
@@ -206,6 +210,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         *,
         expiry: "datetime",
         start: Optional["datetime"] = None,
+        delegated_user_tid: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> "UserDelegationKey":
@@ -220,6 +225,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         :keyword start:
             A DateTime value. Indicates when the key becomes valid.
         :paramtype start: Optional[~datetime.datetime]
+        :keyword str delegated_user_tid: The delegated user tenant id in Entra ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -229,7 +235,11 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         :return: The user delegation key.
         :rtype: ~azure.storage.queue.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))
+        key_info = KeyInfo(
+            start=_to_utc_datetime(start),
+            expiry=_to_utc_datetime(expiry),
+            delegated_user_tid=delegated_user_tid
+        )
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(  # type: ignore
                 key_info=key_info,

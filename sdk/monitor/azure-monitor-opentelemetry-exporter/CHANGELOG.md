@@ -3,12 +3,18 @@
 ## 1.0.0b47 (Unreleased)
 
 ### Features Added
+- Rename metric names for customer sdk stats and set it on by default
+  ([#44849](https://github.com/Azure/azure-sdk-for-python/pull/44849))
+- Add auto detection for application ID from connection string if not set 
+  ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
 - Add support for user id and authId
 ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix customer SDK stats metrics to display drop code and retry code enum values without the prefix
+  ([#44852](https://github.com/Azure/azure-sdk-for-python/pull/44852))
 
 ### Other Changes
 - Update maximum size of custom properties
