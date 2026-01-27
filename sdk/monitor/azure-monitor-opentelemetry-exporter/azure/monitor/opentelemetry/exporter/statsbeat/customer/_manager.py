@@ -329,7 +329,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                             if count > 0:
                                 # Create attributes by copying base and adding drop-specific data
                                 attributes = self._base_attributes.copy()
-                                attributes["drop.code"] = drop_code
+                                attributes["drop.code"] = drop_code if isinstance(drop_code, int) else drop_code.value
                                 attributes["drop.reason"] = reason
                                 attributes["telemetry_type"] = telemetry_type
                                 if telemetry_type in (_REQUEST, _DEPENDENCY):
@@ -353,7 +353,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                         if count > 0:
                             # Create attributes by copying base and adding retry-specific data
                             attributes = self._base_attributes.copy()
-                            attributes["retry.code"] = retry_code
+                            attributes["retry.code"] = retry_code if isinstance(retry_code, int) else retry_code.value
                             attributes["retry.reason"] = reason
                             attributes["telemetry_type"] = telemetry_type
                             observations.append(Observation(count, attributes))

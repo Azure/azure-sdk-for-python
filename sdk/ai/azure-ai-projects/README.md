@@ -218,7 +218,7 @@ asset_file_path = os.path.abspath(
 
 # Upload the CSV file for the code interpreter
 file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
-tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
+tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))
 ```
 
 <!-- END SNIPPET -->
@@ -348,7 +348,7 @@ Call external APIs defined by OpenAPI specifications without additional client-s
 with open(weather_asset_file_path, "r") as f:
     openapi_weather = jsonref.loads(f.read())
 
-tool = OpenApiAgentTool(
+tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
         name="get_weather",
         spec=openapi_weather,
@@ -403,7 +403,7 @@ See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the
   # You can also use "{{$userId}}" to take the oid of the request authentication header
   scope = "user_123"
 
-  tool = MemorySearchTool(
+  tool = MemorySearchPreviewTool(
       memory_store_name=memory_store.name,
       scope=scope,
       update_delay=1,  # Wait 1 second of inactivity before updating memories
@@ -427,7 +427,7 @@ Integrate with Azure AI Search indexes for powerful knowledge retrieval and sema
 <!-- SNIPPET:sample_agent_ai_search.tool_declaration -->
 
 ```python
-tool = AzureAISearchAgentTool(
+tool = AzureAISearchTool(
     azure_ai_search=AzureAISearchToolResource(
         indexes=[
             AISearchIndexResource(
@@ -451,7 +451,7 @@ Ground agent responses with real-time web search results from Bing to provide up
 <!-- SNIPPET:sample_agent_bing_grounding.tool_declaration -->
 
 ```python
-tool = BingGroundingAgentTool(
+tool = BingGroundingTool(
     bing_grounding=BingGroundingSearchToolParameters(
         search_configurations=[
             BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
@@ -471,7 +471,7 @@ Use custom-configured Bing search instances for domain-specific or filtered web 
 <!-- SNIPPET:sample_agent_bing_custom_search.tool_declaration -->
 
 ```python
-tool = BingCustomSearchAgentTool(
+tool = BingCustomSearchPreviewTool(
     bing_custom_search_preview=BingCustomSearchToolParameters(
         search_configurations=[
             BingCustomSearchConfiguration(
@@ -494,7 +494,7 @@ Connect to and query Microsoft Fabric:
 <!-- SNIPPET:sample_agent_fabric.tool_declaration -->
 
 ```python
-tool = MicrosoftFabricAgentTool(
+tool = MicrosoftFabricPreviewTool(
     fabric_dataagent_preview=FabricDataAgentToolParameters(
         project_connections=[
             ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])
@@ -514,7 +514,7 @@ Access and search SharePoint documents, lists, and sites for enterprise knowledg
 <!-- SNIPPET:sample_agent_sharepoint.tool_declaration -->
 
 ```python
-tool = SharepointAgentTool(
+tool = SharepointPreviewTool(
     sharepoint_grounding_preview=SharepointGroundingToolParameters(
         project_connections=[
             ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
@@ -534,7 +534,7 @@ Automate browser interactions for web scraping, testing, and interaction with we
 <!-- SNIPPET:sample_agent_browser_automation.tool_declaration -->
 
 ```python
-tool = BrowserAutomationAgentTool(
+tool = BrowserAutomationPreviewTool(
     browser_automation_preview=BrowserAutomationToolParameters(
         connection=BrowserAutomationToolConnectionParameters(
             project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
@@ -574,7 +574,7 @@ Enable multi-agent collaboration where agents can communicate and delegate tasks
 <!-- SNIPPET:sample_agent_to_agent.tool_declaration -->
 
 ```python
-tool = A2ATool(
+tool = A2APreviewTool(
     project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
 )
 # If the connection is missing target, we need to set the A2A endpoint URL.
@@ -596,7 +596,7 @@ Call external APIs defined by OpenAPI specifications using project connection au
 with open(tripadvisor_asset_file_path, "r") as f:
     openapi_tripadvisor = jsonref.loads(f.read())
 
-tool = OpenApiAgentTool(
+tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
         name="tripadvisor",
         spec=openapi_tripadvisor,
@@ -1128,7 +1128,15 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The SDK logs HTTP request and response details, which may be useful in troubleshooting. To log to stdout, add the following at the top of your Python script:
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
+
+#### Default console logging
+
+To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Note that the log is not redacted and contains sensitive information such as your authentication token. Be sure to remove any sensitive information before sharing this log.
+
+#### Customizing your log
+
+Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format and destination. To log to `stdout`, add the following at the top of your Python script:
 
 ```python
 import sys

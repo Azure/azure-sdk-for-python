@@ -11,7 +11,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    AzureAISearchAgentTool,
+    AzureAISearchTool,
     AzureAISearchToolResource,
     AISearchIndexResource,
     AzureAISearchQueryType,
@@ -125,7 +125,7 @@ class TestAgentAISearchAsync(TestBase):
         """
         Test agent with Azure AI Search capabilities for question answering using async (parallel).
 
-        This test verifies that an agent can be created with AzureAISearchAgentTool,
+        This test verifies that an agent can be created with AzureAISearchTool,
         and handle multiple concurrent requests to search indexed content and provide
         accurate answers to questions based on the search results.
 
@@ -181,7 +181,7 @@ class TestAgentAISearchAsync(TestBase):
                     Respond with only 'True' or 'False' based on what you find in the search results.
                     If you cannot find clear evidence in the search results, answer 'False'.""",
                     tools=[
-                        AzureAISearchAgentTool(
+                        AzureAISearchTool(
                             azure_ai_search=AzureAISearchToolResource(
                                 indexes=[
                                     AISearchIndexResource(
