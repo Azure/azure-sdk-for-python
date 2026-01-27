@@ -196,6 +196,7 @@ _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS = dict(
     ]
 )
 
+
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_SUCCESS_COUNT = _ITEM_SUCCESS_COUNT_NAME[0]
     ITEM_DROP_COUNT = _ITEM_DROP_COUNT_NAME[0]
