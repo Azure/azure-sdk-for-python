@@ -1,4 +1,5 @@
 import sys
+from contextlib import ExitStack
 from io import StringIO
 
 import pytest
@@ -26,10 +27,16 @@ def test_nested_node_log_manager_does_not_recurse(monkeypatch):
     monkeypatch.setattr(sys, "__stdout__", base_out)
     monkeypatch.setattr(sys, "__stderr__", base_err)
 
-    with NodeLogManager():
-        with NodeLogManager():
+    original_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(300)
+    try:
+        with ExitStack() as stack:
+            for _ in range(500):
+                stack.enter_context(NodeLogManager())
             print("nested")
             sys.stderr.write("stderr")
+    finally:
+        sys.setrecursionlimit(original_limit)
 
     assert "nested" in base_out.getvalue()
     assert "stderr" in base_err.getvalue()
