@@ -112,7 +112,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of MetricReader objects to read and
      export metrics. Each reader can have its own exporter and collection interval.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
-     Defaults to `False`.
+     Defaults to `True`.
     :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
      Defaults to `True`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
