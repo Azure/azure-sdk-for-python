@@ -1,15 +1,13 @@
 # Release History
 
-## 1.7.3 (Unreleased)
+## 1.8.0 (2026-01-26)
 
 ### Features Added
 
+- Fixed AudiencePolicy to correctly handle AAD audience errors and return ClientAuthenticationError as expected.
+- Added a `match_conditions` parameter to the `by_page()` method exposed by the page iterator returned by `list_configuration_settings()` to efficiently monitor configuration changes using etags without fetching unchanged data.
 - Added query parameter normalization to support Azure Front Door as a CDN. Query parameter keys are now converted to lowercase and sorted alphabetically.
-- Added support for custom authentication audiences via the `audience` keyword argument in `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
-
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for providing Entra ID authentication audiences via the `audience` keyword argument in the `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
 
 ### Other Changes
 

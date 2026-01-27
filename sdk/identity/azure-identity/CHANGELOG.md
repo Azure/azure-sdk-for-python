@@ -12,13 +12,13 @@
 
 ### Bugs Fixed
 
-- Fixed the `AZURE_REGIONAL_AUTHORITY_NAME` environment variable not being respected in certain credentials. ([#44347](https://github.com/Azure/azure-sdk-for-python/pull/44347))
-- Fixed an issue with certain credentials not bypassing the token cache when claims are provided in `get_token` or `get_token_info` calls. ([#44552](https://github.com/Azure/azure-sdk-for-python/pull/44552))
+- Fixed an issue with certain credentials not bypassing the token cache when claims are provided in `get_token` or `get_token_info` calls. ([#44552](https://github.com/Azure/azure-sdk-for-python/pull/44552)) ([#44815](https://github.com/Azure/azure-sdk-for-python/pull/44815))
 - Fixed an issue where an unhelpful TypeError was raised during Entra ID token requests that returned empty responses. Now, a ClientAuthenticationError is raised with the full response for better troubleshooting. ([#44258](https://github.com/Azure/azure-sdk-for-python/pull/44258))
 
 ### Other Changes
 
 - Add lock-based concurrency control to asynchronous token requests. This addresses race conditions where multiple coroutines could simultaneously request tokens for the same scopes, resulting in redundant authentication requests. ([#43889](https://github.com/Azure/azure-sdk-for-python/pull/43889))
+- Bumped minimum dependency on `msal` to `>=1.31.0`.
 
 ## 1.26.0b1 (2025-11-07)
 

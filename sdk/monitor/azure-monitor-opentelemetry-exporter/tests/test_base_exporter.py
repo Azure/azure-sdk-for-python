@@ -87,10 +87,10 @@ class TestBaseExporter(unittest.TestCase):
         # Clear environ so the mocks from past tests do not interfere.
         os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
         os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
-        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", None)
+        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_DISABLED", None)
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
-        os.environ["APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"] = "false"
+        os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "true"
         cls._base = BaseExporter()
         cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
 
@@ -797,7 +797,7 @@ class TestBaseExporter(unittest.TestCase):
         os.environ,
         {
             "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "false",
+            "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "false",
         },
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
@@ -821,7 +821,7 @@ class TestBaseExporter(unittest.TestCase):
         os.environ,
         {
             "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "false",
+            "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "false",
         },
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")

@@ -90,7 +90,11 @@ class ManagedIdentityClientBase(abc.ABC):
 
         return token
 
-    def get_cached_token(self, *scopes: str) -> Optional[AccessTokenInfo]:
+    def get_cached_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
+        # Do not return a cached token if claims are provided.
+        if kwargs.get("claims") is not None:
+            return None
+
         resource = _scopes_to_resource(*scopes)
         now = time.time()
         for token in self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]):

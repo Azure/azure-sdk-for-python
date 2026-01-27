@@ -26,7 +26,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
             gallery_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
 
         # please add some check logic here by yourself
@@ -66,6 +66,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                         "publishedDate": "2020-02-20 00:00:00",
                         "replicaCount": 0,
                         "replicationMode": "str",
+                        "storageAccountStrategy": "str",
                         "storageAccountType": "str",
                         "targetExtendedLocations": [
                             {
@@ -161,7 +162,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                         "validationEtag": "str",
                     },
                 },
-                api_version="2024-03-03",
+                api_version="2025-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -187,6 +188,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                         "publishedDate": "2020-02-20 00:00:00",
                         "replicaCount": 0,
                         "replicationMode": "str",
+                        "storageAccountStrategy": "str",
                         "storageAccountType": "str",
                         "targetExtendedLocations": [
                             {
@@ -274,7 +276,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                         "validationEtag": "str",
                     },
                 },
-                api_version="2024-03-03",
+                api_version="2025-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -290,7 +292,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                 gallery_name="str",
                 gallery_image_name="str",
                 gallery_image_version_name="str",
-                api_version="2024-03-03",
+                api_version="2025-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
