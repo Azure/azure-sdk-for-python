@@ -45,3 +45,5 @@ extends:
       safeName: azuremgmtresourcedeploymentscripts
     - name: azure-mgmt-resource-bicep
       safeName: azuremgmtresourcebicep
+    - name: azure-mgmt-resources-deploymentstacks
+      safeName: azuremgmtresourcesdeploymentstacks
