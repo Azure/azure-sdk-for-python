@@ -33,10 +33,9 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import DeploymentDeleteFromResourcesState
 
 
-def sample_get_deployment_delete_from_resources_status():
+def sample_deployment_delete_status():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -68,7 +67,7 @@ def sample_get_deployment_delete_from_resources_status():
 
 
 def main():
-    sample_get_deployment_delete_from_resources_status()
+    sample_deployment_delete_status()
 
 
 if __name__ == "__main__":

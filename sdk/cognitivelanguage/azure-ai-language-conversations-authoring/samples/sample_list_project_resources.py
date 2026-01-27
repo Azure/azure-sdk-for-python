@@ -32,7 +32,6 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import AssignedProjectResource
 
 
 def sample_list_project_resources():

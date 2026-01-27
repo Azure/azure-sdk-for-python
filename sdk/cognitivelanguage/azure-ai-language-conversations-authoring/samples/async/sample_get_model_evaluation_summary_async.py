@@ -32,11 +32,11 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_get_model_evaluation_summary_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
 
-async def sample_get_model_evaluation_summary_async():
+async def sample_get_model_eval_summary_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -114,7 +114,7 @@ async def sample_get_model_evaluation_summary_async():
 
 
 async def main():
-    await sample_get_model_evaluation_summary_async()
+    await sample_get_model_eval_summary_async()
 
 
 if __name__ == "__main__":

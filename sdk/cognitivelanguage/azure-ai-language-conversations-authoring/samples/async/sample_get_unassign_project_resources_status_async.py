@@ -34,10 +34,9 @@ import asyncio
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import ProjectResourcesState
 
 
-async def sample_get_unassign_project_resources_status_async():
+async def sample_unassign_project_res_status_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -67,7 +66,7 @@ async def sample_get_unassign_project_resources_status_async():
 
 
 async def main():
-    await sample_get_unassign_project_resources_status_async()
+    await sample_unassign_project_res_status_async()
 
 
 if __name__ == "__main__":

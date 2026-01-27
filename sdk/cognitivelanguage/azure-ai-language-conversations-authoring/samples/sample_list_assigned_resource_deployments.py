@@ -26,13 +26,12 @@ NOTE:
 
 # [START conversation_authoring_list_assigned_resource_deployments]
 import os
-from datetime import date, datetime
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 
-def sample_list_assigned_resource_deployments():
+def sample_list_assigned_deployments():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
 
@@ -59,7 +58,7 @@ def sample_list_assigned_resource_deployments():
 
 
 def main():
-    sample_list_assigned_resource_deployments()
+    sample_list_assigned_deployments()
 
 
 if __name__ == "__main__":

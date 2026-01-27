@@ -44,8 +44,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     CreateDeploymentDetails,
-    AssignedProjectResource,
-    # DataGenerationConnectionInfo,  # uncomment if you need AOAI data generation settings
 )
 
 
