@@ -8,6 +8,7 @@ from azure.ai.language.conversations.models import (
     # request models
     AnalyzeConversationOperationInput,
     MultiLanguageConversationInput,
+    NamedEntity,
     TextConversation,
     TextConversationItem,
     PiiOperationAction,
@@ -100,15 +101,31 @@ class TestConversationsCase(TestConversations):
         print(f"Status: {d.get('status')}")
 
         # ---- Iterate results and verify redaction ----------------------------
-        for actions_page in paged_actions:
+        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
             for action_result in actions_page.task_results or []:
                 ar = cast(AnalyzeConversationOperationResult, action_result)
                 if isinstance(ar, ConversationPiiOperationResult):
                     for conversation in ar.results.conversations or []:
                         conversation = cast(ConversationalPiiResult, conversation)
                         for item in conversation.conversation_items or []:
-                            assert isinstance(item, ConversationPiiItemResult)
+                            item = cast(ConversationPiiItemResult, item)
+                            redacted_text = (getattr(item.redacted_content, "text", None) or "").strip()
+                            if not redacted_text:
+                                continue
 
-        # ---- Assertions -------------------------------------------------------
+                            # Only verify when there are detected entities in the original item
+                            if item.entities:
+                                # Ensure original PII text is NOT present and '*' is present
+                                for entity in item.entities:
+                                    ent_text = cast(NamedEntity, entity).text or ""
+                                    assert (
+                                        ent_text not in redacted_text
+                                    ), f"Expected entity '{ent_text}' to be redacted but found in: {redacted_text}"
+                                assert (
+                                    "*" in redacted_text
+                                ), f"Expected redacted text to contain '*', got: {redacted_text}"
+                                redacted_verified.append(redacted_text)
+
+        # Assertions
         assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
         assert len(redacted_verified) > 0, "Expected at least one redacted line to be verified."

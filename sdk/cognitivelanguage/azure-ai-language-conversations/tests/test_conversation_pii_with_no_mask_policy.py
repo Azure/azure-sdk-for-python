@@ -9,6 +9,7 @@ from azure.ai.language.conversations.models import (
     # request models
     AnalyzeConversationOperationInput,
     MultiLanguageConversationInput,
+    NamedEntity,
     TextConversation,
     TextConversationItem,
     PiiOperationAction,
@@ -114,7 +115,18 @@ class TestConversationsCase(TestConversations):
                     for conversation in ar.results.conversations or []:
                         conversation = cast(ConversationalPiiResult, conversation)
                         for item in conversation.conversation_items or []:
-                            assert isinstance(item, ConversationPiiItemResult)
+                            item = cast(ConversationPiiItemResult, item)
+                            # With NoMask, service returns original text in redacted_content
+                            returned_text = (getattr(item.redacted_content, "text", None) or "").strip()
+                            if item.entities and returned_text:
+                                for entity in item.entities:
+                                    entity = cast(NamedEntity, entity)
+                                    ent_text = entity.text or ""
+                                    detected_entities.append(ent_text)
+                                    # Ensure the original PII text is still present
+                                    assert (
+                                        ent_text in returned_text
+                                    ), f"Expected entity '{ent_text}' to be present but was not found in: {returned_text}"
 
         # ---- Assertions ------------------------
         assert len(detected_entities) > 0, "Expected at least one detected PII entity."

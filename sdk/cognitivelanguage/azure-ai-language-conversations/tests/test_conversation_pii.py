@@ -20,6 +20,7 @@ from azure.ai.language.conversations.models import (
     NamedEntity,
     ConversationError,
     AnalyzeConversationOperationAction,
+    InputWarning,
 )
 
 from azure.core.credentials import AzureKeyCredential
@@ -104,7 +105,7 @@ class TestConversationsCase(TestConversations):
             print(f"Display Name: {d.get('display_name')}")
 
         # ---- Iterate pages and action results --------------------------------
-        for actions_page in paged_actions:
+        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
             print(
                 f"Completed: {actions_page.completed}, "
                 f"In Progress: {actions_page.in_progress}, "
@@ -124,7 +125,23 @@ class TestConversationsCase(TestConversations):
                         print(f"Conversation: #{conversation.id}")
                         print("Detected Entities:")
                         for item in conversation.conversation_items or []:
-                            assert isinstance(item, ConversationPiiItemResult)
+                            item = cast(ConversationPiiItemResult, item)
+                            for entity in item.entities or []:
+                                entity = cast(NamedEntity, entity)
+                                print(f"  Category: {entity.category}")
+                                print(f"  Subcategory: {entity.subcategory}")
+                                print(f"  Text: {entity.text}")
+                                print(f"  Offset: {entity.offset}")
+                                print(f"  Length: {entity.length}")
+                                print(f"  Confidence score: {entity.confidence_score}\n")
+                                entities_detected.append(entity)
+
+                        if conversation.warnings:
+                            print("Warnings:")
+                            for warning in conversation.warnings:
+                                warning = cast(InputWarning, warning)
+                                print(f"  Code: {warning.code}")
+                                print(f"  Message: {warning.message}")
                         print()
                 else:
                     print("  [No supported results to display for this action type]")
