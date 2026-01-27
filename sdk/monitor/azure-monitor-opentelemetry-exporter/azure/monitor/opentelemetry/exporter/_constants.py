@@ -183,10 +183,23 @@ class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 RetryCodeType = Union[RetryCode, int]
 
 
+# Customer SDK Stats metric names: (lowercase_otel_name, pascal_case_display_name)
+_ITEM_SUCCESS_COUNT_NAME = ("item_success_count", "Item_Success_Count")
+_ITEM_DROP_COUNT_NAME = ("item_dropped_count", "Item_Dropped_Count")
+_ITEM_RETRY_COUNT_NAME = ("item_retry_count", "Item_Retry_Count")
+
+_CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS = dict(
+    [
+        _ITEM_SUCCESS_COUNT_NAME,
+        _ITEM_DROP_COUNT_NAME,
+        _ITEM_RETRY_COUNT_NAME,
+    ]
+)
+
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ITEM_SUCCESS_COUNT = "Item_Success_Count"
-    ITEM_DROP_COUNT = "Item_Dropped_Count"
-    ITEM_RETRY_COUNT = "Item_Retry_Count"
+    ITEM_SUCCESS_COUNT = _ITEM_SUCCESS_COUNT_NAME[0]
+    ITEM_DROP_COUNT = _ITEM_DROP_COUNT_NAME[0]
+    ITEM_RETRY_COUNT = _ITEM_RETRY_COUNT_NAME[0]
 
 
 ## Map from Azure Monitor envelope base_types to TelemetryType
