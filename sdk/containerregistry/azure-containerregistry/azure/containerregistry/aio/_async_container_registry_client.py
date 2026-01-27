@@ -118,8 +118,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_hello_world_async.py
-                :start-after: [START create_registry_client]
-                :end-before: [END create_registry_client]
+                :start-after: [START create_registry_client_async]
+                :end-before: [END create_registry_client_async]
                 :language: python
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
@@ -158,8 +158,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_hello_world_async.py
-                :start-after: [START delete_repository]
-                :end-before: [END delete_repository]
+                :start-after: [START delete_repository_async]
+                :end-before: [END delete_repository_async]
                 :language: python
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
@@ -179,8 +179,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_delete_tags_async.py
-                :start-after: [START list_repository_names]
-                :end-before: [END list_repository_names]
+                :start-after: [START list_repository_names_async]
+                :end-before: [END list_repository_names_async]
                 :language: python
                 :dedent: 8
                 :caption: List repositories in a container registry account
