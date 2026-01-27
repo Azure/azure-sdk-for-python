@@ -33,7 +33,7 @@ if TYPE_CHECKING:
         BlobItemInternal,
         BlobTags,
         PageList,
-        StorageServiceProperties,
+        BlobServiceProperties as StorageServiceProperties,
         StorageServiceStats,
     )
     from ._shared.models import LocationMode

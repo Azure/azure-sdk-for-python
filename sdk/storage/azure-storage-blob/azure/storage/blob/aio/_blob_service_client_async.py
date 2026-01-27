@@ -26,7 +26,7 @@ from .._blob_service_client_helpers import _parse_url
 from .._deserialize import service_properties_deserialize, service_stats_deserialize
 from .._encryption import StorageEncryptionMixin
 from .._generated.azure.storage.blobs.aio import BlobClient as AzureBlobStorage
-from .._generated.azure.storage.blobs.models import StorageServiceProperties, KeyInfo
+from .._generated.azure.storage.blobs.models import BlobServiceProperties as StorageServiceProperties, KeyInfo
 from .._models import BlobProperties, ContainerProperties, CorsRule
 from .._serialize import get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin

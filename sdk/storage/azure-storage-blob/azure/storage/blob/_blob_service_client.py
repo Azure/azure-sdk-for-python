@@ -23,7 +23,7 @@ from ._container_client import ContainerClient
 from ._deserialize import service_properties_deserialize, service_stats_deserialize
 from ._encryption import StorageEncryptionMixin
 from ._generated.azure.storage.blobs import BlobClient as AzureBlobStorage
-from ._generated.azure.storage.blobs.models import KeyInfo, StorageServiceProperties
+from ._generated.azure.storage.blobs.models import KeyInfo, BlobServiceProperties as StorageServiceProperties
 from ._list_blobs_helper import FilteredBlobPaged
 from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged, CorsRule
 from ._serialize import get_api_version
