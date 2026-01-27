@@ -18,7 +18,6 @@ from ._client import BlobClient  # type: ignore
 from ._client import PageBlobClient  # type: ignore
 from ._client import AppendBlobClient  # type: ignore
 from ._client import BlockBlobClient  # type: ignore
-from ._patch import CombinedBlobClient  # type: ignore
 from ._version import VERSION
 
 __version__ = VERSION
@@ -37,7 +36,6 @@ __all__ = [
     "PageBlobClient",
     "AppendBlobClient",
     "BlockBlobClient",
-    "CombinedBlobClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
