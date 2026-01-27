@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/ExpressRoutePortsLocationGet.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-05-01/examples/ExpressRoutePortsLocationGet.json
 if __name__ == "__main__":
     main()

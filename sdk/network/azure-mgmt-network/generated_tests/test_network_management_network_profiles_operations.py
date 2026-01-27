@@ -25,7 +25,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_profiles.begin_delete(
             resource_group_name=resource_group.name,
             network_profile_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_profiles.get(
             resource_group_name=resource_group.name,
             network_profile_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -133,6 +133,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -421,6 +422,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -503,6 +505,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -710,6 +713,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -899,6 +903,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -1075,6 +1080,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -1392,6 +1398,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -1476,6 +1483,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -1753,6 +1761,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -1873,6 +1882,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -2052,6 +2062,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -2204,6 +2215,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                             "service": "str",
                                         }
                                     ],
+                                    "serviceGateway": {"id": "str"},
                                     "sharingScope": "str",
                                     "type": "str",
                                 },
@@ -2300,6 +2312,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -2592,6 +2605,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -2676,6 +2690,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -2883,6 +2898,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -3075,6 +3091,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -3254,6 +3271,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -3571,6 +3589,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -3661,6 +3680,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                                         {"id": "str"}
                                                                                     ],
                                                                                     "resourceGuid": "str",
+                                                                                    "serviceGateway": {"id": "str"},
                                                                                     "sku": {"name": "str"},
                                                                                     "sourceVirtualNetwork": {
                                                                                         "id": "str"
@@ -3946,6 +3966,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -4068,6 +4089,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -4251,6 +4273,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -4403,6 +4426,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                                                 "service": "str",
                                             }
                                         ],
+                                        "serviceGateway": {"id": "str"},
                                         "sharingScope": "str",
                                         "type": "str",
                                     },
@@ -4430,7 +4454,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -4443,7 +4467,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_profile_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -4453,7 +4477,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_network_profiles_list_all(self, resource_group):
         response = self.client.network_profiles.list_all(
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -4464,7 +4488,7 @@ class TestNetworkManagementNetworkProfilesOperations(AzureMgmtRecordedTestCase):
     def test_network_profiles_list(self, resource_group):
         response = self.client.network_profiles.list(
             resource_group_name=resource_group.name,
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -81,6 +81,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/NetworkVirtualApplianceVnetAdditionalPublicPut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-05-01/examples/NetworkVirtualApplianceVnetAdditionalPublicPut.json
 if __name__ == "__main__":
     main()

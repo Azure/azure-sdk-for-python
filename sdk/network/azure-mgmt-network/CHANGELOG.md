@@ -1,5 +1,9 @@
 # Release History
 
+## 30.2.0 (2026-02-15)
+
+change log generation was timeout!!! You need to write it manually!!!
+
 ## 30.1.0 (2025-11-19)
 
 ### Features Added

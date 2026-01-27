@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/ExpressRouteCircuitAuthorizationDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-05-01/examples/ExpressRouteCircuitAuthorizationDelete.json
 if __name__ == "__main__":
     main()
