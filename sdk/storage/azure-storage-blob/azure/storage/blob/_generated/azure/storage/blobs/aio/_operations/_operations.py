@@ -9,11 +9,8 @@
 from collections.abc import MutableMapping
 import datetime
 from typing import Any, AsyncIterator, Callable, Literal, Optional, TypeVar, Union
-import urllib.parse
-from xml.etree import ElementTree as ET
 
 from azure.core import AsyncPipelineClient, MatchConditions
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -27,7 +24,6 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -103,14 +99,7 @@ from ..._operations._operations import (
     build_service_set_properties_request,
     build_service_submit_batch_request,
 )
-from ..._utils.model_base import (
-    Model as _Model,
-    _convert_element,
-    _deserialize,
-    _deserialize_xml,
-    _failsafe_deserialize,
-    _get_element,
-)
+from ..._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize, _get_element
 from ..._utils.utils import ClientMixinABC, prepare_multipart_form_data
 from ..._validation import api_version_validation
 from .._configuration import (
@@ -359,22 +348,30 @@ class _ServiceClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def list_containers_segment(
+    @distributed_trace_async
+    async def list_containers_segment(
         self,
         *,
         prefix: Optional[str] = None,
+        marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
         include: Optional[list[Union[str, _models.ListContainersIncludeType]]] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.ContainerItem"]:
+    ) -> _models.ListContainersSegmentResponse:
         """The List Containers Segment operation returns a list of the containers under the specified
         account.
 
         :keyword prefix: Filters the results to return only containers whose name begins with the
          specified prefix. Default value is None.
         :paramtype prefix: str
+        :keyword marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :paramtype marker: str
         :keyword maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
@@ -386,16 +383,11 @@ class _ServiceClientOperationsMixin(
         :keyword include: Include this parameter to specify that the container's metadata be returned
          as part of the response body. Default value is None.
         :paramtype include: list[str or ~azure.storage.blobs.models.ListContainersIncludeType]
-        :return: An iterator like instance of ContainerItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blobs.models.ContainerItem]
+        :return: ListContainersSegmentResponse. The ListContainersSegmentResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.storage.blobs.models.ListContainersSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[list[_models.ContainerItem]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -404,53 +396,66 @@ class _ServiceClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-            _request = build_service_list_containers_segment_request(
-                prefix=prefix,
-                marker=_continuation_token,
-                maxresults=maxresults,
-                timeout=timeout,
-                include=include,
-                content_type=content_type,
-                version=self._config.version,
-                headers=_headers,
-                params=_params,
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.ListContainersSegmentResponse] = kwargs.pop("cls", None)
+
+        _request = build_service_list_containers_segment_request(
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            timeout=timeout,
+            include=include,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
             )
-            path_format_arguments = {
-                "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
+            raise HttpResponseError(response=response, model=error)
 
-        async def extract_data(pipeline_response):
-            deserialized = ET.fromstring(pipeline_response.http_response.text())
-            list_of_elem = _deserialize(list[_models.ContainerItem], deserialized.find("Containers"))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            _cont_token_elem = deserialized.find("NextMarker")
-            return _cont_token_elem.text if _cont_token_elem is not None else None, AsyncList(list_of_elem)
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(_models.ListContainersSegmentResponse, response.text())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.StorageError,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_user_delegation_key(
@@ -2165,26 +2170,34 @@ class _ContainerClientOperationsMixin(
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
+    @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
         api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
     )
-    def list_blob_flat_segment(
+    async def list_blob_flat_segment(
         self,
         *,
         prefix: Optional[str] = None,
+        marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
         timeout: Optional[int] = None,
         start_from: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.BlobItemInternal"]:
+    ) -> _models.ListBlobsFlatSegmentResponse:
         """The List Blobs operation returns a list of the blobs under the specified container.
 
         :keyword prefix: Filters the results to return only containers whose name begins with the
          specified prefix. Default value is None.
         :paramtype prefix: str
+        :keyword marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :paramtype marker: str
         :keyword maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
@@ -2200,16 +2213,11 @@ class _ContainerClientOperationsMixin(
          only one entity level is supported; For recursive list, multiple entity levels are supported.
          (Inclusive). Default value is None.
         :paramtype start_from: str
-        :return: An iterator like instance of BlobItemInternal
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blobs.models.BlobItemInternal]
+        :return: ListBlobsFlatSegmentResponse. The ListBlobsFlatSegmentResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.storage.blobs.models.ListBlobsFlatSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[list[_models.BlobItemInternal]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2218,71 +2226,85 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-            _request = build_container_list_blob_flat_segment_request(
-                prefix=prefix,
-                marker=_continuation_token,
-                maxresults=maxresults,
-                include=include,
-                timeout=timeout,
-                start_from=start_from,
-                content_type=content_type,
-                version=self._config.version,
-                headers=_headers,
-                params=_params,
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.ListBlobsFlatSegmentResponse] = kwargs.pop("cls", None)
+
+        _request = build_container_list_blob_flat_segment_request(
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            start_from=start_from,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
             )
-            path_format_arguments = {
-                "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
+            raise HttpResponseError(response=response, model=error)
 
-        async def extract_data(pipeline_response):
-            deserialized = ET.fromstring(pipeline_response.http_response.text())
-            list_of_elem = _deserialize(list[_models.BlobItemInternal], deserialized.find("Blobs").find("Blob"))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            _cont_token_elem = deserialized.find("NextMarker")
-            return _cont_token_elem.text if _cont_token_elem is not None else None, AsyncList(list_of_elem)
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(_models.ListBlobsFlatSegmentResponse, response.text())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.StorageError,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+        return deserialized  # type: ignore
 
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
+    @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
         api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
     )
-    def list_blob_hierarchy_segment(
+    async def list_blob_hierarchy_segment(
         self,
         *,
         delimiter: str,
         prefix: Optional[str] = None,
+        marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
         timeout: Optional[int] = None,
         start_from: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.BlobItemInternal"]:
+    ) -> _models.ListBlobsHierarchySegmentResponse:
         """The List Blobs operation returns a list of the blobs under the specified container. A delimiter
         can be used to traverse a virtual hierarchy of blobs as though it were a file system.
 
@@ -2294,6 +2316,13 @@ class _ContainerClientOperationsMixin(
         :keyword prefix: Filters the results to return only containers whose name begins with the
          specified prefix. Default value is None.
         :paramtype prefix: str
+        :keyword marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :paramtype marker: str
         :keyword maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
@@ -2309,16 +2338,11 @@ class _ContainerClientOperationsMixin(
          only one entity level is supported; For recursive list, multiple entity levels are supported.
          (Inclusive). Default value is None.
         :paramtype start_from: str
-        :return: An iterator like instance of BlobItemInternal
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blobs.models.BlobItemInternal]
+        :return: ListBlobsHierarchySegmentResponse. The ListBlobsHierarchySegmentResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.storage.blobs.models.ListBlobsHierarchySegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[list[_models.BlobItemInternal]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2327,55 +2351,68 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-            _request = build_container_list_blob_hierarchy_segment_request(
-                delimiter=delimiter,
-                prefix=prefix,
-                marker=_continuation_token,
-                maxresults=maxresults,
-                include=include,
-                timeout=timeout,
-                start_from=start_from,
-                content_type=content_type,
-                version=self._config.version,
-                headers=_headers,
-                params=_params,
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
+
+        _request = build_container_list_blob_hierarchy_segment_request(
+            delimiter=delimiter,
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            start_from=start_from,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
             )
-            path_format_arguments = {
-                "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
+            raise HttpResponseError(response=response, model=error)
 
-        async def extract_data(pipeline_response):
-            deserialized = ET.fromstring(pipeline_response.http_response.text())
-            list_of_elem = _deserialize(list[_models.BlobItemInternal], deserialized.find("Blobs").find("Blob"))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            _cont_token_elem = deserialized.find("NextMarker")
-            return _cont_token_elem.text if _cont_token_elem is not None else None, AsyncList(list_of_elem)
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(_models.ListBlobsHierarchySegmentResponse, response.text())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.StorageError,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_account_info(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:

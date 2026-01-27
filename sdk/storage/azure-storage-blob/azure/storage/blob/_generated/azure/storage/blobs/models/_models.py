@@ -1817,6 +1817,261 @@ class KeyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ListBlobsFlatSegmentResponse(_Model):
+    """An enumeration of blobs.
+
+    :ivar service_endpoint: The service endpoint. Required.
+    :vartype service_endpoint: str
+    :ivar container_name: The container name. Required.
+    :vartype container_name: str
+    :ivar prefix: The prefix of the blobs.
+    :vartype prefix: str
+    :ivar marker: The marker of the blobs.
+    :vartype marker: str
+    :ivar max_results: The max results of the blobs.
+    :vartype max_results: int
+    :ivar segment: The blob segment. Required.
+    :vartype segment: ~azure.storage.blobs.models.BlobFlatListSegment
+    :ivar next_marker: The next marker of the blobs.
+    :vartype next_marker: str
+    """
+
+    service_endpoint: str = rest_field(
+        name="serviceEndpoint",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+    )
+    """The service endpoint. Required."""
+    container_name: str = rest_field(
+        name="containerName",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ContainerName", "text": False, "unwrapped": False},
+    )
+    """The container name. Required."""
+    prefix: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+    )
+    """The prefix of the blobs."""
+    marker: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+    )
+    """The marker of the blobs."""
+    max_results: Optional[int] = rest_field(
+        name="maxResults",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+    )
+    """The max results of the blobs."""
+    segment: "_models.BlobFlatListSegment" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Blobs", "text": False, "unwrapped": False},
+    )
+    """The blob segment. Required."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+    )
+    """The next marker of the blobs."""
+
+    _xml = {"attribute": False, "name": "EnumerationResults", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        service_endpoint: str,
+        container_name: str,
+        segment: "_models.BlobFlatListSegment",
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        max_results: Optional[int] = None,
+        next_marker: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListBlobsHierarchySegmentResponse(_Model):
+    """An enumeration of blobs.
+
+    :ivar service_endpoint: The service endpoint. Required.
+    :vartype service_endpoint: str
+    :ivar container_name: The container name. Required.
+    :vartype container_name: str
+    :ivar delimiter: The delimiter of the blobs.
+    :vartype delimiter: str
+    :ivar prefix: The prefix of the blobs.
+    :vartype prefix: str
+    :ivar marker: The marker of the blobs.
+    :vartype marker: str
+    :ivar max_results: The max results of the blobs.
+    :vartype max_results: int
+    :ivar segment: The blob segment. Required.
+    :vartype segment: ~azure.storage.blobs.models.BlobHierarchyListSegment
+    :ivar next_marker: The next marker of the blobs.
+    :vartype next_marker: str
+    """
+
+    service_endpoint: str = rest_field(
+        name="serviceEndpoint",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+    )
+    """The service endpoint. Required."""
+    container_name: str = rest_field(
+        name="containerName",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ContainerName", "text": False, "unwrapped": False},
+    )
+    """The container name. Required."""
+    delimiter: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Delimiter", "text": False, "unwrapped": False},
+    )
+    """The delimiter of the blobs."""
+    prefix: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+    )
+    """The prefix of the blobs."""
+    marker: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+    )
+    """The marker of the blobs."""
+    max_results: Optional[int] = rest_field(
+        name="maxResults",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+    )
+    """The max results of the blobs."""
+    segment: "_models.BlobHierarchyListSegment" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Blobs", "text": False, "unwrapped": False},
+    )
+    """The blob segment. Required."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+    )
+    """The next marker of the blobs."""
+
+    _xml = {"attribute": False, "name": "EnumerationResults", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        service_endpoint: str,
+        container_name: str,
+        segment: "_models.BlobHierarchyListSegment",
+        delimiter: Optional[str] = None,
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        max_results: Optional[int] = None,
+        next_marker: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListContainersSegmentResponse(_Model):
+    """The list container segment response.
+
+    :ivar service_endpoint: The service endpoint. Required.
+    :vartype service_endpoint: str
+    :ivar prefix: The prefix of the containers.
+    :vartype prefix: str
+    :ivar marker: The marker of the containers.
+    :vartype marker: str
+    :ivar max_results: The max results of the containers.
+    :vartype max_results: int
+    :ivar container_items: The container segment. Required.
+    :vartype container_items: ~azure.storage.blobs.models.ContainerItem
+    :ivar next_marker: The next marker of the containers.
+    :vartype next_marker: str
+    """
+
+    service_endpoint: str = rest_field(
+        name="serviceEndpoint",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+    )
+    """The service endpoint. Required."""
+    prefix: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+    )
+    """The prefix of the containers."""
+    marker: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+    )
+    """The marker of the containers."""
+    max_results: Optional[int] = rest_field(
+        name="maxResults",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+    )
+    """The max results of the containers."""
+    container_items: list["_models.ContainerItem"] = rest_field(
+        name="containerItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Container", "name": "Containers", "text": False, "unwrapped": False},
+    )
+    """The container segment. Required."""
+    next_marker: Optional[str] = rest_field(
+        name="NextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+    )
+    """The next marker of the containers."""
+
+    _xml = {"attribute": False, "name": "EnumerationResults", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        service_endpoint: str,
+        container_items: list["_models.ContainerItem"],
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        max_results: Optional[int] = None,
+        next_marker: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Logging(_Model):
     """Azure Analytics Logging settings.
 
