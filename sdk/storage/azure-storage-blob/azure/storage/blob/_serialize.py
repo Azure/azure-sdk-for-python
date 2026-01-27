@@ -101,22 +101,23 @@ def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Opt
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
-    # Process match conditions and return only non-None values to avoid
-    # leaking extra kwargs to the HTTP transport.
-    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
+    # Return only non-None values to avoid leaking extra kwargs to the HTTP transport.
+    # The generated code accepts etag/match_condition and handles conversion internally.
     result: Dict[str, Any] = {}
     if_modified_since = kwargs.pop('if_modified_since', None)
     if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    etag = kwargs.pop('etag', None)
+    match_condition = kwargs.pop('match_condition', None)
     if_tags = kwargs.pop('if_tags_match_condition', None)
 
     if if_modified_since is not None:
         result['if_modified_since'] = if_modified_since
     if if_unmodified_since is not None:
         result['if_unmodified_since'] = if_unmodified_since
-    if if_match is not None:
-        result['if_match'] = if_match
-    if if_none_match is not None:
-        result['if_none_match'] = if_none_match
+    if etag is not None:
+        result['etag'] = etag
+    if match_condition is not None:
+        result['match_condition'] = match_condition
     if if_tags is not None:
         result['if_tags'] = if_tags
     return result

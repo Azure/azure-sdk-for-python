@@ -68,6 +68,7 @@ from ._shared.response_handlers import process_storage_error, return_response_he
 from ._serialize import (
     get_access_conditions,
     get_api_version,
+    get_cpk_info,
     get_modify_conditions,
     get_version_id
 )
@@ -1115,12 +1116,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+        cpk_info = get_cpk_info(cpk)
+        if cpk and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         try:
             cls_method = kwargs.pop('cls', None)
             if cls_method:
@@ -1132,7 +1130,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 lease_id=access_conditions,
                 **mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
+                **cpk_info,
                 **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
