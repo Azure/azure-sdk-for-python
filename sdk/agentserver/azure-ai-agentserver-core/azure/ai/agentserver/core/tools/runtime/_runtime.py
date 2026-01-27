@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, AsyncContextManager, Dict, Optional, Union
+from abc import ABC, abstractmethod
+from typing import Any, AsyncContextManager, ClassVar, Dict, Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
 
@@ -15,10 +16,29 @@ from ..client._client import FoundryToolClient
 from ...constants import Constants
 
 
-class FoundryToolRuntime(AsyncContextManager["FoundryToolRuntime"]):
+def create_tool_runtime(project_endpoint: str | None,
+                        credential: AsyncTokenCredential | None) -> "FoundryToolRuntime":
+    """Create a Foundry tool runtime.
+    Returns a DefaultFoundryToolRuntime if both project_endpoint and credential are provided,
+    otherwise returns a ThrowingFoundryToolRuntime which raises errors on usage.
+
+    :param project_endpoint: The project endpoint.
+    :type project_endpoint: str | None
+    :param credential: The credential.
+    :type credential: AsyncTokenCredential | None
+    :return: The Foundry tool runtime.
+    :rtype: FoundryToolRuntime
+    """
+    if project_endpoint and credential:
+        return DefaultFoundryToolRuntime(project_endpoint=project_endpoint, credential=credential)
+    else:
+        return ThrowingFoundryToolRuntime()
+
+class FoundryToolRuntime(AsyncContextManager["FoundryToolRuntime"], ABC):
     """Base class for Foundry tool runtimes."""
 
     @property
+    @abstractmethod
     def catalog(self) -> FoundryToolCatalog:
         """The tool catalog.
 
@@ -28,6 +48,7 @@ class FoundryToolRuntime(AsyncContextManager["FoundryToolRuntime"]):
         raise NotImplementedError
 
     @property
+    @abstractmethod
     def invocation(self) -> FoundryToolInvocationResolver:
         """The tool invocation resolver.
 
@@ -91,3 +112,31 @@ class DefaultFoundryToolRuntime(FoundryToolRuntime):
 
     async def __aexit__(self, exc_type, exc_value, traceback):
         await self._client.__aexit__(exc_type, exc_value, traceback)
+
+
+class ThrowingFoundryToolRuntime(FoundryToolRuntime):
+    """A FoundryToolRuntime that raises errors on usage."""
+    _ERROR_MESSAGE: ClassVar[str] = ("FoundryToolRuntime is not configured. "
+                                     "Please provide a valid project endpoint and credential.")
+
+    @property
+    def catalog(self) -> FoundryToolCatalog:
+        """The tool catalog.
+
+        :raises RuntimeError: Always raised to indicate the runtime is not configured.
+        """
+        raise RuntimeError(self._ERROR_MESSAGE)
+
+    @property
+    def invocation(self) -> FoundryToolInvocationResolver:
+        """The tool invocation resolver.
+
+        :raises RuntimeError: Always raised to indicate the runtime is not configured.
+        """
+        raise RuntimeError(self._ERROR_MESSAGE)
+
+    async def __aenter__(self) -> "ThrowingFoundryToolRuntime":
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        pass
