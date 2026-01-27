@@ -4,10 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 import unittest
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import patch, MagicMock
 import datetime
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError
 
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     _try_get_fixed_backoff,
@@ -305,10 +305,11 @@ class TestLoadAllRetryBehavior(unittest.TestCase):
             provider._secret_provider.uses_key_vault = False
 
             # Mock datetime to simulate time passing
-            start_time = datetime.datetime(2024, 1, 1, 0, 0, 0)
+            start_time = datetime.datetime(2026, 1, 1, 0, 0, 0)
             times = [
-                start_time,  # First call to check elapsed time
-                start_time + datetime.timedelta(seconds=2),  # Second call exceeds timeout
+                start_time,  # Initial startup_start_time
+                start_time,  # First loop elapsed check (0 seconds elapsed)
+                start_time + datetime.timedelta(seconds=2),  # Second loop check exceeds timeout
             ]
             mock_datetime.datetime.now.side_effect = times
 

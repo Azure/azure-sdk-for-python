@@ -44,6 +44,7 @@ from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
     DEFAULT_STARTUP_TIMEOUT,
+    MAX_BACKOFF_DURATION,
     MIN_STARTUP_BACKOFF_DURATION,
     JITTER_RATIO,
     STARTUP_BACKOFF_INTERVALS,
@@ -142,6 +143,8 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
     if startup_timeout < MIN_STARTUP_BACKOFF_DURATION:
         raise ValueError(f"Startup timeout must be at least {MIN_STARTUP_BACKOFF_DURATION} seconds.")
+    if startup_timeout > MAX_BACKOFF_DURATION:
+        raise ValueError(f"Startup timeout must be at most {MAX_BACKOFF_DURATION} seconds.")
 
     return {
         "endpoint": endpoint,
