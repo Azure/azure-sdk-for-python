@@ -96,12 +96,12 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
+def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[str]:
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
         lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+    return lease_id if lease_id else None
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:

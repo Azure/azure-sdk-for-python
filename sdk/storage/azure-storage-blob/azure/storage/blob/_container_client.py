@@ -425,7 +425,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             self._client.container.delete(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
@@ -539,7 +539,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             response = self._client.container.get_properties(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 cls=deserialize_container_properties,
                 **kwargs)
         except HttpResponseError as error:
@@ -631,7 +631,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             return self._client.container.set_metadata( # type: ignore
                 metadata=metadata,
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
@@ -705,7 +705,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             response, identifiers = self._client.container.get_access_policy(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
@@ -786,7 +786,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs))

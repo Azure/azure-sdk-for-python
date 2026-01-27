@@ -422,7 +422,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         try:
             await self._client.container.delete(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
@@ -536,7 +536,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         try:
             response = await self._client.container.get_properties(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 cls=deserialize_container_properties,
                 **kwargs)
         except HttpResponseError as error:
@@ -619,7 +619,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             return await self._client.container.set_metadata(  # type: ignore
                 metadata=metadata,
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
@@ -694,7 +694,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         try:
             response, identifiers = await self._client.container.get_access_policy(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
@@ -776,7 +776,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs))

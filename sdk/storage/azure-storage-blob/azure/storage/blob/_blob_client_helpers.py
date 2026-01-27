@@ -148,7 +148,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
 
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
-    kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
+    kwargs['lease_id'] = get_access_conditions(kwargs.pop('lease', None))
     kwargs['modified_access_conditions'] = get_modify_conditions(kwargs)
     kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
     if content_settings:
@@ -232,7 +232,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'modified_access_conditions': get_modify_conditions(kwargs),
         'blob_tags_string': serialize_blob_tags_header(kwargs.pop('tags', None)),
         'cls': return_response_headers,
-        'lease_access_conditions': get_access_conditions(kwargs.pop('destination_lease', None)),
+        'lease_id': get_access_conditions(kwargs.pop('destination_lease', None)),
         'tier': tier.value if tier else None,
         'source_modified_access_conditions': get_source_conditions(kwargs),
         'cpk_info': cpk_info,
@@ -317,7 +317,7 @@ def _download_blob_options(
             'required': encryption_options['required'],
             'key': encryption_options['key'],
             'resolver': encryption_options['resolver']},
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
@@ -382,7 +382,7 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
         )
     options = {
         'query_request': query_request,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'snapshot': snapshot,
@@ -401,7 +401,7 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
         'timeout': kwargs.pop('timeout', None),
         'snapshot': kwargs.pop('snapshot', None),  # this is added for delete_blobs
         'delete_snapshots': delete_snapshots or None,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions
     }
     options.update(kwargs)
@@ -437,7 +437,7 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
     options = {
         'timeout': kwargs.pop('timeout', None),
         **_get_blob_http_headers_dict(blob_headers),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cls': return_response_headers}
     options.update(kwargs)
@@ -457,7 +457,7 @@ def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwar
                             encryption_algorithm=cpk.algorithm)
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
@@ -516,7 +516,7 @@ def _create_page_blob_options(
         'blob_sequence_number': sequence_number,
         **_get_blob_http_headers_dict(blob_headers),
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
@@ -565,7 +565,7 @@ def _create_append_blob_options(
         'content_length': 0,
         **_get_blob_http_headers_dict(blob_headers),
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
@@ -589,7 +589,7 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
 
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
@@ -680,7 +680,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
         source_mod_conditions = get_source_conditions(kwargs)
         dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
         options['source_modified_access_conditions'] = source_mod_conditions
-        options['lease_access_conditions'] = dest_access_conditions
+        options['lease_id'] = dest_access_conditions
         options['tier'] = tier.value if tier else None
         options['seal_blob'] = kwargs.pop('seal_destination_blob', None)
         options['blob_tags_string'] = blob_tags_string
@@ -695,7 +695,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
         copy_id = copy_id['copy_id']
     options = {
         'copy_id': copy_id,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'timeout': kwargs.pop('timeout', None)}
     options.update(kwargs)
     return options
@@ -731,7 +731,7 @@ def _stage_block_options(
         'body': data,
         'transactional_content_md5': None,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'validate_content': validate_content,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
@@ -785,7 +785,7 @@ def _stage_block_from_url_options(
         'source_range': range_header,
         'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
         'source_cpk_info': source_cpk_info,
@@ -854,7 +854,7 @@ def _commit_block_list_options(
     options = {
         'blocks': block_lookup,
         **_get_blob_http_headers_dict(blob_headers),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'timeout': kwargs.pop('timeout', None),
         'modified_access_conditions': mod_conditions,
         'cls': return_response_headers,
@@ -880,7 +880,7 @@ def _set_blob_tags_options(
 
     options = {
         'tags': serialized_tags,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'blob_modified_access_conditions': blob_mod_conditions,
         'version_id': version_id,
@@ -897,7 +897,7 @@ def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], *
     options = {
         'version_id': version_id,
         'snapshot': snapshot,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'blob_modified_access_conditions': blob_mod_conditions,
         'timeout': kwargs.pop('timeout', None),
@@ -923,7 +923,7 @@ def _get_page_ranges_options(
     )
     options = {
         'snapshot': snapshot,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'timeout': kwargs.pop('timeout', None),
         'range': page_range}
@@ -951,7 +951,7 @@ def _set_sequence_number_options(
         'sequence_number_action': sequence_number_action,
         'timeout': kwargs.pop('timeout', None),
         'blob_sequence_number': sequence_number,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cls': return_response_headers}
     options.update(kwargs)
@@ -971,7 +971,7 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
     options = {
         'blob_content_length': size,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'cls': return_response_headers}
@@ -1012,7 +1012,7 @@ def _upload_page_options(
         'transactional_content_md5': None,
         'timeout': kwargs.pop('timeout', None),
         'range': content_range,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'sequence_number_access_conditions': seq_conditions,
         'modified_access_conditions': mod_conditions,
         'validate_content': validate_content,
@@ -1078,7 +1078,7 @@ def _upload_pages_from_url_options(
         'range': destination_range,
         'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'sequence_number_access_conditions': seq_conditions,
         'modified_access_conditions': mod_conditions,
         'source_modified_access_conditions': source_mod_conditions,
@@ -1119,7 +1119,7 @@ def _clear_page_options(
         'content_length': 0,
         'timeout': kwargs.pop('timeout', None),
         'range': content_range,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'sequence_number_access_conditions': seq_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
@@ -1165,7 +1165,7 @@ def _append_block_options(
         'content_length': length,
         'timeout': kwargs.pop('timeout', None),
         'transactional_content_md5': None,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'append_position_access_conditions': append_conditions,
         'modified_access_conditions': mod_conditions,
         'validate_content': validate_content,
@@ -1233,7 +1233,7 @@ def _append_block_from_url_options(
         'source_range': source_range,
         'source_content_md5': source_content_md5,
         'transactional_content_md5': None,
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'append_position_access_conditions': append_conditions,
         'modified_access_conditions': mod_conditions,
         'source_modified_access_conditions': source_mod_conditions,
@@ -1258,7 +1258,7 @@ def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
 
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
+        'lease_id': access_conditions,
         'append_position_access_conditions': append_conditions,
         'modified_access_conditions': mod_conditions,
         'cls': return_response_headers}

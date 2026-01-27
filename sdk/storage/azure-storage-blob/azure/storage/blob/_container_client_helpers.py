@@ -49,13 +49,10 @@ def _generate_delete_blobs_subrequest_options(
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     delete_snapshots: Optional[str] = None,
-    lease_access_conditions: Optional["LeaseAccessConditions"] = None,
+    lease_id: Optional[str] = None,
     modified_access_conditions: Optional["ModifiedAccessConditions"] = None,
     **kwargs
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    lease_id = None
-    if lease_access_conditions is not None:
-        lease_id = lease_access_conditions.lease_id
     if_modified_since = None
     if modified_access_conditions is not None:
         if_modified_since = modified_access_conditions.if_modified_since
@@ -176,7 +173,7 @@ def _generate_set_tiers_subrequest_options(
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     rehydrate_priority: Optional["RehydratePriority"] = None,
-    lease_access_conditions: Optional["LeaseAccessConditions"] = None,
+    lease_id: Optional[str] = None,
     **kwargs: Any
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     if not tier:
@@ -184,10 +181,6 @@ def _generate_set_tiers_subrequest_options(
     if snapshot and version_id:
         raise ValueError("Snapshot and version_id cannot be set at the same time")
     if_tags = kwargs.pop('if_tags', None)
-
-    lease_id = None
-    if lease_access_conditions is not None:
-        lease_id = lease_access_conditions.lease_id
 
     comp = "tier"
     timeout = kwargs.pop('timeout', None)
@@ -245,7 +238,7 @@ def _generate_set_tiers_options(
                 snapshot=blob.get('snapshot'),
                 version_id=blob.get('version_id'),
                 rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
-                lease_access_conditions=blob.get('lease_id'),
+                lease_id=blob.get('lease_id'),
                 if_tags=if_tags or blob.get('if_tags_match_condition'),
                 timeout=timeout or blob.get('timeout')
             )

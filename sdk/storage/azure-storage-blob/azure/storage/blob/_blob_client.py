@@ -1129,7 +1129,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 timeout=kwargs.pop('timeout', None),
                 version_id=version_id,
                 snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
@@ -1986,7 +1986,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 version_id=version_id,
                 **kwargs)
         except HttpResponseError as error:
@@ -2178,7 +2178,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 list_type=block_list_type,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
@@ -2333,7 +2333,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             self._client.blob.set_tier(
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
-                lease_access_conditions=access_conditions,
+                lease_id=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
