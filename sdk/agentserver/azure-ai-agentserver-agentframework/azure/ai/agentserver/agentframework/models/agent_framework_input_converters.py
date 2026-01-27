@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=too-many-nested-blocks,too-many-return-statements,too-many-branches
 # mypy: disable-error-code="no-redef"
+from __future__ import annotations
 
 from typing import Dict, List, Optional
 

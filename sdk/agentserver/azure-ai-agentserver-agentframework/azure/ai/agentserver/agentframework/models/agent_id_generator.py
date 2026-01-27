@@ -9,6 +9,7 @@ object. We intentionally do not allow overriding the generated model's fixed
 returned so callers can decide how to handle absence.
 """
 
+from __future__ import annotations
 
 from typing import Optional
 
