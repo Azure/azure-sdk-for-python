@@ -1,13 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any
+from .id_generator.foundry_id_generator import FoundryIdGenerator
+from .id_generator.id_generator import IdGenerator
 from ...logger import get_logger
 from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
-from .id_generator.foundry_id_generator import FoundryIdGenerator
-from .id_generator.id_generator import IdGenerator
-from ...tools import UserInfo
 
 logger = get_logger()
 
@@ -16,7 +14,7 @@ class AgentRunContext:
     """
     :meta private:
     """
-    def __init__(self, payload: dict, **kwargs: Any) -> None:
+    def __init__(self, payload: dict) -> None:
         self._raw_payload = payload
         self._request = _deserialize_create_response(payload)
         self._id_generator = FoundryIdGenerator.from_request(payload)

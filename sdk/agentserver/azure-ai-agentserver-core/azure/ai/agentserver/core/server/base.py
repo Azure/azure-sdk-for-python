@@ -12,9 +12,6 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
@@ -25,6 +22,10 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp
+
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 
 from ._context import AgentServerContext
 from .common.agent_run_context import AgentRunContext
