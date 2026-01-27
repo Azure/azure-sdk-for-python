@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -55,7 +55,7 @@ class Alias(_serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        paths: Optional[List["_models.AliasPath"]] = None,
+        paths: Optional[list["_models.AliasPath"]] = None,
         type: Optional[Union[str, "_models.AliasType"]] = None,
         default_path: Optional[str] = None,
         default_pattern: Optional["_models.AliasPattern"] = None,
@@ -114,7 +114,7 @@ class AliasPath(_serialization.Model):
         self,
         *,
         path: Optional[str] = None,
-        api_versions: Optional[List[str]] = None,
+        api_versions: Optional[list[str]] = None,
         pattern: Optional["_models.AliasPattern"] = None,
         **kwargs: Any
     ) -> None:
@@ -257,7 +257,7 @@ class DataManifestCustomResourceFunctionDefinition(_serialization.Model):  # pyl
         *,
         name: Optional[str] = None,
         fully_qualified_resource_type: Optional[str] = None,
-        default_properties: Optional[List[str]] = None,
+        default_properties: Optional[list[str]] = None,
         allow_custom_properties: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -339,14 +339,14 @@ class DataPolicyManifest(_serialization.Model):
     def __init__(
         self,
         *,
-        namespaces: Optional[List[str]] = None,
+        namespaces: Optional[list[str]] = None,
         policy_mode: Optional[str] = None,
         is_built_in_only: Optional[bool] = None,
-        resource_type_aliases: Optional[List["_models.ResourceTypeAliases"]] = None,
-        effects: Optional[List["_models.DataEffect"]] = None,
-        field_values: Optional[List[str]] = None,
-        standard: Optional[List[str]] = None,
-        custom: Optional[List["_models.DataManifestCustomResourceFunctionDefinition"]] = None,
+        resource_type_aliases: Optional[list["_models.ResourceTypeAliases"]] = None,
+        effects: Optional[list["_models.DataEffect"]] = None,
+        field_values: Optional[list[str]] = None,
+        standard: Optional[list[str]] = None,
+        custom: Optional[list["_models.DataManifestCustomResourceFunctionDefinition"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -400,7 +400,7 @@ class DataPolicyManifestListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.DataPolicyManifest"]] = None,
+        value: Optional[list["_models.DataPolicyManifest"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -483,8 +483,8 @@ class ErrorResponse(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorResponse"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class Identity(_serialization.Model):
@@ -526,7 +526,7 @@ class Identity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -611,7 +611,7 @@ class Override(_serialization.Model):
         *,
         kind: Optional[Union[str, "_models.OverrideKind"]] = None,
         value: Optional[str] = None,
-        selectors: Optional[List["_models.Selector"]] = None,
+        selectors: Optional[list["_models.Selector"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -659,7 +659,7 @@ class ParameterDefinitionsValue(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ParameterType"]] = None,
-        allowed_values: Optional[List[JSON]] = None,
+        allowed_values: Optional[list[JSON]] = None,
         default_value: Optional[JSON] = None,
         schema: Optional[JSON] = None,
         metadata: Optional["_models.ParameterDefinitionsValueMetadata"] = None,
@@ -719,7 +719,7 @@ class ParameterDefinitionsValueMetadata(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         strong_type: Optional[str] = None,
@@ -866,14 +866,14 @@ class PolicyAssignment(_serialization.Model):
         display_name: Optional[str] = None,
         policy_definition_id: Optional[str] = None,
         definition_version: Optional[str] = None,
-        not_scopes: Optional[List[str]] = None,
-        parameters: Optional[Dict[str, "_models.ParameterValuesValue"]] = None,
+        not_scopes: Optional[list[str]] = None,
+        parameters: Optional[dict[str, "_models.ParameterValuesValue"]] = None,
         description: Optional[str] = None,
         metadata: Optional[JSON] = None,
         enforcement_mode: Union[str, "_models.EnforcementMode"] = "Default",
-        non_compliance_messages: Optional[List["_models.NonComplianceMessage"]] = None,
-        resource_selectors: Optional[List["_models.ResourceSelector"]] = None,
-        overrides: Optional[List["_models.Override"]] = None,
+        non_compliance_messages: Optional[list["_models.NonComplianceMessage"]] = None,
+        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
+        overrides: Optional[list["_models.Override"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -952,7 +952,7 @@ class PolicyAssignmentListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PolicyAssignment"]] = None,
+        value: Optional[list["_models.PolicyAssignment"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -993,8 +993,8 @@ class PolicyAssignmentUpdate(_serialization.Model):
         *,
         location: Optional[str] = None,
         identity: Optional["_models.Identity"] = None,
-        resource_selectors: Optional[List["_models.ResourceSelector"]] = None,
-        overrides: Optional[List["_models.Override"]] = None,
+        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
+        overrides: Optional[list["_models.Override"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1085,9 +1085,9 @@ class PolicyDefinition(_serialization.Model):
         description: Optional[str] = None,
         policy_rule: Optional[JSON] = None,
         metadata: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
+        parameters: Optional[dict[str, "_models.ParameterDefinitionsValue"]] = None,
         version: Optional[str] = None,
-        versions: Optional[List[str]] = None,
+        versions: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1208,7 +1208,7 @@ class PolicyDefinitionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PolicyDefinition"]] = None,
+        value: Optional[list["_models.PolicyDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1271,9 +1271,9 @@ class PolicyDefinitionReference(_serialization.Model):
         *,
         policy_definition_id: str,
         definition_version: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterValuesValue"]] = None,
+        parameters: Optional[dict[str, "_models.ParameterValuesValue"]] = None,
         policy_definition_reference_id: Optional[str] = None,
-        group_names: Optional[List[str]] = None,
+        group_names: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1367,7 +1367,7 @@ class PolicyDefinitionVersion(_serialization.Model):
         description: Optional[str] = None,
         policy_rule: Optional[JSON] = None,
         metadata: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
+        parameters: Optional[dict[str, "_models.ParameterDefinitionsValue"]] = None,
         version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1425,7 +1425,7 @@ class PolicyDefinitionVersionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PolicyDefinitionVersion"]] = None,
+        value: Optional[list["_models.PolicyDefinitionVersion"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1512,12 +1512,12 @@ class PolicyExemption(_serialization.Model):
         *,
         policy_assignment_id: str,
         exemption_category: Union[str, "_models.ExemptionCategory"],
-        policy_definition_reference_ids: Optional[List[str]] = None,
+        policy_definition_reference_ids: Optional[list[str]] = None,
         expires_on: Optional[datetime.datetime] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[JSON] = None,
-        resource_selectors: Optional[List["_models.ResourceSelector"]] = None,
+        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
         assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
         **kwargs: Any
     ) -> None:
@@ -1585,7 +1585,7 @@ class PolicyExemptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PolicyExemption"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PolicyExemption"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of policy exemptions.
         :paramtype value: list[~azure.mgmt.resource.policy.models.PolicyExemption]
@@ -1614,7 +1614,7 @@ class PolicyExemptionUpdate(_serialization.Model):
     def __init__(
         self,
         *,
-        resource_selectors: Optional[List["_models.ResourceSelector"]] = None,
+        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
         assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
         **kwargs: Any
     ) -> None:
@@ -1701,11 +1701,11 @@ class PolicySetDefinition(_serialization.Model):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
-        policy_definitions: Optional[List["_models.PolicyDefinitionReference"]] = None,
-        policy_definition_groups: Optional[List["_models.PolicyDefinitionGroup"]] = None,
+        parameters: Optional[dict[str, "_models.ParameterDefinitionsValue"]] = None,
+        policy_definitions: Optional[list["_models.PolicyDefinitionReference"]] = None,
+        policy_definition_groups: Optional[list["_models.PolicyDefinitionGroup"]] = None,
         version: Optional[str] = None,
-        versions: Optional[List[str]] = None,
+        versions: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1768,7 +1768,7 @@ class PolicySetDefinitionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PolicySetDefinition"]] = None,
+        value: Optional[list["_models.PolicySetDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1848,9 +1848,9 @@ class PolicySetDefinitionVersion(_serialization.Model):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
-        policy_definitions: Optional[List["_models.PolicyDefinitionReference"]] = None,
-        policy_definition_groups: Optional[List["_models.PolicyDefinitionGroup"]] = None,
+        parameters: Optional[dict[str, "_models.ParameterDefinitionsValue"]] = None,
+        policy_definitions: Optional[list["_models.PolicyDefinitionReference"]] = None,
+        policy_definition_groups: Optional[list["_models.PolicyDefinitionGroup"]] = None,
         version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1910,7 +1910,7 @@ class PolicySetDefinitionVersionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PolicySetDefinitionVersion"]] = None,
+        value: Optional[list["_models.PolicySetDefinitionVersion"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2001,7 +2001,7 @@ class ResourceSelector(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, selectors: Optional[List["_models.Selector"]] = None, **kwargs: Any
+        self, *, name: Optional[str] = None, selectors: Optional[list["_models.Selector"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the resource selector.
@@ -2029,7 +2029,7 @@ class ResourceTypeAliases(_serialization.Model):
     }
 
     def __init__(
-        self, *, resource_type: Optional[str] = None, aliases: Optional[List["_models.Alias"]] = None, **kwargs: Any
+        self, *, resource_type: Optional[str] = None, aliases: Optional[list["_models.Alias"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword resource_type: The resource type name.
@@ -2064,8 +2064,8 @@ class Selector(_serialization.Model):
         self,
         *,
         kind: Optional[Union[str, "_models.SelectorKind"]] = None,
-        in_property: Optional[List[str]] = None,
-        not_in: Optional[List[str]] = None,
+        in_property: Optional[list[str]] = None,
+        not_in: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2211,7 +2211,7 @@ class Variable(_serialization.Model):
         "columns": {"key": "properties.columns", "type": "[PolicyVariableColumn]"},
     }
 
-    def __init__(self, *, columns: List["_models.PolicyVariableColumn"], **kwargs: Any) -> None:
+    def __init__(self, *, columns: list["_models.PolicyVariableColumn"], **kwargs: Any) -> None:
         """
         :keyword columns: Variable column definitions. Required.
         :paramtype columns: list[~azure.mgmt.resource.policy.models.PolicyVariableColumn]
@@ -2244,7 +2244,7 @@ class VariableListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Variable"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Variable"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of variables.
         :paramtype value: list[~azure.mgmt.resource.policy.models.Variable]
@@ -2290,7 +2290,7 @@ class VariableValue(_serialization.Model):
         "values": {"key": "properties.values", "type": "[PolicyVariableValueColumnValue]"},
     }
 
-    def __init__(self, *, values: List["_models.PolicyVariableValueColumnValue"], **kwargs: Any) -> None:
+    def __init__(self, *, values: list["_models.PolicyVariableValueColumnValue"], **kwargs: Any) -> None:
         """
         :keyword values: Variable value column value array. Required.
         :paramtype values: list[~azure.mgmt.resource.policy.models.PolicyVariableValueColumnValue]
@@ -2323,7 +2323,7 @@ class VariableValueListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VariableValue"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.VariableValue"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of variable values.
         :paramtype value: list[~azure.mgmt.resource.policy.models.VariableValue]

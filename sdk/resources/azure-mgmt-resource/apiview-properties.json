@@ -1,0 +1,23 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.resource.databoundaries.models.Resource": null,
+        "azure.mgmt.resource.databoundaries.models.ProxyResource": null,
+        "azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition": null,
+        "azure.mgmt.resource.databoundaries.models.DataBoundaryProperties": null,
+        "azure.mgmt.resource.databoundaries.models.ErrorAdditionalInfo": null,
+        "azure.mgmt.resource.databoundaries.models.ErrorDetail": null,
+        "azure.mgmt.resource.databoundaries.models.ErrorResponse": null,
+        "azure.mgmt.resource.databoundaries.models.SystemData": null,
+        "azure.mgmt.resource.databoundaries.models.DefaultName": null,
+        "azure.mgmt.resource.databoundaries.models.DataBoundary": null,
+        "azure.mgmt.resource.databoundaries.models.ProvisioningState": null,
+        "azure.mgmt.resource.databoundaries.models.CreatedByType": null,
+        "azure.mgmt.resource.databoundaries.operations.DataBoundariesOperations.put": null,
+        "azure.mgmt.resource.databoundaries.aio.operations.DataBoundariesOperations.put": null,
+        "azure.mgmt.resource.databoundaries.operations.DataBoundariesOperations.get_tenant": null,
+        "azure.mgmt.resource.databoundaries.aio.operations.DataBoundariesOperations.get_tenant": null,
+        "azure.mgmt.resource.databoundaries.operations.DataBoundariesOperations.get_scope": null,
+        "azure.mgmt.resource.databoundaries.aio.operations.DataBoundariesOperations.get_scope": null
+    }
+}

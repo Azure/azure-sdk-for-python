@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 from io import BytesIO
+from urllib.parse import quote, urlencode
 
 import aiohttp
 import pytest
@@ -22,7 +23,9 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
-    ClientAuthenticationError, ResourceModifiedError)
+    ClientAuthenticationError,
+    ResourceModifiedError
+)
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.mgmt.storage.aio import StorageManagementClient
 from azure.storage.blob.aio import (
@@ -30,7 +33,8 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     download_blob_from_url,
-    upload_blob_to_url)
+    upload_blob_to_url
+)
 from azure.storage.blob import (
     AccessPolicy,
     AccountSasPermissions,
@@ -43,13 +47,13 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     RehydratePriority,
     ResourceTypes,
-    RetentionPolicy,
     Services,
     StandardBlobTier,
     StorageErrorCode,
     generate_account_sas,
     generate_container_sas,
-    generate_blob_sas)
+    generate_blob_sas
+)
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -3527,68 +3531,44 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         result = await (await blob.download_blob()).readall()
         assert result == data[:length]
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_blob_user_delegation_oid(self, **kwargs):
+    @recorded_by_proxy_async
+    async def test_delete_blob_access_tier_conditionals(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
-        token_credential = self.get_credential(BlobServiceClient, is_async=True)
-        data = b"abc123"
 
-        service = BlobServiceClient(
-            account_url=self.account_url(storage_account_name, "blob"),
-            credential=token_credential
+        await self._setup(storage_account_name, storage_account_key)
+
+        early = self.get_datetime_variable(variables, 'early', datetime.utcnow())
+
+        if self.is_live:
+            self.sleep(10)
+
+        blob1_name = await self._create_block_blob()
+        blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
+        blob2_name = self._get_blob_reference() + "2"
+        blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
+        await blob2.upload_blob(
+            self.byte_data,
+            length=len(self.byte_data),
+            standard_blob_tier=StandardBlobTier.COOL,
+            overwrite=True
         )
-        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
-        user_delegation_key = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
-        token = await token_credential.get_token("https://storage.azure.com/.default")
-        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+        await blob1.set_standard_blob_tier('Cool')
+        await blob2.set_standard_blob_tier('Hot')
 
-        container_name = self.get_resource_name('oauthcontainer')
-        container = await service.create_container(container_name)
-        blob = container.get_blob_client(self.get_resource_name('oauthblob'))
-        await blob.upload_blob(BytesIO(data), length=len(data))
+        late = self.get_datetime_variable(variables, 'late', datetime.utcnow() + timedelta(hours=1))
 
-        container_token = self.generate_sas(
-            generate_container_sas,
-            container.account_name,
-            container.container_name,
-            permission=ContainerSasPermissions(read=True, list=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-            user_delegation_key=user_delegation_key,
-            user_delegation_oid=user_delegation_oid
-        )
-        assert "sduoid=" + user_delegation_oid in container_token
+        with pytest.raises(HttpResponseError):
+            await blob1.delete_blob(access_tier_if_modified_since=late)
+        resp = await blob1.delete_blob(access_tier_if_modified_since=early)
+        assert resp is None
 
-        container_client = ContainerClient.from_container_url(
-            f"{container.url}?{container_token}",
-            credential=token_credential
-        )
-
-        blobs_list = []
-        async for b in container_client.list_blobs():
-            blobs_list.append(b)
-        assert blobs_list is not None
-
-        sas_token = self.generate_sas(
-            generate_blob_sas,
-            blob.account_name,
-            blob.container_name,
-            blob.blob_name,
-            permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-            user_delegation_key=user_delegation_key,
-            user_delegation_oid=user_delegation_oid
-        )
-        assert "sduoid=" + user_delegation_oid in sas_token
-
-        blob_client = BlobClient.from_blob_url(
-            f"{blob.url}?{sas_token}",
-            credential=token_credential
-        )
-        content = await (await blob_client.download_blob()).readall()
-        assert content == data
+        with pytest.raises(HttpResponseError):
+            await blob2.delete_blob(access_tier_if_unmodified_since=early)
+        resp = await blob2.delete_blob(access_tier_if_unmodified_since=late)
+        assert resp is None
 
         return variables
 
@@ -3642,5 +3622,131 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         result = await (await blob.download_blob(decompress=False)).readall()
         assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_blob_dynamic_user_delegation_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container_name, blob_name = self.get_resource_name('oauthcontainer'), self.get_resource_name('oauthblob')
+        container = await service.create_container(container_name)
+        blob = container.get_blob_client(blob_name)
+        await blob.upload_blob(b"abc")
+
+        user_delegation_key = await service.get_user_delegation_key(
+            key_start_time=datetime.utcnow(),
+            key_expiry_time=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        request_headers = {
+            "foo$": "bar!",
+            "company": "msft",
+            "city": "redmond,atlanta,reston",
+        }
+
+        request_query_params = {
+            "hello$": "world!",
+            "check": "spelling",
+            "firstName": "john,Tim",
+        }
+
+        blob_token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            request_headers=request_headers,
+            request_query_params=request_query_params
+        )
+
+        def callback(request):
+            for k, v in request_headers.items():
+                request.http_request.headers[k] = v
+            extra = urlencode(request_query_params, quote_via=quote, safe="")
+            request.http_request.url = request.http_request.url + "&" + extra
+
+        identity_blob = BlobClient.from_blob_url(f"{blob.url}?{blob_token}")
+        props = await identity_blob.get_blob_properties(raw_request_hook=callback)
+        assert props is not None
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_blob_cross_tenant_delegation_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        service = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        token = await token_credential.get_token("https://storage.azure.com/.default")
+        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        user_delegation_oid = decoded.get("oid")
+        delegated_user_tid = decoded.get("tid")
+        user_delegation_key = await service.get_user_delegation_key(
+            key_start_time=start,
+            key_expiry_time=expiry,
+            delegated_user_tid=delegated_user_tid
+        )
+
+        assert user_delegation_key is not None
+        assert user_delegation_key.signed_delegated_user_tid == delegated_user_tid
+
+        container_name = self.get_resource_name('oauthcontainer')
+        container = await service.create_container(container_name)
+        blob = container.get_blob_client(self.get_resource_name('oauthblob'))
+        data = b"abc123"
+        await blob.upload_blob(data, length=len(data))
+
+        container_token = self.generate_sas(
+            generate_container_sas,
+            container.account_name,
+            container.container_name,
+            permission=ContainerSasPermissions(read=True, list=True),
+            expiry=expiry,
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+
+        assert "sduoid=" + user_delegation_oid in container_token
+        assert "skdutid=" + delegated_user_tid in container_token
+
+        container_client = ContainerClient.from_container_url(
+            f"{container.url}?{container_token}",
+            credential=token_credential
+        )
+
+        blobs_list = []
+        async for b in container_client.list_blobs():
+            blobs_list.append(b)
+        assert blobs_list is not None
+
+        blob_token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=expiry,
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+
+        assert "sduoid=" + user_delegation_oid in blob_token
+        assert "skdutid=" + delegated_user_tid in blob_token
+
+        identity_blob = BlobClient.from_blob_url(
+            f"{blob.url}?{blob_token}",
+            credential=token_credential
+        )
+        content = await (await identity_blob.download_blob()).readall()
+        assert content == data
 
 # ------------------------------------------------------------------------------
