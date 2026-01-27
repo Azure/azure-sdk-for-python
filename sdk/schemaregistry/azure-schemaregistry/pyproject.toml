@@ -4,5 +4,5 @@ pyright = false
 type_check_samples = true
 
 [tool.azure-sdk-conda]
-in_bundle = true 
+in_bundle = true
 bundle_name = "azure-schemaregistry"

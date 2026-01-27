@@ -1,3 +1,6 @@
 [tool.azure-sdk-build]
 pyright = false
 verifytypes = true
+
+[tool.azure-sdk-conda]
+in_bundle = false
