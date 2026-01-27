@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContainerRegistryPreparer, ContainerRegistryTestBase
+from testpreparer import ContainerRegistryClientTestBase, ContainerRegistryPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryContainerRegistryOperations(ContainerRegistryTestBase):
+class TestContainerRegistryContainerRegistryOperations(ContainerRegistryClientTestBase):
     @ContainerRegistryPreparer()
     @recorded_by_proxy
     def test_container_registry_check_docker_v2_support(self, containerregistry_endpoint):

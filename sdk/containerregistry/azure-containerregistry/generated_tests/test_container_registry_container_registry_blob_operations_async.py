@@ -8,11 +8,11 @@
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContainerRegistryPreparer
-from testpreparer_async import ContainerRegistryTestBaseAsync
+from testpreparer_async import ContainerRegistryClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryContainerRegistryBlobOperationsAsync(ContainerRegistryTestBaseAsync):
+class TestContainerRegistryContainerRegistryBlobOperationsAsync(ContainerRegistryClientTestBaseAsync):
     @ContainerRegistryPreparer()
     @recorded_by_proxy_async
     async def test_container_registry_blob_get_blob(self, containerregistry_endpoint):
@@ -67,7 +67,7 @@ class TestContainerRegistryContainerRegistryBlobOperationsAsync(ContainerRegistr
     async def test_container_registry_blob_get_upload_status(self, containerregistry_endpoint):
         client = self.create_async_client(endpoint=containerregistry_endpoint)
         response = await client.container_registry_blob.get_upload_status(
-            location="str",
+            next_blob_uuid_link="str",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestContainerRegistryContainerRegistryBlobOperationsAsync(ContainerRegistr
     async def test_container_registry_blob_upload_chunk(self, containerregistry_endpoint):
         client = self.create_async_client(endpoint=containerregistry_endpoint)
         response = await client.container_registry_blob.upload_chunk(
-            location="str",
+            next_blob_uuid_link="str",
             value=bytes("bytes", encoding="utf-8"),
             content_type="str",
         )
@@ -91,7 +91,7 @@ class TestContainerRegistryContainerRegistryBlobOperationsAsync(ContainerRegistr
     async def test_container_registry_blob_complete_upload(self, containerregistry_endpoint):
         client = self.create_async_client(endpoint=containerregistry_endpoint)
         response = await client.container_registry_blob.complete_upload(
-            location="str",
+            next_blob_uuid_link="str",
             digest="str",
         )
 
@@ -103,7 +103,7 @@ class TestContainerRegistryContainerRegistryBlobOperationsAsync(ContainerRegistr
     async def test_container_registry_blob_cancel_upload(self, containerregistry_endpoint):
         client = self.create_async_client(endpoint=containerregistry_endpoint)
         response = await client.container_registry_blob.cancel_upload(
-            location="str",
+            next_blob_uuid_link="str",
         )
 
         # please add some check logic here by yourself

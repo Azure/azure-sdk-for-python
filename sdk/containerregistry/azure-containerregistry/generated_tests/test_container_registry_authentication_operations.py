@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContainerRegistryPreparer, ContainerRegistryTestBase
+from testpreparer import ContainerRegistryClientTestBase, ContainerRegistryPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryAuthenticationOperations(ContainerRegistryTestBase):
+class TestContainerRegistryAuthenticationOperations(ContainerRegistryClientTestBase):
     @ContainerRegistryPreparer()
     @recorded_by_proxy
     def test_authentication_exchange_aad_access_token_for_acr_refresh_token(self, containerregistry_endpoint):

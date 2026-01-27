@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContainerRegistryPreparer, ContainerRegistryTestBase
+from testpreparer import ContainerRegistryClientTestBase, ContainerRegistryPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryContainerRegistryBlobOperations(ContainerRegistryTestBase):
+class TestContainerRegistryContainerRegistryBlobOperations(ContainerRegistryClientTestBase):
     @ContainerRegistryPreparer()
     @recorded_by_proxy
     def test_container_registry_blob_get_blob(self, containerregistry_endpoint):
@@ -66,7 +66,7 @@ class TestContainerRegistryContainerRegistryBlobOperations(ContainerRegistryTest
     def test_container_registry_blob_get_upload_status(self, containerregistry_endpoint):
         client = self.create_client(endpoint=containerregistry_endpoint)
         response = client.container_registry_blob.get_upload_status(
-            location="str",
+            next_blob_uuid_link="str",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestContainerRegistryContainerRegistryBlobOperations(ContainerRegistryTest
     def test_container_registry_blob_upload_chunk(self, containerregistry_endpoint):
         client = self.create_client(endpoint=containerregistry_endpoint)
         response = client.container_registry_blob.upload_chunk(
-            location="str",
+            next_blob_uuid_link="str",
             value=bytes("bytes", encoding="utf-8"),
             content_type="str",
         )
@@ -90,7 +90,7 @@ class TestContainerRegistryContainerRegistryBlobOperations(ContainerRegistryTest
     def test_container_registry_blob_complete_upload(self, containerregistry_endpoint):
         client = self.create_client(endpoint=containerregistry_endpoint)
         response = client.container_registry_blob.complete_upload(
-            location="str",
+            next_blob_uuid_link="str",
             digest="str",
         )
 
@@ -102,7 +102,7 @@ class TestContainerRegistryContainerRegistryBlobOperations(ContainerRegistryTest
     def test_container_registry_blob_cancel_upload(self, containerregistry_endpoint):
         client = self.create_client(endpoint=containerregistry_endpoint)
         response = client.container_registry_blob.cancel_upload(
-            location="str",
+            next_blob_uuid_link="str",
         )
 
         # please add some check logic here by yourself

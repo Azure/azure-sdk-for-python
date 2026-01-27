@@ -8,11 +8,11 @@
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContainerRegistryPreparer
-from testpreparer_async import ContainerRegistryTestBaseAsync
+from testpreparer_async import ContainerRegistryClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerRegistryContainerRegistryOperationsAsync(ContainerRegistryTestBaseAsync):
+class TestContainerRegistryContainerRegistryOperationsAsync(ContainerRegistryClientTestBaseAsync):
     @ContainerRegistryPreparer()
     @recorded_by_proxy_async
     async def test_container_registry_check_docker_v2_support(self, containerregistry_endpoint):
