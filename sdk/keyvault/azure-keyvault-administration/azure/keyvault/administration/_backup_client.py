@@ -33,6 +33,11 @@ def _get_continuation_token(pipeline_response: PipelineResponse) -> str:
     the service has different operations for backup/restore starting vs. status checking, the caller is expected to
     first use the status URL from the initial response to make a status request and then pass that status response to
     this function to be serialized into a continuation token.
+
+    :param pipeline_response: The pipeline response of the operation status request.
+    :type pipeline_response: ~azure.core.pipeline.PipelineResponse
+    :returns: An opaque continuation token that can be provided to Core to rehydrate the LRO.
+    :rtype: str
     """
     # Headers needed for LRO rehydration - use an allowlist approach for security
     lro_headers = {"azure-asyncoperation", "operation-location", "location", "content-type", "retry-after"}
