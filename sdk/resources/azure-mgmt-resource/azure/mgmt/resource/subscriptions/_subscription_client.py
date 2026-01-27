@@ -20,13 +20,14 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from . import models as _models
 from ._configuration import SubscriptionClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import Operations, SubscriptionClientOperationsMixin, SubscriptionsOperations, TenantsOperations
+from .operations import Operations, SubscriptionsOperations, TenantsOperations, _SubscriptionClientOperationsMixin
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class SubscriptionClient(SubscriptionClientOperationsMixin):
+class SubscriptionClient(_SubscriptionClientOperationsMixin):
     """All resource groups and resources exist within subscriptions. These operation enable you get
     information about your subscriptions and tenants. A tenant is a dedicated instance of Azure
     Active Directory (Azure AD) for your organization.
@@ -41,19 +42,29 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: Api Version. Default value is "2022-12-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "TokenCredential", base_url: Optional[str] = None, **kwargs: Any) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+    def __init__(
+        self,
+        credential: "TokenCredential",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
+    ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = SubscriptionClientConfiguration(
-            credential=credential, credential_scopes=credential_scopes, **kwargs
+            credential=credential, cloud_setting=cloud_setting, credential_scopes=credential_scopes, **kwargs
         )
 
         _policies = kwargs.pop("policies", None)

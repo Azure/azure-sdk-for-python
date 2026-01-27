@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -49,7 +49,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -105,7 +105,7 @@ class GenericResource(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         **kwargs: Any
@@ -250,7 +250,7 @@ class Application(GenericResource):
         *,
         kind: str,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         plan: Optional["_models.Plan"] = None,
@@ -301,11 +301,11 @@ class Application(GenericResource):
         self.billing_details: Optional["_models.ApplicationBillingDetailsDefinition"] = None
         self.jit_access_policy = jit_access_policy
         self.publisher_tenant_id: Optional[str] = None
-        self.authorizations: Optional[List["_models.ApplicationAuthorization"]] = None
+        self.authorizations: Optional[list["_models.ApplicationAuthorization"]] = None
         self.management_mode: Optional[Union[str, "_models.ApplicationManagementMode"]] = None
         self.customer_support: Optional["_models.ApplicationPackageContact"] = None
         self.support_urls: Optional["_models.ApplicationPackageSupportUrls"] = None
-        self.artifacts: Optional[List["_models.ApplicationArtifact"]] = None
+        self.artifacts: Optional[list["_models.ApplicationArtifact"]] = None
         self.created_by: Optional["_models.ApplicationClientDetails"] = None
         self.updated_by: Optional["_models.ApplicationClientDetails"] = None
 
@@ -559,13 +559,13 @@ class ApplicationDefinition(GenericResource):
         *,
         lock_level: Union[str, "_models.ApplicationLockLevel"],
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         display_name: Optional[str] = None,
         is_enabled: Optional[bool] = None,
-        authorizations: Optional[List["_models.ApplicationAuthorization"]] = None,
-        artifacts: Optional[List["_models.ApplicationDefinitionArtifact"]] = None,
+        authorizations: Optional[list["_models.ApplicationAuthorization"]] = None,
+        artifacts: Optional[list["_models.ApplicationDefinitionArtifact"]] = None,
         description: Optional[str] = None,
         package_file_uri: Optional[str] = None,
         main_template: Optional[JSON] = None,
@@ -574,7 +574,7 @@ class ApplicationDefinition(GenericResource):
         locking_policy: Optional["_models.ApplicationPackageLockingPolicyDefinition"] = None,
         deployment_policy: Optional["_models.ApplicationDeploymentPolicy"] = None,
         management_policy: Optional["_models.ApplicationManagementPolicy"] = None,
-        policies: Optional[List["_models.ApplicationPolicy"]] = None,
+        policies: Optional[list["_models.ApplicationPolicy"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -718,7 +718,7 @@ class ApplicationDefinitionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ApplicationDefinition"]] = None,
+        value: Optional[list["_models.ApplicationDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -797,7 +797,7 @@ class ApplicationJitAccessPolicy(_serialization.Model):
         *,
         jit_access_enabled: bool,
         jit_approval_mode: Optional[Union[str, "_models.JitApprovalMode"]] = None,
-        jit_approvers: Optional[List["_models.JitApproverDefinition"]] = None,
+        jit_approvers: Optional[list["_models.JitApproverDefinition"]] = None,
         maximum_jit_access_duration: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -837,7 +837,7 @@ class ApplicationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Application"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Application"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The array of managed applications.
@@ -920,7 +920,7 @@ class ApplicationNotificationPolicy(_serialization.Model):
     }
 
     def __init__(
-        self, *, notification_endpoints: List["_models.ApplicationNotificationEndpoint"], **kwargs: Any
+        self, *, notification_endpoints: list["_models.ApplicationNotificationEndpoint"], **kwargs: Any
     ) -> None:
         """
         :keyword notification_endpoints: The managed application notification endpoint. Required.
@@ -987,8 +987,8 @@ class ApplicationPackageLockingPolicyDefinition(_serialization.Model):  # pylint
     def __init__(
         self,
         *,
-        allowed_actions: Optional[List[str]] = None,
-        allowed_data_actions: Optional[List[str]] = None,
+        allowed_actions: Optional[list[str]] = None,
+        allowed_data_actions: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1152,7 +1152,7 @@ class ApplicationPatchable(GenericResource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         plan: Optional["_models.PlanPatchable"] = None,
@@ -1204,11 +1204,11 @@ class ApplicationPatchable(GenericResource):
         self.billing_details: Optional["_models.ApplicationBillingDetailsDefinition"] = None
         self.jit_access_policy = jit_access_policy
         self.publisher_tenant_id: Optional[str] = None
-        self.authorizations: Optional[List["_models.ApplicationAuthorization"]] = None
+        self.authorizations: Optional[list["_models.ApplicationAuthorization"]] = None
         self.management_mode: Optional[Union[str, "_models.ApplicationManagementMode"]] = None
         self.customer_support: Optional["_models.ApplicationPackageContact"] = None
         self.support_urls: Optional["_models.ApplicationPackageSupportUrls"] = None
-        self.artifacts: Optional[List["_models.ApplicationArtifact"]] = None
+        self.artifacts: Optional[list["_models.ApplicationArtifact"]] = None
         self.created_by: Optional["_models.ApplicationClientDetails"] = None
         self.updated_by: Optional["_models.ApplicationClientDetails"] = None
 
@@ -1380,8 +1380,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1440,7 +1440,7 @@ class Identity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedResourceIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedResourceIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1614,9 +1614,9 @@ class JitRequestDefinition(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         application_resource_id: Optional[str] = None,
-        jit_authorization_policies: Optional[List["_models.JitAuthorizationPolicies"]] = None,
+        jit_authorization_policies: Optional[list["_models.JitAuthorizationPolicies"]] = None,
         jit_scheduling_policy: Optional["_models.JitSchedulingPolicy"] = None,
         **kwargs: Any
     ) -> None:
@@ -1662,7 +1662,7 @@ class JitRequestDefinitionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.JitRequestDefinition"]] = None,
+        value: Optional[list["_models.JitRequestDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1688,7 +1688,7 @@ class JitRequestPatchable(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Jit request tags.
         :paramtype tags: dict[str, str]
@@ -1927,7 +1927,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Operation"]] = None
+        self.value: Optional[list["_models.Operation"]] = None
         self.next_link: Optional[str] = None
 
 
