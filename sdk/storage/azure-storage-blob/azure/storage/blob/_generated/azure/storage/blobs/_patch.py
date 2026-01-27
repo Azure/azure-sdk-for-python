@@ -76,11 +76,6 @@ class _BlobOperationsWrapper(_BlobClientOperationsMixin):
         """Wrapper for get_account_info - already exists in mixin."""
         return super().get_account_info(*args, **kwargs)
 
-    # Forward query calls directly since method exists in mixin
-    def query(self, *args: Any, **kwargs: Any) -> Any:
-        """Query blob contents using SQL-like syntax."""
-        return super().query(*args, **kwargs)
-
 
 class _PageBlobOperationsWrapper(_PageBlobClientOperationsMixin):
     """Wrapper to provide page blob operations with shared pipeline client."""

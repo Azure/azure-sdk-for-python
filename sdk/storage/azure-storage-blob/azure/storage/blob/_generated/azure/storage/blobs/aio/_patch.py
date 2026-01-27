@@ -78,11 +78,6 @@ class _BlobOperationsWrapper(_BlobClientOperationsMixin):
         """Alias for set_properties for backward compatibility."""
         return await self.set_properties(*args, **kwargs)
 
-    # Forward query calls directly since method exists in mixin
-    async def query(self, *args: Any, **kwargs: Any) -> Any:
-        """Query blob contents using SQL-like syntax."""
-        return await super().query(*args, **kwargs)
-
 
 class _PageBlobOperationsWrapper(_PageBlobClientOperationsMixin):
     """Wrapper to provide page blob operations with shared pipeline client."""
