@@ -20,13 +20,14 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from . import models as _models
 from ._configuration import FeatureClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import FeatureClientOperationsMixin, FeaturesOperations, SubscriptionFeatureRegistrationsOperations
+from .operations import FeaturesOperations, SubscriptionFeatureRegistrationsOperations, _FeatureClientOperationsMixin
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class FeatureClient(FeatureClientOperationsMixin):
+class FeatureClient(_FeatureClientOperationsMixin):
     """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to
     control feature exposure to users. Resource providers typically use this mechanism to provide
     public/private preview for new features prior to making them generally available. Users need to
@@ -43,21 +44,34 @@ class FeatureClient(FeatureClientOperationsMixin):
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = FeatureClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)

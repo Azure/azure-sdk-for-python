@@ -1,5 +1,34 @@
 # Release History
 
+## 25.0.0b2 (2026-01-27)
+
+### Features Added
+
+  - Model `ApplicationClient` added parameter `cloud_setting` in method `__init__`
+  - Model `DataBoundaryMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `FeatureClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ManagementLinkClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ManagementLockClient` added parameter `cloud_setting` in method `__init__`
+  - Model `PolicyClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ResourceManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `SubscriptionClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ChangesClient` added parameter `cloud_setting` in method `__init__`
+  - Model `DataBoundaryMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `FeatureClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ManagementLinkClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ManagementLockClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ApplicationClient` added parameter `cloud_setting` in method `__init__`
+  - Model `PolicyClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ResourcePrivateLinkClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ResourceManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `SubscriptionClient` added parameter `cloud_setting` in method `__init__`
+
+### Breaking Changes
+
+  - Deleted or renamed model `FeatureClientOperationsMixin`
+  - Deleted or renamed model `ApplicationClientOperationsMixin`
+  - Deleted or renamed model `SubscriptionClientOperationsMixin`
+
 ## 25.0.0b1 (2025-07-16)
 
 ### Breaking Changes

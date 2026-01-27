@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
@@ -14,6 +14,7 @@ from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLo
 from ._version import VERSION
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
@@ -25,18 +26,24 @@ class SubscriptionClientConfiguration:  # pylint: disable=too-many-instance-attr
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: Api Version. Default value is "2022-12-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, credential: "TokenCredential", cloud_setting: Optional["AzureClouds"] = None, **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2022-12-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
+        self.cloud_setting = cloud_setting
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-resource/{}".format(VERSION))
