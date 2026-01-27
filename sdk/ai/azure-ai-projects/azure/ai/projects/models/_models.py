@@ -43,6 +43,7 @@ from ._enums import (
     SampleType,
     ScheduleTaskType,
     TextResponseFormatConfigurationType,
+    ToolChoiceParamType,
     ToolType,
     TriggerType,
 )
@@ -2708,26 +2709,28 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
     :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER
     :ivar container: The code interpreter container. Can be a container ID or an object that
      specifies uploaded file IDs to make available to your code, along with an
-     optional ``memory_limit`` setting. Required. Is either a str type or a
+     optional ``memory_limit`` setting.
+     If not provided, the service assumes auto. Is either a str type or a
      CodeInterpreterContainerAuto type.
     :vartype container: str or ~azure.ai.projects.models.CodeInterpreterContainerAuto
     """
 
     type: Literal[ToolType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the code interpreter tool. Always ``code_interpreter``. Required."""
-    container: Union[str, "_models.CodeInterpreterContainerAuto"] = rest_field(
+    container: Optional[Union[str, "_models.CodeInterpreterContainerAuto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The code interpreter container. Can be a container ID or an object that
      specifies uploaded file IDs to make available to your code, along with an
-     optional ``memory_limit`` setting. Required. Is either a str type or a
+     optional ``memory_limit`` setting.
+     If not provided, the service assumes auto. Is either a str type or a
      CodeInterpreterContainerAuto type."""
 
     @overload
     def __init__(
         self,
         *,
-        container: Union[str, "_models.CodeInterpreterContainerAuto"],
+        container: Optional[Union[str, "_models.CodeInterpreterContainerAuto"]] = None,
     ) -> None: ...
 
     @overload
@@ -3925,10 +3928,11 @@ class Drag(ComputerAction, discriminator="drag"):
     """Drag.
 
     :ivar type: Specifies the event type. For a drag action, this property is
-     always set to ``drag``. Required.
+       always set to ``drag``. Required.
     :vartype type: str or ~azure.ai.projects.models.DRAG
     :ivar path: An array of coordinates representing the path of the drag action. Coordinates will
-     appear as an array of objects, eg
+     appear as an array
+       of objects, eg
 
      .. code-block::
 
@@ -3941,10 +3945,11 @@ class Drag(ComputerAction, discriminator="drag"):
 
     type: Literal[ComputerActionType.DRAG] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Specifies the event type. For a drag action, this property is
-     always set to ``drag``. Required."""
+       always set to ``drag``. Required."""
     path: list["_models.DragPoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of coordinates representing the path of the drag action. Coordinates will appear as an
-     array of objects, eg
+     array
+       of objects, eg
      
      .. code-block::
      
@@ -4063,17 +4068,17 @@ class EasyInputMessage(InputItem, discriminator="message"):
     """Input message.
 
     :ivar role: The role of the message input. One of ``user``, ``assistant``, ``system``, or
-     ``developer``. Required. Is one of the following types: Literal["user"],
+       ``developer``. Required. Is one of the following types: Literal["user"],
      Literal["assistant"], Literal["system"], Literal["developer"]
     :vartype role: str or str or str or str
     :ivar content: Text, image, or audio input to the model, used to generate a response.
-     Can also contain previous assistant responses. Required. Is either a str type or a
+       Can also contain previous assistant responses. Required. Is either a str type or a
      [InputContent] type.
     :vartype content: str or list[~azure.ai.projects.models.InputContent]
     :ivar type: The type of the message input. Always ``message``. Required.
     :vartype type: str or ~azure.ai.projects.models.MESSAGE
     :ivar status: The status of item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -4082,13 +4087,13 @@ class EasyInputMessage(InputItem, discriminator="message"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The role of the message input. One of ``user``, ``assistant``, ``system``, or
-     ``developer``. Required. Is one of the following types: Literal[\"user\"],
+       ``developer``. Required. Is one of the following types: Literal[\"user\"],
      Literal[\"assistant\"], Literal[\"system\"], Literal[\"developer\"]"""
     content: Union[str, list["_models.InputContent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Text, image, or audio input to the model, used to generate a response.
-     Can also contain previous assistant responses. Required. Is either a str type or a
+       Can also contain previous assistant responses. Required. Is either a str type or a
      [InputContent] type."""
     type: Literal[InputItemType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the message input. Always ``message``. Required."""
@@ -4096,7 +4101,7 @@ class EasyInputMessage(InputItem, discriminator="message"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -5008,9 +5013,9 @@ class EvaluatorVersion(_Model):
     :ivar created_by: Creator of the evaluator. Required.
     :vartype created_by: str
     :ivar created_at: Creation date/time of the evaluator. Required.
-    :vartype created_at: int
+    :vartype created_at: str
     :ivar modified_at: Last modified date/time of the evaluator. Required.
-    :vartype modified_at: int
+    :vartype modified_at: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -5038,9 +5043,9 @@ class EvaluatorVersion(_Model):
     """Definition of the evaluator. Required."""
     created_by: str = rest_field(visibility=["read"])
     """Creator of the evaluator. Required."""
-    created_at: int = rest_field(visibility=["read"])
+    created_at: str = rest_field(visibility=["read"])
     """Creation date/time of the evaluator. Required."""
-    modified_at: int = rest_field(visibility=["read"])
+    modified_at: str = rest_field(visibility=["read"])
     """Last modified date/time of the evaluator. Required."""
     id: Optional[str] = rest_field(visibility=["read"])
     """Asset ID, a unique identifier for the asset."""
@@ -5707,9 +5712,9 @@ class FunctionShellCallOutputContent(_Model):
     )
     """Represents either an exit outcome (with an exit code) or a timeout outcome for a shell call
      output chunk. Required."""
-    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    created_by: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
-    )
+    )  # pyright: ignore[reportIncompatibleVariableOverride]
     """The identifier of the actor that created the item."""
 
     @overload
@@ -6254,15 +6259,15 @@ class ImageGenTool(Tool, discriminator="image_generation"):
      Literal["gpt-image-1-mini"], str
     :vartype model: str or str or str
     :ivar quality: The quality of the generated image. One of ``low``, ``medium``, ``high``,
-     or ``auto``. Default: ``auto``. Is one of the following types: Literal["low"],
+       or ``auto``. Default: ``auto``. Is one of the following types: Literal["low"],
      Literal["medium"], Literal["high"], Literal["auto"]
     :vartype quality: str or str or str or str
     :ivar size: The size of the generated image. One of ``1024x1024``, ``1024x1536``,
-     ``1536x1024``, or ``auto``. Default: ``auto``. Is one of the following types:
+       ``1536x1024``, or ``auto``. Default: ``auto``. Is one of the following types:
      Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"]
     :vartype size: str or str or str or str
     :ivar output_format: The output format of the generated image. One of ``png``, ``webp``, or
-     ``jpeg``. Default: ``png``. Is one of the following types: Literal["png"], Literal["webp"],
+       ``jpeg``. Default: ``png``. Is one of the following types: Literal["png"], Literal["webp"],
      Literal["jpeg"]
     :vartype output_format: str or str or str
     :ivar output_compression: Compression level for the output image. Default: 100.
@@ -6271,13 +6276,13 @@ class ImageGenTool(Tool, discriminator="image_generation"):
      Literal["auto"] type or a Literal["low"] type.
     :vartype moderation: str or str
     :ivar background: Background type for the generated image. One of ``transparent``,
-     ``opaque``, or ``auto``. Default: ``auto``. Is one of the following types:
+       ``opaque``, or ``auto``. Default: ``auto``. Is one of the following types:
      Literal["transparent"], Literal["opaque"], Literal["auto"]
     :vartype background: str or str or str
     :ivar input_fidelity: Known values are: "high" and "low".
     :vartype input_fidelity: str or ~azure.ai.projects.models.InputFidelity
     :ivar input_image_mask: Optional mask for inpainting. Contains ``image_url``
-     (string, optional) and ``file_id`` (string, optional).
+       (string, optional) and ``file_id`` (string, optional).
     :vartype input_image_mask: ~azure.ai.projects.models.ImageGenToolInputImageMask
     :ivar partial_images: Number of partial images to generate in streaming mode, from 0 (default
      value) to 3.
@@ -6294,19 +6299,19 @@ class ImageGenTool(Tool, discriminator="image_generation"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The quality of the generated image. One of ``low``, ``medium``, ``high``,
-     or ``auto``. Default: ``auto``. Is one of the following types: Literal[\"low\"],
+       or ``auto``. Default: ``auto``. Is one of the following types: Literal[\"low\"],
      Literal[\"medium\"], Literal[\"high\"], Literal[\"auto\"]"""
     size: Optional[Literal["1024x1024", "1024x1536", "1536x1024", "auto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The size of the generated image. One of ``1024x1024``, ``1024x1536``,
-     ``1536x1024``, or ``auto``. Default: ``auto``. Is one of the following types:
+       ``1536x1024``, or ``auto``. Default: ``auto``. Is one of the following types:
      Literal[\"1024x1024\"], Literal[\"1024x1536\"], Literal[\"1536x1024\"], Literal[\"auto\"]"""
     output_format: Optional[Literal["png", "webp", "jpeg"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The output format of the generated image. One of ``png``, ``webp``, or
-     ``jpeg``. Default: ``png``. Is one of the following types: Literal[\"png\"],
+       ``jpeg``. Default: ``png``. Is one of the following types: Literal[\"png\"],
      Literal[\"webp\"], Literal[\"jpeg\"]"""
     output_compression: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Compression level for the output image. Default: 100."""
@@ -6319,7 +6324,7 @@ class ImageGenTool(Tool, discriminator="image_generation"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Background type for the generated image. One of ``transparent``,
-     ``opaque``, or ``auto``. Default: ``auto``. Is one of the following types:
+       ``opaque``, or ``auto``. Default: ``auto``. Is one of the following types:
      Literal[\"transparent\"], Literal[\"opaque\"], Literal[\"auto\"]"""
     input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -6329,7 +6334,7 @@ class ImageGenTool(Tool, discriminator="image_generation"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional mask for inpainting. Contains ``image_url``
-     (string, optional) and ``file_id`` (string, optional)."""
+       (string, optional) and ``file_id`` (string, optional)."""
     partial_images: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of partial images to generate in streaming mode, from 0 (default value) to 3."""
 
@@ -6915,7 +6920,7 @@ class InputItemComputerToolCall(InputItem, discriminator="computer_call"):
     :ivar pending_safety_checks: The pending safety checks for the computer call. Required.
     :vartype pending_safety_checks: list[~azure.ai.projects.models.ComputerCallSafetyCheckParam]
     :ivar status: The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Required. Is one of the following
+       ``incomplete``. Populated when items are returned via API. Required. Is one of the following
      types: Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -6936,7 +6941,7 @@ class InputItemComputerToolCall(InputItem, discriminator="computer_call"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Required. Is one of the following
+       ``incomplete``. Populated when items are returned via API. Required. Is one of the following
      types: Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -7022,7 +7027,7 @@ class InputItemCustomToolCallOutput(InputItem, discriminator="custom_tool_call_o
      Required.
     :vartype call_id: str
     :ivar output: The output from the custom tool call generated by your code.
-     Can be a string or an list of output content. Required. Is either a str type or a
+       Can be a string or an list of output content. Required. Is either a str type or a
      [FunctionAndCustomToolCallOutput] type.
     :vartype output: str or list[~azure.ai.projects.models.FunctionAndCustomToolCallOutput]
     """
@@ -7037,7 +7042,7 @@ class InputItemCustomToolCallOutput(InputItem, discriminator="custom_tool_call_o
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The output from the custom tool call generated by your code.
-     Can be a string or an list of output content. Required. Is either a str type or a
+       Can be a string or an list of output content. Required. Is either a str type or a
      [FunctionAndCustomToolCallOutput] type."""
 
     @overload
@@ -7069,7 +7074,7 @@ class InputItemFileSearchToolCall(InputItem, discriminator="file_search_call"):
     :ivar type: The type of the file search tool call. Always ``file_search_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH_CALL
     :ivar status: The status of the file search tool call. One of ``in_progress``,
-     ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
+       ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["incomplete"],
      Literal["failed"]
     :vartype status: str or str or str or str or str
@@ -7087,7 +7092,7 @@ class InputItemFileSearchToolCall(InputItem, discriminator="file_search_call"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the file search tool call. One of ``in_progress``,
-     ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
+       ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"],
      Literal[\"incomplete\"], Literal[\"failed\"]"""
     queries: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7306,7 +7311,7 @@ class InputItemFunctionToolCall(InputItem, discriminator="function_call"):
     :ivar arguments: A JSON string of the arguments to pass to the function. Required.
     :vartype arguments: str
     :ivar status: The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -7325,7 +7330,7 @@ class InputItemFunctionToolCall(InputItem, discriminator="function_call"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -7723,7 +7728,7 @@ class InputItemOutputMessage(InputItem, discriminator="output_message"):
     :ivar content: The content of the output message. Required.
     :vartype content: list[~azure.ai.projects.models.OutputMessageContent]
     :ivar status: The status of the message input. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when input items are returned via API. Required. Is one of the
+       ``incomplete``. Populated when input items are returned via API. Required. Is one of the
      following types: Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -7742,7 +7747,7 @@ class InputItemOutputMessage(InputItem, discriminator="output_message"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the message input. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when input items are returned via API. Required. Is one of the
+       ``incomplete``. Populated when input items are returned via API. Required. Is one of the
      following types: Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -7781,7 +7786,7 @@ class InputItemReasoningItem(InputItem, discriminator="reasoning"):
     :ivar content: Reasoning text content.
     :vartype content: list[~azure.ai.projects.models.ReasoningTextContent]
     :ivar status: The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -7801,7 +7806,7 @@ class InputItemReasoningItem(InputItem, discriminator="reasoning"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -7838,7 +7843,7 @@ class InputItemWebSearchToolCall(InputItem, discriminator="web_search_call"):
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"]
     :vartype status: str or str or str or str
     :ivar action: An object describing the specific action taken in this web search call.
-     Includes details on how the model used the web (search, open_page, find). Required. Is one of
+       Includes details on how the model used the web (search, open_page, find). Required. Is one of
      the following types: WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind
     :vartype action: ~azure.ai.projects.models.WebSearchActionSearch or
      ~azure.ai.projects.models.WebSearchActionOpenPage or
@@ -7858,7 +7863,7 @@ class InputItemWebSearchToolCall(InputItem, discriminator="web_search_call"):
         rest_field(visibility=["read", "create", "update", "delete", "query"])
     )
     """An object describing the specific action taken in this web search call.
-     Includes details on how the model used the web (search, open_page, find). Required. Is one of
+       Includes details on how the model used the web (search, open_page, find). Required. Is one of
      the following types: WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind"""
 
     @overload
@@ -7910,6 +7915,10 @@ class ItemResource(_Model):
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -7925,6 +7934,12 @@ class ItemResource(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The information about the creator of the item. Is either a CreatedBy type or a str type."""
+    agent_reference: Optional["_models.AgentReference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The agent that created the item."""
+    response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The response on which the item is created."""
 
     @overload
     def __init__(
@@ -7932,6 +7947,8 @@ class ItemResource(_Model):
         *,
         type: str,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7951,6 +7968,10 @@ class InputMessageResource(ItemResource, discriminator="message"):
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the message input. Always set to ``message``. Required.
     :vartype type: str or ~azure.ai.projects.models.MESSAGE
     :ivar role: The role of the message input. One of ``user``, ``system``, or ``developer``.
@@ -7958,7 +7979,7 @@ class InputMessageResource(ItemResource, discriminator="message"):
      Literal["developer"]
     :vartype role: str or str or str
     :ivar status: The status of item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     :ivar content: Required.
@@ -7978,7 +7999,7 @@ class InputMessageResource(ItemResource, discriminator="message"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
     content: list["_models.InputContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
@@ -7993,6 +8014,8 @@ class InputMessageResource(ItemResource, discriminator="message"):
         content: list["_models.InputContent"],
         id: str,  # pylint: disable=redefined-builtin
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         status: Optional[Literal["in_progress", "completed", "incomplete"]] = None,
     ) -> None: ...
 
@@ -8358,6 +8381,10 @@ class ItemReferenceParam(InputItem, discriminator="item_reference"):
 class ItemResourceApplyPatchToolCall(ItemResource, discriminator="apply_patch_call"):
     """Apply patch tool call.
 
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the item. Always ``apply_patch_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.APPLY_PATCH_CALL
     :ivar id: The unique ID of the apply patch tool call. Populated when this item is returned via
@@ -8392,9 +8419,9 @@ class ItemResourceApplyPatchToolCall(ItemResource, discriminator="apply_patch_ca
     )
     """One of the create_file, delete_file, or update_file operations applied via apply_patch.
      Required."""
-    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    created_by: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
-    )
+    )  # pyright: ignore[reportIncompatibleVariableOverride]
     """The ID of the entity that created this tool call."""
 
     @overload
@@ -8405,6 +8432,8 @@ class ItemResourceApplyPatchToolCall(ItemResource, discriminator="apply_patch_ca
         call_id: str,
         status: Union[str, "_models.ApplyPatchCallStatus"],
         operation: "_models.ApplyPatchFileOperation",
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         created_by: Optional[str] = None,
     ) -> None: ...
 
@@ -8423,6 +8452,10 @@ class ItemResourceApplyPatchToolCall(ItemResource, discriminator="apply_patch_ca
 class ItemResourceApplyPatchToolCallOutput(ItemResource, discriminator="apply_patch_call_output"):
     """Apply patch tool call output.
 
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the item. Always ``apply_patch_call_output``. Required.
     :vartype type: str or ~azure.ai.projects.models.APPLY_PATCH_CALL_OUTPUT
     :ivar id: The unique ID of the apply patch tool call output. Populated when this item is
@@ -8452,9 +8485,9 @@ class ItemResourceApplyPatchToolCallOutput(ItemResource, discriminator="apply_pa
     """The status of the apply patch tool call output. One of ``completed`` or ``failed``. Required.
      Known values are: \"completed\" and \"failed\"."""
     output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    created_by: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
-    )
+    )  # pyright: ignore[reportIncompatibleVariableOverride]
     """The ID of the entity that created this tool call output."""
 
     @overload
@@ -8464,6 +8497,8 @@ class ItemResourceApplyPatchToolCallOutput(ItemResource, discriminator="apply_pa
         id: str,  # pylint: disable=redefined-builtin
         call_id: str,
         status: Union[str, "_models.ApplyPatchCallOutputStatus"],
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         output: Optional[str] = None,
         created_by: Optional[str] = None,
     ) -> None: ...
@@ -8486,6 +8521,10 @@ class ItemResourceCodeInterpreterToolCall(ItemResource, discriminator="code_inte
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the code interpreter tool call. Always ``code_interpreter_call``.
      Required.
     :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER_CALL
@@ -8535,6 +8574,8 @@ class ItemResourceCodeInterpreterToolCall(ItemResource, discriminator="code_inte
         code: str,
         outputs: list[Union["_models.CodeInterpreterOutputLogs", "_models.CodeInterpreterOutputImage"]],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -8555,6 +8596,10 @@ class ItemResourceComputerToolCall(ItemResource, discriminator="computer_call"):
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the computer call. Always ``computer_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.COMPUTER_CALL
     :ivar id: The unique ID of the computer call. Required.
@@ -8566,7 +8611,7 @@ class ItemResourceComputerToolCall(ItemResource, discriminator="computer_call"):
     :ivar pending_safety_checks: The pending safety checks for the computer call. Required.
     :vartype pending_safety_checks: list[~azure.ai.projects.models.ComputerCallSafetyCheckParam]
     :ivar status: The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Required. Is one of the following
+       ``incomplete``. Populated when items are returned via API. Required. Is one of the following
      types: Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -8587,7 +8632,7 @@ class ItemResourceComputerToolCall(ItemResource, discriminator="computer_call"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Required. Is one of the following
+       ``incomplete``. Populated when items are returned via API. Required. Is one of the following
      types: Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -8600,6 +8645,8 @@ class ItemResourceComputerToolCall(ItemResource, discriminator="computer_call"):
         pending_safety_checks: list["_models.ComputerCallSafetyCheckParam"],
         status: Literal["in_progress", "completed", "incomplete"],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -8622,6 +8669,10 @@ class ItemResourceComputerToolCallOutputResource(
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the computer tool call output. Always ``computer_call_output``.
      Required.
     :vartype type: str or ~azure.ai.projects.models.COMPUTER_CALL_OUTPUT
@@ -8630,13 +8681,14 @@ class ItemResourceComputerToolCallOutputResource(
     :ivar call_id: The ID of the computer tool call that produced the output. Required.
     :vartype call_id: str
     :ivar acknowledged_safety_checks: The safety checks reported by the API that have been
-     acknowledged by the developer.
+     acknowledged by the
+       developer.
     :vartype acknowledged_safety_checks:
      list[~azure.ai.projects.models.ComputerCallSafetyCheckParam]
     :ivar output: Required.
     :vartype output: ~azure.ai.projects.models.ComputerScreenshotImage
     :ivar status: The status of the message input. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when input items are returned via API. Is one of the following
+       ``incomplete``. Populated when input items are returned via API. Is one of the following
      types: Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -8658,7 +8710,7 @@ class ItemResourceComputerToolCallOutputResource(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the message input. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when input items are returned via API. Is one of the following
+       ``incomplete``. Populated when input items are returned via API. Is one of the following
      types: Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -8668,6 +8720,8 @@ class ItemResourceComputerToolCallOutputResource(
         call_id: str,
         output: "_models.ComputerScreenshotImage",
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         acknowledged_safety_checks: Optional[list["_models.ComputerCallSafetyCheckParam"]] = None,
         status: Optional[Literal["in_progress", "completed", "incomplete"]] = None,
@@ -8691,12 +8745,16 @@ class ItemResourceFileSearchToolCall(ItemResource, discriminator="file_search_ca
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar id: The unique ID of the file search tool call. Required.
     :vartype id: str
     :ivar type: The type of the file search tool call. Always ``file_search_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH_CALL
     :ivar status: The status of the file search tool call. One of ``in_progress``,
-     ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
+       ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["incomplete"],
      Literal["failed"]
     :vartype status: str or str or str or str or str
@@ -8714,7 +8772,7 @@ class ItemResourceFileSearchToolCall(ItemResource, discriminator="file_search_ca
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the file search tool call. One of ``in_progress``,
-     ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
+       ``searching``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"],
      Literal[\"incomplete\"], Literal[\"failed\"]"""
     queries: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8731,6 +8789,8 @@ class ItemResourceFileSearchToolCall(ItemResource, discriminator="file_search_ca
         status: Literal["in_progress", "searching", "completed", "incomplete", "failed"],
         queries: list[str],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         results: Optional[list["_models.FileSearchToolCallResults"]] = None,
     ) -> None: ...
 
@@ -8749,6 +8809,10 @@ class ItemResourceFileSearchToolCall(ItemResource, discriminator="file_search_ca
 class ItemResourceFunctionShellCall(ItemResource, discriminator="shell_call"):
     """Shell tool call.
 
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the item. Always ``shell_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.SHELL_CALL
     :ivar id: The unique ID of the shell tool call. Populated when this item is returned via API.
@@ -8778,9 +8842,9 @@ class ItemResourceFunctionShellCall(ItemResource, discriminator="shell_call"):
     )
     """The status of the shell call. One of ``in_progress``, ``completed``, or ``incomplete``.
      Required. Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
-    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    created_by: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
-    )
+    )  # pyright: ignore[reportIncompatibleVariableOverride]
     """The ID of the entity that created this tool call."""
 
     @overload
@@ -8791,6 +8855,8 @@ class ItemResourceFunctionShellCall(ItemResource, discriminator="shell_call"):
         call_id: str,
         action: "_models.FunctionShellAction",
         status: Union[str, "_models.LocalShellCallStatus"],
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         created_by: Optional[str] = None,
     ) -> None: ...
 
@@ -8809,6 +8875,10 @@ class ItemResourceFunctionShellCall(ItemResource, discriminator="shell_call"):
 class ItemResourceFunctionShellCallOutput(ItemResource, discriminator="shell_call_output"):
     """Shell call output.
 
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the shell call output. Always ``shell_call_output``. Required.
     :vartype type: str or ~azure.ai.projects.models.SHELL_CALL_OUTPUT
     :ivar id: The unique ID of the shell call output. Populated when this item is returned via API.
@@ -8836,9 +8906,9 @@ class ItemResourceFunctionShellCallOutput(ItemResource, discriminator="shell_cal
     """An array of shell call output contents. Required."""
     max_output_length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
-    created_by: Optional[str] = rest_field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    created_by: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
-    )
+    )  # pyright: ignore[reportIncompatibleVariableOverride]
     """The identifier of the actor that created the item."""
 
     @overload
@@ -8849,6 +8919,8 @@ class ItemResourceFunctionShellCallOutput(ItemResource, discriminator="shell_cal
         call_id: str,
         output: list["_models.FunctionShellCallOutputContent"],
         max_output_length: int,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         created_by: Optional[str] = None,
     ) -> None: ...
 
@@ -8872,8 +8944,12 @@ class ItemResourceFunctionToolCallOutputResource(
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar id: The unique ID of the function tool call output. Populated when this item
-     is returned via API.
+       is returned via API.
     :vartype id: str
     :ivar type: The type of the function tool call output. Always ``function_call_output``.
      Required.
@@ -8881,11 +8957,11 @@ class ItemResourceFunctionToolCallOutputResource(
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the function call generated by your code.
-     Can be a string or an list of output content. Required. Is either a str type or a
+       Can be a string or an list of output content. Required. Is either a str type or a
      [FunctionAndCustomToolCallOutput] type.
     :vartype output: str or list[~azure.ai.projects.models.FunctionAndCustomToolCallOutput]
     :ivar status: The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -8901,13 +8977,13 @@ class ItemResourceFunctionToolCallOutputResource(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The output from the function call generated by your code.
-     Can be a string or an list of output content. Required. Is either a str type or a
+       Can be a string or an list of output content. Required. Is either a str type or a
      [FunctionAndCustomToolCallOutput] type."""
     status: Optional[Literal["in_progress", "completed", "incomplete"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -8917,6 +8993,8 @@ class ItemResourceFunctionToolCallOutputResource(
         call_id: str,
         output: Union[str, list["_models.FunctionAndCustomToolCallOutput"]],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         status: Optional[Literal["in_progress", "completed", "incomplete"]] = None,
     ) -> None: ...
@@ -8939,6 +9017,10 @@ class ItemResourceFunctionToolCallResource(ItemResource, discriminator="function
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar id: The unique ID of the function tool call.
     :vartype id: str
     :ivar type: The type of the function tool call. Always ``function_call``. Required.
@@ -8950,7 +9032,7 @@ class ItemResourceFunctionToolCallResource(ItemResource, discriminator="function
     :ivar arguments: A JSON string of the arguments to pass to the function. Required.
     :vartype arguments: str
     :ivar status: The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -8969,7 +9051,7 @@ class ItemResourceFunctionToolCallResource(ItemResource, discriminator="function
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the item. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when items are returned via API. Is one of the following types:
+       ``incomplete``. Populated when items are returned via API. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -8980,6 +9062,8 @@ class ItemResourceFunctionToolCallResource(ItemResource, discriminator="function
         name: str,
         arguments: str,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         status: Optional[Literal["in_progress", "completed", "incomplete"]] = None,
     ) -> None: ...
@@ -9002,6 +9086,10 @@ class ItemResourceImageGenToolCall(ItemResource, discriminator="image_generation
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the image generation call. Always ``image_generation_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION_CALL
     :ivar id: The unique ID of the image generation call. Required.
@@ -9033,6 +9121,8 @@ class ItemResourceImageGenToolCall(ItemResource, discriminator="image_generation
         status: Literal["in_progress", "completed", "generating", "failed"],
         result: str,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9053,6 +9143,10 @@ class ItemResourceLocalShellToolCall(ItemResource, discriminator="local_shell_ca
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the local shell call. Always ``local_shell_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.LOCAL_SHELL_CALL
     :ivar id: The unique ID of the local shell call. Required.
@@ -9089,6 +9183,8 @@ class ItemResourceLocalShellToolCall(ItemResource, discriminator="local_shell_ca
         action: "_models.LocalShellExecAction",
         status: Literal["in_progress", "completed", "incomplete"],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9109,6 +9205,10 @@ class ItemResourceLocalShellToolCallOutput(ItemResource, discriminator="local_sh
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the local shell tool call output. Always ``local_shell_call_output``.
      Required.
     :vartype type: str or ~azure.ai.projects.models.LOCAL_SHELL_CALL_OUTPUT
@@ -9140,6 +9240,8 @@ class ItemResourceLocalShellToolCallOutput(ItemResource, discriminator="local_sh
         id: str,  # pylint: disable=redefined-builtin
         output: str,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         status: Optional[Literal["in_progress", "completed", "incomplete"]] = None,
     ) -> None: ...
 
@@ -9161,6 +9263,10 @@ class ItemResourceMcpApprovalRequest(ItemResource, discriminator="mcp_approval_r
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
     :vartype type: str or ~azure.ai.projects.models.MCP_APPROVAL_REQUEST
     :ivar id: The unique ID of the approval request. Required.
@@ -9193,6 +9299,8 @@ class ItemResourceMcpApprovalRequest(ItemResource, discriminator="mcp_approval_r
         name: str,
         arguments: str,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9213,6 +9321,10 @@ class ItemResourceMcpApprovalResponseResource(ItemResource, discriminator="mcp_a
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
     :vartype type: str or ~azure.ai.projects.models.MCP_APPROVAL_RESPONSE
     :ivar id: The unique ID of the approval response. Required.
@@ -9243,6 +9355,8 @@ class ItemResourceMcpApprovalResponseResource(ItemResource, discriminator="mcp_a
         approval_request_id: str,
         approve: bool,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         reason: Optional[str] = None,
     ) -> None: ...
 
@@ -9264,6 +9378,10 @@ class ItemResourceMcpListTools(ItemResource, discriminator="mcp_list_tools"):
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_list_tools``. Required.
     :vartype type: str or ~azure.ai.projects.models.MCP_LIST_TOOLS
     :ivar id: The unique ID of the list. Required.
@@ -9294,6 +9412,8 @@ class ItemResourceMcpListTools(ItemResource, discriminator="mcp_list_tools"):
         server_label: str,
         tools: list["_models.MCPListToolsTool"],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         error: Optional[str] = None,
     ) -> None: ...
 
@@ -9315,6 +9435,10 @@ class ItemResourceMcpToolCall(ItemResource, discriminator="mcp_call"):
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_call``. Required.
     :vartype type: str or ~azure.ai.projects.models.MCP_CALL
     :ivar id: The unique ID of the tool call. Required.
@@ -9366,6 +9490,8 @@ class ItemResourceMcpToolCall(ItemResource, discriminator="mcp_call"):
         name: str,
         arguments: str,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         output: Optional[str] = None,
         error: Optional[str] = None,
         status: Optional[Union[str, "_models.MCPToolCallStatus"]] = None,
@@ -9390,6 +9516,10 @@ class ItemResourceOutputMessage(ItemResource, discriminator="output_message"):
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar id: The unique ID of the output message. Required.
     :vartype id: str
     :ivar type: The type of the output message. Always ``message``. Required.
@@ -9400,7 +9530,7 @@ class ItemResourceOutputMessage(ItemResource, discriminator="output_message"):
     :ivar content: The content of the output message. Required.
     :vartype content: list[~azure.ai.projects.models.OutputMessageContent]
     :ivar status: The status of the message input. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when input items are returned via API. Required. Is one of the
+       ``incomplete``. Populated when input items are returned via API. Required. Is one of the
      following types: Literal["in_progress"], Literal["completed"], Literal["incomplete"]
     :vartype status: str or str or str
     """
@@ -9419,7 +9549,7 @@ class ItemResourceOutputMessage(ItemResource, discriminator="output_message"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the message input. One of ``in_progress``, ``completed``, or
-     ``incomplete``. Populated when input items are returned via API. Required. Is one of the
+       ``incomplete``. Populated when input items are returned via API. Required. Is one of the
      following types: Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
     @overload
@@ -9430,6 +9560,8 @@ class ItemResourceOutputMessage(ItemResource, discriminator="output_message"):
         content: list["_models.OutputMessageContent"],
         status: Literal["in_progress", "completed", "incomplete"],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9451,6 +9583,10 @@ class ItemResourceWebSearchToolCall(ItemResource, discriminator="web_search_call
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar id: The unique ID of the web search tool call. Required.
     :vartype id: str
     :ivar type: The type of the web search tool call. Always ``web_search_call``. Required.
@@ -9459,7 +9595,7 @@ class ItemResourceWebSearchToolCall(ItemResource, discriminator="web_search_call
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"]
     :vartype status: str or str or str or str
     :ivar action: An object describing the specific action taken in this web search call.
-     Includes details on how the model used the web (search, open_page, find). Required. Is one of
+       Includes details on how the model used the web (search, open_page, find). Required. Is one of
      the following types: WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind
     :vartype action: ~azure.ai.projects.models.WebSearchActionSearch or
      ~azure.ai.projects.models.WebSearchActionOpenPage or
@@ -9479,7 +9615,7 @@ class ItemResourceWebSearchToolCall(ItemResource, discriminator="web_search_call
         rest_field(visibility=["read", "create", "update", "delete", "query"])
     )
     """An object describing the specific action taken in this web search call.
-     Includes details on how the model used the web (search, open_page, find). Required. Is one of
+       Includes details on how the model used the web (search, open_page, find). Required. Is one of
      the following types: WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind"""
 
     @overload
@@ -9492,6 +9628,8 @@ class ItemResourceWebSearchToolCall(ItemResource, discriminator="web_search_call
             "_models.WebSearchActionSearch", "_models.WebSearchActionOpenPage", "_models.WebSearchActionFind"
         ],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9772,13 +9910,13 @@ class MCPTool(Tool, discriminator="mcp"):
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
     :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
-     provided.
+       provided.
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url`` or ``connector_id`` must be provided. Learn more about service
-     connectors `here
+       ``server_url`` or ``connector_id`` must be provided. Learn more about service
+       connectors `here
      <https://platform.openai.com/docs/guides/tools-remote-mcp#connectors>`_.
-     Currently supported ``connector_id`` values are:
+       Currently supported ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -9794,8 +9932,8 @@ class MCPTool(Tool, discriminator="mcp"):
        Literal["connector_sharepoint"]
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
-     with a custom MCP server URL or a service connector. Your application
-     must handle the OAuth authorization flow and provide the token here.
+       with a custom MCP server URL or a service connector. Your application
+       must handle the OAuth authorization flow and provide the token here.
     :vartype authorization: str
     :ivar server_description: Optional description of the MCP server, used to provide more context.
     :vartype server_description: str
@@ -9818,7 +9956,7 @@ class MCPTool(Tool, discriminator="mcp"):
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
-     provided."""
+       provided."""
     connector_id: Optional[
         Literal[
             "connector_dropbox",
@@ -9832,10 +9970,10 @@ class MCPTool(Tool, discriminator="mcp"):
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url`` or ``connector_id`` must be provided. Learn more about service
-     connectors `here
-     <https://platform.openai.com/docs/guides/tools-remote-mcp#connectors>`_.
-     Currently supported ``connector_id`` values are:
+        ``server_url`` or ``connector_id`` must be provided. Learn more about service
+        connectors `here
+      <https://platform.openai.com/docs/guides/tools-remote-mcp#connectors>`_.
+        Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
@@ -9851,8 +9989,8 @@ class MCPTool(Tool, discriminator="mcp"):
         Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either
-     with a custom MCP server URL or a service connector. Your application
-     must handle the OAuth authorization flow and provide the token here."""
+       with a custom MCP server URL or a service connector. Your application
+       must handle the OAuth authorization flow and provide the token here."""
     server_description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional description of the MCP server, used to provide more context."""
     headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10130,6 +10268,10 @@ class MemorySearchToolCallItemResource(ItemResource, discriminator="memory_searc
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.MEMORY_SEARCH_CALL
     :ivar status: The status of the memory search tool call. One of ``in_progress``,
@@ -10161,6 +10303,8 @@ class MemorySearchToolCallItemResource(ItemResource, discriminator="memory_searc
         *,
         status: Literal["in_progress", "searching", "completed", "incomplete", "failed"],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         results: Optional[list["_models.MemorySearchItem"]] = None,
     ) -> None: ...
 
@@ -10846,6 +10990,10 @@ class OAuthConsentRequestItemResource(ItemResource, discriminator="oauth_consent
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar id: Required.
     :vartype id: str
     :ivar type: Required.
@@ -10873,6 +11021,8 @@ class OAuthConsentRequestItemResource(ItemResource, discriminator="oauth_consent
         consent_link: str,
         server_label: str,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -11506,6 +11656,11 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
     :ivar tools: An array of tools the model may call while generating a response. You
      can specify which tool to use by setting the ``tool_choice`` parameter.
     :vartype tools: list[~azure.ai.projects.models.Tool]
+    :ivar tool_choice: How the model should select which tool (or tools) to use when generating a
+     response.
+     See the ``tools`` parameter to see how to specify which tools the model can call. Is either a
+     str type or a ToolChoiceParam type.
+    :vartype tool_choice: str or ~azure.ai.projects.models.ToolChoiceParam
     :ivar text: Configuration options for a text response from the model. Can be plain text or
      structured JSON data.
     :vartype text: ~azure.ai.projects.models.PromptAgentDefinitionText
@@ -11535,6 +11690,12 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of tools the model may call while generating a response. You
      can specify which tool to use by setting the ``tool_choice`` parameter."""
+    tool_choice: Optional[Union[str, "_models.ToolChoiceParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the model should select which tool (or tools) to use when generating a response.
+     See the ``tools`` parameter to see how to specify which tools the model can call. Is either a
+     str type or a ToolChoiceParam type."""
     text: Optional["_models.PromptAgentDefinitionText"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11557,6 +11718,7 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
         top_p: Optional[float] = None,
         reasoning: Optional["_models.Reasoning"] = None,
         tools: Optional[list["_models.Tool"]] = None,
+        tool_choice: Optional[Union[str, "_models.ToolChoiceParam"]] = None,
         text: Optional["_models.PromptAgentDefinitionText"] = None,
         structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = None,
     ) -> None: ...
@@ -12347,6 +12509,101 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
         self.type = ToolType.SHAREPOINT_GROUNDING_PREVIEW  # type: ignore
 
 
+class ToolChoiceParam(_Model):
+    """How the model should select which tool (or tools) to use when generating
+    a response. See the ``tools`` parameter to see how to specify which tools
+    the model can call.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ToolChoiceAllowed, SpecificApplyPatchParam, ToolChoiceCodeInterpreter,
+    ToolChoiceComputerUsePreview, ToolChoiceCustom, ToolChoiceFileSearch, ToolChoiceFunction,
+    ToolChoiceImageGeneration, ToolChoiceMCP, SpecificFunctionShellParam,
+    ToolChoiceWebSearchPreview, ToolChoiceWebSearchPreview20250311
+
+    :ivar type: Required. Known values are: "allowed_tools", "function", "mcp", "custom",
+     "apply_patch", "shell", "file_search", "web_search_preview", "computer_use_preview",
+     "web_search_preview_2025_03_11", "image_generation", and "code_interpreter".
+    :vartype type: str or ~azure.ai.projects.models.ToolChoiceParamType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"allowed_tools\", \"function\", \"mcp\", \"custom\",
+     \"apply_patch\", \"shell\", \"file_search\", \"web_search_preview\", \"computer_use_preview\",
+     \"web_search_preview_2025_03_11\", \"image_generation\", and \"code_interpreter\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SpecificApplyPatchParam(ToolChoiceParam, discriminator="apply_patch"):
+    """Specific apply patch tool choice.
+
+    :ivar type: The tool to call. Always ``apply_patch``. Required.
+    :vartype type: str or ~azure.ai.projects.models.APPLY_PATCH
+    """
+
+    type: Literal[ToolChoiceParamType.APPLY_PATCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The tool to call. Always ``apply_patch``. Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.APPLY_PATCH  # type: ignore
+
+
+class SpecificFunctionShellParam(ToolChoiceParam, discriminator="shell"):
+    """Specific shell tool choice.
+
+    :ivar type: The tool to call. Always ``shell``. Required.
+    :vartype type: str or ~azure.ai.projects.models.SHELL
+    """
+
+    type: Literal[ToolChoiceParamType.SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The tool to call. Always ``shell``. Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.SHELL  # type: ignore
+
+
 class StructuredInputDefinition(_Model):
     """An structured input that can participate in prompt template substitutions and tool argument
     binding.
@@ -12442,6 +12699,10 @@ class StructuredOutputsItemResource(ItemResource, discriminator="structured_outp
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.STRUCTURED_OUTPUTS
     :ivar output: The structured output captured during the response. Required.
@@ -12459,6 +12720,8 @@ class StructuredOutputsItemResource(ItemResource, discriminator="structured_outp
         *,
         output: Any,
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -12766,6 +13029,341 @@ class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminato
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = TextResponseFormatConfigurationType.JSON_SCHEMA  # type: ignore
+
+
+class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
+    """Allowed tools.
+
+    :ivar type: Allowed tool configuration type. Always ``allowed_tools``. Required.
+    :vartype type: str or ~azure.ai.projects.models.ALLOWED_TOOLS
+    :ivar mode: Constrains the tools available to the model to a pre-defined set.
+       ``auto`` allows the model to pick from among the allowed tools and generate a
+       message.
+       ``required`` requires the model to call one or more of the allowed tools. Required. Is either
+     a Literal["auto"] type or a Literal["required"] type.
+    :vartype mode: str or str
+    :ivar tools: A list of tool definitions that the model should be allowed to call.
+       For the Responses API, the list of tool definitions might look like:
+
+     .. code-block:: json
+
+        [
+          { "type": "function", "name": "get_weather" },
+          { "type": "mcp", "server_label": "deepwiki" },
+          { "type": "image_generation" }
+        ]. Required.
+    :vartype tools: list[dict[str, any]]
+    """
+
+    type: Literal[ToolChoiceParamType.ALLOWED_TOOLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Allowed tool configuration type. Always ``allowed_tools``. Required."""
+    mode: Literal["auto", "required"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Constrains the tools available to the model to a pre-defined set.
+       ``auto`` allows the model to pick from among the allowed tools and generate a
+       message.
+       ``required`` requires the model to call one or more of the allowed tools. Required. Is either
+     a Literal[\"auto\"] type or a Literal[\"required\"] type."""
+    tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A list of tool definitions that the model should be allowed to call.
+       For the Responses API, the list of tool definitions might look like:
+     
+     .. code-block:: json
+     
+        [
+          { \"type\": \"function\", \"name\": \"get_weather\" },
+          { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
+          { \"type\": \"image_generation\" }
+        ]. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Literal["auto", "required"],
+        tools: list[dict[str, Any]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.ALLOWED_TOOLS  # type: ignore
+
+
+class ToolChoiceCodeInterpreter(ToolChoiceParam, discriminator="code_interpreter"):
+    """Indicates that the model should use a built-in tool to generate a response.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER
+    """
+
+    type: Literal[ToolChoiceParamType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.CODE_INTERPRETER  # type: ignore
+
+
+class ToolChoiceComputerUsePreview(ToolChoiceParam, discriminator="computer_use_preview"):
+    """Indicates that the model should use a built-in tool to generate a response.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.projects.models.COMPUTER_USE_PREVIEW
+    """
+
+    type: Literal[ToolChoiceParamType.COMPUTER_USE_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.COMPUTER_USE_PREVIEW  # type: ignore
+
+
+class ToolChoiceCustom(ToolChoiceParam, discriminator="custom"):
+    """Custom tool.
+
+    :ivar type: For custom tool calling, the type is always ``custom``. Required.
+    :vartype type: str or ~azure.ai.projects.models.CUSTOM
+    :ivar name: The name of the custom tool to call. Required.
+    :vartype name: str
+    """
+
+    type: Literal[ToolChoiceParamType.CUSTOM] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """For custom tool calling, the type is always ``custom``. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the custom tool to call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.CUSTOM  # type: ignore
+
+
+class ToolChoiceFileSearch(ToolChoiceParam, discriminator="file_search"):
+    """Indicates that the model should use a built-in tool to generate a response.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH
+    """
+
+    type: Literal[ToolChoiceParamType.FILE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.FILE_SEARCH  # type: ignore
+
+
+class ToolChoiceFunction(ToolChoiceParam, discriminator="function"):
+    """Function tool.
+
+    :ivar type: For function calling, the type is always ``function``. Required.
+    :vartype type: str or ~azure.ai.projects.models.FUNCTION
+    :ivar name: The name of the function to call. Required.
+    :vartype name: str
+    """
+
+    type: Literal[ToolChoiceParamType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """For function calling, the type is always ``function``. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the function to call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.FUNCTION  # type: ignore
+
+
+class ToolChoiceImageGeneration(ToolChoiceParam, discriminator="image_generation"):
+    """Indicates that the model should use a built-in tool to generate a response.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION
+    """
+
+    type: Literal[ToolChoiceParamType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.IMAGE_GENERATION  # type: ignore
+
+
+class ToolChoiceMCP(ToolChoiceParam, discriminator="mcp"):
+    """MCP tool.
+
+    :ivar type: For MCP tools, the type is always ``mcp``. Required.
+    :vartype type: str or ~azure.ai.projects.models.MCP
+    :ivar server_label: The label of the MCP server to use. Required.
+    :vartype server_label: str
+    :ivar name:
+    :vartype name: str
+    """
+
+    type: Literal[ToolChoiceParamType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """For MCP tools, the type is always ``mcp``. Required."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the MCP server to use. Required."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        server_label: str,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.MCP  # type: ignore
+
+
+class ToolChoiceWebSearchPreview(ToolChoiceParam, discriminator="web_search_preview"):
+    """Indicates that the model should use a built-in tool to generate a response.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW
+    """
+
+    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW  # type: ignore
+
+
+class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_search_preview_2025_03_11"):
+    """Indicates that the model should use a built-in tool to generate a response.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW2025_03_11
+    """
+
+    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11  # type: ignore
 
 
 class ToolDescription(_Model):
@@ -13439,6 +14037,10 @@ class WorkflowActionOutputItemResource(ItemResource, discriminator="workflow_act
     :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
      a str type.
     :vartype created_by: ~azure.ai.projects.models.CreatedBy or str
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: ~azure.ai.projects.models.AgentReference
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.WORKFLOW_ACTION
     :ivar kind: The kind of CSDL action (e.g., 'SetVariable', 'InvokeAzureAgent'). Required.
@@ -13480,6 +14082,8 @@ class WorkflowActionOutputItemResource(ItemResource, discriminator="workflow_act
         action_id: str,
         status: Literal["completed", "failed", "in_progress", "cancelled"],
         created_by: Optional[Union["_models.CreatedBy", str]] = None,
+        agent_reference: Optional["_models.AgentReference"] = None,
+        response_id: Optional[str] = None,
         parent_action_id: Optional[str] = None,
         previous_action_id: Optional[str] = None,
     ) -> None: ...

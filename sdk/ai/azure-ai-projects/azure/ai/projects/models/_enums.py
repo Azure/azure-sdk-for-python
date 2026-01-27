@@ -753,6 +753,23 @@ class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEn
     JSON_OBJECT = "json_object"
 
 
+class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolChoiceParamType."""
+
+    ALLOWED_TOOLS = "allowed_tools"
+    FUNCTION = "function"
+    MCP = "mcp"
+    CUSTOM = "custom"
+    APPLY_PATCH = "apply_patch"
+    SHELL = "shell"
+    FILE_SEARCH = "file_search"
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    IMAGE_GENERATION = "image_generation"
+    CODE_INTERPRETER = "code_interpreter"
+
+
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ToolType."""
 
