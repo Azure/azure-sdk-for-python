@@ -2004,8 +2004,8 @@ class AgentsOperations:
         description: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -2033,8 +2033,8 @@ class AgentsOperations:
     def update(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -2052,8 +2052,8 @@ class AgentsOperations:
     def update(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -2078,8 +2078,8 @@ class AgentsOperations:
         description: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -2377,8 +2377,7 @@ class AgentsOperations:
         **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -2409,8 +2408,7 @@ class AgentsOperations:
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -2429,8 +2427,7 @@ class AgentsOperations:
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -2457,8 +2454,7 @@ class AgentsOperations:
         **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -4107,7 +4103,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -4192,7 +4188,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
