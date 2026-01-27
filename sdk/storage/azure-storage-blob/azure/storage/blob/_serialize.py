@@ -17,7 +17,6 @@ from ._generated.azure.storage.blobs.models import (
     BlobModifiedAccessConditions,
     BlobTag,
     BlobTags,
-    ContainerCpkScopeInfo,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
     ParquetConfiguration,
@@ -102,15 +101,25 @@ def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Opt
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
-    # The generated code expects 'etag' and 'match_condition' parameters,
-    # which it converts internally using prep_if_match/prep_if_none_match helpers.
-    return {
-        'if_modified_since': kwargs.pop('if_modified_since', None),
-        'if_unmodified_since': kwargs.pop('if_unmodified_since', None),
-        'etag': kwargs.pop('etag', None),
-        'match_condition': kwargs.pop('match_condition', None),
-        'if_tags': kwargs.pop('if_tags_match_condition', None)
-    }
+    # Process match conditions and return only non-None values to avoid
+    # leaking extra kwargs to the HTTP transport.
+    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
+    result: Dict[str, Any] = {}
+    if_modified_since = kwargs.pop('if_modified_since', None)
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    if_tags = kwargs.pop('if_tags_match_condition', None)
+
+    if if_modified_since is not None:
+        result['if_modified_since'] = if_modified_since
+    if if_unmodified_since is not None:
+        result['if_unmodified_since'] = if_unmodified_since
+    if if_match is not None:
+        result['if_match'] = if_match
+    if if_none_match is not None:
+        result['if_none_match'] = if_none_match
+    if if_tags is not None:
+        result['if_tags'] = if_tags
+    return result
 
 
 def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessConditions:
@@ -165,21 +174,22 @@ def get_source_cpk_info(source_cpk: Any) -> Dict[str, Any]:
     return {}
 
 
-def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:
+def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns container CPK scope info as a dict for the generated code."""
     encryption_scope = kwargs.pop('container_encryption_scope', None)
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
-            return ContainerCpkScopeInfo(
-                default_encryption_scope=encryption_scope.default_encryption_scope,
-                prevent_encryption_scope_override=encryption_scope.prevent_encryption_scope_override
-            )
+            return {
+                'default_encryption_scope': encryption_scope.default_encryption_scope,
+                'prevent_encryption_scope_override': encryption_scope.prevent_encryption_scope_override
+            }
         if isinstance(encryption_scope, dict):
-            return ContainerCpkScopeInfo(
-                default_encryption_scope=encryption_scope['default_encryption_scope'],
-                prevent_encryption_scope_override=encryption_scope.get('prevent_encryption_scope_override')
-            )
+            return {
+                'default_encryption_scope': encryption_scope['default_encryption_scope'],
+                'prevent_encryption_scope_override': encryption_scope.get('prevent_encryption_scope_override')
+            }
         raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
-    return None
+    return {}
 
 
 def get_api_version(kwargs: Dict[str, Any]) -> str:
