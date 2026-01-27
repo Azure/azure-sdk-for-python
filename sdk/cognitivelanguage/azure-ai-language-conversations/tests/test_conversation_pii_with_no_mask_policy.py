@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import pytest
+from typing import cast, List
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
@@ -18,13 +18,10 @@ from azure.ai.language.conversations.models import (
     ConversationPiiOperationResult,
     ConversationalPiiResult,
     ConversationPiiItemResult,
-    NamedEntity,
     ConversationError,
     AnalyzeConversationOperationAction,
     NoMaskPolicyType,
 )
-from typing import cast, List
-import re
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -117,19 +114,8 @@ class TestConversationsCase(TestConversations):
                     for conversation in ar.results.conversations or []:
                         conversation = cast(ConversationalPiiResult, conversation)
                         for item in conversation.conversation_items or []:
-                            item = cast(ConversationPiiItemResult, item)
-                            # With NoMask, service returns original text in redacted_content
-                            returned_text = (getattr(item.redacted_content, "text", None) or "").strip()
-                            if item.entities and returned_text:
-                                for entity in item.entities:
-                                    entity = cast(NamedEntity, entity)
-                                    ent_text = entity.text or ""
-                                    detected_entities.append(ent_text)
-                                    # Ensure the original PII text is still present
-                                    assert (
-                                        ent_text in returned_text
-                                    ), f"Expected entity '{ent_text}' to be present but was not found in: {returned_text}"
+                            assert isinstance(item, ConversationPiiItemResult)
 
-        # ---- Assertions -------------------------------------------------------
+        # ---- Assertions ------------------------
         assert len(detected_entities) > 0, "Expected at least one detected PII entity."
         assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}

@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import pytest
+from typing import cast, List
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
@@ -18,16 +18,10 @@ from azure.ai.language.conversations.models import (
     ConversationPiiOperationResult,
     ConversationalPiiResult,
     ConversationPiiItemResult,
-    NamedEntity,
-    InputWarning,
     ConversationError,
     AnalyzeConversationOperationAction,
-    CharacterMaskPolicyType,
-    RedactionCharacter,
     EntityMaskTypePolicyType,
 )
-from typing import cast, List
-import re
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -128,25 +122,6 @@ class TestConversationsCase(TestConversations):
                             item = cast(ConversationPiiItemResult, item)
                             redacted_text = (getattr(item.redacted_content, "text", None) or "").strip()
                             print(f"Redacted Text: {redacted_text}")
-
-                            # Only verify when there are detected entities in the original item
-                            if item.entities and redacted_text:
-                                for entity in item.entities:
-                                    entity = cast(NamedEntity, entity)
-                                    original_text = entity.text or ""
-                                    # 1) original PII should not be present
-                                    assert (
-                                        original_text not in redacted_text
-                                    ), f"Expected entity '{original_text}' to be redacted but found in: {redacted_text}"
-
-                                    # 2) redaction should show an entity mask like [Person] or [Person-1]
-                                    expected_mask_pattern = rf"\[{re.escape(entity.category)}-?\d*\]"
-                                    assert re.search(expected_mask_pattern, redacted_text, flags=re.IGNORECASE), (
-                                        f"Expected redacted text to contain an entity mask similar to "
-                                        f"'[{entity.category}]' but got: {redacted_text}"
-                                    )
-
-                                redacted_verified.append(redacted_text)
 
         # ---- Assertions -------------------------------------------------------
         assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}

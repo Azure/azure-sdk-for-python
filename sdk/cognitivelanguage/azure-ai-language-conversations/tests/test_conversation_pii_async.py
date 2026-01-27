@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+from typing import cast, List
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
@@ -15,15 +16,9 @@ from azure.ai.language.conversations.models import (
     PiiOperationAction,
     ConversationPiiActionContent,
     ConversationActions,
-    AnalyzeConversationOperationResult,
-    ConversationPiiOperationResult,
-    ConversationalPiiResult,
-    ConversationPiiItemResult,
     NamedEntity,
-    InputWarning,
     ConversationError,
 )
-from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(
@@ -117,47 +112,14 @@ class TestConversationsCase(TestConversations):
                     f"Total: {actions_page.total}"
                 )
 
-                for action_result in actions_page.task_results or []:
-                    ar = cast(AnalyzeConversationOperationResult, action_result)
-                    print(f"\nAction Name: {getattr(ar, 'name', None)}")
-                    print(f"Action Status: {getattr(ar, 'status', None)}")
-                    print(f"Kind: {getattr(ar, 'kind', None)}")
-
-                    if isinstance(ar, ConversationPiiOperationResult):
-                        for conversation in ar.results.conversations or []:
-                            conversation = cast(ConversationalPiiResult, conversation)
-                            print(f"Conversation: #{conversation.id}")
-                            print("Detected Entities:")
-                            for item in conversation.conversation_items or []:
-                                item = cast(ConversationPiiItemResult, item)
-                                for entity in item.entities or []:
-                                    entity = cast(NamedEntity, entity)
-                                    print(f"  Category: {entity.category}")
-                                    print(f"  Subcategory: {entity.subcategory}")
-                                    print(f"  Text: {entity.text}")
-                                    print(f"  Offset: {entity.offset}")
-                                    print(f"  Length: {entity.length}")
-                                    print(f"  Confidence score: {entity.confidence_score}\n")
-                                    entities_detected.append(entity)
-
-                            if conversation.warnings:
-                                print("Warnings:")
-                                for warning in conversation.warnings:
-                                    warning = cast(InputWarning, warning)
-                                    print(f"  Code: {warning.code}")
-                                    print(f"  Message: {warning.message}")
-                            print()
-                    else:
-                        print("  [No supported results to display for this action type]")
-
-            # ---- Print errors (from final-state metadata) ---------------------
+            # Print errors
             if d.get("errors"):
                 print("\nErrors:")
                 for err in d["errors"]:
                     err = cast(ConversationError, err)
                     print(f"  Code: {err.code} - {err.message}")
 
-            # ---- Assertions ---------------------------------------------------
+            # Assertions
             assert len(entities_detected) > 0, "Expected at least one PII entity."
             assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
         finally:

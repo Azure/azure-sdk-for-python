@@ -1,23 +1,20 @@
 import functools
-import pytest
+from typing import cast
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     ConversationLanguageUnderstandingInput,
     ConversationAnalysisInput,
     TextConversationItem,
     ConversationActionContent,
-    AnalyzeConversationActionResult,
     StringIndexType,
     ConversationActionResult,
     ConversationPrediction,
     DateTimeResolution,
 )
-
-from typing import cast
-from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.credentials import AzureKeyCredential
 
