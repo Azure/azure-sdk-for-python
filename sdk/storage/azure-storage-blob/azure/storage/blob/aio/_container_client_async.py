@@ -324,9 +324,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             return await self._client.container.create( # type: ignore
                 timeout=timeout,
                 access=public_access,
-                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
+                **container_cpk_scope_info,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
