@@ -24,7 +24,6 @@ from ._generated.azure.storage.blobs.models import (
     CpkInfo,
     DeleteSnapshotsOptionType,
     QueryRequest,
-    SequenceNumberAccessConditions,
     SourceCpkInfo
 )
 from ._models import (
@@ -38,10 +37,12 @@ from ._models import (
 )
 from ._serialize import (
     get_access_conditions,
+    get_append_conditions,
     get_blob_modify_conditions,
     get_cpk_info,
     get_cpk_scope_info,
     get_modify_conditions,
+    get_sequence_conditions,
     get_source_conditions,
     get_source_cpk_info,
     serialize_blob_tags_header,
@@ -220,7 +221,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'cls': return_response_headers,
         'lease_id': get_access_conditions(kwargs.pop('destination_lease', None)),
         'tier': tier.value if tier else None,
-        'source_modified_access_conditions': get_source_conditions(kwargs),
+        **get_source_conditions(kwargs),
         **get_cpk_info(cpk),
         **get_cpk_scope_info(kwargs),
         **get_source_cpk_info(source_cpk),
@@ -638,7 +639,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     if not incremental_copy:
         source_mod_conditions = get_source_conditions(kwargs)
         dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
-        options['source_modified_access_conditions'] = source_mod_conditions
+        options.update(source_mod_conditions)
         options['lease_id'] = dest_access_conditions
         options['tier'] = tier.value if tier else None
         options['seal_blob'] = kwargs.pop('seal_destination_blob', None)
@@ -929,11 +930,7 @@ def _upload_page_options(
     end_range = offset + length - 1  # Reformat to an inclusive range index
     content_range = f'bytes={offset}-{end_range}' # type: ignore
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    seq_conditions = SequenceNumberAccessConditions(
-        if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
-        if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
-        if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
-    )
+    seq_conditions = get_sequence_conditions(kwargs)
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope = get_cpk_scope_info(kwargs)
     validate_content = kwargs.pop('validate_content', False)
@@ -945,7 +942,7 @@ def _upload_page_options(
         'timeout': kwargs.pop('timeout', None),
         'range': content_range,
         'lease_id': access_conditions,
-        'sequence_number_access_conditions': seq_conditions,
+        **seq_conditions,
         **mod_conditions,
         'validate_content': validate_content,
         **cpk_scope,
@@ -975,11 +972,7 @@ def _upload_pages_from_url_options(
     destination_range = f'bytes={offset}-{end_range}'
     source_range = f'bytes={source_offset}-{source_offset + length - 1}'  # should subtract 1 here?
 
-    seq_conditions = SequenceNumberAccessConditions(
-        if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
-        if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
-        if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
-    )
+    seq_conditions = get_sequence_conditions(kwargs)
     source_authorization = kwargs.pop('source_authorization', None)
     source_token_intent = kwargs.pop('source_token_intent', None)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1000,9 +993,9 @@ def _upload_pages_from_url_options(
         'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
-        'sequence_number_access_conditions': seq_conditions,
+        **seq_conditions,
         **mod_conditions,
-        'source_modified_access_conditions': source_mod_conditions,
+        **source_mod_conditions,
         **cpk_scope,
         **get_cpk_info(cpk),
         **get_source_cpk_info(source_cpk),
@@ -1017,11 +1010,7 @@ def _clear_page_options(
     **kwargs: Any
 ) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    seq_conditions = SequenceNumberAccessConditions(
-        if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
-        if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
-        if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
-    )
+    seq_conditions = get_sequence_conditions(kwargs)
     mod_conditions = get_modify_conditions(kwargs)
     if offset is None or offset % 512 != 0:
         raise ValueError("offset must be an integer that aligns with 512 page size")
@@ -1037,7 +1026,7 @@ def _clear_page_options(
         'timeout': kwargs.pop('timeout', None),
         'range': content_range,
         'lease_id': access_conditions,
-        'sequence_number_access_conditions': seq_conditions,
+        **seq_conditions,
         **mod_conditions,
         **get_cpk_info(cpk),
         'cls': return_response_headers}
@@ -1060,15 +1049,8 @@ def _append_block_options(
     if isinstance(data, bytes):
         data = data[:length]
 
-    appendpos_condition = kwargs.pop('appendpos_condition', None)
-    maxsize_condition = kwargs.pop('maxsize_condition', None)
     validate_content = kwargs.pop('validate_content', False)
-    append_conditions = None
-    if maxsize_condition or appendpos_condition is not None:
-        append_conditions = AppendPositionAccessConditions(
-            max_size=maxsize_condition,
-            append_position=appendpos_condition
-        )
+    append_conditions = get_append_conditions(kwargs)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope = get_cpk_scope_info(kwargs)
@@ -1079,7 +1061,7 @@ def _append_block_options(
         'timeout': kwargs.pop('timeout', None),
         'transactional_content_md5': None,
         'lease_id': access_conditions,
-        'append_position_access_conditions': append_conditions,
+        **append_conditions,
         **mod_conditions,
         'validate_content': validate_content,
         **cpk_scope,
@@ -1106,15 +1088,8 @@ def _append_block_from_url_options(
     elif source_offset is not None:
         source_range = f"bytes={source_offset}-"
 
-    appendpos_condition = kwargs.pop('appendpos_condition', None)
-    maxsize_condition = kwargs.pop('maxsize_condition', None)
     source_content_md5 = kwargs.pop('source_content_md5', None)
-    append_conditions = None
-    if maxsize_condition or appendpos_condition is not None:
-        append_conditions = AppendPositionAccessConditions(
-            max_size=maxsize_condition,
-            append_position=appendpos_condition
-        )
+    append_conditions = get_append_conditions(kwargs)
     source_authorization = kwargs.pop('source_authorization', None)
     source_token_intent = kwargs.pop('source_token_intent', None)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1133,9 +1108,9 @@ def _append_block_from_url_options(
         'source_content_md5': source_content_md5,
         'transactional_content_md5': None,
         'lease_id': access_conditions,
-        'append_position_access_conditions': append_conditions,
+        **append_conditions,
         **mod_conditions,
-        'source_modified_access_conditions': source_mod_conditions,
+        **source_mod_conditions,
         **cpk_scope,
         **get_cpk_info(cpk),
         **get_source_cpk_info(source_cpk),
@@ -1146,19 +1121,14 @@ def _append_block_from_url_options(
     return options
 
 def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
-    appendpos_condition = kwargs.pop('appendpos_condition', None)
-    append_conditions = None
-    if appendpos_condition is not None:
-        append_conditions = AppendPositionAccessConditions(
-            append_position=appendpos_condition
-        )
+    append_conditions = get_append_conditions(kwargs)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
 
     options = {
         'timeout': kwargs.pop('timeout', None),
         'lease_id': access_conditions,
-        'append_position_access_conditions': append_conditions,
+        **append_conditions,
         **mod_conditions,
         'cls': return_response_headers}
     options.update(kwargs)

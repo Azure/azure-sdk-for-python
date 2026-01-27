@@ -133,20 +133,70 @@ def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessCond
     )
 
 
-def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
+def get_source_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns source conditions as a dict for the generated code.
+    
+    The generated code expects individual parameters instead of SourceModifiedAccessConditions.
+    """
     if_match, if_none_match = _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
-    return SourceModifiedAccessConditions(
-        source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-        source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-        source_if_match=if_match or kwargs.pop('source_if_match', None),
-        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None),
-        source_if_tags=kwargs.pop('source_if_tags_match_condition', None)
-    )
+    result: Dict[str, Any] = {}
+    
+    source_if_modified_since = kwargs.pop('source_if_modified_since', None)
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)
+    source_if_match = if_match or kwargs.pop('source_if_match', None)
+    source_if_none_match = if_none_match or kwargs.pop('source_if_none_match', None)
+    source_if_tags = kwargs.pop('source_if_tags_match_condition', None)
+    
+    if source_if_modified_since is not None:
+        result['source_if_modified_since'] = source_if_modified_since
+    if source_if_unmodified_since is not None:
+        result['source_if_unmodified_since'] = source_if_unmodified_since
+    if source_if_match is not None:
+        result['source_if_match'] = source_if_match
+    if source_if_none_match is not None:
+        result['source_if_none_match'] = source_if_none_match
+    if source_if_tags is not None:
+        result['source_if_tags'] = source_if_tags
+    return result
 
 
 def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     """Returns encryption_scope as a dict for the generated code."""
     return {'encryption_scope': kwargs.pop('encryption_scope', None)}
+
+
+def get_append_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns append position conditions as a dict for the generated code.
+    
+    The generated code expects individual parameters: max_size and append_position
+    instead of an AppendPositionAccessConditions object.
+    """
+    result: Dict[str, Any] = {}
+    maxsize_condition = kwargs.pop('maxsize_condition', None)
+    appendpos_condition = kwargs.pop('appendpos_condition', None)
+    if maxsize_condition is not None:
+        result['max_size'] = maxsize_condition
+    if appendpos_condition is not None:
+        result['append_position'] = appendpos_condition
+    return result
+
+
+def get_sequence_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns sequence number conditions as a dict for the generated code.
+    
+    The generated code expects individual parameters instead of SequenceNumberAccessConditions.
+    """
+    result: Dict[str, Any] = {}
+    if_sequence_number_lte = kwargs.pop('if_sequence_number_lte', None)
+    if_sequence_number_lt = kwargs.pop('if_sequence_number_lt', None)
+    if_sequence_number_eq = kwargs.pop('if_sequence_number_eq', None)
+    if if_sequence_number_lte is not None:
+        result['if_sequence_number_less_than_or_equal_to'] = if_sequence_number_lte
+    if if_sequence_number_lt is not None:
+        result['if_sequence_number_less_than'] = if_sequence_number_lt
+    if if_sequence_number_eq is not None:
+        result['if_sequence_number_equal_to'] = if_sequence_number_eq
+    return result
 
 
 def get_cpk_info(cpk: Any) -> Dict[str, Any]:
