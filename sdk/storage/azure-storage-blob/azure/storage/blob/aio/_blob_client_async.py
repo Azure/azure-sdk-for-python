@@ -72,7 +72,7 @@ from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_
 from .._generated.azure.storage.blobs.aio import CombinedBlobClient as AzureBlobStorage
 from .._generated.azure.storage.blobs.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
-from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._serialize import get_access_conditions, get_api_version, get_cpk_info, get_modify_conditions, get_version_id
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
@@ -1157,12 +1157,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+        cpk_info = get_cpk_info(cpk)
+        if cpk and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         try:
             cls_method = kwargs.pop('cls', None)
             if cls_method:
@@ -1174,7 +1171,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 lease_id=access_conditions,
                 **mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
+                **cpk_info,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
