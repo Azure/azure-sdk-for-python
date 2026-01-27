@@ -10954,13 +10954,10 @@ class VirtualMachineConfiguration(_Model):
      <https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine>`_.
     :vartype data_disks: list[~azure.batch.models.DataDisk]
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute
-     Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are:
-
-      Windows_Server - The on-premises license is for Windows
-     Server.
-      Windows_Client - The on-premises license is for Windows Client.
+     should only be used when you hold valid on-premises licenses for the Compute Nodes which will
+     be deployed. If omitted, no on-premises licensing discount is applied. Values are:
+     Windows_Server - The on-premises license is for Windows Server.
+     Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
      performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
@@ -11025,14 +11022,11 @@ class VirtualMachineConfiguration(_Model):
     license_type: Optional[str] = rest_field(
         name="licenseType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute
-     Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are:
-     
-      Windows_Server - The on-premises license is for Windows
-     Server.
-      Windows_Client - The on-premises license is for Windows Client."""
+    """This only applies to Images that contain the Windows operating system, and should only be
+     used when you hold valid on-premises licenses for the Compute Nodes which will be deployed. If
+     omitted, no on-premises licensing discount is applied. Values are: Windows_Server - The
+     on-premises license is for Windows Server. Windows_Client - The on-premises license is for
+     Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
