@@ -46,17 +46,12 @@ from azure.ai.language.conversations.models import (
     # Response/result discriminators
     ConversationalAITaskResult,
     ConversationalAIResult,
-    ConversationalAIAnalysis,
-    ConversationalAIIntent,
-    ConversationalAIEntity,
-    ConversationItemRange,
     DateTimeResolution,
     EntitySubtype,
-    EntityTag,
 )
 
 
-async def sample_conversation_multi_turn_prediction_async():
+async def sample_conv_multi_turn_prediction_async():
     # get settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
@@ -166,7 +161,7 @@ async def sample_conversation_multi_turn_prediction_async():
 
 
 async def main():
-    await sample_conversation_multi_turn_prediction_async()
+    await sample_conv_multi_turn_prediction_async()
 
 
 if __name__ == "__main__":

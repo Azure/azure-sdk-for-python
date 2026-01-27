@@ -42,12 +42,7 @@ from azure.ai.language.conversations.models import (
     PiiOperationAction,
     ConversationPiiActionContent,
     NoMaskPolicyType,
-    AnalyzeConversationOperationResult,
     ConversationPiiOperationResult,
-    ConversationalPiiResult,
-    ConversationPiiItemResult,
-    NamedEntity,
-    ConversationError,
 )
 
 

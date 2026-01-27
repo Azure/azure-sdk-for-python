@@ -42,13 +42,10 @@ from azure.ai.language.conversations.models import (
     ConversationPiiActionContent,
     NoMaskPolicyType,
     ConversationPiiOperationResult,
-    ConversationalPiiResult,
-    NamedEntity,
-    ConversationError,
 )
 
 
-def sample_conversation_pii_with_no_mask_policy():
+def sample_conv_pii_no_mask_policy():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -137,7 +134,7 @@ def sample_conversation_pii_with_no_mask_policy():
 
 
 def main():
-    sample_conversation_pii_with_no_mask_policy()
+    sample_conv_pii_no_mask_policy()
 
 
 if __name__ == "__main__":

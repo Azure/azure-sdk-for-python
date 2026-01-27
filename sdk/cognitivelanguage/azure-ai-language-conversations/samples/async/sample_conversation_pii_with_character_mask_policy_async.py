@@ -45,7 +45,6 @@ from azure.ai.language.conversations.models import (
     CharacterMaskPolicyType,
     RedactionCharacter,
     ConversationPiiOperationResult,
-    ConversationError,
 )
 
 
