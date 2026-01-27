@@ -42,7 +42,7 @@ class ListTagsAsync(object):
     async def list_tags(self):
         endpoint = os.environ["CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"]
         load_registry(endpoint)
-        # [START list_tags_anonymous]
+        # [START list_tags_anonymous_async]
         async with ContainerRegistryClient(endpoint) as anon_client:
             manifest = await anon_client.get_manifest_properties("library/hello-world", "latest")
             if manifest.tags:
@@ -50,7 +50,7 @@ class ListTagsAsync(object):
                 # Iterate through all the tags
                 for tag in manifest.tags:
                     print(tag)
-        # [END list_tags_anonymous]
+        # [END list_tags_anonymous_async]
 
 
 async def main():
