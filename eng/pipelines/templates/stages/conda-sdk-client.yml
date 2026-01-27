@@ -948,6 +948,18 @@ extends:
                     # TODO get token from keyvault?
 
                     - pwsh: |
+                        if (-not $env:ANACONDA_API_TOKEN) {
+                          Write-Error "ANACONDA_API_TOKEN is not set"
+                          exit 1
+                        }
+
+                        anaconda whoami
+                        if ($LASTEXITCODE -ne 0) {
+                          Write-Error "Invalid or expired Anaconda API token"
+                          exit 1
+                        }
+                        Write-Host "Anaconda authentication successful"
+
                         $packageDir = "$(Pipeline.Workspace)/conda"
                         $packages = Get-ChildItem -Path $packageDir -Recurse -Include "*.tar.bz2", "*.conda"
                         
