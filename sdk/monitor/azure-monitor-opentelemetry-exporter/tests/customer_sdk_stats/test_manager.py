@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch, MagicMock
 from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     RetryCode,
-    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
+    _APPLICATIONINSIGHTS_SDKSTATS_DISABLED,
     _REQUEST,
     _DEPENDENCY,
     _CUSTOM_EVENT,
@@ -31,7 +31,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         # Enable customer SDK stats for testing
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "true"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "false"
 
         # Reset singleton state - only clear CustomerSdkStatsManager instances
         if CustomerSdkStatsManager in CustomerSdkStatsManager._instances:
@@ -43,7 +43,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     def tearDown(self):
         """Clean up test environment."""
         # Clean up environment variables
-        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, None)
+        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_DISABLED, None)
 
         # Shutdown manager if needed
         try:
@@ -65,7 +65,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     def test_manager_initialization_disabled(self):
         """Test manager initialization when customer SDK stats is disabled."""
         # Disable customer SDK stats
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "false"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "true"
 
         # Create new manager with disabled state
         if hasattr(CustomerSdkStatsManager, "_instances"):
@@ -112,7 +112,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     def test_initialize_disabled_manager(self):
         """Test that initialization fails when manager is disabled."""
         # Disable customer SDK stats
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "false"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "true"
 
         # Create disabled manager
         if hasattr(CustomerSdkStatsManager, "_instances"):

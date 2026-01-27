@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterToolAuto,
+    CodeInterpreterContainerAuto,
 )
 
 
@@ -54,7 +54,7 @@ class TestAgentCodeInterpreter(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can execute Python code.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[]))],
                 ),
                 description="Simple code interpreter agent for basic Python execution.",
             )
@@ -154,7 +154,7 @@ class TestAgentCodeInterpreter(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can analyze data and create visualizations.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
                 ),
                 description="Code interpreter agent for file processing and chart generation.",
             )

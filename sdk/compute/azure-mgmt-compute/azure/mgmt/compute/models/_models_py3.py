@@ -7046,6 +7046,8 @@ class EventGridAndResourceGraph(_serialization.Model):
 class ExecutedValidation(_serialization.Model):
     """This is the executed Validation.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar type: This property specifies the type of image version validation.
     :vartype type: str
     :ivar status: This property specifies the status of the validationProfile of the image version.
@@ -7056,6 +7058,10 @@ class ExecutedValidation(_serialization.Model):
     :ivar execution_time: This property specifies the starting timestamp.
     :vartype execution_time: ~datetime.datetime
     """
+
+    _validation = {
+        "status": {"readonly": True},
+    }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
@@ -7068,7 +7074,6 @@ class ExecutedValidation(_serialization.Model):
         self,
         *,
         type: Optional[str] = None,
-        status: Optional[Union[str, "_models.ValidationStatus"]] = None,
         version: Optional[str] = None,
         execution_time: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -7076,9 +7081,6 @@ class ExecutedValidation(_serialization.Model):
         """
         :keyword type: This property specifies the type of image version validation.
         :paramtype type: str
-        :keyword status: This property specifies the status of the validationProfile of the image
-         version. Known values are: "Unknown", "Failed", and "Succeeded".
-        :paramtype status: str or ~azure.mgmt.compute.models.ValidationStatus
         :keyword version: This property specifies the valid version of the validation.
         :paramtype version: str
         :keyword execution_time: This property specifies the starting timestamp.
@@ -7086,7 +7088,7 @@ class ExecutedValidation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type = type
-        self.status = status
+        self.status: Optional[Union[str, "_models.ValidationStatus"]] = None
         self.version = version
         self.execution_time = execution_time
 
@@ -7818,8 +7820,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "PremiumV2_LRS".
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -7828,6 +7830,11 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
      to be replicated to. This property is updatable.
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
     """
 
     _validation = {
@@ -7843,6 +7850,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
         "replication_mode": {"key": "replicationMode", "type": "str"},
         "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
+        "storage_account_strategy": {"key": "storageAccountStrategy", "type": "str"},
     }
 
     def __init__(
@@ -7855,6 +7863,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         target_extended_locations: Optional[list["_models.GalleryTargetExtendedLocation"]] = None,
+        storage_account_strategy: Optional[Union[str, "_models.StorageAccountStrategy"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7872,8 +7881,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "PremiumV2_LRS".
+         image. Cannot be specified along with storageAccountStrategy. This property is not updatable.
+         Known values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
         :paramtype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
          replication. This property is not updatable. Known values are: "Full" and "Shallow".
@@ -7882,6 +7891,11 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
          going to be replicated to. This property is updatable.
         :paramtype target_extended_locations:
          list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+        :keyword storage_account_strategy: Specifies the strategy to be used when selecting the storage
+         account type. Cannot be specified along with storageAccountType, but can be overridden per
+         region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+         values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+        :paramtype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
         """
         super().__init__(**kwargs)
         self.target_regions = target_regions
@@ -7892,6 +7906,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         self.storage_account_type = storage_account_type
         self.replication_mode = replication_mode
         self.target_extended_locations = target_extended_locations
+        self.storage_account_strategy = storage_account_strategy
 
 
 class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):  # pylint: disable=name-too-long
@@ -7917,8 +7932,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "PremiumV2_LRS".
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -7927,6 +7942,11 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      to be replicated to. This property is updatable.
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
     :ivar source: The source image from which the Image Version is going to be created. Required.
     :vartype source: ~azure.mgmt.compute.models.UserArtifactSource
     :ivar manage_actions:
@@ -7958,6 +7978,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
         "replication_mode": {"key": "replicationMode", "type": "str"},
         "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
+        "storage_account_strategy": {"key": "storageAccountStrategy", "type": "str"},
         "source": {"key": "source", "type": "UserArtifactSource"},
         "manage_actions": {"key": "manageActions", "type": "UserArtifactManage"},
         "settings": {"key": "settings", "type": "UserArtifactSettings"},
@@ -7977,6 +7998,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         target_extended_locations: Optional[list["_models.GalleryTargetExtendedLocation"]] = None,
+        storage_account_strategy: Optional[Union[str, "_models.StorageAccountStrategy"]] = None,
         manage_actions: Optional["_models.UserArtifactManage"] = None,
         settings: Optional["_models.UserArtifactSettings"] = None,
         advanced_settings: Optional[dict[str, str]] = None,
@@ -7999,8 +8021,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "PremiumV2_LRS".
+         image. Cannot be specified along with storageAccountStrategy. This property is not updatable.
+         Known values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
         :paramtype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
          replication. This property is not updatable. Known values are: "Full" and "Shallow".
@@ -8009,6 +8031,11 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
          going to be replicated to. This property is updatable.
         :paramtype target_extended_locations:
          list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+        :keyword storage_account_strategy: Specifies the strategy to be used when selecting the storage
+         account type. Cannot be specified along with storageAccountType, but can be overridden per
+         region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+         values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+        :paramtype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
         :keyword source: The source image from which the Image Version is going to be created.
          Required.
         :paramtype source: ~azure.mgmt.compute.models.UserArtifactSource
@@ -8034,6 +8061,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
             storage_account_type=storage_account_type,
             replication_mode=replication_mode,
             target_extended_locations=target_extended_locations,
+            storage_account_strategy=storage_account_strategy,
             **kwargs
         )
         self.source = source
@@ -9108,8 +9136,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "PremiumV2_LRS".
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -9118,6 +9146,11 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      to be replicated to. This property is updatable.
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
     """
 
 
@@ -10050,6 +10083,764 @@ class GalleryOSDiskImage(GalleryDiskImage):
     :ivar source: The source for the disk image.
     :vartype source: ~azure.mgmt.compute.models.GalleryDiskImageSource
     """
+
+
+class GalleryScript(TrackedResource):
+    """Specifies information about the gallery Script Definition that you want to create or update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Describes the properties of a gallery Script Definition.
+    :vartype properties: ~azure.mgmt.compute.models.GalleryScriptProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "GalleryScriptProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.GalleryScriptProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Describes the properties of a gallery Script Definition.
+        :paramtype properties: ~azure.mgmt.compute.models.GalleryScriptProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class GalleryScriptList(_serialization.Model):
+    """The List Gallery Script operation response.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The GalleryScript items on this page. Required.
+    :vartype value: list[~azure.mgmt.compute.models.GalleryScript]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[GalleryScript]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: list["_models.GalleryScript"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The GalleryScript items on this page. Required.
+        :paramtype value: list[~azure.mgmt.compute.models.GalleryScript]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class GenericGalleryParameter(_serialization.Model):
+    """The definition of a generic gallery parameter.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the parameter. Required.
+    :vartype name: str
+    :ivar required: Indicates whether this parameter must be passed.
+    :vartype required: bool
+    :ivar default_value: The default value of the parameter, only applies to string types.
+    :vartype default_value: str
+    :ivar description: A description to help users understand what this parameter means.
+    :vartype description: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "required": {"key": "required", "type": "bool"},
+        "default_value": {"key": "defaultValue", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        required: Optional[bool] = None,
+        default_value: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the parameter. Required.
+        :paramtype name: str
+        :keyword required: Indicates whether this parameter must be passed.
+        :paramtype required: bool
+        :keyword default_value: The default value of the parameter, only applies to string types.
+        :paramtype default_value: str
+        :keyword description: A description to help users understand what this parameter means.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.required = required
+        self.default_value = default_value
+        self.description = description
+
+
+class GalleryScriptParameter(GenericGalleryParameter):
+    """The definition of a parameter that can be passed to a script of a Gallery Script Version.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the parameter. Required.
+    :vartype name: str
+    :ivar required: Indicates whether this parameter must be passed.
+    :vartype required: bool
+    :ivar default_value: The default value of the parameter, only applies to string types.
+    :vartype default_value: str
+    :ivar description: A description to help users understand what this parameter means.
+    :vartype description: str
+    :ivar type: Specifies the type of the Gallery Script parameter. Possible values are: String,
+     Int, Double, Boolean, Enum. Known values are: "String", "Int", "Double", "Boolean", "Enum", and
+     "Int".
+    :vartype type: str or ~azure.mgmt.compute.models.GalleryScriptParameterType
+    :ivar min_value: The minimum value of parameter.
+    :vartype min_value: str
+    :ivar max_value: The minimum value of parameter.
+    :vartype max_value: str
+    :ivar enum_values: A list of permissible values. Only applicable values are from 'enum' values
+     defined in 'GalleryScriptParameter'.
+    :vartype enum_values: list[str]
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "required": {"key": "required", "type": "bool"},
+        "default_value": {"key": "defaultValue", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "min_value": {"key": "minValue", "type": "str"},
+        "max_value": {"key": "maxValue", "type": "str"},
+        "enum_values": {"key": "enumValues", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        required: Optional[bool] = None,
+        default_value: Optional[str] = None,
+        description: Optional[str] = None,
+        type: Optional[Union[str, "_models.GalleryScriptParameterType"]] = None,
+        min_value: Optional[str] = None,
+        max_value: Optional[str] = None,
+        enum_values: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the parameter. Required.
+        :paramtype name: str
+        :keyword required: Indicates whether this parameter must be passed.
+        :paramtype required: bool
+        :keyword default_value: The default value of the parameter, only applies to string types.
+        :paramtype default_value: str
+        :keyword description: A description to help users understand what this parameter means.
+        :paramtype description: str
+        :keyword type: Specifies the type of the Gallery Script parameter. Possible values are: String,
+         Int, Double, Boolean, Enum. Known values are: "String", "Int", "Double", "Boolean", "Enum", and
+         "Int".
+        :paramtype type: str or ~azure.mgmt.compute.models.GalleryScriptParameterType
+        :keyword min_value: The minimum value of parameter.
+        :paramtype min_value: str
+        :keyword max_value: The minimum value of parameter.
+        :paramtype max_value: str
+        :keyword enum_values: A list of permissible values. Only applicable values are from 'enum'
+         values defined in 'GalleryScriptParameter'.
+        :paramtype enum_values: list[str]
+        """
+        super().__init__(name=name, required=required, default_value=default_value, description=description, **kwargs)
+        self.type = type
+        self.min_value = min_value
+        self.max_value = max_value
+        self.enum_values = enum_values
+
+
+class GalleryScriptProperties(_serialization.Model):
+    """Describes the properties of a gallery script definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar description: The description of this gallery script definition resource. This property is
+     updatable.
+    :vartype description: str
+    :ivar eula: The Eula agreement (End User License Agreement) for the gallery Script Definition.
+    :vartype eula: str
+    :ivar privacy_statement_uri: The privacy statement uri.
+    :vartype privacy_statement_uri: str
+    :ivar release_note_uri: The release note uri.
+    :vartype release_note_uri: str
+    :ivar end_of_life_date: The end of life date of the gallery Script Definition. This property
+     can be used for decommissioning purposes. This property is updatable.
+    :vartype end_of_life_date: ~datetime.datetime
+    :ivar supported_os_type: This property allows you to specify the supported type of the OS that
+     application is built for. Possible values are: **Windows,** **Linux.**. Required. Known values
+     are: "Windows" and "Linux".
+    :vartype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    """
+
+    _validation = {
+        "supported_os_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "eula": {"key": "eula", "type": "str"},
+        "privacy_statement_uri": {"key": "privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "supportedOSType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        supported_os_type: Union[str, "_models.OperatingSystemTypes"],
+        description: Optional[str] = None,
+        eula: Optional[str] = None,
+        privacy_statement_uri: Optional[str] = None,
+        release_note_uri: Optional[str] = None,
+        end_of_life_date: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: The description of this gallery script definition resource. This property
+         is updatable.
+        :paramtype description: str
+        :keyword eula: The Eula agreement (End User License Agreement) for the gallery Script
+         Definition.
+        :paramtype eula: str
+        :keyword privacy_statement_uri: The privacy statement uri.
+        :paramtype privacy_statement_uri: str
+        :keyword release_note_uri: The release note uri.
+        :paramtype release_note_uri: str
+        :keyword end_of_life_date: The end of life date of the gallery Script Definition. This property
+         can be used for decommissioning purposes. This property is updatable.
+        :paramtype end_of_life_date: ~datetime.datetime
+        :keyword supported_os_type: This property allows you to specify the supported type of the OS
+         that application is built for. Possible values are: **Windows,** **Linux.**. Required. Known
+         values are: "Windows" and "Linux".
+        :paramtype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.end_of_life_date = end_of_life_date
+        self.supported_os_type = supported_os_type
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+
+
+class GalleryScriptUpdate(UpdateResourceDefinition):
+    """Specifies information about the gallery Script Definition that you want to update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar description: The description of this gallery script definition resource. This property is
+     updatable.
+    :vartype description: str
+    :ivar eula: The Eula agreement (End User License Agreement) for the gallery Script Definition.
+    :vartype eula: str
+    :ivar privacy_statement_uri: The privacy statement uri.
+    :vartype privacy_statement_uri: str
+    :ivar release_note_uri: The release note uri.
+    :vartype release_note_uri: str
+    :ivar end_of_life_date: The end of life date of the gallery Script Definition. This property
+     can be used for decommissioning purposes. This property is updatable.
+    :vartype end_of_life_date: ~datetime.datetime
+    :ivar supported_os_type: This property allows you to specify the supported type of the OS that
+     application is built for. Possible values are: **Windows,** **Linux.**. Known values are:
+     "Windows" and "Linux".
+    :vartype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "properties.supportedOSType", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        description: Optional[str] = None,
+        eula: Optional[str] = None,
+        privacy_statement_uri: Optional[str] = None,
+        release_note_uri: Optional[str] = None,
+        end_of_life_date: Optional[datetime.datetime] = None,
+        supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword description: The description of this gallery script definition resource. This property
+         is updatable.
+        :paramtype description: str
+        :keyword eula: The Eula agreement (End User License Agreement) for the gallery Script
+         Definition.
+        :paramtype eula: str
+        :keyword privacy_statement_uri: The privacy statement uri.
+        :paramtype privacy_statement_uri: str
+        :keyword release_note_uri: The release note uri.
+        :paramtype release_note_uri: str
+        :keyword end_of_life_date: The end of life date of the gallery Script Definition. This property
+         can be used for decommissioning purposes. This property is updatable.
+        :paramtype end_of_life_date: ~datetime.datetime
+        :keyword supported_os_type: This property allows you to specify the supported type of the OS
+         that application is built for. Possible values are: **Windows,** **Linux.**. Known values are:
+         "Windows" and "Linux".
+        :paramtype supported_os_type: str or ~azure.mgmt.compute.models.OperatingSystemTypes
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.end_of_life_date = end_of_life_date
+        self.supported_os_type = supported_os_type
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+
+
+class GalleryScriptVersion(TrackedResource):
+    """Concrete tracked resource types can be created by aliasing this type using a specific property
+    type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Describes the properties of a gallery Script Version.
+    :vartype properties: ~azure.mgmt.compute.models.GalleryScriptVersionProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "GalleryScriptVersionProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.GalleryScriptVersionProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Describes the properties of a gallery Script Version.
+        :paramtype properties: ~azure.mgmt.compute.models.GalleryScriptVersionProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class GalleryScriptVersionList(_serialization.Model):
+    """Paged collection of GalleryScriptVersion items.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The GalleryScriptVersion items on this page. Required.
+    :vartype value: list[~azure.mgmt.compute.models.GalleryScriptVersion]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[GalleryScriptVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: list["_models.GalleryScriptVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The GalleryScriptVersion items on this page. Required.
+        :paramtype value: list[~azure.mgmt.compute.models.GalleryScriptVersion]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class GalleryScriptVersionProperties(_serialization.Model):
+    """Describes the properties of a gallery script version.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar publishing_profile: The publishing profile of a gallery image version. Required.
+    :vartype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+    :ivar safety_profile: The safety profile of the Gallery Script Version.
+    :vartype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    :ivar replication_status: This is the replication status of the gallery image version.
+    :vartype replication_status: ~azure.mgmt.compute.models.ReplicationStatus
+    """
+
+    _validation = {
+        "publishing_profile": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "publishing_profile": {"key": "publishingProfile", "type": "GalleryScriptVersionPublishingProfile"},
+        "safety_profile": {"key": "safetyProfile", "type": "GalleryScriptVersionSafetyProfile"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "replication_status": {"key": "replicationStatus", "type": "ReplicationStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        publishing_profile: "_models.GalleryScriptVersionPublishingProfile",
+        safety_profile: Optional["_models.GalleryScriptVersionSafetyProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword publishing_profile: The publishing profile of a gallery image version. Required.
+        :paramtype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+        :keyword safety_profile: The safety profile of the Gallery Script Version.
+        :paramtype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+        """
+        super().__init__(**kwargs)
+        self.publishing_profile = publishing_profile
+        self.safety_profile = safety_profile
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
+
+
+class GalleryScriptVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+    """The publishing profile of a gallery image version.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_regions: The target regions where the Image Version is going to be replicated to.
+     This property is updatable.
+    :vartype target_regions: list[~azure.mgmt.compute.models.TargetRegion]
+    :ivar replica_count: The number of replicas of the Image Version to be created per region. This
+     property would take effect for a region when regionalReplicaCount is not specified. This
+     property is updatable.
+    :vartype replica_count: int
+    :ivar exclude_from_latest: If set to true, Virtual Machines deployed from the latest version of
+     the Image Definition won't use this Image Version.
+    :vartype exclude_from_latest: bool
+    :ivar published_date: The timestamp for when the gallery image version is published.
+    :vartype published_date: ~datetime.datetime
+    :ivar end_of_life_date: The end of life date of the gallery image version. This property can be
+     used for decommissioning purposes. This property is updatable.
+    :vartype end_of_life_date: ~datetime.datetime
+    :ivar storage_account_type: Specifies the storage account type to be used to store the image.
+     Cannot be specified along with storageAccountStrategy. This property is not updatable. Known
+     values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
+    :vartype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
+    :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
+     This property is not updatable. Known values are: "Full" and "Shallow".
+    :vartype replication_mode: str or ~azure.mgmt.compute.models.ReplicationMode
+    :ivar target_extended_locations: The target extended locations where the Image Version is going
+     to be replicated to. This property is updatable.
+    :vartype target_extended_locations:
+     list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+    :ivar storage_account_strategy: Specifies the strategy to be used when selecting the storage
+     account type. Cannot be specified along with storageAccountType, but can be overridden per
+     region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+     values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+    :vartype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
+    :ivar source: The source script from which the Script Version is going to be created. Required.
+    :vartype source: ~azure.mgmt.compute.models.ScriptSource
+    """
+
+    _validation = {
+        "published_date": {"readonly": True},
+        "source": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "replication_mode": {"key": "replicationMode", "type": "str"},
+        "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
+        "storage_account_strategy": {"key": "storageAccountStrategy", "type": "str"},
+        "source": {"key": "source", "type": "ScriptSource"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source: "_models.ScriptSource",
+        target_regions: Optional[list["_models.TargetRegion"]] = None,
+        replica_count: Optional[int] = None,
+        exclude_from_latest: Optional[bool] = None,
+        end_of_life_date: Optional[datetime.datetime] = None,
+        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        target_extended_locations: Optional[list["_models.GalleryTargetExtendedLocation"]] = None,
+        storage_account_strategy: Optional[Union[str, "_models.StorageAccountStrategy"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_regions: The target regions where the Image Version is going to be replicated
+         to. This property is updatable.
+        :paramtype target_regions: list[~azure.mgmt.compute.models.TargetRegion]
+        :keyword replica_count: The number of replicas of the Image Version to be created per region.
+         This property would take effect for a region when regionalReplicaCount is not specified. This
+         property is updatable.
+        :paramtype replica_count: int
+        :keyword exclude_from_latest: If set to true, Virtual Machines deployed from the latest version
+         of the Image Definition won't use this Image Version.
+        :paramtype exclude_from_latest: bool
+        :keyword end_of_life_date: The end of life date of the gallery image version. This property can
+         be used for decommissioning purposes. This property is updatable.
+        :paramtype end_of_life_date: ~datetime.datetime
+        :keyword storage_account_type: Specifies the storage account type to be used to store the
+         image. Cannot be specified along with storageAccountStrategy. This property is not updatable.
+         Known values are: "Standard_LRS", "Standard_ZRS", "Premium_LRS", and "PremiumV2_LRS".
+        :paramtype storage_account_type: str or ~azure.mgmt.compute.models.StorageAccountType
+        :keyword replication_mode: Optional parameter which specifies the mode to be used for
+         replication. This property is not updatable. Known values are: "Full" and "Shallow".
+        :paramtype replication_mode: str or ~azure.mgmt.compute.models.ReplicationMode
+        :keyword target_extended_locations: The target extended locations where the Image Version is
+         going to be replicated to. This property is updatable.
+        :paramtype target_extended_locations:
+         list[~azure.mgmt.compute.models.GalleryTargetExtendedLocation]
+        :keyword storage_account_strategy: Specifies the strategy to be used when selecting the storage
+         account type. Cannot be specified along with storageAccountType, but can be overridden per
+         region by specifying targetRegions[].storageAccountType. This property is not updatable. Known
+         values are: "PreferStandard_ZRS" and "DefaultStandard_LRS".
+        :paramtype storage_account_strategy: str or ~azure.mgmt.compute.models.StorageAccountStrategy
+        :keyword source: The source script from which the Script Version is going to be created.
+         Required.
+        :paramtype source: ~azure.mgmt.compute.models.ScriptSource
+        """
+        super().__init__(
+            target_regions=target_regions,
+            replica_count=replica_count,
+            exclude_from_latest=exclude_from_latest,
+            end_of_life_date=end_of_life_date,
+            storage_account_type=storage_account_type,
+            replication_mode=replication_mode,
+            target_extended_locations=target_extended_locations,
+            storage_account_strategy=storage_account_strategy,
+            **kwargs
+        )
+        self.source = source
+
+
+class GalleryScriptVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+    """The safety profile of the Gallery Script Version.
+
+    :ivar allow_deletion_of_replicated_locations: Indicates whether or not removing this Gallery
+     Image Version from replicated regions is allowed.
+    :vartype allow_deletion_of_replicated_locations: bool
+    """
+
+
+class GalleryScriptVersionUpdate(UpdateResourceDefinition):
+    """Specifies information about the gallery Script Version that you want to update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar publishing_profile: The publishing profile of a gallery image version.
+    :vartype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+    :ivar safety_profile: The safety profile of the Gallery Script Version.
+    :vartype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
+    :vartype provisioning_state: str or ~azure.mgmt.compute.models.GalleryProvisioningState
+    :ivar replication_status: This is the replication status of the gallery image version.
+    :vartype replication_status: ~azure.mgmt.compute.models.ReplicationStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {"key": "properties.publishingProfile", "type": "GalleryScriptVersionPublishingProfile"},
+        "safety_profile": {"key": "properties.safetyProfile", "type": "GalleryScriptVersionSafetyProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        publishing_profile: Optional["_models.GalleryScriptVersionPublishingProfile"] = None,
+        safety_profile: Optional["_models.GalleryScriptVersionSafetyProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword publishing_profile: The publishing profile of a gallery image version.
+        :paramtype publishing_profile: ~azure.mgmt.compute.models.GalleryScriptVersionPublishingProfile
+        :keyword safety_profile: The safety profile of the Gallery Script Version.
+        :paramtype safety_profile: ~azure.mgmt.compute.models.GalleryScriptVersionSafetyProfile
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.publishing_profile = publishing_profile
+        self.safety_profile = safety_profile
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
 
 
 class GallerySoftDeletedResource(TrackedResource):
@@ -17363,6 +18154,44 @@ class ScheduleProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.start = start
         self.end = end
+
+
+class ScriptSource(_serialization.Model):
+    """The source script from which the Script Version is going to be created.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar script_link: Required. The link of the source script, it must be a readable storage blob
+     with SAS URI or publicly accessible URI or managed identity enabled. Required.
+    :vartype script_link: str
+    :ivar parameters: Optional. Any input parameters that needs to passed to the script and are
+     accessed within the script for its execution.
+    :vartype parameters: list[~azure.mgmt.compute.models.GalleryScriptParameter]
+    """
+
+    _validation = {
+        "script_link": {"required": True},
+    }
+
+    _attribute_map = {
+        "script_link": {"key": "scriptLink", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[GalleryScriptParameter]"},
+    }
+
+    def __init__(
+        self, *, script_link: str, parameters: Optional[list["_models.GalleryScriptParameter"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword script_link: Required. The link of the source script, it must be a readable storage
+         blob with SAS URI or publicly accessible URI or managed identity enabled. Required.
+        :paramtype script_link: str
+        :keyword parameters: Optional. Any input parameters that needs to passed to the script and are
+         accessed within the script for its execution.
+        :paramtype parameters: list[~azure.mgmt.compute.models.GalleryScriptParameter]
+        """
+        super().__init__(**kwargs)
+        self.script_link = script_link
+        self.parameters = parameters
 
 
 class SecurityPostureReference(_serialization.Model):
