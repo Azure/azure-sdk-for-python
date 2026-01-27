@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with OpenAPI tool capabilities
-    using the OpenApiAgentTool with project connection authentication. The agent can
+    using the OpenApiTool with project connection authentication. The agent can
     call external APIs defined by OpenAPI specifications, using credentials stored in
     an Azure AI Project connection.
 
@@ -34,7 +34,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    OpenApiAgentTool,
+    OpenApiTool,
     OpenApiFunctionDefinition,
     OpenApiProjectConnectionAuthDetails,
     OpenApiProjectConnectionSecurityScheme,
@@ -58,7 +58,7 @@ with (
     with open(tripadvisor_asset_file_path, "r") as f:
         openapi_tripadvisor = jsonref.loads(f.read())
 
-    tool = OpenApiAgentTool(
+    tool = OpenApiTool(
         openapi=OpenApiFunctionDefinition(
             name="tripadvisor",
             spec=openapi_tripadvisor,

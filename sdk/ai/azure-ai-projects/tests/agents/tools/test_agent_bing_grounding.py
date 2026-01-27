@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingGroundingAgentTool,
+    BingGroundingTool,
     BingGroundingSearchToolParameters,
     BingGroundingSearchConfiguration,
 )
@@ -27,7 +27,7 @@ class TestAgentBingGrounding(TestBase):
         """
         Test agent with Bing grounding capabilities.
 
-        This test verifies that an agent can be created with BingGroundingAgentTool,
+        This test verifies that an agent can be created with BingGroundingTool,
         use it to search the web for current information, and provide responses with
         URL citations.
 
@@ -69,7 +69,7 @@ class TestAgentBingGrounding(TestBase):
                     model=model,
                     instructions="You are a helpful assistant.",
                     tools=[
-                        BingGroundingAgentTool(
+                        BingGroundingTool(
                             bing_grounding=BingGroundingSearchToolParameters(
                                 search_configurations=[
                                     BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
@@ -165,7 +165,7 @@ class TestAgentBingGrounding(TestBase):
                     model=model,
                     instructions="You are a helpful assistant that provides current information.",
                     tools=[
-                        BingGroundingAgentTool(
+                        BingGroundingTool(
                             bing_grounding=BingGroundingSearchToolParameters(
                                 search_configurations=[
                                     BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)

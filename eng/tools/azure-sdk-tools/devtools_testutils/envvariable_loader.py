@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 import os
+from typing import Optional
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -16,7 +17,41 @@ from .sanitizers import add_general_string_sanitizer
 _logger = logging.getLogger(__name__)
 
 
+class EnvironmentVariableOptions:
+    """
+    Options for the EnvironmentVariableLoader.
+
+    :param hide_secrets: Case insensitive list of environment variable names whose values should be hidden. Instead of
+        being passed to tests as plain strings, these values will be wrapped in an EnvironmentVariable object that hides
+        the value when printed. Use `.secret` to get the actual value (and don't store the value in a local variable).
+    """
+
+    def __init__(self, *, hide_secrets: Optional[list[str]] = None) -> None:
+        # Store all names as lowercase for easier case insensitive comparison in EnvironmentVariableLoader
+        self.hide_secrets: list[str] = [name.lower() for name in hide_secrets] if hide_secrets else []
+
+
 class EnvironmentVariableLoader(AzureMgmtPreparer):
+    """
+    Preparer to load environment variables during test setup.
+
+    Refer to
+    https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
+    for usage information.
+
+    :param str directory: The service directory prefix for the environment variables; e.g. "keyvault".
+    :param str name_prefix: Not used; present for compatibility with other preparers.
+    :param bool disable_recording: Not used; present for compatibility with other preparers.
+    :param dict client_kwargs: Not used; present for compatibility with other preparers.
+    :param bool random_name_enabled: Not used; present for compatibility with other preparers.
+    :param bool use_cache: Not used; present for compatibility with other preparers.
+    :param list preparers: Not used; present for compatibility with other preparers.
+
+    :param options: An EnvironementVariableOptions object containing additional options for the preparer.
+    :param kwargs: Keyword arguments representing environment variable names and their fake values for use in
+        recordings. For example, `client_id="fake_client_id"`.
+    """
+
     def __init__(
         self,
         directory,
@@ -26,6 +61,8 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         random_name_enabled=False,
         use_cache=True,
         preparers=None,
+        *,
+        options: Optional[EnvironmentVariableOptions] = None,
         **kwargs,
     ):
         super(EnvironmentVariableLoader, self).__init__(
@@ -37,18 +74,30 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         )
 
         self.directory = directory
+        self.hide_secrets = options.hide_secrets if options else []
         self.fake_values = {}
         self.real_values = {}
         self._set_secrets(**kwargs)
         self._backup_preparers = preparers
 
     def _set_secrets(self, **kwargs):
-        keys = kwargs.keys()
+        keys = {key.lower() for key in kwargs.keys()}
+        if self.hide_secrets and not all(name in keys for name in self.hide_secrets):
+            missing = [name for name in self.hide_secrets if name not in keys]
+            raise AzureTestError(
+                f"The following environment variables were specified to be hidden, but no fake values were "
+                f"provided for them: {', '.join(missing)}. Please provide fake values for these variables."
+            )
+
         needed_keys = []
         for key in keys:
             if self.directory in key:
                 needed_keys.append(key)
-                self.fake_values[key] = kwargs[key]
+                # Store the fake value, wrapping in EnvironmentVariable if it should be hidden
+                # Even fake values can cause security alerts if they're formatted like real secrets
+                self.fake_values[key] = (
+                    EnvironmentVariable(key.upper(), kwargs[key]) if key in self.hide_secrets else kwargs[key]
+                )
         for key in self.fake_values:
             kwargs.pop(key)
 
@@ -96,6 +145,12 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                 os.environ.pop("AZURE_CLIENT_SECRET", None)
 
     def create_resource(self, name, **kwargs):
+        """
+        Fetches required environment variables if running live; otherwise returns fake values.
+
+        "create_resource" name is misleading, but is left over from when preparers were mostly used to create test
+        resources at runtime.
+        """
         load_dotenv(find_dotenv())
 
         if self.is_live:
@@ -105,26 +160,23 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
                     scrubbed_value = self.fake_values[key]
                     if scrubbed_value:
-                        self.real_values[key.lower()] = os.environ[key.upper()]
+                        # Store the real value, wrapping in EnvironmentVariable if it should be hidden
+                        self.real_values[key.lower()] = (
+                            EnvironmentVariable(key.upper(), os.environ[key.upper()])
+                            if key in self.hide_secrets
+                            else os.environ[key.upper()]
+                        )
 
-                        # vcrpy-based tests have a scrubber to register fake values
-                        if hasattr(self.test_class_instance, "scrubber"):
-                            self.test_class_instance.scrubber.register_name_pair(
-                                self.real_values[key.lower()], scrubbed_value
+                        try:
+                            add_general_string_sanitizer(
+                                value=scrubbed_value,
+                                target=self.real_values[key],
                             )
-                        # test proxy tests have no scrubber, and instead register sanitizers using fake values
-                        else:
-                            try:
-                                add_general_string_sanitizer(
-                                    value=scrubbed_value,
-                                    target=self.real_values[key.lower()],
-                                )
-                            except:
-                                _logger.info(
-                                    "This test class instance has no scrubber and a sanitizer could not be registered "
-                                    "with the test proxy, so the EnvironmentVariableLoader will not scrub the value of "
-                                    f"{key} in recordings."
-                                )
+                        except:
+                            _logger.info(
+                                "A sanitizer could not be registered with the test proxy, so the "
+                                f"EnvironmentVariableLoader will not scrub the value of {key} in recordings."
+                            )
                     else:
                         raise AzureTestError(
                             "To pass a live ID you must provide the scrubbed value for recordings to prevent secrets "
@@ -152,3 +204,12 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         pass
+
+
+class EnvironmentVariable:
+    def __init__(self, name: str, secret: str) -> None:
+        self.name = name
+        self.secret = secret
+
+    def __str__(self):
+        return f"Environment variable {self.name}'s value hidden for security."

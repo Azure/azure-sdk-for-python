@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, TYPE_CHECKING
+from collections.abc import MutableMapping
+from typing import Any, Optional, TYPE_CHECKING
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class Operation(_serialization.Model):
@@ -104,7 +106,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of Microsoft.Resources operations.
@@ -245,7 +247,7 @@ class ResourceLinkResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ResourceLink"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ResourceLink"], **kwargs: Any) -> None:
         """
         :keyword value: An array of resource links. Required.
         :paramtype value: list[~azure.mgmt.resource.links.models.ResourceLink]

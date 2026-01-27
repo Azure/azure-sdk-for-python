@@ -158,7 +158,7 @@ _UNKNOWN = "UNKNOWN"
 
 # Customer Facing SDKStats
 
-_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
+_APPLICATIONINSIGHTS_SDKSTATS_DISABLED = "APPLICATIONINSIGHTS_SDKSTATS_DISABLED"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
 
@@ -183,10 +183,24 @@ class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 RetryCodeType = Union[RetryCode, int]
 
 
+# Customer SDK Stats metric names: (lowercase_otel_name, pascal_case_display_name)
+_ITEM_SUCCESS_COUNT_NAME = ("item_success_count", "Item_Success_Count")
+_ITEM_DROP_COUNT_NAME = ("item_dropped_count", "Item_Dropped_Count")
+_ITEM_RETRY_COUNT_NAME = ("item_retry_count", "Item_Retry_Count")
+
+_CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS = dict(
+    [
+        _ITEM_SUCCESS_COUNT_NAME,
+        _ITEM_DROP_COUNT_NAME,
+        _ITEM_RETRY_COUNT_NAME,
+    ]
+)
+
+
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ITEM_SUCCESS_COUNT = "preview.item.success.count"
-    ITEM_DROP_COUNT = "preview.item.dropped.count"
-    ITEM_RETRY_COUNT = "preview.item.retry.count"
+    ITEM_SUCCESS_COUNT = _ITEM_SUCCESS_COUNT_NAME[0]
+    ITEM_DROP_COUNT = _ITEM_DROP_COUNT_NAME[0]
+    ITEM_RETRY_COUNT = _ITEM_RETRY_COUNT_NAME[0]
 
 
 ## Map from Azure Monitor envelope base_types to TelemetryType
@@ -335,5 +349,8 @@ _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
 
 # Default message for messages(MessageData) with empty body
 _DEFAULT_LOG_MESSAGE = "n/a"
+
+# Resource attribute applicationId
+_APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
 
 # cSpell:disable
