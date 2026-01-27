@@ -12,6 +12,9 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
@@ -23,21 +26,12 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp
 
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
-
 from ._context import AgentServerContext
-from ..models import projects as project_models
+from .common.agent_run_context import AgentRunContext
 from ..constants import Constants
 from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
-from ..models import (
-    Response as OpenAIResponse,
-    ResponseStreamEvent,
-)
-from .common.agent_run_context import AgentRunContext
-
-from ..tools import DefaultFoundryToolRuntime, UserInfoContextMiddleware
+from ..models import Response as OpenAIResponse, ResponseStreamEvent, projects as project_models
+from ..tools import UserInfoContextMiddleware, create_tool_runtime
 from ..utils._credential import AsyncTokenCredentialAdapter
 
 logger = get_logger()
@@ -100,9 +94,7 @@ class FoundryCBAgent:
                  project_endpoint: Optional[str] = None) -> None:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
         project_endpoint = get_project_endpoint() or project_endpoint
-        if not project_endpoint:
-            raise ValueError("Project endpoint is required.")
-        AgentServerContext(DefaultFoundryToolRuntime(project_endpoint, self.credentials))
+        AgentServerContext(create_tool_runtime(project_endpoint, self.credentials))
 
         async def runs_endpoint(request):
             # Set up tracing context and span

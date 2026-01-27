@@ -82,9 +82,9 @@ class AgentFrameworkInputConverter:
                             if text_parts:
                                 messages.append(" ".join(text_parts))
 
-                    # Case 2: Explicit message params (user/assistant/system)
+                    # Case 2: message params (user/assistant/system)
                     elif (
-                        item.get("type") == "message"
+                        item.get("type") in ("", None, "message")
                         and item.get("role") is not None
                         and item.get("content") is not None
                     ):
