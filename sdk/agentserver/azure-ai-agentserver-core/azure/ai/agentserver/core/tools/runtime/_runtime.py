@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from __future__ import annotations
+
 import os
 from abc import ABC, abstractmethod
 from typing import Any, AsyncContextManager, ClassVar, Dict, Optional, Union
@@ -31,8 +33,7 @@ def create_tool_runtime(project_endpoint: str | None,
     """
     if project_endpoint and credential:
         return DefaultFoundryToolRuntime(project_endpoint=project_endpoint, credential=credential)
-    else:
-        return ThrowingFoundryToolRuntime()
+    return ThrowingFoundryToolRuntime()
 
 class FoundryToolRuntime(AsyncContextManager["FoundryToolRuntime"], ABC):
     """Base class for Foundry tool runtimes."""
@@ -123,6 +124,8 @@ class ThrowingFoundryToolRuntime(FoundryToolRuntime):
     def catalog(self) -> FoundryToolCatalog:
         """The tool catalog.
 
+        :returns: The tool catalog.
+        :rtype: FoundryToolCatalog
         :raises RuntimeError: Always raised to indicate the runtime is not configured.
         """
         raise RuntimeError(self._ERROR_MESSAGE)
@@ -131,6 +134,8 @@ class ThrowingFoundryToolRuntime(FoundryToolRuntime):
     def invocation(self) -> FoundryToolInvocationResolver:
         """The tool invocation resolver.
 
+        :returns: The tool invocation resolver.
+        :rtype: FoundryToolInvocationResolver
         :raises RuntimeError: Always raised to indicate the runtime is not configured.
         """
         raise RuntimeError(self._ERROR_MESSAGE)

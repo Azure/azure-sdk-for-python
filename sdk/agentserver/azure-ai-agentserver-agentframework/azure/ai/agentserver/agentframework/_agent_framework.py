@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation,no-name-in-module,no-member,do-not-import-asyncio
+from __future__ import annotations
 
 import os
 from typing import Any, AsyncGenerator, Optional, TYPE_CHECKING, Union, Callable
