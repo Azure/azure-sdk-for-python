@@ -4,16 +4,15 @@
 # Runtime tests: text records querying (authoring removed)
 # -------------------------------------------------------------------------
 import pytest
+from testcase import QuestionAnsweringTestCase
 
 from azure.ai.language.questionanswering import QuestionAnsweringClient
 from azure.ai.language.questionanswering.models import AnswersFromTextOptions, TextDocument
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import QuestionAnsweringTestCase
-
 
 class TestQueryText(QuestionAnsweringTestCase):
-    def test_query_text_basic(self, recorded_test, qna_creds):
+    def test_query_text_basic(self, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersFromTextOptions(
             question="What is the meaning of life?",
@@ -33,7 +32,7 @@ class TestQueryText(QuestionAnsweringTestCase):
             if answer.short_answer:
                 assert answer.short_answer.text
 
-    def test_query_text_with_str_records(self, recorded_test, qna_creds):
+    def test_query_text_with_str_records(self, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = {
             "question": "How long it takes to charge surface?",
@@ -57,7 +56,7 @@ class TestQueryText(QuestionAnsweringTestCase):
     def test_query_text_overload_errors(self):  # negative client-side parameter validation
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):
-                client.get_answers_from_text("positional_one", "positional_two")  # type: ignore[arg-type]
+                client.get_answers_from_text("positional_one", "positional_two")  # type: ignore[arg-type] #pylint: disable=too-many-function-args
             with pytest.raises(TypeError):
                 client.get_answers_from_text("positional_options_bag", options="options bag by name")  # type: ignore[arg-type]
             params = AnswersFromTextOptions(
@@ -65,13 +64,13 @@ class TestQueryText(QuestionAnsweringTestCase):
                 text_documents=[TextDocument(text="foo", id="doc1"), TextDocument(text="bar", id="doc2")],
             )
             with pytest.raises(TypeError):
-                client.get_answers_from_text(options=params)  # type: ignore[arg-type]
+                client.get_answers_from_text(options=params)  # type: ignore[arg-type] #pylint: disable=no-value-for-parameter
             with pytest.raises(TypeError):
-                client.get_answers_from_text(question="why?", text_documents=["foo", "bar"], options=params)  # type: ignore[arg-type]
+                client.get_answers_from_text(question="why?", text_documents=["foo", "bar"], options=params)  # type: ignore[arg-type] #pylint: disable=no-value-for-parameter
             with pytest.raises(TypeError):
                 client.get_answers_from_text(params, question="Why?")  # type: ignore[arg-type]
 
-    def test_query_text_default_lang_override(self, recorded_test, qna_creds):
+    def test_query_text_default_lang_override(self, qna_creds):
         client = QuestionAnsweringClient(
             qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), default_language="es"
         )

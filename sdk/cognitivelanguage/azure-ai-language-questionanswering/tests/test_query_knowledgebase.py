@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import pytest
 
+from testcase import QuestionAnsweringTestCase
 from azure.ai.language.questionanswering import QuestionAnsweringClient
 from azure.ai.language.questionanswering.models import (
     AnswersOptions,
@@ -16,11 +17,9 @@ from azure.ai.language.questionanswering.models import (
 )
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import QuestionAnsweringTestCase
-
 
 class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
-    def test_query_knowledgebase(self, recorded_test, qna_creds):  # standard model usage
+    def test_query_knowledgebase(self, qna_creds):  # standard model usage
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         query_params = AnswersOptions(
             question="Ports and connectors",
@@ -36,7 +35,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             assert answer.qna_id is not None
             assert answer.source
 
-    def test_query_knowledgebase_with_answerspan(self, recorded_test, qna_creds):
+    def test_query_knowledgebase_with_answerspan(self, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         query_params = AnswersOptions(
             question="Ports and connectors",
@@ -53,7 +52,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
                 assert answer.short_answer.text
                 assert answer.short_answer.confidence is not None
 
-    def test_query_knowledgebase_filter(self, recorded_test, qna_creds):
+    def test_query_knowledgebase_filter(self, qna_creds):
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
@@ -76,7 +75,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             )
             assert response.answers
 
-    def test_query_knowledgebase_only_id(self, recorded_test, qna_creds):
+    def test_query_knowledgebase_only_id(self, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         with client:
             query_params = AnswersOptions(qna_id=19)
@@ -88,11 +87,11 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             # These calls intentionally violate the method signature to ensure TypeError is raised.
             with pytest.raises(TypeError):
-                client.get_answers("positional_one", "positional_two")  # type: ignore
+                client.get_answers("positional_one", "positional_two")  # type: ignore # pylint: disable=too-many-function-args, missing-kwoa
             with pytest.raises(TypeError):
-                client.get_answers("positional_options_bag", options="options bag by name")  # type: ignore
+                client.get_answers("positional_options_bag", options="options bag by name")  # type: ignore # pylint: disable=missing-kwoa
             with pytest.raises(TypeError):
-                client.get_answers(options={"qnaId": 15}, project_name="hello", deployment_name="test")  # type: ignore
+                client.get_answers(options={"qnaId": 15}, project_name="hello", deployment_name="test")  # type: ignore # pylint: disable=no-value-for-parameter
             with pytest.raises(TypeError):
                 client.get_answers({"qnaId": 15}, question="Why?", project_name="hello", deployment_name="test")  # type: ignore
 
@@ -102,4 +101,4 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             with pytest.raises(TypeError):
                 client.get_answers(options, project_name="hello", deployment_name="test")
             with pytest.raises(TypeError):
-                client.get_answers(project_name="hello", deployment_name="test")
+                client.get_answers(project_name="hello", deployment_name="test") # pylint: disable=no-value-for-parameter
