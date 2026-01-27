@@ -5,7 +5,6 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import DeploymentState
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,

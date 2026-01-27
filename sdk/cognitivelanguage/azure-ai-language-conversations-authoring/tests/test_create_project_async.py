@@ -2,14 +2,14 @@
 import functools
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     CreateProjectOptions,
     ProjectDetails,
     ProjectKind,
 )
-from devtools_testutils.aio import recorded_by_proxy_async
 
 
 from azure.core.credentials import AzureKeyCredential
