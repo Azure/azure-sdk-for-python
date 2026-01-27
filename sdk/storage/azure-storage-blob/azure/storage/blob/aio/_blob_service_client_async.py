@@ -25,7 +25,7 @@ from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 from .._blob_service_client_helpers import _parse_url
 from .._deserialize import service_properties_deserialize, service_stats_deserialize
 from .._encryption import StorageEncryptionMixin
-from .._generated.azure.storage.blobs.aio import BlobClient as AzureBlobStorage
+from .._generated.azure.storage.blobs.aio import CombinedBlobClient as AzureBlobStorage
 from .._generated.azure.storage.blobs.models import BlobServiceProperties as StorageServiceProperties, KeyInfo
 from .._models import BlobProperties, ContainerProperties, CorsRule
 from .._serialize import get_api_version
@@ -701,7 +701,7 @@ class BlobServiceClient(  # type: ignore [misc]
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
-            await renamed_container._client.container.rename(name, **kwargs)   # pylint: disable = protected-access
+            await renamed_container._client.container.rename(source_container_name=name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)

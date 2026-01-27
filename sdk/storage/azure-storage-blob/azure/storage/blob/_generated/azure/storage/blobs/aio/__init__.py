@@ -18,6 +18,7 @@ from ._client import BlobClient  # type: ignore
 from ._client import PageBlobClient  # type: ignore
 from ._client import AppendBlobClient  # type: ignore
 from ._client import BlockBlobClient  # type: ignore
+from ._patch import CombinedBlobClient  # type: ignore
 
 try:
     from ._patch import __all__ as _patch_all
@@ -33,6 +34,7 @@ __all__ = [
     "PageBlobClient",
     "AppendBlobClient",
     "BlockBlobClient",
+    "CombinedBlobClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

@@ -61,7 +61,7 @@ from ._upload_helpers import _any_conditions
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
-    from ._generated.azure.storage.blobs import BlobClient as AzureBlobStorage
+    from ._generated.azure.storage.blobs import CombinedBlobClient as AzureBlobStorage
     from ._models import ContentSettings
     from ._shared.models import StorageConfiguration
 

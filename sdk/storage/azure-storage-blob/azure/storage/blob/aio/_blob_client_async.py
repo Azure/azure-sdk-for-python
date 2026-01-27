@@ -69,7 +69,7 @@ from .._deserialize import (
     parse_tags
 )
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from .._generated.azure.storage.blobs.aio import BlobClient as AzureBlobStorage
+from .._generated.azure.storage.blobs.aio import CombinedBlobClient as AzureBlobStorage
 from .._generated.azure.storage.blobs.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
@@ -1303,7 +1303,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return cast(Dict[str, Union[str, datetime]], await self._client.blob.set_metadata(**options))
+            return cast(
+                Dict[str, Union[str, datetime]],
+                await self._client.blob.set_metadata(metadata=metadata, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1337,10 +1339,12 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
-            cls=return_response_headers,version_id=version_id, **kwargs))
+            expiry=immutability_policy.expiry_time,
+            immutability_policy_mode=immutability_policy.policy_mode,
+            version_id=version_id,
+            cls=return_response_headers,
+            **kwargs))
 
     @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1389,7 +1393,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         version_id = get_version_id(self.version_id, kwargs)
         return cast(Dict[str, Union[str, datetime, bool]], await self._client.blob.set_legal_hold(
-            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+            legal_hold=legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
     async def create_page_blob(
@@ -1494,7 +1498,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.create(**options))
+            return cast(Dict[str, Any], await self._client.page_blob.create(size=size, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -2867,7 +2871,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _resize_blob_options(size=size, **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.resize(**options))
+            return cast(Dict[str, Any], await self._client.page_blob.resize(size=size, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 

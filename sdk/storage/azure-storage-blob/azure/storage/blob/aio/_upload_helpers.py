@@ -35,7 +35,11 @@ from .._shared.uploads_async import (
 from .._upload_helpers import _any_conditions, _convert_mod_error
 
 if TYPE_CHECKING:
-    from .._generated.azure.storage.blobs.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
+    from .._generated.azure.storage.blobs.aio.operations import (
+        AppendBlobOperations,
+        BlockBlobOperations,
+        PageBlobOperations,
+    )
     from .._shared.models import StorageConfiguration
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
