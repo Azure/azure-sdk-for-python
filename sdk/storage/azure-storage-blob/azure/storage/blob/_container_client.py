@@ -426,7 +426,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self._client.container.delete(
                 timeout=timeout,
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -632,7 +632,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 metadata=metadata,
                 timeout=timeout,
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -787,7 +787,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout=timeout,
                 access=public_access,
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 **kwargs))
         except HttpResponseError as error:

@@ -21,7 +21,6 @@ from ._generated.azure.storage.blobs.models import (
     CpkScopeInfo,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
-    ModifiedAccessConditions,
     ParquetConfiguration,
     QueryFormat,
     QuerySerialization,

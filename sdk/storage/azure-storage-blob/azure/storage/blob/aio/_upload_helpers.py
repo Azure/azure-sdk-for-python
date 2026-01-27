@@ -22,7 +22,6 @@ from .._encryption import (
 from .._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
     BlockLookupList,
-    ModifiedAccessConditions
 )
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import (
@@ -241,7 +240,7 @@ async def upload_page_blob(
                 kwargs['encryptor'] = encryptor
                 kwargs['padder'] = padder
 
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
+        kwargs['modified_access_conditions'] = {'if_match': response['etag']}
         return cast(Dict[str, Any], await upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,

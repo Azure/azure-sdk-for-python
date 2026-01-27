@@ -23,7 +23,6 @@ from ._generated.azure.storage.blobs.models import (
     BlockLookupList,
     CpkInfo,
     DeleteSnapshotsOptionType,
-    ModifiedAccessConditions,
     QueryRequest,
     SequenceNumberAccessConditions,
     SourceCpkInfo
@@ -875,7 +874,7 @@ def _set_blob_tags_options(
 )-> Dict[str, Any]:
     serialized_tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    mod_conditions = ModifiedAccessConditions(if_tags=kwargs.pop('if_tags_match_condition', None))
+    mod_conditions = {'if_tags': kwargs.pop('if_tags_match_condition', None)}
     blob_mod_conditions = get_blob_modify_conditions(kwargs)
 
     options = {
@@ -891,7 +890,7 @@ def _set_blob_tags_options(
 
 def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    mod_conditions = ModifiedAccessConditions(if_tags=kwargs.pop('if_tags_match_condition', None))
+    mod_conditions = {'if_tags': kwargs.pop('if_tags_match_condition', None)}
     blob_mod_conditions = get_blob_modify_conditions(kwargs)
 
     options = {

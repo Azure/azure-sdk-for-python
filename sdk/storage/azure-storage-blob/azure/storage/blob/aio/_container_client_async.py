@@ -423,7 +423,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             await self._client.container.delete(
                 timeout=timeout,
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -620,7 +620,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 metadata=metadata,
                 timeout=timeout,
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -777,7 +777,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 timeout=timeout,
                 access=public_access,
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 **kwargs))
         except HttpResponseError as error:

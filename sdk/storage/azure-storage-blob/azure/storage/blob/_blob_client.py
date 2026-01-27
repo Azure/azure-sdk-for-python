@@ -1130,7 +1130,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 version_id=version_id,
                 snapshot=self.snapshot,
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs))
@@ -1985,7 +1985,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 tier=standard_blob_tier,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 lease_id=access_conditions,
                 version_id=version_id,
                 **kwargs)
@@ -2179,7 +2179,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2334,7 +2334,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
                 lease_id=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)

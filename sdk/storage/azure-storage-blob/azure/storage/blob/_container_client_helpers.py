@@ -17,7 +17,6 @@ from ._shared.base_client import parse_query
 if TYPE_CHECKING:
     from azure.storage.blob import RehydratePriority
     from urllib.parse import ParseResult
-    from ._generated.azure.storage.blobs.models import ModifiedAccessConditions
     from ._models import PremiumPageBlobTier, StandardBlobTier
 
 
@@ -50,25 +49,13 @@ def _generate_delete_blobs_subrequest_options(
     version_id: Optional[str] = None,
     delete_snapshots: Optional[str] = None,
     lease_id: Optional[str] = None,
-    modified_access_conditions: Optional["ModifiedAccessConditions"] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
+    if_match: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_tags: Optional[str] = None,
     **kwargs
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    if_modified_since = None
-    if modified_access_conditions is not None:
-        if_modified_since = modified_access_conditions.if_modified_since
-    if_unmodified_since = None
-    if modified_access_conditions is not None:
-        if_unmodified_since = modified_access_conditions.if_unmodified_since
-    if_match = None
-    if modified_access_conditions is not None:
-        if_match = modified_access_conditions.if_match
-    if_none_match = None
-    if modified_access_conditions is not None:
-        if_none_match = modified_access_conditions.if_none_match
-    if_tags = None
-    if modified_access_conditions is not None:
-        if_tags = modified_access_conditions.if_tags
-
     # Construct parameters
     timeout = kwargs.pop('timeout', None)
     query_parameters = {}
