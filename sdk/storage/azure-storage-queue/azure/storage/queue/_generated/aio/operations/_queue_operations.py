@@ -101,10 +101,10 @@ class QueueOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -166,9 +166,9 @@ class QueueOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -232,10 +232,10 @@ class QueueOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -313,11 +313,11 @@ class QueueOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -381,10 +381,10 @@ class QueueOperations:
 
         _request = build_get_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -467,11 +467,11 @@ class QueueOperations:
 
         _request = build_set_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
