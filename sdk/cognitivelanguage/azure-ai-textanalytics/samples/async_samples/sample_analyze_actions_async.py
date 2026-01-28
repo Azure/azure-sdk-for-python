@@ -29,7 +29,7 @@ NOTE:
 
 # [START analyze_async]
 import os
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
@@ -40,7 +40,6 @@ from azure.ai.textanalytics.models import (
     KeyPhraseLROTask,
     EntityRecognitionOperationResult,
     KeyPhraseExtractionOperationResult,
-    EntityTag,
 )
 
 
@@ -106,13 +105,6 @@ async def sample_analyze_actions_async():
                             print(f"    Type: {entity.type}")
                         if hasattr(entity, "subcategory") and entity.subcategory:
                             print(f"    Subcategory: {entity.subcategory}")
-                        if hasattr(entity, "tags") and entity.tags:
-                            print("    Tags:")
-                            for tag in entity.tags:
-                                if isinstance(tag, EntityTag):
-                                    print(f"        TagName: {tag.name}")
-                                    print(f"        TagConfidenceScore: {tag.confidence_score}")
-                        print(f"    Confidence score: {entity.confidence_score}")
                         print()
                 for err in action_result.results.errors:
                     print(f"  Error in document: {err.id}!")
