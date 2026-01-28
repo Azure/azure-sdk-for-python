@@ -79,14 +79,19 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 deployment_name="production",
             )
             assert response.answers
-            assert any(
-                a
-                for a in response.answers
-                if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
+            assert any( # pylint: disable=use-a-generator
+                [
+                    a
+                    for a in response.answers
+                    if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
+                ]
             )
-            assert any(
-                (a.metadata or {}).get("explicitlytaggedheading") == "make your battery last"
-                for a in response.answers
+            assert any( # pylint: disable=use-a-generator
+                [
+                    a
+                    for a in response.answers
+                    if (a.metadata or {}).get("explicitlytaggedheading") == "make your battery last"
+                ]
             )
 
     @pytest.mark.asyncio
