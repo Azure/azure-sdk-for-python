@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -31,7 +31,7 @@ class ManagementLockListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ManagementLockObject"]] = None,
+        value: Optional[list["_models.ManagementLockObject"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -91,7 +91,7 @@ class ManagementLockObject(_serialization.Model):
         *,
         level: Union[str, "_models.LockLevel"],
         notes: Optional[str] = None,
-        owners: Optional[List["_models.ManagementLockOwner"]] = None,
+        owners: Optional[list["_models.ManagementLockOwner"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -218,7 +218,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of Microsoft.Authorization operations.

@@ -1,8 +1,20 @@
 # Release History
 
-## 12.25.0b1 (Unreleased)
+## 12.26.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.25.0b1 (2026-01-27)
+
+### Features Added
+- Added support for service version 2026-04-06.
+- Added support for improved error handling for file share provisioning.
+- Added support for the keyword `user_delegation_tid` to `ShareServiceClient.get_user_delegation_key` API, which
+can be used in `generate_share_sas` and `generate_file_sas` to specify the Tenant ID that is authorized
+to use the generated SAS URL. Note that `user_delegation_tid` must be used together with `user_delegation_oid`.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
 
 ## 12.24.0 (2026-01-06)
 
