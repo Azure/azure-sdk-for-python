@@ -1,3 +1,4 @@
+# pylint: disable=name-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -35,7 +36,7 @@ from azure.ai.textanalytics.authoring.models import (
 )
 
 
-async def sample_unassign_deploy_resources_async():
+async def sample_unassign_deployment_resources_async():
     # settings
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -66,7 +67,7 @@ async def sample_unassign_deploy_resources_async():
 
 
 async def main():
-    await sample_unassign_deploy_resources_async()
+    await sample_unassign_deployment_resources_async()
 
 
 if __name__ == "__main__":
