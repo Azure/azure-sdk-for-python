@@ -1345,7 +1345,10 @@ class TestEvaluate:
         assert len(empty_converted["_evaluation_results_list"]) == 0
         assert empty_converted["_evaluation_summary"]["result_counts"]["total"] == 0
 
-    @patch("azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins", return_value={})
+    @patch(
+        "azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins",
+        return_value={},
+    )
     @patch("azure.ai.evaluation._evaluate._evaluate._get_evaluation_run_results")
     @patch("azure.ai.evaluation._evaluate._evaluate._begin_aoai_evaluation")
     @patch("azure.ai.evaluation._evaluate._evaluate._preprocess_data")
@@ -1384,7 +1387,10 @@ class TestEvaluate:
                 "expected_rows": len(df),
             }
         ]
-        mock_get_results.return_value = (pd.DataFrame([{"outputs.g.score": 1}]), {"g.pass_rate": 1.0})
+        mock_get_results.return_value = (
+            pd.DataFrame([{"outputs.g.score": 1}]),
+            {"g.pass_rate": 1.0},
+        )
 
         result = evaluate(
             evaluators={"g": grader},
@@ -1394,6 +1400,7 @@ class TestEvaluate:
 
         assert "oai_eval_run_ids" in result
         assert result["oai_eval_run_ids"] == [{"eval_group_id": "grp1", "eval_run_id": "run1"}]
+
 
 @pytest.mark.unittest
 class TestTagsInLoggingFunctions:
