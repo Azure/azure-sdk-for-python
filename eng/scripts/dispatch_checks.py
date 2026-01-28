@@ -20,6 +20,7 @@ from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
 from devtools_testutils.proxy_startup import prepare_local_tool
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+ISOLATE_DIRS_TO_CLEAN: List[str] = []
 
 
 @dataclass
@@ -137,6 +138,21 @@ def _stop_proxy_instances(instances: List[ProxyProcess]) -> None:
                 logger.warning(f"Test proxy on port {instance.port} did not stop cleanly.")
 
 
+def _cleanup_isolate_dirs() -> None:
+    if not ISOLATE_DIRS_TO_CLEAN:
+        return
+
+    for path in ISOLATE_DIRS_TO_CLEAN:
+        if not path:
+            continue
+        if os.path.exists(path):
+            try:
+                shutil.rmtree(path)
+            except Exception:
+                logger.warning(f"Failed to remove isolate dir {path}")
+    ISOLATE_DIRS_TO_CLEAN.clear()
+
+
 def ensure_proxies_for_checks(checks: List[str]) -> List[ProxyProcess]:
     ports = sorted({get_proxy_port_for_check(check) for check in checks if check})
     if not ports:
@@ -242,10 +258,7 @@ async def run_check(
         if in_ci():
             package_name = os.path.basename(os.path.normpath(package))
             isolate_dir = os.path.join(root_dir, ".venv", package_name, f".venv_{check}")
-            try:
-                shutil.rmtree(isolate_dir)
-            except:
-                logger.warning(f"Failed to remove isolate dir {isolate_dir} for {package} / {check}")
+            ISOLATE_DIRS_TO_CLEAN.append(isolate_dir)
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
@@ -546,4 +559,5 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         exit_code = 130
     finally:
         _stop_proxy_instances(proxy_processes)
+        _cleanup_isolate_dirs()
     sys.exit(exit_code)
