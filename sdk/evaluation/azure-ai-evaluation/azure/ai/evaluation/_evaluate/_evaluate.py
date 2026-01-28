@@ -1052,6 +1052,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     result_df_dict = results_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
+    if eval_run_info_list:
+        result["oai_eval_run_ids"] = [
+            {"eval_group_id": info["eval_group_id"], "eval_run_id": info["eval_run_id"]}
+            for info in eval_run_info_list
+        ]
     # _add_aoai_structured_results_to_results(result, LOGGER, kwargs.get("eval_meta_data"))
 
     eval_id: Optional[str] = kwargs.get("_eval_id")

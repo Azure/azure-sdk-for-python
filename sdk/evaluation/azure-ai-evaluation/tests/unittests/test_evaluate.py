@@ -1345,6 +1345,55 @@ class TestEvaluate:
         assert len(empty_converted["_evaluation_results_list"]) == 0
         assert empty_converted["_evaluation_summary"]["result_counts"]["total"] == 0
 
+    @patch("azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins", return_value={})
+    @patch("azure.ai.evaluation._evaluate._evaluate._get_evaluation_run_results")
+    @patch("azure.ai.evaluation._evaluate._evaluate._begin_aoai_evaluation")
+    @patch("azure.ai.evaluation._evaluate._evaluate._preprocess_data")
+    def test_evaluate_returns_oai_eval_run_ids(
+        self,
+        mock_preprocess,
+        mock_begin,
+        mock_get_results,
+        _,
+        mock_model_config,
+    ):
+        df = pd.DataFrame([{"query": "hi"}])
+        grader = AzureOpenAILabelGrader(
+            model_config=mock_model_config,
+            input=[{"content": "{{item.query}}", "role": "user"}],
+            labels=["positive", "negative", "neutral"],
+            passing_labels=["neutral"],
+            model="gpt-4o-2024-11-20",
+            name="labelgrader",
+        )
+        mock_preprocess.return_value = {
+            "column_mapping": {},
+            "evaluators": {},
+            "graders": {"g": grader},
+            "input_data_df": df,
+            "target_run": None,
+            "batch_run_client": None,
+            "batch_run_data": None,
+        }
+        mock_begin.return_value = [
+            {
+                "client": None,
+                "eval_group_id": "grp1",
+                "eval_run_id": "run1",
+                "grader_name_map": {},
+                "expected_rows": len(df),
+            }
+        ]
+        mock_get_results.return_value = (pd.DataFrame([{"outputs.g.score": 1}]), {"g.pass_rate": 1.0})
+
+        result = evaluate(
+            evaluators={"g": grader},
+            data="dummy_path",
+            azure_ai_project=None,
+        )
+
+        assert "oai_eval_run_ids" in result
+        assert result["oai_eval_run_ids"] == [{"eval_group_id": "grp1", "eval_run_id": "run1"}]
 
 @pytest.mark.unittest
 class TestTagsInLoggingFunctions:
