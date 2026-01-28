@@ -1,5 +1,11 @@
 # Release History
 
+## 15.1.0 (2026-01-23)
+
+### Other Changes
+
+- This is the stable release of the features from 15.1.0b2.
+
 ## 15.1.0b2 (2025-11-20)
 
 ### Features Added
