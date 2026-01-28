@@ -8,7 +8,7 @@ from azure.ai.language.questionanswering.authoring import QuestionAnsweringAutho
 
 
 class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
-    def test_polling_interval(self, recorded_test, qna_authoring_creds): # pylint: disable=unused-argument
+    def test_polling_interval(self, qna_authoring_creds):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
