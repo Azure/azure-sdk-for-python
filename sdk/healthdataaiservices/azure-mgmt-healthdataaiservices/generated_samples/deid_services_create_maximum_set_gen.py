@@ -37,12 +37,13 @@ def main():
             "identity": {"type": "None", "userAssignedIdentities": {}},
             "location": "qwyhvdwcsjulggagdqxlmazcl",
             "properties": {"publicNetworkAccess": "Enabled"},
+            "sku": {"capacity": 1, "name": "Standard", "tier": "Standard"},
             "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-09-20/DeidServices_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2026-02-01-preview/DeidServices_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 {
+  "apiVersion": "2026-02-01-preview",
   "commit": "0410d404c68289cb1737d06bba92133bb84b515c",
-  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "repository_url": "Azure/azure-rest-api-specs",
   "typespec_src": "specification/healthdataaiservices/HealthDataAIServices.Management",
-  "@azure-tools/typespec-python": "0.36.1"
+  "emitterVersion": "0.59.0"
 }

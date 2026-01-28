@@ -34,6 +34,8 @@ from ._models import (  # type: ignore
     PrivateLinkServiceConnectionState,
     ProxyResource,
     Resource,
+    Sku,
+    SkuUpdate,
     SystemData,
     TrackedResource,
     UserAssignedIdentity,
@@ -48,6 +50,7 @@ from ._enums import (  # type: ignore
     PrivateEndpointServiceConnectionStatus,
     ProvisioningState,
     PublicNetworkAccess,
+    SkuTier,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -74,6 +77,8 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "Resource",
+    "Sku",
+    "SkuUpdate",
     "SystemData",
     "TrackedResource",
     "UserAssignedIdentity",
@@ -85,6 +90,7 @@ __all__ = [
     "PrivateEndpointServiceConnectionStatus",
     "ProvisioningState",
     "PublicNetworkAccess",
+    "SkuTier",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -60,7 +60,9 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -77,7 +79,7 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     """The private endpoint connection status."""
 
     PENDING = "Pending"
-    """Connectionaiting for approval or rejection"""
+    """Connection waiting for approval or rejection"""
     APPROVED = "Approved"
     """Connection approved"""
     REJECTED = "Rejected"
@@ -110,3 +112,14 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The public network access is enabled"""
     DISABLED = "Disabled"
     """The public network access is disabled"""
+
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The tier of the SKU."""
+
+    FREE = "Free"
+    """Free tier."""
+    BASIC = "Basic"
+    """Basic tier."""
+    STANDARD = "Standard"
+    """Standard tier."""
