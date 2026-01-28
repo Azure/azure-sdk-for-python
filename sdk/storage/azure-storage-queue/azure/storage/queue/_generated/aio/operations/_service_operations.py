@@ -102,12 +102,12 @@ class ServiceOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -172,11 +172,11 @@ class ServiceOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -245,11 +245,11 @@ class ServiceOperations:
 
         _request = build_get_statistics_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -327,12 +327,12 @@ class ServiceOperations:
 
         _request = build_get_user_delegation_key_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -430,6 +430,7 @@ class ServiceOperations:
 
         _request = build_list_queues_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -437,7 +438,6 @@ class ServiceOperations:
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
