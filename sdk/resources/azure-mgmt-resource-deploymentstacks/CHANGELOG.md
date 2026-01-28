@@ -63,30 +63,20 @@
   - Model `DeploymentStacksOperations` added parameter `unmanage_action_resources_without_delete_support` in method `begin_delete_at_management_group`
   - Model `DeploymentStacksOperations` added parameter `unmanage_action_resources_without_delete_support` in method `begin_delete_at_resource_group`
   - Model `DeploymentStacksOperations` added parameter `unmanage_action_resources_without_delete_support` in method `begin_delete_at_subscription`
-  - Added model `DeploymentStacksWhatIfResultsAtManagementGroupOperations`
-  - Added model `DeploymentStacksWhatIfResultsAtResourceGroupOperations`
-  - Added model `DeploymentStacksWhatIfResultsAtSubscriptionOperations`
+  - Added operation group `DeploymentStacksWhatIfResultsAtManagementGroupOperations`
+  - Added operation group `DeploymentStacksWhatIfResultsAtResourceGroupOperations`
+  - Added operation group `DeploymentStacksWhatIfResultsAtSubscriptionOperations`
 
 ### Breaking Changes
 
   - Model `DeploymentStack` moved instance variable `error`/`template`/`template_link`/`parameters`/`parameters_link`/`action_on_unmanage`/`debug_setting`/`bypass_stack_out_of_sync_error`/`deployment_scope`/`description`/`deny_settings`/`provisioning_state`/`correlation_id`/`detached_resources`/`deleted_resources`/`failed_resources`/`resources`/`deployment_id`/`outputs`/`duration` under property `properties`
-  - Deleted or renamed model `AzureResourceBase`
-  - Deleted or renamed model `DeploymentStacksError`
-  - Deleted or renamed model `UnmanageActionManagementGroupMode`
-  - Deleted or renamed model `UnmanageActionResourceGroupMode`
-  - Deleted or renamed model `UnmanageActionResourceMode`
-  - Method `DeploymentStacksOperations.begin_delete_at_management_group` changed its parameter `unmanage_action_resources` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_management_group` changed its parameter `unmanage_action_resource_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_management_group` changed its parameter `unmanage_action_management_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_management_group` changed its parameter `bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_resource_group` changed its parameter `unmanage_action_resources` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_resource_group` changed its parameter `unmanage_action_resource_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_resource_group` changed its parameter `unmanage_action_management_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_resource_group` changed its parameter `bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_subscription` changed its parameter `unmanage_action_resources` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_subscription` changed its parameter `unmanage_action_resource_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_subscription` changed its parameter `unmanage_action_management_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `DeploymentStacksOperations.begin_delete_at_subscription` changed its parameter `bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
+  - Method `DeploymentStacksOperations.begin_delete_at_management_group` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
+  - Method `DeploymentStacksOperations.begin_delete_at_resource_group` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
+  - Method `DeploymentStacksOperations.begin_delete_at_subscription` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AzureResourceBase`/`DeploymentStacksError`/`UnmanageActionManagementGroupMode`/`UnmanageActionResourceGroupMode`/`UnmanageActionResourceMode` which actually were not used by SDK users
 
 ## 1.0.0b1 (2025-06-09)
 
