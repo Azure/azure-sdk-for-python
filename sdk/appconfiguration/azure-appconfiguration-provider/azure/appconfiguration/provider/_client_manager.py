@@ -137,6 +137,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
         configuration_settings = []
         for select in selects:
+            configurations = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 snapshot = self._client.get_snapshot(select.snapshot_name)
@@ -166,18 +167,26 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
-            # Handle None key_filter by converting to empty string
-            key_filter = select.key_filter if select.key_filter is not None else ""
-            feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + key_filter,
-                label_filter=select.label_filter,
-                tags_filter=select.tag_filters,
-                **kwargs,
-            )
+            feature_flags = []
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                snapshot = self._client.get_snapshot(select.snapshot_name)
+                if snapshot.composition_type != SnapshotComposition.KEY:
+                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
+                feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+            else:
+                # Handle None key_filter by converting to empty string
+                key_filter = select.key_filter if select.key_filter is not None else ""
+                feature_flags = self._client.list_configuration_settings(
+                    key_filter=FEATURE_FLAG_PREFIX + key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
             for feature_flag in feature_flags:
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
                     # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
-                    # mistake, so we should ignore it.
+                    # mistake, so we should ignore it, or it was loaded via snapshot.
                     continue
                 loaded_feature_flags.append(feature_flag)
 
