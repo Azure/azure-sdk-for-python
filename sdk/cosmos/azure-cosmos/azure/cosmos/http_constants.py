@@ -231,6 +231,8 @@ class HttpHeaders:
 
     # Dedicated Gateway headers
     DedicatedGatewayCacheStaleness = "x-ms-dedicatedgateway-max-age"
+    DedicatedGatewayBypassCache = "x-ms-dedicatedgateway-bypass-cache"
+    DedicatedGatewayShardKey = "x-ms-dedicatedgateway-shard-key"
     IntegratedCacheHit = "x-ms-cosmos-cachehit"
 
     # Backend headers
