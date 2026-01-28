@@ -13,11 +13,12 @@ import logging
 import requests  # type: ignore[import-untyped]
 import time
 
-from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.monitor.opentelemetry._configure import configure_azure_monitor
 from opentelemetry import trace
-
+from azure.identity import ManagedIdentityCredential
 from opentelemetry.sdk.resources import Resource
 
+credential = ManagedIdentityCredential()
 configure_azure_monitor(
     resource=Resource.create(
         {
