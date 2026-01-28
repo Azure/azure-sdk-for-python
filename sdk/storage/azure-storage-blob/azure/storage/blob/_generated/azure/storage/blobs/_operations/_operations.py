@@ -590,7 +590,8 @@ def build_container_acquire_lease_request(
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&acquire"
+    ## TODO: WUT?
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
