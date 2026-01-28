@@ -51,12 +51,12 @@ class DeleteImages(object):
                     repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
                 ):
                     manifest_count += 1
-                    # [END delete_manifests]
                     if manifest_count > 3:
                         # Make sure will have the permission to delete the manifest later
-                        client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)  # type: ignore[arg-type]
+                        client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)
                         print(f"Deleting {repository}:{manifest.digest}")
-                        client.delete_manifest(repository, manifest.digest)  # type: ignore[arg-type]
+                        client.delete_manifest(repository, manifest.digest)
+        # [END delete_manifests]
 
 
 if __name__ == "__main__":
