@@ -43,7 +43,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_recognize_pii_redaction_policies_async(self, text_analysis_endpoint, text_analysis_key):
+    async def test_recognize_pii_redaction_policies_async(self, text_analysis_endpoint, text_analysis_key): # pylint: disable=name-too-long
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
 
             # Documents

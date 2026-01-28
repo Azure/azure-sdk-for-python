@@ -43,7 +43,7 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_recognize_pii_confidence_score_async(
+    async def test_recognize_pii_confidence_score_async( # pylint: disable=name-too-long
         self, text_analysis_endpoint, text_analysis_key
     ):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
