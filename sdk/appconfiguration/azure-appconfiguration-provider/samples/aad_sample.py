@@ -37,4 +37,4 @@ config = load(
 
 print("message found: " + str("message" in config))
 print("test.message found: " + str("test.message" in config))
-print("feature_flag_enabled found: " + str(config["feature_management"]))
+print("feature_flag_enabled found: " + str(config.get("feature_management")))
