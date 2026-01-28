@@ -28,7 +28,7 @@ def patch_openai(monkeypatch):
     monkeypatch.setattr("azure.ai.projects._patch.get_bearer_token_provider", lambda *_, **__: "token-provider")
 
 
-def _build_client(
+def _build_dummy_client(
     project_user_agent: Optional[str],
     default_headers: Optional[Dict[str, str]],
 ):
@@ -104,7 +104,7 @@ class TestResponses(TestBase):
         ],
     )
     def test_user_agent_patching_via_response_create(self, project_ua, openai_default_header, expected_ua):
-        client = _build_client(project_ua, openai_default_header)
+        client = _build_dummy_client(project_ua, openai_default_header)
 
         calls = []
 
