@@ -42,6 +42,7 @@ class ProxyProcess:
 
 PROXY_STATUS_SUFFIX = "/Info/Available"
 PROXY_STARTUP_TIMEOUT = 60
+BASE_PROXY_PORT = 5000
 
 
 def _proxy_status_url(port: int) -> str:
@@ -192,6 +193,7 @@ async def run_check(
     base_args: List[str],
     idx: int,
     total: int,
+    proxy_port: int,
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -207,6 +209,8 @@ async def run_check(
     :type idx: int
     :param total: Total number of tasks (used for logging progress).
     :type total: int
+    :param proxy_port: Dedicated proxy port assigned to this check instance.
+    :type proxy_port: int
     :returns: A :class:`CheckResult` describing exit code, duration and captured output.
     :rtype: CheckResult
     """
@@ -216,6 +220,7 @@ async def run_check(
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_MANUAL_START"] = "1"
+        env["PROXY_URL"] = f"http://localhost:{proxy_port}"
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -309,7 +314,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
     tasks = []
     semaphore = asyncio.Semaphore(max_parallel)
     combos = [(p, c) for p in packages for c in checks]
-    total = len(combos)
+    scheduled: List[tuple] = []
 
     test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
     dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
@@ -332,11 +337,22 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
 
             replace_dev_reqs(destination_dev_req, pkg, wheel_dir)
 
-    for idx, (package, check) in enumerate(combos, start=1):
+    next_proxy_port = BASE_PROXY_PORT
+    for package, check in combos:
         if not is_check_enabled(package, check, CHECK_DEFAULTS.get(check, True)):
-            logger.warning(f"Skipping disabled check {check} ({idx}/{total}) for package {package}")
+            logger.warning(f"Skipping disabled check {check} for package {package}")
             continue
-        tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total)))
+        scheduled.append((package, check, next_proxy_port))
+        next_proxy_port += 1
+
+    total = len(scheduled)
+
+    for idx, (package, check, proxy_port) in enumerate(scheduled, start=1):
+        tasks.append(
+            asyncio.create_task(
+                run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port)
+            )
+        )
 
     # Handle Ctrl+C gracefully
     pending = set(tasks)
@@ -349,7 +365,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
         raise
     # Normalize exceptions
     norm_results: List[CheckResult] = []
-    for res, (package, check) in zip(results, combos):
+    for res, (package, check, _) in zip(results, scheduled):
         if isinstance(res, CheckResult):
             norm_results.append(res)
         elif isinstance(res, Exception):
@@ -553,12 +569,12 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     try:
         if in_ci():
             logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
-            proxy_processes = ensure_proxies_for_checks(checks)
+            # proxy_processes = ensure_proxies_for_checks(checks)
         exit_code = asyncio.run(run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir))
     except KeyboardInterrupt:
         logger.error("Aborted by user.")
         exit_code = 130
     finally:
-        _stop_proxy_instances(proxy_processes)
+        # _stop_proxy_instances(proxy_processes)
         _cleanup_isolate_dirs()
     sys.exit(exit_code)
