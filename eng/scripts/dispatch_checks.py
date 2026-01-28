@@ -219,7 +219,6 @@ async def run_check(
         cmd = base_args + [check, "--isolate", package]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
-        env["PROXY_MANUAL_START"] = "1"
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
         try:
             proc = await asyncio.create_subprocess_exec(
