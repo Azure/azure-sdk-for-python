@@ -709,6 +709,13 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
             logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
         return query
 
+def _format_value(v):
+    if isinstance(v, str):
+        return f'"{v}"'
+    elif v is None:
+        return 'None'
+    else:
+        return str(v)
 
 def _get_agent_response(agent_response_msgs, include_tool_messages=False):
     """Extracts formatted agent response including text, and optionally tool calls/results."""
@@ -743,7 +750,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                             tool_call_id = content.get("tool_call_id")
                             func_name = content.get("name", "")
                             args = content.get("arguments", {})
-                        args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
+                        args_str = ", ".join(f'{k}={_format_value(v)}' for k, v in args.items())
                         call_line = f"[TOOL_CALL] {func_name}({args_str})"
                         agent_response_text.append(call_line)
                         if tool_call_id in tool_results:
