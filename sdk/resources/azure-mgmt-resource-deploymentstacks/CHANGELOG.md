@@ -60,9 +60,9 @@
   - Added model `ProxyResource`
   - Added model `Resource`
   - Added enum `ValidationLevel`
-  - Model `DeploymentStacksOperations` added parameter `unmanage_action_resources_without_delete_support` in method `begin_delete_at_management_group`
-  - Model `DeploymentStacksOperations` added parameter `unmanage_action_resources_without_delete_support` in method `begin_delete_at_resource_group`
-  - Model `DeploymentStacksOperations` added parameter `unmanage_action_resources_without_delete_support` in method `begin_delete_at_subscription`
+  - Method `DeploymentStacksOperations.begin_delete_at_management_group` added parameter `unmanage_action_resources_without_delete_support`
+  - Method `DeploymentStacksOperations.begin_delete_at_resource_group` added parameter `unmanage_action_resources_without_delete_support`
+  - Method `DeploymentStacksOperations.begin_delete_at_subscription` added parameter `unmanage_action_resources_without_delete_support`
   - Added operation group `DeploymentStacksWhatIfResultsAtManagementGroupOperations`
   - Added operation group `DeploymentStacksWhatIfResultsAtResourceGroupOperations`
   - Added operation group `DeploymentStacksWhatIfResultsAtSubscriptionOperations`
