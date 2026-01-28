@@ -68,7 +68,7 @@ class TestConfigure(unittest.TestCase):
         tracing_mock.assert_called_once()
         logging_mock.assert_called_once()
         metrics_mock.assert_called_once()
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once()
         instrumentation_mock.assert_called_once()
         detect_attach_mock.assert_called_once()
 
@@ -123,7 +123,7 @@ class TestConfigure(unittest.TestCase):
         tracing_mock.assert_not_called()
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
         # Assert setup_metrics is called before setup_logging
         self.assertLess(call_order.index("metrics"), call_order.index("logging"))
@@ -174,7 +174,7 @@ class TestConfigure(unittest.TestCase):
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_not_called()
         metrics_mock.assert_called_once_with(configurations)
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
         # Assert setup_metrics is called before setup_tracing
         self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
@@ -220,7 +220,7 @@ class TestConfigure(unittest.TestCase):
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_not_called()
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
 
     @patch(
