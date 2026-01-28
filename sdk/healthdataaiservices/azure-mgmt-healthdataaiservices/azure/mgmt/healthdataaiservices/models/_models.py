@@ -243,7 +243,7 @@ class DeidUpdate(_Model):
     :ivar properties: RP-specific properties.
     :vartype properties: ~azure.mgmt.healthdataaiservices.models.DeidPropertiesUpdate
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
-    :vartype sku: ~azure.mgmt.healthdataaiservices.models.SkuUpdate
+    :vartype sku: ~azure.mgmt.healthdataaiservices.models.Sku
     """
 
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -256,7 +256,7 @@ class DeidUpdate(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """RP-specific properties."""
-    sku: Optional["_models.SkuUpdate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU (Stock Keeping Unit) assigned to this resource."""
 
     @overload
@@ -266,7 +266,7 @@ class DeidUpdate(_Model):
         tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentityUpdate"] = None,
         properties: Optional["_models.DeidPropertiesUpdate"] = None,
-        sku: Optional["_models.SkuUpdate"] = None,
+        sku: Optional["_models.Sku"] = None,
     ) -> None: ...
 
     @overload
@@ -824,24 +824,42 @@ class PrivateLinkServiceConnectionState(_Model):
 
 
 class Sku(_Model):
-    """The SKU (Stock Keeping Unit) assigned to this resource.
+    """The resource model definition representing SKU.
 
-    :ivar name: The name of the SKU. Required.
+    :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
-    :ivar tier: The tier of the SKU. Known values are: "Free", "Basic", and "Standard".
+    :ivar tier: This field is required to be implemented by the Resource Provider if the service
+     has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
+     "Standard", and "Premium".
     :vartype tier: str or ~azure.mgmt.healthdataaiservices.models.SkuTier
-    :ivar capacity: The capacity of the SKU.
+    :ivar size: The SKU size. When the name field is the combination of tier and some other value,
+     this would be the standalone code.
+    :vartype size: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
+     If scale out/in is not possible for the resource this may be omitted.
     :vartype capacity: int
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the SKU. Required."""
+    """The name of the SKU. Ex - P3. It is typically a letter+number code. Required."""
     tier: Optional[Union[str, "_models.SkuTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The tier of the SKU. Known values are: \"Free\", \"Basic\", and \"Standard\"."""
+    """This field is required to be implemented by the Resource Provider if the service has more than
+     one tier, but is not required on a PUT. Known values are: \"Free\", \"Basic\", \"Standard\",
+     and \"Premium\"."""
+    size: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The SKU size. When the name field is the combination of tier and some other value, this would
+     be the standalone code."""
+    family: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If the service has different generations of hardware, for the same SKU, then that can be
+     captured here."""
     capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The capacity of the SKU."""
+    """If the SKU supports scale out/in then the capacity integer should be included. If scale out/in
+     is not possible for the resource this may be omitted."""
 
     @overload
     def __init__(
@@ -849,46 +867,8 @@ class Sku(_Model):
         *,
         name: str,
         tier: Optional[Union[str, "_models.SkuTier"]] = None,
-        capacity: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SkuUpdate(_Model):
-    """The SKU (Stock Keeping Unit) update model for PATCH operations.
-
-    :ivar name: The name of the SKU.
-    :vartype name: str
-    :ivar tier: The tier of the SKU. Known values are: "Free", "Basic", and "Standard".
-    :vartype tier: str or ~azure.mgmt.healthdataaiservices.models.SkuTier
-    :ivar capacity: The capacity of the SKU.
-    :vartype capacity: int
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the SKU."""
-    tier: Optional[Union[str, "_models.SkuTier"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The tier of the SKU. Known values are: \"Free\", \"Basic\", and \"Standard\"."""
-    capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The capacity of the SKU."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        tier: Optional[Union[str, "_models.SkuTier"]] = None,
+        size: Optional[str] = None,
+        family: Optional[str] = None,
         capacity: Optional[int] = None,
     ) -> None: ...
 

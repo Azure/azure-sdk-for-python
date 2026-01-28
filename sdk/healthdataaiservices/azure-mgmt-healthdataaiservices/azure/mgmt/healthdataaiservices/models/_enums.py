@@ -115,11 +115,15 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The tier of the SKU."""
+    """This field is required to be implemented by the Resource Provider if the service has more than
+    one tier, but is not required on a PUT.
+    """
 
     FREE = "Free"
-    """Free tier."""
+    """The Free service tier."""
     BASIC = "Basic"
-    """Basic tier."""
+    """The Basic service tier."""
     STANDARD = "Standard"
-    """Standard tier."""
+    """The Standard service tier."""
+    PREMIUM = "Premium"
+    """The Premium service tier."""
