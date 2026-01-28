@@ -93,6 +93,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperations(AzureMgmtRecordedTestCa
                     "publicNetworkAccess": "str",
                     "serviceUrl": "str",
                 },
+                "sku": {"name": "str", "capacity": 0, "tier": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -121,6 +122,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperations(AzureMgmtRecordedTestCa
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "properties": {"publicNetworkAccess": "str"},
+                "sku": {"name": "str", "capacity": 0, "tier": "str"},
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result
