@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
     pip install azure-identity
     pip install azure-mgmt-redhatopenshift
 # USAGE
-    python sync_sets_update.py
+    python open_shift_versions_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,22 +28,16 @@ from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
 def main():
     client = AzureRedHatOpenShiftClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.sync_sets.update(
-        resource_group_name="resourceGroup",
-        resource_name="resourceName",
-        child_resource_name="childResourceName",
-        parameters={
-            "properties": {
-                "resources": "eyAKICAiYXBpVmVyc2lvbiI6ICJoaXZlLm9wZW5zaGlmdC5pby92MSIsCiAgImtpbmQiOiAiU3luY1NldCIsCiAgIm1ldGFkYXRhIjogewogICAgIm5hbWUiOiAic2FtcGxlIiwKICAgICJuYW1lc3BhY2UiOiAiYXJvLWY2MGFlOGEyLWJjYTEtNDk4Ny05MDU2LWYyZjZhMTgzN2NhYSIKICB9LAogICJzcGVjIjogewogICAgImNsdXN0ZXJEZXBsb3ltZW50UmVmcyI6IFtdLAogICAgInJlc291cmNlcyI6IFsKICAgICAgewogICAgICAgICJhcGlWZXJzaW9uIjogInYxIiwKICAgICAgICAia2luZCI6ICJDb25maWdNYXAiLAogICAgICAgICJtZXRhZGF0YSI6IHsKICAgICAgICAgICJuYW1lIjogIm15Y29uZmlnbWFwIgogICAgICAgIH0KICAgICAgfQogICAgXQogIH0KfQo="
-            }
-        },
+    response = client.open_shift_versions.get(
+        location="location",
+        open_shift_version="4.14.40",
     )
     print(response)
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/stable/2023-11-22/examples/SyncSets_Update.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/OpenShiftClusters/stable/2025-07-25/examples/OpenShiftVersions_Get.json
 if __name__ == "__main__":
     main()

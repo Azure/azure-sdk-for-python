@@ -9,7 +9,8 @@ from collections.abc import MutableMapping
 from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -18,59 +19,37 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
+from ... import models as _models
+from ..._utils.serialization import Deserializer, Serializer
+from ...operations._platform_workload_identity_role_sets_operations import build_list_request
 from .._configuration import AzureRedHatOpenShiftClientConfiguration
-from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
 
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
 
-
-def build_list_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-25"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.RedHatOpenShift/operations")
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class Operations:
+class PlatformWorkloadIdentityRoleSetsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.redhatopenshift.AzureRedHatOpenShiftClient`'s
-        :attr:`operations` attribute.
+        :class:`~azure.mgmt.redhatopenshift.aio.AzureRedHatOpenShiftClient`'s
+        :attr:`platform_workload_identity_role_sets` attribute.
     """
 
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: AzureRedHatOpenShiftClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
@@ -78,20 +57,25 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
-        """Lists all of the available RP operations.
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.PlatformWorkloadIdentityRoleSet"]:
+        """Lists a mapping of OpenShift versions to identity requirements, which include operatorName,
+        roleDefinitionName, roleDefinitionId, and serviceAccounts.
 
-        The operation returns the RP operations.
+        This operation returns a list of Platform Workload Identity Role Sets as a string.
 
-        :return: An iterator like instance of either Operation or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.redhatopenshift.models.Operation]
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of either PlatformWorkloadIdentityRoleSet or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityRoleSet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.OperationList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PlatformWorkloadIdentityRoleSetList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -105,6 +89,8 @@ class Operations:
             if not next_link:
 
                 _request = build_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -128,18 +114,18 @@ class Operations:
                 _request.method = "GET"
             return _request
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationList", pipeline_response)
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PlatformWorkloadIdentityRoleSetList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -150,4 +136,4 @@ class Operations:
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+        return AsyncItemPaged(get_next, extract_data)
