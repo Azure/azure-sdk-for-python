@@ -19,7 +19,7 @@ from azure.core.credentials import AzureKeyCredential
 
 
 class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
-    def test_query_knowledgebase(self, qna_creds):  # standard model usage
+    def test_query_knowledgebase(self, recorded_test, qna_creds):  # standard model usage
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         query_params = AnswersOptions(
             question="Ports and connectors",
@@ -35,7 +35,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             assert answer.qna_id is not None
             assert answer.source
 
-    def test_query_knowledgebase_with_answerspan(self, qna_creds):
+    def test_query_knowledgebase_with_answerspan(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         query_params = AnswersOptions(
             question="Ports and connectors",
@@ -52,7 +52,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
                 assert answer.short_answer.text
                 assert answer.short_answer.confidence is not None
 
-    def test_query_knowledgebase_filter(self, qna_creds):
+    def test_query_knowledgebase_filter(self, recorded_test, qna_creds):
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
@@ -75,7 +75,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             )
             assert response.answers
 
-    def test_query_knowledgebase_only_id(self, qna_creds):
+    def test_query_knowledgebase_only_id(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         with client:
             query_params = AnswersOptions(qna_id=19)

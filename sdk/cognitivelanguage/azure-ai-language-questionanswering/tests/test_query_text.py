@@ -12,7 +12,7 @@ from azure.core.credentials import AzureKeyCredential
 
 
 class TestQueryText(QuestionAnsweringTestCase):
-    def test_query_text_basic(self, qna_creds):
+    def test_query_text_basic(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersFromTextOptions(
             question="What is the meaning of life?",
@@ -32,7 +32,7 @@ class TestQueryText(QuestionAnsweringTestCase):
             if answer.short_answer:
                 assert answer.short_answer.text
 
-    def test_query_text_with_str_records(self, qna_creds):
+    def test_query_text_with_str_records(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = {
             "question": "How long it takes to charge surface?",
@@ -70,7 +70,7 @@ class TestQueryText(QuestionAnsweringTestCase):
             with pytest.raises(TypeError):
                 client.get_answers_from_text(params, question="Why?")  # type: ignore[arg-type]
 
-    def test_query_text_default_lang_override(self, qna_creds):
+    def test_query_text_default_lang_override(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(
             qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), default_language="es"
         )
