@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added startup retry, if the initial load fails, the provider will retry until the startup timeout is reached. By default the retry period is 100s, and can be configured via the `startup_timeout` kwarg on the `load` method.
+
 ### Breaking Changes
 
 ### Bugs Fixed
