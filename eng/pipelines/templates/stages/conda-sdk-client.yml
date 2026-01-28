@@ -2,7 +2,7 @@ parameters:
   - name: conda_username
     displayName: 'Conda Username'
     type: string
-    default: 'azure-sdk'
+    default: 'Microsoft'
   - name: release_msal
     displayName: 'msal'
     type: boolean
@@ -944,8 +944,6 @@ extends:
                     - pwsh: |
                         python -m pip install anaconda-client
                       displayName: 'Install anaconda-client'
-
-                    # TODO get token from keyvault?
 
                     - pwsh: |
                         if (-not $env:ANACONDA_API_TOKEN) {
