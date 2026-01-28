@@ -377,9 +377,15 @@ class AvatarConfig(_Model):
     :vartype customized: bool
     :ivar video: Optional video configuration including resolution, bitrate, and codec.
     :vartype video: ~azure.ai.voicelive.models.VideoParams
+    :ivar scene: Configuration for the avatar's zoom level, position, rotation and movement
+     amplitude in the video frame.
+    :vartype scene: ~azure.ai.voicelive.models.Scene
     :ivar output_protocol: Output protocol for avatar streaming. Default is 'webrtc'. Known values
      are: "webrtc" and "websocket".
     :vartype output_protocol: str or ~azure.ai.voicelive.models.AvatarOutputProtocol
+    :ivar output_audit_audio: When enabled, forwards audit audio via WebSocket for review/debugging
+     purposes, even when avatar output is delivered via WebRTC.
+    :vartype output_audit_audio: bool
     """
 
     type: Optional[Union[str, "_models.AvatarConfigTypes"]] = rest_field(
@@ -402,11 +408,17 @@ class AvatarConfig(_Model):
     """Indicates whether the avatar is customized or not. Required."""
     video: Optional["_models.VideoParams"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional video configuration including resolution, bitrate, and codec."""
+    scene: Optional["_models.Scene"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Configuration for the avatar's zoom level, position, rotation and movement amplitude in the
+     video frame."""
     output_protocol: Optional[Union[str, "_models.AvatarOutputProtocol"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Output protocol for avatar streaming. Default is 'webrtc'. Known values are: \"webrtc\" and
      \"websocket\"."""
+    output_audit_audio: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """When enabled, forwards audit audio via WebSocket for review/debugging purposes, even when
+     avatar output is delivered via WebRTC."""
 
     @overload
     def __init__(
@@ -419,7 +431,9 @@ class AvatarConfig(_Model):
         style: Optional[str] = None,
         model: Optional[Union[str, "_models.PhotoAvatarBaseModes"]] = None,
         video: Optional["_models.VideoParams"] = None,
+        scene: Optional["_models.Scene"] = None,
         output_protocol: Optional[Union[str, "_models.AvatarOutputProtocol"]] = None,
+        output_audit_audio: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4301,6 +4315,79 @@ class ResponseTextContentPart(ContentPart, discriminator="text"):
         self.type = ContentPartType.TEXT  # type: ignore
 
 
+class Scene(_Model):
+    """Configuration for avatar's zoom level, position, rotation and movement amplitude in the video
+    frame.
+
+    :ivar zoom: Zoom level of the avatar. Range is (0, +∞). Values less than 1 zoom out, values
+     greater than 1 zoom in.
+    :vartype zoom: float
+    :ivar position_x: Horizontal position of the avatar. Range is [-1, 1], as a proportion of frame
+     width. Negative values move left, positive values move right.
+    :vartype position_x: float
+    :ivar position_y: Vertical position of the avatar. Range is [-1, 1], as a proportion of frame
+     height. Negative values move up, positive values move down.
+    :vartype position_y: float
+    :ivar rotation_x: Rotation around the X-axis (pitch). Range is [-π, π] in radians. Negative
+     values rotate up, positive values rotate down.
+    :vartype rotation_x: float
+    :ivar rotation_y: Rotation around the Y-axis (yaw). Range is [-π, π] in radians. Negative
+     values rotate left, positive values rotate right.
+    :vartype rotation_y: float
+    :ivar rotation_z: Rotation around the Z-axis (roll). Range is [-π, π] in radians. Negative
+     values rotate anticlockwise, positive values rotate clockwise.
+    :vartype rotation_z: float
+    :ivar amplitude: Amplitude of the avatar movement. Range is (0, 1]. Values in (0, 1) mean
+     reduced amplitude, 1 means full amplitude.
+    :vartype amplitude: float
+    """
+
+    zoom: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Zoom level of the avatar. Range is (0, +∞). Values less than 1 zoom out, values greater than 1
+     zoom in."""
+    position_x: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Horizontal position of the avatar. Range is [-1, 1], as a proportion of frame width. Negative
+     values move left, positive values move right."""
+    position_y: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Vertical position of the avatar. Range is [-1, 1], as a proportion of frame height. Negative
+     values move up, positive values move down."""
+    rotation_x: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Rotation around the X-axis (pitch). Range is [-π, π] in radians. Negative values rotate up,
+     positive values rotate down."""
+    rotation_y: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Rotation around the Y-axis (yaw). Range is [-π, π] in radians. Negative values rotate left,
+     positive values rotate right."""
+    rotation_z: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Rotation around the Z-axis (roll). Range is [-π, π] in radians. Negative values rotate
+     anticlockwise, positive values rotate clockwise."""
+    amplitude: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Amplitude of the avatar movement. Range is (0, 1]. Values in (0, 1) mean reduced amplitude, 1
+     means full amplitude."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zoom: Optional[float] = None,
+        position_x: Optional[float] = None,
+        position_y: Optional[float] = None,
+        rotation_x: Optional[float] = None,
+        rotation_y: Optional[float] = None,
+        rotation_z: Optional[float] = None,
+        amplitude: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ServerEvent(_Model):
     """A voicelive server event.
 
@@ -4329,9 +4416,10 @@ class ServerEvent(_Model):
     ServerEventResponseMcpCallInProgress, ServerEventResponseMcpCallArgumentsDelta,
     ServerEventResponseMcpCallArgumentsDone, ServerEventResponseOutputItemAdded,
     ServerEventResponseOutputItemDone, ServerEventResponseTextDelta, ServerEventResponseTextDone,
-    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated
+    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated,
+    ServerEventWarning
 
-    :ivar type: The type of event. Required. Known values are: "error",
+    :ivar type: The type of event. Required. Known values are: "error", "warning",
      "session.avatar.connecting", "session.created", "session.updated",
      "conversation.item.input_audio_transcription.completed",
      "conversation.item.input_audio_transcription.delta",
@@ -4360,8 +4448,8 @@ class ServerEvent(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of event. Required. Known values are: \"error\", \"session.avatar.connecting\",
-     \"session.created\", \"session.updated\",
+    """The type of event. Required. Known values are: \"error\", \"warning\",
+     \"session.avatar.connecting\", \"session.created\", \"session.updated\",
      \"conversation.item.input_audio_transcription.completed\",
      \"conversation.item.input_audio_transcription.delta\",
      \"conversation.item.input_audio_transcription.failed\", \"conversation.item.created\",
@@ -6791,6 +6879,83 @@ class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ServerEventType.SESSION_UPDATED  # type: ignore
+
+
+class ServerEventWarning(ServerEvent, discriminator="warning"):
+    """Returned when a warning occurs that does not interrupt the conversation flow.
+    Warnings are informational and the session will continue normally.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The event type, must be ``warning``. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.WARNING
+    :ivar warning: Details of the warning. Required.
+    :vartype warning: ~azure.ai.voicelive.models.ServerEventWarningDetails
+    """
+
+    type: Literal[ServerEventType.WARNING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, must be ``warning``. Required."""
+    warning: "_models.ServerEventWarningDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of the warning. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        warning: "_models.ServerEventWarningDetails",
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.WARNING  # type: ignore
+
+
+class ServerEventWarningDetails(_Model):
+    """Details of the warning.
+
+    :ivar message: A human-readable warning message. Required.
+    :vartype message: str
+    :ivar code: Warning code, if any.
+    :vartype code: str
+    :ivar param: Parameter related to the warning, if any.
+    :vartype param: str
+    """
+
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable warning message. Required."""
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Warning code, if any."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Parameter related to the warning, if any."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
+        code: Optional[str] = None,
+        param: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ServerVad(TurnDetection, discriminator="server_vad"):

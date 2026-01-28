@@ -305,6 +305,7 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Server event types used in VoiceLive protocol."""
 
     ERROR = "error"
+    WARNING = "warning"
     SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
     SESSION_CREATED = "session.created"
     SESSION_UPDATED = "session.updated"
