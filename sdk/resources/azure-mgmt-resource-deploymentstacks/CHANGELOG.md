@@ -69,6 +69,8 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration. 
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration. 
   - Model `DeploymentStack` moved instance variable `error`/`template`/`template_link`/`parameters`/`parameters_link`/`action_on_unmanage`/`debug_setting`/`bypass_stack_out_of_sync_error`/`deployment_scope`/`description`/`deny_settings`/`provisioning_state`/`correlation_id`/`detached_resources`/`deleted_resources`/`failed_resources`/`resources`/`deployment_id`/`outputs`/`duration` under property `properties`
   - Method `DeploymentStacksOperations.begin_delete_at_management_group` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
   - Method `DeploymentStacksOperations.begin_delete_at_resource_group` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
