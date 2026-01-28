@@ -69,26 +69,7 @@
 
 ### Breaking Changes
 
-  - Model `DeploymentStack` deleted or renamed its instance variable `error`
-  - Model `DeploymentStack` deleted or renamed its instance variable `template`
-  - Model `DeploymentStack` deleted or renamed its instance variable `template_link`
-  - Model `DeploymentStack` deleted or renamed its instance variable `parameters`
-  - Model `DeploymentStack` deleted or renamed its instance variable `parameters_link`
-  - Model `DeploymentStack` deleted or renamed its instance variable `action_on_unmanage`
-  - Model `DeploymentStack` deleted or renamed its instance variable `debug_setting`
-  - Model `DeploymentStack` deleted or renamed its instance variable `bypass_stack_out_of_sync_error`
-  - Model `DeploymentStack` deleted or renamed its instance variable `deployment_scope`
-  - Model `DeploymentStack` deleted or renamed its instance variable `description`
-  - Model `DeploymentStack` deleted or renamed its instance variable `deny_settings`
-  - Model `DeploymentStack` deleted or renamed its instance variable `provisioning_state`
-  - Model `DeploymentStack` deleted or renamed its instance variable `correlation_id`
-  - Model `DeploymentStack` deleted or renamed its instance variable `detached_resources`
-  - Model `DeploymentStack` deleted or renamed its instance variable `deleted_resources`
-  - Model `DeploymentStack` deleted or renamed its instance variable `failed_resources`
-  - Model `DeploymentStack` deleted or renamed its instance variable `resources`
-  - Model `DeploymentStack` deleted or renamed its instance variable `deployment_id`
-  - Model `DeploymentStack` deleted or renamed its instance variable `outputs`
-  - Model `DeploymentStack` deleted or renamed its instance variable `duration`
+  - Model `DeploymentStack` moved instance variable `error`/`template`/`template_link`/`parameters`/`parameters_link`/`action_on_unmanage`/`debug_setting`/`bypass_stack_out_of_sync_error`/`deployment_scope`/`description`/`deny_settings`/`provisioning_state`/`correlation_id`/`detached_resources`/`deleted_resources`/`failed_resources`/`resources`/`deployment_id`/`outputs`/`duration` under property `properties`
   - Deleted or renamed model `AzureResourceBase`
   - Deleted or renamed model `DeploymentStacksError`
   - Deleted or renamed model `UnmanageActionManagementGroupMode`
