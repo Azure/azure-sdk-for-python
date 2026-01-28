@@ -124,7 +124,7 @@ class ImdsCredential(MsalManagedIdentityClient):
                 raise CredentialUnavailableError(error_message) from ex
 
         try:
-            token_info = super()._request_token(*scopes)
+            token_info = super()._request_token(*scopes, **kwargs)
         except CredentialUnavailableError:
             # Response is not json, skip the IMDS credential
             raise

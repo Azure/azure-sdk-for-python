@@ -80,7 +80,7 @@ class SoftDeletedResourceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GallerySoftDeletedResourceList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
