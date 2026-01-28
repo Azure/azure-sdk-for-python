@@ -3,8 +3,6 @@
 ## 1.0.0b47 (Unreleased)
 
 ### Features Added
-- Feature tracking for when customer sdkstats is disabled by the user
-  ([#44888](https://github.com/Azure/azure-sdk-for-python/pull/44888))
 - Rename metric names for customer sdk stats and set it on by default
   ([#44849](https://github.com/Azure/azure-sdk-for-python/pull/44849))
 - Add auto detection for application ID from connection string if not set 
