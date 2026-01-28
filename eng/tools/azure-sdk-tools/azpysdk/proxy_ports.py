@@ -7,6 +7,7 @@ races. Keeping this data in a single module allows both the CLI and the CI
 launcher to share the same source of truth without having to parse the tox
 configuration file at runtime.
 """
+
 from __future__ import annotations
 
 from typing import Dict, Optional

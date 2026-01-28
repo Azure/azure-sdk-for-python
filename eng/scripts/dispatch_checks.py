@@ -46,6 +46,7 @@ BASE_PROXY_PORT = 5000
 # Checks implemented via InstallAndTest all require shared recording restore behavior.
 INSTALL_AND_TEST_CHECKS = {"whl", "whl_no_aio", "sdist", "devtest", "optional", "latestdependency", "mindependency"}
 
+
 def _cleanup_isolate_dirs() -> None:
     if not ISOLATE_DIRS_TO_CLEAN:
         return
@@ -70,7 +71,8 @@ def _checks_require_recording_restore(checks: List[str]) -> bool:
 
 
 def _restore_package_recordings(packages: List[str], proxy_executable: str) -> None:
-    unique_packages = list(dict.fromkeys(packages))
+    # azure template has a fake tag for demonstration purposes, skip restore on that one.
+    unique_packages = [package for package in list(dict.fromkeys(packages)) if package != "azure-template"]
     for package in unique_packages:
         assets_path = os.path.join(package, "assets.json")
         if not os.path.exists(assets_path):
@@ -254,11 +256,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
     total = len(scheduled)
 
     for idx, (package, check, proxy_port) in enumerate(scheduled, start=1):
-        tasks.append(
-            asyncio.create_task(
-                run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port)
-            )
-        )
+        tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port)))
 
     # Handle Ctrl+C gracefully
     pending = set(tasks)
@@ -317,12 +315,14 @@ def configure_interrupt_handling():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="""
+    parser = argparse.ArgumentParser(
+        description="""
 This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `checks` environments for each package identified as in scope.
 In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
-""")
+"""
+    )
 
     parser.add_argument(
         "glob_string",
