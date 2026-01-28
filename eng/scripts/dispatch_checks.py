@@ -72,7 +72,8 @@ def _checks_require_recording_restore(checks: List[str]) -> bool:
 
 def _restore_package_recordings(packages: List[str], proxy_executable: str) -> None:
     # azure template has a fake tag for demonstration purposes, skip restore on that one.
-    unique_packages = [package for package in list(dict.fromkeys(packages)) if package != "azure-template"]
+    unique_packages = [package for package in list(dict.fromkeys(packages)) if "azure-template" not in package]
+
     for package in unique_packages:
         assets_path = os.path.join(package, "assets.json")
         if not os.path.exists(assets_path):
