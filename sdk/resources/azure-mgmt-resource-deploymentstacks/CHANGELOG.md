@@ -75,10 +75,11 @@
   - Method `DeploymentStacksOperations.begin_delete_at_management_group` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
   - Method `DeploymentStacksOperations.begin_delete_at_resource_group` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
   - Method `DeploymentStacksOperations.begin_delete_at_subscription` changed its parameter `unmanage_action_resources`/`unmanage_action_resource_groups`/`unmanage_action_management_groups`/`bypass_stack_out_of_sync_error` from `positional_or_keyword` to `keyword_only`
+  - Replaced enum `UnmanageActionManagementGroupMode`/`UnmanageActionResourceGroupMode`/`UnmanageActionResourceMode` with enum `DeploymentStacksDeleteDetachEnum`
 
 ### Other Changes
 
-  - Deleted model `AzureResourceBase`/`DeploymentStacksError`/`UnmanageActionManagementGroupMode`/`UnmanageActionResourceGroupMode`/`UnmanageActionResourceMode` which actually were not used by SDK users
+  - Deleted model `AzureResourceBase`/`DeploymentStacksError` which actually were not used by SDK users
 
 ## 1.0.0b1 (2025-06-09)
 
