@@ -3,6 +3,10 @@
 ## 12.26.0b1 (Unreleased)
 
 ### Features Added
+- Added support for the keyword `file_property_semantics` in `ShareClient`'s `create_directory` and `DirectoryClient`'s
+`create_directory` APIs, which specifies permissions to be configured upon directory creation.
+- Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
+optional initial data to be uploaded (up to 4MB).
 
 ## 12.25.0b1 (2026-01-27)
 
