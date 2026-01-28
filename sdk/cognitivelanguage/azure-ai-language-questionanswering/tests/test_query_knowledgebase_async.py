@@ -20,7 +20,7 @@ from azure.core.credentials import AzureKeyCredential
 
 class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds):
+    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds): # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
@@ -38,7 +38,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             assert answer.metadata is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_with_short_answer(self, recorded_test, qna_creds):
+    async def test_query_knowledgebase_with_short_answer(self, recorded_test, qna_creds): # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
@@ -55,7 +55,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 assert answer.short_answer.confidence is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds):
+    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
