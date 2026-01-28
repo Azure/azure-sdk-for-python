@@ -7,7 +7,7 @@ from azure.ai.language.questionanswering.authoring import QuestionAnsweringAutho
 
 
 class TestExportAndImport(QuestionAnsweringAuthoringTestCase):
-    def test_export_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_export_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -23,7 +23,7 @@ class TestExportAndImport(QuestionAnsweringAuthoringTestCase):
         export_poller.result()  # LROPoller[None]; ensure no exception
         assert export_poller.done()
 
-    def test_import_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_import_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )

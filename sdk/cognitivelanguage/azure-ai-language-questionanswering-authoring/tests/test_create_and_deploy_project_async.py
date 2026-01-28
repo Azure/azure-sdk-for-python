@@ -9,7 +9,7 @@ from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringA
 
 class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
     @pytest.mark.asyncio
-    async def test_create_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_create_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -31,7 +31,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
             assert found
 
     @pytest.mark.asyncio
-    async def test_deploy_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_deploy_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )

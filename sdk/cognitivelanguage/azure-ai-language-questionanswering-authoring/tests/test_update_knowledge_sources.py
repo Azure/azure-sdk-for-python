@@ -9,7 +9,7 @@ from azure.ai.language.questionanswering.authoring import models as _models
 
 
 class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
-    def test_add_source(self, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_add_source(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -40,7 +40,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         poller.result()
         assert any(s.get("displayName") == source_display_name for s in client.list_sources(project_name=project_name))
 
-    def test_add_qna(self, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_add_qna(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -72,7 +72,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
             for q in client.list_qnas(project_name=project_name)
         )
 
-    def test_add_synonym(self, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_add_synonym(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )

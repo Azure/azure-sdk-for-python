@@ -8,7 +8,7 @@ from azure.ai.language.questionanswering.authoring import QuestionAnsweringAutho
 
 
 class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
-    def test_polling_interval(self, qna_authoring_creds):
+    def test_polling_interval(self, recorded_test, qna_authoring_creds): # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -19,7 +19,7 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         )
         assert client._config.polling_interval == 1
 
-    def test_create_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_create_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -36,7 +36,7 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         found = any(p.get("projectName") == project_name for p in client.list_projects())
         assert found
 
-    def test_deploy_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    def test_deploy_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )

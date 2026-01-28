@@ -11,7 +11,7 @@ from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringA
 
 class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
     @pytest.mark.asyncio
-    async def test_export_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_export_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
@@ -28,7 +28,7 @@ class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
             assert poller.done()
 
     @pytest.mark.asyncio
-    async def test_import_project(self, qna_authoring_creds):  # type: ignore[name-defined]
+    async def test_import_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
