@@ -55,7 +55,7 @@ from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
-from .._cosmos_responses import CosmosDict, CosmosList
+from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
@@ -2353,7 +2353,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Queries documents in a collection.
 
         :param str database_or_container_link:
@@ -2375,7 +2375,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         if base.IsDatabaseLink(database_or_container_link):
-            return AsyncItemPaged(
+            return CosmosAsyncItemPaged(
                 self,
                 query,
                 options,
@@ -2406,7 +2406,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.last_response_headers,
             )
 
-        return AsyncItemPaged(
+        return CosmosAsyncItemPaged(
             self,
             query,
             options,
