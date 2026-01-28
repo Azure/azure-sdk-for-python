@@ -3,6 +3,7 @@
 ## 1.8.6 (Unreleased)
 
 ### Features Added
+- Enable live metrics by default
 
 ### Breaking Changes
 
