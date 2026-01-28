@@ -1,0 +1,17 @@
+# Development requirements for red team tests
+# This file excludes promptflow-devkit to avoid pillow version conflicts
+# (promptflow-devkit requires pillow<=11.3.0, pyrit requires pillow>=12.1.0)
+
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
+pytest-xdist
+azure-ai-inference>=1.0.0b4
+azure-ai-projects<=1.0.0b10
+aiohttp
+filelock
+-e ../azure-ai-evaluation[redteam]

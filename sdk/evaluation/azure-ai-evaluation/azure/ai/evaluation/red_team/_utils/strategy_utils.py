@@ -18,7 +18,7 @@ from pyrit.prompt_converter import (
     BinaryConverter,
     CaesarConverter,
     CharacterSpaceConverter,
-    CharSwapGenerator,
+    CharSwapConverter,
     DiacriticConverter,
     FlipConverter,
     LeetspeakConverter,
@@ -97,7 +97,7 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
         AttackStrategy.Binary: BinaryConverter(),
         AttackStrategy.Caesar: CaesarConverter(caesar_offset=1),
         AttackStrategy.CharacterSpace: CharacterSpaceConverter(),
-        AttackStrategy.CharSwap: CharSwapGenerator(),
+        AttackStrategy.CharSwap: CharSwapConverter(),
         AttackStrategy.Diacritic: DiacriticConverter(),
         AttackStrategy.Flip: FlipConverter(),
         AttackStrategy.Leetspeak: LeetspeakConverter(),
@@ -154,6 +154,9 @@ def get_chat_target(
 
     # Helper function for message conversion
     def _message_to_dict(message):
+        # Handle both dict and object formats
+        if isinstance(message, dict):
+            return message
         return {
             "role": message.role,
             "content": message.content,
