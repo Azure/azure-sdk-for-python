@@ -1,8 +1,255 @@
 # Release History
 
-## 10.2.0 (2026-01-23)
+## 10.2.0 (2026-01-28)
 
-change log generation was timeout!!! You need to write it manually!!!
+  - Client `WebSiteManagementClient` added method `send_request`
+  - Model `AddressResponse` added property `system_data`
+  - Model `AnalysisDefinition` added property `system_data`
+  - Model `ApiKVReference` added property `system_data`
+  - Model `AppServiceEnvironmentPatchResource` added property `properties`
+  - Model `AppServiceEnvironmentResource` added property `properties`
+  - Model `AppServiceEnvironmentResource` added property `system_data`
+  - Model `AppServicePlan` added property `system_data`
+  - Model `ApplicationStackResource` added property `properties`
+  - Model `AseV3NetworkingConfiguration` added property `system_data`
+  - Model `BackupItem` added property `system_data`
+  - Model `Certificate` added property `system_data`
+  - Model `ContinuousWebJob` added property `system_data`
+  - Model `CsmDeploymentStatus` added property `system_data`
+  - Model `CsmPublishingCredentialsPoliciesEntity` added property `system_data`
+  - Model `CustomDnsSuffixConfiguration` added property `system_data`
+  - Model `DatabaseConnection` added property `system_data`
+  - Model `DeletedSite` added property `system_data`
+  - Model `Deployment` added property `system_data`
+  - Model `DetectorDefinitionResource` added property `properties`
+  - Model `DetectorDefinitionResource` added property `system_data`
+  - Model `DetectorResponse` added property `system_data`
+  - Model `DiagnosticCategory` added property `system_data`
+  - Model `DiagnosticMetricSet` added property `values_property`
+  - Model `FunctionAppConfig` added property `site_update_strategy`
+  - Model `FunctionEnvelope` added property `system_data`
+  - Model `HostNameBinding` added property `system_data`
+  - Model `HybridConnection` added property `system_data`
+  - Model `HybridConnectionLimits` added property `system_data`
+  - Model `Identifier` added property `system_data`
+  - Model `KubeEnvironment` added property `system_data`
+  - Model `MSDeploy` added property `properties`
+  - Model `MSDeployStatus` added property `system_data`
+  - Model `MigrateMySqlStatus` added property `system_data`
+  - Model `NetworkFeatures` added property `system_data`
+  - Model `PerfMonSet` added property `values_property`
+  - Model `PremierAddOn` added property `system_data`
+  - Model `PrivateAccess` added property `system_data`
+  - Model `ProcessInfo` added property `system_data`
+  - Model `ProcessModuleInfo` added property `system_data`
+  - Model `PublicCertificate` added property `system_data`
+  - Model `RecommendationRule` added property `system_data`
+  - Model `RelayServiceConnectionEntity` added property `system_data`
+  - Model `RemotePrivateEndpointConnectionARMResource` added property `system_data`
+  - Model `RequestHistory` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceHealthMetadata` added property `system_data`
+  - Model `Site` added property `system_data`
+  - Model `SiteAuthSettingsV2` added property `system_data`
+  - Model `SiteConfigResource` added property `properties`
+  - Model `SiteConfigResource` added property `system_data`
+  - Model `SiteContainer` added property `system_data`
+  - Model `SiteExtensionInfo` added property `system_data`
+  - Model `SiteLogsConfig` added property `system_data`
+  - Model `SiteSourceControl` added property `system_data`
+  - Model `SlotConfigNamesResource` added property `properties`
+  - Model `SlotConfigNamesResource` added property `system_data`
+  - Model `SourceControl` added property `system_data`
+  - Model `StaticSiteARMResource` added property `properties`
+  - Model `StaticSiteARMResource` added property `system_data`
+  - Model `StaticSiteBasicAuthPropertiesARMResource` added property `system_data`
+  - Model `StaticSiteBuildARMResource` added property `system_data`
+  - Model `StaticSiteCustomDomainOverviewARMResource` added property `system_data`
+  - Model `StaticSiteLinkedBackendARMResource` added property `system_data`
+  - Model `StaticSitePatchResource` added property `properties`
+  - Model `StaticSiteUserProvidedFunctionAppARMResource` added property `system_data`
+  - Model `StaticSiteZipDeploymentARMResource` added property `properties`
+  - Model `SwiftVirtualNetwork` added property `system_data`
+  - Model `TriggeredJobHistory` added property `system_data`
+  - Model `TriggeredWebJob` added property `system_data`
+  - Model `User` added property `system_data`
+  - Model `ValidateRequest` added property `properties`
+  - Model `VnetGateway` added property `system_data`
+  - Model `VnetInfoResource` added property `properties`
+  - Model `VnetInfoResource` added property `system_data`
+  - Model `VnetRoute` added property `system_data`
+  - Model `WebJob` added property `system_data`
+  - Model `WebSiteInstanceStatus` added property `system_data`
+  - Model `WorkerPoolResource` added property `properties`
+  - Model `WorkerPoolResource` added property `system_data`
+  - Model `WorkflowEnvelope` added property `system_data`
+  - Model `WorkflowRun` added property `system_data`
+  - Model `WorkflowRunAction` added property `system_data`
+  - Model `WorkflowRunActionRepetitionDefinition` added property `properties`
+  - Model `WorkflowRunActionRepetitionDefinition` added property `system_data`
+  - Model `WorkflowTrigger` added property `system_data`
+  - Model `WorkflowTriggerHistory` added property `system_data`
+  - Model `WorkflowVersion` added property `system_data`
+  - Added enum `CreatedByType`
+  - Added model `DatabaseConnectionPatchRequestProperties`
+  - Added model `FunctionsSiteUpdateStrategy`
+  - Added model `MSDeployCore`
+  - Added model `ProxyResource`
+  - Added model `ResourceMetricDefinitionProperties`
+  - Added enum `SiteUpdateStrategyType`
+  - Added model `SlotConfigNames`
+  - Added model `StaticSite`
+  - Added model `StaticSiteZipDeployment`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+  - Added model `ValidateProperties`
+  - Added model `WorkerPool`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted or renamed client operation group `WebSiteManagementClient.app_service_certificate_orders`
+  - Deleted or renamed client operation group `WebSiteManagementClient.certificate_orders_diagnostics`
+  - Deleted or renamed client operation group `WebSiteManagementClient.certificate_registration_provider`
+  - Deleted or renamed client operation group `WebSiteManagementClient.domain_registration_provider`
+  - Deleted or renamed client operation group `WebSiteManagementClient.domains`
+  - Deleted or renamed client operation group `WebSiteManagementClient.top_level_domains`
+  - Client `WebSiteManagementClient` deleted or renamed instance variable `url`
+  - Method `WebSiteManagementClient.check_name_availability` moved parameters `name`/`type`/`is_fqdn`/`environment_id` under property `request`
+  - Method `WebSiteManagementClient.list_billing_meters` changed its parameter `billing_location`/`os_type` from `positional_or_keyword` to `keyword_only`
+  - Method `WebSiteManagementClient.list_custom_host_name_sites` changed its parameter `hostname` from `positional_or_keyword` to `keyword_only`
+  - Method `WebSiteManagementClient.list_geo_regions` changed its parameter `sku`/`linux_workers_enabled`/`xenon_workers_enabled`/`linux_dynamic_workers_enabled`/`custom_mode_workers_enabled` from `positional_or_keyword` to `keyword_only`
+  - Method `WebSiteManagementClient.regional_check_name_availability` moved parameters `name`/`type`/`resource_group_name`/`auto_generated_domain_name_label_scope` under property `request`
+  - Model `AppServiceEnvironmentPatchResource` moved instance variable `provisioning_state`/`status`/`virtual_network`/`internal_load_balancing_mode`/`multi_size`/`multi_role_count`/`ipssl_address_count`/`dns_suffix`/`maximum_number_of_machines`/`front_end_scale_factor`/`suspended`/`cluster_settings`/`user_whitelisted_ip_ranges`/`has_linux_workers`/`upgrade_preference`/`dedicated_host_count`/`zone_redundant`/`custom_dns_suffix_configuration`/`networking_configuration`/`upgrade_availability` under property `properties`
+  - Model `AppServiceEnvironmentResource` moved instance variable `provisioning_state`/`status`/`virtual_network`/`internal_load_balancing_mode`/`multi_size`/`multi_role_count`/`ipssl_address_count`/`dns_suffix`/`maximum_number_of_machines`/`front_end_scale_factor`/`suspended`/`cluster_settings`/`user_whitelisted_ip_ranges`/`has_linux_workers`/`upgrade_preference`/`dedicated_host_count`/`zone_redundant`/`custom_dns_suffix_configuration`/`networking_configuration`/`upgrade_availability` under property `properties`
+  - Model `ApplicationStackResource` moved instance variable `name_properties_name`/`display`/`dependency`/`major_versions`/`frameworks`/`is_deprecated` under property `properties`
+  - Model `DatabaseConnectionPatchRequest` moved instance variable `resource_id`/`connection_identity`/`connection_string`/`region` under property `properties`
+  - Model `DetectorDefinitionResource` moved instance variable `display_name`/`description`/`rank`/`is_enabled` under property `properties`
+  - Model `DiagnosticMetricSet` renamed its instance variable `values` to `values_property`
+  - Model `MSDeploy` moved instance variable `package_uri`/`connection_string`/`db_type`/`set_parameters_xml_file_uri`/`set_parameters`/`skip_app_data`/`app_offline` under property `properties`
+  - Model `PerfMonSet` renamed its instance variable `values` to `values_property`
+  - Model `Resource` deleted or renamed its instance variable `kind`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `ResourceMetricDefinition` moved instance variable `unit`/`primary_aggregation_type`/`metric_availabilities`/`resource_uri` under property `properties`
+  - Model `SiteConfigResource` moved instance variable `number_of_workers`/`default_documents`/`net_framework_version`/`php_version`/`python_version`/`node_version`/`power_shell_version`/`linux_fx_version`/`windows_fx_version`/`request_tracing_enabled`/`request_tracing_expiration_time`/`remote_debugging_enabled`/`remote_debugging_version`/`http_logging_enabled`/`acr_use_managed_identity_creds`/`acr_user_managed_identity_id`/`logs_directory_size_limit`/`detailed_error_logging_enabled`/`publishing_username`/`app_settings`/`metadata`/`connection_strings`/`machine_key`/`handler_mappings`/`document_root`/`scm_type`/`use32_bit_worker_process`/`web_sockets_enabled`/`always_on`/`java_version`/`java_container`/`java_container_version`/`app_command_line`/`managed_pipeline_mode`/`virtual_applications`/`load_balancing`/`experiments`/`limits`/`auto_heal_enabled`/`auto_heal_rules`/`tracing_options`/`vnet_name`/`vnet_route_all_enabled`/`vnet_private_ports_count`/`cors`/`push`/`api_definition`/`api_management_config`/`auto_swap_slot_name`/`local_my_sql_enabled`/`managed_service_identity_id`/`x_managed_service_identity_id`/`key_vault_reference_identity`/`ip_security_restrictions`/`ip_security_restrictions_default_action`/`scm_ip_security_restrictions`/`scm_ip_security_restrictions_default_action`/`scm_ip_security_restrictions_use_main`/`http20_enabled`/`http20_proxy_flag`/`min_tls_version`/`min_tls_cipher_suite`/`scm_min_tls_version`/`ftps_state`/`pre_warmed_instance_count`/`function_app_scale_limit`/`elastic_web_app_scale_limit`/`health_check_path`/`functions_runtime_scale_monitoring_enabled`/`website_time_zone`/`minimum_elastic_instance_count`/`azure_storage_accounts`/`public_network_access` under property `properties`
+  - Model `SlotConfigNamesResource` moved instance variable `connection_string_names`/`app_setting_names`/`azure_storage_config_names` under property `properties`
+  - Model `StaticSiteARMResource` moved instance variable `default_hostname`/`repository_url`/`branch`/`custom_domains`/`repository_token`/`build_properties`/`private_endpoint_connections`/`staging_environment_policy`/`allow_config_file_updates`/`template_properties`/`content_distribution_endpoint`/`key_vault_reference_identity`/`user_provided_function_apps`/`linked_backends`/`provider`/`enterprise_grade_cdn_status`/`public_network_access`/`database_connections` under property `properties`
+  - Model `StaticSitePatchResource` moved instance variable `default_hostname`/`repository_url`/`branch`/`custom_domains`/`repository_token`/`build_properties`/`private_endpoint_connections`/`staging_environment_policy`/`allow_config_file_updates`/`template_properties`/`content_distribution_endpoint`/`key_vault_reference_identity`/`user_provided_function_apps`/`linked_backends`/`provider`/`enterprise_grade_cdn_status`/`public_network_access`/`database_connections` under property `properties`
+  - Model `StaticSiteZipDeploymentARMResource` moved instance variable `app_zip_url`/`api_zip_url`/`deployment_title`/`provider`/`function_language` under property `properties`
+  - Model `ValidateRequest` moved instance variable `server_farm_id`/`sku_name`/`need_linux_workers`/`is_spot`/`capacity`/`hosting_environment`/`is_xenon`/`container_registry_base_url`/`container_registry_username`/`container_registry_password`/`container_image_repository`/`container_image_tag`/`container_image_platform`/`app_service_environment` under property `properties`
+  - Model `VnetInfoResource` moved instance variable `vnet_resource_id`/`cert_thumbprint`/`cert_blob`/`routes`/`resync_required`/`dns_servers`/`is_swift` under property `properties`
+  - Model `WorkerPoolResource` moved instance variable `worker_size_id`/`compute_mode`/`worker_size`/`worker_count`/`instance_names` under property `properties`
+  - Model `WorkflowRunActionRepetitionDefinition` moved instance variable `start_time`/`end_time`/`correlation`/`status`/`code`/`error`/`tracking_id`/`inputs`/`inputs_link`/`outputs`/`outputs_link`/`tracked_properties`/`retry_history`/`iteration_count`/`repetition_indexes` under property `properties`
+  - Deleted or renamed model `Address`
+  - Deleted or renamed model `AppServiceCertificate`
+  - Deleted or renamed model `AppServiceCertificateOrder`
+  - Deleted or renamed model `AppServiceCertificateOrderPatchResource`
+  - Deleted or renamed model `AppServiceCertificatePatchResource`
+  - Deleted or renamed model `AppServiceCertificateResource`
+  - Deleted or renamed model `AppserviceGithubToken`
+  - Deleted or renamed model `AppserviceGithubTokenRequest`
+  - Deleted or renamed model `CertificateDetails`
+  - Deleted or renamed model `CertificateEmail`
+  - Deleted or renamed model `CertificateOrderAction`
+  - Deleted or renamed model `CertificateOrderActionType`
+  - Deleted or renamed model `CertificateOrderContact`
+  - Deleted or renamed model `CertificateOrderStatus`
+  - Deleted or renamed model `CertificateProductType`
+  - Deleted or renamed model `CipherSuites`
+  - Deleted or renamed model `Contact`
+  - Deleted or renamed model `Container`
+  - Deleted or renamed model `ContainerResources`
+  - Deleted or renamed model `DnsType`
+  - Deleted or renamed model `Domain`
+  - Deleted or renamed model `DomainAvailabilityCheckResult`
+  - Deleted or renamed model `DomainControlCenterSsoRequest`
+  - Deleted or renamed model `DomainOwnershipIdentifier`
+  - Deleted or renamed model `DomainPatchResource`
+  - Deleted or renamed model `DomainPurchaseConsent`
+  - Deleted or renamed model `DomainRecommendationSearchParameters`
+  - Deleted or renamed model `DomainStatus`
+  - Deleted or renamed model `DomainType`
+  - Deleted or renamed model `EnvironmentVar`
+  - Deleted or renamed model `ErrorPage`
+  - Deleted or renamed model `HostName`
+  - Deleted or renamed model `HttpScaleRule`
+  - Deleted or renamed model `QueueScaleRule`
+  - Deleted or renamed model `ReissueCertificateOrderRequest`
+  - Deleted or renamed model `RenewCertificateOrderRequest`
+  - Deleted or renamed model `ResourceNotRenewableReason`
+  - Deleted or renamed model `Scale`
+  - Deleted or renamed model `ScaleRule`
+  - Deleted or renamed model `ScaleRuleAuth`
+  - Deleted or renamed model `SiteSeal`
+  - Deleted or renamed model `SiteSealRequest`
+  - Deleted or renamed model `SubResource`
+  - Deleted or renamed model `Template`
+  - Deleted or renamed model `TldLegalAgreement`
+  - Deleted or renamed model `TopLevelDomain`
+  - Deleted or renamed model `TopLevelDomainAgreementOption`
+  - Deleted or renamed model `WorkflowFilter`
+  - Deleted or renamed model `WorkflowRunActionFilter`
+  - Deleted or renamed model `WorkflowRunFilter`
+  - Deleted or renamed model `WorkflowTriggerFilter`
+  - Deleted or renamed model `WorkflowTriggerHistoryFilter`
+  - Method `AppServiceEnvironmentsOperations.begin_delete` changed its parameter `force_delete` from `positional_or_keyword` to `keyword_only`
+  - Method `AppServiceEnvironmentsOperations.list_web_apps` changed its parameter `properties_to_include` from `positional_or_keyword` to `keyword_only`
+  - Method `AppServicePlansOperations.list` changed its parameter `detailed` from `positional_or_keyword` to `keyword_only`
+  - Method `AppServicePlansOperations.list_web_apps` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `AppServicePlansOperations.restart_web_apps` changed its parameter `soft_restart` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_analysis` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_analysis_slot` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_detector` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_detector_slot` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.get_hosting_environment_detector_response` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.get_site_detector_response` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.get_site_detector_response_slot` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `ProviderOperations.get_available_stacks` changed its parameter `os_type_selected` from `positional_or_keyword` to `keyword_only`
+  - Method `ProviderOperations.get_available_stacks_on_prem` changed its parameter `os_type_selected` from `positional_or_keyword` to `keyword_only`
+  - Method `ProviderOperations.get_function_app_stacks` changed its parameter `stack_os_type` from `positional_or_keyword` to `keyword_only`
+  - Method `ProviderOperations.get_function_app_stacks_for_location` changed its parameter `stack_os_type` from `positional_or_keyword` to `keyword_only`
+  - Method `ProviderOperations.get_web_app_stacks` changed its parameter `stack_os_type` from `positional_or_keyword` to `keyword_only`
+  - Method `ProviderOperations.get_web_app_stacks_for_location` changed its parameter `stack_os_type` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.disable_all_for_hosting_environment` changed its parameter `environment_name` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.disable_recommendation_for_hosting_environment` changed its parameter `environment_name` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.get_rule_details_by_hosting_environment` changed its parameter `update_seen`/`recommendation_id` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.get_rule_details_by_web_app` changed its parameter `update_seen`/`recommendation_id` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.list` changed its parameter `featured` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.list_history_for_hosting_environment` changed its parameter `expired_only` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.list_history_for_web_app` changed its parameter `expired_only` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.list_recommended_rules_for_hosting_environment` changed its parameter `featured` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.list_recommended_rules_for_web_app` changed its parameter `featured` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.reset_all_filters_for_hosting_environment` changed its parameter `environment_name` from `positional_or_keyword` to `keyword_only`
+  - Method `StaticSitesOperations.begin_register_user_provided_function_app_with_static_site` changed its parameter `is_forced` from `positional_or_keyword` to `keyword_only`
+  - Method `StaticSitesOperations.begin_register_user_provided_function_app_with_static_site_build` changed its parameter `is_forced` from `positional_or_keyword` to `keyword_only`
+  - Method `StaticSitesOperations.unlink_backend` changed its parameter `is_cleaning_auth_config` from `positional_or_keyword` to `keyword_only`
+  - Method `StaticSitesOperations.unlink_backend_from_build` changed its parameter `is_cleaning_auth_config` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.analyze_custom_hostname` changed its parameter `host_name` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.analyze_custom_hostname_slot` changed its parameter `host_name` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_migrate_storage` changed its parameter `subscription_name` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_network_trace` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_network_trace_slot` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.delete` changed its parameter `delete_metrics`/`delete_empty_server_farm` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.delete_slot` changed its parameter `delete_metrics`/`delete_empty_server_farm` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.delete_source_control` changed its parameter `additional_flags` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.delete_source_control_slot` changed its parameter `additional_flags` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.list_by_resource_group` changed its parameter `include_slots` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.restart` changed its parameter `soft_restart`/`synchronous` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.restart_slot` changed its parameter `soft_restart`/`synchronous` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.start_web_site_network_trace` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.start_web_site_network_trace_slot` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_migrate_storage` re-ordered its parameters from `['self', 'subscription_name', 'resource_group_name', 'name', 'migration_options', 'kwargs']` to `['self', 'resource_group_name', 'name', 'migration_options', 'subscription_name', 'kwargs']`
+  - Method `RecommendationsOperations.disable_all_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'hosting_environment_name', 'environment_name', 'kwargs']`
+  - Method `RecommendationsOperations.disable_recommendation_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'name', 'hosting_environment_name', 'environment_name', 'kwargs']`
+  - Method `RecommendationsOperations.reset_all_filters_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'hosting_environment_name', 'environment_name', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `ExpressionTraces`/`PrivateLinkConnectionApprovalRequestResource`/`ApiKVReferenceCollection`/`AppServiceCertificateCollection`/`AppServiceCertificateOrderCollection`/`AppServiceEnvironmentCollection`/`AppServicePlanCollection`/`ApplicationStackCollection`/`AseRegionCollection`/`BackupItemCollection`/`BillingMeterCollection`/`CertificateCollection`/`ContinuousWebJobCollection`/`CsmDeploymentStatusCollection`/`CsmOperationCollection`/`CsmUsageQuotaCollection`/`CustomHostnameSitesCollection`/`DatabaseConnectionCollection`/`DeletedWebAppCollection`/`DeploymentCollection`/`DetectorResponseCollection`/`DiagnosticAnalysisCollection`/`DiagnosticCategoryCollection`/`DiagnosticDetectorCollection`/`DomainCollection`/`DomainOwnershipIdentifierCollection`/`FunctionAppStackCollection`/`FunctionEnvelopeCollection`/`GeoRegionCollection`/`HostNameBindingCollection`/`HybridConnectionCollection`/`IdentifierCollection`/`InboundEnvironmentEndpointCollection`/`KubeEnvironmentCollection`/`NameIdentifierCollection`/`OutboundEnvironmentEndpointCollection`/`PerfMonCounterCollection`/`PremierAddOnOfferCollection`/`PrivateEndpointConnectionCollection`/`ProcessInfoCollection`/`ProcessModuleInfoCollection`/`ProcessThreadInfoCollection`/`PublicCertificateCollection`/`PublishingCredentialsPoliciesCollection`/`RecommendationCollection`/`ResourceCollection`/`ResourceHealthMetadataCollection`/`ResourceMetricDefinitionCollection`/`SiteConfigResourceCollection`/`SiteConfigurationSnapshotInfoCollection`/`SiteContainerCollection`/`SiteExtensionInfoCollection`/`SkuInfoCollection`/`SlotDifferenceCollection`/`SnapshotCollection`/`SourceControlCollection`/`StampCapacityCollection`/`StaticSiteBasicAuthPropertiesCollection`/`StaticSiteBuildCollection`/`StaticSiteCollection`/`StaticSiteCustomDomainOverviewCollection`/`StaticSiteFunctionOverviewCollection`/`StaticSiteLinkedBackendsCollection`/`StaticSiteUserCollection`/`StaticSiteUserProvidedFunctionAppsCollection`/`TldLegalAgreementCollection`/`TopLevelDomainCollection`/`TriggeredJobHistoryCollection`/`TriggeredWebJobCollection`/`UsageCollection`/`WebAppCollection`/`WebAppInstanceStatusCollection`/`WebAppStackCollection`/`WebJobCollection`/`WorkerPoolCollection`/`WorkflowEnvelopeCollection`/`WorkflowRunActionRepetitionDefinitionCollection` which actually were not used by SDK users
 
 ## 10.1.0 (2025-11-17)
 
