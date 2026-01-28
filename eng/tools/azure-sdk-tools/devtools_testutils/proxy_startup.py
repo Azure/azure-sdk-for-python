@@ -19,6 +19,7 @@ import certifi
 from dotenv import load_dotenv, find_dotenv
 import pytest
 import subprocess
+from urllib.parse import urlparse
 from urllib3.exceptions import SSLError
 
 from ci_tools.variables import in_ci
@@ -95,6 +96,28 @@ AVAILABLE_TEST_PROXY_BINARIES = {
 PROXY_DOWNLOAD_URL = "https://github.com/Azure/azure-sdk-tools/releases/download/Azure.Sdk.Tools.TestProxy_{}/{}"
 
 discovered_roots = []
+
+
+def _get_proxy_log_suffix() -> str:
+    """Derive a log suffix based on the configured proxy port."""
+
+    proxy_url = os.getenv("PROXY_URL", PROXY_URL)
+    normalized = proxy_url if "://" in proxy_url else f"http://{proxy_url}"
+    try:
+        parsed = urlparse(normalized)
+    except Exception as exc:  # pragma: no cover - defensive parsing guard
+        _LOGGER.debug("Unable to parse PROXY_URL '%s': %s", proxy_url, exc)
+        return "default"
+
+    if parsed.port:
+        return str(parsed.port)
+
+    if parsed.netloc and ":" in parsed.netloc:
+        candidate = parsed.netloc.rsplit(":", 1)[-1]
+        if candidate.isdigit():
+            return candidate
+
+    return "default"
 
 
 def get_target_version(repo_root: str) -> str:
@@ -362,19 +385,14 @@ def start_test_proxy(request) -> None:
             # If we're in CI, allow for tox environment parallelization and write proxy output to a log file
             log = None
             if in_ci():
-                envname = os.getenv("TOX_ENV_NAME", "default")
-                log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
+                log_suffix = _get_proxy_log_suffix()
+                log = open(os.path.join(root, f"_proxy_log_{log_suffix}.log"), "a")
 
-                os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", envname)
-                if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
-                    os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
+                # os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", log_suffix)
+                # if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
+                #     os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
 
-            if os.getenv("TF_BUILD"):
-                _LOGGER.info("Starting the test proxy tool from dotnet tool cache...")
-                tool_name = "test-proxy"
-            else:
-                _LOGGER.info("Downloading and starting standalone proxy executable...")
-                tool_name = prepare_local_tool(root)
+            tool_name = prepare_local_tool(root)
 
             if requires_https:
                 # Always start the proxy with these two defaults set to allow SSL connection
@@ -386,6 +404,12 @@ def start_test_proxy(request) -> None:
                 }
             else:
                 passenv = {}
+
+            # When the proxy is started in context of a file, deletions of files under that directory crashes the test-proxy
+            # due to how asp.net kestrel loads configuration files. We can disable this behavior by setting this environment
+            # variable in env for the proxy process, which will allow us to clean up the --isolate directories without crashing
+            # running proxies.
+            passenv["DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE"] = "false"
 
             # If they are already set, override what we give the proxy with what is in os.environ
             passenv.update(os.environ)

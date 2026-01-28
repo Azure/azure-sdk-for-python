@@ -43,102 +43,8 @@ class ProxyProcess:
 PROXY_STATUS_SUFFIX = "/Info/Available"
 PROXY_STARTUP_TIMEOUT = 60
 BASE_PROXY_PORT = 5000
-
-
-def _proxy_status_url(port: int) -> str:
-    return f"http://localhost:{port}{PROXY_STATUS_SUFFIX}"
-
-
-def _proxy_is_running(port: int) -> bool:
-    try:
-        with urllib.request.urlopen(_proxy_status_url(port), timeout=5) as resp:
-            return resp.status == 200
-    except Exception:
-        return False
-
-
-def _wait_for_proxy(port: int, timeout: int = PROXY_STARTUP_TIMEOUT) -> bool:
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        if _proxy_is_running(port):
-            return True
-        time.sleep(1)
-    return _proxy_is_running(port)
-
-
-def _wait_for_proxy_shutdown(port: int, timeout: int = 15) -> bool:
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        if not _proxy_is_running(port):
-            return True
-        time.sleep(0.5)
-    return not _proxy_is_running(port)
-
-
-def _start_proxy(port: int, tool_path: str) -> ProxyProcess:
-    env = os.environ.copy()
-    log_handle: Optional[IO[str]] = None
-
-    if in_ci():
-        log_path = os.path.join(root_dir, f"_proxy_log_{port}.log")
-        os.makedirs(os.path.dirname(log_path), exist_ok=True)
-        log_handle = open(log_path, "a")
-        assets_folder = os.path.join(root_dir, "l", f"proxy_{port}")
-        os.makedirs(assets_folder, exist_ok=True)
-        env["PROXY_ASSETS_FOLDER"] = assets_folder
-        env["DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE"] = "false"
-
-    command = shlex.split(
-        f'{tool_path} start --storage-location="{root_dir}" -- --urls "http://localhost:{port}"'
-    )
-    creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
-
-    process = subprocess.Popen(
-        command,
-        stdout=log_handle or subprocess.DEVNULL,
-        stderr=log_handle or subprocess.STDOUT,
-        env=env,
-        creationflags=creationflags,
-    )
-
-    if not _wait_for_proxy(port):
-        process.terminate()
-        if log_handle:
-            log_handle.close()
-        raise RuntimeError(f"Failed to start test proxy on port {port}")
-
-    logger.info(f"Started test proxy on port {port}")
-    return ProxyProcess(port=port, process=process, log_handle=log_handle)
-
-
-def _stop_proxy_instances(instances: List[ProxyProcess]) -> None:
-    for instance in instances:
-        proc = instance.process
-        if proc.poll() is None:
-            try:
-                if os.name == "nt" and hasattr(signal, "CTRL_BREAK_EVENT"):
-                    proc.send_signal(signal.CTRL_BREAK_EVENT)
-                else:
-                    proc.send_signal(signal.SIGINT)
-                proc.wait(timeout=20)
-            except (ProcessLookupError, PermissionError):
-                pass
-            except (ValueError, OSError):
-                pass
-            except subprocess.TimeoutExpired:
-                proc.terminate()
-                try:
-                    proc.wait(timeout=10)
-                except subprocess.TimeoutExpired:
-                    proc.kill()
-            except Exception:
-                proc.terminate()
-        if instance.log_handle:
-            instance.log_handle.close()
-        if _proxy_is_running(instance.port):
-            if not _wait_for_proxy_shutdown(instance.port, timeout=10):
-                logger.warning(f"Test proxy on port {instance.port} did not stop cleanly.")
-
+# Checks implemented via InstallAndTest all require shared recording restore behavior.
+INSTALL_AND_TEST_CHECKS = {"whl", "whl_no_aio", "sdist", "devtest", "optional", "latestdependency", "mindependency"}
 
 def _cleanup_isolate_dirs() -> None:
     if not ISOLATE_DIRS_TO_CLEAN:
@@ -155,35 +61,36 @@ def _cleanup_isolate_dirs() -> None:
     ISOLATE_DIRS_TO_CLEAN.clear()
 
 
-def ensure_proxies_for_checks(checks: List[str]) -> List[ProxyProcess]:
-    ports = sorted({get_proxy_port_for_check(check) for check in checks if check})
-    if not ports:
-        return []
-
-    started: List[ProxyProcess] = []
-    tool_path: Optional[str] = None
-
-    try:
-        for port in ports:
-            if _proxy_is_running(port):
-                logger.info(f"Test proxy already running on port {port}")
-                continue
-            if tool_path is None:
-                tool_path = prepare_local_tool(root_dir)
-
-            if tool_path is None:
-                raise RuntimeError("Failed to prepare test proxy tool.")
-            started.append(_start_proxy(port, tool_path))
-    except Exception:
-        _stop_proxy_instances(started)
-        raise
-
-    os.environ["PROXY_MANUAL_START"] = "1"
-    return started
-
-
 def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def _checks_require_recording_restore(checks: List[str]) -> bool:
+    return any(check in INSTALL_AND_TEST_CHECKS for check in checks)
+
+
+def _restore_package_recordings(packages: List[str], proxy_executable: str) -> None:
+    unique_packages = list(dict.fromkeys(packages))
+    for package in unique_packages:
+        assets_path = os.path.join(package, "assets.json")
+        if not os.path.exists(assets_path):
+            logger.debug(f"No assets.json found under {package}; skipping restore.")
+            continue
+        cmd = [proxy_executable, "restore", "-a", assets_path]
+        logger.info(f"Restoring recordings for {package} using assets file {assets_path}.")
+        try:
+            completed = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            if completed.stdout:
+                logger.debug(completed.stdout.strip())
+            if completed.stderr:
+                logger.debug(completed.stderr.strip())
+        except subprocess.CalledProcessError as exc:
+            logger.error(f"Failed to restore recordings for {package}: {exc}")
+            if exc.stdout:
+                logger.error(exc.stdout.strip())
+            if exc.stderr:
+                logger.error(exc.stderr.strip())
+            raise
 
 
 async def run_check(
@@ -559,6 +466,19 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         logger.error("No valid checks provided via -c/--checks.")
         sys.exit(2)
 
+    if in_ci() and _checks_require_recording_restore(checks):
+        try:
+            proxy_executable = prepare_local_tool(root_dir)
+        except Exception as exc:
+            logger.error(f"Unable to prepare test proxy executable for recording restore: {exc}")
+            sys.exit(1)
+
+        try:
+            _restore_package_recordings(targeted_packages, proxy_executable)
+        except subprocess.CalledProcessError:
+            logger.error("Recording restore pre-pass failed; aborting check execution.")
+            sys.exit(1)
+
     logger.info(
         f"Running {len(checks)} check(s) across {len(targeted_packages)} packages (max_parallel={args.max_parallel})."
     )
@@ -568,12 +488,10 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     try:
         if in_ci():
             logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
-            # proxy_processes = ensure_proxies_for_checks(checks)
         exit_code = asyncio.run(run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir))
     except KeyboardInterrupt:
         logger.error("Aborted by user.")
         exit_code = 130
     finally:
-        # _stop_proxy_instances(proxy_processes)
         _cleanup_isolate_dirs()
     sys.exit(exit_code)
