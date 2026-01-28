@@ -58,7 +58,7 @@ class DeleteTagsAsync(object):
                     tag_count += 1
                     if tag_count > 3:
                         print(f"Deleting {repository_name}:{tag.name}")
-                        await client.delete_tag(repository_name, tag.name)
+                        await client.delete_tag(repository_name, tag.name)  # type: ignore[arg-type]
 
 
 async def main():
