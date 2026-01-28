@@ -10,11 +10,14 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from azure.monitor.opentelemetry import _utils
-from azure.monitor.opentelemetry.exporter._constants import _AKS_ARM_NAMESPACE_ID
 
 TEST_VALUE = "TEST_VALUE"
 TEST_IKEY = "1234abcd-ab12-34cd-ab12-a23456abcdef"
-TEST_CONN_STR = f"InstrumentationKey={TEST_IKEY};IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/"
+TEST_CONN_STR = (
+    f"InstrumentationKey={TEST_IKEY};"
+    "IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;"
+    "LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/"
+)
 
 
 def clear_env_var(env_var):
@@ -22,6 +25,7 @@ def clear_env_var(env_var):
         del environ[env_var]
 
 
+# pylint: disable=protected-access
 class TestUtils(TestCase):
     @patch.dict(
         "os.environ",
@@ -62,7 +66,9 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=False,
     )
-    def test_diagnostics_app_service_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
+    def test_diagnostics_app_service_attach(
+        self, attach_mock, app_service_mock, aks_mock, functions_mock
+    ):  # pylint: disable=unused-argument
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
@@ -82,7 +88,9 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=False,
     )
-    def test_diagnostics_aks_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
+    def test_diagnostics_aks_attach(
+        self, attach_mock, app_service_mock, aks_mock, functions_mock
+    ):  # pylint: disable=unused-argument
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
@@ -104,7 +112,9 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=True,
     )
-    def test_diagnostics_functions_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
+    def test_diagnostics_functions_attach(
+        self, attach_mock, app_service_mock, aks_mock, functions_mock
+    ):  # pylint: disable=unused-argument
         reload(_utils)
         # Functions attach does not currently enable diagnostics
         self.assertFalse(_utils._is_diagnostics_enabled())
@@ -113,7 +123,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
         return_value=False,
     )
-    def test_diagnostics_disabled(self, attach_mock):
+    def test_diagnostics_disabled(self, attach_mock):  # pylint: disable=unused-argument
         reload(_utils)
         self.assertFalse(_utils._is_diagnostics_enabled())
 
@@ -121,14 +131,14 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry._utils.platform.system",
         return_value="Linux",
     )
-    def test_log_path_linux(self, mock_system):
+    def test_log_path_linux(self, mock_system):  # pylint: disable=unused-argument
         self.assertEqual(_utils._get_log_path(), "/var/log/applicationinsights")
 
     @patch(
         "azure.monitor.opentelemetry._utils.platform.system",
         return_value="Linux",
     )
-    def test_status_log_path_linux(self, mock_system):
+    def test_status_log_path_linux(self, mock_system):  # pylint: disable=unused-argument
         self.assertEqual(
             _utils._get_log_path(status_log_path=True),
             "/var/log/applicationinsights",
@@ -139,7 +149,7 @@ class TestUtils(TestCase):
         return_value="Windows",
     )
     @patch("pathlib.Path.home", return_value="\\HOME\\DIR")
-    def test_log_path_windows(self, mock_system, mock_home):
+    def test_log_path_windows(self, mock_system, mock_home):  # pylint: disable=unused-argument
         self.assertEqual(
             _utils._get_log_path(),
             "\\HOME\\DIR\\LogFiles\\ApplicationInsights",
@@ -150,7 +160,7 @@ class TestUtils(TestCase):
         return_value="Windows",
     )
     @patch("pathlib.Path.home", return_value="\\HOME\\DIR")
-    def test_status_log_path_windows(self, mock_system, mock_home):
+    def test_status_log_path_windows(self, mock_system, mock_home):  # pylint: disable=unused-argument
         self.assertEqual(
             _utils._get_log_path(status_log_path=True),
             "\\HOME\\DIR\\LogFiles\\ApplicationInsights\\status",
@@ -160,14 +170,14 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry._utils.platform.system",
         return_value="Window",
     )
-    def test_log_path_other(self, mock_platform):
+    def test_log_path_other(self, mock_platform):  # pylint: disable=unused-argument
         self.assertIsNone(_utils._get_log_path())
 
     @patch(
         "azure.monitor.opentelemetry._utils.platform.system",
         return_value="linux",
     )
-    def test_status_log_path_other(self, mock_platform):
+    def test_status_log_path_other(self, mock_platform):  # pylint: disable=unused-argument
         self.assertIsNone(_utils._get_log_path(status_log_path=True))
 
     @patch.dict("os.environ", {"key": "value"})
@@ -179,5 +189,5 @@ class TestUtils(TestCase):
         self.assertEqual(_utils._env_var_or_default("key"), "")
 
     @patch.dict("os.environ", {})
-    def test_env_var_or_default_empty_with_defaults(self):
+    def test_env_var_or_default_empty_with_defaults(self):  # pylint: disable=name-too-long
         self.assertEqual(_utils._env_var_or_default("key", default_val="value"), "value")

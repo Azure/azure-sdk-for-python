@@ -14,10 +14,8 @@
 import unittest
 from unittest.mock import Mock, call, patch
 
-from opentelemetry.sdk._logs import LoggingHandler
 from opentelemetry.sdk.resources import Resource
 
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._configure import (
     _send_attach_warning,
     _setup_instrumentations,
@@ -33,6 +31,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_
 TEST_RESOURCE = Resource({"foo": "bar"})
 
 
+# pylint: disable=too-many-public-methods
 class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._send_attach_warning",
@@ -90,7 +89,7 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
-    def test_configure_azure_monitor_disable_tracing(
+    def test_configure_azure_monitor_disable_tracing(  # pylint: disable=name-too-long
         self,
         config_mock,
         tracing_mock,
@@ -146,7 +145,7 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
-    def test_configure_azure_monitor_disable_logging(
+    def test_configure_azure_monitor_disable_logging(  # pylint: disable=name-too-long
         self,
         config_mock,
         tracing_mock,
@@ -197,7 +196,7 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
-    def test_configure_azure_monitor_disable_metrics(
+    def test_configure_azure_monitor_disable_metrics(  # pylint: disable=name-too-long
         self,
         config_mock,
         tracing_mock,
@@ -241,7 +240,7 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
-    def test_configure_azure_monitor_enable_live_metrics(
+    def test_configure_azure_monitor_enable_live_metrics(  # pylint: disable=name-too-long
         self,
         config_mock,
         tracing_mock,
@@ -293,7 +292,7 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
-    def test_configure_azure_monitor_disable_perf_counters(
+    def test_configure_azure_monitor_disable_perf_counters(  # pylint: disable=name-too-long
         self,
         config_mock,
         tracing_mock,
@@ -484,7 +483,7 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure.ApplicationInsightsSampler",
     )
-    def test_setup_tracing_perf_counters_disabled(
+    def test_setup_tracing_perf_counters_disabled(  # pylint: disable=name-too-long
         self,
         sampler_mock,
         tp_mock,
@@ -684,7 +683,9 @@ class TestConfigure(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
     @patch("azure.monitor.opentelemetry._configure.getLogger")
-    def test_setup_logging_disable_performance_counters(self, get_logger_mock, pclp_mock):
+    def test_setup_logging_disable_performance_counters(
+        self, get_logger_mock, pclp_mock
+    ):  # pylint: disable=name-too-long
         lp_mock = Mock()
         set_logger_provider_mock = Mock()
         log_exporter_mock = Mock()
@@ -858,7 +859,7 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure.MeterProvider",
         autospec=True,
     )
-    def test_setup_metrics_perf_counters_disabled(
+    def test_setup_metrics_perf_counters_disabled(  # pylint: disable=name-too-long
         self, mp_mock, set_meter_provider_mock, metric_exporter_mock, reader_mock, mock_enable_performance_counters
     ):
         mp_init_mock = Mock()
@@ -905,7 +906,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
-    def test_setup_instrumentations_lib_not_supported(
+    def test_setup_instrumentations_lib_not_supported(  # pylint: disable=name-too-long
         self,
         iter_mock,
         dep_mock,
@@ -932,7 +933,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("azure_sdk"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
-    def test_setup_instrumentations_additional_azure(
+    def test_setup_instrumentations_additional_azure(  # pylint: disable=name-too-long
         self,
         iter_mock,
         enabled_mock,
@@ -1076,7 +1077,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
     @patch("azure.monitor.opentelemetry._configure._is_on_functions")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
-    def test_send_attach_warning_false_on_functions(
+    def test_send_attach_warning_false_on_functions(  # pylint: disable=name-too-long
         self,
         is_attach_enabled_mock,
         is_on_functions_mock,

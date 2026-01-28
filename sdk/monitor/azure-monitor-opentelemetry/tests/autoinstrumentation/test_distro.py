@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from os import environ
 import warnings
 from unittest import TestCase
@@ -15,7 +21,7 @@ class TestDistro(TestCase):
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging")
-    def test_configure(self, mock_diagnostics, azure_core_mock, attach_mock):
+    def test_configure(self, mock_diagnostics, azure_core_mock, attach_mock):  # pylint: disable=unused-argument
         distro = AzureMonitorDistro()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
@@ -47,7 +53,9 @@ class TestDistro(TestCase):
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging")
-    def test_configure_env_vars_set(self, mock_diagnostics, azure_core_mock, attach_mock):
+    def test_configure_env_vars_set(
+        self, mock_diagnostics, azure_core_mock, attach_mock
+    ):  # pylint: disable=unused-argument
         distro = AzureMonitorDistro()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
@@ -72,7 +80,9 @@ class TestDistro(TestCase):
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging")
-    def test_configure_disable_azure_core(self, mock_diagnostics, azure_core_mock, attach_mock):
+    def test_configure_disable_azure_core(
+        self, mock_diagnostics, azure_core_mock, attach_mock
+    ):  # pylint: disable=unused-argument
         distro = AzureMonitorDistro()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
@@ -85,7 +95,7 @@ class TestDistro(TestCase):
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging")
-    def test_configure_preview(self, mock_diagnostics, azure_core_mock, attach_mock):
+    def test_configure_preview(self, mock_diagnostics, azure_core_mock, attach_mock):  # pylint: disable=unused-argument
         distro = AzureMonitorDistro()
         with self.assertWarns(Warning):
             distro.configure()
@@ -98,7 +108,9 @@ class TestDistro(TestCase):
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging")
-    def test_configure_exc(self, mock_diagnostics, azure_core_mock, attach_mock, configure_mock):
+    def test_configure_exc(
+        self, mock_diagnostics, azure_core_mock, attach_mock, configure_mock
+    ):  # pylint: disable=unused-argument
         distro = AzureMonitorDistro()
         configure_mock.side_effect = Exception("Test Exception")
         with self.assertRaises(Exception):

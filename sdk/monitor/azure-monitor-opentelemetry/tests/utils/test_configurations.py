@@ -26,6 +26,14 @@ from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF, ALWAYS_ON, ParentBased, TraceIdRatioBased
+
+from opentelemetry.environment_variables import (
+    OTEL_LOGS_EXPORTER,
+    OTEL_METRICS_EXPORTER,
+    OTEL_TRACES_EXPORTER,
+)
+from opentelemetry.sdk.resources import Resource
+
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _get_sampler_from_name,
@@ -41,16 +49,8 @@ from azure.monitor.opentelemetry._constants import (
     PARENT_BASED_ALWAYS_OFF_SAMPLER,
     PARENT_BASED_ALWAYS_ON_SAMPLER,
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
-    SAMPLING_ARG,
     METRIC_READERS_ARG,
 )
-from opentelemetry.environment_variables import (
-    OTEL_LOGS_EXPORTER,
-    OTEL_METRICS_EXPORTER,
-    OTEL_TRACES_EXPORTER,
-)
-from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
-from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry._version import VERSION
 
@@ -62,6 +62,7 @@ TEST_MERGED_RESOURCE = Resource(
 )
 
 
+# pylint: disable=protected-access, too-many-public-methods
 class TestConfigurations(TestCase):
     @patch.dict("os.environ", {}, clear=True)
     @patch(
@@ -213,7 +214,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_validation(self, resource_create_mock):
+    def test_get_configurations_env_vars_validation(
+        self, resource_create_mock
+    ):  # pylint: disable=unused-argument, name-too-long
         configurations = _get_configurations()
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["disable_logging"], False)
@@ -233,7 +236,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_validation_check_backward_compatibility(self, resource_create_mock):
+    def test_get_configurations_env_vars_validation_check_backward_compatibility(
+        self, resource_create_mock
+    ):  # pylint: disable=unused-argument, name-too-long
         configurations = _get_configurations()
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["disable_logging"], False)
@@ -253,7 +258,9 @@ class TestConfigurations(TestCase):
         "azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES",
         ("previewlib1", "previewlib2"),
     )
-    def test_merge_instrumentation_options_conflict(self, resource_create_mock):
+    def test_merge_instrumentation_options_conflict(
+        self, resource_create_mock
+    ):  # pylint: disable=unused-argument, name-too-long
         configurations = _get_configurations(
             instrumentation_options={
                 "azure_sdk": {"enabled": True},
@@ -286,7 +293,9 @@ class TestConfigurations(TestCase):
         ("previewlib1", "previewlib2"),
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_merge_instrumentation_options_extra_args(self, resource_create_mock):
+    def test_merge_instrumentation_options_extra_args(
+        self, resource_create_mock
+    ):  # pylint: disable=unused-argument, name-too-long
         configurations = _get_configurations(
             instrumentation_options={
                 "django": {"enabled": True},
@@ -321,7 +330,7 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    def test_get_configurations_logger_name_env_var(self):
+    def test_get_configurations_logger_name_env_var(self):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         self.assertEqual(configurations["logger_name"], "test_env_logger")
@@ -333,7 +342,7 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    def test_get_configurations_logger_name_param_overrides_env_var(self):
+    def test_get_configurations_logger_name_param_overrides_env_var(self):  # pylint: disable=name-too-long
         configurations = _get_configurations(logger_name="test_param_logger")
 
         self.assertEqual(configurations["logger_name"], "test_param_logger")
@@ -345,7 +354,7 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    def test_get_configurations_logging_format_env_var(self):
+    def test_get_configurations_logging_format_env_var(self):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         formatter = configurations["logging_formatter"]
@@ -378,7 +387,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("azure.monitor.opentelemetry._utils.configurations._logger")
-    def test_get_configurations_logging_format_env_var_invalid_format(self, mock_logger):
+    def test_get_configurations_logging_format_env_var_invalid_format(
+        self, mock_logger
+    ):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         # Should be None when format is invalid
@@ -396,8 +407,7 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    def test_get_configurations_logging_format_param_overrides_env_var(self):
-        from logging import Formatter
+    def test_get_configurations_logging_format_param_overrides_env_var(self):  # pylint: disable=name-too-long
 
         custom_formatter = Formatter("%(levelname)s: %(message)s")
         configurations = _get_configurations(logging_formatter=custom_formatter)
@@ -412,14 +422,14 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    def test_get_configurations_logging_format_invalid_param_uses_env_var(self):
+    def test_get_configurations_logging_format_invalid_param_uses_env_var(self):  # pylint: disable=name-too-long
         configurations = _get_configurations(logging_formatter="not_a_formatter")
 
         # Invalid parameter should be set to None, but env var should still be used
         self.assertIsNone(configurations["logging_formatter"])
 
     @patch.dict("os.environ", {}, clear=True)
-    def test_get_configurations_logging_format_no_env_var(self):
+    def test_get_configurations_logging_format_no_env_var(self):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         # Should not have logging_formatter key when no env var is set
@@ -439,7 +449,7 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_rate_limited(self, resource_create_mock):
+    def test_get_configurations_env_vars_rate_limited(self, resource_create_mock):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -466,7 +476,7 @@ class TestConfigurations(TestCase):
 
     @patch.dict("os.environ", {}, clear=True)
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):
+    def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):  # pylint: disable=name-too-long
         configurations = _get_configurations(traces_per_second=2.5)
 
         self.assertTrue("connection_string" not in configurations)
@@ -504,7 +514,7 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_no_preference(self, resource_create_mock):
+    def test_get_configurations_env_vars_no_preference(self, resource_create_mock):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -542,7 +552,7 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_check_default(self, resource_create_mock):
+    def test_get_configurations_env_vars_check_default(self, resource_create_mock):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -581,7 +591,7 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_fixed_percentage(self, resource_create_mock):
+    def test_get_configurations_env_vars_fixed_percentage(self, resource_create_mock):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -619,7 +629,7 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_always_on(self, resource_create_mock):
+    def test_get_configurations_env_vars_always_on(self, resource_create_mock):  # pylint: disable=name-too-long
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -654,7 +664,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_always_off(self, resource_create_mock):
+    def test_get_configurations_env_vars_always_off(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -672,7 +684,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_trace_id_ratio_incorrect_value(self, resource_create_mock):
+    def test_get_configurations_env_vars_trace_id_ratio_incorrect_value(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -690,7 +704,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_trace_id_ratio(self, resource_create_mock):
+    def test_get_configurations_env_vars_trace_id_ratio(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -708,25 +724,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_trace_id_ratio_non_numeric_value(self, resource_create_mock):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
-        self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
-
-    @patch.dict(
-        "os.environ",
-        {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "sampler",
-        },
-        clear=True,
-    )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_trace_id_ratio_non_numeric_value(self, resource_create_mock):
+    def test_get_configurations_env_vars_trace_id_ratio_non_numeric_value(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -743,7 +743,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_always_on(self, resource_create_mock):
+    def test_get_configurations_env_vars_parentbased_always_on(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -760,7 +762,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_always_off(self, resource_create_mock):
+    def test_get_configurations_env_vars_parentbased_always_off(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -778,7 +782,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio(self, resource_create_mock):
+    def test_get_configurations_env_vars_parentbased_trace_id_ratio(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -796,8 +802,8 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio_with_out_of_bounds_value(
-        self, resource_create_mock
+    def test_get_configurations_env_vars_parentbased_trace_id_ratio_with_out_of_bounds_value(  # pylint: disable=name-too-long,
+        self, resource_create_mock  # pylint: disable=unused-argument
     ):
         configurations = _get_configurations()
 
@@ -816,7 +822,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio_non_numeric_value(self, resource_create_mock):
+    def test_get_configurations_env_vars_parentbased_trace_id_ratio_non_numeric_value(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -833,7 +841,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio_no_sampler_argument(self, resource_create_mock):
+    def test_get_configurations_env_vars_parentbased_trace_id_ratio_no_sampler_argument(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -849,7 +859,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_no_sampling_env_set(self, resource_create_mock):
+    def test_get_configurations_env_vars_no_sampling_env_set(
+        self, resource_create_mock
+    ):  # pylint: disable=name-too-long, unused-argument
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -861,17 +873,17 @@ class TestConfigurations(TestCase):
         self.assertIs(_get_sampler_from_name(ALWAYS_ON_SAMPLER, None), ALWAYS_ON)
         self.assertIs(_get_sampler_from_name(ALWAYS_OFF_SAMPLER, None), ALWAYS_OFF)
 
-    def test_get_sampler_from_name_trace_id_ratio(self):
+    def test_get_sampler_from_name_trace_id_ratio(self):  # pylint: disable=name-too-long
         sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER, "0.3")
         self.assertIsInstance(sampler, TraceIdRatioBased)
         self.assertEqual(sampler._rate, 0.3)
 
-    def test_get_sampler_from_name_trace_id_ratio_defaults_to_one(self):
+    def test_get_sampler_from_name_trace_id_ratio_defaults_to_one(self):  # pylint: disable=name-too-long
         sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER, None)
         self.assertIsInstance(sampler, TraceIdRatioBased)
         self.assertEqual(sampler._rate, 1.0)
 
-    def test_get_sampler_from_name_parent_based_fixed(self):
+    def test_get_sampler_from_name_parent_based_fixed(self):  # pylint: disable=name-too-long
         sampler_on = _get_sampler_from_name(PARENT_BASED_ALWAYS_ON_SAMPLER, None)
         sampler_off = _get_sampler_from_name(PARENT_BASED_ALWAYS_OFF_SAMPLER, None)
 
@@ -881,18 +893,18 @@ class TestConfigurations(TestCase):
         self.assertIsInstance(sampler_off, ParentBased)
         self.assertIs(sampler_off._root, ALWAYS_OFF)
 
-    def test_get_sampler_from_name_parent_based_trace_id_ratio(self):
+    def test_get_sampler_from_name_parent_based_trace_id_ratio(self):  # pylint: disable=name-too-long
         sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER, "0.25")
         self.assertIsInstance(sampler, ParentBased)
         self.assertIsInstance(sampler._root, TraceIdRatioBased)
         self.assertEqual(sampler._root._rate, 0.25)
 
-    def test_get_sampler_from_name_parent_based_trace_id_ratio_defaults(self):
+    def test_get_sampler_from_name_parent_based_trace_id_ratio_defaults(self):  # pylint: disable=name-too-long
         sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER, None)
         self.assertIsInstance(sampler._root, TraceIdRatioBased)
         self.assertEqual(sampler._root._rate, 1.0)
 
-    def test_get_sampler_from_name_invalid_type_defaults_parentbased_always_on(self):
+    def test_get_sampler_from_name_invalid_type_defaults_parentbased_always_on(self):  # pylint: disable=name-too-long
         sampler = _get_sampler_from_name("not-a-sampler", None)
         self.assertIsInstance(sampler, ParentBased)
         self.assertIs(sampler._root, ALWAYS_ON)

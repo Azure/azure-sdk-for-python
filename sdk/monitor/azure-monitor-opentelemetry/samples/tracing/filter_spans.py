@@ -4,12 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import requests  # type: ignore[import-untyped]
-from azure.monitor.opentelemetry import configure_azure_monitor
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
 from opentelemetry.sdk.trace import SpanProcessor
 from opentelemetry.trace import get_tracer, SpanContext, SpanKind, TraceFlags
 
+from azure.monitor.opentelemetry import configure_azure_monitor
 
+
+# pylint: disable=protected-access
 # Define a custom processor to filter your spans
 class SpanFilteringProcessor(SpanProcessor):
     # Prevents exporting spans that are of kind INTERNAL

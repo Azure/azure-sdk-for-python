@@ -1,14 +1,19 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from os import environ
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
+from azure.storage.blob import BlobServiceClient
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Set up exporting to Azure Monitor
 configure_azure_monitor()
 
 # Example with Storage SDKs
-
-from azure.storage.blob import BlobServiceClient
 
 tracer = trace.get_tracer(__name__)
 with tracer.start_as_current_span(name="MyApplication"):

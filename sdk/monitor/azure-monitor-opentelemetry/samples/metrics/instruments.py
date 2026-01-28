@@ -2,27 +2,27 @@
 # Licensed under the MIT License.
 from typing import Iterable
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import metrics
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk.resources import Resource, ResourceAttributes
+
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Configure Azure monitor collection telemetry pipeline
 configure_azure_monitor()
 
 
 # Callback functions for observable instruments
-def observable_counter_func(options: CallbackOptions) -> Iterable[Observation]:
+def observable_counter_func(options: CallbackOptions) -> Iterable[Observation]:  # pylint: disable=unused-argument
     yield Observation(1, {})
 
 
 def observable_up_down_counter_func(
-    options: CallbackOptions,
+    options: CallbackOptions,  # pylint: disable=unused-argument
 ) -> Iterable[Observation]:
     yield Observation(-10, {})
 
 
-def observable_gauge_func(options: CallbackOptions) -> Iterable[Observation]:
+def observable_gauge_func(options: CallbackOptions) -> Iterable[Observation]:  # pylint: disable=unused-argument
     yield Observation(9, {})
 
 
