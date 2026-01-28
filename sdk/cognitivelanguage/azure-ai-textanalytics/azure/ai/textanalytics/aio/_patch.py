@@ -128,7 +128,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @overload
-    async def begin_analyze_text_job(
+    async def begin_analyze_text_job( # type: ignore[override]
         self,
         *,
         text_input: _models.MultiLanguageTextInput,
@@ -165,7 +165,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         """
 
     @overload
-    async def begin_analyze_text_job(
+    async def begin_analyze_text_job( # type: ignore[override]
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeTextAsyncLROPoller[AsyncItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -184,7 +184,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         """
 
     @overload
-    async def begin_analyze_text_job(
+    async def begin_analyze_text_job( # type: ignore[override]
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeTextAsyncLROPoller[AsyncItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
