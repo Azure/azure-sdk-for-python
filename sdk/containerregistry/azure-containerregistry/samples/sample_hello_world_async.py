@@ -43,9 +43,9 @@ class HelloWorldAsync(object):
     async def basic_sample(self):
         load_registry(self.endpoint)
         # Instantiate an instance of ContainerRegistryClient
-        # [START create_registry_client]
+        # [START create_registry_client_async]
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
-            # [END create_registry_client]
+            # [END create_registry_client_async]
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():
                 print(repository_name)
@@ -56,13 +56,13 @@ class HelloWorldAsync(object):
 
                         # Make sure will have the permission to delete the repository later
                         await client.update_manifest_properties(
-                            repository_name, tag.name, can_write=True, can_delete=True
+                            repository_name, tag.name, can_write=True, can_delete=True  # type: ignore[arg-type]
                         )
 
                     print("Deleting " + repository_name)
-                    # [START delete_repository]
+                    # [START delete_repository_async]
                     await client.delete_repository(repository_name)
-                    # [END delete_repository]
+                    # [END delete_repository_async]
 
 
 async def main():
