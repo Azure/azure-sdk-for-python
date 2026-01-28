@@ -1,6 +1,6 @@
 import functools
-from datetime import date, datetime
 import pytest
+from datetime import date, datetime
 
 from devtools_testutils import EnvironmentVariableLoader, AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async

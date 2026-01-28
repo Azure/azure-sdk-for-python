@@ -11,7 +11,6 @@ from azure.ai.language.conversations.authoring.models import (
     ProjectKind,
 )
 
-
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(

@@ -48,7 +48,7 @@ def sample_authentication_api_key():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    clu_client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key)) #pylint: disable=unused-variable
+    clu_client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key)) # pylint: disable=unused-variable
     # [END create_clu_client_with_key]
 
 
@@ -63,7 +63,7 @@ def sample_authentication_with_aad():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    clu_client = ConversationAuthoringClient(endpoint, credential=credential) #pylint: disable=unused-variable
+    clu_client = ConversationAuthoringClient(endpoint, credential=credential) # pylint: disable=unused-variable
 
 
 def main():
