@@ -85,6 +85,7 @@ def _start_proxy(port: int, tool_path: str) -> ProxyProcess:
         assets_folder = os.path.join(root_dir, "l", f"proxy_{port}")
         os.makedirs(assets_folder, exist_ok=True)
         env["PROXY_ASSETS_FOLDER"] = assets_folder
+        env["DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE"] = "false"
 
     command = shlex.split(
         f'{tool_path} start --storage-location="{root_dir}" -- --urls "http://localhost:{port}"'
