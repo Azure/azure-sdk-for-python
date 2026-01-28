@@ -6,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+import datetime
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -81,7 +82,7 @@ class ErrorDefinition(_serialization.Model):
         "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(self, *, details: Optional[List["_models.ErrorDefinition"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, details: Optional[list["_models.ErrorDefinition"]] = None, **kwargs: Any) -> None:
         """
         :keyword details: Internal error details.
         :paramtype details: list[~azure.mgmt.resource.features.models.ErrorDefinition]
@@ -127,7 +128,7 @@ class FeatureOperationsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.FeatureResult"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.FeatureResult"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The array of features.
@@ -289,7 +290,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of Microsoft.Features operations.
@@ -394,7 +395,7 @@ class SubscriptionFeatureRegistrationList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.SubscriptionFeatureRegistration"]] = None,
+        value: Optional[list["_models.SubscriptionFeatureRegistration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -484,7 +485,7 @@ class SubscriptionFeatureRegistrationProperties(_serialization.Model):  # pylint
         *,
         state: Optional[Union[str, "_models.SubscriptionFeatureRegistrationState"]] = None,
         authorization_profile: Optional["_models.AuthorizationProfile"] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         should_feature_display_in_portal: bool = False,
         description: Optional[str] = None,
         **kwargs: Any

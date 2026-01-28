@@ -39,6 +39,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS,
     _METRIC_ENVELOPE_NAME,
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
@@ -167,6 +168,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         final_metric_name = name
         if self._is_sdkstats and name in _STATSBEAT_METRIC_NAME_MAPPINGS:
             final_metric_name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
+        # Apply customer sdkstats metric name mapping if this is a customer sdkstats exporter
+        if self._is_customer_sdkstats and name in _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS:
+            final_metric_name = _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS[name]
 
         envelope = _convert_point_to_envelope(point, final_metric_name, resource, scope)
         # Note that Performance Counters are not counted as "Autocollected standard metrics"
