@@ -69,3 +69,5 @@ verify_keywords = false
 whl_no_aio = false
 mypy = false
 apistub = false
+mindependency = false
+latestdependency = false
