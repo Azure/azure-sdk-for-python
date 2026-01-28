@@ -1056,9 +1056,10 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+        # Convert permission to string if it's a ContainerSasPermissions object
+        if permission is not None and not isinstance(permission, str):
+            permission = permission.__str__()
+        super().__init__(start=start, expiry=expiry, permission=permission)
 
 
 class BlobSasPermissions(object):

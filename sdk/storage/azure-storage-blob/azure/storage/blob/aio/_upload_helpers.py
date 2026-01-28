@@ -57,7 +57,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs['if_none_match'] = '*'
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
@@ -198,7 +198,7 @@ async def upload_page_blob(
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs['if_none_match'] = '*'
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
