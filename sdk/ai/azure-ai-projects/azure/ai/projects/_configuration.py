@@ -23,10 +23,10 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     attributes.
 
     :param endpoint: Foundry Project endpoint in the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}".
-     If you only have one Project in your Foundry Hub, or to target the default Project
-     in your Hub, use the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project". Required.
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
+     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
