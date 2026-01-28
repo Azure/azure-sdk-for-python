@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry.exporter._utils import (
     get_compute_type,
 )
 
+from azure.monitor.opentelemetry.exporter.statsbeat._state import set_statsbeat_customer_sdkstats_feature_set
 from ._utils import get_customer_sdkstats_export_interval, categorize_status_code, is_customer_sdkstats_enabled
 
 
@@ -62,6 +63,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             self._status = CustomerSdkStatsStatus.UNINITIALIZED
         else:
             self._status = CustomerSdkStatsStatus.DISABLED
+            set_statsbeat_customer_sdkstats_feature_set()
 
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
