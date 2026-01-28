@@ -112,7 +112,7 @@ def sample_conversation_summarization():
         print(f"Display Name: {d.get('display_name')}")
 
     # Iterate results
-    for actions_page in paged_actions:
+    for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
         print(
             f"Completed: {actions_page.completed}, "
             f"In Progress: {actions_page.in_progress}, "
