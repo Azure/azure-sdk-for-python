@@ -19,6 +19,9 @@
 - **Response Metadata**: Added `metadata` field to `Response` and `ResponseCreateParams` for attaching up to 16 key-value pairs (max 64 chars for keys, 512 chars for values)
 - **Array Encoding Support**: Enhanced serialization to support pipe, space, comma, and newline-delimited array encoding formats
 - **Custom Text Normalization**: Added `custom_text_normalization_url` field to `AzureStandardVoice`, `AzureCustomVoice`, and `AzurePersonalVoice` for custom text normalization configurations
+- **Avatar Scene Configuration**: Added `Scene` model for controlling avatar's zoom level, position (x/y), rotation (x/y/z pitch/yaw/roll), and movement amplitude in the video frame
+- **Enhanced Avatar Configuration**: Added `scene` and `output_audit_audio` fields to `AvatarConfig` for scene control and audit audio forwarding via WebSocket
+- **Server Warning Events**: Added `ServerEventWarning` and `ServerEventWarningDetails` models for non-fatal warning events that don't interrupt conversation flow; added `WARNING` to `ServerEventType` enum
 
 ### Other Changes
 
