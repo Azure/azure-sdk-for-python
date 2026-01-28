@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import pytest
+import responses
 import json
 import os
 from typing import Any, List, Optional, Tuple
@@ -15,6 +16,23 @@ from azure.codetransparency.aio import (
 from azure.codetransparency.cbor import (
     CBORDecoder,
 )
+from azure.codetransparency.receipt import (
+    verify_transparent_statement,
+    VerificationOptions,
+    AuthorizedReceiptBehavior,
+    UnauthorizedReceiptBehavior,
+    OfflineKeysBehavior,
+)
+
+# Get the directory containing test files
+TEST_FILES_DIR = os.path.join(os.path.dirname(__file__), "test_files")
+
+
+def read_file_bytes(name: str) -> bytes:
+    """Read a test file and return its bytes."""
+    file_path = os.path.join(TEST_FILES_DIR, name)
+    with open(file_path, "rb") as f:
+        return f.read()
 
 
 class MockAsyncResponse(AsyncHttpResponseImpl):
@@ -320,9 +338,9 @@ async def test_begin_create_entry_with_polling(cert_file):
         "A26B4F7065726174696F6E49646532322E3334665374617475736772756E6E696E67"
     )
     running_operation_cbor = bytes.fromhex(running_operation_hex)
-    # CBOR encoded: {"OperationId": "22.34", "Status": "succeeded"}
+    # CBOR encoded: {"EntryId": "22.34", "Status": "succeeded"}
     operation_succeeded_hex = (
-        "A26B4F7065726174696F6E49646532322E33346653746174757369737563636565646564"
+        "A267456E74727949646532322E33346653746174757369737563636565646564"
     )
     operation_succeeded_cbor = bytes.fromhex(operation_succeeded_hex)
 
@@ -398,3 +416,105 @@ async def test_begin_wait_for_operation_with_polling(cert_file):
     assert len(transport.requests) == 3
 
     await client.close()
+
+
+@responses.activate
+@pytest.mark.asyncio
+async def test_register_poll_verify(cert_file):
+    """Test full flow: create_entry with polling, then get_entry_statement with default retries and verify."""
+    # Create entry POST response. CBOR encoded: {"OperationId": "22.34", "Status": "running"}
+    running_operation_hex = (
+        "A26B4F7065726174696F6E49646532322E3334665374617475736772756E6E696E67"
+    )
+    running_operation_cbor = bytes.fromhex(running_operation_hex)
+    # Create entry poll response. CBOR encoded: {"EntryId": "22.34", "Status": "succeeded"}
+    operation_succeeded_hex = (
+        "A267456E74727949646532322E33346653746174757369737563636565646564"
+    )
+    operation_succeeded_cbor = bytes.fromhex(operation_succeeded_hex)
+    # Get statement error. CBOR encoded: {-1: "TransactionNotCached", -2: "Historical transaction 22.34 is not cached."}
+    transaction_pending_hex = "A220745472616E73616374696F6E4E6F7443616368656421782B486973746F726963616C207472616E73616374696F6E2032322E3334206973206E6F74206361636865642E"
+    transaction_pending_cbor = bytes.fromhex(transaction_pending_hex)
+    # Get statement response is COSE_Sign1 bytes
+    transparent_statement_bytes = read_file_bytes("transparent_statement.cose")
+    # Verifier will download the valid JWKS for the issuer foo.bar.com
+    valid_jwk = {
+        "crv": "P-384",
+        "kid": "fb29ce6d6b37e7a0b03a5fc94205490e1c37de1f41f68b92e3620021e9981d01",
+        "kty": "EC",
+        "x": "Tv_tP9eJIb5oJY9YB6iAzMfds4v3N84f8pgcPYLaxd_Nj3Nb_dBm6Fc8ViDZQhGR",
+        "y": "xJ7fI2kA8gs11XDc9h2zodU-fZYRrE0UJHpzPfDVJrOpTvPcDoC5EWOBx9Fks0bZ",
+    }
+    jwks_document = {"keys": [valid_jwk]}
+
+    main_client_transport_mocked = MockAsyncTransport(
+        [
+            # create_entry POST request
+            (202, running_operation_cbor, {"Content-Type": "application/cbor"}),
+            # get_operation GET request (polling) - first returns running
+            (200, running_operation_cbor, {"Content-Type": "application/cbor"}),
+            # Second poll returns succeeded
+            (200, operation_succeeded_cbor, {"Content-Type": "application/cbor"}),
+            # get_entry_statement GET request - first returns transaction not cached
+            (
+                503,
+                transaction_pending_cbor,
+                {"Content-Type": "application/concise-problem-details+cbor"},
+            ),
+            # Second get_entry_statement returns succeeded
+            (200, transparent_statement_bytes, {"Content-Type": "application/cose"}),
+        ]
+    )
+
+    client = CodeTransparencyClient(
+        endpoint="https://test.confidential-ledger.azure.com",
+        credential=None,
+        ledger_certificate_path=cert_file,
+        transport=main_client_transport_mocked,
+    )
+
+    # Sample COSE_Sign1 entry (minimal valid structure)
+    entry_body = b"\xd2\x84\x43\xa1\x01\x26\xa0\x44test\x40"
+
+    # Create entry with polling
+    poller = await client.begin_create_entry(entry_body, polling_interval=0.1)
+    result = await poller.result()
+    assert poller.status() == "finished"
+    operation = CBORDecoder(result).decode()
+    assert operation.get("Status") == "succeeded"
+    entry_id = operation.get("EntryId")
+    assert entry_id == "22.34"
+    # Get entry statement with retries
+    transparent_statement = await client.get_entry_statement(entry_id)
+    transparent_statement_bytes = b"".join(
+        [chunk async for chunk in transparent_statement]
+    )
+
+    # Verify polling happened: 1 POST + 4 GET operations
+    assert len(main_client_transport_mocked.requests) == 5
+    await client.close()
+
+    # Verify the transparent statement, it will use sync client under the hood which needs different response mocking
+    responses.add(
+        responses.GET,
+        "https://foo.bar.com/jwks",
+        body=json.dumps(jwks_document),
+        status=200,
+        content_type="application/json",
+    )
+    # use similar options as in the readme
+    verification_options = VerificationOptions(
+        authorized_domains=["foo.bar.com"],
+        authorized_receipt_behavior=AuthorizedReceiptBehavior.VERIFY_ALL_MATCHING,
+        unauthorized_receipt_behavior=UnauthorizedReceiptBehavior.FAIL_IF_PRESENT,
+        offline_keys=None,  # No offline keys - force network fallback
+        offline_keys_behavior=OfflineKeysBehavior.FALLBACK_TO_NETWORK,
+    )
+    try:
+        verify_transparent_statement(
+            transparent_statement_bytes,
+            verification_options,
+            ledger_certificate_path=cert_file,
+        )
+    except Exception as e:
+        pytest.fail(f"Verification failed: {e}")
