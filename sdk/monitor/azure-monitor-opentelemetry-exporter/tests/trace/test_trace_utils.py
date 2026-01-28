@@ -2,14 +2,13 @@
 # Licensed under the MIT License.
 
 import unittest
-from unittest import mock
+
+from fixedint import Int32  # pylint: disable=no-name-in-module
 
 from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     _get_DJB2_sample_score,
 )
 
-# fixedint was removed as a source dependency. It is used as a dev requirement to test sample score
-from fixedint import Int32
 from azure.monitor.opentelemetry.exporter._constants import (
     _SAMPLING_HASH,
     _INT32_MAX,

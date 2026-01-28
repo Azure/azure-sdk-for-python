@@ -9,10 +9,10 @@ tracked via spans and telemetry is exported to application insights with the Azu
 import os
 
 # You will need to install azure-identity
-from azure.identity import ManagedIdentityCredential
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from azure.identity import ManagedIdentityCredential
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 

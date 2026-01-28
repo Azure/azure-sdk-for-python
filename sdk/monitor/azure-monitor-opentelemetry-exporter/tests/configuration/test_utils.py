@@ -3,7 +3,7 @@
 import json
 import unittest
 from unittest.mock import Mock, patch
-import requests
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
 from azure.monitor.opentelemetry.exporter._configuration._utils import (
     _ConfigurationProfile,
@@ -22,6 +22,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 
 
+# pylint: disable=docstring-missing-param
 class TestConfigurationProfile(unittest.TestCase):
     """Test cases for _ConfigurationProfile class."""
 
@@ -603,7 +604,7 @@ class TestOneSettingsResponseErrorHandling(unittest.TestCase):
             (False, False, 429, "no error flags but error status"),
         ]
 
-        for has_timeout, has_exception, status_code, description in test_cases:
+        for _has_timeout, has_exception, status_code, description in test_cases:
             with self.subTest(description=description):
                 response = OneSettingsResponse(has_exception=has_exception, status_code=status_code)
                 self.assertEqual(response.has_exception, has_exception)
