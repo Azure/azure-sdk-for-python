@@ -3,7 +3,9 @@
 ## 1.8.6 (Unreleased)
 
 ### Features Added
+
 - Enable live metrics by default
+  ([#44902](https://github.com/Azure/azure-sdk-for-python/pull/44902))
 
 ### Breaking Changes
 
