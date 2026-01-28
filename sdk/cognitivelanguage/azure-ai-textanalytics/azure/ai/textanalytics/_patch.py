@@ -141,8 +141,8 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
             kwargs["api_version"] = api_version
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-    @overload
-    def begin_analyze_text_job( # type: ignore[override]
+    @overload # type: ignore[override]
+    def begin_analyze_text_job(
         self,
         *,
         text_input: _models.MultiLanguageTextInput,
