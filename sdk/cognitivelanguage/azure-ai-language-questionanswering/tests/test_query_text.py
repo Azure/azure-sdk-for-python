@@ -56,7 +56,7 @@ class TestQueryText(QuestionAnsweringTestCase):
     def test_query_text_overload_errors(self):  # negative client-side parameter validation
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):
-                client.get_answers_from_text("positional_one", "positional_two")  # type: ignore[arg-type] #pylint: disable=too-many-function-args
+                client.get_answers_from_text("positional_one", "positional_two")  # type: ignore[arg-type] # pylint: disable=too-many-function-args
             with pytest.raises(TypeError):
                 client.get_answers_from_text("positional_options_bag", options="options bag by name")  # type: ignore[arg-type]
             params = AnswersFromTextOptions(
@@ -64,9 +64,9 @@ class TestQueryText(QuestionAnsweringTestCase):
                 text_documents=[TextDocument(text="foo", id="doc1"), TextDocument(text="bar", id="doc2")],
             )
             with pytest.raises(TypeError):
-                client.get_answers_from_text(options=params)  # type: ignore[arg-type] #pylint: disable=no-value-for-parameter
+                client.get_answers_from_text(options=params)  # type: ignore[arg-type] # pylint: disable=no-value-for-parameter
             with pytest.raises(TypeError):
-                client.get_answers_from_text(question="why?", text_documents=["foo", "bar"], options=params)  # type: ignore[arg-type] #pylint: disable=no-value-for-parameter
+                client.get_answers_from_text(question="why?", text_documents=["foo", "bar"], options=params)  # type: ignore[arg-type] # pylint: disable=no-value-for-parameter
             with pytest.raises(TypeError):
                 client.get_answers_from_text(params, question="Why?")  # type: ignore[arg-type]
 
