@@ -50,7 +50,7 @@ class AuthoringTestHelper:
         poller.result()
 
     @staticmethod
-    def export_project(client, project_name, delete_project=True, **kwargs):
+    def export_project(client, project_name, delete_project=True, **kwargs): # pylint: disable=useless-return
         # begin_export poller is typed as LROPoller[None]; generator currently discards
         # the final body so result() returns None. We only validate successful completion.
         export_poller = client.begin_export(project_name=project_name, file_format="json", **kwargs)
@@ -58,7 +58,7 @@ class AuthoringTestHelper:
         if delete_project:
             delete_poller = client.begin_delete_project(project_name=project_name, **kwargs)
             delete_poller.result()
-
+        return None
 
 class AuthoringAsyncTestHelper:
     """Async utility helper for creating and exporting authoring test projects."""
