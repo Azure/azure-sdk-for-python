@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from codecs import IncrementalDecoder
     from ._encryption import _EncryptionData
     from ._generated import AzureBlobStorage
-    from ._generated.operations import BlobOperations
+    from ._generated.azure.storage.blobs.operations import BlobOperations
     from ._models import BlobProperties
     from ._shared.models import StorageConfiguration
 

@@ -12,7 +12,7 @@ except ImportError:
 
 from azure.core import MatchConditions
 
-from ._generated.models import (
+from ._generated.azure.storage.blobs.models import (
     ArrowConfiguration,
     BlobModifiedAccessConditions,
     BlobTag,
