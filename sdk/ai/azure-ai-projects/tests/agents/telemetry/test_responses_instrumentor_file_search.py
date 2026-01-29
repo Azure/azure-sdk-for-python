@@ -149,7 +149,9 @@ Return Policy: 30-day return policy with no questions asked
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str), "Text content should be present when content recording is enabled"
+                                        assert "content" in part and isinstance(
+                                            part["content"], str
+                                        ), "Text content should be present when content recording is enabled"
                                         assert "Contoso" in part["content"], "Should contain the user query"
 
                     elif event.name == "gen_ai.output.messages":
@@ -158,7 +160,7 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -171,13 +173,21 @@ Return Policy: 30-day return policy with no questions asked
                                             # With content recording, queries should be present
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" in file_search, "queries should be present in file_search when content recording is enabled"
+                                                assert (
+                                                    "queries" in file_search
+                                                ), "queries should be present in file_search when content recording is enabled"
                                                 queries = file_search["queries"]
-                                                assert isinstance(queries, list) and len(queries) > 0, "queries should be a non-empty list"
+                                                assert (
+                                                    isinstance(queries, list) and len(queries) > 0
+                                                ), "queries should be a non-empty list"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" in part, "text content should be present when content recording is enabled"
-                                        assert isinstance(part["content"], str) and len(part["content"]) > 0, "text content should be non-empty"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present when content recording is enabled"
+                                        assert (
+                                            isinstance(part["content"], str) and len(part["content"]) > 0
+                                        ), "text content should be non-empty"
 
                 assert found_file_search_call, "Should have found file_search_call in output"
                 assert found_text_response, "Should have found text response in output"
@@ -195,7 +205,7 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -206,10 +216,14 @@ Return Policy: 30-day return policy with no questions asked
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "file_search_call":
                                             found_file_search_in_items = True
-                                            assert "id" in tool_content, "file_search_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "file_search_call should have id in conversation items"
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" in file_search, "queries should be present when content recording is enabled"
+                                                assert (
+                                                    "queries" in file_search
+                                                ), "queries should be present when content recording is enabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -343,7 +357,9 @@ Return Policy: 30-day return policy with no questions asked
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
 
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
@@ -351,7 +367,7 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -364,10 +380,14 @@ Return Policy: 30-day return policy with no questions asked
                                             # Without content recording, queries should NOT be present
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" not in file_search, "queries should NOT be present when content recording is disabled"
+                                                assert (
+                                                    "queries" not in file_search
+                                                ), "queries should NOT be present when content recording is disabled"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" not in part, "text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present when content recording is disabled"
 
                 assert found_file_search_call, "Should have found file_search_call in output"
                 assert found_text_response, "Should have found text response type in output"
@@ -385,21 +405,27 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present in conversation items"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present in conversation items"
                                     elif part.get("type") == "tool_call":
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "file_search_call":
                                             found_file_search_in_items = True
-                                            assert "id" in tool_content, "file_search_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "file_search_call should have id in conversation items"
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" not in file_search, "queries should NOT be present when content recording is disabled"
+                                                assert (
+                                                    "queries" not in file_search
+                                                ), "queries should NOT be present when content recording is disabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -542,7 +568,9 @@ Return Policy: 30-day return policy with no questions asked
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str), "Text content should be present when content recording is enabled"
+                                        assert "content" in part and isinstance(
+                                            part["content"], str
+                                        ), "Text content should be present when content recording is enabled"
 
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
@@ -550,7 +578,7 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -562,10 +590,14 @@ Return Policy: 30-day return policy with no questions asked
                                             assert "id" in tool_content, "file_search_call should have id"
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" in file_search, "queries should be present when content recording is enabled"
+                                                assert (
+                                                    "queries" in file_search
+                                                ), "queries should be present when content recording is enabled"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" in part, "text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present when content recording is enabled"
 
                 assert found_file_search_call, "Should have found file_search_call in output"
                 assert found_text_response, "Should have found text response in output"
@@ -583,7 +615,7 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -594,10 +626,14 @@ Return Policy: 30-day return policy with no questions asked
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "file_search_call":
                                             found_file_search_in_items = True
-                                            assert "id" in tool_content, "file_search_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "file_search_call should have id in conversation items"
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" in file_search, "queries should be present when content recording is enabled"
+                                                assert (
+                                                    "queries" in file_search
+                                                ), "queries should be present when content recording is enabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -736,7 +772,9 @@ Return Policy: 30-day return policy with no questions asked
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
 
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
@@ -744,7 +782,7 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -756,10 +794,14 @@ Return Policy: 30-day return policy with no questions asked
                                             assert "id" in tool_content, "file_search_call should have id"
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" not in file_search, "queries should NOT be present when content recording is disabled"
+                                                assert (
+                                                    "queries" not in file_search
+                                                ), "queries should NOT be present when content recording is disabled"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" not in part, "text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present when content recording is disabled"
 
                 assert found_file_search_call, "Should have found file_search_call in output"
                 assert found_text_response, "Should have found text response type in output"
@@ -777,21 +819,27 @@ Return Policy: 30-day return policy with no questions asked
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present in conversation items"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present in conversation items"
                                     elif part.get("type") == "tool_call":
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "file_search_call":
                                             found_file_search_in_items = True
-                                            assert "id" in tool_content, "file_search_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "file_search_call should have id in conversation items"
                                             file_search = tool_content.get("file_search")
                                             if file_search:
-                                                assert "queries" not in file_search, "queries should NOT be present when content recording is disabled"
+                                                assert (
+                                                    "queries" not in file_search
+                                                ), "queries should NOT be present when content recording is disabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 

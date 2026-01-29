@@ -31,6 +31,7 @@ _utils._span_impl_type = settings.tracing_implementation()
 def checkWorkflowEventContents(content, content_recording_enabled):
     """Validate workflow event content structure and required fields."""
     import json
+
     assert isinstance(content, str) and content.strip() != ""
     data = json.loads(content)
     assert isinstance(data, list) and len(data) > 0
@@ -45,21 +46,38 @@ def checkWorkflowEventContents(content, content_recording_enabled):
                 workflow_content = part.get("content")
                 assert isinstance(workflow_content, dict)
                 # status is always present
-                assert "status" in workflow_content and isinstance(workflow_content["status"], str) and workflow_content["status"]
+                assert (
+                    "status" in workflow_content
+                    and isinstance(workflow_content["status"], str)
+                    and workflow_content["status"]
+                )
                 if content_recording_enabled:
                     # action_id and previous_action_id should be present and non-empty
-                    assert "action_id" in workflow_content and isinstance(workflow_content["action_id"], str) and workflow_content["action_id"]
-                    assert "previous_action_id" in workflow_content and isinstance(workflow_content["previous_action_id"], str) and workflow_content["previous_action_id"]
+                    assert (
+                        "action_id" in workflow_content
+                        and isinstance(workflow_content["action_id"], str)
+                        and workflow_content["action_id"]
+                    )
+                    assert (
+                        "previous_action_id" in workflow_content
+                        and isinstance(workflow_content["previous_action_id"], str)
+                        and workflow_content["previous_action_id"]
+                    )
                 else:
                     # action_id and previous_action_id should NOT be present when content recording is disabled
-                    assert "action_id" not in workflow_content, "action_id should not be present when content recording is disabled"
-                    assert "previous_action_id" not in workflow_content, "previous_action_id should not be present when content recording is disabled"
+                    assert (
+                        "action_id" not in workflow_content
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in workflow_content
+                    ), "previous_action_id should not be present when content recording is disabled"
         assert found_workflow_action, "No workflow_action part found in workflow event"
 
 
 def checkInputMessageEventContents(content, content_recording_enabled):
     """Validate input message event content structure and required fields."""
     import json
+
     assert isinstance(content, str) and content.strip() != ""
     data = json.loads(content)
     assert isinstance(data, list) and len(data) > 0
@@ -75,7 +93,9 @@ def checkInputMessageEventContents(content, content_recording_enabled):
                     assert "content" in part and isinstance(part["content"], str) and part["content"].strip() != ""
                 else:
                     # content field should NOT be present in text parts when content recording is disabled
-                    assert "content" not in part, "Text content should not be present when content recording is disabled"
+                    assert (
+                        "content" not in part
+                    ), "Text content should not be present when content recording is disabled"
         assert found_text, "No text part found in input message event"
 
 
@@ -254,13 +274,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation and conversation item listing
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -273,6 +292,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -284,6 +304,7 @@ trigger:
                         if not isinstance(event_content, str) or not event_content.strip():
                             continue
                         import json
+
                         try:
                             data = json.loads(event_content)
                         except Exception:
@@ -304,6 +325,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list)
                         for item in data:
@@ -321,12 +343,8 @@ trigger:
 
             finally:
                 project_client.agents.delete_version(agent_name=workflow.name, agent_version=workflow.version)
-                project_client.agents.delete_version(
-                    agent_name=student_agent.name, agent_version=student_agent.version
-                )
-                project_client.agents.delete_version(
-                    agent_name=teacher_agent.name, agent_version=teacher_agent.version
-                )
+                project_client.agents.delete_version(agent_name=student_agent.name, agent_version=student_agent.version)
+                project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -417,13 +435,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events (should exist even without content recording)
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation span - verify content recording is OFF
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -436,6 +453,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -447,6 +465,7 @@ trigger:
                         if not isinstance(event_content, str) or not event_content.strip():
                             continue
                         import json
+
                         try:
                             data = json.loads(event_content)
                         except Exception:
@@ -468,6 +487,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list)
                         for item in data:
@@ -485,12 +505,8 @@ trigger:
 
             finally:
                 project_client.agents.delete_version(agent_name=workflow.name, agent_version=workflow.version)
-                project_client.agents.delete_version(
-                    agent_name=student_agent.name, agent_version=student_agent.version
-                )
-                project_client.agents.delete_version(
-                    agent_name=teacher_agent.name, agent_version=teacher_agent.version
-                )
+                project_client.agents.delete_version(agent_name=student_agent.name, agent_version=student_agent.version)
+                project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)
 
     # ========================================
     # Sync Workflow Agent Tests - Streaming
@@ -590,13 +606,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation span
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -609,6 +624,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -620,6 +636,7 @@ trigger:
                         if not isinstance(event_content, str) or not event_content.strip():
                             continue
                         import json
+
                         try:
                             data = json.loads(event_content)
                         except Exception:
@@ -641,6 +658,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list)
                         for item in data:
@@ -658,12 +676,8 @@ trigger:
 
             finally:
                 project_client.agents.delete_version(agent_name=workflow.name, agent_version=workflow.version)
-                project_client.agents.delete_version(
-                    agent_name=student_agent.name, agent_version=student_agent.version
-                )
-                project_client.agents.delete_version(
-                    agent_name=teacher_agent.name, agent_version=teacher_agent.version
-                )
+                project_client.agents.delete_version(agent_name=student_agent.name, agent_version=student_agent.version)
+                project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -759,13 +773,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events (should exist even without content recording)
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation span - verify content recording is OFF
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -778,6 +791,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -789,6 +803,7 @@ trigger:
                         if not isinstance(event_content, str) or not event_content.strip():
                             continue
                         import json
+
                         try:
                             data = json.loads(event_content)
                         except Exception:
@@ -810,6 +825,7 @@ trigger:
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list)
                         for item in data:
@@ -827,9 +843,5 @@ trigger:
 
             finally:
                 project_client.agents.delete_version(agent_name=workflow.name, agent_version=workflow.version)
-                project_client.agents.delete_version(
-                    agent_name=student_agent.name, agent_version=student_agent.version
-                )
-                project_client.agents.delete_version(
-                    agent_name=teacher_agent.name, agent_version=teacher_agent.version
-                )
+                project_client.agents.delete_version(agent_name=student_agent.name, agent_version=student_agent.version)
+                project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)

@@ -148,7 +148,9 @@ TRANSPORTATION,Contoso air,1100000
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str), "Text content should be present when content recording is enabled"
+                                        assert "content" in part and isinstance(
+                                            part["content"], str
+                                        ), "Text content should be present when content recording is enabled"
 
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
@@ -156,7 +158,7 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -167,10 +169,14 @@ TRANSPORTATION,Contoso air,1100000
                                             found_code_interpreter_call = True
                                             assert "id" in tool_content, "code_interpreter_call should have id"
                                             # With content recording, code should be present
-                                            assert "code" in tool_content, "code should be present when content recording is enabled"
+                                            assert (
+                                                "code" in tool_content
+                                            ), "code should be present when content recording is enabled"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" in part, "text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present when content recording is enabled"
 
                 assert found_code_interpreter_call, "Should have found code_interpreter_call in output"
                 assert found_text_response, "Should have found text response in output"
@@ -188,7 +194,7 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -199,11 +205,17 @@ TRANSPORTATION,Contoso air,1100000
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "code_interpreter_call":
                                             found_code_interpreter_in_items = True
-                                            assert "id" in tool_content, "code_interpreter_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "code_interpreter_call should have id in conversation items"
                                             code_interpreter = tool_content.get("code_interpreter")
                                             if code_interpreter:
-                                                assert "code" in code_interpreter, "code should be present when content recording is enabled"
-                                                assert "status" in code_interpreter, "status should be present in code_interpreter"
+                                                assert (
+                                                    "code" in code_interpreter
+                                                ), "code should be present when content recording is enabled"
+                                                assert (
+                                                    "status" in code_interpreter
+                                                ), "status should be present in code_interpreter"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -322,7 +334,9 @@ TRANSPORTATION,Contoso air,1100000
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
 
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
@@ -330,7 +344,7 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -341,10 +355,14 @@ TRANSPORTATION,Contoso air,1100000
                                             found_code_interpreter_call = True
                                             assert "id" in tool_content, "code_interpreter_call should have id"
                                             # Without content recording, code should NOT be present
-                                            assert "code" not in tool_content, "code should NOT be present when content recording is disabled"
+                                            assert (
+                                                "code" not in tool_content
+                                            ), "code should NOT be present when content recording is disabled"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" not in part, "text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present when content recording is disabled"
 
                 assert found_code_interpreter_call, "Should have found code_interpreter_call in output"
                 assert found_text_response, "Should have found text response type in output"
@@ -362,22 +380,28 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present in conversation items"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present in conversation items"
                                     elif part.get("type") == "tool_call":
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "code_interpreter_call":
                                             found_code_interpreter_in_items = True
-                                            assert "id" in tool_content, "code_interpreter_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "code_interpreter_call should have id in conversation items"
                                             # Without content recording, code should NOT be present
                                             code_interpreter = tool_content.get("code_interpreter")
                                             if code_interpreter:
-                                                assert "code" not in code_interpreter, "code should NOT be present when content recording is disabled"
+                                                assert (
+                                                    "code" not in code_interpreter
+                                                ), "code should NOT be present when content recording is disabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -505,7 +529,9 @@ TRANSPORTATION,Contoso air,1100000
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str), "Text content should be present when content recording is enabled"
+                                        assert "content" in part and isinstance(
+                                            part["content"], str
+                                        ), "Text content should be present when content recording is enabled"
 
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
@@ -513,7 +539,7 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -523,10 +549,14 @@ TRANSPORTATION,Contoso air,1100000
                                         if tool_content and tool_content.get("type") == "code_interpreter_call":
                                             found_code_interpreter_call = True
                                             assert "id" in tool_content, "code_interpreter_call should have id"
-                                            assert "code" in tool_content, "code should be present when content recording is enabled"
+                                            assert (
+                                                "code" in tool_content
+                                            ), "code should be present when content recording is enabled"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" in part, "text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present when content recording is enabled"
 
                 assert found_code_interpreter_call, "Should have found code_interpreter_call in output"
                 assert found_text_response, "Should have found text response in output"
@@ -544,7 +574,7 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -555,11 +585,17 @@ TRANSPORTATION,Contoso air,1100000
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "code_interpreter_call":
                                             found_code_interpreter_in_items = True
-                                            assert "id" in tool_content, "code_interpreter_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "code_interpreter_call should have id in conversation items"
                                             code_interpreter = tool_content.get("code_interpreter")
                                             if code_interpreter:
-                                                assert "code" in code_interpreter, "code should be present when content recording is enabled"
-                                                assert "status" in code_interpreter, "status should be present in code_interpreter"
+                                                assert (
+                                                    "code" in code_interpreter
+                                                ), "code should be present when content recording is enabled"
+                                                assert (
+                                                    "status" in code_interpreter
+                                                ), "status should be present in code_interpreter"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -683,7 +719,9 @@ TRANSPORTATION,Contoso air,1100000
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
 
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
@@ -691,7 +729,7 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
@@ -701,10 +739,14 @@ TRANSPORTATION,Contoso air,1100000
                                         if tool_content and tool_content.get("type") == "code_interpreter_call":
                                             found_code_interpreter_call = True
                                             assert "id" in tool_content, "code_interpreter_call should have id"
-                                            assert "code" not in tool_content, "code should NOT be present when content recording is disabled"
+                                            assert (
+                                                "code" not in tool_content
+                                            ), "code should NOT be present when content recording is disabled"
                                     elif part.get("type") == "text":
                                         found_text_response = True
-                                        assert "content" not in part, "text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present when content recording is disabled"
 
                 assert found_code_interpreter_call, "Should have found code_interpreter_call in output"
                 assert found_text_response, "Should have found text response type in output"
@@ -722,21 +764,27 @@ TRANSPORTATION,Contoso air,1100000
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         data = json.loads(content)
-                        
+
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present in conversation items"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present in conversation items"
                                     elif part.get("type") == "tool_call":
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "code_interpreter_call":
                                             found_code_interpreter_in_items = True
-                                            assert "id" in tool_content, "code_interpreter_call should have id in conversation items"
+                                            assert (
+                                                "id" in tool_content
+                                            ), "code_interpreter_call should have id in conversation items"
                                             code_interpreter = tool_content.get("code_interpreter")
                                             if code_interpreter:
-                                                assert "code" not in code_interpreter, "code should NOT be present when content recording is disabled"
+                                                assert (
+                                                    "code" not in code_interpreter
+                                                ), "code should NOT be present when content recording is disabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 

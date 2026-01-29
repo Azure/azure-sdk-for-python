@@ -4014,8 +4014,12 @@ trigger:
                     assert "content" in part
                     assert "status" in part["content"]
                     # With content recording ON, action_id and previous_action_id should be present
-                    assert "action_id" in part["content"], "action_id should be present when content recording is enabled"
-                    assert "previous_action_id" in part["content"], "previous_action_id should be present when content recording is enabled"
+                    assert (
+                        "action_id" in part["content"]
+                    ), "action_id should be present when content recording is enabled"
+                    assert (
+                        "previous_action_id" in part["content"]
+                    ), "previous_action_id should be present when content recording is enabled"
         assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_without_content")
@@ -4124,8 +4128,12 @@ trigger:
                     assert "content" in part
                     assert "status" in part["content"]
                     # action_id and previous_action_id should NOT be present when content recording is off
-                    assert "action_id" not in part["content"], "action_id should not be present when content recording is disabled"
-                    assert "previous_action_id" not in part["content"], "previous_action_id should not be present when content recording is disabled"
+                    assert (
+                        "action_id" not in part["content"]
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in part["content"]
+                    ), "previous_action_id should not be present when content recording is disabled"
         assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_with_content")
@@ -4326,8 +4334,12 @@ trigger:
                     assert "content" in part
                     assert "status" in part["content"]
                     # With content recording ON, action_id and previous_action_id should be present
-                    assert "action_id" in part["content"], "action_id should be present when content recording is enabled"
-                    assert "previous_action_id" in part["content"], "previous_action_id should be present when content recording is enabled"
+                    assert (
+                        "action_id" in part["content"]
+                    ), "action_id should be present when content recording is enabled"
+                    assert (
+                        "previous_action_id" in part["content"]
+                    ), "previous_action_id should be present when content recording is enabled"
         assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_without_content")
@@ -4441,8 +4453,12 @@ trigger:
                     assert "content" in part
                     assert "status" in part["content"]
                     # action_id and previous_action_id should NOT be present when content recording is off
-                    assert "action_id" not in part["content"], "action_id should not be present when content recording is disabled"
-                    assert "previous_action_id" not in part["content"], "previous_action_id should not be present when content recording is disabled"
+                    assert (
+                        "action_id" not in part["content"]
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in part["content"]
+                    ), "previous_action_id should not be present when content recording is disabled"
         assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_with_content")

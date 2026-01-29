@@ -47,15 +47,31 @@ def checkWorkflowEventContents(content, content_recording_enabled):
                 workflow_content = part.get("content")
                 assert isinstance(workflow_content, dict)
                 # status is always present
-                assert "status" in workflow_content and isinstance(workflow_content["status"], str) and workflow_content["status"]
+                assert (
+                    "status" in workflow_content
+                    and isinstance(workflow_content["status"], str)
+                    and workflow_content["status"]
+                )
                 if content_recording_enabled:
                     # action_id and previous_action_id should be present and non-empty
-                    assert "action_id" in workflow_content and isinstance(workflow_content["action_id"], str) and workflow_content["action_id"]
-                    assert "previous_action_id" in workflow_content and isinstance(workflow_content["previous_action_id"], str) and workflow_content["previous_action_id"]
+                    assert (
+                        "action_id" in workflow_content
+                        and isinstance(workflow_content["action_id"], str)
+                        and workflow_content["action_id"]
+                    )
+                    assert (
+                        "previous_action_id" in workflow_content
+                        and isinstance(workflow_content["previous_action_id"], str)
+                        and workflow_content["previous_action_id"]
+                    )
                 else:
                     # action_id and previous_action_id should NOT be present when content recording is disabled
-                    assert "action_id" not in workflow_content, "action_id should not be present when content recording is disabled"
-                    assert "previous_action_id" not in workflow_content, "previous_action_id should not be present when content recording is disabled"
+                    assert (
+                        "action_id" not in workflow_content
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in workflow_content
+                    ), "previous_action_id should not be present when content recording is disabled"
         assert found_workflow_action, "No workflow_action part found in workflow event"
 
 
@@ -76,14 +92,16 @@ def checkInputMessageEventContents(content, content_recording_enabled):
                     assert "content" in part and isinstance(part["content"], str) and part["content"].strip() != ""
                 else:
                     # content field should NOT be present in text parts when content recording is disabled
-                    assert "content" not in part, "Text content should not be present when content recording is disabled"
+                    assert (
+                        "content" not in part
+                    ), "Text content should not be present when content recording is disabled"
         assert found_text, "No text part found in input message event"
 
 
 class TestResponsesInstrumentorWorkflowAsync(TestAiAgentsInstrumentorBase):
     """Async tests for ResponsesInstrumentor with workflow agents."""
 
-    def _create_student_teacher_workflow(self, project_client, student_agent, teacher_agent):
+    async def _create_student_teacher_workflow(self, project_client, student_agent, teacher_agent):
         """Create a multi-agent workflow with student and teacher agents."""
         workflow_yaml = f"""
 kind: workflow
@@ -153,7 +171,7 @@ trigger:
           actionId: student_agent
 """
 
-        workflow = project_client.agents.create_version(
+        workflow = await project_client.agents.create_version(
             agent_name="student-teacher-workflow",
             definition=WorkflowAgentDefinition(workflow=workflow_yaml),
         )
@@ -252,13 +270,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation span
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -413,13 +430,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events (should exist even without content recording)
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation span - verify content recording is OFF
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -583,13 +599,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation span
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -749,13 +764,12 @@ trigger:
                 assert attributes_match
 
                 # Check for workflow action events (should exist even without content recording)
-                workflow_events = [
-                    e for e in span.events if e.name == "gen_ai.workflow.action"
-                ]
+                workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
                 assert len(workflow_events) > 0, "Should have workflow action events"
 
                 # Strict event content checks for response generation span - verify content recording is OFF
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes

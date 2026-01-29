@@ -129,6 +129,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
                 # Comprehensive event content validation - verify content IS present
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -136,6 +137,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         # Check that content fields ARE present with content recording ON
@@ -145,13 +147,18 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                                 assert isinstance(parts, list) and len(parts) > 0
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str) and part["content"].strip() != "", "Text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                            and isinstance(part["content"], str)
+                                            and part["content"].strip() != ""
+                                        ), "Text content should be present when content recording is enabled"
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
 
@@ -200,7 +207,11 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
             agent = project_client.agents.create_version(
                 agent_name="MyAgent",
-                definition=PromptAgentDefinition(model=deployment_name, instructions="""You are an Agent helping with browser automation tasks.""", tools=[tool]),
+                definition=PromptAgentDefinition(
+                    model=deployment_name,
+                    instructions="""You are an Agent helping with browser automation tasks.""",
+                    tools=[tool],
+                ),
             )
 
             try:
@@ -245,6 +256,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
                 # Comprehensive event content validation - verify content is NOT present
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -252,6 +264,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         # Check that content fields are NOT present with content recording OFF
@@ -261,13 +274,16 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                                 assert isinstance(parts, list) and len(parts) > 0
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
 
@@ -285,7 +301,9 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     def test_sync_browser_automation_streaming_with_content_recording(self, **kwargs):
         """Test synchronous browser automation agent with streaming and content recording enabled."""
         self.cleanup()
-        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"})
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
         self.setup_telemetry()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
@@ -298,10 +316,25 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
         with project_client:
             openai_client = project_client.get_openai_client()
 
-            from azure.ai.projects.models import BrowserAutomationPreviewTool, BrowserAutomationToolParameters, BrowserAutomationToolConnectionParameters
+            from azure.ai.projects.models import (
+                BrowserAutomationPreviewTool,
+                BrowserAutomationToolParameters,
+                BrowserAutomationToolConnectionParameters,
+            )
 
-            tool = BrowserAutomationPreviewTool(browser_automation_preview=BrowserAutomationToolParameters(connection=BrowserAutomationToolConnectionParameters(project_connection_id=browser_automation_connection_id)))
-            agent = project_client.agents.create_version(agent_name="MyAgent", definition=PromptAgentDefinition(model=deployment_name, instructions="""Browser automation helper.""", tools=[tool]))
+            tool = BrowserAutomationPreviewTool(
+                browser_automation_preview=BrowserAutomationToolParameters(
+                    connection=BrowserAutomationToolConnectionParameters(
+                        project_connection_id=browser_automation_connection_id
+                    )
+                )
+            )
+            agent = project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=deployment_name, instructions="""Browser automation helper.""", tools=[tool]
+                ),
+            )
 
             try:
                 conversation = openai_client.conversations.create()
@@ -349,6 +382,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                 openai_client.conversations.delete(conversation_id=conversation.id)
                 # Strict event content checks for response generation span (after span assignment)
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -356,6 +390,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -367,18 +402,23 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str) and part["content"].strip() != "", "Text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                            and isinstance(part["content"], str)
+                                            and part["content"].strip() != ""
+                                        ), "Text content should be present when content recording is enabled"
                     if event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
                         assert first.get("role") in ("assistant", "tool")
-                        assert isinstance(first.get("parts"), list) and len(first["parts"]) > 0                
+                        assert isinstance(first.get("parts"), list) and len(first["parts"]) > 0
             finally:
                 project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
@@ -388,7 +428,9 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     def test_sync_browser_automation_streaming_without_content_recording(self, **kwargs):
         """Test synchronous browser automation agent with streaming and content recording disabled."""
         self.cleanup()
-        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"})
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
         self.setup_telemetry()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
@@ -401,10 +443,23 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
         with project_client:
             openai_client = project_client.get_openai_client()
 
-            from azure.ai.projects.models import BrowserAutomationPreviewTool, BrowserAutomationToolParameters, BrowserAutomationToolConnectionParameters
+            from azure.ai.projects.models import (
+                BrowserAutomationPreviewTool,
+                BrowserAutomationToolParameters,
+                BrowserAutomationToolConnectionParameters,
+            )
 
-            tool = BrowserAutomationPreviewTool(browser_automation_preview=BrowserAutomationToolParameters(connection=BrowserAutomationToolConnectionParameters(project_connection_id=browser_automation_connection_id)))
-            agent = project_client.agents.create_version(agent_name="MyAgent", definition=PromptAgentDefinition(model=deployment_name, instructions="Browser helper.", tools=[tool]))
+            tool = BrowserAutomationPreviewTool(
+                browser_automation_preview=BrowserAutomationToolParameters(
+                    connection=BrowserAutomationToolConnectionParameters(
+                        project_connection_id=browser_automation_connection_id
+                    )
+                )
+            )
+            agent = project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(model=deployment_name, instructions="Browser helper.", tools=[tool]),
+            )
 
             try:
                 conversation = openai_client.conversations.create()
@@ -448,6 +503,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
                 # Strict event content checks for response generation span (after span assignment)
                 from collections.abc import Mapping
+
                 for event in span.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -455,6 +511,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -466,13 +523,16 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
                     if event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]

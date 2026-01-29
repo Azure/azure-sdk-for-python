@@ -134,6 +134,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 # Comprehensive event validation for first span - verify content IS present
                 from collections.abc import Mapping
+
                 for event in span1.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -141,6 +142,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         # Validate content fields ARE present
@@ -150,13 +152,18 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                 assert isinstance(parts, list) and len(parts) > 0
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str) and part["content"].strip() != "", "Text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                            and isinstance(part["content"], str)
+                                            and part["content"].strip() != ""
+                                        ), "Text content should be present when content recording is enabled"
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -172,11 +179,19 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                 if tool_type in ("mcp_list_tools", "mcp_approval_request"):
                                     assert "id" in tool_content
                                     if tool_type == "mcp_list_tools":
-                                        assert "server_label" in tool_content, "server_label should be present for mcp_list_tools when content recording is enabled"
+                                        assert (
+                                            "server_label" in tool_content
+                                        ), "server_label should be present for mcp_list_tools when content recording is enabled"
                                     elif tool_type == "mcp_approval_request":
-                                        assert "name" in tool_content, "name should be present for mcp_approval_request when content recording is enabled"
-                                        assert "server_label" in tool_content, "server_label should be present for mcp_approval_request when content recording is enabled"
-                                        assert "arguments" in tool_content, "arguments should be present for mcp_approval_request when content recording is enabled"
+                                        assert (
+                                            "name" in tool_content
+                                        ), "name should be present for mcp_approval_request when content recording is enabled"
+                                        assert (
+                                            "server_label" in tool_content
+                                        ), "server_label should be present for mcp_approval_request when content recording is enabled"
+                                        assert (
+                                            "arguments" in tool_content
+                                        ), "arguments should be present for mcp_approval_request when content recording is enabled"
 
                 # Validate second response span (approval response)
                 span2 = spans[1]
@@ -202,6 +217,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         # Check for MCP approval response content
                         for entry in data:
@@ -213,13 +229,16 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                         assert isinstance(mcp_content, dict)
                                         if mcp_content.get("type") == "mcp_approval_response":
                                             assert "id" in mcp_content
-                                            assert "approval_request_id" in mcp_content, "approval_request_id should be present when content recording is enabled"
+                                            assert (
+                                                "approval_request_id" in mcp_content
+                                            ), "approval_request_id should be present when content recording is enabled"
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         # Check for MCP call content
                         for entry in data:
@@ -230,11 +249,19 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "mcp_call":
                                             assert "id" in tool_content
-                                            assert "name" in tool_content, "name should be present for mcp_call when content recording is enabled"
-                                            assert "arguments" in tool_content, "arguments should be present for mcp_call when content recording is enabled"
-                                            assert "server_label" in tool_content, "server_label should be present for mcp_call when content recording is enabled"
+                                            assert (
+                                                "name" in tool_content
+                                            ), "name should be present for mcp_call when content recording is enabled"
+                                            assert (
+                                                "arguments" in tool_content
+                                            ), "arguments should be present for mcp_call when content recording is enabled"
+                                            assert (
+                                                "server_label" in tool_content
+                                            ), "server_label should be present for mcp_call when content recording is enabled"
                                     elif part.get("type") == "text":
-                                        assert "content" in part, "text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present when content recording is enabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
@@ -248,6 +275,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         # Validate MCP content in conversation items
                         for entry in data:
@@ -255,16 +283,22 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part, "text content should be present in conversation items when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present in conversation items when content recording is enabled"
                                     elif part.get("type") == "mcp":
                                         mcp_content = part.get("content")
                                         if mcp_content and mcp_content.get("type") == "mcp_approval_response":
-                                            assert "approval_request_id" in mcp_content, "approval_request_id should be present when content recording is enabled"
+                                            assert (
+                                                "approval_request_id" in mcp_content
+                                            ), "approval_request_id should be present when content recording is enabled"
                             elif entry.get("role") == "assistant":
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part, "text content should be present in conversation items when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present in conversation items when content recording is enabled"
                                     elif part.get("type") == "mcp":
                                         mcp_content = part.get("content")
                                         if mcp_content:
@@ -272,8 +306,12 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                             if mcp_type in ("mcp_list_tools", "mcp_call", "mcp_approval_request"):
                                                 assert "id" in mcp_content
                                                 if mcp_type == "mcp_call":
-                                                    assert "name" in mcp_content, "name should be present for mcp_call in conversation items"
-                                                    assert "server_label" in mcp_content, "server_label should be present for mcp_call in conversation items"
+                                                    assert (
+                                                        "name" in mcp_content
+                                                    ), "name should be present for mcp_call in conversation items"
+                                                    assert (
+                                                        "server_label" in mcp_content
+                                                    ), "server_label should be present for mcp_call in conversation items"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -384,6 +422,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 # Comprehensive event validation for first span - verify content is NOT present
                 from collections.abc import Mapping
+
                 for event in span1.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -391,6 +430,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         # Validate content fields are NOT present
@@ -400,13 +440,16 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                 assert isinstance(parts, list) and len(parts) > 0
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         assert isinstance(data, list) and len(data) > 0
                         first = data[0]
@@ -426,8 +469,12 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                         pass
                                     elif tool_type == "mcp_approval_request":
                                         # Should not have name, arguments when content recording is disabled
-                                        assert "name" not in tool_content, "name should NOT be present for mcp_approval_request when content recording is disabled"
-                                        assert "arguments" not in tool_content, "arguments should NOT be present for mcp_approval_request when content recording is disabled"
+                                        assert (
+                                            "name" not in tool_content
+                                        ), "name should NOT be present for mcp_approval_request when content recording is disabled"
+                                        assert (
+                                            "arguments" not in tool_content
+                                        ), "arguments should NOT be present for mcp_approval_request when content recording is disabled"
 
                 # Validate second response span (approval response)
                 span2 = spans[1]
@@ -453,6 +500,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         # Check for MCP approval response content - should be minimal
                         for entry in data:
@@ -471,6 +519,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         # Check for MCP call content - should be minimal
                         for entry in data:
@@ -481,10 +530,16 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "mcp_call":
                                             assert "id" in tool_content
-                                            assert "name" not in tool_content, "name should NOT be present for mcp_call when content recording is disabled"
-                                            assert "arguments" not in tool_content, "arguments should NOT be present for mcp_call when content recording is disabled"
+                                            assert (
+                                                "name" not in tool_content
+                                            ), "name should NOT be present for mcp_call when content recording is disabled"
+                                            assert (
+                                                "arguments" not in tool_content
+                                            ), "arguments should NOT be present for mcp_call when content recording is disabled"
                                     elif part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present when content recording is disabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
@@ -498,6 +553,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         # Validate MCP content in conversation items - should be minimal
                         for entry in data:
@@ -505,7 +561,9 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present in conversation items when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present in conversation items when content recording is disabled"
                                     elif part.get("type") == "mcp":
                                         mcp_content = part.get("content")
                                         if mcp_content and mcp_content.get("type") == "mcp_approval_response":
@@ -515,7 +573,9 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present in conversation items when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present in conversation items when content recording is disabled"
                                     elif part.get("type") == "mcp":
                                         mcp_content = part.get("content")
                                         if mcp_content:
@@ -523,7 +583,9 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                             if mcp_type == "mcp_call":
                                                 assert "id" in mcp_content
                                                 # Should not have name, server_label, arguments when content recording is disabled
-                                                assert "name" not in mcp_content, "name should NOT be present for mcp_call in conversation items when content recording is disabled"
+                                                assert (
+                                                    "name" not in mcp_content
+                                                ), "name should NOT be present for mcp_call in conversation items when content recording is disabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -590,11 +652,11 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 # Collect approval requests from stream
                 input_list = []
                 async for event in stream:
-                    if hasattr(event, 'type') and event.type == "response.output_item.done":
-                        if hasattr(event, 'item') and hasattr(event.item, 'type'):
+                    if hasattr(event, "type") and event.type == "response.output_item.done":
+                        if hasattr(event, "item") and hasattr(event.item, "type"):
                             if event.item.type == "mcp_approval_request":
-                                if hasattr(event.item, 'server_label') and event.item.server_label == "api-specs":
-                                    if hasattr(event.item, 'id') and event.item.id:
+                                if hasattr(event.item, "server_label") and event.item.server_label == "api-specs":
+                                    if hasattr(event.item, "id") and event.item.id:
                                         input_list.append(
                                             McpApprovalResponse(
                                                 type="mcp_approval_response",
@@ -647,6 +709,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 # Comprehensive event validation - verify content IS present
                 from collections.abc import Mapping
+
                 for event in span1.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -654,19 +717,25 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             if entry.get("role") == "user":
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part and isinstance(part["content"], str) and part["content"].strip() != "", "Text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                            and isinstance(part["content"], str)
+                                            and part["content"].strip() != ""
+                                        ), "Text content should be present when content recording is enabled"
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             parts = entry.get("parts")
@@ -677,8 +746,12 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                         if tool_content:
                                             tool_type = tool_content.get("type")
                                             if tool_type == "mcp_approval_request":
-                                                assert "name" in tool_content, "name should be present for mcp_approval_request when content recording is enabled"
-                                                assert "arguments" in tool_content, "arguments should be present for mcp_approval_request when content recording is enabled"
+                                                assert (
+                                                    "name" in tool_content
+                                                ), "name should be present for mcp_approval_request when content recording is enabled"
+                                                assert (
+                                                    "arguments" in tool_content
+                                                ), "arguments should be present for mcp_approval_request when content recording is enabled"
 
                 # Validate second response span
                 span2 = spans[1]
@@ -708,6 +781,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             parts = entry.get("parts")
@@ -716,10 +790,16 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                     if part.get("type") == "tool_call":
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "mcp_call":
-                                            assert "name" in tool_content, "name should be present for mcp_call when content recording is enabled"
-                                            assert "arguments" in tool_content, "arguments should be present for mcp_call when content recording is enabled"
+                                            assert (
+                                                "name" in tool_content
+                                            ), "name should be present for mcp_call when content recording is enabled"
+                                            assert (
+                                                "arguments" in tool_content
+                                            ), "arguments should be present for mcp_call when content recording is enabled"
                                     elif part.get("type") == "text":
-                                        assert "content" in part, "text content should be present when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present when content recording is enabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
@@ -733,17 +813,22 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" in part, "text content should be present in conversation items when content recording is enabled"
+                                        assert (
+                                            "content" in part
+                                        ), "text content should be present in conversation items when content recording is enabled"
                                     elif part.get("type") == "mcp":
                                         mcp_content = part.get("content")
                                         if mcp_content and mcp_content.get("type") == "mcp_call":
-                                            assert "name" in mcp_content, "name should be present for mcp_call in conversation items when content recording is enabled"
+                                            assert (
+                                                "name" in mcp_content
+                                            ), "name should be present for mcp_call in conversation items when content recording is enabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
@@ -806,11 +891,11 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 # Collect approval requests from stream
                 input_list = []
                 async for event in stream:
-                    if hasattr(event, 'type') and event.type == "response.output_item.done":
-                        if hasattr(event, 'item') and hasattr(event.item, 'type'):
+                    if hasattr(event, "type") and event.type == "response.output_item.done":
+                        if hasattr(event, "item") and hasattr(event.item, "type"):
                             if event.item.type == "mcp_approval_request":
-                                if hasattr(event.item, 'server_label') and event.item.server_label == "api-specs":
-                                    if hasattr(event.item, 'id') and event.item.id:
+                                if hasattr(event.item, "server_label") and event.item.server_label == "api-specs":
+                                    if hasattr(event.item, "id") and event.item.id:
                                         input_list.append(
                                             McpApprovalResponse(
                                                 type="mcp_approval_response",
@@ -863,6 +948,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 # Comprehensive event validation - verify content is NOT present
                 from collections.abc import Mapping
+
                 for event in span1.events:
                     if event.name == "gen_ai.input.messages":
                         attrs = event.attributes
@@ -870,19 +956,23 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             if entry.get("role") == "user":
                                 parts = entry.get("parts")
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "Text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "Text content should NOT be present when content recording is disabled"
                     elif event.name == "gen_ai.output.messages":
                         attrs = event.attributes
                         assert attrs is not None and isinstance(attrs, Mapping)
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             parts = entry.get("parts")
@@ -893,8 +983,12 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                         if tool_content:
                                             tool_type = tool_content.get("type")
                                             if tool_type == "mcp_approval_request":
-                                                assert "name" not in tool_content, "name should NOT be present for mcp_approval_request when content recording is disabled"
-                                                assert "arguments" not in tool_content, "arguments should NOT be present for mcp_approval_request when content recording is disabled"
+                                                assert (
+                                                    "name" not in tool_content
+                                                ), "name should NOT be present for mcp_approval_request when content recording is disabled"
+                                                assert (
+                                                    "arguments" not in tool_content
+                                                ), "arguments should NOT be present for mcp_approval_request when content recording is disabled"
 
                 # Validate second response span
                 span2 = spans[1]
@@ -924,6 +1018,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             parts = entry.get("parts")
@@ -932,10 +1027,16 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                                     if part.get("type") == "tool_call":
                                         tool_content = part.get("content")
                                         if tool_content and tool_content.get("type") == "mcp_call":
-                                            assert "name" not in tool_content, "name should NOT be present for mcp_call when content recording is disabled"
-                                            assert "arguments" not in tool_content, "arguments should NOT be present for mcp_call when content recording is disabled"
+                                            assert (
+                                                "name" not in tool_content
+                                            ), "name should NOT be present for mcp_call when content recording is disabled"
+                                            assert (
+                                                "arguments" not in tool_content
+                                            ), "arguments should NOT be present for mcp_call when content recording is disabled"
                                     elif part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present when content recording is disabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
@@ -949,17 +1050,22 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                         content = attrs.get("gen_ai.event.content")
                         assert isinstance(content, str) and content.strip() != ""
                         import json
+
                         data = json.loads(content)
                         for entry in data:
                             parts = entry.get("parts")
                             if parts:
                                 for part in parts:
                                     if part.get("type") == "text":
-                                        assert "content" not in part, "text content should NOT be present in conversation items when content recording is disabled"
+                                        assert (
+                                            "content" not in part
+                                        ), "text content should NOT be present in conversation items when content recording is disabled"
                                     elif part.get("type") == "mcp":
                                         mcp_content = part.get("content")
                                         if mcp_content and mcp_content.get("type") == "mcp_call":
-                                            assert "name" not in mcp_content, "name should NOT be present for mcp_call in conversation items when content recording is disabled"
+                                            assert (
+                                                "name" not in mcp_content
+                                            ), "name should NOT be present for mcp_call in conversation items when content recording is disabled"
                     else:
                         assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
