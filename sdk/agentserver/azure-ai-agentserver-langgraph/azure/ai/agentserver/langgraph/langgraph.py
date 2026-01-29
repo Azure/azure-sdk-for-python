@@ -167,7 +167,9 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         config = input_arguments.get("config", {})
         configurable = config.get("configurable", {})
-        configurable["thread_id"] = input_arguments["context"].agent_run.conversation_id
+        thread_id = input_arguments["context"].agent_run.conversation_id
+        if thread_id:
+            configurable["thread_id"] = thread_id
         config["configurable"] = configurable
         context.attach_to_config(config)
 

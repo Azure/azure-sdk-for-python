@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Optional
+
 from .id_generator.foundry_id_generator import FoundryIdGenerator
 from .id_generator.id_generator import IdGenerator
 from ...logger import get_logger
@@ -39,7 +41,7 @@ class AgentRunContext:
         return self._response_id
 
     @property
-    def conversation_id(self) -> str:
+    def conversation_id(self) -> Optional[str]:
         return self._conversation_id
 
     @property

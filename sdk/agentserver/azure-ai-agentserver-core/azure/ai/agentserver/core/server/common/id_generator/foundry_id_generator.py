@@ -27,8 +27,12 @@ class FoundryIdGenerator(IdGenerator):
 
     def __init__(self, response_id: Optional[str], conversation_id: Optional[str]):
         self.response_id = response_id or self._new_id("resp")
-        self.conversation_id = conversation_id or self._new_id("conv")
-        self._partition_id = self._extract_partition_id(self.conversation_id)
+        self.conversation_id = conversation_id
+        partition_source = self.conversation_id or self.response_id
+        try:
+            self._partition_id = self._extract_partition_id(partition_source)
+        except ValueError:
+            self._partition_id = self._secure_entropy(18)
 
     @classmethod
     def from_request(cls, payload: dict) -> "FoundryIdGenerator":
