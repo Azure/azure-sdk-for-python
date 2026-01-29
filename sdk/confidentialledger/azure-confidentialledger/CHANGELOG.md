@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed authentication failure on HTTP redirects by preserving sensitive headers during service-managed redirects within the Confidential Ledger endpoint.
+
 ## 2.0.0b1 (2025-10-20)
 
 ### Features Added
