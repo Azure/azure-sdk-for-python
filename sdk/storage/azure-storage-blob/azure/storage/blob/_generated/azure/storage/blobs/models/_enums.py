@@ -300,14 +300,7 @@ class PublicAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Container access."""
 
 
-class QueryRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The query request, note only SQL supported."""
-
-    SQL = "SQL"
-    """The SQL request query type."""
-
-
-class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class QueryFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The query format type."""
 
     DELIMITED = "delimited"
@@ -318,6 +311,13 @@ class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The query format type is Apache Arrow."""
     PARQUET = "parquet"
     """The query format type is Parquet."""
+
+
+class QueryRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The query request, note only SQL supported."""
+
+    SQL = "SQL"
+    """The SQL request query type."""
 
 
 class RehydratePriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):

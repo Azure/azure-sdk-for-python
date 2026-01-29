@@ -19,7 +19,7 @@ from .._encryption import (
     _ENCRYPTION_PROTOCOL_V1,
     _ENCRYPTION_PROTOCOL_V2
 )
-from .._generated.models import (
+from .._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
     BlockLookupList,
     ModifiedAccessConditions
