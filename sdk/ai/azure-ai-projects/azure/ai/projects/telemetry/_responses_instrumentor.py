@@ -3998,9 +3998,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Wrap in parts array for semantic convention compliance
             parts: List[Dict[str, Any]] = [{"type": "workflow_action", "content": workflow_details}]
             event_body = [{"role": role, "parts": parts}]
-
-            # Use generic event name for workflow actions
-            event_name = GEN_AI_WORKFLOW_ACTION_EVENT
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "message":
             # Regular message - use content format for consistency
