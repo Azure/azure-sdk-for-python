@@ -2369,7 +2369,7 @@ def _convert_single_row_to_aoai_format(
             "message": str(error_message) if error_message is not None else "",
         }
         top_sample = {"error": error_info}
-    # If status is "success" or doesn't exist, top_sample remains empty {}
+    # If status is "success" or doesn't exist, top_sample is set to None (no error information)
     else:
         top_sample = None
 
