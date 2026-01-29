@@ -416,7 +416,6 @@ def build_table_get_access_policy_request(table: str, *, timeout: Optional[int] 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -433,7 +432,6 @@ def build_table_get_access_policy_request(table: str, *, timeout: Optional[int] 
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -459,8 +457,8 @@ def build_table_set_access_policy_request(table: str, *, timeout: Optional[int] 
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -479,8 +477,8 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -489,7 +487,6 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -501,7 +498,6 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -512,7 +508,6 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -524,7 +519,6 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -578,7 +572,6 @@ class TableOperations:
         top: Optional[int] = None,
         select: Optional[str] = None,
         filter: Optional[str] = None,
-        next_table_name: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.TableProperties"]:
         """Queries tables under the given account.
@@ -594,9 +587,6 @@ class TableOperations:
         :paramtype select: str
         :keyword filter: OData filter expression. Default value is None.
         :paramtype filter: str
-        :keyword next_table_name: A table query continuation token from a previous call. Default value
-         is None.
-        :paramtype next_table_name: str
         :return: An iterator like instance of TableProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables._generated.models.TableProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -617,43 +607,23 @@ class TableOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        def prepare_request(_continuation_token=None):
 
-                _request = build_table_query_request(
-                    format=format,
-                    top=top,
-                    select=select,
-                    filter=filter,
-                    next_table_name=next_table_name,
-                    data_service_version=data_service_version,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
+            _request = build_table_query_request(
+                format=format,
+                top=top,
+                select=select,
+                filter=filter,
+                next_table_name=_continuation_token,
+                data_service_version=data_service_version,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
             return _request
 
         def extract_data(pipeline_response):
@@ -661,10 +631,12 @@ class TableOperations:
             list_of_elem = _deserialize(list[_models.TableProperties], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+            return pipeline_response.http_response.headers.get("x-ms-continuation-NextTableName") or None, iter(
+                list_of_elem
+            )
 
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -968,7 +940,7 @@ class TableOperations:
         next_partition_key: Optional[str] = None,
         next_row_key: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.TableEntitiesPagedResult:
+    ) -> _models.TableEntityQueryResponse:
         """Queries entities under the given table.
 
         :param table: The name of the table. Required.
@@ -992,9 +964,9 @@ class TableOperations:
         :keyword next_row_key: An entity row key query continuation token from a previous call. Default
          value is None.
         :paramtype next_row_key: str
-        :return: TableEntitiesPagedResult. The TableEntitiesPagedResult is compatible with
+        :return: TableEntityQueryResponse. The TableEntityQueryResponse is compatible with
          MutableMapping
-        :rtype: ~azure.data.tables._generated.models.TableEntitiesPagedResult
+        :rtype: ~azure.data.tables._generated.models.TableEntityQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1011,7 +983,7 @@ class TableOperations:
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        cls: ClsType[_models.TableEntitiesPagedResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TableEntityQueryResponse] = kwargs.pop("cls", None)
 
         _request = build_table_query_entities_request(
             table=table,
@@ -1070,7 +1042,7 @@ class TableOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TableEntitiesPagedResult, response.json())
+            deserialized = _deserialize(_models.TableEntityQueryResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1903,16 +1875,14 @@ class TableOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _request = build_table_get_access_policy_request(
             table=table,
             timeout=timeout,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2228,15 +2198,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
 
         _request = build_service_get_properties_request(
             timeout=timeout,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2304,15 +2272,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.TableServiceStats] = kwargs.pop("cls", None)
 
         _request = build_service_get_statistics_request(
             timeout=timeout,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

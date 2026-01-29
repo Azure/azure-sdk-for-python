@@ -9,7 +9,7 @@
         "azure.data.tables._generated.models.RetentionPolicy": "Data.Tables.RetentionPolicy",
         "azure.data.tables._generated.models.SignedIdentifier": "Data.Tables.SignedIdentifier",
         "azure.data.tables._generated.models.SubmitTransactionRequest": "Data.Tables.Table.submitTransaction.Request.anonymous",
-        "azure.data.tables._generated.models.TableEntitiesPagedResult": "Data.Tables.TableEntitiesPagedResult",
+        "azure.data.tables._generated.models.TableEntityQueryResponse": "Data.Tables.TableEntityQueryResponse",
         "azure.data.tables._generated.models.TableProperties": "Data.Tables.TableProperties",
         "azure.data.tables._generated.models.TableResponse": "Data.Tables.TableResponse",
         "azure.data.tables._generated.models.TablesError": "Data.Tables.TablesError",
