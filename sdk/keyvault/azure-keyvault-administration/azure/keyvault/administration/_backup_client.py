@@ -72,7 +72,7 @@ def _get_continuation_token(pipeline_response: PipelineResponse) -> str:
             },
         },
     }
-    return base64.b64encode(json.dumps(token).encode("utf-8")).decode("ascii")
+    return base64.b64encode(json.dumps(token, separators=(",", ":")).encode("utf-8")).decode("ascii")
 
 
 class KeyVaultBackupClient(KeyVaultClientBase):
