@@ -112,4 +112,10 @@ extends:
                       - Updates outdated package versions in conda-sdk-client.yml
                       - Adds new packages to conda-sdk-client.yml
                       - Adds/updates yamls and changelogs 
+                      
+                      ## Next Steps 
+                      - [ ] For new data plane packages, submit this form to create a private dummy library placeholder in Conda before uploading a release: https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR180k2XpSUFBtXHTh8-jMUlUNlA1MFpZOVhZME1aNU1EU1Y3SjZRU0JNRC4u
+                      - [ ] After this PR is merged and succeeds the Conda build, approve the pipeline to upload the releases to Conda
+                      - [ ] After upload, delete the dummy library and make the new packages publicly available in Conda.
+                      - [ ] Create an AKA link for new release logs here: http://aka.ms/
                     BaseBranchName: main
