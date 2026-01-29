@@ -15,7 +15,7 @@ from .._shared.response_handlers import process_storage_error, return_response_h
 from .._serialize import get_modify_conditions
 
 if TYPE_CHECKING:
-    from azure.storage.blob.aio import BlobClient, ContainerClient
+    from azure.storage.blob.azure.storage.models.aio import BlobClient, ContainerClient
     from datetime import datetime
 
 
