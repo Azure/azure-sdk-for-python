@@ -105,11 +105,11 @@ class MessagesOperations:
 
         _request = build_dequeue_request(
             url=self._config.url,
+            version=self._config.version,
             number_of_messages=number_of_messages,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -175,9 +175,9 @@ class MessagesOperations:
 
         _request = build_clear_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -267,12 +267,12 @@ class MessagesOperations:
 
         _request = build_enqueue_request(
             url=self._config.url,
+            version=self._config.version,
             visibilitytimeout=visibilitytimeout,
             message_time_to_live=message_time_to_live,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -350,11 +350,11 @@ class MessagesOperations:
 
         _request = build_peek_request(
             url=self._config.url,
+            version=self._config.version,
             number_of_messages=number_of_messages,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             peekonly=peekonly,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

@@ -19,7 +19,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     RetryCode,
-    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
+    _APPLICATIONINSIGHTS_SDKSTATS_DISABLED,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     _exception_categories,
@@ -47,7 +47,7 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         # Enable customer SDK stats for testing
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "true"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "false"
 
         # Reset the customer stats manager for each test
         manager = get_customer_stats_manager()
@@ -59,7 +59,7 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
     def tearDown(self):
         """Clean up test environment."""
         # Clean up environment variables
-        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, None)
+        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_DISABLED, None)
         os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL, None)
 
         # Shutdown customer stats
@@ -191,7 +191,7 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
 
     def test_is_customer_sdkstats_enabled_true(self):
         """Test checking if customer SDK stats is enabled (true case)."""
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "true"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "false"
 
         result = is_customer_sdkstats_enabled()
 
@@ -199,7 +199,7 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
 
     def test_is_customer_sdkstats_enabled_false(self):
         """Test checking if customer SDK stats is enabled (false case)."""
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "false"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "true"
 
         result = is_customer_sdkstats_enabled()
 
@@ -207,19 +207,19 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
 
     def test_is_customer_sdkstats_enabled_not_set(self):
         """Test checking if customer SDK stats is enabled when not set."""
-        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, None)
+        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_DISABLED, None)
 
         result = is_customer_sdkstats_enabled()
 
-        self.assertFalse(result)
+        self.assertTrue(result)
 
     def test_is_customer_sdkstats_enabled_case_insensitive(self):
         """Test that enabled check is case insensitive."""
-        test_cases = ["TRUE", "True", "tRuE", "true"]
+        test_cases = ["FALSE", "False", "fAlSe", "false"]
 
         for case in test_cases:
             with self.subTest(case=case):
-                os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = case
+                os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = case
                 result = is_customer_sdkstats_enabled()
                 self.assertTrue(result)
 

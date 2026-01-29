@@ -29,7 +29,7 @@ from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import AsyncRetryPolicy, UserAgentPolicy
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy, UserAgentPolicy
 
 from .constants import (
     CommonConstants,
@@ -116,6 +116,22 @@ def get_async_http_client_with_timeout() -> AsyncHttpPipeline:
     return get_async_http_client().with_policies(
         retry_policy=AsyncRetryPolicy(timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT)
     )
+
+
+def get_sync_http_client_with_retry():
+    """Get an HTTP client configured with retry policy for sync evals.
+
+    Configures retries on 5XX server errors and honors Retry-After headers on 429 responses.
+    """
+    # Configure retry policy with explicit settings for transient errors
+    # retry_on_status_codes includes 429 (rate limit) and 5XX server errors
+    retry_policy = RetryPolicy(
+        retry_total=3,
+        retry_on_status_codes=[429, 500, 502, 503, 504],
+        retry_backoff_factor=0.8,
+        retry_backoff_max=120,
+    )
+    return get_http_client(retry_policy=retry_policy)
 
 
 async def ensure_service_availability_onedp(
@@ -1042,7 +1058,7 @@ async def evaluate_with_rai_service_sync(
         )
 
     # Sync evals endpoint implementation (default)
-    api_version = "2025-10-15-preview"
+    api_version = "2025-11-15-preview"
     if not is_onedp_project(project_scope):
         # Get RAI service URL from discovery service and check service availability
         token = await fetch_or_reuse_token(credential)
@@ -1055,7 +1071,7 @@ async def evaluate_with_rai_service_sync(
         sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
         sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
 
-        with get_http_client() as client:
+        with get_sync_http_client_with_retry() as client:
             http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
 
         if http_response.status_code != 200:
@@ -1255,7 +1271,7 @@ async def evaluate_with_rai_service_sync_multimodal(
         )
 
     # Sync evals endpoint implementation (default)
-    api_version = "2025-10-15-preview"
+    api_version = "2025-11-15-preview"
     sync_eval_payload = _build_sync_eval_multimodal_payload(messages, metric_name)
 
     if is_onedp_project(project_scope):
@@ -1285,7 +1301,7 @@ async def evaluate_with_rai_service_sync_multimodal(
 
     sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
 
-    with get_http_client() as client:
+    with get_sync_http_client_with_retry() as client:
         http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
 
     if http_response.status_code != 200:

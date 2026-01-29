@@ -1,5 +1,15 @@
 # Release History
 
+## 37.2.0 (2026-01-27)
+
+### Features Added
+
+  - Added operation group GalleryScriptVersionsOperations
+  - Added operation group GalleryScriptsOperations
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter storage_account_strategy
+  - Model GalleryArtifactPublishingProfileBase has a new parameter storage_account_strategy
+  - Model GalleryImageVersionPublishingProfile has a new parameter storage_account_strategy
+
 ## 37.1.0 (2025-11-17)
 
 ### Features Added

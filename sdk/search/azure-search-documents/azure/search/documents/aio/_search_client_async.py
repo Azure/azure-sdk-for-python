@@ -58,8 +58,8 @@ class SearchClient(HeadersMixin):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
-            :start-after: [START create_search_client_with_key_async]
-            :end-before: [END create_search_client_with_key_async]
+            :start-after: [START authenticate_search_client_with_api_key_async]
+            :end-before: [END authenticate_search_client_with_api_key_async]
             :language: python
             :dedent: 4
             :caption: Creating the SearchClient with an API key.
@@ -132,7 +132,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_get_document_async.py
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
                 :start-after: [START get_document_async]
                 :end-before: [END get_document_async]
                 :language: python
@@ -327,7 +327,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_simple_query_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_simple_async.py
                 :start-after: [START simple_query_async]
                 :end-before: [END simple_query_async]
                 :language: python
@@ -336,7 +336,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_filter_query_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_filter_async.py
                 :start-after: [START filter_query_async]
                 :end-before: [END filter_query_async]
                 :language: python
@@ -345,7 +345,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_facet_query_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_facets_async.py
                 :start-after: [START facet_query_async]
                 :end-before: [END facet_query_async]
                 :language: python
@@ -463,7 +463,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_suggestions_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_suggestions_async.py
                 :start-after: [START suggest_query_async]
                 :end-before: [END suggest_query_async]
                 :language: python
@@ -545,7 +545,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_autocomplete_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_autocomplete_async.py
                 :start-after: [START autocomplete_query_async]
                 :end-before: [END autocomplete_query_async]
                 :language: python
@@ -590,7 +590,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
                 :start-after: [START upload_document_async]
                 :end-before: [END upload_document_async]
                 :language: python
@@ -624,7 +624,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
                 :start-after: [START delete_document_async]
                 :end-before: [END delete_document_async]
                 :language: python
@@ -654,7 +654,7 @@ class SearchClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
                 :start-after: [START merge_document_async]
                 :end-before: [END merge_document_async]
                 :language: python

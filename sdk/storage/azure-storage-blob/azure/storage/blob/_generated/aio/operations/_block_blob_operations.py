@@ -60,7 +60,7 @@ class BlockBlobOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def upload(
+    async def upload(  # pylint: disable=too-many-locals
         self,
         content_length: int,
         body: IO[bytes],
@@ -209,6 +209,7 @@ class BlockBlobOperations:
         _request = build_upload_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
             blob_content_type=_blob_content_type,
@@ -239,7 +240,6 @@ class BlockBlobOperations:
             structured_content_length=structured_content_length,
             blob_type=blob_type,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -289,7 +289,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def put_blob_from_url(
+    async def put_blob_from_url(  # pylint: disable=too-many-locals
         self,
         content_length: int,
         copy_source: str,
@@ -310,6 +310,7 @@ class BlockBlobOperations:
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        source_cpk_info: Optional[_models.SourceCpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
@@ -380,6 +381,8 @@ class BlockBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :param source_cpk_info: Parameter group. Default value is None.
+        :type source_cpk_info: ~azure.storage.blob.models.SourceCpkInfo
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -419,6 +422,9 @@ class BlockBlobOperations:
         _source_if_match = None
         _source_if_none_match = None
         _source_if_tags = None
+        _source_encryption_key = None
+        _source_encryption_key_sha256 = None
+        _source_encryption_algorithm = None
         if blob_http_headers is not None:
             _blob_cache_control = blob_http_headers.blob_cache_control
             _blob_content_disposition = blob_http_headers.blob_content_disposition
@@ -446,11 +452,16 @@ class BlockBlobOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_tags = source_modified_access_conditions.source_if_tags
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if source_cpk_info is not None:
+            _source_encryption_algorithm = source_cpk_info.source_encryption_algorithm
+            _source_encryption_key = source_cpk_info.source_encryption_key
+            _source_encryption_key_sha256 = source_cpk_info.source_encryption_key_sha256
 
         _request = build_put_blob_from_url_request(
             url=self._config.url,
             content_length=content_length,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
             blob_content_type=_blob_content_type,
@@ -483,8 +494,10 @@ class BlockBlobOperations:
             copy_source_authorization=copy_source_authorization,
             copy_source_tags=copy_source_tags,
             file_request_intent=file_request_intent,
+            source_encryption_key=_source_encryption_key,
+            source_encryption_key_sha256=_source_encryption_key_sha256,
+            source_encryption_algorithm=_source_encryption_algorithm,
             blob_type=blob_type,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -530,7 +543,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def stage_block(
+    async def stage_block(  # pylint: disable=too-many-locals
         self,
         block_id: str,
         content_length: int,
@@ -622,6 +635,7 @@ class BlockBlobOperations:
             url=self._config.url,
             block_id=block_id,
             content_length=content_length,
+            version=self._config.version,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
             timeout=timeout,
@@ -635,7 +649,6 @@ class BlockBlobOperations:
             structured_content_length=structured_content_length,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -685,7 +698,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def stage_block_from_url(
+    async def stage_block_from_url(  # pylint: disable=too-many-locals
         self,
         block_id: str,
         content_length: int,
@@ -701,6 +714,7 @@ class BlockBlobOperations:
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        source_cpk_info: Optional[_models.SourceCpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """The Stage Block operation creates a new block to be committed as part of a blob where the
@@ -745,6 +759,8 @@ class BlockBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :param source_cpk_info: Parameter group. Default value is None.
+        :type source_cpk_info: ~azure.storage.blob.models.SourceCpkInfo
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -772,6 +788,9 @@ class BlockBlobOperations:
         _source_if_unmodified_since = None
         _source_if_match = None
         _source_if_none_match = None
+        _source_encryption_key = None
+        _source_encryption_key_sha256 = None
+        _source_encryption_algorithm = None
         if cpk_info is not None:
             _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
@@ -785,12 +804,17 @@ class BlockBlobOperations:
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if source_cpk_info is not None:
+            _source_encryption_algorithm = source_cpk_info.source_encryption_algorithm
+            _source_encryption_key = source_cpk_info.source_encryption_key
+            _source_encryption_key_sha256 = source_cpk_info.source_encryption_key_sha256
 
         _request = build_stage_block_from_url_request(
             url=self._config.url,
             block_id=block_id,
             content_length=content_length,
             source_url=source_url,
+            version=self._config.version,
             source_range=source_range,
             source_content_md5=source_content_md5,
             source_contentcrc64=source_contentcrc64,
@@ -807,8 +831,10 @@ class BlockBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             file_request_intent=file_request_intent,
+            source_encryption_key=_source_encryption_key,
+            source_encryption_key_sha256=_source_encryption_key_sha256,
+            source_encryption_algorithm=_source_encryption_algorithm,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -854,7 +880,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def commit_block_list(
+    async def commit_block_list(  # pylint: disable=too-many-locals
         self,
         blocks: _models.BlockLookupList,
         timeout: Optional[int] = None,
@@ -992,6 +1018,7 @@ class BlockBlobOperations:
 
         _request = build_commit_block_list_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
             blob_content_type=_blob_content_type,
@@ -1020,7 +1047,6 @@ class BlockBlobOperations:
             legal_hold=legal_hold,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1133,6 +1159,7 @@ class BlockBlobOperations:
 
         _request = build_get_block_list_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             list_type=list_type,
             timeout=timeout,
@@ -1140,7 +1167,6 @@ class BlockBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
