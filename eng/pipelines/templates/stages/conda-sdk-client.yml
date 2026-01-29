@@ -1,12 +1,4 @@
 parameters:
-  - name: conda_username
-    displayName: 'Conda Username'
-    type: string
-    default: 'Microsoft'
-  - name: dry_run
-    displayName: 'Dry Run (skip upload)'
-    type: boolean
-    default: false
   - name: release_msal
     displayName: 'msal'
     type: boolean
@@ -913,48 +905,3 @@ extends:
                           version: 1.0.0
                         - package: azure-mgmt-workloadssapvirtualinstance
                           version: 1.0.0
-
-      - stage: Publish_To_Conda
-        displayName: Publish to Conda
-        dependsOn: Build_Universal_Dependencies
-        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'))
-        variables:
-          - template: /eng/pipelines/templates/variables/globals.yml@self
-        # TODO this stage should only be available on main branch after testing
-        # TODO this whole pipeline should be triggered on main when a new release is merged
-        jobs:
-          - deployment: PublishCondaPackages
-            displayName: 'Publish Conda Packages'
-            environment: package-publish
-            timeoutInMinutes: 120
-
-            pool:
-              name: azsdk-pool
-              image: ubuntu-24.04
-              os: linux
-
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - download: current
-                      artifact: conda
-                      displayName: 'Download Conda Artifacts'
-
-                    - task: UsePythonVersion@0
-                      displayName: 'Use Python 3.11'
-                      inputs:
-                        versionSpec: '3.11'
-
-                    - pwsh: |
-                        python -m pip install anaconda-client
-                      displayName: 'Install anaconda-client'
-
-                    - task: PythonScript@0
-                      displayName: 'Publish to Conda'
-                      inputs:
-                        scriptSource: 'filePath'
-                        scriptPath: '$(Build.SourcesDirectory)/eng/scripts/publish_conda.py'
-                        arguments: '--package-dir "$(Pipeline.Workspace)/conda" --user "${{ parameters.conda_username }}"${{ if eq(parameters.dry_run, true) }} --dry-run${{ else }}${{ end }}'
-                        env:
-                          ANACONDA_API_TOKEN: $(conda-release-apikey)
