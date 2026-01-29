@@ -4,6 +4,7 @@
 
 ### Features Added
 - The default sampling behavior has been changed from ApplicationInsightsSampler with 100% sampling (all traces sampled) to RateLimitedSampler with 5.0 traces per second. This change significantly reduces telemetry volume for high-traffic applications and provides better cost optimization out of the box. Impact: Applications with more than 5 requests per second will see fewer traces exported by default.
+  ([#44925](https://github.com/Azure/azure-sdk-for-python/pull/44925))        
 
 - Enable live metrics by default
   ([#44902](https://github.com/Azure/azure-sdk-for-python/pull/44902))
