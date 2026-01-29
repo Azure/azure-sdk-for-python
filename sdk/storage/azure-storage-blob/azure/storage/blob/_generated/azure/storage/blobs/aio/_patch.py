@@ -10,19 +10,92 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Any, TYPE_CHECKING
 
-from ._client import (
-    ServiceClient,
-    ContainerClient,
-    BlobClient,
-    PageBlobClient,
-    AppendBlobClient,
-    BlockBlobClient,
-)
+from azure.core import AsyncPipelineClient
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from ._utils.serialization import Serializer
+from ._operations import (
+    _AppendBlobClientOperationsMixin,
+    _BlobClientOperationsMixin,
+    _BlockBlobClientOperationsMixin,
+    _ContainerClientOperationsMixin,
+    _PageBlobClientOperationsMixin,
+    _ServiceClientOperationsMixin,
+)
+from .._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+
+
+class _ServiceOperationsWrapper(_ServiceClientOperationsMixin):
+    """Wrapper to provide service operations with shared pipeline client."""
+
+    def __init__(
+        self, config: Any, client: AsyncPipelineClient, serialize: Serializer, deserialize: Deserializer
+    ) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+class _ContainerOperationsWrapper(_ContainerClientOperationsMixin):
+    """Wrapper to provide container operations with shared pipeline client."""
+
+    def __init__(
+        self, config: Any, client: AsyncPipelineClient, serialize: Serializer, deserialize: Deserializer
+    ) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+class _BlobOperationsWrapper(_BlobClientOperationsMixin):
+    """Wrapper to provide blob operations with shared pipeline client."""
+
+    def __init__(
+        self, config: Any, client: AsyncPipelineClient, serialize: Serializer, deserialize: Deserializer
+    ) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _PageBlobOperationsWrapper(_PageBlobClientOperationsMixin):
+    """Wrapper to provide page blob operations with shared pipeline client."""
+
+    def __init__(
+        self, config: Any, client: AsyncPipelineClient, serialize: Serializer, deserialize: Deserializer
+    ) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _AppendBlobOperationsWrapper(_AppendBlobClientOperationsMixin):
+    """Wrapper to provide append blob operations with shared pipeline client."""
+
+    def __init__(
+        self, config: Any, client: AsyncPipelineClient, serialize: Serializer, deserialize: Deserializer
+    ) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _BlockBlobOperationsWrapper(_BlockBlobClientOperationsMixin):
+    """Wrapper to provide block blob operations with shared pipeline client."""
+
+    def __init__(
+        self, config: Any, client: AsyncPipelineClient, serialize: Serializer, deserialize: Deserializer
+    ) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
 
 
 class AzureBlobStorage:
@@ -43,41 +116,61 @@ class AzureBlobStorage:
         self,
         url: str,
         credential: "AsyncTokenCredential",
+        *,
+        base_url: str = None,  # type: ignore
+        pipeline: Any = None,
         **kwargs: Any
     ) -> None:
+        from ._configuration import BlobClientConfiguration
+
+        _endpoint = "{url}"
+        self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
+
+        if pipeline is not None:
+            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=pipeline)
+        else:
+            from azure.core.pipeline import policies
+
+            _policies = kwargs.pop("policies", None)
+            if _policies is None:
+                _policies = [
+                    policies.RequestIdPolicy(**kwargs),
+                    self._config.headers_policy,
+                    self._config.user_agent_policy,
+                    self._config.proxy_policy,
+                    policies.ContentDecodePolicy(**kwargs),
+                    self._config.redirect_policy,
+                    self._config.retry_policy,
+                    self._config.authentication_policy,
+                    self._config.custom_hook_policy,
+                    self._config.logging_policy,
+                    policies.DistributedTracingPolicy(**kwargs),
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                    self._config.http_logging_policy,
+                ]
+            self._client = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
         self._serialize = Serializer()
-        self.service = ServiceClient(url, credential, **kwargs)
-        self.container = ContainerClient(url, credential, **kwargs)
-        self.blob = BlobClient(url, credential, **kwargs)
-        self.page_blob = PageBlobClient(url, credential, **kwargs)
-        self.append_blob = AppendBlobClient(url, credential, **kwargs)
-        self.block_blob = BlockBlobClient(url, credential, **kwargs)
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+        # Create operation wrappers as attributes
+        self.service = _ServiceOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.container = _ContainerOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.blob = _BlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.page_blob = _PageBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.append_blob = _AppendBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.block_blob = _BlockBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
 
     async def close(self) -> None:
-        await self.service.close()
-        await self.container.close()
-        await self.blob.close()
-        await self.page_blob.close()
-        await self.append_blob.close()
-        await self.block_blob.close()
+        await self._client.close()
 
     async def __aenter__(self) -> "AzureBlobStorage":
-        await self.service.__aenter__()
-        await self.container.__aenter__()
-        await self.blob.__aenter__()
-        await self.page_blob.__aenter__()
-        await self.append_blob.__aenter__()
-        await self.block_blob.__aenter__()
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *exc_details: Any) -> None:
-        await self.service.__aexit__(*exc_details)
-        await self.container.__aexit__(*exc_details)
-        await self.blob.__aexit__(*exc_details)
-        await self.page_blob.__aexit__(*exc_details)
-        await self.append_blob.__aexit__(*exc_details)
-        await self.block_blob.__aexit__(*exc_details)
-
+        await self._client.__aexit__(*exc_details)
 
 __all__: list[str] = ["AzureBlobStorage"]
 

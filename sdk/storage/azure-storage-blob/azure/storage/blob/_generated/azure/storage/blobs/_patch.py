@@ -7,75 +7,157 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-
 from typing import Any, TYPE_CHECKING
 
-from ._client import (
-    ServiceClient,
-    ContainerClient,
-    BlobClient,
-    PageBlobClient,
-    AppendBlobClient,
-    BlockBlobClient,
+from azure.core import PipelineClient
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.rest import HttpRequest, HttpResponse
+
+from ._operations import (
+    _AppendBlobClientOperationsMixin,
+    _BlobClientOperationsMixin,
+    _BlockBlobClientOperationsMixin,
+    _ContainerClientOperationsMixin,
+    _PageBlobClientOperationsMixin,
+    _ServiceClientOperationsMixin,
 )
-from ._utils.serialization import Serializer
+from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureBlobStorage():
+class _ServiceOperationsWrapper(_ServiceClientOperationsMixin):
+    """Wrapper to provide service operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+class _ContainerOperationsWrapper(_ContainerClientOperationsMixin):
+    """Wrapper to provide container operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+class _BlobOperationsWrapper(_BlobClientOperationsMixin):
+    """Wrapper to provide blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _PageBlobOperationsWrapper(_PageBlobClientOperationsMixin):
+    """Wrapper to provide page blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _AppendBlobOperationsWrapper(_AppendBlobClientOperationsMixin):
+    """Wrapper to provide append blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _BlockBlobOperationsWrapper(_BlockBlobClientOperationsMixin):
+    """Wrapper to provide block blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class AzureBlobStorage:
     """Combined client that exposes all blob storage operations as attributes.
 
-        This class wraps the individual operation mixins and exposes them as attributes
-        to maintain backward compatibility with the previous autorest-generated client structure.
+    This class wraps the individual operation mixins and exposes them as attributes
+    to maintain backward compatibility with the previous autorest-generated client structure.
 
-        :param url: The host name of the blob storage account.
-        :type url: str
-        :param credential: Credential used to authenticate requests to the service.
-        :type credential: ~azure.core.credentials.TokenCredential
-        :keyword version: Specifies the version of the operation to use for this request.
-        :paramtype version: str
-        """
+    :param url: The host name of the blob storage account.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword version: Specifies the version of the operation to use for this request.
+    :paramtype version: str
+    """
 
     def __init__(
         self,
         url: str,
         credential: "TokenCredential",
+        *,
+        base_url: str = None,  # type: ignore
+        pipeline: Any = None,
         **kwargs: Any
     ) -> None:
+        from ._configuration import BlobClientConfiguration
+
+        _endpoint = "{url}"
+        self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
+
+        if pipeline is not None:
+            self._client = PipelineClient(base_url=_endpoint, pipeline=pipeline)
+        else:
+            from azure.core.pipeline import policies
+
+            _policies = kwargs.pop("policies", None)
+            if _policies is None:
+                _policies = [
+                    policies.RequestIdPolicy(**kwargs),
+                    self._config.headers_policy,
+                    self._config.user_agent_policy,
+                    self._config.proxy_policy,
+                    policies.ContentDecodePolicy(**kwargs),
+                    self._config.redirect_policy,
+                    self._config.retry_policy,
+                    self._config.authentication_policy,
+                    self._config.custom_hook_policy,
+                    self._config.logging_policy,
+                    policies.DistributedTracingPolicy(**kwargs),
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                    self._config.http_logging_policy,
+                ]
+            self._client = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
         self._serialize = Serializer()
-        self.service = ServiceClient(url, credential, **kwargs)
-        self.container = ContainerClient(url, credential, **kwargs)
-        self.blob = BlobClient(url, credential, **kwargs)
-        self.page_blob = PageBlobClient(url, credential, **kwargs)
-        self.append_blob = AppendBlobClient(url, credential, **kwargs)
-        self.block_blob = BlockBlobClient(url, credential, **kwargs)
-    
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+        # Create operation wrappers as attributes
+        self.service = _ServiceOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.container = _ContainerOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.blob = _BlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.page_blob = _PageBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.append_blob = _AppendBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.block_blob = _BlockBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+
     def close(self) -> None:
-        self.service.close()
-        self.container.close()
-        self.blob.close()
-        self.page_blob.close()
-        self.append_blob.close()
-        self.block_blob.close()
+        self._client.close()
 
     def __enter__(self) -> "AzureBlobStorage":
-        self.service.__enter__()
-        self.container.__enter__()
-        self.blob.__enter__()
-        self.page_blob.__enter__()
-        self.append_blob.__enter__()
-        self.block_blob.__enter__()
+        self._client.__enter__()
         return self
 
     def __exit__(self, *exc_details: Any) -> None:
-        self.service.__exit__(*exc_details)
-        self.container.__exit__(*exc_details)
-        self.blob.__exit__(*exc_details)
-        self.page_blob.__exit__(*exc_details)
-        self.append_blob.__exit__(*exc_details)
-        self.block_blob.__exit__(*exc_details)
+        self._client.__exit__(*exc_details)
 
 __all__: list[str] = ["AzureBlobStorage"]
 
