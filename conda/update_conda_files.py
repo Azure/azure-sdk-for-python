@@ -429,16 +429,26 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
 
 
 def get_package_metadata(
-    package_name: str, package_path: Optional[str]
+    package_name: str, package_path: Optional[str], is_bundle: bool = False
 ) -> Tuple[str, str, str]:
-    """Extract package metadata for about section in meta.yaml."""
+    """Extract package metadata for about section in meta.yaml.
+
+    :param package_name: The name of the package or bundle.
+    :param package_path: The filesystem path to the package.
+    :param is_bundle: Whether this is a release bundle (affects URL structure).
+    """
     if package_path:
         service_dir = os.path.basename(os.path.dirname(package_path))
     else:
         service_dir = package_name.replace("azure-", "")
 
-    # TODO handle bundle
-    home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
+    # For bundles, URL points to service directory; for individual packages, include package name
+    if is_bundle:
+        home_url = (
+            f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}"
+        )
+    else:
+        home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
     summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
 
@@ -486,7 +496,9 @@ def generate_data_plane_meta_yaml(
         run_reqs = list(run_reqs)
 
         package_path = get_package_path(bundle_map[bundle_name][0])
-        home_url, summary, description = get_package_metadata(bundle_name, package_path)
+        home_url, summary, description = get_package_metadata(
+            bundle_name, package_path, is_bundle=True
+        )
     else:
         logger.info(f"Generating meta.yaml for package {package_name}")
         package_path = get_package_path(package_name)
