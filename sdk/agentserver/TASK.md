@@ -12,4 +12,4 @@
 - [ ] YYYY-MM-DD — <follow-up discovered while implementing something else>
 
 ## Done
-- [x] 2026-01-29 — Create `PLANNING.md` (architecture + workflow snapshot for AgentServer).
+- [x] 2026-01-29 — Create `AGENTS.md`, `PLANNING.md`, `TASK.md`.
