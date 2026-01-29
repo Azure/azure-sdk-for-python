@@ -21,6 +21,7 @@
   * Rename class `MicrosoftFabricAgentTool` to `MicrosoftFabricPreviewTool`.
   * Rename class `SharepointAgentTool` to `SharepointPreviewTool`.
 * Rename class `ItemParam` to `InputItem`.
+* Tracing: workflow actions in conversation item listings are now emitted as "gen_ai.conversation.item" events (with role="workflow") instead of "gen_ai.workflow.action" events in the list_conversation_items span.
 
 ## 2.0.0b3 (2026-01-06)
 
