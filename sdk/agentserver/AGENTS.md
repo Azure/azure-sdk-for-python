@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides comprehensive guidance to Coding Agents(Codex, Claude Code, Github Copilot, etc.) when working with Python code in this repository.
+This file provides comprehensive guidance to Coding Agents(Codex, Claude Code, GitHub Copilot, etc.) when working with Python code in this repository.
 
 
 ## 🎯 (Read-first) Project Awareness & Context
@@ -50,8 +50,8 @@ Avoid building functionality on speculation. Implement features only when they a
 - **Functions should be under 50 lines** with a single, clear responsibility.
 - **Classes should be under 100 lines** and represent a single concept or entity.
 - **Organize code into clearly separated modules**, grouped by feature or responsibility.
-- **Line length should be max 100 characters** ruff rule in pyproject.toml
-- **Use venv_linux** (the virtual environment) whenever executing Python commands, including for unit tests.
+- **Line length should be max 120 characters**, as enforced by Ruff in `pyproject.toml`.
+- **Use the standard repo workflow**: from the package root, run tests and linters via `tox` (for example, `tox -e pytest` or `tox -e pylint`) rather than relying on a custom virtual environment name.
 - **Keep modules focused and cohesive**; split by feature responsibility when a file grows large or mixes concerns.
 - **Avoid drive-by refactors** unless required by the task.
 - **Preserve public API stability** and match existing patterns in the package you touch.
@@ -116,18 +116,42 @@ def calculate_discount(
 ```
 
 ### Error Handling Standards
-...
+
+- Prefer explicit validation at API boundaries and raise errors **as early as possible**.
+- Use standard Python exceptions (`ValueError`, `TypeError`, `KeyError`, etc.) when they accurately describe the problem.
+- When a domain-specific error is needed, define a clear, documented exception type and reuse it consistently.
+- Do **not** silently swallow exceptions. Either handle them meaningfully (with clear recovery behavior) or let them propagate.
+- Preserve the original traceback when re-raising (`raise` without arguments) so issues remain diagnosable.
+- Fail fast on programmer errors (e.g., inconsistent state, impossible branches) using assertions or explicit exceptions.
+- For public APIs, validate user input and return helpful, actionable messages without leaking secrets or internal implementation details.
 
 #### Exception Best Practices
 
-### Logging Standards
-...
+- Avoid `except Exception:` and **never** use bare `except:`; always catch the most specific exception type possible.
+- Keep `try` blocks **small** and focused so that it is clear which statements may raise the handled exception.
+- When adding context to an error, use either `raise NewError("message") from exc` or log the context and re-raise with `raise`.
+- Do not use exceptions for normal control flow; reserve them for truly exceptional or error conditions.
+- When a function can raise non-obvious exceptions, document them in the docstring under a `:raises:` section.
+- In asynchronous code, make sure exceptions are not lost in background tasks; gather and handle them explicitly where needed.
 
+### Logging Standards
+
+- Use the standard library `logging` module for all diagnostic output; **do not** use `print` in library or service code.
+- Create a module-level logger via `logger = logging.getLogger(__name__)` and use it consistently within that module.
+- Choose log levels appropriately:
+  - `logger.debug(...)` for detailed diagnostics and tracing.
+  - `logger.info(...)` for high-level lifecycle events (startup, shutdown, major state changes).
+  - `logger.warning(...)` for recoverable issues or unexpected-but-tolerated conditions.
+  - `logger.error(...)` for failures where the current operation cannot succeed.
+  - `logger.critical(...)` for unrecoverable conditions affecting process health.
+- Never log secrets, credentials, access tokens, full connection strings, or sensitive customer data.
+- When logging exceptions, prefer `logger.exception("message")` inside an `except` block so the traceback is included.
+- Keep log messages clear and structured (include identifiers like request IDs, resource names, or correlation IDs when available).
 ## ⚠️ Important Notes
 
 - **NEVER ASSUME OR GUESS** - When in doubt, ask for clarification
 - **Always verify file paths and module names** before use
-- **Keep CLAUDE.md updated** when adding new patterns or dependencies
+- **Keep this file (`AGENTS.md`) updated** when adding new patterns or dependencies
 - **Test your code** - No feature is complete without tests
 - **Document your decisions** - Future developers (including yourself) will thank you
 
