@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Optional
+from typing import Any, Optional
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -75,6 +75,26 @@ class ContainerCpkScopeInfo:
         self.default_encryption_scope = default_encryption_scope
         self.prevent_encryption_scope_override = prevent_encryption_scope_override
 
+
+class CpkScopeInfo:
+    """Parameter group.
+
+    :ivar encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
+     encryption scope to use to encrypt the data provided in the request. If not specified,
+     encryption is performed with the default account encryption scope.  For more information, see
+     Encryption at Rest for Azure Storage Services.
+    :vartype encryption_scope: str
+    """
+        
+    def __init__(self, *, encryption_scope: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
+         encryption scope to use to encrypt the data provided in the request. If not specified,
+         encryption is performed with the default account encryption scope.  For more information, see
+         Encryption at Rest for Azure Storage Services.
+        :paramtype encryption_scope: str
+        """
+        self.encryption_scope = encryption_scope    
 
 class CpkInfo:
     """Parameter group for CPK info."""
@@ -167,6 +187,26 @@ class SourceModifiedAccessConditions:
         self.source_if_none_match = source_if_none_match
         self.source_if_tags = source_if_tags
 
+class LeaseAccessConditions:
+    """Parameter group.
+
+    :ivar lease_id: If specified, the operation only succeeds if the resource's lease is active and
+    matches this ID.
+    :vartype lease_id: str
+    """
+
+    def __init__(
+        self,
+        *,
+        lease_id: Optional[str] = None,
+    ):
+        """
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID.
+        :paramtype lease_id: str
+        """
+        self.lease_id = lease_id
+
 
 __all__: list[str] = [
     "AppendPositionAccessConditions",
@@ -178,7 +218,9 @@ __all__: list[str] = [
     "QueryFormatType",
     "SequenceNumberAccessConditions",
     "SourceCpkInfo",
+    "CpkScopeInfo",
     "SourceModifiedAccessConditions",
+    "LeaseAccessConditions",
 ]
 
 
