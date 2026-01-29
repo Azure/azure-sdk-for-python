@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TableServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for TableServiceClient.
+class TablesClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for TablesClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -47,75 +47,13 @@ class TableServiceClientConfiguration:  # pylint: disable=too-many-instance-attr
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "{package-dir}/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "data-tables/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _infer_policy(self, **kwargs):
         if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "Authorization", **kwargs)
-        if hasattr(self.credential, "get_token"):
-            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-        raise TypeError(f"Unsupported credential: {self.credential}")
-
-    def _configure(self, **kwargs: Any) -> None:
-        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get("authentication_policy")
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = self._infer_policy(**kwargs)
-
-
-class TableClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for TableClient.
-
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param url: The host name of the tables account, e.g. accountName.table.core.windows.net.
-     Required.
-    :type url: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
-    :param table_name: The name of the table to operate on. Required.
-    :type table_name: str
-    :keyword api_version: The API version. Default value is "2019-02-02". Note that overriding this
-     default value may result in unsupported behavior.
-    :paramtype api_version: str
-    """
-
-    def __init__(
-        self, url: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], table_name: str, **kwargs: Any
-    ) -> None:
-        api_version: str = kwargs.pop("api_version", "2019-02-02")
-
-        if url is None:
-            raise ValueError("Parameter 'url' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        if table_name is None:
-            raise ValueError("Parameter 'table_name' must not be None.")
-
-        self.url = url
-        self.credential = credential
-        self.table_name = table_name
-        self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "{package-dir}/{}".format(VERSION))
-        self.polling_interval = kwargs.get("polling_interval", 30)
-        self._configure(**kwargs)
-
-    def _infer_policy(self, **kwargs):
-        if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "Authorization", **kwargs)
+            return policies.AzureKeyCredentialPolicy(self.credential, "SAS Token", **kwargs)
         if hasattr(self.credential, "get_token"):
             return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         raise TypeError(f"Unsupported credential: {self.credential}")

@@ -10,11 +10,11 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "{package-dir}"
+name = "azure-data-tables"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Corporation Azure {package Dir} Client Library for Python"
+description = "Microsoft Corporation Azure Data Tables Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",

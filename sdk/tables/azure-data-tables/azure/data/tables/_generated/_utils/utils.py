@@ -5,29 +5,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from abc import ABC
 import json
-from typing import Any, Generic, IO, Mapping, Optional, TYPE_CHECKING, TypeVar, Union
+from typing import Any, IO, Mapping, Optional, Union
 
 from azure.core import MatchConditions
 
 from .._utils.model_base import Model, SdkJSONEncoder
-
-if TYPE_CHECKING:
-    from .serialization import Deserializer, Serializer
-
-
-TClient = TypeVar("TClient")
-TConfig = TypeVar("TConfig")
-
-
-class ClientMixinABC(ABC, Generic[TClient, TConfig]):
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: TClient
-    _config: TConfig
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"
 
 
 def quote_etag(etag: Optional[str]) -> Optional[str]:

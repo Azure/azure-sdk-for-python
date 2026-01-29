@@ -27,7 +27,7 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
 )
 
-from ._generated import AzureTable
+from ._generated import TablesClient as AzureTable
 from ._common_conversion import _is_cosmos_endpoint, _get_account
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (

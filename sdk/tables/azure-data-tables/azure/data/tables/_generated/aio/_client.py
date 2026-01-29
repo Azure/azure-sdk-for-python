@@ -16,16 +16,20 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import TableClientConfiguration, TableServiceClientConfiguration
-from ._operations import _TableClientOperationsMixin, _TableServiceClientOperationsMixin
+from ._configuration import TablesClientConfiguration
+from .operations import ServiceOperations, TableOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TableServiceClient(_TableServiceClientOperationsMixin):
-    """TableServiceClient.
+class TablesClient:
+    """TablesClient.
 
+    :ivar service: ServiceOperations operations
+    :vartype service: azure.data.tables._generated.aio.operations.ServiceOperations
+    :ivar table: TableOperations operations
+    :vartype table: azure.data.tables._generated.aio.operations.TableOperations
     :param url: The host name of the tables account, e.g. accountName.table.core.windows.net.
      Required.
     :type url: str
@@ -40,7 +44,7 @@ class TableServiceClient(_TableServiceClientOperationsMixin):
 
     def __init__(self, url: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{url}"
-        self._config = TableServiceClientConfiguration(url=url, credential=credential, **kwargs)
+        self._config = TablesClientConfiguration(url=url, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -64,91 +68,8 @@ class TableServiceClient(_TableServiceClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-
-    def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
-        """Runs the network request through the client's chained policies.
-
-        >>> from azure.core.rest import HttpRequest
-        >>> request = HttpRequest("GET", "https://www.example.org/")
-        <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
-
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
-
-        :param request: The network request you want to make. Required.
-        :type request: ~azure.core.rest.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
-        """
-
-        request_copy = deepcopy(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
-
-    async def close(self) -> None:
-        await self._client.close()
-
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
-
-    async def __aexit__(self, *exc_details: Any) -> None:
-        await self._client.__aexit__(*exc_details)
-
-
-class TableClient(_TableClientOperationsMixin):
-    """TableClient.
-
-    :param url: The host name of the tables account, e.g. accountName.table.core.windows.net.
-     Required.
-    :type url: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
-    :param table_name: The name of the table to operate on. Required.
-    :type table_name: str
-    :keyword api_version: The API version. Default value is "2019-02-02". Note that overriding this
-     default value may result in unsupported behavior.
-    :paramtype api_version: str
-    """
-
-    def __init__(
-        self, url: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], table_name: str, **kwargs: Any
-    ) -> None:
-        _endpoint = "{url}"
-        self._config = TableClientConfiguration(url=url, credential=credential, table_name=table_name, **kwargs)
-
-        _policies = kwargs.pop("policies", None)
-        if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.table = TableOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

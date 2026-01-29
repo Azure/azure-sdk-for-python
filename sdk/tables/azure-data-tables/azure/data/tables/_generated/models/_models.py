@@ -175,7 +175,7 @@ class SignedIdentifier(_Model):
 
     :ivar id: The unique ID for the signed identifier. Required.
     :vartype id: str
-    :ivar access_policy: The access policy for the signed identifier. Required.
+    :ivar access_policy: The access policy for the signed identifier.
     :vartype access_policy: ~azure.data.tables._generated.models.TableAccessPolicy
     """
 
@@ -184,12 +184,12 @@ class SignedIdentifier(_Model):
         xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
     )
     """The unique ID for the signed identifier. Required."""
-    access_policy: "_models.TableAccessPolicy" = rest_field(
+    access_policy: Optional["_models.TableAccessPolicy"] = rest_field(
         name="accessPolicy",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False},
     )
-    """The access policy for the signed identifier. Required."""
+    """The access policy for the signed identifier."""
 
     _xml = {"attribute": False, "name": "SignedIdentifier", "text": False, "unwrapped": False}
 
@@ -198,7 +198,7 @@ class SignedIdentifier(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        access_policy: "_models.TableAccessPolicy",
+        access_policy: Optional["_models.TableAccessPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -489,7 +489,7 @@ class TableEntitiesPagedResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TableItem(_Model):
+class TableProperties(_Model):
     """The properties for the table response.
 
     :ivar table_name: The name of the table.
@@ -688,39 +688,6 @@ class TableServiceStats(_Model):
         self,
         *,
         geo_replication: Optional["_models.GeoReplication"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TablesPagedResult(_Model):
-    """The properties for the table query response.
-
-    :ivar metadata: The metadata response of the table.
-    :vartype metadata: str
-    :ivar value: The requested list of tables.
-    :vartype value: list[~azure.data.tables._generated.models.TableItem]
-    """
-
-    metadata: Optional[str] = rest_field(name="odata.metadata", visibility=["read", "query"])
-    """The metadata response of the table."""
-    value: Optional[list["_models.TableItem"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The requested list of tables."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        metadata: Optional[str] = None,
-        value: Optional[list["_models.TableItem"]] = None,
     ) -> None: ...
 
     @overload

@@ -29,7 +29,7 @@ from azure.core.rest import HttpRequest
 from ._authentication_async import _configure_credential
 from .._common_conversion import _is_cosmos_endpoint, _get_account
 from .._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
-from .._generated.aio import AzureTable
+from .._generated.aio import TablesClient as AzureTable
 from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version, AudienceType
 from .._error import (
     RequestTooLargeError,
