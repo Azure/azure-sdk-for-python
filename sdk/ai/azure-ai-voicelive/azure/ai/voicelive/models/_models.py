@@ -4416,10 +4416,9 @@ class ServerEvent(_Model):
     ServerEventResponseMcpCallInProgress, ServerEventResponseMcpCallArgumentsDelta,
     ServerEventResponseMcpCallArgumentsDone, ServerEventResponseOutputItemAdded,
     ServerEventResponseOutputItemDone, ServerEventResponseTextDelta, ServerEventResponseTextDone,
-    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated,
-    ServerEventWarning
+    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated
 
-    :ivar type: The type of event. Required. Known values are: "error", "warning",
+    :ivar type: The type of event. Required. Known values are: "error",
      "session.avatar.connecting", "session.created", "session.updated",
      "conversation.item.input_audio_transcription.completed",
      "conversation.item.input_audio_transcription.delta",
@@ -4448,7 +4447,7 @@ class ServerEvent(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of event. Required. Known values are: \"error\", \"warning\",
+    """The type of event. Required. Known values are: \"error\",
      \"session.avatar.connecting\", \"session.created\", \"session.updated\",
      \"conversation.item.input_audio_transcription.completed\",
      \"conversation.item.input_audio_transcription.delta\",
@@ -6879,83 +6878,6 @@ class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ServerEventType.SESSION_UPDATED  # type: ignore
-
-
-class ServerEventWarning(ServerEvent, discriminator="warning"):
-    """Returned when a warning occurs that does not interrupt the conversation flow.
-    Warnings are informational and the session will continue normally.
-
-    :ivar event_id:
-    :vartype event_id: str
-    :ivar type: The event type, must be ``warning``. Required.
-    :vartype type: str or ~azure.ai.voicelive.models.WARNING
-    :ivar warning: Details of the warning. Required.
-    :vartype warning: ~azure.ai.voicelive.models.ServerEventWarningDetails
-    """
-
-    type: Literal[ServerEventType.WARNING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``warning``. Required."""
-    warning: "_models.ServerEventWarningDetails" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Details of the warning. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        warning: "_models.ServerEventWarningDetails",
-        event_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ServerEventType.WARNING  # type: ignore
-
-
-class ServerEventWarningDetails(_Model):
-    """Details of the warning.
-
-    :ivar message: A human-readable warning message. Required.
-    :vartype message: str
-    :ivar code: Warning code, if any.
-    :vartype code: str
-    :ivar param: Parameter related to the warning, if any.
-    :vartype param: str
-    """
-
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable warning message. Required."""
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Warning code, if any."""
-    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Parameter related to the warning, if any."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        message: str,
-        code: Optional[str] = None,
-        param: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ServerVad(TurnDetection, discriminator="server_vad"):

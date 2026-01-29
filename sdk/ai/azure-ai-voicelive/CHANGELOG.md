@@ -21,7 +21,6 @@
 - **Custom Text Normalization**: Added `custom_text_normalization_url` field to `AzureStandardVoice`, `AzureCustomVoice`, and `AzurePersonalVoice` for custom text normalization configurations
 - **Avatar Scene Configuration**: Added `Scene` model for controlling avatar's zoom level, position (x/y), rotation (x/y/z pitch/yaw/roll), and movement amplitude in the video frame
 - **Enhanced Avatar Configuration**: Added `scene` and `output_audit_audio` fields to `AvatarConfig` for scene control and audit audio forwarding via WebSocket
-- **Server Warning Events**: Added `ServerEventWarning` and `ServerEventWarningDetails` models for non-fatal warning events that don't interrupt conversation flow; added `WARNING` to `ServerEventType` enum
 
 ### Other Changes
 

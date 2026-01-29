@@ -137,8 +137,6 @@
         "azure.ai.voicelive.models.ServerEventSessionAvatarConnecting": "VoiceLive.ServerEventSessionAvatarConnecting",
         "azure.ai.voicelive.models.ServerEventSessionCreated": "VoiceLive.ServerEventSessionCreated",
         "azure.ai.voicelive.models.ServerEventSessionUpdated": "VoiceLive.ServerEventSessionUpdated",
-        "azure.ai.voicelive.models.ServerEventWarning": "VoiceLive.ServerEventWarning",
-        "azure.ai.voicelive.models.ServerEventWarningDetails": "VoiceLive.ServerEventWarningDetails",
         "azure.ai.voicelive.models.ServerVad": "VoiceLive.ServerVad",
         "azure.ai.voicelive.models.SessionBase": "VoiceLive.SessionBase",
         "azure.ai.voicelive.models.SystemMessageItem": "VoiceLive.SystemMessageItem",
