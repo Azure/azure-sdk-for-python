@@ -223,7 +223,7 @@ def build_service_submit_batch_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_service_find_blobs_by_tags_request(
+def build_service_filter_blobs_request(
     *,
     filter_expression: str,
     timeout: Optional[int] = None,
@@ -537,7 +537,7 @@ def build_container_submit_batch_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_container_find_blobs_by_tags_request(  # pylint: disable=name-too-long
+def build_container_filter_blobs_request(
     *,
     filter_expression: str,
     timeout: Optional[int] = None,
@@ -590,8 +590,7 @@ def build_container_acquire_lease_request(
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    ## TODO: WUT?
-    _url = "/?comp=lease&restype=container"
+    _url = "/?comp=lease&restype=container&acquire"
 
     # Construct parameters
     if timeout is not None:
@@ -626,7 +625,7 @@ def build_container_release_lease_request(
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "/?comp=lease&restype=container&release"
 
     # Construct parameters
     if timeout is not None:
@@ -660,7 +659,7 @@ def build_container_renew_lease_request(
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "/?comp=lease&restype=container&renew"
 
     # Construct parameters
     if timeout is not None:
@@ -694,7 +693,7 @@ def build_container_break_lease_request(
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "/?comp=lease&restype=container&break"
 
     # Construct parameters
     if timeout is not None:
@@ -730,7 +729,7 @@ def build_container_change_lease_request(
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "/?comp=lease&restype=container&change"
 
     # Construct parameters
     if timeout is not None:
@@ -1108,7 +1107,7 @@ def build_blob_set_expiry_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_blob_set_properties_request(
+def build_blob_set_http_headers_request(
     *,
     timeout: Optional[int] = None,
     blob_cache_control: Optional[str] = None,
@@ -2619,7 +2618,7 @@ def build_page_blob_resize_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_page_blob_set_sequence_number_request(  # pylint: disable=name-too-long
+def build_page_blob_update_sequence_number_request(  # pylint: disable=name-too-long
     *,
     sequence_number_action: Union[str, _models.SequenceNumberActionType],
     timeout: Optional[int] = None,
@@ -3193,7 +3192,7 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_block_blob_upload_blob_from_url_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_block_blob_put_blob_from_url_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     *,
     copy_source: str,
     metadata: Optional[str] = None,
@@ -3725,13 +3724,17 @@ class _ServiceClientOperationsMixin(
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
-        self, storage_service_properties: _models.BlobServiceProperties, *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        storage_service_properties: _models.StorageServiceProperties,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> None:
         """Sets properties for a storage account's Blob service endpoint, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param storage_service_properties: The storage service properties to set. Required.
-        :type storage_service_properties: ~azure.storage.blobs.models.BlobServiceProperties
+        :type storage_service_properties: ~azure.storage.blobs.models.StorageServiceProperties
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -3796,7 +3799,7 @@ class _ServiceClientOperationsMixin(
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def get_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.BlobServiceProperties:
+    def get_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.StorageServiceProperties:
         """Retrieves properties of a storage account's Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -3804,8 +3807,9 @@ class _ServiceClientOperationsMixin(
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :return: BlobServiceProperties. The BlobServiceProperties is compatible with MutableMapping
-        :rtype: ~azure.storage.blobs.models.BlobServiceProperties
+        :return: StorageServiceProperties. The StorageServiceProperties is compatible with
+         MutableMapping
+        :rtype: ~azure.storage.blobs.models.StorageServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3820,7 +3824,7 @@ class _ServiceClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[_models.BlobServiceProperties] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StorageServiceProperties] = kwargs.pop("cls", None)
 
         _request = build_service_get_properties_request(
             timeout=timeout,
@@ -3866,7 +3870,7 @@ class _ServiceClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize_xml(_models.BlobServiceProperties, response.text())
+            deserialized = _deserialize_xml(_models.StorageServiceProperties, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4307,7 +4311,7 @@ class _ServiceClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def find_blobs_by_tags(
+    def filter_blobs(
         self,
         *,
         filter_expression: str,
@@ -4359,7 +4363,7 @@ class _ServiceClientOperationsMixin(
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
-        _request = build_service_find_blobs_by_tags_request(
+        _request = build_service_filter_blobs_request(
             filter_expression=filter_expression,
             timeout=timeout,
             marker=marker,
@@ -5209,7 +5213,7 @@ class _ContainerClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def find_blobs_by_tags(
+    def filter_blobs(
         self,
         *,
         filter_expression: str,
@@ -5261,7 +5265,7 @@ class _ContainerClientOperationsMixin(
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
-        _request = build_container_find_blobs_by_tags_request(
+        _request = build_container_filter_blobs_request(
             filter_expression=filter_expression,
             timeout=timeout,
             marker=marker,
@@ -6947,7 +6951,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def set_properties(  # pylint: disable=inconsistent-return-statements,too-many-locals
+    def set_http_headers(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         *,
         timeout: Optional[int] = None,
@@ -7031,7 +7035,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_blob_set_properties_request(
+        _request = build_blob_set_http_headers_request(
             timeout=timeout,
             blob_cache_control=blob_cache_control,
             blob_content_type=blob_content_type,
@@ -10394,7 +10398,7 @@ class _PageBlobClientOperationsMixin(
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def set_sequence_number(  # pylint: disable=inconsistent-return-statements
+    def update_sequence_number(  # pylint: disable=inconsistent-return-statements
         self,
         *,
         sequence_number_action: Union[str, _models.SequenceNumberActionType],
@@ -10465,7 +10469,7 @@ class _PageBlobClientOperationsMixin(
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_page_blob_set_sequence_number_request(
+        _request = build_page_blob_update_sequence_number_request(
             sequence_number_action=sequence_number_action,
             timeout=timeout,
             lease_id=lease_id,
@@ -11653,7 +11657,7 @@ class _BlockBlobClientOperationsMixin(
         },
         api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
     )
-    def upload_blob_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
+    def put_blob_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         *,
         copy_source: str,
@@ -11841,7 +11845,7 @@ class _BlockBlobClientOperationsMixin(
         blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_block_blob_upload_blob_from_url_request(
+        _request = build_block_blob_put_blob_from_url_request(
             copy_source=copy_source,
             metadata=metadata,
             timeout=timeout,

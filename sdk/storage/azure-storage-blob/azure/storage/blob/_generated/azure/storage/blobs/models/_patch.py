@@ -85,7 +85,7 @@ class CpkScopeInfo:
      Encryption at Rest for Azure Storage Services.
     :vartype encryption_scope: str
     """
-        
+
     def __init__(self, *, encryption_scope: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
@@ -94,7 +94,8 @@ class CpkScopeInfo:
          Encryption at Rest for Azure Storage Services.
         :paramtype encryption_scope: str
         """
-        self.encryption_scope = encryption_scope    
+        self.encryption_scope = encryption_scope
+
 
 class CpkInfo:
     """Parameter group for CPK info."""
@@ -186,6 +187,7 @@ class SourceModifiedAccessConditions:
         self.source_if_match = source_if_match
         self.source_if_none_match = source_if_none_match
         self.source_if_tags = source_if_tags
+
 
 class LeaseAccessConditions:
     """Parameter group.

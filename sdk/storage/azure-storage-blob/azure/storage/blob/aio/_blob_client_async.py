@@ -910,7 +910,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             **kwargs
         )
         try:
-            headers, raw_response_body = await self._client.blob.query(**options)
+            headers, raw_response_body = await self._client.block_blob.query(**options)
         except HttpResponseError as error:
             process_storage_error(error)
         blob_query_reader = BlobQueryReader(
@@ -1303,7 +1303,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return cast(Dict[str, Union[str, datetime]], await self._client.blob.set_metadata(**options))
+            return cast(
+                Dict[str, Union[str, datetime]],
+                await self._client.blob.set_metadata(metadata=metadata, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1337,10 +1339,14 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
-            cls=return_response_headers,version_id=version_id, **kwargs))
+        return cast(
+            Dict[str, str],
+            await self._client.blob.set_immutability_policy(
+                expiry=immutability_policy.expiry_time,
+                policy_mode=immutability_policy.policy_mode,
+                cls=return_response_headers,
+                version_id=version_id,
+                **kwargs))
 
     @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1389,7 +1395,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         version_id = get_version_id(self.version_id, kwargs)
         return cast(Dict[str, Union[str, datetime, bool]], await self._client.blob.set_legal_hold(
-            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+            legal_hold=legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
     async def create_page_blob(
@@ -1487,14 +1493,18 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options = _create_page_blob_options(
-            size=size,
+        # options = _create_page_blob_options( # TODO: do we need?
+        #     size=size,
+        #     content_settings=content_settings,
+        #     metadata=metadata,
+        #     premium_page_blob_tier=premium_page_blob_tier,
+        #     **kwargs)
+        try:
+            return cast(Dict[str, Any], await self._client.page_blob.create(  size=size,
             content_settings=content_settings,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
-            **kwargs)
-        try:
-            return cast(Dict[str, Any], await self._client.page_blob.create(**options))
+            **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -2867,7 +2877,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _resize_blob_options(size=size, **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.resize(**options))
+            return cast(Dict[str, Any], await self._client.page_blob.resize(size=size, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 

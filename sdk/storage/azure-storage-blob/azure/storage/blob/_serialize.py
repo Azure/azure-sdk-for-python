@@ -24,7 +24,7 @@ from ._generated.azure.storage.blobs.models import (
     LeaseAccessConditions,
     ModifiedAccessConditions,
     QueryFormat,
-    QueryType,
+    QueryFormatType,
     QuerySerialization,
     SourceModifiedAccessConditions,
     ParquetConfiguration
@@ -198,10 +198,11 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
 
 def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
-        qq_format = QueryFormat(type=QueryType.PARQUET, parquet_text_configuration=ParquetConfiguration(' '))  #type: ignore [arg-type]
+        qq_format = QueryFormat(type=QueryFormatType.PARQUET,
+                                 parquet_text_configuration=ParquetConfiguration(' '))  #type: ignore [arg-type]
     elif isinstance(formater, DelimitedJsonDialect):
         json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
-        qq_format = QueryFormat(type=QueryType.JSON, json_text_configuration=json_serialization_settings)
+        qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
     elif hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
         try:
             headers = formater.has_header  # type: ignore
@@ -217,12 +218,12 @@ def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Option
             headers_present=headers
         )
         qq_format = QueryFormat(
-            type=QueryType.DELIMITED,
+            type=QueryFormatType.DELIMITED,
             delimited_text_configuration=csv_serialization_settings
         )
     elif isinstance(formater, list):
         arrow_serialization_settings = ArrowConfiguration(schema=formater)
-        qq_format = QueryFormat(type=QueryType.ARROW, arrow_configuration=arrow_serialization_settings)
+        qq_format = QueryFormat(type=QueryFormatType.ARROW, arrow_configuration=arrow_serialization_settings)
     elif not formater:
         return None
     else:

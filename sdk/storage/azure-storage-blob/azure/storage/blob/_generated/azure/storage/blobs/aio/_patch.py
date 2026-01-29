@@ -39,6 +39,7 @@ class _ServiceOperationsWrapper(_ServiceClientOperationsMixin):
         self._serialize = serialize
         self._deserialize = deserialize
 
+
 class _ContainerOperationsWrapper(_ContainerClientOperationsMixin):
     """Wrapper to provide container operations with shared pipeline client."""
 
@@ -49,6 +50,7 @@ class _ContainerOperationsWrapper(_ContainerClientOperationsMixin):
         self._client = client
         self._serialize = serialize
         self._deserialize = deserialize
+
 
 class _BlobOperationsWrapper(_BlobClientOperationsMixin):
     """Wrapper to provide blob operations with shared pipeline client."""
@@ -171,6 +173,7 @@ class AzureBlobStorage:
 
     async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
+
 
 __all__: list[str] = ["AzureBlobStorage"]
 

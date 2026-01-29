@@ -23,7 +23,7 @@ from ._container_client import ContainerClient
 from ._deserialize import service_properties_deserialize, service_stats_deserialize
 from ._encryption import StorageEncryptionMixin
 from ._generated.azure.storage.blobs import AzureBlobStorage
-from ._generated.azure.storage.blobs.models import KeyInfo, BlobServiceProperties as StorageServiceProperties
+from ._generated.azure.storage.blobs.models import KeyInfo, StorageServiceProperties
 from ._list_blobs_helper import FilteredBlobPaged
 from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged, CorsRule
 from ._serialize import get_api_version
@@ -360,6 +360,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
+            # TODO: this should not need to be wrapped to deserialize
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -694,7 +695,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
-            renamed_container._client.container.rename(name, **kwargs)  # pylint: disable = protected-access
+            renamed_container._client.container.rename(source_container_name=name, **kwargs)  # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
