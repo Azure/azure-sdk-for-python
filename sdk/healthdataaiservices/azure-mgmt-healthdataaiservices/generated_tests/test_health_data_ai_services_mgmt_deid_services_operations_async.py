@@ -95,6 +95,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
                         "publicNetworkAccess": "str",
                         "serviceUrl": "str",
                     },
+                    "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
