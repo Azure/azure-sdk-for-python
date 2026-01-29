@@ -410,13 +410,14 @@ def start_test_proxy(request) -> None:
             # in CI, when multiple environments are running in parallel, we need to isolate the storage locations
             # such that each proxy environment has its own storage location. This will prevent race conditions where the same
             # check is accessing the same file storage as another parallel check
-            start_location = get_assets_directory(root, os.getenv("CHECK_ENV", ""))
+            assets_location = get_assets_directory(root, os.getenv("CHECK_ENV", ""))
+            passenv["PROXY_ASSETS_LOCATION"] = assets_location
 
             # If they are already set, override what we give the proxy with what is in os.environ
             passenv.update(os.environ)
 
             proc = subprocess.Popen(
-                shlex.split(f'{tool_name} start --storage-location="{start_location}" -- --urls "{PROXY_URL}"'),
+                shlex.split(f'{tool_name} start --storage-location="{root}" -- --urls "{PROXY_URL}"'),
                 stdout=log or subprocess.DEVNULL,
                 stderr=log or subprocess.STDOUT,
                 env=passenv,
