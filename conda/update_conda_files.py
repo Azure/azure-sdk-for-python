@@ -189,7 +189,7 @@ def update_conda_sdk_client_yml(
                 logger.info(
                     f"Package {pkg_name} download_uri mismatch with PyPi, updating {curr_download_uri} to {download_uri}"
                 )
-                checkout_item["version"] = latest_version
+                # checkout for these packages only has download_uri, no version field
                 checkout_item["download_uri"] = download_uri
                 logger.info(
                     f"Updated download_uri for {pkg_name} with version {latest_version}: {download_uri}"
@@ -374,7 +374,6 @@ def determine_service_info(
     else:
         common_root = "azure"
 
-    # TODO handle exceptions msrest,msal.msal-extensions,azure-ai-vision,azure-healthinsights
     package_path = get_package_path(package_name)
     if not service_name and package_path:
         service_name = os.path.basename(os.path.dirname(package_path))
@@ -386,8 +385,7 @@ def format_requirement(req: str) -> str:
     """Format a requirement string for conda meta.yaml."""
     name_unpinned = re.split(r"[>=<!]", req)[0].strip()
 
-    # TODO idk if this is right, certain reqs never seem to have pinned versions like aiohttp or isodate
-    # and does this actually only apply to azure-core and azure-identity, not all azure-* reqs?
+    # assuming this always applies to all azure-* reqs
     if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
         return f"{name_unpinned} >={{{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}}}"
 
@@ -401,7 +399,7 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
     host_requirements = set(["pip"])
     run_requirements = set()
 
-    # TODO finalize actual list of essentials, this is more of a placeholder with reqs idk how to find dynamically
+    # reqs commonly seen in existing meta.yaml files that aren't always in setup.py or pyproject.toml
     for essential_req in [
         "azure-identity",
         "azure-core",
@@ -427,8 +425,6 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
         host_requirements.add(req_name)
         run_requirements.add(req_name)
 
-    # TODO there are other requirements to consider...
-
     return list(host_requirements), list(run_requirements)
 
 
@@ -439,13 +435,13 @@ def get_package_metadata(
     if package_path:
         service_dir = os.path.basename(os.path.dirname(package_path))
     else:
-        # TODO
         service_dir = package_name.replace("azure-", "")
+
+    # TODO handle bundle
     home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
     summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
 
-    # TODO definitely need to check if this is actually always correct
     conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
     description = (
         f"This is the {summary}.\n    Please see {conda_url} for version details."
@@ -455,7 +451,6 @@ def get_package_metadata(
 
 
 def generate_data_plane_meta_yaml(
-    package_dict: Dict[str, Dict[str, str]],
     bundle_map: Dict[str, List[str]],
     package_name: str,
     bundle_name: Optional[str],
@@ -463,8 +458,7 @@ def generate_data_plane_meta_yaml(
     """
     Generate the meta.yaml content for a data plane package or release group.
     """
-
-    # TODO is it correct that the env var name is arbitrary and replaced in conda_functions.py?
+    # assumes env var name is arbitrary and replaced in conda_functions.py
     src_distr_name = package_name.split("-")[-1].upper()
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
@@ -581,7 +575,7 @@ def add_new_data_plane_packages(
 
         try:
             meta_yml = generate_data_plane_meta_yaml(
-                package_dict, bundle_map, package_name, bundle_name
+                bundle_map, package_name, bundle_name
             )
             if bundle_name:
                 bundles_processed.add(bundle_name)
@@ -629,7 +623,6 @@ def add_new_mgmt_plane_packages(
         result.extend(new_mgmt_plane_names)
         return result
 
-    # TODO probably need to automate removal of deprecated packages from here
     existing_imports_text = test_match.group(1)
     existing_imports = [
         line.strip()
@@ -1064,8 +1057,6 @@ if __name__ == "__main__":
     mgmt_plane_release_log_results = update_mgmt_plane_release_log(
         package_dict, all_mgmt_plane_names, new_version
     )
-
-    # TODO AKA link logic
 
     print("=== REPORT ===")
 

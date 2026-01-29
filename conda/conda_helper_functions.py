@@ -53,18 +53,22 @@ def get_bundle_name(package_name: str) -> Optional[str]:
         return None
     parsed = ParsedSetup.from_path(package_path)
     if not parsed:
-        # TODO raise something
+        # can't proceed, need to know if it's bundled or not
         logger.error(f"Failed to parse setup for package {package_name}")
-        return None
+        raise Exception(f"Failed to parse setup for package {package_name}")
 
     conda_config = parsed.get_conda_config()
 
     if not conda_config:
         if parsed.is_stable_release():
-            # TODO raise something
-            logger.warning(
+            raise Exception(
                 f"Stable release package {package_name} needs a conda config"
             )
+
+        # beta or alpha package are not released
+        logger.warning(
+            f"No conda config found for package {package_name}, which may be a pre-release"
+        )
         return None
 
     if conda_config and "bundle_name" in conda_config:
@@ -198,8 +202,6 @@ def package_needs_update(
         logger.debug(
             f"Package {package_row.get(PACKAGE_COL)} is skipped due to missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
         )
-
-        # TODO need to verify that this is the desired behavior / we're not skipping needed packages
 
         return False
 
