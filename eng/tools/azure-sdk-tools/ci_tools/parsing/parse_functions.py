@@ -16,6 +16,7 @@ from typing import Dict, List, Tuple, Any, Optional, Union
 
 # this assumes the presence of "packaging"
 from packaging.requirements import Requirement
+from packaging.version import Version, InvalidVersion
 from setuptools import Extension
 
 from ci_tools.variables import str_to_bool
@@ -468,7 +469,7 @@ def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
 
 def get_conda_config(package_path: str) -> Optional[Dict[str, Any]]:
     """
-    Attempts to retrieve all values within [tools.azure-sdk-conda] section of a pyproject.toml.
+    Attempts to retrieve all values within [tool.azure-sdk-conda] section of a pyproject.toml.
     """
     if os.path.isfile(package_path):
         package_path = os.path.dirname(package_path)
@@ -884,6 +885,14 @@ def classify_release_type(version: str) -> str:
     :rtype: str
     :return: Either "beta" or "stable"
     """
-    if "b" in version.lower():
-        return "beta"
-    return "stable"
+    try:
+        parsed = Version(version)
+        # .pre is set for alpha/beta/rc, .dev is set for dev releases
+        if parsed.pre is not None or parsed.dev is not None:
+            return "beta"
+        return "stable"
+    except InvalidVersion:
+        # Fallback
+        if any(marker in version.lower() for marker in ("a", "b", "rc", "dev")):
+            return "beta"
+        return "stable"

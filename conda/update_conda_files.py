@@ -368,15 +368,14 @@ def determine_service_info(
     # defaults
     package_name = pkg.get(PACKAGE_COL, "")
     service_name = pkg.get(REPO_PATH_COL, "").lower()
-
-    if bundle_name:
-        common_root = f"azure/{bundle_name.split('-')[1]}"
-    else:
-        common_root = "azure"
+    common_root = "azure"
 
     package_path = get_package_path(package_name)
     if not service_name and package_path:
         service_name = os.path.basename(os.path.dirname(package_path))
+
+    if bundle_name and service_name:
+        common_root = f"azure/{service_name}"
 
     return common_root, service_name
 
@@ -1098,4 +1097,11 @@ if __name__ == "__main__":
             "\nThe following data plane packages may require manual adjustments in release logs:"
         )
         for pkg_name in data_plane_release_log_results:
+            print(f"- {pkg_name}")
+
+    if mgmt_plane_release_log_results:
+        print(
+            "\nThe following management plane packages may require manual adjustments in azure-mgmt release log:"
+        )
+        for pkg_name in mgmt_plane_release_log_results:
             print(f"- {pkg_name}")

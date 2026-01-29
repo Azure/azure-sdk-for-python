@@ -125,7 +125,7 @@ def parse_csv() -> List[Dict[str, str]]:
     try:
         logger.info(f"Downloading CSV from {AZURE_SDK_CSV_URL}")
 
-        with urllib.request.urlopen(AZURE_SDK_CSV_URL) as response:
+        with urllib.request.urlopen(AZURE_SDK_CSV_URL, timeout=10) as response:
             csv_content = response.read().decode("utf-8")
 
         # Parse the CSV content
