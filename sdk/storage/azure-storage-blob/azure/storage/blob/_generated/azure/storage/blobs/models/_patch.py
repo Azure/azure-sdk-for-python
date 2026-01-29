@@ -90,6 +90,7 @@ class CpkInfo:
         self.encryption_key_sha256 = encryption_key_sha256
         self.encryption_algorithm = encryption_algorithm
 
+
 class ModifiedAccessConditions:
     """Parameter group for modified access conditions."""
 

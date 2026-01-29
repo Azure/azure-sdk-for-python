@@ -22,22 +22,20 @@ class AccessPolicy(_Model):
     """Represents an access policy.
 
     :ivar start: The date-time the policy is active. Required.
-    :vartype start: ~datetime.datetime
+    :vartype start: str
     :ivar expiry: The date-time the policy expires. Required.
-    :vartype expiry: ~datetime.datetime
+    :vartype expiry: str
     :ivar permission: The permissions for acl the policy. Required.
     :vartype permission: str
     """
 
-    start: datetime.datetime = rest_field(
+    start: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
     )
     """The date-time the policy is active. Required."""
-    expiry: datetime.datetime = rest_field(
+    expiry: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
     )
     """The date-time the policy expires. Required."""
@@ -53,8 +51,8 @@ class AccessPolicy(_Model):
     def __init__(
         self,
         *,
-        start: datetime.datetime,
-        expiry: datetime.datetime,
+        start: str,
+        expiry: str,
         permission: str,
     ) -> None: ...
 

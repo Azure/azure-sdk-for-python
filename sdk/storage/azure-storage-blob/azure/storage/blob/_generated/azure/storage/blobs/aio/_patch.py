@@ -186,9 +186,7 @@ class CombinedBlobClient:
         self.container = _ContainerOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
         self.blob = _BlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
         self.page_blob = _PageBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
-        self.append_blob = _AppendBlobOperationsWrapper(
-            self._config, self._client, self._serialize, self._deserialize
-        )
+        self.append_blob = _AppendBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
         self.block_blob = _BlockBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
 
     async def close(self) -> None:
