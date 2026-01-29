@@ -5,7 +5,10 @@
       "mslearn",
       "envtemplate",
       "ainvoke",
-      "asetup"
+      "asetup",
+      "hitl",
+      "HITL",
+      "awrap"
     ],
     "ignorePaths": [
       "*.csv",
