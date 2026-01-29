@@ -626,7 +626,7 @@ def build_container_release_lease_request(
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&release"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -660,7 +660,7 @@ def build_container_renew_lease_request(
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&renew"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -694,7 +694,7 @@ def build_container_break_lease_request(
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&break"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -730,7 +730,7 @@ def build_container_change_lease_request(
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&change"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
