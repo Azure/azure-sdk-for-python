@@ -42,6 +42,23 @@ Avoid building functionality on speculation. Implement features only when they a
 - **After finishing**: mark the task done immediately, and note what changed (files/areas) in `TASK.md`.
 - **Update CHANGELOG.md only when required** by release policy.
 
+### TASK.md template
+```markdown
+## Now (active)
+- [ ] YYYY-MM-DD — <short task title>
+  - Scope: <what you will touch / not touch>
+  - Exit criteria: <tests passing / sample runs / files updated>
+
+## Next (queued)
+- [ ] YYYY-MM-DD — <task>
+
+## Discovered During Work
+- [ ] YYYY-MM-DD — <follow-up discovered while implementing something else>
+
+## Done
+- [x] YYYY-MM-DD — <task completed>
+```
+
 ## 📎 Style & Conventions & Standards
 
 ### File and Function Limits
