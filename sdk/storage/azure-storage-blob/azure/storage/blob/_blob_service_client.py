@@ -22,7 +22,7 @@ from ._blob_service_client_helpers import _parse_url
 from ._container_client import ContainerClient
 from ._deserialize import service_properties_deserialize, service_stats_deserialize
 from ._encryption import StorageEncryptionMixin
-from ._generated import AzureBlobStorage
+from ._generated.azure.storage.blobs import AzureBlobStorage
 from ._generated.azure.storage.blobs.models import KeyInfo, StorageServiceProperties
 from ._list_blobs_helper import FilteredBlobPaged
 from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged, CorsRule
