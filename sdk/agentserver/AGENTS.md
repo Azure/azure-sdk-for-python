@@ -2,6 +2,12 @@
 
 This file provides comprehensive guidance to Coding Agents(Codex, Claude Code, Github Copilot, etc.) when working with Python code in this repository.
 
+
+## 🎯 (Read-first) Project Awareness & Context
+
+- **Always read `PLANNING.md`** at the start of a new conversation to understand the project's architecture, goals, style, and constraints.
+- **Check `TASK.md`** before starting a new task. If the task isn't listed, add it with a brief description and today's date.
+
 ## 🏆 Core Development Philosophy
 
 ### KISS (Keep It Simple, Stupid)
@@ -19,47 +25,21 @@ Avoid building functionality on speculation. Implement features only when they a
 - **Single Responsibility**: Each function, class, and module should have one clear purpose.
 - **Fail Fast**: Check for potential errors early and raise exceptions immediately when issues occur.
 
-## 🧱 Code Structure & Modularity
-### 🔄 Project Awareness & Context
+### Implementation Patterns
 
-- **Always read `.agents/PLANNING.md`** at the start of a new conversation to understand the project's architecture, goals, style, and constraints.
-- **Check `.agents/TASK.md`** before starting a new task. If the task isn't listed, add it with a brief description and today's date.
-- **Use consistent naming conventions, file structure, and architecture patterns** as described in `.agents/PLANNING.md`.
-- **Read the package READMEs**:
-  - `sdk/agentserver/azure-ai-agentserver-core/README.md`
-  - `sdk/agentserver/azure-ai-agentserver-agentframework/README.md`
-  - `sdk/agentserver/azure-ai-agentserver-langgraph/README.md`
-- **Read repo guidance**:
-  - `CONTRIBUTING.md`
-  - `doc/dev/tests.md`
-  - `doc/eng_sys_checks.md`
+- **Explicit validation at boundaries**: Validate inputs and identifiers early; reject malformed descriptors and missing required fields.
+- **Separation of resolution and execution**: Keep discovery/selection separate from invocation to allow late binding and interchangeable implementations.
+- **Context-aware execution**: Thread request/user context through calls via scoped providers; avoid global mutable state.
+- **Cache with safety**: Use bounded TTL caching with concurrency-safe in-flight de-duplication; invalidate on errors.
+- **Stable naming and deterministic mapping**: Derive stable, unique names deterministically to avoid collisions.
+- **Graceful defaults, loud misconfiguration**: Provide sensible defaults when optional data is missing; raise clear errors when required configuration is absent.
+- **Thin integration layers**: Use adapters/middleware to translate between layers without leaking internals.
 
-### 🏗️ Project Structure
+## ✅ Work Process (required)
 
-#### Repository Structure
-
-AgentServer is developed within **azure-sdk-for-python** at `sdk/agentserver/`:
-
-- **azure-ai-agentserver-core**: Core library
-  - Runtime/context
-  - HTTP gateway
-  - Foundry integrations
-  - Responses API protocol (current)
-- **azure-ai-agentserver-agentframework**: Agent Framework adapter
-- **azure-ai-agentserver-langgraph**: LangGraph adapter
-
-#### Architecture (Current vs Target)
-
-- **Current**: OpenAI Responses API protocol lives in `azure-ai-agentserver-core` alongside core runtime and HTTP gateway code; framework adapters layer on top.
-- **Target (Planned, not fully implemented)**:
-  - Core layer: app/runtime/context, foundry integrations (tools, checkpointing), HTTP gateway
-  - Protocol layer: Responses API in its own package
-  - Framework layer: adapters (agentframework, langgraph, other frameworks)
-
-## ✅ Task Completion
-
-- **Mark completed tasks in `.agents/TASK.md`** immediately after finishing them.
-- Add new sub-tasks or TODOs discovered during development to `.agents/TASK.md` under a "Discovered During Work" section.
+- **Before coding**: confirm the task in `TASK.md` → **Now**.
+- **While working**: Add new sub-tasks or TODOs discovered during development to `TASK.md` under a "Discovered During Work" section.
+- **After finishing**: mark the task done immediately, and note what changed (files/areas) in `TASK.md`.
 - **Update CHANGELOG.md only when required** by release policy.
 
 ## 📎 Style & Conventions & Standards
