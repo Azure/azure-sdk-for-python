@@ -67,7 +67,7 @@
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99
+/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99 @jimmyca15
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
@@ -389,19 +389,22 @@
 # PRLabel: %Health Deidentification
 /sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
-# AzureSdkOwners: @yungshinlintw @vkurpad
+# AzureSdkOwners: @yungshinlintw @bojunehsu
 # ServiceLabel: %Cognitive - Form Recognizer
-# ServiceOwners: @yungshinlintw @vkurpad
+# ServiceOwners: @yungshinlintw @bojunehsu
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @yungshinlintw @vkurpad
+/sdk/formrecognizer/                                                 @yungshinlintw @bojunehsu
 
-# AzureSdkOwners: @yungshinlintw @vkurpad
+# AzureSdkOwners: @yungshinlintw @bojunehsu
 # ServiceLabel: %Document Intelligence
-# ServiceOwners: @yungshinlintw @vkurpad
+# ServiceOwners: @yungshinlintw @bojunehsu
+
+# PRLabel: %Cognitive - Content Understanding
+/sdk/contentunderstanding/                                           @yungshinlintw @bojunehsu
 
 # PRLabel: %Document Intelligence
-/sdk/documentintelligence/                                           @yungshinlintw @vkurpad
+/sdk/documentintelligence/                                           @yungshinlintw @bojunehsu
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Cognitive - Metrics Advisor

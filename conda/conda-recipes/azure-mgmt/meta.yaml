@@ -17,7 +17,6 @@ requirements:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
@@ -27,7 +26,6 @@ requirements:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
@@ -840,6 +838,11 @@ test:
     - azure.mgmt.resource.features.v2021_07_01.aio.operations
     - azure.mgmt.resource.features.v2021_07_01.models
     - azure.mgmt.resource.features.v2021_07_01.operations
+    - azure.mgmt.resourcegraph
+    - azure.mgmt.resourcegraph.aio
+    - azure.mgmt.resourcegraph.aio.operations
+    - azure.mgmt.resourcegraph.models
+    - azure.mgmt.resourcegraph.operations
     - azure.mgmt.resource.links
     - azure.mgmt.resource.links.aio
     - azure.mgmt.resource.links.v2016_09_01

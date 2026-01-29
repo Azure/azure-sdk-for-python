@@ -1032,6 +1032,7 @@ class TestConfigure(unittest.TestCase):
         instrumentor_mock.instrument.assert_called_once()
         logger_mock.debug.assert_called_once()
 
+    @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
     @patch("azure.monitor.opentelemetry._configure._is_on_functions")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
@@ -1040,12 +1041,21 @@ class TestConfigure(unittest.TestCase):
         is_attach_enabled_mock,
         is_on_functions_mock,
         mock_diagnostics,
+        mock_logger,
     ):
         is_attach_enabled_mock.return_value = True
         is_on_functions_mock.return_value = False
         _send_attach_warning()
+        message = (
+            "Distro detected that automatic instrumentation may have occurred. Only use autoinstrumentation if you "
+            "are not using manual instrumentation of OpenTelemetry in your code, such as with "
+            "azure-monitor-opentelemetry or azure-monitor-opentelemetry-exporter. For App Service resources, disable "
+            "autoinstrumentation in the Application Insights experience on your App Service resource or by setting "
+            "the ApplicationInsightsAgent_EXTENSION_VERSION app setting to 'disabled'."
+        )
+        mock_logger.warning.assert_called_once_with(message)
         mock_diagnostics.warning.assert_called_once_with(
-            "Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not being duplicated. This may impact your cost.",
+            message,
             _DISTRO_DETECTS_ATTACH,
         )
 
