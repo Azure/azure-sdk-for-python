@@ -6,6 +6,7 @@ from fnmatch import fnmatch
 from typing import Optional, List
 
 from .Check import Check
+from .proxy_ports import get_proxy_url_for_check
 from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
@@ -302,7 +303,7 @@ class samples(Check):
         """Run the samples check command."""
         logger.info("Running samples check...")
 
-        set_envvar_defaults({"PROXY_URL": "http://localhost:5003"})
+        set_envvar_defaults({"PROXY_URL": get_proxy_url_for_check(args.command)})
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []

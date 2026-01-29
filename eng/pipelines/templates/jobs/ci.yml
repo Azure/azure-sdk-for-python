@@ -333,7 +333,7 @@ jobs:
         - pwsh: |
             $ErrorActionPreference = 'Stop'
             $PSNativeCommandUseErrorActionPreference = $true
-            $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
+            $(PIP_EXE) install "./eng/tools/azure-sdk-tools"
           displayName: 'Prep Environment'
         - task: PythonScript@0
           displayName: 'Ensure service coverage'
