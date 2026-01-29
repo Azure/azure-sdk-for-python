@@ -2355,11 +2355,13 @@ def _convert_single_row_to_aoai_format(
     top_sample = {}
 
     # Check for error status - only populate top_sample if there are errors
-    if (input_data is not None 
-        and "sample.output_status.status" in input_data 
-        and isinstance(input_data["sample.output_status.status"], str) 
+    if (
+        input_data is not None
+        and "sample.output_status.status" in input_data
+        and isinstance(input_data["sample.output_status.status"], str)
         and not _is_none_or_nan(input_data["sample.output_status.status"])
-        and input_data["sample.output_status.status"] != "success"):
+        and input_data["sample.output_status.status"] != "success"
+    ):
         # There are errors, populate top_sample with error information
         error_message = input_data.get("sample.output_status.message", "")
         error_info = {
