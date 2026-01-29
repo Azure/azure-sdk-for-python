@@ -13,6 +13,10 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Add custom metric mapping for customer sdkstats metric names to preserve casing
+  ([#44855](https://github.com/Azure/azure-sdk-for-python/pull/44855))
+- Fix customer SDK stats metrics to display drop code and retry code enum values without the prefix
+  ([#44852](https://github.com/Azure/azure-sdk-for-python/pull/44852))
 
 ### Other Changes
 - Update maximum size of custom properties

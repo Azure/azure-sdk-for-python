@@ -1,17 +1,25 @@
 # Release History
 
-## 1.8.5 (Unreleased)
+## 1.8.6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.8.5 (2026-01-28)
 
 ### Features Added
 
 - In double-instrumentation scenarios, surface in the log stream instead of just in diagnostic logs.
   ([#44682](https://github.com/Azure/azure-sdk-for-python/pull/44682))
 
-### Breaking Changes
-
 ### Bugs Fixed
 
-- Fix the format of the fixed percentage sampler constant and ensure backward compatability
+- Fix the format of the fixed percentage sampler constant and ensure backward compatibility
   ([#44656](https://github.com/Azure/azure-sdk-for-python/pull/44656))
 - Only add PerformanceCounter Processors after PerformanceCounter setup to avoid circular dependency.
   ([#44661](https://github.com/Azure/azure-sdk-for-python/pull/44661))
