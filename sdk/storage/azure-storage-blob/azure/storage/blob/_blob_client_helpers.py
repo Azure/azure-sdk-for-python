@@ -365,7 +365,9 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
                 pass
     else:
         output_format = input_format if not input_parquet_format else None
+    # TODO: added param to QueryRequest
     query_request = QueryRequest(
+        query_type="SQL",
         expression=query_expression,
         input_serialization=serialize_query_format(input_format),
         output_serialization=serialize_query_format(output_format)
