@@ -24,6 +24,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
 )
 
 
+# pylint: disable=protected-access
 class TestTelemetryData(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._RequestData")
     def test_from_span_server_kind_server(self, fn_mock):
