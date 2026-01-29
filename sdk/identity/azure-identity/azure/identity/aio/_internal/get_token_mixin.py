@@ -5,13 +5,13 @@
 import abc
 import logging
 import time
-from typing import Any, Optional, Dict, Type
+from typing import Any, Optional, Dict, Type, Tuple
 from weakref import WeakValueDictionary
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ..._internal import within_credential_chain
-from .utils import get_running_async_lock_class
+from .utils import get_running_async_lock_class, get_current_loop_id
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,8 +20,9 @@ class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
-        self._global_lock: Any = None
-        self._active_locks: WeakValueDictionary[tuple, Any] = WeakValueDictionary()
+        # Maps loop ID -> (loop_lock, active_locks WeakValueDict)
+        # This is to handle edge cases where the credential is used in multiple event loops.
+        self._per_loop_state: Dict[int, Tuple[Any, WeakValueDictionary]] = {}
         self._lock_class_type: Optional[Type] = None
 
         # https://github.com/python/mypy/issues/5887
@@ -33,20 +34,26 @@ class GetTokenMixin(abc.ABC):
             self._lock_class_type = get_running_async_lock_class()
         return self._lock_class_type
 
-    async def _get_request_lock(self, lock_key: tuple) -> Any:
-        if self._global_lock is None:
-            self._global_lock = self._lock_class()
+    def _get_loop_state(self, loop_id: int) -> Tuple[Any, WeakValueDictionary]:
+        if loop_id not in self._per_loop_state:
+            self._per_loop_state[loop_id] = (self._lock_class(), WeakValueDictionary())
+        return self._per_loop_state[loop_id]
 
-        lock = self._active_locks.get(lock_key)
+    async def _get_request_lock(self, lock_key: tuple) -> Any:
+
+        loop_id = get_current_loop_id()
+        loop_lock, active_locks = self._get_loop_state(loop_id)
+
+        lock = active_locks.get(lock_key)
         if lock is not None:
             return lock
 
-        async with self._global_lock:
+        async with loop_lock:
             # Double-check in case another coroutine created it while we waited
-            lock = self._active_locks.get(lock_key)
+            lock = active_locks.get(lock_key)
             if lock is None:
                 lock = self._lock_class()
-                self._active_locks[lock_key] = lock
+                active_locks[lock_key] = lock
             return lock
 
     @abc.abstractmethod
@@ -217,13 +224,11 @@ class GetTokenMixin(abc.ABC):
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
         # Remove the non-picklable entries
-        del state["_global_lock"]
         del state["_lock_class_type"]
-        del state["_active_locks"]
+        del state["_per_loop_state"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
-        self._active_locks = WeakValueDictionary()
-        self._global_lock = None
+        self._per_loop_state = {}
         self._lock_class_type = None

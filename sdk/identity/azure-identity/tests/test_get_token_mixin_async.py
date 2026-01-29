@@ -4,10 +4,13 @@
 # ------------------------------------
 import time
 import asyncio
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from asyncio import sleep as real_sleep
 import gc
+import threading
 import weakref
 from unittest import mock
+
 
 from azure.core.credentials import AccessTokenInfo
 import pytest
@@ -333,8 +336,62 @@ async def test_concurrent_different_options_run_independently(get_token_method):
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_loops_in_different_threads(get_token_method):
+    """Test that locks are created/used per event loop in different threads"""
+    credential = MockCredentialWithDelay()
+
+    def thread_target():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        async def get_token_and_record_loop_id():
+            await getattr(credential, get_token_method)(SCOPE)
+            await getattr(credential, get_token_method)(SCOPE)
+
+        loop.run_until_complete(get_token_and_record_loop_id())
+        loop.close()
+
+    num_threads = 3
+    threads = [threading.Thread(target=thread_target) for _ in range(num_threads)]
+    assert len(threads) == num_threads
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    # Only one token request should have been made despite 5 concurrent calls
+    assert credential.request_count == num_threads
+    assert len(credential._per_loop_state) == num_threads
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_credential_thread_pool(get_token_method):
+    """Test that a credential can be used concurrently from multiple threads using ThreadPoolExecutor"""
+    credential = MockCredentialWithDelay()
+
+    def worker(worker_id: int):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            token = loop.run_until_complete(getattr(credential, get_token_method)(SCOPE))
+            return (worker_id, token.token[:20])
+        finally:
+            loop.close()
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [executor.submit(worker, i) for i in range(5)]
+        completed = []
+        for future in as_completed(futures):
+            result = future.result()
+            completed.append(result)
+        assert len(completed) == 5
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 async def test_weakref_dictionary_cleanup(get_token_method):
     """Test that locks are automatically cleaned up from the WeakValueDictionary when no longer referenced"""
+
+    from azure.identity.aio._internal.utils import get_current_loop_id
 
     class MockCredentialWithLockTracking(GetTokenMixin):
         def __init__(self):
@@ -342,6 +399,13 @@ async def test_weakref_dictionary_cleanup(get_token_method):
             self.cached_tokens = {}
             self.request_count = 0
             self.lock_refs = []  # Store strong references during requests
+
+        def _get_active_locks(self):
+            """Helper to get active_locks for the current loop."""
+            loop_id = get_current_loop_id()
+            if loop_id in self._per_loop_state:
+                return self._per_loop_state[loop_id][1]
+            return None
 
         async def _acquire_token_silently(self, *scopes, **kwargs):
             return None
@@ -355,9 +419,10 @@ async def test_weakref_dictionary_cleanup(get_token_method):
                 kwargs.get("tenant_id"),
                 kwargs.get("enable_cae", False),
             )
-            if lock_key in self._active_locks:
-                self.lock_refs.append(self._active_locks[lock_key])
-            await asyncio.sleep(0.1)
+            active_locks = self._get_active_locks()
+            if active_locks is not None and lock_key in active_locks:
+                self.lock_refs.append(active_locks[lock_key])
+            await real_sleep(0.1)
             lock_key_for_token = tuple(sorted(scopes))
             token = AccessTokenInfo(f"token_{lock_key_for_token[0]}", int(time.time() + 3600))
             self.cached_tokens[lock_key_for_token] = token
@@ -385,7 +450,8 @@ async def test_weakref_dictionary_cleanup(get_token_method):
     initial_lock_count = len(credential.lock_refs)
     assert initial_lock_count == 3, f"Should have captured 3 lock references, got {initial_lock_count}"
 
-    assert len(credential._active_locks) == 3, "WeakValueDictionary should contain 3 locks"
+    active_locks = credential._get_active_locks()
+    assert active_locks is not None and len(active_locks) == 3, "WeakValueDictionary should contain 3 locks"
 
     # Create weak references to track when locks are deallocated
     weak_refs = [weakref.ref(lock) for lock in credential.lock_refs]
@@ -404,7 +470,8 @@ async def test_weakref_dictionary_cleanup(get_token_method):
 
     # The WeakValueDictionary should automatically clean up dead entries
     # Access the dict to trigger cleanup
-    remaining_locks = len(credential._active_locks)
+    active_locks = credential._get_active_locks()
+    remaining_locks = len(active_locks) if active_locks else 0
 
     assert remaining_locks == 0, f"WeakValueDictionary should be empty after GC, but has {remaining_locks} entries"
 
