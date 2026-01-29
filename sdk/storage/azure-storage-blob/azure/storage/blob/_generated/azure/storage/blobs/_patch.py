@@ -18,6 +18,7 @@ from ._client import (
     AppendBlobClient,
     BlockBlobClient,
 )
+from ._utils.serialization import Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -43,6 +44,7 @@ class AzureBlobStorage():
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
+        self._serialize = Serializer()
         self.service = ServiceClient(url, credential, **kwargs)
         self.container = ContainerClient(url, credential, **kwargs)
         self.blob = BlobClient(url, credential, **kwargs)
