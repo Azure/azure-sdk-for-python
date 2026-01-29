@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AccessPolicy,
+    CorsRule,
     GeoReplication,
+    Logging,
     Metrics,
     RetentionPolicy,
     SignedIdentifier,
     SubmitTransactionRequest,
-    TableAccessPolicy,
-    TableAnalyticsLogging,
-    TableCorsRule,
     TableEntitiesPagedResult,
     TableProperties,
     TableResponse,
@@ -41,14 +41,14 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AccessPolicy",
+    "CorsRule",
     "GeoReplication",
+    "Logging",
     "Metrics",
     "RetentionPolicy",
     "SignedIdentifier",
     "SubmitTransactionRequest",
-    "TableAccessPolicy",
-    "TableAnalyticsLogging",
-    "TableCorsRule",
     "TableEntitiesPagedResult",
     "TableProperties",
     "TableResponse",

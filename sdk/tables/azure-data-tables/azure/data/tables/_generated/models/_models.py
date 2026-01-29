@@ -17,6 +17,149 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AccessPolicy(_Model):
+    """An access policy.
+
+    :ivar start: The date-time the policy is active. Required.
+    :vartype start: ~datetime.datetime
+    :ivar expiry: The date-time the policy expires. Required.
+    :vartype expiry: ~datetime.datetime
+    :ivar permission: The permissions for acl the policy. Required.
+    :vartype permission: str
+    """
+
+    start: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+    )
+    """The date-time the policy is active. Required."""
+    expiry: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+    )
+    """The date-time the policy expires. Required."""
+    permission: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Permission", "text": False, "unwrapped": False},
+    )
+    """The permissions for acl the policy. Required."""
+
+    _xml = {"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start: datetime.datetime,
+        expiry: datetime.datetime,
+        permission: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CorsRule(_Model):
+    """CORS is an HTTP feature that enables a web application running under one domain to access
+    resources in another domain. Web browsers implement a security restriction known as same-origin
+    policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
+    way to allow one domain (the origin domain) to call APIs in another domain.
+
+    :ivar allowed_origins: The origin domains that are permitted to make a request against the
+     service via
+     CORS. The origin domain is the domain from which the request originates. Note
+     that the origin must be an exact case-sensitive match with the origin that the
+     user age sends to the service. You can also use the wildcard character '*' to
+     allow all origin domains to make requests via CORS. Required.
+    :vartype allowed_origins: str
+    :ivar allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
+     CORS
+     request. Required.
+    :vartype allowed_methods: str
+    :ivar allowed_headers: The request headers that the origin domain may specify on the CORS
+     request. Required.
+    :vartype allowed_headers: str
+    :ivar exposed_headers: The response headers that may be sent in the response to the CORS
+     request and
+     exposed by the browser to the request issuer. Required.
+    :vartype exposed_headers: str
+    :ivar max_age_in_seconds: The maximum amount time that a browser should cache the preflight
+     OPTIONS
+     request. Required.
+    :vartype max_age_in_seconds: int
+    """
+
+    allowed_origins: str = rest_field(
+        name="allowedOrigins",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AllowedOrigins", "text": False, "unwrapped": False},
+    )
+    """The origin domains that are permitted to make a request against the service via
+     CORS. The origin domain is the domain from which the request originates. Note
+     that the origin must be an exact case-sensitive match with the origin that the
+     user age sends to the service. You can also use the wildcard character '*' to
+     allow all origin domains to make requests via CORS. Required."""
+    allowed_methods: str = rest_field(
+        name="allowedMethods",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AllowedMethods", "text": False, "unwrapped": False},
+    )
+    """The methods (HTTP request verbs) that the origin domain may use for a CORS
+     request. Required."""
+    allowed_headers: str = rest_field(
+        name="allowedHeaders",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AllowedHeaders", "text": False, "unwrapped": False},
+    )
+    """The request headers that the origin domain may specify on the CORS request. Required."""
+    exposed_headers: str = rest_field(
+        name="exposedHeaders",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ExposedHeaders", "text": False, "unwrapped": False},
+    )
+    """The response headers that may be sent in the response to the CORS request and
+     exposed by the browser to the request issuer. Required."""
+    max_age_in_seconds: int = rest_field(
+        name="maxAgeInSeconds",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MaxAgeInSeconds", "text": False, "unwrapped": False},
+    )
+    """The maximum amount time that a browser should cache the preflight OPTIONS
+     request. Required."""
+
+    _xml = {"attribute": False, "name": "CorsRule", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        allowed_origins: str,
+        allowed_methods: str,
+        allowed_headers: str,
+        exposed_headers: str,
+        max_age_in_seconds: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class GeoReplication(_Model):
     """Geo-Replication information for the Secondary Storage Service.
 
@@ -53,6 +196,72 @@ class GeoReplication(_Model):
         *,
         status: Union[str, "_models.GeoReplicationStatusType"],
         last_sync_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Logging(_Model):
+    """Azure Analytics Logging settings.
+
+    :ivar version: The version of the logging properties. Required.
+    :vartype version: str
+    :ivar delete: Whether delete operation is logged. Required.
+    :vartype delete: bool
+    :ivar read: Whether read operation is logged. Required.
+    :vartype read: bool
+    :ivar write: Whether write operation is logged. Required.
+    :vartype write: bool
+    :ivar retention_policy: The retention policy of the logs. Required.
+    :vartype retention_policy: ~azure.data.tables._generated.models.RetentionPolicy
+    """
+
+    version: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+    )
+    """The version of the logging properties. Required."""
+    delete: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Delete", "text": False, "unwrapped": False},
+    )
+    """Whether delete operation is logged. Required."""
+    read: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Read", "text": False, "unwrapped": False},
+    )
+    """Whether read operation is logged. Required."""
+    write: bool = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Write", "text": False, "unwrapped": False},
+    )
+    """Whether write operation is logged. Required."""
+    retention_policy: "_models.RetentionPolicy" = rest_field(
+        name="retentionPolicy",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "RetentionPolicy", "text": False, "unwrapped": False},
+    )
+    """The retention policy of the logs. Required."""
+
+    _xml = {"attribute": False, "name": "Logging", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        version: str,
+        delete: bool,
+        read: bool,
+        write: bool,
+        retention_policy: "_models.RetentionPolicy",
     ) -> None: ...
 
     @overload
@@ -176,7 +385,7 @@ class SignedIdentifier(_Model):
     :ivar id: The unique ID for the signed identifier. Required.
     :vartype id: str
     :ivar access_policy: The access policy for the signed identifier.
-    :vartype access_policy: ~azure.data.tables._generated.models.TableAccessPolicy
+    :vartype access_policy: ~azure.data.tables._generated.models.AccessPolicy
     """
 
     id: str = rest_field(
@@ -184,7 +393,7 @@ class SignedIdentifier(_Model):
         xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
     )
     """The unique ID for the signed identifier. Required."""
-    access_policy: Optional["_models.TableAccessPolicy"] = rest_field(
+    access_policy: Optional["_models.AccessPolicy"] = rest_field(
         name="accessPolicy",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False},
@@ -198,7 +407,7 @@ class SignedIdentifier(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        access_policy: Optional["_models.TableAccessPolicy"] = None,
+        access_policy: Optional["_models.AccessPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -247,225 +456,16 @@ class SubmitTransactionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TableAccessPolicy(_Model):
-    """An access policy.
-
-    :ivar start: The date-time the policy is active. Required.
-    :vartype start: ~datetime.datetime
-    :ivar expiry: The date-time the policy expires. Required.
-    :vartype expiry: ~datetime.datetime
-    :ivar permission: The permissions for acl the policy. Required.
-    :vartype permission: str
-    """
-
-    start: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
-        xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
-    )
-    """The date-time the policy is active. Required."""
-    expiry: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
-        xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
-    )
-    """The date-time the policy expires. Required."""
-    permission: str = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Permission", "text": False, "unwrapped": False},
-    )
-    """The permissions for acl the policy. Required."""
-
-    _xml = {"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        start: datetime.datetime,
-        expiry: datetime.datetime,
-        permission: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TableAnalyticsLogging(_Model):
-    """Azure Analytics Logging settings.
-
-    :ivar version: The version of the logging properties. Required.
-    :vartype version: str
-    :ivar delete: Whether delete operation is logged. Required.
-    :vartype delete: bool
-    :ivar read: Whether read operation is logged. Required.
-    :vartype read: bool
-    :ivar write: Whether write operation is logged. Required.
-    :vartype write: bool
-    :ivar retention_policy: The retention policy of the logs. Required.
-    :vartype retention_policy: ~azure.data.tables._generated.models.RetentionPolicy
-    """
-
-    version: str = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
-    )
-    """The version of the logging properties. Required."""
-    delete: bool = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Delete", "text": False, "unwrapped": False},
-    )
-    """Whether delete operation is logged. Required."""
-    read: bool = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Read", "text": False, "unwrapped": False},
-    )
-    """Whether read operation is logged. Required."""
-    write: bool = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Write", "text": False, "unwrapped": False},
-    )
-    """Whether write operation is logged. Required."""
-    retention_policy: "_models.RetentionPolicy" = rest_field(
-        name="retentionPolicy",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "RetentionPolicy", "text": False, "unwrapped": False},
-    )
-    """The retention policy of the logs. Required."""
-
-    _xml = {"attribute": False, "name": "Logging", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        version: str,
-        delete: bool,
-        read: bool,
-        write: bool,
-        retention_policy: "_models.RetentionPolicy",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TableCorsRule(_Model):
-    """CORS is an HTTP feature that enables a web application running under one domain to access
-    resources in another domain. Web browsers implement a security restriction known as same-origin
-    policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
-    way to allow one domain (the origin domain) to call APIs in another domain.
-
-    :ivar allowed_origins: The origin domains that are permitted to make a request against the
-     service via
-     CORS. The origin domain is the domain from which the request originates. Note
-     that the origin must be an exact case-sensitive match with the origin that the
-     user age sends to the service. You can also use the wildcard character '*' to
-     allow all origin domains to make requests via CORS. Required.
-    :vartype allowed_origins: str
-    :ivar allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
-     CORS
-     request. Required.
-    :vartype allowed_methods: str
-    :ivar allowed_headers: The request headers that the origin domain may specify on the CORS
-     request. Required.
-    :vartype allowed_headers: str
-    :ivar exposed_headers: The response headers that may be sent in the response to the CORS
-     request and
-     exposed by the browser to the request issuer. Required.
-    :vartype exposed_headers: str
-    :ivar max_age_in_seconds: The maximum amount time that a browser should cache the preflight
-     OPTIONS
-     request. Required.
-    :vartype max_age_in_seconds: int
-    """
-
-    allowed_origins: str = rest_field(
-        name="allowedOrigins",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "AllowedOrigins", "text": False, "unwrapped": False},
-    )
-    """The origin domains that are permitted to make a request against the service via
-     CORS. The origin domain is the domain from which the request originates. Note
-     that the origin must be an exact case-sensitive match with the origin that the
-     user age sends to the service. You can also use the wildcard character '*' to
-     allow all origin domains to make requests via CORS. Required."""
-    allowed_methods: str = rest_field(
-        name="allowedMethods",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "AllowedMethods", "text": False, "unwrapped": False},
-    )
-    """The methods (HTTP request verbs) that the origin domain may use for a CORS
-     request. Required."""
-    allowed_headers: str = rest_field(
-        name="allowedHeaders",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "AllowedHeaders", "text": False, "unwrapped": False},
-    )
-    """The request headers that the origin domain may specify on the CORS request. Required."""
-    exposed_headers: str = rest_field(
-        name="exposedHeaders",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "ExposedHeaders", "text": False, "unwrapped": False},
-    )
-    """The response headers that may be sent in the response to the CORS request and
-     exposed by the browser to the request issuer. Required."""
-    max_age_in_seconds: int = rest_field(
-        name="maxAgeInSeconds",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "MaxAgeInSeconds", "text": False, "unwrapped": False},
-    )
-    """The maximum amount time that a browser should cache the preflight OPTIONS
-     request. Required."""
-
-    _xml = {"attribute": False, "name": "CorsRule", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        allowed_origins: str,
-        allowed_methods: str,
-        allowed_headers: str,
-        exposed_headers: str,
-        max_age_in_seconds: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class TableEntitiesPagedResult(_Model):
     """The properties for the table entity query response.
 
-    :ivar metadata: The metadata response of the table.
-    :vartype metadata: str
+    :ivar odata_metadata: The metadata response of the table.
+    :vartype odata_metadata: str
     :ivar value: List of table entities.
     :vartype value: list[dict[str, any]]
     """
 
-    metadata: Optional[str] = rest_field(name="odata.metadata", visibility=["read", "query"])
+    odata_metadata: Optional[str] = rest_field(name="odata.metadata", visibility=["read", "query"])
     """The metadata response of the table."""
     value: Optional[list[dict[str, Any]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of table entities."""
@@ -474,7 +474,7 @@ class TableEntitiesPagedResult(_Model):
     def __init__(
         self,
         *,
-        metadata: Optional[str] = None,
+        odata_metadata: Optional[str] = None,
         value: Optional[list[dict[str, Any]]] = None,
     ) -> None: ...
 
@@ -494,21 +494,21 @@ class TableProperties(_Model):
 
     :ivar table_name: The name of the table.
     :vartype table_name: str
-    :ivar type: The odata type of the table.
-    :vartype type: str
-    :ivar id: The id of the table.
-    :vartype id: str
-    :ivar edit_link: The edit link of the table.
-    :vartype edit_link: str
+    :ivar odata_type: The odata type of the table.
+    :vartype odata_type: str
+    :ivar odata_id: The id of the table.
+    :vartype odata_id: str
+    :ivar odata_edit_link: The edit link of the table.
+    :vartype odata_edit_link: str
     """
 
     table_name: Optional[str] = rest_field(name="TableName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the table."""
-    type: Optional[str] = rest_field(name="odata.type", visibility=["read", "query"])
+    odata_type: Optional[str] = rest_field(name="odata.type", visibility=["read", "query"])
     """The odata type of the table."""
-    id: Optional[str] = rest_field(name="odata.id", visibility=["read", "query"])
+    odata_id: Optional[str] = rest_field(name="odata.id", visibility=["read", "query"])
     """The id of the table."""
-    edit_link: Optional[str] = rest_field(name="odata.editLink", visibility=["read", "query"])
+    odata_edit_link: Optional[str] = rest_field(name="odata.editLink", visibility=["read", "query"])
     """The edit link of the table."""
 
     @overload
@@ -516,9 +516,9 @@ class TableProperties(_Model):
         self,
         *,
         table_name: Optional[str] = None,
-        type: Optional[str] = None,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        edit_link: Optional[str] = None,
+        odata_type: Optional[str] = None,
+        odata_id: Optional[str] = None,
+        odata_edit_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -537,25 +537,25 @@ class TableResponse(_Model):
 
     :ivar table_name: The name of the table.
     :vartype table_name: str
-    :ivar type: The odata type of the table.
-    :vartype type: str
-    :ivar id: The id of the table.
-    :vartype id: str
-    :ivar edit_link: The edit link of the table.
-    :vartype edit_link: str
-    :ivar metadata: The metadata response of the table.
-    :vartype metadata: str
+    :ivar odata_type: The odata type of the table.
+    :vartype odata_type: str
+    :ivar odata_id: The id of the table.
+    :vartype odata_id: str
+    :ivar odata_edit_link: The edit link of the table.
+    :vartype odata_edit_link: str
+    :ivar odata_metadata: The metadata response of the table.
+    :vartype odata_metadata: str
     """
 
     table_name: Optional[str] = rest_field(name="TableName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the table."""
-    type: Optional[str] = rest_field(name="odata.type", visibility=["read", "query"])
+    odata_type: Optional[str] = rest_field(name="odata.type", visibility=["read", "query"])
     """The odata type of the table."""
-    id: Optional[str] = rest_field(name="odata.id", visibility=["read", "query"])
+    odata_id: Optional[str] = rest_field(name="odata.id", visibility=["read", "query"])
     """The id of the table."""
-    edit_link: Optional[str] = rest_field(name="odata.editLink", visibility=["read", "query"])
+    odata_edit_link: Optional[str] = rest_field(name="odata.editLink", visibility=["read", "query"])
     """The edit link of the table."""
-    metadata: Optional[str] = rest_field(name="odata.metadata", visibility=["read", "query"])
+    odata_metadata: Optional[str] = rest_field(name="odata.metadata", visibility=["read", "query"])
     """The metadata response of the table."""
 
     @overload
@@ -563,10 +563,10 @@ class TableResponse(_Model):
         self,
         *,
         table_name: Optional[str] = None,
-        type: Optional[str] = None,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        edit_link: Optional[str] = None,
-        metadata: Optional[str] = None,
+        odata_type: Optional[str] = None,
+        odata_id: Optional[str] = None,
+        odata_edit_link: Optional[str] = None,
+        odata_metadata: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -612,16 +612,16 @@ class TableServiceProperties(_Model):
     """The service properties.
 
     :ivar logging: The logging properties.
-    :vartype logging: ~azure.data.tables._generated.models.TableAnalyticsLogging
+    :vartype logging: ~azure.data.tables._generated.models.Logging
     :ivar hour_metrics: The hour metrics properties.
     :vartype hour_metrics: ~azure.data.tables._generated.models.Metrics
     :ivar minute_metrics: The minute metrics properties.
     :vartype minute_metrics: ~azure.data.tables._generated.models.Metrics
     :ivar cors: The CORS properties.
-    :vartype cors: ~azure.data.tables._generated.models.TableCorsRule
+    :vartype cors: ~azure.data.tables._generated.models.CorsRule
     """
 
-    logging: Optional["_models.TableAnalyticsLogging"] = rest_field(
+    logging: Optional["_models.Logging"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Logging", "text": False, "unwrapped": False},
     )
@@ -638,7 +638,7 @@ class TableServiceProperties(_Model):
         xml={"attribute": False, "name": "MinuteMetrics", "text": False, "unwrapped": False},
     )
     """The minute metrics properties."""
-    cors: Optional[list["_models.TableCorsRule"]] = rest_field(
+    cors: Optional[list["_models.CorsRule"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "itemsName": "CorsRule", "name": "Cors", "text": False, "unwrapped": False},
     )
@@ -650,10 +650,10 @@ class TableServiceProperties(_Model):
     def __init__(
         self,
         *,
-        logging: Optional["_models.TableAnalyticsLogging"] = None,
+        logging: Optional["_models.Logging"] = None,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[list["_models.TableCorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
     ) -> None: ...
 
     @overload

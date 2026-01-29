@@ -13,11 +13,11 @@ from azure.core.paging import PageIterator
 from ._generated.models import (
     TableServiceStats as GenTableServiceStats,
     TableServiceProperties as GenTableServiceProperties,
-    TableAccessPolicy as GenAccessPolicy,
-    TableAnalyticsLogging as GeneratedLogging,
+    AccessPolicy as GenAccessPolicy,
+    Logging as GeneratedLogging,
     Metrics as GeneratedMetrics,
     RetentionPolicy as GeneratedRetentionPolicy,
-    TableCorsRule as GeneratedCorsRule,
+    CorsRule as GeneratedCorsRule,
 )
 from ._error import _process_table_error
 from ._decoder import TableEntityDecoder

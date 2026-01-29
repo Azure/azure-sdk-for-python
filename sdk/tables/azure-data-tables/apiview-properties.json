@@ -1,14 +1,14 @@
 {
     "CrossLanguagePackageId": "Data.Tables",
     "CrossLanguageDefinitionId": {
+        "azure.data.tables._generated.models.AccessPolicy": "Data.Tables.AccessPolicy",
+        "azure.data.tables._generated.models.CorsRule": "Data.Tables.CorsRule",
         "azure.data.tables._generated.models.GeoReplication": "Data.Tables.GeoReplication",
+        "azure.data.tables._generated.models.Logging": "Data.Tables.Logging",
         "azure.data.tables._generated.models.Metrics": "Data.Tables.Metrics",
         "azure.data.tables._generated.models.RetentionPolicy": "Data.Tables.RetentionPolicy",
         "azure.data.tables._generated.models.SignedIdentifier": "Data.Tables.SignedIdentifier",
         "azure.data.tables._generated.models.SubmitTransactionRequest": "Data.Tables.Table.submitTransaction.Request.anonymous",
-        "azure.data.tables._generated.models.TableAccessPolicy": "Data.Tables.AccessPolicy",
-        "azure.data.tables._generated.models.TableAnalyticsLogging": "Data.Tables.Logging",
-        "azure.data.tables._generated.models.TableCorsRule": "Data.Tables.CorsRule",
         "azure.data.tables._generated.models.TableEntitiesPagedResult": "Data.Tables.TableEntitiesPagedResult",
         "azure.data.tables._generated.models.TableProperties": "Data.Tables.TableProperties",
         "azure.data.tables._generated.models.TableResponse": "Data.Tables.TableResponse",

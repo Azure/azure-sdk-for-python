@@ -35,7 +35,7 @@ class OdataMetadataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether the response should echo the created content."""
 
-    NO_ECHO = "return-no-content"
+    RETURN_NO_CONTENT = "return-no-content"
     """Do not echo the created content."""
-    ECHO = "return-content"
+    RETURN_CONTENT = "return-content"
     """Echo the created content."""

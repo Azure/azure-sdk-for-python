@@ -5,4 +5,3 @@ recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py
 include azure/data/__init__.py
-include azure/data/tables/__init__.py
