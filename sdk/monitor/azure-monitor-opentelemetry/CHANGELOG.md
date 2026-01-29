@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Add missing copyright headers and ensure consistent formatting across files.
 
 ## 1.8.5 (2026-01-28)
 

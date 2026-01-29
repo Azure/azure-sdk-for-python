@@ -1,5 +1,9 @@
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
+# Licensed under the MIT License. See License in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 """
 This example shows how configure live metrics to be enabled. It sets up a minimal example of sending dependency,
 trace and exception telemetry to demonstrate the capabilities and collection set of live metrics.
