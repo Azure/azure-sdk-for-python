@@ -3,6 +3,10 @@ parameters:
     displayName: 'Conda Username'
     type: string
     default: 'Microsoft'
+  - name: dry_run
+    displayName: 'Dry Run (skip upload)'
+    type: boolean
+    default: false
   - name: release_msal
     displayName: 'msal'
     type: boolean
@@ -916,7 +920,8 @@ extends:
         condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'))
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml@self
-
+        # TODO this stage should only be available on main branch after testing
+        # TODO this whole pipeline should be triggered on main when a new release is merged
         jobs:
           - deployment: PublishCondaPackages
             displayName: 'Publish Conda Packages'
@@ -945,61 +950,11 @@ extends:
                         python -m pip install anaconda-client
                       displayName: 'Install anaconda-client'
 
-                    - pwsh: |
-                        if (-not $env:ANACONDA_API_TOKEN) {
-                          Write-Error "ANACONDA_API_TOKEN is not set"
-                          exit 1
-                        }
-
-                        anaconda whoami
-                        if ($LASTEXITCODE -ne 0) {
-                          Write-Error "Invalid or expired Anaconda API token"
-                          exit 1
-                        }
-                        Write-Host "Anaconda authentication successful"
-
-                        $packageDir = "$(Pipeline.Workspace)/conda"
-                        $packages = Get-ChildItem -Path $packageDir -Recurse -Include "*.tar.bz2", "*.conda"
-                        
-                        if ($packages.Count -eq 0) {
-                          Write-Error "No conda packages found in $packageDir"
-                          exit 1
-                        }
-                        
-                        Write-Host "Found $($packages.Count) packages to upload:"
-                        foreach ($pkg in $packages) {
-                          Write-Host "  - $($pkg.Name)"
-                        }
-                        
-                        $failed = @()
-                        foreach ($pkg in $packages) {
-                          Write-Host "Uploading $($pkg.FullName)..."
-                          $retries = 3
-                          $success = $false 
-
-                          for ($i = 1; $i -le $retries; $i++) {
-                            anaconda upload --user ${{ parameters.conda_username }} --skip-existing $($pkg.FullName)
-                            if ($LASTEXITCODE -eq 0) {
-                              Write-Host "Successfully uploaded $($pkg.Name) on attempt $i."
-                              $success = $true
-                              break
-                            }
-                            Write-Warning "Attempt $i failed, retrying..."
-                            Start-Sleep -Seconds 5
-                          }
-
-                          if (-not $success) {
-                            $failed += $pkg.Name
-                          }
-                        }
-                        
-                        if ($failed.Count -gt 0) {
-                          Write-Error "Failed to upload the following packages: $($failed -join ', ')"
-                          exit 1
-                        }
-
-                        Write-Host "Successfully uploaded all packages!"
+                    - task: PythonScript@0
                       displayName: 'Publish to Conda'
-                      workingDirectory: $(Pipeline.Workspace)
-                      env:
-                        ANACONDA_API_TOKEN: $(AnacondaApiToken)
+                      inputs:
+                        scriptSource: 'filePath'
+                        scriptPath: '$(Build.SourcesDirectory)/eng/scripts/publish_conda.py'
+                        arguments: '--package-dir "$(Pipeline.Workspace)/conda" --user "${{ parameters.conda_username }}"${{ if eq(parameters.dry_run, true) }} --dry-run${{ else }}${{ end }}'
+                        env:
+                          ANACONDA_API_TOKEN: $(conda-release-apikey)
