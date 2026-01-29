@@ -16,17 +16,17 @@ from azure.core.exceptions import HttpResponseError
 from ._shared import decode_base64_to_bytes
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
-from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import ArrowField
-from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import Logging as GeneratedLogging
-from ._generated.models import Metrics as GeneratedMetrics
-from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-from ._generated.models import StaticWebsite as GeneratedStaticWebsite
+from ._generated.azure.storage.blobs.models import AccessPolicy as GenAccessPolicy
+from ._generated.azure.storage.blobs.models import ArrowField
+from ._generated.azure.storage.blobs.models import CorsRule as GeneratedCorsRule
+from ._generated.azure.storage.blobs.models import Logging as GeneratedLogging
+from ._generated.azure.storage.blobs.models import Metrics as GeneratedMetrics
+from ._generated.azure.storage.blobs.models import RetentionPolicy as GeneratedRetentionPolicy
+from ._generated.azure.storage.blobs.models import StaticWebsite as GeneratedStaticWebsite
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.models import PageList
+    from ._generated.azure.storage.blobs.models import PageList
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list: "PageList") -> List["PageRange"]:

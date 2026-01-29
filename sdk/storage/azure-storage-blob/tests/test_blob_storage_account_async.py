@@ -6,7 +6,7 @@
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob import StandardBlobTier
 from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob._generated.models import RehydratePriority
+from azure.storage.blob._generated.azure.storage.blobs.models import RehydratePriority
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
