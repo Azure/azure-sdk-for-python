@@ -26,7 +26,7 @@ from azure.appconfiguration import ConfigurationSetting
 def main():
     # [START create_app_config_client]
 
-    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT"]
+    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
     credential = DefaultAzureCredential()
     # Create app config client
     client = AzureAppConfigurationClient(base_url=ENDPOINT, credential=credential)
