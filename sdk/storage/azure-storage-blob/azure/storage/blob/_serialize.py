@@ -12,20 +12,17 @@ except ImportError:
 
 from azure.core import MatchConditions
 
-from ._generated.models import (
+from ._generated.azure.storage.blobs.models import (
     ArrowConfiguration,
     BlobModifiedAccessConditions,
     BlobTag,
     BlobTags,
-    ContainerCpkScopeInfo,
-    CpkScopeInfo,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
-    LeaseAccessConditions,
-    ModifiedAccessConditions,
+    ParquetConfiguration,
     QueryFormat,
-    QueryFormatType,
     QuerySerialization,
+    QueryType,
     SourceModifiedAccessConditions
 )
 from ._models import ContainerEncryptionScope, DelimitedJsonDialect
@@ -95,23 +92,35 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
+def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[str]:
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
         lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+    return lease_id if lease_id else None
 
 
-def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
-    return ModifiedAccessConditions(
-        if_modified_since=kwargs.pop('if_modified_since', None),
-        if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
-        if_tags=kwargs.pop('if_tags_match_condition', None)
-    )
+def get_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    # Return only non-None values to avoid leaking extra kwargs to the HTTP transport.
+    # The generated code accepts etag/match_condition and handles conversion internally.
+    result: Dict[str, Any] = {}
+    if_modified_since = kwargs.pop('if_modified_since', None)
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    etag = kwargs.pop('etag', None)
+    match_condition = kwargs.pop('match_condition', None)
+    if_tags = kwargs.pop('if_tags_match_condition', None)
+
+    if if_modified_since is not None:
+        result['if_modified_since'] = if_modified_since
+    if if_unmodified_since is not None:
+        result['if_unmodified_since'] = if_unmodified_since
+    if etag is not None:
+        result['etag'] = etag
+    if match_condition is not None:
+        result['match_condition'] = match_condition
+    if if_tags is not None:
+        result['if_tags'] = if_tags
+    return result
 
 
 def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessConditions:
@@ -124,38 +133,114 @@ def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessCond
     )
 
 
-def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
+def get_source_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns source conditions as a dict for the generated code.
+    
+    The generated code expects individual parameters instead of SourceModifiedAccessConditions.
+    """
     if_match, if_none_match = _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
-    return SourceModifiedAccessConditions(
-        source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-        source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-        source_if_match=if_match or kwargs.pop('source_if_match', None),
-        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None),
-        source_if_tags=kwargs.pop('source_if_tags_match_condition', None)
-    )
+    result: Dict[str, Any] = {}
+    
+    source_if_modified_since = kwargs.pop('source_if_modified_since', None)
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)
+    source_if_match = if_match or kwargs.pop('source_if_match', None)
+    source_if_none_match = if_none_match or kwargs.pop('source_if_none_match', None)
+    source_if_tags = kwargs.pop('source_if_tags_match_condition', None)
+    
+    if source_if_modified_since is not None:
+        result['source_if_modified_since'] = source_if_modified_since
+    if source_if_unmodified_since is not None:
+        result['source_if_unmodified_since'] = source_if_unmodified_since
+    if source_if_match is not None:
+        result['source_if_match'] = source_if_match
+    if source_if_none_match is not None:
+        result['source_if_none_match'] = source_if_none_match
+    if source_if_tags is not None:
+        result['source_if_tags'] = source_if_tags
+    return result
 
 
-def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[CpkScopeInfo]:
-    if 'encryption_scope' in kwargs:
-        return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
-    return None
+def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns encryption_scope as a dict for the generated code."""
+    return {'encryption_scope': kwargs.pop('encryption_scope', None)}
 
 
-def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:
+def get_append_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns append position conditions as a dict for the generated code.
+    
+    The generated code expects individual parameters: max_size and append_position
+    instead of an AppendPositionAccessConditions object.
+    """
+    result: Dict[str, Any] = {}
+    maxsize_condition = kwargs.pop('maxsize_condition', None)
+    appendpos_condition = kwargs.pop('appendpos_condition', None)
+    if maxsize_condition is not None:
+        result['max_size'] = maxsize_condition
+    if appendpos_condition is not None:
+        result['append_position'] = appendpos_condition
+    return result
+
+
+def get_sequence_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns sequence number conditions as a dict for the generated code.
+    
+    The generated code expects individual parameters instead of SequenceNumberAccessConditions.
+    """
+    result: Dict[str, Any] = {}
+    if_sequence_number_lte = kwargs.pop('if_sequence_number_lte', None)
+    if_sequence_number_lt = kwargs.pop('if_sequence_number_lt', None)
+    if_sequence_number_eq = kwargs.pop('if_sequence_number_eq', None)
+    if if_sequence_number_lte is not None:
+        result['if_sequence_number_less_than_or_equal_to'] = if_sequence_number_lte
+    if if_sequence_number_lt is not None:
+        result['if_sequence_number_less_than'] = if_sequence_number_lt
+    if if_sequence_number_eq is not None:
+        result['if_sequence_number_equal_to'] = if_sequence_number_eq
+    return result
+
+
+def get_cpk_info(cpk: Any) -> Dict[str, Any]:
+    """Returns CPK parameters as a dict for the generated code.
+    
+    The generated code expects individual parameters: encryption_key,
+    encryption_key_sha256, and encryption_algorithm instead of a CpkInfo object.
+    """
+    if cpk:
+        return {
+            'encryption_key': cpk.key_value,
+            'encryption_key_sha256': cpk.key_hash,
+            'encryption_algorithm': cpk.algorithm
+        }
+    return {}
+
+
+def get_source_cpk_info(source_cpk: Any) -> Dict[str, Any]:
+    """Returns source CPK parameters as a dict for the generated code."""
+    if source_cpk:
+        return {
+            'source_encryption_key': source_cpk.key_value,
+            'source_encryption_key_sha256': source_cpk.key_hash,
+            'source_encryption_algorithm': source_cpk.algorithm
+        }
+    return {}
+
+
+def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Returns container CPK scope info as a dict for the generated code."""
     encryption_scope = kwargs.pop('container_encryption_scope', None)
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
-            return ContainerCpkScopeInfo(
-                default_encryption_scope=encryption_scope.default_encryption_scope,
-                prevent_encryption_scope_override=encryption_scope.prevent_encryption_scope_override
-            )
+            return {
+                'default_encryption_scope': encryption_scope.default_encryption_scope,
+                'prevent_encryption_scope_override': encryption_scope.prevent_encryption_scope_override
+            }
         if isinstance(encryption_scope, dict):
-            return ContainerCpkScopeInfo(
-                default_encryption_scope=encryption_scope['default_encryption_scope'],
-                prevent_encryption_scope_override=encryption_scope.get('prevent_encryption_scope_override')
-            )
+            return {
+                'default_encryption_scope': encryption_scope['default_encryption_scope'],
+                'prevent_encryption_scope_override': encryption_scope.get('prevent_encryption_scope_override')
+            }
         raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
-    return None
+    return {}
 
 
 def get_api_version(kwargs: Dict[str, Any]) -> str:
@@ -197,10 +282,10 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
 
 def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
-        qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=' ')  #type: ignore [arg-type]
+        qq_format = QueryFormat(type=QueryType.PARQUET, parquet_text_configuration=ParquetConfiguration())
     elif isinstance(formater, DelimitedJsonDialect):
         json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
-        qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
+        qq_format = QueryFormat(type=QueryType.JSON, json_text_configuration=json_serialization_settings)
     elif hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
         try:
             headers = formater.has_header  # type: ignore
@@ -216,12 +301,12 @@ def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Option
             headers_present=headers
         )
         qq_format = QueryFormat(
-            type=QueryFormatType.DELIMITED,
+            type=QueryType.DELIMITED,
             delimited_text_configuration=csv_serialization_settings
         )
     elif isinstance(formater, list):
         arrow_serialization_settings = ArrowConfiguration(schema=formater)
-        qq_format = QueryFormat(type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings)
+        qq_format = QueryFormat(type=QueryType.ARROW, arrow_configuration=arrow_serialization_settings)
     elif not formater:
         return None
     else:
