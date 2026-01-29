@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Publish conda packages to Anaconda.org.
 
@@ -67,31 +66,31 @@ def upload_package(
             logger.info(f"[DRY RUN] Would upload: {package_path}")
             return True
 
-        result = subprocess.run(
-            [
-                "anaconda",
-                "upload",
-                "--user",
-                user,
-                "--skip-existing",
-                str(package_path),
-                "--private",  # TODO remove after testing is complete
-            ],
-            capture_output=True,
-            text=True,
-        )
+        # result = subprocess.run(
+        #     [
+        #         "anaconda",
+        #         "upload",
+        #         "--user",
+        #         user,
+        #         "--skip-existing",
+        #         str(package_path),
+        #         "--private",  # TODO remove after testing is complete
+        #     ],
+        #     capture_output=True,
+        #     text=True,
+        # )
 
-        if result.returncode == 0:
-            logger.info(f"Successfully uploaded {package_path.name}")
-            if result.stdout:
-                logger.debug(result.stdout)
-            return True
+        # if result.returncode == 0:
+        #     logger.info(f"Successfully uploaded {package_path.name}")
+        #     if result.stdout:
+        #         logger.debug(result.stdout)
+        #     return True
 
-        logger.warning(f"Attempt {attempt} failed: {result.stderr.strip()}")
+        # logger.warning(f"Attempt {attempt} failed: {result.stderr.strip()}")
 
-        if attempt < max_retries:
-            logger.info(f"Retrying in {retry_delay} seconds...")
-            time.sleep(retry_delay)
+        # if attempt < max_retries:
+        #     logger.info(f"Retrying in {retry_delay} seconds...")
+        #     time.sleep(retry_delay)
 
     return False
 
