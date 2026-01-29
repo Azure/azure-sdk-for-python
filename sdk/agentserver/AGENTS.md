@@ -37,7 +37,8 @@ Avoid building functionality on speculation. Implement features only when they a
 
 ## ✅ Work Process (required)
 
-- **Before coding**: confirm the task in `TASK.md` → **Now**.
+- **Git Worktree**: Always work in git worktrees for isolated task branches, create worktrees from current branch in `./.worktrees/`.
+- **Before coding**: 1) confirm the task in `TASK.md` → **Now**. 2) create a worktree branch under `./.worktrees/tasks/<short-task-name>`.
 - **While working**: Add new sub-tasks or TODOs discovered during development to `TASK.md` under a "Discovered During Work" section.
 - **After finishing**: mark the task done immediately, and note what changed (files/areas) in `TASK.md`.
 - **Update CHANGELOG.md only when required** by release policy.
