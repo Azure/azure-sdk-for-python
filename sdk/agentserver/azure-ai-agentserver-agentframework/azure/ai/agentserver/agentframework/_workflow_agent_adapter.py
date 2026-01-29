@@ -59,9 +59,10 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
 
             checkpoint_storage = None
             selected_checkpoint = None
-            if self._checkpoint_repository:
-                checkpoint_storage = await self._checkpoint_repository.get_or_create(context.conversation_id)
-                selected_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
+            if self._checkpoint_repository and (conversation_id := context.conversation_id):
+                checkpoint_storage = await self._checkpoint_repository.get_or_create(conversation_id)
+                if checkpoint_storage:
+                    selected_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
             if selected_checkpoint:
                 summary = get_checkpoint_summary(selected_checkpoint)
                 if summary.status == "completed":

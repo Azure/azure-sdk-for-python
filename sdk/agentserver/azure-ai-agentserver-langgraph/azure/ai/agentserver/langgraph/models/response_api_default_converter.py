@@ -148,8 +148,10 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         return converter.convert()
 
     async def _aget_state(self, context: LanggraphRunContext) -> Optional[StateSnapshot]:
+        if not (thread_id := context.agent_run.conversation_id):
+            return None
         config = RunnableConfig(
-            configurable={"thread_id": context.agent_run.conversation_id},
+            configurable={"thread_id": thread_id},
         )
         if self._graph.checkpointer:
             state = await self._graph.aget_state(config=config)

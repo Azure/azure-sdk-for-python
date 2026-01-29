@@ -184,9 +184,10 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :rtype: Optional[AgentThread]
         """
         if self._thread_repository:
-            agent_thread = await self._thread_repository.get(context.conversation_id)
+            conversation_id = context.conversation_id
+            agent_thread = await self._thread_repository.get(conversation_id)
             if agent_thread:
-                logger.info(f"Loaded agent thread for conversation: {context.conversation_id}")
+                logger.info(f"Loaded agent thread for conversation: {conversation_id}")
                 return agent_thread
             return agent.get_new_thread()
         return None
@@ -202,9 +203,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :return: None
         :rtype: None
         """
-        if agent_thread and self._thread_repository:
-            await self._thread_repository.set(context.conversation_id, agent_thread)
-            logger.info(f"Saved agent thread for conversation: {context.conversation_id}")
+        if agent_thread and self._thread_repository and (conversation_id := context.conversation_id):
+            await self._thread_repository.set(conversation_id, agent_thread)
+            logger.info(f"Saved agent thread for conversation: {conversation_id}")
 
     def _run_streaming_updates(
         self,
