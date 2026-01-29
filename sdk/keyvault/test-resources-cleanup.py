@@ -90,9 +90,7 @@ async def close_sessions():
         await hsm_client.close()
     await secret_client.close()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(delete_certificates())
-loop.run_until_complete(delete_keys_and_secrets())
-loop.run_until_complete(purge_resources())
-loop.run_until_complete(close_sessions())
-loop.close()
+asyncio.run(delete_certificates())
+asyncio.run(delete_keys_and_secrets())
+asyncio.run(purge_resources())
+asyncio.run(close_sessions())
