@@ -22,7 +22,7 @@ import subprocess
 from urllib.parse import urlparse
 from urllib3.exceptions import SSLError
 
-from ci_tools.variables import in_ci
+from ci_tools.variables import in_ci, get_assets_directory
 
 from .config import PROXY_URL
 from .fake_credentials import FAKE_ACCESS_TOKEN, FAKE_ID, SERVICEBUS_FAKE_SAS, SANITIZED
@@ -388,10 +388,6 @@ def start_test_proxy(request) -> None:
                 log_suffix = _get_proxy_log_suffix()
                 log = open(os.path.join(root, f"_proxy_log_{log_suffix}.log"), "a")
 
-                # os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", log_suffix)
-                # if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
-                #     os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
-
             tool_name = prepare_local_tool(root)
 
             if requires_https:
@@ -405,17 +401,22 @@ def start_test_proxy(request) -> None:
             else:
                 passenv = {}
 
-            # When the proxy is started in context of a file, deletions of files under that directory crashes the test-proxy
+            # When the proxy is started in context of a directory, deletions of files under that directory crashes the test-proxy
             # due to how asp.net kestrel loads configuration files. We can disable this behavior by setting this environment
             # variable in env for the proxy process, which will allow us to clean up the --isolate directories without crashing
             # running proxies.
             passenv["DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE"] = "false"
 
+            # in CI, when multiple environments are running in parallel, we need to isolate the storage locations
+            # such that each proxy environment has its own storage location. This will prevent race conditions where the same
+            # check is accessing the same file storage as another parallel check
+            start_location = get_assets_directory(root, os.getenv("CHECK_ENV", ""))
+
             # If they are already set, override what we give the proxy with what is in os.environ
             passenv.update(os.environ)
 
             proc = subprocess.Popen(
-                shlex.split(f'{tool_name} start --storage-location="{root}" -- --urls "{PROXY_URL}"'),
+                shlex.split(f'{tool_name} start --storage-location="{start_location}" -- --urls "{PROXY_URL}"'),
                 stdout=log or subprocess.DEVNULL,
                 stderr=log or subprocess.STDOUT,
                 env=passenv,

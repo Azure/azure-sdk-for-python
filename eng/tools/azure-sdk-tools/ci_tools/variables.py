@@ -131,3 +131,18 @@ def set_envvar_defaults(settings: Optional[Dict[str, str]] = None) -> None:
     if settings:
         # this will override any defaults set prior in the case of override
         set_environment_from_dictionary(settings)
+
+def get_assets_directory(root: str, env_name: str) -> str:
+    """
+    Resolves the location of the assets directory for test proxy recordings, given a root directory.
+    Outside of CI, this will end up being the root directory itself.
+    """
+    if in_ci():
+        dir = os.path.join(root, "l", env_name)
+    else:
+        return root
+
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+    return dir
