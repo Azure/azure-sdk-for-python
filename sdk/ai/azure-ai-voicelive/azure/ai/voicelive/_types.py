@@ -12,3 +12,4 @@ if TYPE_CHECKING:
     from . import models as _models
 Voice = Union[str, "_models.OpenAIVoiceName", "_models.OpenAIVoice", "_models.AzureVoice"]
 ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceSelection"]
+FillerResponseConfig = Union["_models.BasicFillerResponseConfig", "_models.LlmFillerResponseConfig"]

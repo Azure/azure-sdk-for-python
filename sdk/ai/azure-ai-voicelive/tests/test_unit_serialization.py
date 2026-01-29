@@ -335,3 +335,62 @@ class TestSerializerIntegration:
 
         assert modalities_result == ["text", "audio"]
         assert formats_result == ["pcm16", "g711_ulaw"]
+
+
+class TestSerializationSecurity:
+    """Test security improvements in serialization (removed eval usage)."""
+
+    def test_serialize_basic_no_eval(self):
+        """Test that basic type serialization doesn't use eval()."""
+        from azure.ai.voicelive._utils.serialization import Serializer
+
+        serializer = Serializer()
+
+        # These should work without eval
+        assert serializer.serialize_basic("test", "str") == "test"
+        assert serializer.serialize_basic(42, "int") == 42
+        assert serializer.serialize_basic(3.14, "float") == 3.14
+        assert serializer.serialize_basic(True, "bool") is True
+
+    def test_serialize_basic_invalid_type_raises_error(self):
+        """Test that invalid data types raise TypeError instead of eval error."""
+        from azure.ai.voicelive._utils.serialization import Serializer
+
+        serializer = Serializer()
+
+        # Should raise TypeError for unsupported types, not execute arbitrary code
+        with pytest.raises(TypeError, match="Unknown basic data type"):
+            serializer.serialize_basic("test", "malicious_code")
+
+    def test_deserialize_basic_no_eval(self):
+        """Test that basic type deserialization doesn't use eval()."""
+        from azure.ai.voicelive._utils.serialization import Deserializer
+
+        deserializer = Deserializer()
+
+        # These should work without eval
+        assert deserializer.deserialize_basic("test", "str") == "test"
+        assert deserializer.deserialize_basic("42", "int") == 42
+        assert deserializer.deserialize_basic("3.14", "float") == 3.14
+
+    def test_deserialize_basic_invalid_type_raises_error(self):
+        """Test that invalid data types raise TypeError in deserialization."""
+        from azure.ai.voicelive._utils.serialization import Deserializer
+
+        deserializer = Deserializer()
+
+        # Should raise TypeError for unsupported types
+        with pytest.raises(TypeError, match="Unknown basic data type"):
+            deserializer.deserialize_basic("test", "unknown_type")
+
+    def test_security_bool_serialization(self):
+        """Test that bool serialization works correctly without eval."""
+        from azure.ai.voicelive._utils.serialization import Serializer
+
+        serializer = Serializer()
+
+        # Test bool specifically as it was changed from eval(data_type)(data)
+        assert serializer.serialize_basic(True, "bool") is True
+        assert serializer.serialize_basic(False, "bool") is False
+        assert serializer.serialize_basic(1, "bool") is True  # Truthy value
+        assert serializer.serialize_basic(0, "bool") is False  # Falsy value
