@@ -122,6 +122,12 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
     add_general_regex_sanitizer(regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC", value="eval-data-sanitized-timestamp")
 
+    # Sanitize Unix timestamps in eval names (from sample_redteam_evaluations.py)
+    # Pattern 1: "Red Team Agent Safety Evaluation -<timestamp>"
+    add_general_regex_sanitizer(regex=r"Evaluation -\d{10}", value="Evaluation -SANITIZED-TS")
+    # Pattern 2: "Eval Run for <agent_name> -<timestamp>" (agent name already sanitized)
+    add_general_regex_sanitizer(regex=r"sanitized-agent-name -\d{10}", value="sanitized-agent-name -SANITIZED-TS")
+
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 

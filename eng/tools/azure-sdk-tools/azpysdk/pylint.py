@@ -177,15 +177,16 @@ class pylint(Check):
                         )
                         results.append(e.returncode)
 
-                # Run samples with main pylintrc
+                # Run samples with samples_pylintrc
                 if os.path.exists(samples_dir):
                     try:
+                        samples_rcfile = os.path.join(REPO_ROOT, "eng/samples_pylintrc")
                         logger.info(
                             [
                                 executable,
                                 "-m",
                                 "pylint",
-                                "--rcfile={}".format(rcFileLocation),
+                                "--rcfile={}".format(samples_rcfile),
                                 "--output-format=parseable",
                                 samples_dir,
                             ]
@@ -196,7 +197,7 @@ class pylint(Check):
                                     executable,
                                     "-m",
                                     "pylint",
-                                    "--rcfile={}".format(rcFileLocation),
+                                    "--rcfile={}".format(samples_rcfile),
                                     "--output-format=parseable",
                                     samples_dir,
                                 ]

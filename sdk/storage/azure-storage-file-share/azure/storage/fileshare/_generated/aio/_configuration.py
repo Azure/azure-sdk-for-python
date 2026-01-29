@@ -21,6 +21,8 @@ class AzureFileStorageConfiguration:  # pylint: disable=too-many-instance-attrib
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param version: Specifies the version of the operation to use for this request. Required.
+    :type version: str
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation. Required.
     :type url: str
@@ -32,9 +34,6 @@ class AzureFileStorageConfiguration:  # pylint: disable=too-many-instance-attrib
     :param allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
      URI. Default value is None.
     :type allow_source_trailing_dot: bool
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2026-02-06". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
      overriding this default value may result in unsupported behavior.
@@ -43,23 +42,25 @@ class AzureFileStorageConfiguration:  # pylint: disable=too-many-instance-attrib
 
     def __init__(
         self,
+        version: str,
         url: str,
         file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        version: Literal["2026-02-06"] = kwargs.pop("version", "2026-02-06")
         file_range_write_from_url: Literal["update"] = kwargs.pop("file_range_write_from_url", "update")
 
+        if version is None:
+            raise ValueError("Parameter 'version' must not be None.")
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
 
+        self.version = version
         self.url = url
         self.file_request_intent = file_request_intent
         self.allow_trailing_dot = allow_trailing_dot
         self.allow_source_trailing_dot = allow_source_trailing_dot
-        self.version = version
         self.file_range_write_from_url = file_range_write_from_url
         kwargs.setdefault("sdk_moniker", "azurefilestorage/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

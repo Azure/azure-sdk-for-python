@@ -4130,7 +4130,6 @@ trigger:
             WorkflowAgentDefinition,
             AgentReference,
             PromptAgentDefinition,
-            ResponseStreamEventType,
         )
 
         self.cleanup()
@@ -4254,10 +4253,7 @@ trigger:
             # Consume the stream and track workflow actions
             workflow_action_count = 0
             for event in stream:
-                if (
-                    event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-                    and event.item.type == "workflow_action"
-                ):
+                if event.type == "response.output_item.added" and event.item.type == "workflow_action":
                     workflow_action_count += 1
 
             # Verify we got workflow actions during streaming
