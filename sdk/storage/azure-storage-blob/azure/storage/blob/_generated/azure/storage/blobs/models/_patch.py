@@ -7,207 +7,106 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Optional
+from typing import Optional
+from typing_extensions import TypedDict, NotRequired
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AppendPositionAccessConditions:
+class AppendPositionAccessConditions(TypedDict, total=False):
     """Parameter group for append position access conditions."""
 
-    def __init__(
-        self,
-        *,
-        max_size: Optional[int] = None,
-        append_position: Optional[int] = None,
-    ):
-        self.max_size = max_size
-        self.append_position = append_position
+    max_size: NotRequired[Optional[int]]
+    append_position: NotRequired[Optional[int]]
 
 
-class BlobHTTPHeaders:
+class BlobHTTPHeaders(TypedDict, total=False):
     """Parameter group for blob HTTP headers."""
 
-    def __init__(
-        self,
-        *,
-        blob_cache_control: Optional[str] = None,
-        blob_content_type: Optional[str] = None,
-        blob_content_md5: Optional[bytes] = None,
-        blob_content_encoding: Optional[str] = None,
-        blob_content_language: Optional[str] = None,
-        blob_content_disposition: Optional[str] = None,
-    ):
-        self.blob_cache_control = blob_cache_control
-        self.blob_content_type = blob_content_type
-        self.blob_content_md5 = blob_content_md5
-        self.blob_content_encoding = blob_content_encoding
-        self.blob_content_language = blob_content_language
-        self.blob_content_disposition = blob_content_disposition
+    blob_cache_control: NotRequired[Optional[str]]
+    blob_content_type: NotRequired[Optional[str]]
+    blob_content_md5: NotRequired[Optional[bytes]]
+    blob_content_encoding: NotRequired[Optional[str]]
+    blob_content_language: NotRequired[Optional[str]]
+    blob_content_disposition: NotRequired[Optional[str]]
 
 
-class BlobModifiedAccessConditions:
+class BlobModifiedAccessConditions(TypedDict, total=False):
     """Parameter group for blob modified access conditions."""
 
-    def __init__(
-        self,
-        *,
-        if_modified_since: Optional[str] = None,
-        if_unmodified_since: Optional[str] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-    ):
-        self.if_modified_since = if_modified_since
-        self.if_unmodified_since = if_unmodified_since
-        self.if_match = if_match
-        self.if_none_match = if_none_match
+    if_modified_since: NotRequired[Optional[str]]
+    if_unmodified_since: NotRequired[Optional[str]]
+    if_match: NotRequired[Optional[str]]
+    if_none_match: NotRequired[Optional[str]]
 
-
-class ContainerCpkScopeInfo:
+class ContainerCpkScopeInfo(TypedDict, total=False):
     """Parameter group for container CPK scope info."""
 
-    def __init__(
-        self,
-        *,
-        default_encryption_scope: Optional[str] = None,
-        prevent_encryption_scope_override: Optional[bool] = None,
-    ):
-        self.default_encryption_scope = default_encryption_scope
-        self.prevent_encryption_scope_override = prevent_encryption_scope_override
+    default_encryption_scope: NotRequired[Optional[str]]
+    prevent_encryption_scope_override: NotRequired[Optional[bool]]
 
 
-class CpkScopeInfo:
+class CpkScopeInfo(TypedDict, total=False):
     """Parameter group.
 
-    :ivar encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
+    encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
      encryption scope to use to encrypt the data provided in the request. If not specified,
      encryption is performed with the default account encryption scope.  For more information, see
      Encryption at Rest for Azure Storage Services.
-    :vartype encryption_scope: str
     """
 
-    def __init__(self, *, encryption_scope: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
-         encryption scope to use to encrypt the data provided in the request. If not specified,
-         encryption is performed with the default account encryption scope.  For more information, see
-         Encryption at Rest for Azure Storage Services.
-        :paramtype encryption_scope: str
-        """
-        self.encryption_scope = encryption_scope
+    encryption_scope: NotRequired[Optional[str]]
 
 
-class CpkInfo:
+class CpkInfo(TypedDict, total=False):
     """Parameter group for CPK info."""
 
-    def __init__(
-        self,
-        *,
-        encryption_key: Optional[str] = None,
-        encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[str] = None,
-    ):
-        self.encryption_key = encryption_key
-        self.encryption_key_sha256 = encryption_key_sha256
-        self.encryption_algorithm = encryption_algorithm
+    encryption_key: NotRequired[Optional[str]]
+    encryption_key_sha256: NotRequired[Optional[str]]
+    encryption_algorithm: NotRequired[Optional[str]]
 
-
-class ModifiedAccessConditions:
+class ModifiedAccessConditions(TypedDict, total=False):
     """Parameter group for modified access conditions."""
 
-    def __init__(
-        self,
-        *,
-        if_modified_since: Optional[str] = None,
-        if_unmodified_since: Optional[str] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_tags: Optional[str] = None,
-    ):
-        self.if_modified_since = if_modified_since
-        self.if_unmodified_since = if_unmodified_since
-        self.if_match = if_match
-        self.if_none_match = if_none_match
-        self.if_tags = if_tags
+    if_modified_since: NotRequired[Optional[str]]
+    if_unmodified_since: NotRequired[Optional[str]]
+    if_match: NotRequired[Optional[str]]
+    if_none_match: NotRequired[Optional[str]]
+    if_tags: NotRequired[Optional[str]]
 
-
-class QueryFormatType(Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The query format type."""
-
-    DELIMITED = "delimited"
-    JSON = "json"
-    ARROW = "arrow"
-    PARQUET = "parquet"
-
-
-class SequenceNumberAccessConditions:
+class SequenceNumberAccessConditions(TypedDict, total=False):
     """Parameter group for sequence number access conditions."""
 
-    def __init__(
-        self,
-        *,
-        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
-        if_sequence_number_less_than: Optional[int] = None,
-        if_sequence_number_equal_to: Optional[int] = None,
-    ):
-        self.if_sequence_number_less_than_or_equal_to = if_sequence_number_less_than_or_equal_to
-        self.if_sequence_number_less_than = if_sequence_number_less_than
-        self.if_sequence_number_equal_to = if_sequence_number_equal_to
+    if_sequence_number_less_than_or_equal_to: NotRequired[Optional[int]]
+    if_sequence_number_less_than: NotRequired[Optional[int]]
+    if_sequence_number_equal_to: NotRequired[Optional[int]]
 
 
-class SourceCpkInfo:
+class SourceCpkInfo(TypedDict, total=False):
     """Parameter group for source CPK info."""
 
-    def __init__(
-        self,
-        *,
-        source_encryption_key: Optional[str] = None,
-        source_encryption_key_sha256: Optional[str] = None,
-        source_encryption_algorithm: Optional[str] = None,
-    ):
-        self.source_encryption_key = source_encryption_key
-        self.source_encryption_key_sha256 = source_encryption_key_sha256
-        self.source_encryption_algorithm = source_encryption_algorithm
+    source_encryption_key: NotRequired[Optional[str]]
+    source_encryption_key_sha256: NotRequired[Optional[str]]
+    source_encryption_algorithm: NotRequired[Optional[str]]
 
-
-class SourceModifiedAccessConditions:
+class SourceModifiedAccessConditions(TypedDict, total=False):
     """Parameter group for source modified access conditions."""
 
-    def __init__(
-        self,
-        *,
-        source_if_modified_since: Optional[str] = None,
-        source_if_unmodified_since: Optional[str] = None,
-        source_if_match: Optional[str] = None,
-        source_if_none_match: Optional[str] = None,
-        source_if_tags: Optional[str] = None,
-    ):
-        self.source_if_modified_since = source_if_modified_since
-        self.source_if_unmodified_since = source_if_unmodified_since
-        self.source_if_match = source_if_match
-        self.source_if_none_match = source_if_none_match
-        self.source_if_tags = source_if_tags
+    source_if_modified_since: NotRequired[Optional[str]]
+    source_if_unmodified_since: NotRequired[Optional[str]]
+    source_if_match: NotRequired[Optional[str]]
+    source_if_none_match: NotRequired[Optional[str]]
+    source_if_tags: NotRequired[Optional[str]]
 
 
-class LeaseAccessConditions:
+class LeaseAccessConditions(TypedDict, total=False):
     """Parameter group.
 
-    :ivar lease_id: If specified, the operation only succeeds if the resource's lease is active and
+    lease_id: If specified, the operation only succeeds if the resource's lease is active and
     matches this ID.
-    :vartype lease_id: str
     """
 
-    def __init__(
-        self,
-        *,
-        lease_id: Optional[str] = None,
-    ):
-        """
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID.
-        :paramtype lease_id: str
-        """
-        self.lease_id = lease_id
+    lease_id: NotRequired[Optional[str]]
 
 
 __all__: list[str] = [
@@ -217,7 +116,6 @@ __all__: list[str] = [
     "ContainerCpkScopeInfo",
     "CpkInfo",
     "ModifiedAccessConditions",
-    "QueryFormatType",
     "SequenceNumberAccessConditions",
     "SourceCpkInfo",
     "CpkScopeInfo",
