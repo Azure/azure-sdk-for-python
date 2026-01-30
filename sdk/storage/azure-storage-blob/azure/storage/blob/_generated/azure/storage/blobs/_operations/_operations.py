@@ -2181,7 +2181,7 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
         _headers["x-ms-content-crc64"] = _SERIALIZER.header(
             "transactional_content_crc64", transactional_content_crc64, "bytearray"
         )
-    _headers["Range"] = _SERIALIZER.header("range", range, "str")
+    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if encryption_key is not None:

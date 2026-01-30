@@ -761,7 +761,7 @@ def _stage_block_options(
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
-    block_id = encode_base64(str(block_id))
+    block_id_bytes = encode_base64(str(block_id)).encode('utf-8')
     if isinstance(data, str):
         data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -781,7 +781,7 @@ def _stage_block_options(
                             encryption_algorithm=cpk.algorithm)
 
     options = {
-        'block_id': block_id,
+        'block_id': block_id_bytes,
         'content_length': length,
         'body': data,
         'transactional_content_md5': None,
@@ -813,7 +813,7 @@ def _stage_block_from_url_options(
         raise ValueError("Source offset value must not be None if length is set.")
     if source_length is not None and source_offset is not None:
         source_length = source_offset + source_length - 1
-    block_id = encode_base64(str(block_id))
+    block_id_bytes = encode_base64(str(block_id)).encode('utf-8')
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     range_header = None
     if source_offset is not None:
@@ -837,7 +837,7 @@ def _stage_block_from_url_options(
     options = {
         'copy_source_authorization': source_authorization,
         'file_request_intent': source_token_intent,
-        'block_id': block_id,
+        'block_id': block_id_bytes,
         'content_length': 0,
         'source_url': source_url,
         'source_range': range_header,
@@ -874,14 +874,15 @@ def _commit_block_list_options(
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
         if isinstance(block, BlobBlock):
+            block_id_bytes = encode_base64(str(block.id)).encode('utf-8')
             if block.state.value == 'committed':
-                cast(List[str], block_lookup.committed).append(encode_base64(str(block.id)))
+                cast(List[bytes], block_lookup.committed).append(block_id_bytes)
             elif block.state.value == 'uncommitted':
-                cast(List[str], block_lookup.uncommitted).append(encode_base64(str(block.id)))
+                cast(List[bytes], block_lookup.uncommitted).append(block_id_bytes)
             elif block_lookup.latest is not None:
-                block_lookup.latest.append(encode_base64(str(block.id)))
+                block_lookup.latest.append(block_id_bytes)
         else:
-            block_lookup.latest.append(encode_base64(str(block)))
+            block_lookup.latest.append(encode_base64(str(block)).encode('utf-8'))
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     blob_headers = None

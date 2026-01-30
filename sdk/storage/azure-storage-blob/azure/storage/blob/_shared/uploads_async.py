@@ -292,21 +292,23 @@ class BlockBlobChunkUploader(_ChunkUploader):
         # TODO: This is incorrect, but works with recording.
         index = f"{chunk_offset:032d}"
         block_id = encode_base64(url_quote(encode_base64(index)))
+        block_id_bytes = block_id.encode('utf-8')
         await self.service.stage_block(
-            block_id,
+            block_id_bytes,
             len(chunk_data),
             body=chunk_data,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options,
         )
-        return index, block_id
+        return index, block_id_bytes
 
     async def _upload_substream_block(self, index, block_stream):
         try:
             block_id = f"BlockId{(index//self.chunk_size):05}"
+            block_id_bytes = encode_base64(block_id).encode('utf-8')
             await self.service.stage_block(
-                block_id,
+                block_id_bytes,
                 len(block_stream),
                 block_stream,
                 data_stream_total=self.total_size,
@@ -315,7 +317,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
             )
         finally:
             block_stream.close()
-        return block_id
+        return block_id_bytes
 
 
 class PageBlobChunkUploader(_ChunkUploader):
