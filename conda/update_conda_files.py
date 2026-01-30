@@ -1105,3 +1105,14 @@ if __name__ == "__main__":
         )
         for pkg_name in mgmt_plane_release_log_results:
             print(f"- {pkg_name}")
+
+    print("\n=== Manual Steps for New Data Plane Packages ===")
+    print(
+        "- A dummy placeholder library needs to be requested on Conda for new data plane packages."
+    )
+    print("- A new AKA link needs to be created for each new release log.")
+    print(
+        "\nSee the generated PR description for further details. The new data plane package names are:"
+    )
+    for pkg_name in new_data_plane_names:
+        print(f"{pkg_name}")
