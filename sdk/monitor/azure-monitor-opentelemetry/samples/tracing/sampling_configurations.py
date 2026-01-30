@@ -40,19 +40,18 @@ from opentelemetry import trace
 
 """
     configure_azure_monitor (
-        "traces_per_second": 0.5,
+        traces_per_second: 0.5,
     ) 
 """
 
 # Using fixed percentage sampler
 # Set the OTEL_TRACES_SAMPLER environment variable to "microsoft.fixed_percentage"
 # Set the OTEL_TRACES_SAMPLER_ARG environment variable to 0.2; it must be a number between 0 and 1 or it defaults to 1.0.
-# When configuring sampling via `configure_azure_monitor`, the default sampler is rate limited. To use the classic Application Insights sampler instead, set `sampling_ratio` to 1.0 and `traces_per_second` to 0.0.
+# When configuring sampling via `configure_azure_monitor`, the default sampler is rate limited. To use the classic Application Insights sampler instead, set `sampling_ratio` to 1.0. # pylint: disable=line-too-long
 
 """
     configure_azure_monitor (
-        "sampling_ratio": 1.0,
-        "traces_per_second": 0.0,
+        sampling_ratio: 1.0,
     ) 
 """
 
@@ -64,7 +63,7 @@ from opentelemetry import trace
 
 """
     configure_azure_monitor (
-        "enable_trace_based_sampling_for_logs": True,
+        enable_trace_based_sampling_for_logs: True,
     ) 
 """
 
