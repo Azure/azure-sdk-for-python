@@ -135,7 +135,8 @@ class FoundryCBAgent:
 
                 async def gen_async(ex):
                     ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
-                    token = otel_context.attach(ctx)
+                    prev_ctx = otel_context.get_current()
+                    otel_context.attach(ctx)
                     seq = 0
                     try:
                         if ex:
@@ -162,7 +163,7 @@ class FoundryCBAgent:
                                 message=_format_error(ex),
                                 param="")
                             yield _event_to_sse_chunk(err)
-                        otel_context.detach(token)
+                        otel_context.attach(prev_ctx)
 
                 return StreamingResponse(
                     gen_async(ex),
