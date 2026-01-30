@@ -24,9 +24,11 @@ Avoid building functionality on speculation. Implement features only when they a
 - **Open/Closed Principle**: Software entities should be open for extension but closed for modification.
 - **Single Responsibility**: Each function, class, and module should have one clear purpose.
 - **Fail Fast**: Check for potential errors early and raise exceptions immediately when issues occur.
+- **Encapsulation**: Hide internal state and require all interaction to be performed through an object's methods.
 
 ### Implementation Patterns
 
+- **Type-Safe**: Prefer explicit, type‑safe structures (TypedDicts, dataclasses, enums, unions) over Dict, Any, or other untyped containers, unless there is no viable alternative.
 - **Explicit validation at boundaries**: Validate inputs and identifiers early; reject malformed descriptors and missing required fields.
 - **Separation of resolution and execution**: Keep discovery/selection separate from invocation to allow late binding and interchangeable implementations.
 - **Context-aware execution**: Thread request/user context through calls via scoped providers; avoid global mutable state.
@@ -37,8 +39,7 @@ Avoid building functionality on speculation. Implement features only when they a
 
 ## ✅ Work Process (required)
 
-- **Git Worktree**: Always work in git worktrees for isolated task branches, create worktrees from current branch in `./.worktrees/`.
-- **Before coding**: 1) confirm the task in `TASK.md` → **Now**. 2) create a worktree branch under `./.worktrees/tasks/<short-task-name>`.
+- **Before coding**: confirm the task in `TASK.md` → **Now**.
 - **While working**: Add new sub-tasks or TODOs discovered during development to `TASK.md` under a "Discovered During Work" section.
 - **After finishing**: mark the task done immediately, and note what changed (files/areas) in `TASK.md`.
 - **Update CHANGELOG.md only when required** by release policy.
