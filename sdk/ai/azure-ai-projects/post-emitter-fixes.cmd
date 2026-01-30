@@ -1,7 +1,7 @@
 REM
 REM To emit from TypeSpec, run this in the current folder: 
 REM
-REM   tsp-client update  --debug --local-spec-repo e:\src\azure-rest-api-specs-pr\specification\ai\Azure.AI.Projects
+REM   tsp-client update  --debug --local-spec-repo e:\src\azure-rest-api-specs\specification\ai-foundry\data-plane\Foundry
 REM
 REM (replace `e:\src\...` with the local folder containing up to date TypeSpec)
 REM
