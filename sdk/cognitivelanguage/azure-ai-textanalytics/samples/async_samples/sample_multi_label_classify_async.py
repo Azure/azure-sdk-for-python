@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_custom_multi_label_classification_async.py
+FILE: sample_multi_label_classify_async.py
 
 DESCRIPTION:
     This sample demonstrates how to run a **custom multi-label classification** action over text (async LRO).
 
 USAGE:
-    python sample_text_custom_multi_label_classification_async.py
+    python sample_multi_label_classify_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -30,7 +30,7 @@ OPTIONAL ENV VARS:
 
 # [START text_custom_multi_label_classification_async]
 import os
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
@@ -43,7 +43,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-async def sample_text_custom_multi_label_classification_async():
+async def sample_multi_label_classify_async():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -127,15 +127,15 @@ async def sample_text_custom_multi_label_classification_async():
                             f"\n[Other action] name={op_result.task_name}, "
                             f"status={op_result.status}, kind={op_result.kind}"
                         )
-                    except Exception:
-                        print("\n[Other action present]")
+                    except (AttributeError, TypeError) as e:
+                        print(f"\n[Other action present] Error: {e}")
 
 
 # [END text_custom_multi_label_classification_async]
 
 
 async def main():
-    await sample_text_custom_multi_label_classification_async()
+    await sample_multi_label_classify_async()
 
 
 if __name__ == "__main__":
