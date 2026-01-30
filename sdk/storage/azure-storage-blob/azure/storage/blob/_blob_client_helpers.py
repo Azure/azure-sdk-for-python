@@ -429,9 +429,11 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
         'timeout': kwargs.pop('timeout', None),
         'snapshot': kwargs.pop('snapshot', None),  # this is added for delete_blobs
         'delete_snapshots': delete_snapshots or None,
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
     options.update(kwargs)
     return options
 
@@ -720,16 +722,19 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     options = {
         'copy_source': source_url,
         'timeout': timeout,
-        'modified_access_conditions': dest_mod_conditions,
         'headers': headers,
         'cls': return_response_headers,
     }
+    if dest_mod_conditions:
+        options.update(dest_mod_conditions)
 
     if not incremental_copy:
         source_mod_conditions = get_source_conditions(kwargs)
         dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
-        options['source_modified_access_conditions'] = source_mod_conditions
-        options['lease_access_conditions'] = dest_access_conditions
+        if source_mod_conditions:
+            options.update(source_mod_conditions)
+        if dest_access_conditions:
+            options.update(dest_access_conditions)
         options['tier'] = tier.value if tier else None
         options['seal_blob'] = kwargs.pop('seal_destination_blob', None)
         options['blob_tags_string'] = blob_tags_string
@@ -744,8 +749,9 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
         copy_id = copy_id['copy_id']
     options = {
         'copy_id': copy_id,
-        'lease_access_conditions': access_conditions,
         'timeout': kwargs.pop('timeout', None)}
+    if access_conditions:
+        options.update(access_conditions)
     options.update(kwargs)
     return options
 
@@ -990,8 +996,6 @@ def _get_page_ranges_options(
     )
     options = {
         'snapshot': snapshot,
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
         'timeout': kwargs.pop('timeout', None),
         'range': page_range}
     if previous_snapshot_diff:
@@ -1002,6 +1006,10 @@ def _get_page_ranges_options(
                 options['prevsnapshot'] = previous_snapshot_diff['snapshot'] # type: ignore
             except TypeError:
                 options['prevsnapshot'] = previous_snapshot_diff
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
     options.update(kwargs)
     return options
 
@@ -1018,9 +1026,11 @@ def _set_sequence_number_options(
         'sequence_number_action': sequence_number_action,
         'timeout': kwargs.pop('timeout', None),
         'blob_sequence_number': sequence_number,
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
         'cls': return_response_headers}
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
     options.update(kwargs)
     return options
 
