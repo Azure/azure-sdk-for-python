@@ -96,47 +96,77 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
+def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> LeaseAccessConditions:
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
         lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+    if lease_id:
+        return LeaseAccessConditions(lease_id=lease_id)
+    return LeaseAccessConditions()
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
-    return ModifiedAccessConditions(
-        if_modified_since=kwargs.pop('if_modified_since', None),
-        if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        etag=kwargs.pop('etag', None),
-        match_condition=kwargs.pop('match_condition', None),
-        if_tags=kwargs.pop('if_tags_match_condition', None)
-    )
+    conditions: ModifiedAccessConditions = {}
+    if_modified_since = kwargs.pop('if_modified_since', None)
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    etag = kwargs.pop('etag', None)
+    match_condition = kwargs.pop('match_condition', None)
+    if_tags = kwargs.pop('if_tags_match_condition', None)
+    if if_modified_since is not None:
+        conditions['if_modified_since'] = if_modified_since
+    if if_unmodified_since is not None:
+        conditions['if_unmodified_since'] = if_unmodified_since
+    if etag is not None:
+        conditions['etag'] = etag
+    if match_condition is not None:
+        conditions['match_condition'] = match_condition
+    if if_tags is not None:
+        conditions['if_tags'] = if_tags
+    return conditions
 
 
 def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessConditions:
-    return BlobModifiedAccessConditions(
-        if_modified_since=kwargs.pop('if_modified_since', None),
-        if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        etag=kwargs.pop('etag', None),
-        match_condition=kwargs.pop('match_condition', None),
-    )
+    conditions: BlobModifiedAccessConditions = {}
+    if_modified_since = kwargs.pop('if_modified_since', None)
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    etag = kwargs.pop('etag', None)
+    match_condition = kwargs.pop('match_condition', None)
+    if if_modified_since is not None:
+        conditions['if_modified_since'] = if_modified_since
+    if if_unmodified_since is not None:
+        conditions['if_unmodified_since'] = if_unmodified_since
+    if etag is not None:
+        conditions['etag'] = etag
+    if match_condition is not None:
+        conditions['match_condition'] = match_condition
+    return conditions
 
 
 def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
-    return SourceModifiedAccessConditions(
-        source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-        source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-        source_etag=kwargs.pop('source_etag', None),
-        source_match_condition=kwargs.pop('source_match_condition', None),
-        source_if_tags=kwargs.pop('source_if_tags_match_condition', None)
-    )
+    conditions: SourceModifiedAccessConditions = {}
+    source_if_modified_since = kwargs.pop('source_if_modified_since', None)
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)
+    source_etag = kwargs.pop('source_etag', None)
+    source_match_condition = kwargs.pop('source_match_condition', None)
+    source_if_tags = kwargs.pop('source_if_tags_match_condition', None)
+    if source_if_modified_since is not None:
+        conditions['source_if_modified_since'] = source_if_modified_since
+    if source_if_unmodified_since is not None:
+        conditions['source_if_unmodified_since'] = source_if_unmodified_since
+    if source_etag is not None:
+        conditions['source_etag'] = source_etag
+    if source_match_condition is not None:
+        conditions['source_match_condition'] = source_match_condition
+    if source_if_tags is not None:
+        conditions['source_if_tags'] = source_if_tags
+    return conditions
 
 
-def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[CpkScopeInfo]:
+def get_cpk_scope_info(kwargs: Dict[str, Any]) -> CpkScopeInfo:
     if 'encryption_scope' in kwargs:
         return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
-    return None
+    return CpkScopeInfo()
 
 
 def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:

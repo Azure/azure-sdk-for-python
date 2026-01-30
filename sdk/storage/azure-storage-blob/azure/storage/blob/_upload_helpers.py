@@ -254,8 +254,9 @@ def upload_page_blob(
                 kwargs['encryptor'] = encryptor
                 kwargs['padder'] = padder
 
-        # TODO: kept because upload_data_chunks rewrites the kwargs
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
+        # Set etag condition for subsequent chunk uploads
+        kwargs['etag'] = response['etag']
+        kwargs['match_condition'] = MatchConditions.IfNotModified
         return cast(Dict[str, Any], upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,
