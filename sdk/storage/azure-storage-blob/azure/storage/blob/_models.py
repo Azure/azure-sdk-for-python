@@ -278,6 +278,7 @@ class Metrics(GeneratedMetrics):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
+        super(GeneratedMetrics, self).__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
@@ -319,6 +320,7 @@ class StaticWebsite(GeneratedStaticWebsite):
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
+        super(GeneratedStaticWebsite, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
             self.index_document = kwargs.get('index_document')
