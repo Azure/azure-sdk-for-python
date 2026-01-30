@@ -879,7 +879,7 @@ def build_blob_download_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
-    accept = _headers.pop("Accept", "application/octet-stream")
+    accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
     _url = "/"
@@ -895,7 +895,7 @@ def build_blob_download_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["Range"] = _SERIALIZER.header("range", range, "str")
+        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if range_get_content_md5 is not None:

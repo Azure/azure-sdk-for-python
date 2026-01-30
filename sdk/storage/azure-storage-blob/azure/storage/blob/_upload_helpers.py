@@ -238,7 +238,7 @@ def upload_page_blob(
 
         response = cast(Dict[str, Any], client.create(
             content_length=0,
-            blob_content_length=length,
+            size=length,
             blob_sequence_number=None,  # type: ignore [arg-type]
             blob_tags_string=blob_tags_string,
             tier=tier,
@@ -297,10 +297,15 @@ def upload_append_blob(  # pylint: disable=unused-argument
         append_conditions = AppendPositionAccessConditions(
             max_size=kwargs.pop('maxsize_condition', None),
             append_position=None)
-        if append_conditions:
-            kwargs.update(append_conditions)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
         progress_hook = kwargs.pop('progress_hook', None)
+
+        # Create a copy of kwargs for create() that excludes append-specific conditions
+        create_kwargs = {k: v for k, v in kwargs.items() if k not in ('max_size', 'append_position')}
+
+        # Add append_conditions to kwargs for append_block operations
+        if append_conditions:
+            kwargs.update(append_conditions)
 
         try:
             if overwrite:
@@ -308,7 +313,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                     content_length=0,
                     headers=headers,
                     blob_tags_string=blob_tags_string,
-                    **kwargs)
+                    **create_kwargs)
             return cast(Dict[str, Any], upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,
@@ -335,7 +340,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 content_length=0,
                 headers=headers,
                 blob_tags_string=blob_tags_string,
-                **kwargs)
+                **create_kwargs)
             return cast(Dict[str, Any], upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,
