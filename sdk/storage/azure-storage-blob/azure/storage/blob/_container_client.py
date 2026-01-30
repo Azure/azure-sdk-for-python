@@ -30,7 +30,7 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._generated.azure.storage.blobs import AzureBlobStorage
-from ._generated.azure.storage.blobs.models import SignedIdentifier
+from ._generated.azure.storage.blobs.models import SignedIdentifier, SignedIdentifiers
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
     BlobNamesPaged,
@@ -712,7 +712,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             process_storage_error(error)
         return {
             'public_access': response.get('blob_public_access'),
-            'signed_identifiers': identifiers or []
+            'signed_identifiers': identifiers.items_property or []
         }
 
     @distributed_trace
@@ -776,7 +776,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
-        signed_identifiers = identifiers # type: ignore
+        signed_identifiers = SignedIdentifiers(items_property=identifiers) # type: ignore
         lease = kwargs.pop('lease', None)
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)

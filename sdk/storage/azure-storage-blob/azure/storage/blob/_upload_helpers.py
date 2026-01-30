@@ -56,7 +56,7 @@ def _convert_mod_error(error):
     raise overwrite_error
 
 
-def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
+def _any_conditions(**kwargs):
     return any([
         kwargs.get('if_modified_since'),
         kwargs.get('if_unmodified_since'),
