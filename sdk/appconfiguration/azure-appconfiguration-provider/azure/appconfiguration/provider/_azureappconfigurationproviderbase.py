@@ -116,13 +116,6 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
 
     # Validate feature flag selectors don't use snapshots
     feature_flag_selectors = kwargs.get("feature_flag_selectors")
-    if feature_flag_selectors:
-        for selector in feature_flag_selectors:
-            if hasattr(selector, "snapshot_name") and selector.snapshot_name is not None:
-                raise ValueError(
-                    "snapshot_name cannot be used with feature_flag_selectors. "
-                    "Use snapshot_name with regular selects instead to load feature flags from snapshots."
-                )
 
     # Determine Key Vault usage
     uses_key_vault = (

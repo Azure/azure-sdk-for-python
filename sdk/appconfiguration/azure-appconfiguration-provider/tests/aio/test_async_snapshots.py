@@ -87,20 +87,6 @@ class TestSnapshotSupport:
         assert selector.tag_filters == ["env=prod"]
         assert selector.snapshot_name is None
 
-    @pytest.mark.asyncio
-    async def test_feature_flag_selectors_with_snapshot_raises_error(self):
-        """Test that feature_flag_selectors with snapshot_name raises ValueError during validation."""
-        with pytest.raises(
-            ValueError,
-            match=r"snapshot_name cannot be used with feature_flag_selectors\. "
-            r"Use snapshot_name with regular selects instead to load feature flags from snapshots\.",
-        ):
-            await load(
-                connection_string="Endpoint=test;Id=test;Secret=test",
-                feature_flag_enabled=True,
-                feature_flag_selectors=[SettingSelector(snapshot_name="my-snapshot")],
-            )
-
 
 class TestSnapshotProviderIntegration(AppConfigTestCase):
     """Integration tests for snapshot functionality with recorded tests."""
@@ -157,18 +143,6 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
         ) as provider:
             # Verify we can access the configuration (message is set up by setup_configs)
             assert "message" in provider
-
-    @app_config_decorator_async
-    @recorded_by_proxy_async
-    async def test_snapshot_selector_parameter_validation_in_provider(self, appconfiguration_connection_string):
-        """Test that snapshot selector parameter validation works when loading provider."""
-        # Test that feature flag selectors with snapshots are rejected
-        with pytest.raises(ValueError, match="snapshot_name cannot be used with feature_flag_selectors"):
-            await self.create_client(
-                connection_string=appconfiguration_connection_string,
-                feature_flag_enabled=True,
-                feature_flag_selectors=[SettingSelector(snapshot_name="test-snapshot")],
-            )
 
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
     @app_config_decorator_async
@@ -269,7 +243,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                     ),
                 ]
 
-                # Update the original settings with new values
+                # Update the original settings with new values and add a new key
                 new_key = ConfigurationSetting(key="new_key_added_after_load", value="new_value", label=NULL_CHAR)
                 await set_test_settings_async(sdk_client, modified_settings + [new_key])
 
@@ -375,12 +349,9 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             # Load provider using snapshot for config settings and regular selectors for feature flags
             async with await self.create_client(
                 connection_string=appconfiguration_connection_string,
-                selects=[
-                    SettingSelector(snapshot_name=snapshot_name),  # Snapshot data (config + snapshot FF)
-                ],
                 feature_flag_enabled=True,  # Enable feature flags
                 feature_flag_selectors=[
-                    SettingSelector(key_filter="RegularFeature*"),  # Load only RegularFeature* flags
+                    SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
                 ],
             ) as provider:
 
@@ -393,29 +364,24 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 feature_flag_ids = {ff["id"]: ff["enabled"] for ff in feature_flags}
 
                 # Regular feature flags should be loaded
-                assert "RegularFeature" in feature_flag_ids, "RegularFeature should be loaded via regular selector"
-                assert feature_flag_ids["RegularFeature"] is True
-                assert "RegularFeatureDisabled" in feature_flag_ids, "RegularFeatureDisabled should be loaded"
-                assert feature_flag_ids["RegularFeatureDisabled"] is False
-
-                # Snapshot-only feature flag should NOT be loaded as a feature flag
                 assert (
-                    "SnapshotOnlyFeature" not in feature_flag_ids
-                ), "SnapshotOnlyFeature should not be loaded as FF from snapshot"
+                    "RegularFeature" not in feature_flag_ids
+                ), "RegularFeature should not be loaded via regular selector"
+                assert "RegularFeatureDisabled" not in feature_flag_ids, "RegularFeatureDisabled should not be loaded"
+
+                # Snapshot-only feature flag should be loaded as a feature flag
+                assert (
+                    "SnapshotOnlyFeature" in feature_flag_ids
+                ), "SnapshotOnlyFeature should be loaded as FF from snapshot"
 
                 # Verify exactly 2 feature flags are loaded (the regular ones)
                 assert len(feature_flags) == 2, f"Expected 2 feature flags, got {len(feature_flags)}"
 
-            # Modify the regular feature flags
+            # Modify the feature flags in the snapshot
             modified_feature_flags = [
                 FeatureFlagConfigurationSetting(
-                    feature_id="RegularFeature",
+                    feature_id="SnapshotOnlyFeature",
                     enabled=False,  # Changed from True to False
-                    label=NULL_CHAR,
-                ),
-                FeatureFlagConfigurationSetting(
-                    feature_id="RegularFeatureDisabled",
-                    enabled=True,  # Changed from False to True
                     label=NULL_CHAR,
                 ),
             ]
@@ -425,18 +391,16 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             # Load a fresh provider without snapshot to verify current feature flag values
             async with await self.create_client(
                 connection_string=appconfiguration_connection_string,
-                selects=[SettingSelector(key_filter="ff_snapshot_test_*")],
                 feature_flag_enabled=True,
                 feature_flag_selectors=[
-                    SettingSelector(key_filter="RegularFeature*"),
+                    SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
                 ],
             ) as provider_current:
 
-                # Current feature flag values should be the modified ones
+                # Current feature flag values should be the original ones from snapshot (immutable)
                 current_feature_flags = provider_current.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
                 current_ff_ids = {ff["id"]: ff["enabled"] for ff in current_feature_flags}
-                assert current_ff_ids.get("RegularFeature") is False  # Modified value
-                assert current_ff_ids.get("RegularFeatureDisabled") is True  # Modified value
+                assert current_ff_ids.get("SnapshotOnlyFeature") is True  # Original value from snapshot (not modified)
 
         finally:
             # Clean up test resources
