@@ -54,11 +54,10 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs['if_none_match'] = '*'
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
-        blob_headers = kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
 
@@ -85,7 +84,6 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             response = cast(Dict[str, Any], await client.upload(
                 body=data,  # type: ignore [arg-type]
                 content_length=adjusted_count,
-                blob_http_headers=blob_headers,
                 headers=headers,
                 cls=return_response_headers,
                 validate_content=validate_content,
@@ -162,7 +160,6 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         block_lookup.latest = block_ids
         return cast(Dict[str, Any], await client.commit_block_list(
             block_lookup,
-            blob_http_headers=blob_headers,
             cls=return_response_headers,
             validate_content=validate_content,
             headers=headers,
@@ -195,7 +192,7 @@ async def upload_page_blob(
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs['if_none_match'] = '*'
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
@@ -222,7 +219,6 @@ async def upload_page_blob(
             content_length=0,
             blob_content_length=length,
             blob_sequence_number=None,  # type: ignore [arg-type]
-            blob_http_headers=kwargs.pop('blob_headers', None),
             blob_tags_string=blob_tags_string,
             tier=tier,
             cls=return_response_headers,
@@ -274,7 +270,6 @@ async def upload_append_blob(  # pylint: disable=unused-argument
     try:
         if length == 0:
             return {}
-        blob_headers = kwargs.pop('blob_headers', None)
         append_conditions = AppendPositionAccessConditions(
             max_size=kwargs.pop('maxsize_condition', None),
             append_position=None)
@@ -285,7 +280,6 @@ async def upload_append_blob(  # pylint: disable=unused-argument
             if overwrite:
                 await client.create(
                     content_length=0,
-                    blob_http_headers=blob_headers,
                     headers=headers,
                     blob_tags_string=blob_tags_string,
                     **kwargs)
@@ -314,7 +308,6 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                     raise error from exc
             await client.create(
                 content_length=0,
-                blob_http_headers=blob_headers,
                 headers=headers,
                 blob_tags_string=blob_tags_string,
                 **kwargs)

@@ -1155,6 +1155,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        if access_conditions:
+            kwargs.update(access_conditions)
+        if mod_conditions:
+            kwargs.update(mod_conditions)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -1163,6 +1167,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+            kwargs.update(cpk_info)
         try:
             cls_method = kwargs.pop('cls', None)
             if cls_method:
@@ -1171,10 +1176,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 timeout=kwargs.pop('timeout', None),
                 version_id=version_id,
                 snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)

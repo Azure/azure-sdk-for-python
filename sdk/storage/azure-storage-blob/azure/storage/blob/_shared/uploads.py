@@ -55,7 +55,11 @@ def upload_data_chunks(
     parallel = max_concurrency > 1
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("modified_access_conditions", None)
+
+    if kwargs.get("modified_access_conditions"):
+        access_conditions = kwargs.pop("modified_access_conditions")
+        kwargs.update(access_conditions)
 
     uploader = uploader_class(
         service=service,
