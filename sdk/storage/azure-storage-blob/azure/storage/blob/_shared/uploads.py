@@ -10,6 +10,7 @@ from itertools import islice
 from math import ceil
 from threading import Lock
 
+from azure.core import MatchConditions
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
@@ -53,13 +54,10 @@ def upload_data_chunks(
 ):
 
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel and ("etag" in kwargs or "match_condition" in kwargs):
         # Access conditions do not work with parallelism
-        kwargs.pop("modified_access_conditions", None)
-
-    if kwargs.get("modified_access_conditions"):
-        access_conditions = kwargs.pop("modified_access_conditions")
-        kwargs.update(access_conditions)
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
     uploader = uploader_class(
         service=service,
@@ -97,9 +95,10 @@ def upload_substream_blocks(
     **kwargs,
 ):
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel and ("etag" in kwargs or "match_condition" in kwargs):
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -257,7 +256,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 class BlockBlobChunkUploader(_ChunkUploader):
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("modified_access_conditions", None)
+        # Block blob uploads don't use etag conditions during chunk upload
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
@@ -315,8 +316,9 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+            if not self.parallel and self.request_options.get("etag") is None:
+                self.request_options["etag"] = self.response_headers["etag"]
+                self.request_options["match_condition"] = MatchConditions.IfNotModified
 
     def _upload_substream_block(self, index, block_stream):
         pass
@@ -370,8 +372,9 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+        if not self.parallel and self.request_options.get("etag") is None:
+            self.request_options["etag"] = self.response_headers["etag"]
+            self.request_options["match_condition"] = MatchConditions.IfNotModified
 
     def _upload_substream_block(self, index, block_stream):
         try:

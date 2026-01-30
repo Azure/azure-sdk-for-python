@@ -1058,6 +1058,7 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
+        super(GenAccessPolicy, self).__init__()
         self.start = start
         self.expiry = expiry
         self.permission = permission

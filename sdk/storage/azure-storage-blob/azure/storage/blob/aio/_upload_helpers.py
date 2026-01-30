@@ -8,6 +8,7 @@ import inspect
 from io import SEEK_SET, UnsupportedOperation
 from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 
 from ._encryption_async import GCMBlobEncryptionStream
@@ -22,7 +23,6 @@ from .._encryption import (
 from .._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
     BlockLookupList,
-    ModifiedAccessConditions
 )
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import (
@@ -54,7 +54,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['if_none_match'] = '*'
+            kwargs['match_condition'] = MatchConditions.IfMissing
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
@@ -192,7 +192,7 @@ async def upload_page_blob(
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['if_none_match'] = '*'
+            kwargs['match_condition'] = MatchConditions.IfMissing
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
@@ -233,7 +233,8 @@ async def upload_page_blob(
                 kwargs['encryptor'] = encryptor
                 kwargs['padder'] = padder
 
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
+        kwargs['etag'] = response['etag']
+        kwargs['match_condition'] = MatchConditions.IfNotModified
         return cast(Dict[str, Any], await upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,
