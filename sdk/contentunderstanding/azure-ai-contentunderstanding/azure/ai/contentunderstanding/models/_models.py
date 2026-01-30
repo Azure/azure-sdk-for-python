@@ -83,8 +83,8 @@ class AnalyzeResult(_Model):
     :vartype created_at: ~datetime.datetime
     :ivar warnings: Warnings encountered while analyzing the document.
     :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar string_encoding:   The string encoding format for content spans in the response.
-       Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
+    :ivar string_encoding:   The string encoding format for content spans in the response. Possible
+     values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
     :vartype string_encoding: str
     :ivar contents: The extracted content. Required.
     :vartype contents: list[~azure.ai.contentunderstanding.models.MediaContent]
@@ -107,8 +107,8 @@ class AnalyzeResult(_Model):
     string_encoding: Optional[str] = rest_field(
         name="stringEncoding", visibility=["read", "create", "update", "delete", "query"]
     )
-    """  The string encoding format for content spans in the response.
-       Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.\")."""
+    """The string encoding format for content spans in the response. Possible values are 'codePoint',
+     'utf16', and ``utf8``.  Default is ``codePoint``.\")."""
     contents: list["_models.MediaContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The extracted content. Required."""
 
@@ -538,8 +538,8 @@ class ContentAnalyzer(_Model):
     :vartype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
     :ivar knowledge_sources: Additional knowledge sources used to enhance the analyzer.
     :vartype knowledge_sources: list[~azure.ai.contentunderstanding.models.KnowledgeSource]
-    :ivar models: Mapping of model roles to specific model names.
-     Ex. { "completion": "gpt-4.1", "embedding": "text-embedding-3-large" }.
+    :ivar models: Mapping of model roles to specific model names. Ex. { "completion": "gpt-4.1",
+     "embedding": "text-embedding-3-large" }.
     :vartype models: dict[str, str]
     :ivar supported_models: Chat completion and embedding models supported by the analyzer.
     :vartype supported_models: ~azure.ai.contentunderstanding.models.SupportedModels
@@ -578,8 +578,8 @@ class ContentAnalyzer(_Model):
     )
     """Additional knowledge sources used to enhance the analyzer."""
     models: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
-    """Mapping of model roles to specific model names.
-     Ex. { \"completion\": \"gpt-4.1\", \"embedding\": \"text-embedding-3-large\" }."""
+    """Mapping of model roles to specific model names. Ex. { \"completion\": \"gpt-4.1\",
+     \"embedding\": \"text-embedding-3-large\" }."""
     supported_models: Optional["_models.SupportedModels"] = rest_field(name="supportedModels", visibility=["read"])
     """Chat completion and embedding models supported by the analyzer."""
 
@@ -699,8 +699,8 @@ class ContentAnalyzerConfig(_Model):
     :vartype enable_segment: bool
     :ivar segment_per_page: Force segmentation of document content by page.
     :vartype segment_per_page: bool
-    :ivar omit_content: Omit the content for this analyzer from analyze result.
-     Only return content(s) from additional analyzers specified in contentCategories, if any.
+    :ivar omit_content: Omit the content for this analyzer from analyze result. Only return
+     content(s) from additional analyzers specified in contentCategories, if any.
     :vartype omit_content: bool
     """
 
@@ -768,8 +768,8 @@ class ContentAnalyzerConfig(_Model):
     omit_content: Optional[bool] = rest_field(
         name="omitContent", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Omit the content for this analyzer from analyze result.
-     Only return content(s) from additional analyzers specified in contentCategories, if any."""
+    """Omit the content for this analyzer from analyze result. Only return content(s) from additional
+     analyzers specified in contentCategories, if any."""
 
     @overload
     def __init__(
@@ -1065,16 +1065,14 @@ class ContentSpan(_Model):
 class ContentUnderstandingDefaults(_Model):
     """default settings for this Content Understanding resource.
 
-    :ivar model_deployments: Mapping of model names to deployments.
-     Ex. { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
-     "myTextEmbedding3LargeDeployment" }. Required.
+    :ivar model_deployments: Mapping of model names to deployments. Ex. { "gpt-4.1":
+     "myGpt41Deployment", "text-embedding-3-large": "myTextEmbedding3LargeDeployment" }. Required.
     :vartype model_deployments: dict[str, str]
     """
 
     model_deployments: dict[str, str] = rest_field(name="modelDeployments", visibility=["read", "create", "update"])
-    """Mapping of model names to deployments.
-     Ex. { \"gpt-4.1\": \"myGpt41Deployment\", \"text-embedding-3-large\":
-     \"myTextEmbedding3LargeDeployment\" }. Required."""
+    """Mapping of model names to deployments. Ex. { \"gpt-4.1\": \"myGpt41Deployment\",
+     \"text-embedding-3-large\": \"myTextEmbedding3LargeDeployment\" }. Required."""
 
     @overload
     def __init__(
@@ -1583,9 +1581,9 @@ class DocumentContent(MediaContent, discriminator="document"):
     :vartype start_page_number: int
     :ivar end_page_number: End page number (1-indexed) of the content. Required.
     :vartype end_page_number: int
-    :ivar unit: Length unit used by the width, height, and source properties.
-     For images/tiff, the default unit is pixel.  For PDF, the default unit is inch. Known values
-     are: "pixel" and "inch".
+    :ivar unit: Length unit used by the width, height, and source properties. For images/tiff, the
+     default unit is pixel.  For PDF, the default unit is inch. Known values are: "pixel" and
+     "inch".
     :vartype unit: str or ~azure.ai.contentunderstanding.models.LengthUnit
     :ivar pages: List of pages in the document.
     :vartype pages: list[~azure.ai.contentunderstanding.models.DocumentPage]
@@ -1620,9 +1618,8 @@ class DocumentContent(MediaContent, discriminator="document"):
     unit: Optional[Union[str, "_models.LengthUnit"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Length unit used by the width, height, and source properties.
-     For images/tiff, the default unit is pixel.  For PDF, the default unit is inch. Known values
-     are: \"pixel\" and \"inch\"."""
+    """Length unit used by the width, height, and source properties. For images/tiff, the default unit
+     is pixel.  For PDF, the default unit is inch. Known values are: \"pixel\" and \"inch\"."""
     pages: Optional[list["_models.DocumentPage"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1986,9 +1983,8 @@ class DocumentPage(_Model):
     :vartype height: float
     :ivar spans: Span(s) associated with the page in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
-    :ivar angle: The general orientation of the content in clockwise direction,
-     measured in degrees between (-180, 180].
-     Only if enableOcr is true.
+    :ivar angle: The general orientation of the content in clockwise direction, measured in degrees
+     between (-180, 180]. Only if enableOcr is true.
     :vartype angle: float
     :ivar words: List of words in the page.  Only if enableOcr and returnDetails are true.
     :vartype words: list[~azure.ai.contentunderstanding.models.DocumentWord]
@@ -2013,9 +2009,8 @@ class DocumentPage(_Model):
     )
     """Span(s) associated with the page in the markdown content."""
     angle: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The general orientation of the content in clockwise direction,
-     measured in degrees between (-180, 180].
-     Only if enableOcr is true."""
+    """The general orientation of the content in clockwise direction, measured in degrees between
+     (-180, 180]. Only if enableOcr is true."""
     words: Optional[list["_models.DocumentWord"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2060,8 +2055,8 @@ class DocumentPage(_Model):
 
 
 class DocumentParagraph(_Model):
-    """Paragraph in a document, generally consisting of an contiguous sequence of lines
-    with common alignment and spacing.
+    """Paragraph in a document, generally consisting of an contiguous sequence of lines with common
+    alignment and spacing.
 
     :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
      "pageNumber", "title", "sectionHeading", "footnote", and "formulaBlock".
@@ -2286,9 +2281,9 @@ class DocumentTableCell(_Model):
 
 
 class DocumentWord(_Model):
-    """Word in a document, consisting of a contiguous sequence of characters.
-    For non-space delimited languages, such as Chinese, Japanese, and Korean,
-    each character is represented as its own word.
+    """Word in a document, consisting of a contiguous sequence of characters. For non-space delimited
+    languages, such as Chinese, Japanese, and Korean, each character is represented as its own
+    word.
 
     :ivar content: Word text. Required.
     :vartype content: str
@@ -2866,13 +2861,13 @@ class TranscriptWord(_Model):
 class UsageDetails(_Model):
     """Usage details.
 
-    :ivar document_pages_minimal: The number of document pages processed at the minimal level.
-     For documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted
-     as one page.
+    :ivar document_pages_minimal: The number of document pages processed at the minimal level. For
+     documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted as
+     one page.
     :vartype document_pages_minimal: int
-    :ivar document_pages_basic: The number of document pages processed at the basic level.
-     For documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted
-     as one page.
+    :ivar document_pages_basic: The number of document pages processed at the basic level. For
+     documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted as
+     one page.
     :vartype document_pages_basic: int
     :ivar document_pages_standard: The number of document pages processed at the standard level.
      For documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted
@@ -2893,21 +2888,18 @@ class UsageDetails(_Model):
     document_pages_minimal: Optional[int] = rest_field(
         name="documentPagesMinimal", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The number of document pages processed at the minimal level.
-     For documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted
-     as one page."""
+    """The number of document pages processed at the minimal level. For documents without explicit
+     pages (ex. txt, html), every 3000 UTF-16 characters is counted as one page."""
     document_pages_basic: Optional[int] = rest_field(
         name="documentPagesBasic", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The number of document pages processed at the basic level.
-     For documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted
-     as one page."""
+    """The number of document pages processed at the basic level. For documents without explicit pages
+     (ex. txt, html), every 3000 UTF-16 characters is counted as one page."""
     document_pages_standard: Optional[int] = rest_field(
         name="documentPagesStandard", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The number of document pages processed at the standard level.
-     For documents without explicit pages (ex. txt, html), every 3000 UTF-16 characters is counted
-     as one page."""
+    """The number of document pages processed at the standard level. For documents without explicit
+     pages (ex. txt, html), every 3000 UTF-16 characters is counted as one page."""
     audio_hours: Optional[float] = rest_field(
         name="audioHours", visibility=["read", "create", "update", "delete", "query"]
     )

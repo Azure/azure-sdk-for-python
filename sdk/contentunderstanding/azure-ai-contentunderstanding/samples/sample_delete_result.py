@@ -60,9 +60,7 @@ def main() -> None:
 
     # [START analyze_and_delete_result]
     # You can replace this URL with your own invoice file URL
-    document_url = (
-        "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
-    )
+    document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
 
     # Step 1: Analyze and wait for completion
     analyze_operation = client.begin_analyze(

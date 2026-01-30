@@ -50,7 +50,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
         """
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
@@ -148,7 +148,9 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_with_classifier_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
+    async def test_sample_analyze_with_classifier_async(
+        self, contentunderstanding_endpoint: str, **kwargs
+    ) -> Dict[str, str]:
         """Test analyzing a document with a classifier to categorize content into segments (async version).
 
         This test validates:
@@ -160,7 +162,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
         """
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID

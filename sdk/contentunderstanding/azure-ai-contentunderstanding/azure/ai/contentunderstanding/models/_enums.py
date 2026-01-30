@@ -215,7 +215,7 @@ class ProcessingLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data may be processed in the same geography as the resource."""
     DATA_ZONE = "dataZone"
     """Data may be processed in the same data zone as the resource."""
-    GLOBAL = "global"
+    GLOBALEnum = "global"
     """Data may be processed in any Azure data center globally."""
 
 
