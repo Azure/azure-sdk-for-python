@@ -1657,9 +1657,6 @@ class RedTeam:
         """
         log_section_header(self.logger, "Starting Foundry-based attack execution")
 
-        # Check for indirect attacks
-        has_indirect = StrategyMapper.has_indirect_attack(flattened_attack_strategies)
-
         # Create progress bar
         progress_bar = tqdm(
             total=self.total_tasks,

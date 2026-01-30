@@ -325,21 +325,21 @@ class TestStrategyMapper:
 
     def test_map_single_strategy_easy(self):
         """Test mapping EASY strategy."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         result = StrategyMapper.map_strategy(AttackStrategy.EASY)
         assert result == FoundryStrategy.EASY
 
     def test_map_single_strategy_moderate(self):
         """Test mapping MODERATE strategy."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         result = StrategyMapper.map_strategy(AttackStrategy.MODERATE)
         assert result == FoundryStrategy.MODERATE
 
     def test_map_single_strategy_base64(self):
         """Test mapping Base64 strategy."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         result = StrategyMapper.map_strategy(AttackStrategy.Base64)
         assert result == FoundryStrategy.Base64
@@ -356,7 +356,7 @@ class TestStrategyMapper:
 
     def test_map_strategies_list(self):
         """Test mapping a list of strategies."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         strategies = [AttackStrategy.Base64, AttackStrategy.Morse, AttackStrategy.Caesar]
         result = StrategyMapper.map_strategies(strategies)
@@ -376,7 +376,7 @@ class TestStrategyMapper:
 
     def test_map_composed_strategy(self):
         """Test mapping a composed (list) strategy."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         strategies = [[AttackStrategy.Base64, AttackStrategy.Morse]]
         result = StrategyMapper.map_strategies(strategies)
@@ -832,7 +832,7 @@ class TestScenarioOrchestrator:
     @pytest.mark.asyncio
     async def test_execute_creates_scenario(self, mock_logger):
         """Test that execute creates and runs a Foundry scenario."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         mock_target = MagicMock()
         mock_scorer = MagicMock()
@@ -1861,7 +1861,7 @@ class TestScenarioOrchestratorExtended:
     @pytest.mark.asyncio
     async def test_execute_with_adversarial_chat(self, mock_logger):
         """Test execute with adversarial chat target configured."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         mock_target = MagicMock()
         mock_scorer = MagicMock()
@@ -2261,7 +2261,7 @@ class TestStrategyMapperExtended:
 
     def test_map_all_individual_strategies(self):
         """Test mapping all individual converter strategies."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         individual_strategies = [
             AttackStrategy.AnsiAttack,
@@ -2293,7 +2293,7 @@ class TestStrategyMapperExtended:
 
     def test_map_aggregate_strategies(self):
         """Test mapping aggregate difficulty strategies."""
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         assert StrategyMapper.map_strategy(AttackStrategy.EASY) == FoundryStrategy.EASY
         assert StrategyMapper.map_strategy(AttackStrategy.MODERATE) == FoundryStrategy.MODERATE
@@ -2551,7 +2551,7 @@ class TestFoundryFlowIntegration:
 
         # Verify mapping
         assert len(mapped) == 3
-        from pyrit.scenario.scenarios.foundry import FoundryStrategy
+        from pyrit.scenario.foundry import FoundryStrategy
 
         assert FoundryStrategy.Base64 in mapped
         assert FoundryStrategy.Morse in mapped

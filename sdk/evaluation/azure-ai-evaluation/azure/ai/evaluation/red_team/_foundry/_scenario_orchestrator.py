@@ -10,7 +10,7 @@ from pyrit.models import AttackResult, AttackOutcome
 from pyrit.models.scenario_result import ScenarioResult
 from pyrit.prompt_target import PromptChatTarget
 from pyrit.scenario import DatasetConfiguration
-from pyrit.scenario.scenarios.foundry import FoundryScenario, FoundryStrategy
+from pyrit.scenario.foundry import FoundryScenario, FoundryStrategy
 
 from ._rai_scorer import RAIServiceScorer
 
