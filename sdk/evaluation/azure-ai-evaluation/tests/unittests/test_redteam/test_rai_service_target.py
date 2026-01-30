@@ -13,11 +13,12 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from pyrit.common import initialize_pyrit, IN_MEMORY
+    from pyrit.memory import CentralMemory, SQLiteMemory
 
-    initialize_pyrit(memory_db_type=IN_MEMORY)
+    # Initialize PyRIT with in-memory database
+    CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
     from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
-    from pyrit.models import PromptRequestResponse, PromptRequestPiece
+    from pyrit.models import Message as PromptRequestResponse, MessagePiece as PromptRequestPiece
 
 
 # Basic mocks
@@ -50,7 +51,7 @@ def mock_prompt_request():
         original_value_data_type="text",
         converted_value_data_type="text",
     )
-    return PromptRequestResponse(request_pieces=[piece])
+    return PromptRequestResponse(message_pieces=[piece])
 
 
 @pytest.fixture
@@ -305,8 +306,8 @@ async def test_send_prompt_async_success_flow(
     mock_poll.assert_called_once_with("mock-op-id")
     mock_process.assert_called_once_with({"status": "succeeded", "raw": "poll_result"})
 
-    assert len(response.request_pieces) == 1
-    response_piece = response.request_pieces[0]
+    assert len(response.message_pieces) == 1
+    response_piece = response.message_pieces[0]
     assert response_piece.role == "assistant"
     assert json.loads(response_piece.converted_value) == {"processed": "final_content"}
 
@@ -354,8 +355,8 @@ async def test_send_prompt_async_exception_fallback(rai_target, mock_prompt_requ
         assert call_count >= 5, f"Expected at least 5 retries but got {call_count}"
 
         # Verify we got a valid response with the expected structure
-        assert len(response.request_pieces) == 1
-        response_piece = response.request_pieces[0]
+        assert len(response.message_pieces) == 1
+        response_piece = response.message_pieces[0]
         assert response_piece.role == "assistant"
         # Check if the response is the fallback JSON with expected fields
         fallback_content = json.loads(response_piece.converted_value)
@@ -373,14 +374,14 @@ def test_validate_request_success(rai_target, mock_prompt_request):
 
 def test_validate_request_invalid_pieces(rai_target, mock_prompt_request):
     """Tests validation failure with multiple pieces."""
-    mock_prompt_request.request_pieces.append(mock_prompt_request.request_pieces[0])  # Add a second piece
+    mock_prompt_request.message_pieces.append(mock_prompt_request.message_pieces[0])  # Add a second piece
     with pytest.raises(ValueError, match="only supports a single prompt request piece"):
         rai_target._validate_request(prompt_request=mock_prompt_request)
 
 
 def test_validate_request_invalid_type(rai_target, mock_prompt_request):
     """Tests validation failure with non-text data type."""
-    mock_prompt_request.request_pieces[0].converted_value_data_type = "image"
+    mock_prompt_request.message_pieces[0].converted_value_data_type = "image"
     with pytest.raises(ValueError, match="only supports text prompt input"):
         rai_target._validate_request(prompt_request=mock_prompt_request)
 

@@ -59,6 +59,19 @@
           "TestSamples": "false"
         }
       }
+    },
+    {
+      "Config": {
+        "redteam_Ubuntu2404_310": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "UnsupportedToxEnvironments": "whl,sdist,depends,latestdependency,mindependency,whl_no_aio,pylint,mypy,pyright,black,verifytypes,apistub,samples",
+          "IsRedteamJob": "true"
+        }
+      }
     }
   ]
 }

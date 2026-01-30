@@ -12,4 +12,6 @@ aiohttp
 filelock
 promptflow-core>=1.17.1
 promptflow-devkit>=1.17.1
--e ../azure-ai-evaluation[redteam]
+# Note: redteam extra is installed separately via dev_requirements_redteam.txt
+# to avoid pillow version conflicts with promptflow-devkit
+-e ../azure-ai-evaluation
