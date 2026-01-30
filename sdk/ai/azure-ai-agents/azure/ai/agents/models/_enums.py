@@ -14,29 +14,29 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available tool types for agents named tools."""
 
     FUNCTION = "function"
-    """Tool type ``function``"""
+    """Tool type ``function``."""
     CODE_INTERPRETER = "code_interpreter"
-    """Tool type ``code_interpreter``"""
+    """Tool type ``code_interpreter``."""
     FILE_SEARCH = "file_search"
-    """Tool type ``file_search``"""
+    """Tool type ``file_search``."""
     BING_GROUNDING = "bing_grounding"
-    """Tool type ``bing_grounding``"""
+    """Tool type ``bing_grounding``."""
     MICROSOFT_FABRIC = "fabric_dataagent"
-    """Tool type ``fabric_dataagent``"""
+    """Tool type ``fabric_dataagent``."""
     SHAREPOINT = "sharepoint_grounding"
-    """Tool type ``sharepoint_grounding``"""
+    """Tool type ``sharepoint_grounding``."""
     AZURE_AI_SEARCH = "azure_ai_search"
-    """Tool type ``azure_ai_search``"""
+    """Tool type ``azure_ai_search``."""
     BING_CUSTOM_SEARCH = "bing_custom_search"
-    """Tool type ``bing_custom_search``"""
+    """Tool type ``bing_custom_search``."""
     CONNECTED_AGENT = "connected_agent"
-    """Tool type ``connected_agent``"""
+    """Tool type ``connected_agent``."""
     DEEP_RESEARCH = "deep_research"
-    """Tool type ``deep_research``"""
+    """Tool type ``deep_research``."""
     MCP = "mcp"
-    """Tool type ``mcp``"""
+    """Tool type ``mcp``."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
-    """Tool type ``computer_use_preview``"""
+    """Tool type ``computer_use_preview``."""
 
 
 class AgentsResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -60,8 +60,6 @@ class AgentsToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Each event in a server-sent events stream has an ``event`` and ``data`` property:
 
-
-
     .. code-block::
 
        event: thread.created
@@ -79,58 +77,58 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     THREAD_CREATED = "thread.created"
-    """Event sent when a new thread is created. The data of this event is of type AgentThread"""
+    """Event sent when a new thread is created. The data of this event is of type AgentThread."""
     THREAD_RUN_CREATED = "thread.run.created"
-    """Event sent when a new run is created. The data of this event is of type ThreadRun"""
+    """Event sent when a new run is created. The data of this event is of type ThreadRun."""
     THREAD_RUN_QUEUED = "thread.run.queued"
-    """Event sent when a run moves to ``queued`` status. The data of this event is of type ThreadRun"""
+    """Event sent when a run moves to ``queued`` status. The data of this event is of type ThreadRun."""
     THREAD_RUN_IN_PROGRESS = "thread.run.in_progress"
     """Event sent when a run moves to ``in_progress`` status. The data of this event is of type
-    ThreadRun"""
+    ThreadRun."""
     THREAD_RUN_REQUIRES_ACTION = "thread.run.requires_action"
     """Event sent when a run moves to ``requires_action`` status. The data of this event is of type
-    ThreadRun"""
+    ThreadRun."""
     THREAD_RUN_COMPLETED = "thread.run.completed"
-    """Event sent when a run is completed. The data of this event is of type ThreadRun"""
+    """Event sent when a run is completed. The data of this event is of type ThreadRun."""
     THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
-    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
+    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun."""
     THREAD_RUN_FAILED = "thread.run.failed"
-    """Event sent when a run fails. The data of this event is of type ThreadRun"""
+    """Event sent when a run fails. The data of this event is of type ThreadRun."""
     THREAD_RUN_CANCELLING = "thread.run.cancelling"
     """Event sent when a run moves to ``cancelling`` status. The data of this event is of type
-    ThreadRun"""
+    ThreadRun."""
     THREAD_RUN_CANCELLED = "thread.run.cancelled"
-    """Event sent when a run is cancelled. The data of this event is of type ThreadRun"""
+    """Event sent when a run is cancelled. The data of this event is of type ThreadRun."""
     THREAD_RUN_EXPIRED = "thread.run.expired"
-    """Event sent when a run is expired. The data of this event is of type ThreadRun"""
+    """Event sent when a run is expired. The data of this event is of type ThreadRun."""
     THREAD_RUN_STEP_CREATED = "thread.run.step.created"
-    """Event sent when a new thread run step is created. The data of this event is of type RunStep"""
+    """Event sent when a new thread run step is created. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_IN_PROGRESS = "thread.run.step.in_progress"
     """Event sent when a run step moves to ``in_progress`` status. The data of this event is of type
-    RunStep"""
+    RunStep."""
     THREAD_RUN_STEP_DELTA = "thread.run.step.delta"
     """Event sent when a run step is being streamed. The data of this event is of type
-    RunStepDeltaChunk"""
+    RunStepDeltaChunk."""
     THREAD_RUN_STEP_COMPLETED = "thread.run.step.completed"
-    """Event sent when a run step is completed. The data of this event is of type RunStep"""
+    """Event sent when a run step is completed. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_FAILED = "thread.run.step.failed"
-    """Event sent when a run step fails. The data of this event is of type RunStep"""
+    """Event sent when a run step fails. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_CANCELLED = "thread.run.step.cancelled"
-    """Event sent when a run step is cancelled. The data of this event is of type RunStep"""
+    """Event sent when a run step is cancelled. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_EXPIRED = "thread.run.step.expired"
-    """Event sent when a run step is expired. The data of this event is of type RunStep"""
+    """Event sent when a run step is expired. The data of this event is of type RunStep."""
     THREAD_MESSAGE_CREATED = "thread.message.created"
-    """Event sent when a new message is created. The data of this event is of type ThreadMessage"""
+    """Event sent when a new message is created. The data of this event is of type ThreadMessage."""
     THREAD_MESSAGE_IN_PROGRESS = "thread.message.in_progress"
     """Event sent when a message moves to ``in_progress`` status. The data of this event is of type
-    ThreadMessage"""
+    ThreadMessage."""
     THREAD_MESSAGE_DELTA = "thread.message.delta"
     """Event sent when a message is being streamed. The data of this event is of type
-    MessageDeltaChunk"""
+    MessageDeltaChunk."""
     THREAD_MESSAGE_COMPLETED = "thread.message.completed"
-    """Event sent when a message is completed. The data of this event is of type ThreadMessage"""
+    """Event sent when a message is completed. The data of this event is of type ThreadMessage."""
     THREAD_MESSAGE_INCOMPLETE = "thread.message.incomplete"
-    """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
+    """Event sent before a message is completed. The data of this event is of type ThreadMessage."""
     ERROR = "error"
     """Event sent when an error occurs, such as an internal server error or a timeout."""
     DONE = "done"
@@ -141,28 +139,28 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available query types for Azure AI Search tool."""
 
     SIMPLE = "simple"
-    """Query type ``simple``"""
+    """Query type ``simple``."""
     SEMANTIC = "semantic"
-    """Query type ``semantic``"""
+    """Query type ``semantic``."""
     VECTOR = "vector"
-    """Query type ``vector``"""
+    """Query type ``vector``."""
     VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
-    """Query type ``vector_simple_hybrid``"""
+    """Query type ``vector_simple_hybrid``."""
     VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
-    """Query type ``vector_semantic_hybrid``"""
+    """Query type ``vector_semantic_hybrid``."""
 
 
 class ComputerUseEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The environment types supported by the computer use tool."""
 
     WINDOWS = "windows"
-    """Windows environment"""
+    """Windows environment."""
     MAC = "mac"
-    """Mac environment"""
+    """Mac environment."""
     LINUX = "linux"
-    """Linux environment"""
+    """Linux environment."""
     BROWSER = "browser"
-    """Browser environment"""
+    """Browser environment."""
 
 
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -195,8 +193,7 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     UPLOADED = "uploaded"
     """The file has been uploaded but it's not yet processed. This state is not returned by Azure
-    OpenAI and exposed only for
-    compatibility. It can be categorized as an inactive state."""
+    OpenAI and exposed only for compatibility. It can be categorized as an inactive state."""
     PENDING = "pending"
     """The operation was created and is not queued to be processed in the future. It can be
     categorized as an inactive state."""
@@ -210,12 +207,10 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     categorized as a terminal state."""
     DELETING = "deleting"
     """The entity is in the process to be deleted. This state is not returned by Azure OpenAI and
-    exposed only for compatibility.
-    It can be categorized as an active state."""
+    exposed only for compatibility. It can be categorized as an active state."""
     DELETED = "deleted"
     """The entity has been deleted but may still be referenced by other entities predating the
-    deletion. It can be categorized as a
-    terminal state."""
+    deletion. It can be categorized as a terminal state."""
 
 
 class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -235,9 +230,9 @@ class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     MAX_COMPLETION_TOKENS = "max_completion_tokens"
-    """Maximum completion tokens exceeded"""
+    """Maximum completion tokens exceeded."""
     MAX_PROMPT_TOKENS = "max_prompt_tokens"
-    """Maximum prompt tokens exceeded"""
+    """Maximum prompt tokens exceeded."""
 
 
 class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -301,32 +296,32 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Message operation related streaming events."""
 
     THREAD_MESSAGE_CREATED = "thread.message.created"
-    """Event sent when a new message is created. The data of this event is of type ThreadMessage"""
+    """Event sent when a new message is created. The data of this event is of type ThreadMessage."""
     THREAD_MESSAGE_IN_PROGRESS = "thread.message.in_progress"
     """Event sent when a message moves to ``in_progress`` status. The data of this event is of type
-    ThreadMessage"""
+    ThreadMessage."""
     THREAD_MESSAGE_DELTA = "thread.message.delta"
     """Event sent when a message is being streamed. The data of this event is of type
-    MessageDeltaChunk"""
+    MessageDeltaChunk."""
     THREAD_MESSAGE_COMPLETED = "thread.message.completed"
-    """Event sent when a message is completed. The data of this event is of type ThreadMessage"""
+    """Event sent when a message is completed. The data of this event is of type ThreadMessage."""
     THREAD_MESSAGE_INCOMPLETE = "thread.message.incomplete"
-    """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
+    """Event sent before a message is completed. The data of this event is of type ThreadMessage."""
 
 
 class MouseButton(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mouse button types supported by click actions."""
 
     LEFT = "left"
-    """Left mouse button"""
+    """Left mouse button."""
     RIGHT = "right"
-    """Right mouse button"""
+    """Right mouse button."""
     WHEEL = "wheel"
-    """Mouse wheel button"""
+    """Mouse wheel button."""
     BACK = "back"
-    """Back mouse button"""
+    """Back mouse button."""
     FORWARD = "forward"
-    """Forward mouse button"""
+    """Forward mouse button."""
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -338,8 +333,11 @@ class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ANONYMOUS = "anonymous"
+    """ANONYMOUS."""
     CONNECTION = "connection"
+    """CONNECTION."""
     MANAGED_IDENTITY = "managed_identity"
+    """MANAGED_IDENTITY."""
 
 
 class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -407,21 +405,21 @@ class RunStepStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Run step operation related streaming events."""
 
     THREAD_RUN_STEP_CREATED = "thread.run.step.created"
-    """Event sent when a new thread run step is created. The data of this event is of type RunStep"""
+    """Event sent when a new thread run step is created. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_IN_PROGRESS = "thread.run.step.in_progress"
     """Event sent when a run step moves to ``in_progress`` status. The data of this event is of type
-    RunStep"""
+    RunStep."""
     THREAD_RUN_STEP_DELTA = "thread.run.step.delta"
     """Event sent when a run step is being streamed. The data of this event is of type
-    RunStepDeltaChunk"""
+    RunStepDeltaChunk."""
     THREAD_RUN_STEP_COMPLETED = "thread.run.step.completed"
-    """Event sent when a run step is completed. The data of this event is of type RunStep"""
+    """Event sent when a run step is completed. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_FAILED = "thread.run.step.failed"
-    """Event sent when a run step fails. The data of this event is of type RunStep"""
+    """Event sent when a run step fails. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_CANCELLED = "thread.run.step.cancelled"
-    """Event sent when a run step is cancelled. The data of this event is of type RunStep"""
+    """Event sent when a run step is cancelled. The data of this event is of type RunStep."""
     THREAD_RUN_STEP_EXPIRED = "thread.run.step.expired"
-    """Event sent when a run step is expired. The data of this event is of type RunStep"""
+    """Event sent when a run step is expired. The data of this event is of type RunStep."""
 
 
 class RunStepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -439,35 +437,35 @@ class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Run operation related streaming events."""
 
     THREAD_RUN_CREATED = "thread.run.created"
-    """Event sent when a new run is created. The data of this event is of type ThreadRun"""
+    """Event sent when a new run is created. The data of this event is of type ThreadRun."""
     THREAD_RUN_QUEUED = "thread.run.queued"
-    """Event sent when a run moves to ``queued`` status. The data of this event is of type ThreadRun"""
+    """Event sent when a run moves to ``queued`` status. The data of this event is of type ThreadRun."""
     THREAD_RUN_IN_PROGRESS = "thread.run.in_progress"
     """Event sent when a run moves to ``in_progress`` status. The data of this event is of type
-    ThreadRun"""
+    ThreadRun."""
     THREAD_RUN_REQUIRES_ACTION = "thread.run.requires_action"
     """Event sent when a run moves to ``requires_action`` status. The data of this event is of type
-    ThreadRun"""
+    ThreadRun."""
     THREAD_RUN_COMPLETED = "thread.run.completed"
-    """Event sent when a run is completed. The data of this event is of type ThreadRun"""
+    """Event sent when a run is completed. The data of this event is of type ThreadRun."""
     THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
-    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
+    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun."""
     THREAD_RUN_FAILED = "thread.run.failed"
-    """Event sent when a run fails. The data of this event is of type ThreadRun"""
+    """Event sent when a run fails. The data of this event is of type ThreadRun."""
     THREAD_RUN_CANCELLING = "thread.run.cancelling"
     """Event sent when a run moves to ``cancelling`` status. The data of this event is of type
-    ThreadRun"""
+    ThreadRun."""
     THREAD_RUN_CANCELLED = "thread.run.cancelled"
-    """Event sent when a run is cancelled. The data of this event is of type ThreadRun"""
+    """Event sent when a run is cancelled. The data of this event is of type ThreadRun."""
     THREAD_RUN_EXPIRED = "thread.run.expired"
-    """Event sent when a run is expired. The data of this event is of type ThreadRun"""
+    """Event sent when a run is expired. The data of this event is of type ThreadRun."""
 
 
 class ThreadStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Thread operation related streaming events."""
 
     THREAD_CREATED = "thread.created"
-    """Event sent when a new thread is created. The data of this event is of type AgentThread"""
+    """Event sent when a new thread is created. The data of this event is of type AgentThread."""
 
 
 class TruncationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -484,26 +482,29 @@ class VectorStoreChunkingStrategyRequestType(str, Enum, metaclass=CaseInsensitiv
     """Type of chunking strategy."""
 
     AUTO = "auto"
+    """AUTO."""
     STATIC = "static"
+    """STATIC."""
 
 
 class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of chunking strategy."""
 
     OTHER = "other"
+    """OTHER."""
     STATIC = "static"
+    """STATIC."""
 
 
 class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of vector storage asset. Asset type may be a uri_asset, in this case it should contain
-    asset URI ID,
-    in the case of id_asset it should contain the data ID.
+    asset URI ID, in the case of id_asset it should contain the data ID.
     """
 
     URI_ASSET = "uri_asset"
-    """Azure URI"""
+    """Azure URI."""
     ID_ASSET = "id_asset"
-    """The data ID"""
+    """The data ID."""
 
 
 class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -554,13 +555,13 @@ class VectorStoreFileStatusFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query parameter filter for vector store file retrieval endpoint."""
 
     IN_PROGRESS = "in_progress"
-    """Retrieve only files that are currently being processed"""
+    """Retrieve only files that are currently being processed."""
     COMPLETED = "completed"
-    """Retrieve only files that have been successfully processed"""
+    """Retrieve only files that have been successfully processed."""
     FAILED = "failed"
-    """Retrieve only files that have failed to process"""
+    """Retrieve only files that have failed to process."""
     CANCELLED = "cancelled"
-    """Retrieve only files that were cancelled"""
+    """Retrieve only files that were cancelled."""
 
 
 class VectorStoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
