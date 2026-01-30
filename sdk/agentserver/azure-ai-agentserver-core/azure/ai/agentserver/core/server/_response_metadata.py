@@ -7,7 +7,7 @@ import json
 from dataclasses import asdict
 from typing import Dict
 
-from ..application._package_metadata import get_current_app
+from ..application._metadata import get_current_app
 from ..models import Response as OpenAIResponse, ResponseStreamEvent
 from ..models.projects import (
     ResponseCompletedEvent,
@@ -21,7 +21,7 @@ METADATA_KEY = "foundry_agents_metadata"
 
 def _metadata_json() -> str:
     payload = asdict(get_current_app())
-    return json.dumps(payload, separators=(",", ":"), sort_keys=True)
+    return json.dumps(payload)
 
 
 def build_foundry_agents_metadata_headers() -> Dict[str, str]:
