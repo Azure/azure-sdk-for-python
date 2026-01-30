@@ -13,6 +13,8 @@ from typing import (
 )
 from urllib.parse import quote, unquote, urlparse
 
+from azure.core import MatchConditions
+
 from ._deserialize import deserialize_blob_stream
 from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from ._generated.azure.storage.blobs.models import (
@@ -261,7 +263,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         options.update(source_cpk_info)
     options.update(kwargs)
     if not overwrite and not _any_conditions(**options):
-        options['if_none_match'] = '*'
+        options['match_condition'] = MatchConditions.IfMissing
     return options
 
 def _download_blob_options(

@@ -55,22 +55,30 @@ def _generate_delete_blobs_subrequest_options(
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     lease_id = None
     if lease_access_conditions is not None:
-        lease_id = lease_access_conditions.lease_id
+        lease_id = lease_access_conditions.get('lease_id')
     if_modified_since = None
-    if modified_access_conditions is not None:
-        if_modified_since = modified_access_conditions.if_modified_since
     if_unmodified_since = None
-    if modified_access_conditions is not None:
-        if_unmodified_since = modified_access_conditions.if_unmodified_since
-    if_match = None
-    if modified_access_conditions is not None:
-        if_match = modified_access_conditions.if_match
-    if_none_match = None
-    if modified_access_conditions is not None:
-        if_none_match = modified_access_conditions.if_none_match
+    etag = None
+    match_condition = None
     if_tags = None
     if modified_access_conditions is not None:
-        if_tags = modified_access_conditions.if_tags
+        if_modified_since = modified_access_conditions.get('if_modified_since')
+        if_unmodified_since = modified_access_conditions.get('if_unmodified_since')
+        etag = modified_access_conditions.get('etag')
+        match_condition = modified_access_conditions.get('match_condition')
+        if_tags = modified_access_conditions.get('if_tags')
+
+    # Convert etag/match_condition to if_match/if_none_match headers
+    if_match = None
+    if_none_match = None
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = etag
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = '*'
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = etag
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = '*'
 
     # Construct parameters
     timeout = kwargs.pop('timeout', None)

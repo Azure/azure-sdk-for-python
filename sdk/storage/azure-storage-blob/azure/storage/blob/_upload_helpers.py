@@ -7,6 +7,7 @@
 from io import SEEK_SET, UnsupportedOperation
 from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
 from ._encryption import (
@@ -59,8 +60,8 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
     return any([
         kwargs.get('if_modified_since'),
         kwargs.get('if_unmodified_since'),
-        kwargs.get('if_none_match'),
-        kwargs.get('if_match')
+        kwargs.get('etag'),
+        kwargs.get('match_condition')
     ])
 
 
@@ -78,7 +79,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['if_none_match'] = '*'
+            kwargs['match_condition'] = MatchConditions.IfMissing
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
@@ -212,7 +213,7 @@ def upload_page_blob(
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['if_none_match'] = '*'
+            kwargs['match_condition'] = MatchConditions.IfMissing
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:

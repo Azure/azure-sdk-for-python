@@ -36,8 +36,8 @@ class BlobModifiedAccessConditions(TypedDict, total=False):
 
     if_modified_since: NotRequired[Optional[str]]
     if_unmodified_since: NotRequired[Optional[str]]
-    if_match: NotRequired[Optional[str]]
-    if_none_match: NotRequired[Optional[str]]
+    etag: NotRequired[Optional[str]]
+    match_condition: NotRequired[Optional[str]]
 
 class ContainerCpkScopeInfo(TypedDict, total=False):
     """Parameter group for container CPK scope info."""
@@ -70,8 +70,8 @@ class ModifiedAccessConditions(TypedDict, total=False):
 
     if_modified_since: NotRequired[Optional[str]]
     if_unmodified_since: NotRequired[Optional[str]]
-    if_match: NotRequired[Optional[str]]
-    if_none_match: NotRequired[Optional[str]]
+    etag: NotRequired[Optional[str]]
+    match_condition: NotRequired[Optional[str]]
     if_tags: NotRequired[Optional[str]]
 
 class SequenceNumberAccessConditions(TypedDict, total=False):
@@ -94,8 +94,8 @@ class SourceModifiedAccessConditions(TypedDict, total=False):
 
     source_if_modified_since: NotRequired[Optional[str]]
     source_if_unmodified_since: NotRequired[Optional[str]]
-    source_if_match: NotRequired[Optional[str]]
-    source_if_none_match: NotRequired[Optional[str]]
+    source_etag: NotRequired[Optional[str]]
+    source_match_condition: NotRequired[Optional[str]]
     source_if_tags: NotRequired[Optional[str]]
 
 

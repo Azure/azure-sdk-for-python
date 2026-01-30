@@ -105,33 +105,30 @@ def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Opt
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
     return ModifiedAccessConditions(
         if_modified_since=kwargs.pop('if_modified_since', None),
         if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
+        etag=kwargs.pop('etag', None),
+        match_condition=kwargs.pop('match_condition', None),
         if_tags=kwargs.pop('if_tags_match_condition', None)
     )
 
 
 def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
     return BlobModifiedAccessConditions(
         if_modified_since=kwargs.pop('if_modified_since', None),
         if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
+        etag=kwargs.pop('etag', None),
+        match_condition=kwargs.pop('match_condition', None),
     )
 
 
 def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
     return SourceModifiedAccessConditions(
         source_if_modified_since=kwargs.pop('source_if_modified_since', None),
         source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-        source_if_match=if_match or kwargs.pop('source_if_match', None),
-        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None),
+        source_etag=kwargs.pop('source_etag', None),
+        source_match_condition=kwargs.pop('source_match_condition', None),
         source_if_tags=kwargs.pop('source_if_tags_match_condition', None)
     )
 
