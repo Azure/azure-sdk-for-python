@@ -3,6 +3,7 @@
 ### 4.15.0b3 (Unreleased)
 
 #### Features Added
+* Added `get_response_headers()` and `get_last_response_headers()` methods to the `CosmosItemPaged` and `CosmosAsyncItemPaged` objects returned by `query_items()`, allowing access to response headers from query operations. See [PR 44593](https://github.com/Azure/azure-sdk-for-python/pull/44593)
 
 #### Breaking Changes
 
