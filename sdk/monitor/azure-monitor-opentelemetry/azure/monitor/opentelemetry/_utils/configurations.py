@@ -314,7 +314,7 @@ def _default_metric_readers(configurations):
 
 
 def _default_enable_live_metrics(configurations):
-    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
+    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, True)
 
 
 def _default_enable_performance_counters(configurations):
