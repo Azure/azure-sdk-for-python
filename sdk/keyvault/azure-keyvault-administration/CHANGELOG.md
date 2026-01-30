@@ -1,6 +1,6 @@
 # Release History
 
-## 4.6.1 (Unreleased)
+## 4.7.0 (Unreleased)
 
 ### Features Added
 
@@ -11,6 +11,7 @@
   previous versions of this library are not compatible with versions of `azure-core>=1.38.0`.
 
 ### Bugs Fixed
+
 ### Other Changes
 
 - Updated minimum `azure-core` version to 1.38.0
