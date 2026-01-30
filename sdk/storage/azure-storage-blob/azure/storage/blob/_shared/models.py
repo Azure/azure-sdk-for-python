@@ -10,11 +10,28 @@ from typing import Optional
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import UserAgentPolicy
+from xml.etree.ElementTree import Element
+
+
+def _get_xml_text(value):
+    """Extract text from an XML Element if needed, otherwise return value as-is.
+
+    This is needed because the generated code's XML deserialization may return
+    XML Element objects instead of text content for some fields.
+    """
+    if value is None:
+        return None
+    if isinstance(value, Element):
+        return value.text
+    return value
 
 
 def get_enum_value(value):
     if value is None or value in ["None", ""]:
         return None
+    # Handle XML Element objects (from generated code XML deserialization)
+    if isinstance(value, Element):
+        return value.text
     try:
         return value.value
     except AttributeError:

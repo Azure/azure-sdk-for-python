@@ -16,17 +16,17 @@ from azure.core.exceptions import HttpResponseError
 from ._shared import decode_base64_to_bytes
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
-from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import ArrowField
-from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import Logging as GeneratedLogging
-from ._generated.models import Metrics as GeneratedMetrics
-from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-from ._generated.models import StaticWebsite as GeneratedStaticWebsite
+from ._generated.azure.storage.blobs.models import AccessPolicy as GenAccessPolicy
+from ._generated.azure.storage.blobs.models import ArrowField
+from ._generated.azure.storage.blobs.models import CorsRule as GeneratedCorsRule
+from ._generated.azure.storage.blobs.models import Logging as GeneratedLogging
+from ._generated.azure.storage.blobs.models import Metrics as GeneratedMetrics
+from ._generated.azure.storage.blobs.models import RetentionPolicy as GeneratedRetentionPolicy
+from ._generated.azure.storage.blobs.models import StaticWebsite as GeneratedStaticWebsite
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.models import PageList
+    from ._generated.azure.storage.blobs.models import PageList
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list: "PageList") -> List["PageRange"]:
@@ -278,6 +278,7 @@ class Metrics(GeneratedMetrics):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
+        super(GeneratedMetrics, self).__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
@@ -319,6 +320,7 @@ class StaticWebsite(GeneratedStaticWebsite):
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
+        super(GeneratedStaticWebsite, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
             self.index_document = kwargs.get('index_document')
@@ -476,12 +478,12 @@ class ContainerProperties(DictMixin):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
-        props.etag = generated.properties.etag
+        props.etag = generated.properties.e_tag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.immutable_storage_with_versioning_enabled = generated.properties.is_immutable_storage_with_versioning_enabled  # pylint: disable=line-too-long, name-too-long
-        props.deleted = generated.deleted
+        props.deleted = generated.delete
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
@@ -1056,6 +1058,7 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
+        super(GenAccessPolicy, self).__init__()
         self.start = start
         self.expiry = expiry
         self.permission = permission

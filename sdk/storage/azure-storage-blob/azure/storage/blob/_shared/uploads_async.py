@@ -12,6 +12,8 @@ from itertools import islice
 from math import ceil
 from typing import AsyncGenerator, Union
 
+from azure.core import MatchConditions
+
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
@@ -70,9 +72,10 @@ async def upload_data_chunks(
 ):
 
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel and ("etag" in kwargs or "match_condition" in kwargs):
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
     uploader = uploader_class(
         service=service,
@@ -116,9 +119,10 @@ async def upload_substream_blocks(
     **kwargs,
 ):
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel and ("etag" in kwargs or "match_condition" in kwargs):
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -278,7 +282,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 class BlockBlobChunkUploader(_ChunkUploader):
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("modified_access_conditions", None)
+        # Block blob uploads don't use etag conditions during chunk upload
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
@@ -286,21 +292,23 @@ class BlockBlobChunkUploader(_ChunkUploader):
         # TODO: This is incorrect, but works with recording.
         index = f"{chunk_offset:032d}"
         block_id = encode_base64(url_quote(encode_base64(index)))
+        block_id_bytes = block_id.encode('utf-8')
         await self.service.stage_block(
-            block_id,
+            block_id_bytes,
             len(chunk_data),
             body=chunk_data,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options,
         )
-        return index, block_id
+        return index, block_id_bytes
 
     async def _upload_substream_block(self, index, block_stream):
         try:
             block_id = f"BlockId{(index//self.chunk_size):05}"
+            block_id_bytes = encode_base64(block_id).encode('utf-8')
             await self.service.stage_block(
-                block_id,
+                block_id_bytes,
                 len(block_stream),
                 block_stream,
                 data_stream_total=self.total_size,
@@ -309,7 +317,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
             )
         finally:
             block_stream.close()
-        return block_id
+        return block_id_bytes
 
 
 class PageBlobChunkUploader(_ChunkUploader):
@@ -339,8 +347,9 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+            if not self.parallel and self.request_options.get("etag") is None:
+                self.request_options["etag"] = self.response_headers["etag"]
+                self.request_options["match_condition"] = MatchConditions.IfNotModified
 
     async def _upload_substream_block(self, index, block_stream):
         pass
@@ -393,8 +402,9 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+        if not self.parallel and self.request_options.get("etag") is None:
+            self.request_options["etag"] = self.response_headers["etag"]
+            self.request_options["match_condition"] = MatchConditions.IfNotModified
 
     async def _upload_substream_block(self, index, block_stream):
         try:
