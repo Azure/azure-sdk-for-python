@@ -374,6 +374,7 @@ class AsyncMCPCallClient:
                 endpoint=self.endpoint,
                 credential=self.credential,
                 model=self.model,
+                api_version="2026-01-01-preview", # To use MCP features, the api version must be higher than or equal to 2026-01-01-preview
             ) as connection:
                 # Initialize audio processor
                 self.audio_processor = AudioProcessor(connection)
@@ -646,8 +647,7 @@ async def main():
     """Main async function."""
     # Get credentials from environment variables
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
-    # important, PLEASE SET the features=mcp_preview:true in query params to enable mcp features
-    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1?features=mcp_preview:true")
+    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
 
     if not api_key:
         print("❌ Error: No API key provided")
