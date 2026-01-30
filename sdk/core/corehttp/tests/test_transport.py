@@ -16,7 +16,6 @@ from corehttp.transport.requests import RequestsTransport
 from corehttp.runtime.pipeline import Pipeline
 from corehttp.exceptions import ServiceResponseError, ServiceResponseTimeoutError, ServiceRequestTimeoutError
 
-import pytest
 
 
 def test_already_close_with_with(caplog, port):
