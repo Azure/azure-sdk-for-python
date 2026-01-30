@@ -86,6 +86,51 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
             raw_request_hook=manual_token_hook
         )
 
+    async def test_session_token_compound_not_sent_for_single_partition_query_async(self):
+        """
+        Verify that when querying with a feed range (single physical partition),
+        only that partition's session token is sent, not the entire compound token.
+        """
+        test_container = await self.created_db.create_container(
+            "Container query test" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+
+        try:
+            # Create items across multiple partition keys
+            for i in range(100):
+                await test_container.create_item({
+                    'id': str(uuid.uuid4()),
+                    'pk': f"pk_{i:04d}"
+                })
+
+            # Get feed ranges and verify multiple exist
+            feed_ranges = [feed_range async for feed_range in test_container.read_feed_ranges()]
+            self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
+
+            # Capture session token sent with feed range query
+            captured_session_token = {}
+
+            def capture_session_token(request):
+                captured_session_token['token'] = request.http_request.headers.get(HttpHeaders.SessionToken)
+
+            # Query with single feed range
+            _ = [item async for item in test_container.query_items(
+                query="SELECT * FROM c",
+                feed_range=feed_ranges[0],
+                raw_request_hook=capture_session_token
+            )]
+
+            # Verify only single partition token was sent
+            token = captured_session_token.get('token')
+            self.assertIsNotNone(token, "Session token should be present")
+            self.assertNotIn(',', token,
+                             f"Expected single partition token, got compound token: {token}")
+
+        finally:
+            await self.created_db.delete_container(test_container)
+
     async def test_manual_session_token_override_async(self):
         # Create an item to get a valid session token from the response
         created_document = await self.created_container.create_item(
