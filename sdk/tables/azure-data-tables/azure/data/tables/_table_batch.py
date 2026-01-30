@@ -19,8 +19,8 @@ from ._generated.operations._operations import (
     build_table_update_entity_request,
     build_table_delete_entity_request,
 )
-from ._generated._configuration import AzureTableConfiguration
-from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
+from ._generated._configuration import TablesClientConfiguration as AzureTableConfiguration
+from ._generated.aio._configuration import TablesClientConfiguration as AsyncAzureTableConfiguration
 
 
 EntityType = Union[TableEntity, Mapping[str, Any]]

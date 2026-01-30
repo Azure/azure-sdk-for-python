@@ -268,14 +268,7 @@ class TableServiceClient(TablesBaseClient):
                 :caption: Querying tables in a storage account
         """
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
-            filter=query_filter,
-            page_iterator_class=TablePropertiesPaged,
-        )
+        return self._client.table.query(filter=query_filter, top=results_per_page, **kwargs)
 
     @distributed_trace
     def list_tables(self, *, results_per_page: Optional[int] = None, **kwargs) -> ItemPaged[TableItem]:
@@ -295,12 +288,7 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in a storage account
         """
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
-            page_iterator_class=TablePropertiesPaged,
-        )
+        return self._client.table.query(top=results_per_page, **kwargs)
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.
