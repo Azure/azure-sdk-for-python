@@ -102,6 +102,44 @@ class TestCallbackChatTargetPrompts:
             mock_memory.get_conversation.assert_called_once_with(conversation_id="test-id")
 
     @pytest.mark.asyncio
+    async def test_send_prompt_async_with_prompt_request_keyword(self, chat_target, mock_request, mock_callback):
+        """Test send_prompt_async accepts prompt_request keyword for SDK compatibility."""
+        with patch.object(chat_target, "_memory") as mock_memory, patch(
+            "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
+        ) as mock_construct:
+            # Setup memory mock
+            mock_memory.get_conversation.return_value = []
+
+            # Setup construct_response mock
+            mock_construct.return_value = mock_request
+
+            # Call the method with prompt_request instead of message
+            response = await chat_target.send_prompt_async(prompt_request=mock_request)
+
+            # Check that callback was called with correct parameters
+            mock_callback.assert_called_once()
+            call_args = mock_callback.call_args[1]
+            assert call_args["stream"] is False
+            assert call_args["session_state"] is None
+            assert call_args["context"] == {}
+
+    @pytest.mark.asyncio
+    async def test_send_prompt_async_raises_error_if_both_keywords_provided(self, chat_target, mock_request):
+        """Test send_prompt_async raises error if both message and prompt_request are provided."""
+        with pytest.raises(ValueError) as exc_info:
+            await chat_target.send_prompt_async(message=mock_request, prompt_request=mock_request)
+
+        assert "either 'message' or 'prompt_request'" in str(exc_info.value).lower()
+
+    @pytest.mark.asyncio
+    async def test_send_prompt_async_raises_error_if_no_keyword_provided(self, chat_target):
+        """Test send_prompt_async raises error if neither message nor prompt_request is provided."""
+        with pytest.raises(ValueError) as exc_info:
+            await chat_target.send_prompt_async()
+
+        assert "either 'message' or 'prompt_request' must be provided" in str(exc_info.value).lower()
+
+    @pytest.mark.asyncio
     async def test_send_prompt_async_with_context_from_labels(self, chat_target, mock_callback):
         """Test send_prompt_async method with context from request labels."""
         # Create a request with context in labels

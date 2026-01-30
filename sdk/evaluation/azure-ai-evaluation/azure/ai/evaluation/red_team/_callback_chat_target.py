@@ -47,7 +47,9 @@ class _CallbackChatTarget(PromptChatTarget):
         self._stream = stream
         self._retry_enabled = retry_enabled
 
-    async def send_prompt_async(self, *, message: Message) -> List[Message]:
+    async def send_prompt_async(
+        self, *, message: Optional[Message] = None, prompt_request: Optional[Message] = None
+    ) -> List[Message]:
         """
         Sends a prompt to the callback target and returns the response.
 
@@ -55,7 +57,9 @@ class _CallbackChatTarget(PromptChatTarget):
         and empty responses using PyRIT's exponential backoff strategy.
 
         Args:
-            message: The message to send to the target.
+            message: The message to send to the target (PyRIT standard keyword).
+            prompt_request: Alias for message (SDK compatibility keyword).
+                Either message or prompt_request must be provided, but not both.
 
         Returns:
             A list containing the response message.
@@ -63,11 +67,19 @@ class _CallbackChatTarget(PromptChatTarget):
         Raises:
             RateLimitException: When rate limit is hit and retries are exhausted.
             EmptyResponseException: When callback returns empty response and retries are exhausted.
+            ValueError: If neither or both message and prompt_request are provided.
         """
+        # Accept both 'message' (PyRIT standard) and 'prompt_request' (SDK convention) for compatibility
+        if message is not None and prompt_request is not None:
+            raise ValueError("Provide either 'message' or 'prompt_request', not both.")
+        request_message = message or prompt_request
+        if request_message is None:
+            raise ValueError("Either 'message' or 'prompt_request' must be provided.")
+
         if self._retry_enabled:
-            return await self._send_prompt_with_retry(message=message)
+            return await self._send_prompt_with_retry(message=request_message)
         else:
-            return await self._send_prompt_impl(message=message)
+            return await self._send_prompt_impl(message=request_message)
 
     @pyrit_target_retry
     async def _send_prompt_with_retry(self, *, message: Message) -> List[Message]:
