@@ -28,6 +28,11 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 
 from ._context import AgentServerContext
+from ._response_metadata import (
+    attach_foundry_metadata_to_response,
+    build_foundry_agents_metadata_headers,
+    try_attach_foundry_metadata_to_event,
+)
 from .common.agent_run_context import AgentRunContext
 from ..constants import Constants
 from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
@@ -124,7 +129,9 @@ class FoundryCBAgent:
                     result = resp if not ex else project_models.ResponseError(
                         code=project_models.ResponseErrorCode.SERVER_ERROR,
                         message=_format_error(ex))
-                    return JSONResponse(result.as_dict())
+                    if not ex:
+                        attach_foundry_metadata_to_response(result)
+                    return JSONResponse(result.as_dict(), headers=self.create_response_headers())
 
                 async def gen_async(ex):
                     ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
@@ -141,6 +148,7 @@ class FoundryCBAgent:
                                 # Keep-alive signal
                                 yield _keep_alive_comment()
                             else:
+                                try_attach_foundry_metadata_to_event(event)
                                 seq += 1
                                 yield _event_to_sse_chunk(event)
                         logger.info("End of processing CreateResponse request.")
@@ -157,7 +165,11 @@ class FoundryCBAgent:
                             yield _event_to_sse_chunk(err)
                         otel_context.attach(prev_ctx)
 
-                return StreamingResponse(gen_async(ex), media_type="text/event-stream")
+                return StreamingResponse(
+                    gen_async(ex),
+                    media_type="text/event-stream",
+                    headers=self.create_response_headers(),
+                )
 
         async def liveness_endpoint(request):
             result = await self.agent_liveness(request)
@@ -397,6 +409,11 @@ class FoundryCBAgent:
         processor = BatchSpanProcessor(exporter_instance)
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
+
+    def create_response_headers(self) -> dict[str, str]:
+        headers = {}
+        headers.update(build_foundry_agents_metadata_headers())
+        return headers
 
 
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:

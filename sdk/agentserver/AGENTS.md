@@ -24,9 +24,11 @@ Avoid building functionality on speculation. Implement features only when they a
 - **Open/Closed Principle**: Software entities should be open for extension but closed for modification.
 - **Single Responsibility**: Each function, class, and module should have one clear purpose.
 - **Fail Fast**: Check for potential errors early and raise exceptions immediately when issues occur.
+- **Encapsulation**: Hide internal state and require all interaction to be performed through an object's methods.
 
 ### Implementation Patterns
 
+- **Type-Safe**: Prefer explicit, type‑safe structures (TypedDicts, dataclasses, enums, unions) over Dict, Any, or other untyped containers, unless there is no viable alternative.
 - **Explicit validation at boundaries**: Validate inputs and identifiers early; reject malformed descriptors and missing required fields.
 - **Separation of resolution and execution**: Keep discovery/selection separate from invocation to allow late binding and interchangeable implementations.
 - **Context-aware execution**: Thread request/user context through calls via scoped providers; avoid global mutable state.
