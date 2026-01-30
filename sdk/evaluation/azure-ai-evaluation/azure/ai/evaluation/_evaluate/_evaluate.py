@@ -2375,6 +2375,7 @@ def _convert_single_row_to_aoai_format(
 
     # Remove dup status fields from input_data to prevent them from appearing in datasource_item
     if input_data is not None:
+        input_data.pop("sample.output_status", None)
         input_data.pop("sample.output_status.status", None)
         input_data.pop("sample.output_status.message", None)
 
