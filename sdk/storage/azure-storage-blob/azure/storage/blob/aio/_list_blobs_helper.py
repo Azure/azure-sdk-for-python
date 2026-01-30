@@ -93,7 +93,7 @@ class BlobPropertiesPaged(AsyncPageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
+        self.current_page = [self._build_item(item) for item in (self._response.segment.blob_items or [])]
 
         return self._response.next_marker or None, self.current_page
 
@@ -227,7 +227,7 @@ class BlobPrefixPaged(BlobPropertiesPaged):
 
     async def _extract_data_cb(self, get_next_return):
         continuation_token, _ = await super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
+        self.current_page = (self._response.segment.blob_prefixes or []) + (self._response.segment.blob_items or [])
         self.current_page = [self._build_item(item) for item in self.current_page]
         self.delimiter = self._response.delimiter
 
