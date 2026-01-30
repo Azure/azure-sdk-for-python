@@ -36,7 +36,7 @@ from .._configuration import (
     PageBlobClientConfiguration,
     ServiceClientConfiguration,
 )
-from .._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize, _get_element
+from .._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize_xml, _get_element
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match, prepare_multipart_form_data
 from .._validation import api_version_validation
@@ -3781,7 +3781,7 @@ class _ServiceClientOperationsMixin(
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -3852,7 +3852,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -3931,7 +3931,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4040,7 +4040,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4125,7 +4125,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4199,7 +4199,7 @@ class _ServiceClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4286,7 +4286,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4393,7 +4393,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4497,7 +4497,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4570,7 +4570,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4677,7 +4677,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4760,7 +4760,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4838,7 +4838,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -4947,7 +4947,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5028,7 +5028,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5107,7 +5107,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5191,7 +5191,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5295,7 +5295,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5394,7 +5394,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5484,7 +5484,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5572,7 +5572,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5667,7 +5667,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5760,7 +5760,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5873,7 +5873,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -5999,7 +5999,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -6073,7 +6073,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -6246,7 +6246,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -6553,7 +6553,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -6787,7 +6787,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -6853,7 +6853,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -6931,7 +6931,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7068,7 +7068,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7171,7 +7171,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7260,7 +7260,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7347,7 +7347,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7483,7 +7483,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7606,7 +7606,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7716,7 +7716,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7824,7 +7824,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -7937,7 +7937,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8052,7 +8052,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8189,7 +8189,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8375,7 +8375,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8570,7 +8570,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8661,7 +8661,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8768,7 +8768,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8834,7 +8834,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -8959,7 +8959,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -9093,7 +9093,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -9301,7 +9301,7 @@ class _PageBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -9497,7 +9497,7 @@ class _PageBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -9669,7 +9669,7 @@ class _PageBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -9904,7 +9904,7 @@ class _PageBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -10060,7 +10060,7 @@ class _PageBlobClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -10227,7 +10227,7 @@ class _PageBlobClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -10375,7 +10375,7 @@ class _PageBlobClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -10498,7 +10498,7 @@ class _PageBlobClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -10613,7 +10613,7 @@ class _PageBlobClientOperationsMixin(
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -10809,7 +10809,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -11000,7 +11000,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -11251,7 +11251,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -11380,7 +11380,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -11617,7 +11617,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -11901,7 +11901,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -12052,7 +12052,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -12249,7 +12249,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -12476,7 +12476,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -12591,7 +12591,7 @@ class _BlockBlobClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )
@@ -12748,7 +12748,7 @@ class _BlockBlobClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.StorageError,
                 response,
             )

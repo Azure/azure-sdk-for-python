@@ -39,6 +39,7 @@ class BlobModifiedAccessConditions(TypedDict, total=False):
     etag: NotRequired[Optional[str]]
     match_condition: NotRequired[Optional[str]]
 
+
 class ContainerCpkScopeInfo(TypedDict, total=False):
     """Parameter group for container CPK scope info."""
 
@@ -65,6 +66,7 @@ class CpkInfo(TypedDict, total=False):
     encryption_key_sha256: NotRequired[Optional[str]]
     encryption_algorithm: NotRequired[Optional[str]]
 
+
 class ModifiedAccessConditions(TypedDict, total=False):
     """Parameter group for modified access conditions."""
 
@@ -73,6 +75,7 @@ class ModifiedAccessConditions(TypedDict, total=False):
     etag: NotRequired[Optional[str]]
     match_condition: NotRequired[Optional[str]]
     if_tags: NotRequired[Optional[str]]
+
 
 class SequenceNumberAccessConditions(TypedDict, total=False):
     """Parameter group for sequence number access conditions."""
@@ -88,6 +91,7 @@ class SourceCpkInfo(TypedDict, total=False):
     source_encryption_key: NotRequired[Optional[str]]
     source_encryption_key_sha256: NotRequired[Optional[str]]
     source_encryption_algorithm: NotRequired[Optional[str]]
+
 
 class SourceModifiedAccessConditions(TypedDict, total=False):
     """Parameter group for source modified access conditions."""
