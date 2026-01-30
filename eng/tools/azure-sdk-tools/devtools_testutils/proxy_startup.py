@@ -22,7 +22,7 @@ import subprocess
 from urllib.parse import urlparse
 from urllib3.exceptions import SSLError
 
-from ci_tools.variables import in_ci, get_assets_directory
+from ci_tools.variables import in_ci  #
 
 from .config import PROXY_URL
 from .fake_credentials import FAKE_ACCESS_TOKEN, FAKE_ID, SERVICEBUS_FAKE_SAS, SANITIZED
@@ -406,12 +406,6 @@ def start_test_proxy(request) -> None:
             # variable in env for the proxy process, which will allow us to clean up the --isolate directories without crashing
             # running proxies.
             passenv["DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE"] = "false"
-
-            # in CI, when multiple environments are running in parallel, we need to isolate the storage locations
-            # such that each proxy environment has its own storage location. This will prevent race conditions where the same
-            # check is accessing the same file storage as another parallel check
-            assets_location = get_assets_directory(root, os.getenv("CHECK_ENV", ""))
-            passenv["PROXY_ASSETS_LOCATION"] = assets_location
 
             # If they are already set, override what we give the proxy with what is in os.environ
             passenv.update(os.environ)

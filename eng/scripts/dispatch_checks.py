@@ -13,7 +13,7 @@ from typing import IO, List, Optional
 
 from azpysdk.proxy_ports import get_proxy_port_for_check
 from ci_tools.functions import discover_targeted_packages
-from ci_tools.variables import in_ci, get_assets_directory
+from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
@@ -71,9 +71,7 @@ def _checks_require_recording_restore(checks: List[str]) -> bool:
     return any(check in INSTALL_AND_TEST_CHECKS for check in checks)
 
 
-def _restore_package_recordings(
-    packages: List[str], proxy_executable: str, assets_dir: Optional[str] = None
-) -> None:
+def _restore_package_recordings(packages: List[str], proxy_executable: str, assets_dir: Optional[str] = None) -> None:
     # azure template has a fake tag for demonstration purposes, skip restore on that one.
     unique_packages = [package for package in list(dict.fromkeys(packages)) if "azure-template" not in package]
 
@@ -107,9 +105,7 @@ def _prepopulate_check_asset_dirs(base_assets_dir: str, checks: List[str]) -> No
         return
 
     if not base_assets_dir or not os.path.exists(base_assets_dir):
-        logger.warning(
-            f"Base assets directory {base_assets_dir} missing; skipping per-check asset propagation."
-        )
+        logger.warning(f"Base assets directory {base_assets_dir} missing; skipping per-check asset propagation.")
         return
 
     unique_checks = sorted(
@@ -161,7 +157,9 @@ async def run_check(
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
-        env["CHECK_ENV"] = check
+
+        if in_ci():
+            env["PROXY_ASSETS_FOLDER"] = os.path.join(root_dir, ".assets_distributed", str(proxy_port))
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -499,6 +497,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         logger.error("No valid checks provided via -c/--checks.")
         sys.exit(2)
 
+    # ensure that the proxy exe is available before we start running checks that may need to populate it
     if in_ci() and _checks_require_recording_restore(checks):
         try:
             proxy_executable = prepare_local_tool(root_dir)
@@ -506,14 +505,14 @@ In the case of an environment invoking `pytest`, results can be collected in a j
             logger.error(f"Unable to prepare test proxy executable for recording restore: {exc}")
             sys.exit(1)
 
-        base_assets_dir = get_assets_directory(root_dir, SHARED_RESTORE_ENV)
-        try:
-            _restore_package_recordings(targeted_packages, proxy_executable, base_assets_dir)
-        except subprocess.CalledProcessError:
-            logger.error("Recording restore pre-pass failed; aborting check execution.")
-            sys.exit(1)
+        # base_assets_dir = get_assets_directory(root_dir, SHARED_RESTORE_ENV)
+        # try:
+        #     _restore_package_recordings(targeted_packages, proxy_executable, base_assets_dir)
+        # except subprocess.CalledProcessError:
+        #     logger.error("Recording restore pre-pass failed; aborting check execution.")
+        #     sys.exit(1)
 
-        _prepopulate_check_asset_dirs(base_assets_dir, checks)
+        # _prepopulate_check_asset_dirs(base_assets_dir, checks)
 
     logger.info(
         f"Running {len(checks)} check(s) across {len(targeted_packages)} packages (max_parallel={args.max_parallel})."
