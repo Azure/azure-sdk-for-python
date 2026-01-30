@@ -172,7 +172,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 snapshot = self._client.get_snapshot(select.snapshot_name)
                 if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
+                    raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Handle None key_filter by converting to empty string
@@ -184,6 +184,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     **kwargs,
                 )
             for feature_flag in feature_flags:
+                if isinstance(feature_flag, FeatureFlagConfigurationSetting):
+                    loaded_feature_flags.append(feature_flag)
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
                     # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
                     # mistake, so we should ignore it, or it was loaded via snapshot.
