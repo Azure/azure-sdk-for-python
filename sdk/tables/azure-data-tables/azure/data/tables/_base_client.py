@@ -146,11 +146,17 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
             }
         self._hosts = _hosts
 
-        self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)
+        auth_policy, self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
-        self._client = AzureTable(self.url, credential=None, policies=kwargs.pop("policies", self._policies), **kwargs)
+        self._client = AzureTable(
+            self.url,
+            credential=credential,
+            authentication_policy=auth_policy,
+            policies=kwargs.pop("policies", self._policies),
+            **kwargs
+        )
         # Incompatible assignment when assigning a str value to a Literal type variable
         self._client._config.api_version = get_api_version(
             api_version, self._client._config.api_version
@@ -239,11 +245,11 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         """
         return f"{self.scheme}://{hostname}{self._query_str}"
 
-    def _configure_policies(self, *, audience: Optional[str] = None, **kwargs: Any) -> List[Any]:
+    def _configure_policies(self, *, audience: Optional[str] = None, **kwargs: Any) -> tuple[Any, List[Any]]:
         credential_policy = _configure_credential(
             self.credential, cosmos_endpoint=self._cosmos_endpoint, audience=audience
         )
-        return [
+        return credential_policy, [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),

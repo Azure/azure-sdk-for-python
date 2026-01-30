@@ -33,15 +33,14 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._utils.model_base import (
-    Model as _Model,
     SdkJSONEncoder,
     _deserialize,
     _deserialize_xml,
     _failsafe_deserialize,
+    _failsafe_deserialize_xml,
     _get_element,
 )
 from ..._utils.serialization import Deserializer, Serializer
-from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
     build_service_get_properties_request,
     build_service_get_statistics_request,
@@ -56,249 +55,13 @@ from ...operations._operations import (
     build_table_query_entity_with_partition_and_row_key_request,
     build_table_query_request,
     build_table_set_access_policy_request,
-    build_table_submit_transaction_request,
     build_table_update_entity_request,
 )
 from .._configuration import TablesClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
-
-
-class ServiceOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.data.tables._generated.aio.TablesClient`'s
-        :attr:`service` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: TablesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def set_properties(
-        self, table_service_properties: _models.TableServiceProperties, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> None:
-        """Sets properties for an account's Table service endpoint, including properties
-        for Analytics and CORS (Cross-Origin Resource Sharing) rules.
-
-        :param table_service_properties: The table service properties to set. Required.
-        :type table_service_properties: ~azure.data.tables._generated.models.TableServiceProperties
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _content = _get_element(table_service_properties)
-
-        _request = build_service_set_properties_request(
-            timeout=timeout,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesServiceError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def get_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.TableServiceProperties:
-        """Gets the properties of an account's Table service, including properties for
-        Analytics and CORS (Cross-Origin Resource Sharing) rules.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :return: TableServiceProperties. The TableServiceProperties is compatible with MutableMapping
-        :rtype: ~azure.data.tables._generated.models.TableServiceProperties
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
-
-        _request = build_service_get_properties_request(
-            timeout=timeout,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesServiceError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(_models.TableServiceProperties, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_statistics(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.TableServiceStats:
-        """Retrieves statistics related to replication for the Table service. It is only
-        available on the secondary location endpoint when read-access geo-redundant
-        replication is enabled for the account.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :return: TableServiceStats. The TableServiceStats is compatible with MutableMapping
-        :rtype: ~azure.data.tables._generated.models.TableServiceStats
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TableServiceStats] = kwargs.pop("cls", None)
-
-        _request = build_service_get_statistics_request(
-            timeout=timeout,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesServiceError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(_models.TableServiceStats, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class TableOperations:
@@ -410,158 +173,6 @@ class TableOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def get_access_policy(
-        self, table: str, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> list[_models.SignedIdentifier]:
-        """Retrieves details about any stored access policies specified on the table that
-        may be used with Shared Access Signatures.
-
-        :param table: The name of the table. Required.
-        :type table: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :return: SignedIdentifier
-        :rtype: ~azure.data.tables._generated.models.SignedIdentifier
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
-
-        _request = build_table_get_access_policy_request(
-            table=table,
-            timeout=timeout,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesServiceError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(list[_models.SignedIdentifier], response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def set_access_policy(
-        self, table: str, table_acl: list[_models.SignedIdentifier], *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> None:
-        """Sets stored access policies for the table that may be used with Shared Access
-        Signatures.
-
-        :param table: The name of the table. Required.
-        :type table: str
-        :param table_acl: The access control list for the table. Required.
-        :type table_acl: ~azure.data.tables._generated.models.SignedIdentifier
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _content = _get_element(table_acl)
-
-        _request = build_table_set_access_policy_request(
-            table=table,
-            timeout=timeout,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesServiceError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def create(
@@ -834,108 +445,46 @@ class TableOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @overload
-    async def insert_entity(
-        self,
-        table: str,
-        table_entity_properties: Optional[dict[str, Any]] = None,
-        *,
-        content_type: str = "application/json",
-        timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
-        **kwargs: Any
-    ) -> Optional[dict[str, Any]]:
-        """Insert entity in a table.
-
-        :param table: The name of the table. Required.
-        :type table: str
-        :param table_entity_properties: The entity properties to insert. Default value is None.
-        :type table_entity_properties: dict[str, any]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
-         payload. Possible values are return-no-content and return-content. Known values are:
-         "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
-        :return: dict mapping str to any or None
-        :rtype: dict[str, any] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def insert_entity(
-        self,
-        table: str,
-        table_entity_properties: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
-        **kwargs: Any
-    ) -> Optional[dict[str, Any]]:
-        """Insert entity in a table.
-
-        :param table: The name of the table. Required.
-        :type table: str
-        :param table_entity_properties: The entity properties to insert. Default value is None.
-        :type table_entity_properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
-         payload. Possible values are return-no-content and return-content. Known values are:
-         "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
-        :return: dict mapping str to any or None
-        :rtype: dict[str, any] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    async def insert_entity(
+    async def query_entities(
         self,
         table: str,
-        table_entity_properties: Optional[Union[dict[str, Any], IO[bytes]]] = None,
         *,
-        timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        top: Optional[int] = None,
+        select: Optional[str] = None,
+        filter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        next_partition_key: Optional[str] = None,
+        next_row_key: Optional[str] = None,
         **kwargs: Any
-    ) -> Optional[dict[str, Any]]:
-        """Insert entity in a table.
+    ) -> _models.TableEntityQueryResponse:
+        """Queries entities under the given table.
 
         :param table: The name of the table. Required.
         :type table: str
-        :param table_entity_properties: The entity properties to insert. Is either a {str: Any} type or
-         a IO[bytes] type. Default value is None.
-        :type table_entity_properties: dict[str, any] or IO[bytes]
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
         :keyword format: Specifies the metadata format for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
-         payload. Possible values are return-no-content and return-content. Known values are:
-         "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
-        :return: dict mapping str to any or None
-        :rtype: dict[str, any] or None
+        :keyword top: Specifies the maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested. Default value is None.
+        :paramtype select: str
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword next_partition_key: An entity partition key query continuation token from a previous
+         call. Default value is None.
+        :paramtype next_partition_key: str
+        :keyword next_row_key: An entity row key query continuation token from a previous call. Default
+         value is None.
+        :paramtype next_row_key: str
+        :return: TableEntityQueryResponse. The TableEntityQueryResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.data.tables._generated.models.TableEntityQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -946,35 +495,25 @@ class TableOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if table_entity_properties else None
-        cls: ClsType[Optional[dict[str, Any]]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TableEntityQueryResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json" if table_entity_properties else None
-        _content = None
-        if isinstance(table_entity_properties, (IOBase, bytes)):
-            _content = table_entity_properties
-        else:
-            if table_entity_properties is not None:
-                _content = json.dumps(table_entity_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
-
-        _request = build_table_insert_entity_request(
+        _request = build_table_query_entities_request(
             table=table,
-            timeout=timeout,
             format=format,
-            echo_content=echo_content,
+            top=top,
+            select=select,
+            filter=filter,
+            timeout=timeout,
+            next_partition_key=next_partition_key,
+            next_row_key=next_row_key,
             data_service_version=data_service_version,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -990,7 +529,7 @@ class TableOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1003,37 +542,141 @@ class TableOperations:
             )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 201:
-            response_headers["Preference-Applied"] = self._deserialize(
-                "str", response.headers.get("Preference-Applied")
-            )
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["x-ms-continuation-NextPartitionKey"] = self._deserialize(
+            "str", response.headers.get("x-ms-continuation-NextPartitionKey")
+        )
+        response_headers["x-ms-continuation-NextRowKey"] = self._deserialize(
+            "str", response.headers.get("x-ms-continuation-NextRowKey")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TableEntityQueryResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def query_entity_with_partition_and_row_key(
+        self,
+        table: str,
+        partition_key: str,
+        row_key: str,
+        *,
+        timeout: Optional[int] = None,
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        select: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> dict[str, Any]:
+        """Retrieve a single entity.
+
+        :param table: The name of the table. Required.
+        :type table: str
+        :param partition_key: The partition key of the entity. Required.
+        :type partition_key: str
+        :param row_key: The row key of the entity. Required.
+        :type row_key: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested. Default value is None.
+        :paramtype select: str
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        data_service_version: Literal["3.0"] = kwargs.pop(
+            "data_service_version", _headers.pop("DataServiceVersion", "3.0")
+        )
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+
+        _request = build_table_query_entity_with_partition_and_row_key_request(
+            table=table,
+            partition_key=partition_key,
+            row_key=row_key,
+            timeout=timeout,
+            format=format,
+            select=select,
+            filter=filter,
+            data_service_version=data_service_version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
             if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(dict[str, Any], response.json())
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.TablesError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
-        if response.status_code == 204:
-            response_headers["Preference-Applied"] = self._deserialize(
-                "str", response.headers.get("Preference-Applied")
-            )
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-continuation-NextPartitionKey"] = self._deserialize(
+            "str", response.headers.get("x-ms-continuation-NextPartitionKey")
+        )
+        response_headers["x-ms-continuation-NextRowKey"] = self._deserialize(
+            "str", response.headers.get("x-ms-continuation-NextRowKey")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(dict[str, Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1521,257 +1164,108 @@ class TableOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def query_entities(
+    @overload
+    async def insert_entity(
         self,
         table: str,
+        table_entity_properties: Optional[dict[str, Any]] = None,
         *,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        top: Optional[int] = None,
-        select: Optional[str] = None,
-        filter: Optional[str] = None,
+        content_type: str = "application/json",
         timeout: Optional[int] = None,
-        next_partition_key: Optional[str] = None,
-        next_row_key: Optional[str] = None,
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
-    ) -> _models.TableEntityQueryResponse:
-        """Queries entities under the given table.
+    ) -> Optional[dict[str, Any]]:
+        """Insert entity in a table.
 
         :param table: The name of the table. Required.
         :type table: str
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword top: Specifies the maximum number of records to return. Default value is None.
-        :paramtype top: int
-        :keyword select: Select expression using OData notation. Limits the columns on each record to
-         just those requested. Default value is None.
-        :paramtype select: str
-        :keyword filter: OData filter expression. Default value is None.
-        :paramtype filter: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword next_partition_key: An entity partition key query continuation token from a previous
-         call. Default value is None.
-        :paramtype next_partition_key: str
-        :keyword next_row_key: An entity row key query continuation token from a previous call. Default
-         value is None.
-        :paramtype next_row_key: str
-        :return: TableEntityQueryResponse. The TableEntityQueryResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.data.tables._generated.models.TableEntityQueryResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        data_service_version: Literal["3.0"] = kwargs.pop(
-            "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )
-        cls: ClsType[_models.TableEntityQueryResponse] = kwargs.pop("cls", None)
-
-        _request = build_table_query_entities_request(
-            table=table,
-            format=format,
-            top=top,
-            select=select,
-            filter=filter,
-            timeout=timeout,
-            next_partition_key=next_partition_key,
-            next_row_key=next_row_key,
-            data_service_version=data_service_version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-continuation-NextPartitionKey"] = self._deserialize(
-            "str", response.headers.get("x-ms-continuation-NextPartitionKey")
-        )
-        response_headers["x-ms-continuation-NextRowKey"] = self._deserialize(
-            "str", response.headers.get("x-ms-continuation-NextRowKey")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TableEntityQueryResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def query_entity_with_partition_and_row_key(
-        self,
-        table: str,
-        partition_key: str,
-        row_key: str,
-        *,
-        timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        select: Optional[str] = None,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> dict[str, Any]:
-        """Retrieve a single entity.
-
-        :param table: The name of the table. Required.
-        :type table: str
-        :param partition_key: The partition key of the entity. Required.
-        :type partition_key: str
-        :param row_key: The row key of the entity. Required.
-        :type row_key: str
+        :param table_entity_properties: The entity properties to insert. Default value is None.
+        :type table_entity_properties: dict[str, any]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword format: Specifies the metadata format for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword select: Select expression using OData notation. Limits the columns on each record to
-         just those requested. Default value is None.
-        :paramtype select: str
-        :keyword filter: OData filter expression. Default value is None.
-        :paramtype filter: str
-        :return: dict mapping str to any
-        :rtype: dict[str, any]
+        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :return: dict mapping str to any or None
+        :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+    @overload
+    async def insert_entity(
+        self,
+        table: str,
+        table_entity_properties: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        timeout: Optional[int] = None,
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        **kwargs: Any
+    ) -> Optional[dict[str, Any]]:
+        """Insert entity in a table.
 
-        data_service_version: Literal["3.0"] = kwargs.pop(
-            "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )
-        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
-
-        _request = build_table_query_entity_with_partition_and_row_key_request(
-            table=table,
-            partition_key=partition_key,
-            row_key=row_key,
-            timeout=timeout,
-            format=format,
-            select=select,
-            filter=filter,
-            data_service_version=data_service_version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["x-ms-continuation-NextPartitionKey"] = self._deserialize(
-            "str", response.headers.get("x-ms-continuation-NextPartitionKey")
-        )
-        response_headers["x-ms-continuation-NextRowKey"] = self._deserialize(
-            "str", response.headers.get("x-ms-continuation-NextRowKey")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(dict[str, Any], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def submit_transaction(
-        self, body: _models.SubmitTransactionRequest, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> _models.SubmitTransactionRequest:
-        """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
-
-        :param body: The body of the request. Required.
-        :type body: ~azure.data.tables._generated.models.SubmitTransactionRequest
+        :param table: The name of the table. Required.
+        :type table: str
+        :param table_entity_properties: The entity properties to insert. Default value is None.
+        :type table_entity_properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :return: SubmitTransactionRequest. The SubmitTransactionRequest is compatible with
-         MutableMapping
-        :rtype: ~azure.data.tables._generated.models.SubmitTransactionRequest
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
+        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :return: dict mapping str to any or None
+        :rtype: dict[str, any] or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def insert_entity(
+        self,
+        table: str,
+        table_entity_properties: Optional[Union[dict[str, Any], IO[bytes]]] = None,
+        *,
+        timeout: Optional[int] = None,
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        **kwargs: Any
+    ) -> Optional[dict[str, Any]]:
+        """Insert entity in a table.
+
+        :param table: The name of the table. Required.
+        :type table: str
+        :param table_entity_properties: The entity properties to insert. Is either a {str: Any} type or
+         a IO[bytes] type. Default value is None.
+        :type table_entity_properties: dict[str, any] or IO[bytes]
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
+        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :return: dict mapping str to any or None
+        :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1785,21 +1279,32 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        multipart_content_type: str = kwargs.pop(
-            "multipart_content_type", _headers.pop("Content-Type", "multipart/mixed")
+        data_service_version: Literal["3.0"] = kwargs.pop(
+            "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        cls: ClsType[_models.SubmitTransactionRequest] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if table_entity_properties else None
+        cls: ClsType[Optional[dict[str, Any]]] = kwargs.pop("cls", None)
 
-        _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: list[str] = ["body"]
-        _data_fields: list[str] = ["name"]
-        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        content_type = content_type or "application/json" if table_entity_properties else None
+        _content = None
+        if isinstance(table_entity_properties, (IOBase, bytes)):
+            _content = table_entity_properties
+        else:
+            if table_entity_properties is not None:
+                _content = json.dumps(table_entity_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
-        _request = build_table_submit_transaction_request(
+        _request = build_table_insert_entity_request(
+            table=table,
             timeout=timeout,
-            multipart_content_type=multipart_content_type,
+            format=format,
+            echo_content=echo_content,
+            data_service_version=data_service_version,
+            content_type=content_type,
             api_version=self._config.api_version,
-            files=_files,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1815,7 +1320,7 @@ class TableOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [201, 204]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1828,19 +1333,423 @@ class TableOperations:
             )
             raise HttpResponseError(response=response, model=error)
 
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Preference-Applied"] = self._deserialize(
+                "str", response.headers.get("Preference-Applied")
+            )
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(dict[str, Any], response.json())
+
+        if response.status_code == 204:
+            response_headers["Preference-Applied"] = self._deserialize(
+                "str", response.headers.get("Preference-Applied")
+            )
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_access_policy(
+        self, table: str, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> list[_models.SignedIdentifier]:
+        """Retrieves details about any stored access policies specified on the table that may be used with
+        Shared Access Signatures.
+
+        :param table: The name of the table. Required.
+        :type table: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :return: SignedIdentifier
+        :rtype: ~azure.data.tables._generated.models.SignedIdentifier
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+
+        _request = build_table_get_access_policy_request(
+            table=table,
+            timeout=timeout,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.TablesServiceError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(list[_models.SignedIdentifier], response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def set_access_policy(
+        self, table: str, table_acl: list[_models.SignedIdentifier], *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """Sets stored access policies for the table that may be used with Shared Access Signatures.
+
+        :param table: The name of the table. Required.
+        :type table: str
+        :param table_acl: The access control list for the table. Required.
+        :type table_acl: ~azure.data.tables._generated.models.SignedIdentifier
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _content = _get_element(table_acl)
+
+        _request = build_table_set_access_policy_request(
+            table=table,
+            timeout=timeout,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.TablesServiceError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+
+class ServiceOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.data.tables._generated.aio.TablesClient`'s
+        :attr:`service` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: TablesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def set_properties(
+        self, table_service_properties: _models.TableServiceProperties, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """Sets properties for an account's Table service endpoint, including properties for Analytics and
+        CORS (Cross-Origin Resource Sharing) rules.
+
+        :param table_service_properties: The table service properties to set. Required.
+        :type table_service_properties: ~azure.data.tables._generated.models.TableServiceProperties
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _content = _get_element(table_service_properties)
+
+        _request = build_service_set_properties_request(
+            timeout=timeout,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.TablesServiceError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
         response_headers = {}
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def get_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.TableServiceProperties:
+        """Gets the properties of an account's Table service, including properties for Analytics and CORS
+        (Cross-Origin Resource Sharing) rules.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :return: TableServiceProperties. The TableServiceProperties is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.TableServiceProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
+
+        _request = build_service_get_properties_request(
+            timeout=timeout,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.TablesServiceError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.SubmitTransactionRequest, response.text())
+            deserialized = _deserialize_xml(_models.TableServiceProperties, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_statistics(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.TableServiceStats:
+        """Retrieves statistics related to replication for the Table service. It is only available on the
+        secondary location endpoint when read-access geo-redundant replication is enabled for the
+        account.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :return: TableServiceStats. The TableServiceStats is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.TableServiceStats
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TableServiceStats] = kwargs.pop("cls", None)
+
+        _request = build_service_get_statistics_request(
+            timeout=timeout,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.TablesServiceError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(_models.TableServiceStats, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

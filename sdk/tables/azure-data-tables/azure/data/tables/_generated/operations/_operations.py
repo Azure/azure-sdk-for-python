@@ -33,19 +33,19 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._configuration import TablesClientConfiguration
 from .._utils.model_base import (
-    Model as _Model,
     SdkJSONEncoder,
     _deserialize,
     _deserialize_xml,
     _failsafe_deserialize,
+    _failsafe_deserialize_xml,
     _get_element,
 )
 from .._utils.serialization import Deserializer, Serializer
-from .._utils.utils import prep_if_match, prep_if_none_match, prepare_multipart_form_data
+from .._utils.utils import prep_if_match, prep_if_none_match
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -523,28 +523,6 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_table_submit_transaction_request(*, timeout: Optional[int] = None, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    multipart_content_type: str = kwargs.pop("multipart_content_type")
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
-    accept = _headers.pop("Accept", "multipart/mixed")
-
-    # Construct URL
-    _url = "/$batch"
-
-    # Construct parameters
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class TableOperations:
@@ -1856,8 +1834,8 @@ class TableOperations:
     def get_access_policy(
         self, table: str, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> list[_models.SignedIdentifier]:
-        """Retrieves details about any stored access policies specified on the table that
-        may be used with Shared Access Signatures.
+        """Retrieves details about any stored access policies specified on the table that may be used with
+        Shared Access Signatures.
 
         :param table: The name of the table. Required.
         :type table: str
@@ -1906,7 +1884,7 @@ class TableOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.TablesServiceError,
                 response,
             )
@@ -1935,8 +1913,7 @@ class TableOperations:
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
         self, table: str, table_acl: list[_models.SignedIdentifier], *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """Sets stored access policies for the table that may be used with Shared Access
-        Signatures.
+        """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param table: The name of the table. Required.
         :type table: str
@@ -1987,7 +1964,7 @@ class TableOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.TablesServiceError,
                 response,
             )
@@ -2003,94 +1980,6 @@ class TableOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace
-    def submit_transaction(
-        self, body: _models.SubmitTransactionRequest, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> _models.SubmitTransactionRequest:
-        """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
-
-        :param body: The body of the request. Required.
-        :type body: ~azure.data.tables._generated.models.SubmitTransactionRequest
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :return: SubmitTransactionRequest. The SubmitTransactionRequest is compatible with
-         MutableMapping
-        :rtype: ~azure.data.tables._generated.models.SubmitTransactionRequest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        multipart_content_type: str = kwargs.pop(
-            "multipart_content_type", _headers.pop("Content-Type", "multipart/mixed")
-        )
-        cls: ClsType[_models.SubmitTransactionRequest] = kwargs.pop("cls", None)
-
-        _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: list[str] = ["body"]
-        _data_fields: list[str] = ["name"]
-        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
-
-        _request = build_table_submit_transaction_request(
-            timeout=timeout,
-            multipart_content_type=multipart_content_type,
-            api_version=self._config.api_version,
-            files=_files,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.SubmitTransactionRequest, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class ServiceOperations:
@@ -2114,8 +2003,8 @@ class ServiceOperations:
     def set_properties(  # pylint: disable=inconsistent-return-statements
         self, table_service_properties: _models.TableServiceProperties, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """Sets properties for an account's Table service endpoint, including properties
-        for Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Sets properties for an account's Table service endpoint, including properties for Analytics and
+        CORS (Cross-Origin Resource Sharing) rules.
 
         :param table_service_properties: The table service properties to set. Required.
         :type table_service_properties: ~azure.data.tables._generated.models.TableServiceProperties
@@ -2163,7 +2052,7 @@ class ServiceOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.TablesServiceError,
                 response,
             )
@@ -2181,8 +2070,8 @@ class ServiceOperations:
 
     @distributed_trace
     def get_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.TableServiceProperties:
-        """Gets the properties of an account's Table service, including properties for
-        Analytics and CORS (Cross-Origin Resource Sharing) rules.
+        """Gets the properties of an account's Table service, including properties for Analytics and CORS
+        (Cross-Origin Resource Sharing) rules.
 
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
@@ -2228,7 +2117,7 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.TablesServiceError,
                 response,
             )
@@ -2254,9 +2143,9 @@ class ServiceOperations:
 
     @distributed_trace
     def get_statistics(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.TableServiceStats:
-        """Retrieves statistics related to replication for the Table service. It is only
-        available on the secondary location endpoint when read-access geo-redundant
-        replication is enabled for the account.
+        """Retrieves statistics related to replication for the Table service. It is only available on the
+        secondary location endpoint when read-access geo-redundant replication is enabled for the
+        account.
 
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
@@ -2302,7 +2191,7 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
+            error = _failsafe_deserialize_xml(
                 _models.TablesServiceError,
                 response,
             )

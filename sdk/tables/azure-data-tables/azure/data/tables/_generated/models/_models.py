@@ -11,7 +11,6 @@ import datetime
 from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
-from .._utils.utils import FileType
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -73,26 +72,22 @@ class CorsRule(_Model):
     way to allow one domain (the origin domain) to call APIs in another domain.
 
     :ivar allowed_origins: The origin domains that are permitted to make a request against the
-     service via
-     CORS. The origin domain is the domain from which the request originates. Note
-     that the origin must be an exact case-sensitive match with the origin that the
-     user age sends to the service. You can also use the wildcard character '*' to
-     allow all origin domains to make requests via CORS. Required.
+     service via CORS. The origin domain is the domain from which the request originates. Note that
+     the origin must be an exact case-sensitive match with the origin that the user age sends to the
+     service. You can also use the wildcard character '*' to allow all origin domains to make
+     requests via CORS. Required.
     :vartype allowed_origins: str
     :ivar allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
-     CORS
-     request. Required.
+     CORS request. Required.
     :vartype allowed_methods: str
     :ivar allowed_headers: The request headers that the origin domain may specify on the CORS
      request. Required.
     :vartype allowed_headers: str
     :ivar exposed_headers: The response headers that may be sent in the response to the CORS
-     request and
-     exposed by the browser to the request issuer. Required.
+     request and exposed by the browser to the request issuer. Required.
     :vartype exposed_headers: str
     :ivar max_age_in_seconds: The maximum amount time that a browser should cache the preflight
-     OPTIONS
-     request. Required.
+     OPTIONS request. Required.
     :vartype max_age_in_seconds: int
     """
 
@@ -101,18 +96,16 @@ class CorsRule(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedOrigins", "text": False, "unwrapped": False},
     )
-    """The origin domains that are permitted to make a request against the service via
-     CORS. The origin domain is the domain from which the request originates. Note
-     that the origin must be an exact case-sensitive match with the origin that the
-     user age sends to the service. You can also use the wildcard character '*' to
-     allow all origin domains to make requests via CORS. Required."""
+    """The origin domains that are permitted to make a request against the service via CORS. The
+     origin domain is the domain from which the request originates. Note that the origin must be an
+     exact case-sensitive match with the origin that the user age sends to the service. You can also
+     use the wildcard character '*' to allow all origin domains to make requests via CORS. Required."""
     allowed_methods: str = rest_field(
         name="allowedMethods",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedMethods", "text": False, "unwrapped": False},
     )
-    """The methods (HTTP request verbs) that the origin domain may use for a CORS
-     request. Required."""
+    """The methods (HTTP request verbs) that the origin domain may use for a CORS request. Required."""
     allowed_headers: str = rest_field(
         name="allowedHeaders",
         visibility=["read", "create", "update", "delete", "query"],
@@ -124,15 +117,14 @@ class CorsRule(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ExposedHeaders", "text": False, "unwrapped": False},
     )
-    """The response headers that may be sent in the response to the CORS request and
-     exposed by the browser to the request issuer. Required."""
+    """The response headers that may be sent in the response to the CORS request and exposed by the
+     browser to the request issuer. Required."""
     max_age_in_seconds: int = rest_field(
         name="maxAgeInSeconds",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxAgeInSeconds", "text": False, "unwrapped": False},
     )
-    """The maximum amount time that a browser should cache the preflight OPTIONS
-     request. Required."""
+    """The maximum amount time that a browser should cache the preflight OPTIONS request. Required."""
 
     _xml = {"attribute": False, "name": "CorsRule", "text": False, "unwrapped": False}
 
@@ -302,8 +294,7 @@ class Metrics(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "IncludeAPIs", "text": False, "unwrapped": False},
     )
-    """Indicates whether metrics should generate summary statistics for called API
-     operations."""
+    """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
         name="retentionPolicy",
         visibility=["read", "create", "update", "delete", "query"],
@@ -339,8 +330,8 @@ class RetentionPolicy(_Model):
 
     :ivar enabled: Whether to enable the retention policy. Required.
     :vartype enabled: bool
-    :ivar days: Indicates the number of days that metrics or logging or soft-deleted data
-     should be retained. All data older than this value will be deleted.
+    :ivar days: Indicates the number of days that metrics or logging or soft-deleted data should be
+     retained. All data older than this value will be deleted.
     :vartype days: int
     """
 
@@ -353,8 +344,8 @@ class RetentionPolicy(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Days", "text": False, "unwrapped": False},
     )
-    """Indicates the number of days that metrics or logging or soft-deleted data
-     should be retained. All data older than this value will be deleted."""
+    """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
+     All data older than this value will be deleted."""
 
     _xml = {"attribute": False, "name": "RetentionPolicy", "text": False, "unwrapped": False}
 
@@ -406,41 +397,6 @@ class SignedIdentifier(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         access_policy: Optional["_models.AccessPolicy"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SubmitTransactionRequest(_Model):
-    """SubmitTransactionRequest.
-
-    :ivar name: Required.
-    :vartype name: str
-    :ivar body: Required.
-    :vartype body: ~azure.data.tables._generated._utils.utils.FileType
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    body: FileType = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
-    )
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        body: FileType,
     ) -> None: ...
 
     @overload

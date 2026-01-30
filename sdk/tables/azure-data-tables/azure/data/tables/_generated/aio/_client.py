@@ -26,10 +26,10 @@ if TYPE_CHECKING:
 class TablesClient:
     """TablesClient.
 
-    :ivar service: ServiceOperations operations
-    :vartype service: azure.data.tables._generated.aio.operations.ServiceOperations
     :ivar table: TableOperations operations
     :vartype table: azure.data.tables._generated.aio.operations.TableOperations
+    :ivar service: ServiceOperations operations
+    :vartype service: azure.data.tables._generated.aio.operations.ServiceOperations
     :param url: The host name of the tables account, e.g. accountName.table.core.windows.net.
      Required.
     :type url: str
@@ -68,8 +68,8 @@ class TablesClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
         self.table = TableOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
