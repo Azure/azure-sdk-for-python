@@ -24,7 +24,6 @@ dependencies = [
     "azure-ai-agents>=1.2.0b5",
     "azure-core>=1.35.0",
     "azure-identity",
-    "openai>=1.80.0",
     "opentelemetry-api>=1.35",
     "opentelemetry-exporter-otlp-proto-http",
     "starlette>=0.45.0",

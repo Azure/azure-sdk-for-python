@@ -20,7 +20,7 @@ class CustomCredential(CustomCredentialGenerated):
     :vartype credential_keys: dict[str, str]
     """
 
-    credential_keys: Dict[str, str] = {}
+    credential_keys: Dict[str, str]
     """The secret custom credential keys. Required."""
 
 
