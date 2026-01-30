@@ -590,7 +590,7 @@ def build_container_acquire_lease_request(
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&acquire"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -625,7 +625,7 @@ def build_container_release_lease_request(
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&release"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -659,7 +659,7 @@ def build_container_renew_lease_request(
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&renew"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -693,7 +693,7 @@ def build_container_break_lease_request(
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&break"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -729,7 +729,7 @@ def build_container_change_lease_request(
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container&change"
+    _url = "/?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -767,7 +767,7 @@ def build_container_list_blob_flat_segment_request(  # pylint: disable=name-too-
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=container&comp=list&flat"
+    _url = "/?restype=container&comp=list"
 
     # Construct parameters
     if prefix is not None:
@@ -810,7 +810,7 @@ def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=container&comp=list&hierarchy"
+    _url = "/?restype=container&comp=list"
 
     # Construct parameters
     _params["delimiter"] = _SERIALIZER.query("delimiter", delimiter, "str")
@@ -1130,7 +1130,7 @@ def build_blob_set_http_headers_request(
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=properties&SetHTTPHeaders"
+    _url = "/?comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -1351,7 +1351,7 @@ def build_blob_acquire_lease_request(
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&acquire"
+    _url = "/?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1397,7 +1397,7 @@ def build_blob_release_lease_request(
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&release"
+    _url = "/?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1442,7 +1442,7 @@ def build_blob_renew_lease_request(
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&renew"
+    _url = "/?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1488,7 +1488,7 @@ def build_blob_change_lease_request(
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&change"
+    _url = "/?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1534,7 +1534,7 @@ def build_blob_break_lease_request(
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&break"
+    _url = "/?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1752,7 +1752,7 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
     requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=copy&sync"
+    _url = "/?comp=copy"
 
     # Construct parameters
     if timeout is not None:
@@ -1833,7 +1833,7 @@ def build_blob_abort_copy_from_url_request(
     )
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=copy&copyid"
+    _url = "/?comp=copy"
 
     # Construct parameters
     if timeout is not None:
@@ -1898,7 +1898,7 @@ def build_blob_get_account_info_request(*, timeout: Optional[int] = None, **kwar
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=account&comp=properties&blob"
+    _url = "/?restype=account&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -2163,7 +2163,7 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=page&update"
+    _url = "/?comp=page"
 
     # Construct parameters
     if timeout is not None:
@@ -2255,7 +2255,7 @@ def build_page_blob_clear_pages_request(
     page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=page&clear"
+    _url = "/?comp=page"
 
     # Construct parameters
     if timeout is not None:
@@ -2345,7 +2345,7 @@ def build_page_blob_upload_pages_from_url_request(  # pylint: disable=name-too-l
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=page&update&fromUrl"
+    _url = "/?comp=page"
 
     # Construct parameters
     if timeout is not None:
@@ -2518,7 +2518,7 @@ def build_page_blob_get_page_ranges_diff_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=pagelist&diff"
+    _url = "/?comp=pagelist"
 
     # Construct parameters
     if snapshot is not None:
@@ -2580,7 +2580,7 @@ def build_page_blob_resize_request(
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=properties&Resize"
+    _url = "/?comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -2637,7 +2637,7 @@ def build_page_blob_update_sequence_number_request(  # pylint: disable=name-too-
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=properties&UpdateSequenceNumber"
+    _url = "/?comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -2937,7 +2937,7 @@ def build_append_blob_append_block_from_url_request(  # pylint: disable=name-too
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=appendblock&fromUrl"
+    _url = "/?comp=appendblock"
 
     # Construct parameters
     if timeout is not None:
@@ -3238,7 +3238,7 @@ def build_block_blob_put_blob_from_url_request(  # pylint: disable=name-too-long
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?BlockBlob&fromUrl"
+    _url = "/?BlockBlob"
 
     # Construct parameters
     if timeout is not None:
@@ -3439,7 +3439,7 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=block&fromURL"
+    _url = "/?comp=block"
 
     # Construct parameters
     _params["blockid"] = _SERIALIZER.query("block_id", block_id, "bytearray")
