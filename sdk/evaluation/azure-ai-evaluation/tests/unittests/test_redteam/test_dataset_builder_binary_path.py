@@ -705,3 +705,93 @@ class TestFullBuildFlow:
 
         builder.add_objective_with_context(objective_content="Test 2")
         assert len(builder) == 2
+
+
+# =============================================================================
+# Tests for Context Storage in Metadata (Standard Attacks)
+# =============================================================================
+@pytest.mark.unittest
+class TestContextMetadataStorage:
+    """Test context storage in objective metadata for standard attacks."""
+
+    def test_standard_attack_stores_context_in_metadata(self):
+        """Test that standard (non-indirect) attacks store context in objective metadata."""
+        from azure.ai.evaluation.red_team._foundry._dataset_builder import (
+            DatasetConfigurationBuilder as RealBuilder,
+        )
+
+        builder = RealBuilder(risk_category="violence", is_indirect_attack=False)
+        context_items = [
+            {"content": "Email body content", "context_type": "email", "tool_name": "email_reader"},
+            {"content": "Document content", "context_type": "document", "tool_name": "doc_reader"},
+        ]
+
+        builder.add_objective_with_context(
+            objective_content="Test objective",
+            context_items=context_items,
+            metadata={"risk_subtype": "test"},
+        )
+
+        # Get the seed group and objective
+        assert len(builder.seed_groups) == 1
+        seed_group = builder.seed_groups[0]
+        objective = seed_group.seeds[0]  # First seed is the objective
+
+        # Verify context is stored in metadata
+        assert "context_items" in objective.metadata
+        assert objective.metadata["context_items"] == context_items
+
+        # Clean up
+        builder.cleanup()
+
+    def test_indirect_attack_does_not_store_context_in_metadata(self):
+        """Test that indirect attacks do NOT store context in objective metadata (stored as SeedPrompts)."""
+        from azure.ai.evaluation.red_team._foundry._dataset_builder import (
+            DatasetConfigurationBuilder as RealBuilder,
+        )
+
+        builder = RealBuilder(risk_category="violence", is_indirect_attack=True)
+        context_items = [
+            {"content": "Email body content", "context_type": "email", "tool_name": "email_reader"},
+        ]
+
+        builder.add_objective_with_context(
+            objective_content="Test objective",
+            context_items=context_items,
+            metadata={"risk_subtype": "test"},
+        )
+
+        # Get the seed group and objective
+        assert len(builder.seed_groups) == 1
+        seed_group = builder.seed_groups[0]
+        objective = seed_group.seeds[0]  # First seed is the objective
+
+        # Verify context is NOT stored in metadata (it's stored as separate SeedPrompts instead)
+        assert "context_items" not in objective.metadata
+
+        # Clean up
+        builder.cleanup()
+
+    def test_standard_attack_no_context_no_metadata_entry(self):
+        """Test that without context items, no context_items key in metadata."""
+        from azure.ai.evaluation.red_team._foundry._dataset_builder import (
+            DatasetConfigurationBuilder as RealBuilder,
+        )
+
+        builder = RealBuilder(risk_category="violence", is_indirect_attack=False)
+
+        builder.add_objective_with_context(
+            objective_content="Test objective",
+            context_items=None,  # No context
+            metadata={"risk_subtype": "test"},
+        )
+
+        # Get the seed group and objective
+        seed_group = builder.seed_groups[0]
+        objective = seed_group.seeds[0]
+
+        # Verify context_items is not in metadata when not provided
+        assert "context_items" not in objective.metadata
+
+        # Clean up
+        builder.cleanup()

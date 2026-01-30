@@ -87,6 +87,10 @@ class DatasetConfigurationBuilder:
         objective_metadata = metadata.copy() if metadata else {}
         objective_metadata["risk_category"] = self.risk_category
 
+        # Store context items in metadata for standard attacks (used for scoring/result reconstruction)
+        if context_items and not self.is_indirect_attack:
+            objective_metadata["context_items"] = context_items
+
         objective = SeedObjective(
             value=objective_content,
             prompt_group_id=group_uuid,
@@ -99,9 +103,9 @@ class DatasetConfigurationBuilder:
         if self.is_indirect_attack and context_items:
             # XPIA: Create separate SeedPrompt with injected attack string
             seeds.extend(self._create_xpia_prompts(objective_content, context_items, group_uuid))
-        # Note: For standard attacks, we don't add context prompts to the SeedGroup
-        # because PyRIT's converters don't support non-text data types.
-        # Context is stored in objective metadata for reference if needed.
+        # Note: For standard attacks, context is stored in objective metadata (above)
+        # rather than as separate SeedPrompts, because PyRIT's converters don't support
+        # non-text data types and we don't want context to be sent through converters.
 
         # 3. Create seed group
         seed_group = SeedGroup(seeds=seeds)
