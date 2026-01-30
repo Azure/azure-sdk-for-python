@@ -4,29 +4,60 @@ parameters:
 - name: DependsOn
   type: string
   default: Build
+- name: ArtifactName
+  type: string
+  default: 'conda'
 
 stages:
-  # - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
-  - stage: Release
-    displayName: 'Conda Release'
-    dependsOn: ${{parameters.DependsOn}}
-    condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
-    jobs:
-      - deployment: CondaRelease
-        displayName: "Publish Conda Artifact"
-        # environment: pypi
+  - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
+    - ${{ each artifact in parameters.CondaArtifacts }}:
+      - stage: 'Release_${{artifact.name}}'
+        displayName: 'Release: ${{artifact.name}}'
+        dependsOn: ${{parameters.DependsOn}}
+        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+        jobs:
+          - deployment: PublishCondaPackage
+            displayName: "Publish Conda Artifact: ${{artifact.name}}"
+            environment: package-publish
 
-        pool:
-          name: 'azsdk-pool'
-          demands: ImageOverride -equals 'ubuntu-24.04'
+            templateContext:
+              type: releaseJob
+              isProduction: true
+              inputs:
+              - input: pipelineArtifact
+                artifactName: ${{parameters.ArtifactName}}
+                targetPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                - ${{ each artifact in parameters.CondaArtifacts }}:
-                  - pwsh: |
-                      Write-Host "${{ artifact.name }} is ${{ artifact.inBatch }}"
-                    workingDirectory: $(Pipeline.Workspace)
-                    displayName: Output Visible Conda Artifact
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+
+                    - task: UsePythonVersion@0
+                      inputs:
+                        versionSpec: '3.12'
+
+                    - pwsh: |
+                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                      workingDirectory: $(Pipeline.Workspace)
+                      displayName: Output Visible Conda Artifacts
+
+                    - script: |
+                        set -e
+                        python -m pip install anaconda-client
+                      displayName: Install anaconda-client
+
+                    - script: |
+                        set -e
+                        anaconda upload --user $CONDA_USERNAME --skip-existing --private $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.tar.bz2
+                        echo "Uploaded ${{artifact.name}} to Anaconda"
+                      displayName: 'Publish ${{artifact.name}} to Anaconda'
+                      env:
+                        ANACONDA_API_TOKEN: $(conda-release-apikey)
+                        CONDA_USERNAME: Microsoft
