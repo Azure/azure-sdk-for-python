@@ -70,7 +70,8 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 | `views` | A list of [views][ot_view] that will be used to customize metrics exported by the SDK. | `N/A` |
 | `log_record_processors` | A list of [log record processors][ot_log_record_processor] that will process log records before they are exported. | `N/A` |
 | `metric_readers` | A list of [metric reader][ot_metric_reader] that will process metric readers before they are exported | `N/A` |
-| `traces_per_second` | Configures the Rate Limited sampler by specifying the maximum number of traces to sample per second. When set, this automatically enables the rate-limited sampler. Alternatively, you can configure sampling using the `OTEL_TRACES_SAMPLER` and `OTEL_TRACES_SAMPLER_ARG` environment variables as described in the table below. To switch back to fixed percentage sampler, set the sampling_ratio to the desired value, ex. 1.0 and set traces_per_second to 0.0. Please refer to [sampling_configurations] sample file for more clarity on sampler configuration. **Please note that the sampling configuration via environment variables will have precedence over the sampling exporter/distro options.** | `N/A`
+| `sampling_ratio` | Configures the Application Insights Sampler specifying the percentage of traces to be sampled. Has to be a value between 0 and 1. For example, 0.1 sampling ratio would mean sampling 10% of all the traces. Defaults to 1.0 i.e 100% sampling rate. **Please note that the sampling configuration via environment variables will have precedence over the sampling exporter/distro options.** | `N/A`
+| `traces_per_second` | Configures the Rate Limited Sampler by specifying the maximum number of traces to sample per second. When set, this automatically enables the rate-limited sampler. Alternatively, you can configure sampling using the `OTEL_TRACES_SAMPLER` and `OTEL_TRACES_SAMPLER_ARG` environment variables as described in the table below. To switch back to fixed percentage sampler, set the sampling_ratio to the desired value, ex. 1.0. Please refer to [sampling_configurations] sample file for more clarity on sampler configuration. **Please note that the sampling configuration via environment variables will have precedence over the sampling exporter/distro options.** | `N/A`
 
 You can configure further with [OpenTelemetry environment variables][ot_env_vars].
 
@@ -268,5 +269,5 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [python_logging_formatter]: https://docs.python.org/3/library/logging.html#formatter-objects
 [python_logging_level]: https://docs.python.org/3/library/logging.html#levels
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples
-[sampling_configuration]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/sampling_configurations.py
+[sampling_configurations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/sampling_configurations.py
 [samples_manual]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manually_instrumented.py
