@@ -156,7 +156,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
         blob.name = generated.name.content  #type: ignore
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type)
-    blob.etag = generated.properties.etag
+    blob.etag = generated.properties.e_tag
     blob.deleted = generated.deleted
     blob.snapshot = generated.snapshot
     blob.is_append_blob_sealed = generated.properties.is_sealed
