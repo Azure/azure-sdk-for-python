@@ -23,6 +23,7 @@ try:
     from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
     from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
     from pyrit.orchestrator import Orchestrator
+
     _ORCHESTRATOR_AVAILABLE = True
 except ImportError:
     # Newer PyRIT versions use scenario-based approach instead of orchestrators

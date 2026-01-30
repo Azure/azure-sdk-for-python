@@ -106,10 +106,7 @@ class TestRedTeamFoundry:
             if context and "contexts" in context:
                 context_info = f" [with {len(context['contexts'])} context items]"
 
-            formatted_response = {
-                "content": f"Response to: {query}{context_info}",
-                "role": "assistant"
-            }
+            formatted_response = {"content": f"Response to: {query}{context_info}", "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],

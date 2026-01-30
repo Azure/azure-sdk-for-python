@@ -88,8 +88,7 @@ class FoundryExecutionManager:
 
         # Check if Baseline was requested (it's in special_strategies)
         include_baseline = any(
-            s == AttackStrategy.Baseline if not isinstance(s, list)
-            else AttackStrategy.Baseline in s
+            s == AttackStrategy.Baseline if not isinstance(s, list) else AttackStrategy.Baseline in s
             for s in attack_strategies
         )
 
@@ -107,8 +106,7 @@ class FoundryExecutionManager:
             )
             # Filter out multi-turn strategies
             mapped_strategies = [
-                s for s in mapped_strategies
-                if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
+                s for s in mapped_strategies if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
             ]
 
         # Check if we need XPIA handling
@@ -183,10 +181,7 @@ class FoundryExecutionManager:
             self._result_processors[risk_value] = result_processor
 
             # Generate JSONL output
-            output_path = os.path.join(
-                self.output_dir,
-                f"{risk_value}_results.jsonl"
-            )
+            output_path = os.path.join(self.output_dir, f"{risk_value}_results.jsonl")
             result_processor.to_jsonl(output_path)
 
             # Get summary stats
@@ -301,11 +296,13 @@ class FoundryExecutionManager:
 
                 # Also check for separate context fields
                 if "context_type" in first_msg:
-                    context_items.append({
-                        "content": first_msg.get("content", ""),
-                        "context_type": first_msg["context_type"],
-                        "tool_name": first_msg.get("tool_name"),
-                    })
+                    context_items.append(
+                        {
+                            "content": first_msg.get("content", ""),
+                            "context_type": first_msg["context_type"],
+                            "tool_name": first_msg.get("tool_name"),
+                        }
+                    )
 
         # Top-level context
         if "context" in obj:

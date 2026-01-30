@@ -51,9 +51,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         self.azure_ai_project = azure_ai_project
         self.context = context
 
-    async def send_prompt_async(
-        self, *, prompt_request: Message, objective: str = ""
-    ) -> Message:
+    async def send_prompt_async(self, *, prompt_request: Message, objective: str = "") -> Message:
         self.logger.info("Starting send_prompt_async operation")
         self._validate_request(prompt_request=prompt_request)
 

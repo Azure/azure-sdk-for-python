@@ -99,19 +99,23 @@ class FoundryResultProcessor:
 
                     # For XPIA, include the injected vehicle
                     if metadata.get("is_attack_vehicle"):
-                        contexts.append({
-                            "content": content,
-                            "tool_name": metadata.get("tool_name"),
-                            "context_type": metadata.get("context_type"),
-                            "is_attack_vehicle": True,
-                        })
+                        contexts.append(
+                            {
+                                "content": content,
+                                "tool_name": metadata.get("tool_name"),
+                                "context_type": metadata.get("context_type"),
+                                "is_attack_vehicle": True,
+                            }
+                        )
                     elif not metadata.get("is_original_context"):
                         # Standard context
-                        contexts.append({
-                            "content": content,
-                            "tool_name": metadata.get("tool_name"),
-                            "context_type": metadata.get("context_type"),
-                        })
+                        contexts.append(
+                            {
+                                "content": content,
+                                "tool_name": metadata.get("tool_name"),
+                                "context_type": metadata.get("context_type"),
+                            }
+                        )
 
                 self._context_lookup[str(group_id)] = {
                     "contexts": contexts,
@@ -165,9 +169,7 @@ class FoundryResultProcessor:
         """
         try:
             # Get conversation messages for this result
-            conversation_pieces = memory.get_message_pieces(
-                conversation_id=attack_result.conversation_id
-            )
+            conversation_pieces = memory.get_message_pieces(conversation_id=attack_result.conversation_id)
 
             # Extract prompt_group_id from conversation metadata
             group_id = self._get_prompt_group_id_from_conversation(conversation_pieces)
@@ -266,10 +268,7 @@ class FoundryResultProcessor:
         messages = []
 
         # Sort by sequence if available
-        sorted_pieces = sorted(
-            conversation_pieces,
-            key=lambda p: getattr(p, "sequence", 0)
-        )
+        sorted_pieces = sorted(conversation_pieces, key=lambda p: getattr(p, "sequence", 0))
 
         for piece in sorted_pieces:
             # Get role, handling api_role property

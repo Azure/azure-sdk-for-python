@@ -466,9 +466,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
         stop=stop_after_attempt(5),
         retry_error_callback=_fallback_response,
     )
-    async def send_prompt_async(
-        self, *, prompt_request: Message, objective: str = ""
-    ) -> Message:
+    async def send_prompt_async(self, *, prompt_request: Message, objective: str = "") -> Message:
         """Send a prompt to the Azure RAI service.
 
         :param prompt_request: The prompt request

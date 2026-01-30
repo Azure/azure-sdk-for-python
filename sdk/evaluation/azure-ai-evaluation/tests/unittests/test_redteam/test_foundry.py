@@ -65,7 +65,9 @@ def sample_objectives():
         },
         {
             "id": str(uuid.uuid4()),
-            "messages": [{"content": "Test objective 2", "context": [{"content": "Email content", "context_type": "email"}]}],
+            "messages": [
+                {"content": "Test objective 2", "context": [{"content": "Email content", "context_type": "email"}]}
+            ],
             "metadata": {"risk_subtype": "violence_specific"},
         },
     ]
@@ -159,10 +161,7 @@ class TestDatasetConfigurationBuilder:
         assert len(seeds) >= 1
 
         # Check that attack vehicle metadata is present on some seeds
-        has_attack_vehicle = any(
-            getattr(seed, "metadata", {}).get("is_attack_vehicle")
-            for seed in seeds
-        )
+        has_attack_vehicle = any(getattr(seed, "metadata", {}).get("is_attack_vehicle") for seed in seeds)
         # In XPIA mode with context, we should have attack vehicles
         # (This depends on implementation details)
 
@@ -692,9 +691,7 @@ class TestRAIServiceScorer:
 
         mock_piece = MagicMock()
         mock_piece.labels = {
-            "context": json.dumps({
-                "contexts": [{"content": "Context content 1"}, {"content": "Context content 2"}]
-            })
+            "context": json.dumps({"contexts": [{"content": "Context content 1"}, {"content": "Context content 2"}]})
         }
 
         result = scorer._get_context_for_piece(mock_piece)
@@ -910,9 +907,7 @@ class TestScenarioOrchestrator:
         failure_result.outcome = AttackOutcome.FAILURE
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [success_result, success_result, failure_result]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [success_result, success_result, failure_result]}
 
         asr = orchestrator.calculate_asr()
         assert asr == pytest.approx(2 / 3)  # 2 successes out of 3
@@ -945,9 +940,7 @@ class TestScenarioOrchestrator:
         morse_success.attack_identifier = {"__type__": "MorseAttack"}
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [base64_success, base64_failure, morse_success]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [base64_success, base64_failure, morse_success]}
 
         asr_by_strategy = orchestrator.calculate_asr_by_strategy()
 
@@ -1049,9 +1042,7 @@ class TestFoundryResultProcessor:
         undetermined = MagicMock()
         undetermined.outcome = AttackOutcome.UNDETERMINED
 
-        mock_scenario.get_attack_results.return_value = [
-            success, success, failure, undetermined
-        ]
+        mock_scenario.get_attack_results.return_value = [success, success, failure, undetermined]
 
         mock_dataset = MagicMock()
         mock_dataset.get_all_seed_groups.return_value = []
@@ -1292,12 +1283,14 @@ class TestFoundryExecutionManager:
         )
 
         obj = {
-            "messages": [{
-                "content": "Attack",
-                "context": [
-                    {"content": "Email body", "context_type": "email"},
-                ],
-            }]
+            "messages": [
+                {
+                    "content": "Attack",
+                    "context": [
+                        {"content": "Email body", "context_type": "email"},
+                    ],
+                }
+            ]
         }
         result = manager._extract_context_items(obj)
 
@@ -1313,9 +1306,7 @@ class TestFoundryExecutionManager:
             output_dir="/test/output",
         )
 
-        obj = {
-            "context": [{"content": "Top level context", "context_type": "text"}]
-        }
+        obj = {"context": [{"content": "Top level context", "context_type": "text"}]}
         result = manager._extract_context_items(obj)
 
         assert len(result) == 1
@@ -1475,18 +1466,15 @@ class TestFoundryExecutionManager:
         mock_result_processor.get_summary_stats.return_value = {"asr": 0.5, "total": 10, "successful": 5}
 
         # Patch internal methods to avoid full execution
-        with patch.object(manager, "_build_dataset_config") as mock_build, \
-             patch(
-                 "azure.ai.evaluation.red_team._foundry._execution_manager.ScenarioOrchestrator",
-                 return_value=mock_orchestrator_instance
-             ), \
-             patch(
-                 "azure.ai.evaluation.red_team._foundry._execution_manager.FoundryResultProcessor",
-                 return_value=mock_result_processor
-             ), \
-             patch(
-                 "azure.ai.evaluation.red_team._foundry._execution_manager.RAIServiceScorer"
-             ):
+        with patch.object(manager, "_build_dataset_config") as mock_build, patch(
+            "azure.ai.evaluation.red_team._foundry._execution_manager.ScenarioOrchestrator",
+            return_value=mock_orchestrator_instance,
+        ), patch(
+            "azure.ai.evaluation.red_team._foundry._execution_manager.FoundryResultProcessor",
+            return_value=mock_result_processor,
+        ), patch(
+            "azure.ai.evaluation.red_team._foundry._execution_manager.RAIServiceScorer"
+        ):
 
             mock_dataset = MagicMock()
             mock_dataset.get_all_seed_groups.return_value = [MagicMock()]
@@ -1789,9 +1777,7 @@ class TestRAIServiceScorerExtended:
         mock_piece.id = "test-id"
         mock_piece.converted_value = "Response text"
         mock_piece.original_value = "Original text"
-        mock_piece.labels = {
-            "context": json.dumps({"contexts": [{"content": "Context for eval"}]})
-        }
+        mock_piece.labels = {"context": json.dumps({"contexts": [{"content": "Context for eval"}]})}
         mock_piece.api_role = "assistant"
 
         mock_message = MagicMock()
@@ -1817,7 +1803,9 @@ class TestRAIServiceScorerExtended:
             assert scores[0].score_value == "true"
 
     @pytest.mark.asyncio
-    async def test_score_async_with_different_risk_categories(self, mock_credential, mock_azure_ai_project, mock_logger):
+    async def test_score_async_with_different_risk_categories(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
         """Test score_async with different risk categories."""
         risk_categories = [
             RiskCategory.Violence,
@@ -1933,9 +1921,7 @@ class TestScenarioOrchestratorExtended:
         undetermined.outcome = AttackOutcome.UNDETERMINED
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [success, failure, undetermined, success]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [success, failure, undetermined, success]}
 
         asr = orchestrator.calculate_asr()
         # 2 successes out of 4 total
@@ -1965,9 +1951,7 @@ class TestScenarioOrchestratorExtended:
         result2.attack_identifier = {"__type__": "KnownAttack"}
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [result1, result2]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [result1, result2]}
 
         asr_by_strategy = orchestrator.calculate_asr_by_strategy()
 
@@ -2082,12 +2066,14 @@ class TestFoundryResultProcessorExtended:
         piece.converted_value = "Message content"
         piece.sequence = 0
         piece.labels = {
-            "context": json.dumps({
-                "contexts": [
-                    {"content": "Context 1", "context_type": "email"},
-                    {"content": "Context 2", "context_type": "document"},
-                ]
-            })
+            "context": json.dumps(
+                {
+                    "contexts": [
+                        {"content": "Context 1", "context_type": "email"},
+                        {"content": "Context 2", "context_type": "document"},
+                    ]
+                }
+            )
         }
 
         messages = processor._build_messages_from_pieces([piece])
@@ -2167,10 +2153,12 @@ class TestFoundryExecutionManagerExtended:
         )
 
         obj = {
-            "messages": [{
-                "content": "Attack",
-                "context": "Simple string context",  # String, not list
-            }]
+            "messages": [
+                {
+                    "content": "Attack",
+                    "context": "Simple string context",  # String, not list
+                }
+            ]
         }
         result = manager._extract_context_items(obj)
 
@@ -2368,12 +2356,15 @@ class TestRedTeamFoundryIntegration:
         from azure.ai.evaluation.red_team import RedTeam
 
         # Patch all network-related and initialization calls
-        with patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), \
-             patch("azure.ai.evaluation.red_team._red_team.SQLiteMemory"), \
-             patch("azure.ai.evaluation.red_team._red_team.validate_azure_ai_project"), \
-             patch("azure.ai.evaluation.red_team._red_team.is_onedp_project", return_value=False), \
-             patch("azure.ai.evaluation.red_team._red_team.ManagedIdentityAPITokenManager"), \
-             patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"):
+        with patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), patch(
+            "azure.ai.evaluation.red_team._red_team.SQLiteMemory"
+        ), patch("azure.ai.evaluation.red_team._red_team.validate_azure_ai_project"), patch(
+            "azure.ai.evaluation.red_team._red_team.is_onedp_project", return_value=False
+        ), patch(
+            "azure.ai.evaluation.red_team._red_team.ManagedIdentityAPITokenManager"
+        ), patch(
+            "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
+        ):
             red_team = RedTeam(
                 azure_ai_project=mock_azure_ai_project,
                 credential=mock_credential,
@@ -2561,6 +2552,7 @@ class TestFoundryFlowIntegration:
         # Verify mapping
         assert len(mapped) == 3
         from pyrit.scenario.scenarios.foundry import FoundryStrategy
+
         assert FoundryStrategy.Base64 in mapped
         assert FoundryStrategy.Morse in mapped
         assert FoundryStrategy.MultiTurn in mapped
@@ -2574,9 +2566,7 @@ class TestFoundryFlowIntegration:
         builder.add_objective_with_context(
             objective_content="Test attack objective",
             objective_id=str(test_uuid),
-            context_items=[
-                {"content": "Email context", "context_type": "email", "tool_name": "reader"}
-            ],
+            context_items=[{"content": "Email context", "context_type": "email", "tool_name": "reader"}],
             metadata={"risk_subtype": "weapons"},
         )
 
@@ -2627,13 +2617,19 @@ class TestFoundryFlowIntegration:
             "asr": 0.5,
         }
 
-        with patch.object(ScenarioOrchestrator, "__init__", return_value=None), \
-             patch.object(ScenarioOrchestrator, "execute", mock_orchestrator.execute), \
-             patch.object(ScenarioOrchestrator, "calculate_asr_by_strategy", mock_orchestrator.calculate_asr_by_strategy), \
-             patch.object(ScenarioOrchestrator, "get_attack_results", mock_orchestrator.get_attack_results), \
-             patch.object(FoundryResultProcessor, "__init__", return_value=None), \
-             patch.object(FoundryResultProcessor, "to_jsonl", mock_processor.to_jsonl), \
-             patch.object(FoundryResultProcessor, "get_summary_stats", mock_processor.get_summary_stats):
+        with patch.object(ScenarioOrchestrator, "__init__", return_value=None), patch.object(
+            ScenarioOrchestrator, "execute", mock_orchestrator.execute
+        ), patch.object(
+            ScenarioOrchestrator, "calculate_asr_by_strategy", mock_orchestrator.calculate_asr_by_strategy
+        ), patch.object(
+            ScenarioOrchestrator, "get_attack_results", mock_orchestrator.get_attack_results
+        ), patch.object(
+            FoundryResultProcessor, "__init__", return_value=None
+        ), patch.object(
+            FoundryResultProcessor, "to_jsonl", mock_processor.to_jsonl
+        ), patch.object(
+            FoundryResultProcessor, "get_summary_stats", mock_processor.get_summary_stats
+        ):
 
             # Note: This test verifies the structure, actual execution requires PyRIT
             # The test passes if no exceptions are raised during setup

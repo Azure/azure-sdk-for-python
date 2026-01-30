@@ -170,6 +170,7 @@ class ScenarioOrchestrator:
         # Return memory instance regardless of scenario execution state
 
         from pyrit.memory import CentralMemory
+
         return CentralMemory.get_memory_instance()
 
     def calculate_asr(self) -> float:

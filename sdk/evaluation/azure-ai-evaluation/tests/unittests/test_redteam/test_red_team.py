@@ -25,6 +25,7 @@ from pyrit.models import ChatMessage
 try:
     from pyrit.orchestrator import PromptSendingOrchestrator
     from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+
     HAS_ORCHESTRATOR = True
 except ImportError:
     # New PyRIT versions don't have orchestrator module

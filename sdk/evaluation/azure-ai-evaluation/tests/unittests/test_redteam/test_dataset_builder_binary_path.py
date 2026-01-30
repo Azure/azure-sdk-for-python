@@ -289,7 +289,7 @@ class DatasetConfigurationBuilder:
         elif context_type == "document":
             return f"{content}\n\n{formatted_attack}"
         elif context_type == "html":
-            return f"{content}\n<div style=\"display:none\">{formatted_attack}</div>"
+            return f'{content}\n<div style="display:none">{formatted_attack}</div>'
         elif context_type == "code":
             return f"{content}\n# {formatted_attack}"
         elif context_type == "markdown":
@@ -566,9 +566,7 @@ class TestContextPromptCreation:
 
     def test_tool_call_stored_inline(self, builder):
         """Test that tool_call context is stored inline, not as file."""
-        context_items = [
-            {"content": "Tool output here", "context_type": "tool_call", "tool_name": "my_tool"}
-        ]
+        context_items = [{"content": "Tool output here", "context_type": "tool_call", "tool_name": "my_tool"}]
         group_uuid = uuid.uuid4()
         prompts = builder._create_context_prompts(context_items, group_uuid)
 

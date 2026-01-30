@@ -95,16 +95,20 @@ class _CallbackChatTarget(PromptChatTarget):
         messages: List[Dict[str, str]] = []
         for msg in conversation_history:
             for piece in msg.message_pieces:
-                messages.append({
-                    "role": piece.api_role if hasattr(piece, 'api_role') else str(piece.role),
-                    "content": piece.converted_value or piece.original_value or ""
-                })
+                messages.append(
+                    {
+                        "role": piece.api_role if hasattr(piece, "api_role") else str(piece.role),
+                        "content": piece.converted_value or piece.original_value or "",
+                    }
+                )
 
         # Add current request
-        messages.append({
-            "role": request.api_role if hasattr(request, 'api_role') else str(request.role),
-            "content": request.converted_value or request.original_value or ""
-        })
+        messages.append(
+            {
+                "role": request.api_role if hasattr(request, "api_role") else str(request.role),
+                "content": request.converted_value or request.original_value or "",
+            }
+        )
 
         logger.debug(f"Sending the following prompt to the prompt target: {request}")
 

@@ -194,9 +194,7 @@ class TestCallbackChatTargetRetry:
         mock_response.headers = {}
 
         mock_callback.side_effect = OpenAIRateLimitError(
-            "Rate limit exceeded",
-            response=mock_response,
-            body={"error": {"message": "Rate limit exceeded"}}
+            "Rate limit exceeded", response=mock_response, body={"error": {"message": "Rate limit exceeded"}}
         )
 
         target = _CallbackChatTarget(callback=mock_callback, retry_enabled=False)
@@ -423,8 +421,9 @@ class TestCallbackChatTargetRetry:
             mock_construct.return_value = mock_request
 
             # Spy on both methods
-            with patch.object(target, "_send_prompt_with_retry", wraps=target._send_prompt_with_retry) as mock_retry, \
-                 patch.object(target, "_send_prompt_impl", wraps=target._send_prompt_impl) as mock_impl:
+            with patch.object(
+                target, "_send_prompt_with_retry", wraps=target._send_prompt_with_retry
+            ) as mock_retry, patch.object(target, "_send_prompt_impl", wraps=target._send_prompt_impl) as mock_impl:
                 await target.send_prompt_async(message=mock_request)
                 mock_retry.assert_not_called()
                 mock_impl.assert_called_once()

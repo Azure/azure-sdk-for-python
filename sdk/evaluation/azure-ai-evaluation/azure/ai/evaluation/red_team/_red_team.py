@@ -1705,7 +1705,9 @@ class RedTeam:
                         if obj_dict:
                             objectives_by_risk[risk_value].append(obj_dict)
                         else:
-                            self.logger.debug(f"_build_objective_dict_from_cached returned None for obj type: {type(obj)}")
+                            self.logger.debug(
+                                f"_build_objective_dict_from_cached returned None for obj type: {type(obj)}"
+                            )
                 else:
                     self.logger.debug(f"baseline_key {baseline_key} NOT found in attack_objectives")
 
@@ -1744,7 +1746,11 @@ class RedTeam:
                         "data_file": data_file,
                         "evaluation_result_file": "",
                         "evaluation_result": None,
-                        "status": TASK_STATUS["COMPLETED"] if result_data.get("status") == "completed" else TASK_STATUS["FAILED"],
+                        "status": (
+                            TASK_STATUS["COMPLETED"]
+                            if result_data.get("status") == "completed"
+                            else TASK_STATUS["FAILED"]
+                        ),
                         "asr": result_data.get("asr", 0.0),
                     }
 
@@ -1754,14 +1760,13 @@ class RedTeam:
                         try:
                             # Find the risk category enum from value
                             risk_category_enum = next(
-                                (rc for rc in self.risk_categories if rc.value == risk_value),
-                                None
+                                (rc for rc in self.risk_categories if rc.value == risk_value), None
                             )
                             if risk_category_enum and self.evaluation_processor:
                                 # Find matching strategy for evaluation
                                 strategy_for_eval = next(
                                     (s for s in foundry_strategies if get_strategy_name(s) == strategy_name),
-                                    AttackStrategy.Baseline  # Fallback
+                                    AttackStrategy.Baseline,  # Fallback
                                 )
 
                                 await self.evaluation_processor.evaluate(
@@ -1774,9 +1779,7 @@ class RedTeam:
                                     red_team_info=self.red_team_info,
                                 )
                         except Exception as eval_error:
-                            self.logger.warning(
-                                f"Evaluation error for {strategy_name}/{risk_value}: {str(eval_error)}"
-                            )
+                            self.logger.warning(f"Evaluation error for {strategy_name}/{risk_value}: {str(eval_error)}")
                             # Don't fail the whole execution for eval errors
                             tqdm.write(f"⚠️ Evaluation warning for {strategy_name}/{risk_value}: {str(eval_error)}")
 
@@ -1796,6 +1799,7 @@ class RedTeam:
         except Exception as e:
             self.logger.error(f"Error in Foundry execution: {str(e)}")
             import traceback
+
             self.logger.debug(traceback.format_exc())
 
             # Mark all tasks as failed
@@ -1856,10 +1860,12 @@ class RedTeam:
                 elif isinstance(context, str):
                     context_items = [{"content": context}]
 
-            obj_dict["messages"] = [{
-                "content": content,
-                "context": context_items,
-            }]
+            obj_dict["messages"] = [
+                {
+                    "content": content,
+                    "context": context_items,
+                }
+            ]
 
         # Add metadata if not present
         if "metadata" not in obj_dict:

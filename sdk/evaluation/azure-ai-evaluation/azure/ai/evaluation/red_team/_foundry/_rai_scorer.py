@@ -110,11 +110,13 @@ class RAIServiceScorer(TrueFalseScorer):
                     if seed.metadata.get("is_context") or seed.metadata.get("is_attack_vehicle"):
                         # Read content from file if binary_path, otherwise use value directly
                         content = self._read_seed_value(seed)
-                        context_data.append({
-                            "content": content,
-                            "context_type": seed.metadata.get("context_type"),
-                            "tool_name": seed.metadata.get("tool_name"),
-                        })
+                        context_data.append(
+                            {
+                                "content": content,
+                                "context_type": seed.metadata.get("context_type"),
+                                "tool_name": seed.metadata.get("tool_name"),
+                            }
+                        )
 
             self._context_lookup[str(group_id)] = {
                 "contexts": context_data,
@@ -183,7 +185,7 @@ class RAIServiceScorer(TrueFalseScorer):
             score = Score(
                 score_value=str(attack_successful).lower(),  # "true" or "false"
                 score_value_description=f"Attack {'succeeded' if attack_successful else 'failed'}: "
-                                        f"score={raw_score}, threshold={threshold}",
+                f"score={raw_score}, threshold={threshold}",
                 score_type="true_false",
                 score_category=[self.risk_category.value],
                 score_rationale=reason,
@@ -251,7 +253,7 @@ class RAIServiceScorer(TrueFalseScorer):
         # Find the assistant response piece
         response_piece = None
         for piece in message.message_pieces:
-            piece_role = piece.api_role if hasattr(piece, 'api_role') else str(piece.role)
+            piece_role = piece.api_role if hasattr(piece, "api_role") else str(piece.role)
             if piece_role == "assistant":
                 response_piece = piece
                 break

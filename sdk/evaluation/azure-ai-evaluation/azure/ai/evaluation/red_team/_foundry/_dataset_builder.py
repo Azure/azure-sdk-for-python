@@ -144,6 +144,7 @@ class DatasetConfigurationBuilder:
         """
         try:
             from pyrit.common.path import DB_DATA_PATH
+
             base_dir = Path(DB_DATA_PATH) / "seed-prompt-entries" / "binaries"
         except ImportError:
             base_dir = Path(tempfile.gettempdir()) / "pyrit_foundry_context"
@@ -387,7 +388,7 @@ class DatasetConfigurationBuilder:
             return f"{content}\n\n{formatted_attack}"
         elif context_type == "html":
             # Inject as hidden element
-            return f"{content}\n<div style=\"display:none\">{formatted_attack}</div>"
+            return f'{content}\n<div style="display:none">{formatted_attack}</div>'
         elif context_type == "code":
             # Inject as comment
             return f"{content}\n# {formatted_attack}"
