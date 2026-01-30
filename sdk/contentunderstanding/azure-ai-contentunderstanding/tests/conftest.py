@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,10 +31,10 @@ def start_proxy(test_proxy):
 @pytest.fixture(scope="session", autouse=True)
 def configure_test_proxy_matcher(test_proxy):
     """Configure the test proxy to handle LRO polling request matching.
-    
+
     LRO operations (like begin_analyze) make multiple identical GET requests to poll status.
     The test proxy must match these requests in the correct order. We configure:
-    
+
     1. compare_bodies=False: Don't match on body content (polling requests have no body)
     2. excluded_headers: Completely exclude these headers from matching consideration.
        These headers vary between recording and playback environments:
@@ -45,7 +46,7 @@ def configure_test_proxy_matcher(test_proxy):
     """
     set_custom_default_matcher(
         compare_bodies=False,
-        excluded_headers="User-Agent,x-ms-client-request-id,x-ms-request-id,Authorization,Content-Length,Accept,Connection"
+        excluded_headers="User-Agent,x-ms-client-request-id,x-ms-request-id,Authorization,Content-Length,Accept,Connection",
     )
 
 
@@ -96,11 +97,8 @@ def add_sanitizers(test_proxy):
     # Sanitize endpoint URLs to match DocumentIntelligence SDK pattern
     # Normalize any endpoint hostname to "Sanitized" to ensure recordings match between recording and playback
     # This regex matches the hostname part (between // and .services.ai.azure.com) and replaces it with "Sanitized"
-    add_general_regex_sanitizer(
-        value="Sanitized",
-        regex="(?<=\\/\\/)[^/]+(?=\\.services\\.ai\\.azure\\.com)"
-    )
-    
+    add_general_regex_sanitizer(value="Sanitized", regex="(?<=\\/\\/)[^/]+(?=\\.services\\.ai\\.azure\\.com)")
+
     # Sanitize Operation-Location headers specifically (used by LRO polling)
     # This ensures the poller uses the correct endpoint URL during playback
     # IMPORTANT: Do NOT use lookahead (?=...) as it doesn't consume the match,
@@ -108,7 +106,7 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(
         key="Operation-Location",
         value="https://Sanitized.services.ai.azure.com",
-        regex=r"https://[a-zA-Z0-9\-]+\.services\.ai\.azure\.com"
+        regex=r"https://[a-zA-Z0-9\-]+\.services\.ai\.azure\.com",
     )
 
     # Sanitize Ocp-Apim-Subscription-Key header (where the API key is sent)
@@ -133,27 +131,19 @@ def add_sanitizers(test_proxy):
     # This ensures that real resource IDs and regions are sanitized before being stored in test proxy variables
     source_resource_id = os.environ.get("CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID", "")
     if source_resource_id and source_resource_id != "placeholder-source-resource-id":
-        add_general_string_sanitizer(
-            target=source_resource_id, value="placeholder-source-resource-id"
-        )
-    
+        add_general_string_sanitizer(target=source_resource_id, value="placeholder-source-resource-id")
+
     source_region = os.environ.get("CONTENTUNDERSTANDING_SOURCE_REGION", "")
     if source_region and source_region != "placeholder-source-region":
-        add_general_string_sanitizer(
-            target=source_region, value="placeholder-source-region"
-        )
-    
+        add_general_string_sanitizer(target=source_region, value="placeholder-source-region")
+
     target_resource_id = os.environ.get("CONTENTUNDERSTANDING_TARGET_RESOURCE_ID", "")
     if target_resource_id and target_resource_id != "placeholder-target-resource-id":
-        add_general_string_sanitizer(
-            target=target_resource_id, value="placeholder-target-resource-id"
-        )
-    
+        add_general_string_sanitizer(target=target_resource_id, value="placeholder-target-resource-id")
+
     target_region = os.environ.get("CONTENTUNDERSTANDING_TARGET_REGION", "")
     if target_region and target_region != "placeholder-target-region":
-        add_general_string_sanitizer(
-            target=target_region, value="placeholder-target-region"
-        )
+        add_general_string_sanitizer(target=target_region, value="placeholder-target-region")
 
     # Sanitize dynamic analyzer IDs in URLs only
     # Note: We don't sanitize analyzer IDs in response bodies because tests using variables

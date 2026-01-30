@@ -74,9 +74,7 @@ class TestSampleAnalyzeBinaryAsync(ContentUnderstandingClientTestBaseAsync):
         print("[PASS] Binary data created successfully")
 
         # Analyze the document
-        poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes
-        )
+        poller = await client.begin_analyze_binary(analyzer_id="prebuilt-documentSearch", binary_input=file_bytes)
 
         result = await poller.result()
 

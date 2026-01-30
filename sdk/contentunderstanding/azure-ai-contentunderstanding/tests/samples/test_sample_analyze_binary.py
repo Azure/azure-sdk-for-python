@@ -74,9 +74,7 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         print("[PASS] Binary data created successfully")
 
         # Analyze the document
-        poller = client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes
-        )
+        poller = client.begin_analyze_binary(analyzer_id="prebuilt-documentSearch", binary_input=file_bytes)
 
         result = poller.result()
 

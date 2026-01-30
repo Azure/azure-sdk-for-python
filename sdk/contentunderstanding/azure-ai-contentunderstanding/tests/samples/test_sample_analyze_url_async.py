@@ -51,9 +51,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         print(f"[PASS] Analyzing document from URL: {url}")
 
         # Analyze the document
-        poller = await client.begin_analyze(
-            analyzer_id="prebuilt-documentSearch", inputs=[AnalyzeInput(url=url)]
-        )
+        poller = await client.begin_analyze(analyzer_id="prebuilt-documentSearch", inputs=[AnalyzeInput(url=url)])
 
         result = await poller.result()
 
@@ -153,7 +151,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10
         )
-        
+
         result = await poller.result()
 
         # Assertion: Verify analysis operation completed
@@ -193,10 +191,8 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         print(f"[PASS] Analyzing image from URL: {url}")
 
         # Analyze the image
-        poller = await client.begin_analyze(
-            analyzer_id="prebuilt-imageSearch", inputs=[AnalyzeInput(url=url)]
-        )
-        
+        poller = await client.begin_analyze(analyzer_id="prebuilt-imageSearch", inputs=[AnalyzeInput(url=url)])
+
         result = await poller.result()
 
         # Assertion: Verify analysis operation completed

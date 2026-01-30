@@ -49,7 +49,7 @@ _SERIALIZER.client_side_validation = False
 def build_content_understanding_analyze_request(  # pylint: disable=name-too-long
     analyzer_id: str,
     *,
-    string_encoding: Optional[str] = None,
+    string_encoding: str,
     processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -69,11 +69,10 @@ def build_content_understanding_analyze_request(  # pylint: disable=name-too-lon
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if string_encoding is not None:
-        _params["stringEncoding"] = _SERIALIZER.query("string_encoding", string_encoding, "str")
+    _params["stringEncoding"] = _SERIALIZER.query("string_encoding", string_encoding, "str")
     if processing_location is not None:
         _params["processingLocation"] = _SERIALIZER.query("processing_location", processing_location, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
@@ -86,15 +85,15 @@ def build_content_understanding_analyze_request(  # pylint: disable=name-too-lon
 def build_content_understanding_analyze_binary_request(  # pylint: disable=name-too-long
     analyzer_id: str,
     *,
-    string_encoding: Optional[str] = None,
-    processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+    string_encoding: str,
     input_range: Optional[str] = None,
+    processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -107,16 +106,16 @@ def build_content_understanding_analyze_binary_request(  # pylint: disable=name-
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if string_encoding is not None:
-        _params["stringEncoding"] = _SERIALIZER.query("string_encoding", string_encoding, "str")
-    if processing_location is not None:
-        _params["processingLocation"] = _SERIALIZER.query("processing_location", processing_location, "str")
+    _params["stringEncoding"] = _SERIALIZER.query("string_encoding", string_encoding, "str")
     if input_range is not None:
         _params["range"] = _SERIALIZER.query("input_range", input_range, "str")
+    if processing_location is not None:
+        _params["processingLocation"] = _SERIALIZER.query("processing_location", processing_location, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -460,7 +459,7 @@ class _ContentUnderstandingClientOperationsMixin(
         analyzer_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        string_encoding: Optional[str] = None,
+        string_encoding: str,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         inputs: Optional[list[_models.AnalyzeInput]] = None,
         model_deployments: Optional[dict[str, str]] = None,
@@ -538,7 +537,7 @@ class _ContentUnderstandingClientOperationsMixin(
         self,
         analyzer_id: str,
         *,
-        string_encoding: Optional[str] = None,
+        string_encoding: str,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         inputs: Optional[list[_models.AnalyzeInput]] = None,
@@ -551,7 +550,7 @@ class _ContentUnderstandingClientOperationsMixin(
         :type analyzer_id: str
         :keyword string_encoding:   The string encoding format for content spans in the response.
            Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
-         Default value is None.
+         Required.
         :paramtype string_encoding: str
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
@@ -578,7 +577,7 @@ class _ContentUnderstandingClientOperationsMixin(
         analyzer_id: str,
         body: JSON,
         *,
-        string_encoding: Optional[str] = None,
+        string_encoding: str,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -591,7 +590,7 @@ class _ContentUnderstandingClientOperationsMixin(
         :type body: JSON
         :keyword string_encoding:   The string encoding format for content spans in the response.
            Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
-         Default value is None.
+         Required.
         :paramtype string_encoding: str
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
@@ -611,7 +610,7 @@ class _ContentUnderstandingClientOperationsMixin(
         analyzer_id: str,
         body: IO[bytes],
         *,
-        string_encoding: Optional[str] = None,
+        string_encoding: str,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -624,7 +623,7 @@ class _ContentUnderstandingClientOperationsMixin(
         :type body: IO[bytes]
         :keyword string_encoding:   The string encoding format for content spans in the response.
            Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
-         Default value is None.
+         Required.
         :paramtype string_encoding: str
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
@@ -644,7 +643,7 @@ class _ContentUnderstandingClientOperationsMixin(
         analyzer_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        string_encoding: Optional[str] = None,
+        string_encoding: str,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         inputs: Optional[list[_models.AnalyzeInput]] = None,
         model_deployments: Optional[dict[str, str]] = None,
@@ -658,7 +657,7 @@ class _ContentUnderstandingClientOperationsMixin(
         :type body: JSON or IO[bytes]
         :keyword string_encoding:   The string encoding format for content spans in the response.
            Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
-         Default value is None.
+         Required.
         :paramtype string_encoding: str
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
@@ -743,9 +742,9 @@ class _ContentUnderstandingClientOperationsMixin(
         analyzer_id: str,
         binary_input: bytes,
         *,
-        string_encoding: Optional[str] = None,
-        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        string_encoding: str,
         input_range: Optional[str] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -756,10 +755,10 @@ class _ContentUnderstandingClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type")
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _content = binary_input
@@ -767,8 +766,8 @@ class _ContentUnderstandingClientOperationsMixin(
         _request = build_content_understanding_analyze_binary_request(
             analyzer_id=analyzer_id,
             string_encoding=string_encoding,
-            processing_location=processing_location,
             input_range=input_range,
+            processing_location=processing_location,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -814,9 +813,9 @@ class _ContentUnderstandingClientOperationsMixin(
         analyzer_id: str,
         binary_input: bytes,
         *,
-        string_encoding: Optional[str] = None,
-        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        string_encoding: str,
         input_range: Optional[str] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.AnalyzeResult]:
         """Extract content and fields from input.
@@ -827,24 +826,24 @@ class _ContentUnderstandingClientOperationsMixin(
         :type binary_input: bytes
         :keyword string_encoding:   The string encoding format for content spans in the response.
            Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
-         Default value is None.
+         Required.
         :paramtype string_encoding: str
-        :keyword processing_location: The location where the data may be processed.  Defaults to
-         global. Known values are: "geography", "dataZone", and "global". Default value is None.
-        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
         :keyword input_range: Range of the input to analyze (ex. ``1-3,5,9-``).  Document content uses
          1-based page numbers, while audio visual content uses integer milliseconds. Default value is
          None.
         :paramtype input_range: str
+        :keyword processing_location: The location where the data may be processed.  Defaults to
+         global. Known values are: "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
         :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type")
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[_models.AnalyzeResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -854,8 +853,8 @@ class _ContentUnderstandingClientOperationsMixin(
                 analyzer_id=analyzer_id,
                 binary_input=binary_input,
                 string_encoding=string_encoding,
-                processing_location=processing_location,
                 input_range=input_range,
+                processing_location=processing_location,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
