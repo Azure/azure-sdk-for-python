@@ -9,6 +9,7 @@ import json
 import pytest
 from typing import Optional, Tuple
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import SPAN_NAME_CHAT, SPAN_NAME_INVOKE_AGENT
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from openai import OpenAI
@@ -224,7 +225,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -304,7 +305,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -394,7 +395,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -700,7 +701,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -833,7 +834,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
@@ -1029,7 +1030,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
@@ -1201,7 +1202,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call) - no content
@@ -1391,7 +1392,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call) - no content
@@ -1816,7 +1817,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1920,7 +1921,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2016,7 +2017,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2115,7 +2116,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2209,7 +2210,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2278,7 +2279,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2347,7 +2348,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2416,7 +2417,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2494,7 +2495,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2567,7 +2568,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2640,7 +2641,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2713,7 +2714,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2795,7 +2796,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2872,7 +2873,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2949,7 +2950,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3026,7 +3027,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3111,7 +3112,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3192,7 +3193,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3273,7 +3274,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3354,7 +3355,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3415,7 +3416,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3488,7 +3489,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -3612,7 +3613,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
@@ -3766,7 +3767,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span - should have events with tool call structure but no details
@@ -3967,7 +3968,7 @@ trigger:
         # Verify workflow action events
         self.exporter.force_flush()
         # Workflow agents use agent name in span, not deployment name
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -4078,7 +4079,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -4287,7 +4288,7 @@ trigger:
 
         # Verify workflow action events in streaming mode
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -4403,7 +4404,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -4508,7 +4509,7 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes
@@ -4585,7 +4586,7 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes

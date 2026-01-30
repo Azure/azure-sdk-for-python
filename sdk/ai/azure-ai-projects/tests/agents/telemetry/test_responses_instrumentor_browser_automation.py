@@ -9,6 +9,7 @@ Tests for ResponsesInstrumentor with browser automation agents.
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import SPAN_NAME_INVOKE_AGENT
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -98,7 +99,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                 assert len(response.output) > 0
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 
@@ -229,7 +230,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                 )
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 
@@ -353,7 +354,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                     pass
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 
@@ -478,7 +479,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                     pass
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 

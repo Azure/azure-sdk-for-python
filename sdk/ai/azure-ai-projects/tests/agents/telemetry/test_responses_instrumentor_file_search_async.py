@@ -10,6 +10,7 @@ import os
 import pytest
 from io import BytesIO
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import SPAN_NAME_INVOKE_AGENT
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -111,7 +112,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1, "Should have one response span"
 
                 # Validate response span
@@ -319,7 +320,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1, "Should have one response span"
 
                 # Validate response span
@@ -527,7 +528,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1, "Should have one response span"
 
                 # Validate response span
@@ -731,7 +732,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1, "Should have one response span"
 
                 # Validate response span
