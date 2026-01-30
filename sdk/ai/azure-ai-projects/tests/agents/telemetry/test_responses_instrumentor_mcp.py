@@ -109,7 +109,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
                 for item in items:
-                    pass  # Just iterate to consume items
+                    pass  # Iterate to consume items
 
                 # Check spans
                 self.exporter.force_flush()
