@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:portal.microsofticm.com)",
+      "Bash(gh pr view:*)",
+      "Bash(git push)"
+    ]
+  }
+}
