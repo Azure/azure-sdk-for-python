@@ -143,22 +143,28 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     if cpk:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
-    kwargs['cpk_info'] = cpk_info
+        kwargs.update(cpk_info)
 
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
-    kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
-    kwargs['modified_access_conditions'] = get_modify_conditions(kwargs)
-    kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
+    lease_access_conditions = get_access_conditions(kwargs.pop('lease', None))
+    if lease_access_conditions:
+        kwargs.update(lease_access_conditions)
+    mod_conditions = get_modify_conditions(kwargs)
+    if mod_conditions:
+        kwargs.update(mod_conditions)
+    cpk_scope_info = get_cpk_scope_info(kwargs)
+    if cpk_scope_info:
+        kwargs.update(cpk_scope_info)
     if content_settings:
-        kwargs['blob_headers'] = BlobHTTPHeaders(
+        kwargs.update(BlobHTTPHeaders(
             blob_cache_control=content_settings.cache_control,
             blob_content_type=content_settings.content_type,
             blob_content_md5=content_settings.content_md5,
             blob_content_encoding=content_settings.content_encoding,
             blob_content_language=content_settings.content_language,
             blob_content_disposition=content_settings.content_disposition
-        )
+        ))
     kwargs['blob_tags_string'] = serialize_blob_tags_header(kwargs.pop('tags', None))
     kwargs['stream'] = stream
     kwargs['length'] = length
@@ -202,14 +208,14 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     source_authorization = kwargs.pop('source_authorization', None)
     source_token_intent = kwargs.pop('source_token_intent', None)
     if content_settings:
-        kwargs['blob_http_headers'] = BlobHTTPHeaders(
+        kwargs.update(BlobHTTPHeaders(
             blob_cache_control=content_settings.cache_control,
             blob_content_type=content_settings.content_type,
             blob_content_md5=None,
             blob_content_encoding=content_settings.content_encoding,
             blob_content_language=content_settings.content_language,
             blob_content_disposition=content_settings.content_disposition
-        )
+        ))
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
@@ -224,6 +230,11 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
             source_encryption_algorithm=source_cpk.algorithm
         )
 
+    mod_conditions = get_modify_conditions(kwargs)
+    access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
+    source_mod_conditions = get_source_conditions(kwargs)
+    cpk_scope_info = get_cpk_scope_info(kwargs)
+
     options = {
         'copy_source_authorization': source_authorization,
         'file_request_intent': source_token_intent,
@@ -231,20 +242,26 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'copy_source_blob_properties': kwargs.pop('include_source_blob_properties', True),
         'source_content_md5': kwargs.pop('source_content_md5', None),
         'copy_source': source_url,
-        'modified_access_conditions': get_modify_conditions(kwargs),
         'blob_tags_string': serialize_blob_tags_header(kwargs.pop('tags', None)),
         'cls': return_response_headers,
-        'lease_access_conditions': get_access_conditions(kwargs.pop('destination_lease', None)),
         'tier': tier.value if tier else None,
-        'source_modified_access_conditions': get_source_conditions(kwargs),
-        'cpk_info': cpk_info,
-        'cpk_scope_info': get_cpk_scope_info(kwargs),
-        'source_cpk_info': source_cpk_info,
         'headers': headers,
     }
+    if mod_conditions:
+        options.update(mod_conditions)
+    if access_conditions:
+        options.update(access_conditions)
+    if source_mod_conditions:
+        options.update(source_mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
+    if source_cpk_info:
+        options.update(source_cpk_info)
     options.update(kwargs)
     if not overwrite and not _any_conditions(**options):
-        options['modified_access_conditions'].if_none_match = '*'
+        options['if_none_match'] = '*'
     return options
 
 def _download_blob_options(
@@ -319,15 +336,18 @@ def _download_blob_options(
             'required': encryption_options['required'],
             'key': encryption_options['key'],
             'resolver': encryption_options['resolver']},
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_info': cpk_info,
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
         'max_concurrency':kwargs.pop('max_concurrency', 1),
         'encoding': encoding,
         'timeout': kwargs.pop('timeout', None),
         'name': blob_name,
         'container': container_name}
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -385,13 +405,16 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
         )
     options = {
         'query_request': query_request,
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_info': cpk_info,
         'snapshot': snapshot,
         'timeout': kwargs.pop('timeout', None),
         'cls': return_headers_and_deserialized,
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_info:
+        options.update(cpk_info)
     options.update({k: v for k, v in kwargs.items() if v is not None})
     return options, delimiter
 
@@ -439,10 +462,13 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
         )
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'blob_http_headers': blob_headers,
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
         'cls': return_response_headers}
+    if blob_headers:
+        options.update(blob_headers)
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
     options.update(kwargs)
     return options
 
@@ -460,12 +486,16 @@ def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwar
                             encryption_algorithm=cpk.algorithm)
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
         'cls': return_response_headers,
         'headers': headers}
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -517,16 +547,21 @@ def _create_page_blob_options(
         'content_length': 0,
         'blob_content_length': size,
         'blob_sequence_number': sequence_number,
-        'blob_http_headers': blob_headers,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
         'blob_tags_string': blob_tags_string,
         'cls': return_response_headers,
-        "tier": tier,
+        'tier': tier,
         'headers': headers}
+    if blob_headers:
+        options.update(blob_headers)
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -566,15 +601,20 @@ def _create_append_blob_options(
 
     options = {
         'content_length': 0,
-        'blob_http_headers': blob_headers,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
         'blob_tags_string': blob_tags_string,
         'cls': return_response_headers,
         'headers': headers}
+    if blob_headers:
+        options.update(blob_headers)
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -592,12 +632,16 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
 
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
         'cls': return_response_headers,
         'headers': headers}
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -734,12 +778,15 @@ def _stage_block_options(
         'body': data,
         'transactional_content_md5': None,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
         'cls': return_response_headers,
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -788,12 +835,16 @@ def _stage_block_from_url_options(
         'source_range': range_header,
         'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
-        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers,
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
+    if source_cpk_info:
+        options.update(source_cpk_info)
     options.update(kwargs)
     return options
 
@@ -856,18 +907,23 @@ def _commit_block_list_options(
 
     options = {
         'blocks': block_lookup,
-        'blob_http_headers': blob_headers,
-        'lease_access_conditions': access_conditions,
         'timeout': kwargs.pop('timeout', None),
-        'modified_access_conditions': mod_conditions,
         'cls': return_response_headers,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
         'tier': tier.value if tier else None,
         'blob_tags_string': blob_tags_string,
         'headers': headers
     }
+    if blob_headers:
+        options.update(blob_headers)
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -883,12 +939,15 @@ def _set_blob_tags_options(
 
     options = {
         'tags': serialized_tags,
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'blob_modified_access_conditions': blob_mod_conditions,
         'version_id': version_id,
         'cls': return_response_headers
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if blob_mod_conditions:
+        options.update(blob_mod_conditions)
     options.update(kwargs)
     return options
 
@@ -900,12 +959,15 @@ def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], *
     options = {
         'version_id': version_id,
         'snapshot': snapshot,
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'blob_modified_access_conditions': blob_mod_conditions,
         'timeout': kwargs.pop('timeout', None),
         'cls': return_headers_and_deserialized
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if blob_mod_conditions:
+        options.update(blob_mod_conditions)
     return options
 
 def _get_page_ranges_options(
@@ -974,10 +1036,13 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
     options = {
         'blob_content_length': size,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_info': cpk_info,
         'cls': return_response_headers}
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -1015,13 +1080,18 @@ def _upload_page_options(
         'transactional_content_md5': None,
         'timeout': kwargs.pop('timeout', None),
         'range': content_range,
-        'lease_access_conditions': access_conditions,
-        'sequence_number_access_conditions': seq_conditions,
-        'modified_access_conditions': mod_conditions,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
         'cls': return_response_headers}
+    if access_conditions:
+        options.update(access_conditions)
+    if seq_conditions:
+        options.update(seq_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -1081,15 +1151,22 @@ def _upload_pages_from_url_options(
         'range': destination_range,
         'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'sequence_number_access_conditions': seq_conditions,
-        'modified_access_conditions': mod_conditions,
-        'source_modified_access_conditions': source_mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
-        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if seq_conditions:
+        options.update(seq_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if source_mod_conditions:
+        options.update(source_mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
+    if source_cpk_info:
+        options.update(source_cpk_info)
     options.update(kwargs)
     return options
 
@@ -1122,11 +1199,15 @@ def _clear_page_options(
         'content_length': 0,
         'timeout': kwargs.pop('timeout', None),
         'range': content_range,
-        'lease_access_conditions': access_conditions,
-        'sequence_number_access_conditions': seq_conditions,
-        'modified_access_conditions': mod_conditions,
-        'cpk_info': cpk_info,
         'cls': return_response_headers}
+    if access_conditions:
+        options.update(access_conditions)
+    if seq_conditions:
+        options.update(seq_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -1168,13 +1249,19 @@ def _append_block_options(
         'content_length': length,
         'timeout': kwargs.pop('timeout', None),
         'transactional_content_md5': None,
-        'lease_access_conditions': access_conditions,
-        'append_position_access_conditions': append_conditions,
-        'modified_access_conditions': mod_conditions,
         'validate_content': validate_content,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
-        'cls': return_response_headers}
+        'cls': return_response_headers
+    }
+    if append_conditions:
+        options.update(append_conditions)
+    if access_conditions:
+        options.update(access_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -1236,16 +1323,23 @@ def _append_block_from_url_options(
         'source_range': source_range,
         'source_content_md5': source_content_md5,
         'transactional_content_md5': None,
-        'lease_access_conditions': access_conditions,
-        'append_position_access_conditions': append_conditions,
-        'modified_access_conditions': mod_conditions,
-        'source_modified_access_conditions': source_mod_conditions,
-        'cpk_scope_info': cpk_scope_info,
-        'cpk_info': cpk_info,
-        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers,
         'timeout': kwargs.pop('timeout', None)
     }
+    if access_conditions:
+        options.update(access_conditions)
+    if append_conditions:
+        options.update(append_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
+    if source_mod_conditions:
+        options.update(source_mod_conditions)
+    if cpk_scope_info:
+        options.update(cpk_scope_info)
+    if cpk_info:
+        options.update(cpk_info)
+    if source_cpk_info:
+        options.update(source_cpk_info)
     options.update(kwargs)
     return options
 
@@ -1261,10 +1355,13 @@ def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
 
     options = {
         'timeout': kwargs.pop('timeout', None),
-        'lease_access_conditions': access_conditions,
-        'append_position_access_conditions': append_conditions,
-        'modified_access_conditions': mod_conditions,
         'cls': return_response_headers}
+    if access_conditions:
+        options.update(access_conditions)
+    if append_conditions:
+        options.update(append_conditions)
+    if mod_conditions:
+        options.update(mod_conditions)
     options.update(kwargs)
     return options
 

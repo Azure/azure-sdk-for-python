@@ -323,11 +323,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         timeout = kwargs.pop('timeout', None)
         headers.update(add_metadata_headers(metadata)) # type: ignore
         container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
+        if container_cpk_scope_info:
+            kwargs.update(container_cpk_scope_info)
         try:
             return self._client.container.create( # type: ignore
                 timeout=timeout,
                 access=public_access,
-                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
