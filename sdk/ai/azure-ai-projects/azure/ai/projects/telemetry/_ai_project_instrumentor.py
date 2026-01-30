@@ -488,6 +488,11 @@ class _AIAgentsInstrumentorPreview:
                 # Convert schema to JSON string if it's a dict/object
                 if isinstance(response_schema, dict):
                     schema_str = json.dumps(response_schema, ensure_ascii=False)
+                elif hasattr(response_schema, "as_dict"):
+                    # Handle model objects that have as_dict() method (e.g., ResponseFormatJsonSchemaSchema)
+                    schema_dict = response_schema.as_dict()
+                    schema_str = json.dumps(schema_dict, ensure_ascii=False)
+                # TODO: is this 'elif' still needed, not that we added the above?
                 elif hasattr(response_schema, "__dict__"):
                     # Handle model objects by converting to dict first
                     schema_dict = {k: v for k, v in response_schema.__dict__.items() if not k.startswith("_")}

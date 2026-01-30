@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -65,10 +65,10 @@ from ...operations._operations import (
 from .._configuration import ApplicationClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class ApplicationClientOperationsMixin(
+class _ApplicationClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ApplicationClientConfiguration]
 ):
 
@@ -212,7 +212,10 @@ class ApplicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Application", pipeline_response.http_response)
@@ -263,7 +266,10 @@ class ApplicationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -385,7 +391,10 @@ class ApplicationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -619,9 +628,10 @@ class ApplicationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[Optional[_models.Application]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -654,7 +664,10 @@ class ApplicationsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -739,7 +752,10 @@ class ApplicationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -815,7 +831,10 @@ class ApplicationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -866,7 +885,10 @@ class ApplicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Application", pipeline_response.http_response)
@@ -913,7 +935,10 @@ class ApplicationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -1026,7 +1051,10 @@ class ApplicationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -1241,9 +1269,10 @@ class ApplicationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.Application] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -1274,7 +1303,10 @@ class ApplicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Application", pipeline_response.http_response)
@@ -1325,7 +1357,10 @@ class ApplicationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -1458,7 +1493,10 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ApplicationDefinition", pipeline_response.http_response)
@@ -1509,7 +1547,10 @@ class ApplicationDefinitionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -1632,7 +1673,10 @@ class ApplicationDefinitionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -1850,7 +1894,10 @@ class ApplicationDefinitionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1905,7 +1952,10 @@ class ApplicationDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ApplicationDefinition", pipeline_response.http_response)
@@ -1956,7 +2006,10 @@ class ApplicationDefinitionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -2078,7 +2131,10 @@ class ApplicationDefinitionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -2286,7 +2342,10 @@ class JitRequestsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("JitRequestDefinition", pipeline_response.http_response)
@@ -2353,7 +2412,10 @@ class JitRequestsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -2615,7 +2677,10 @@ class JitRequestsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("JitRequestDefinition", pipeline_response.http_response)
@@ -2671,7 +2736,10 @@ class JitRequestsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -2716,7 +2784,10 @@ class JitRequestsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("JitRequestDefinitionListResult", pipeline_response.http_response)
@@ -2771,7 +2842,10 @@ class JitRequestsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("JitRequestDefinitionListResult", pipeline_response.http_response)

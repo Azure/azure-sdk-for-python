@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import FeatureClientOperationsMixin  # type: ignore
+from ._operations import _FeatureClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._operations import FeaturesOperations  # type: ignore
 from ._operations import SubscriptionFeatureRegistrationsOperations  # type: ignore
 
@@ -21,7 +21,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "FeatureClientOperationsMixin",
     "FeaturesOperations",
     "SubscriptionFeatureRegistrationsOperations",
 ]
