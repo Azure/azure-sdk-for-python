@@ -257,11 +257,11 @@ class ListContainersIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     METADATA = "metadata"
-    """Include metadata"""
+    """Include metadata."""
     DELETED = "deleted"
-    """Include deleted"""
+    """Include deleted."""
     SYSTEM = "system"
-    """Include system"""
+    """Include system."""
 
 
 class PremiumPageBlobAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
