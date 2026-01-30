@@ -467,8 +467,10 @@ def generate_data_plane_meta_yaml(
     """
     Generate the meta.yaml content for a data plane package or release group.
     """
-    # assumes env var name is arbitrary and replaced in conda_functions.py
-    src_distr_name = package_name.split("-")[-1].upper()
+    # Use bundle_name if available for recipe name and env var derivation
+    # however, env var name is arbitrary and replaced in conda_functions.py
+    recipe_name = bundle_name if bundle_name else package_name
+    src_distr_name = recipe_name.split("-")[-1].upper()
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
     # TODO not sure if this is the best way to get these requirements
@@ -514,7 +516,7 @@ def generate_data_plane_meta_yaml(
     host_reqs_str = "\n    - ".join(host_reqs)
     run_reqs_str = "\n    - ".join(run_reqs)
     pkg_imports_str = "\n    - ".join(pkg_imports)
-    meta_yaml_content = f"""{{% set name = "{package_name}" %}}
+    meta_yaml_content = f"""{{% set name = "{recipe_name}" %}}
 
 package:
   name: "{{{{ name|lower }}}}"
@@ -557,7 +559,6 @@ extra:
 
 
 def add_new_data_plane_packages(
-    package_dict: Dict[str, Dict[str, str]],
     bundle_map: Dict[str, List[str]],
     new_data_plane_names: List[str],
 ) -> List[str]:
@@ -573,16 +574,18 @@ def add_new_data_plane_packages(
     for package_name in new_data_plane_names:
         logger.info(f"Adding new data plane meta.yaml for: {package_name}")
 
-        pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, package_name, "meta.yaml")
-        os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
-
+        file_name = package_name
         bundle_name = get_bundle_name(package_name)
+        if bundle_name:
+            if bundle_name in bundles_processed:
+                logger.info(
+                    f"Meta.yaml for bundle {bundle_name} already created, skipping {package_name}"
+                )
+                continue
+            file_name = bundle_name
 
-        if bundle_name and bundle_name in bundles_processed:
-            logger.info(
-                f"Meta.yaml for bundle {bundle_name} already created, skipping {package_name}"
-            )
-            continue
+        pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, file_name, "meta.yaml")
+        os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
 
         try:
             meta_yml = generate_data_plane_meta_yaml(
@@ -613,9 +616,7 @@ def add_new_data_plane_packages(
 # =====================================
 
 
-def add_new_mgmt_plane_packages(
-    package_dict: Dict[str, Dict[str, str]], new_mgmt_plane_names: List[str]
-) -> List[str]:
+def add_new_mgmt_plane_packages(new_mgmt_plane_names: List[str]) -> List[str]:
     """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
     if len(new_mgmt_plane_names) == 0:
         return []
@@ -1050,13 +1051,11 @@ if __name__ == "__main__":
 
     # handle new data plane libraries
     new_data_plane_results = add_new_data_plane_packages(
-        package_dict, bundle_map, new_data_plane_names
+        bundle_map, new_data_plane_names
     )
 
     # handle new mgmt plane libraries
-    new_mgmt_plane_results = add_new_mgmt_plane_packages(
-        package_dict, new_mgmt_plane_names
-    )
+    new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_names)
 
     # add/update release logs
     data_plane_release_log_results = update_data_plane_release_logs(
