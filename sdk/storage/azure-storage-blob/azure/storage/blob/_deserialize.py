@@ -87,14 +87,32 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
     return result_list
 
 
+class _DownloadResponse:
+    """Wrapper for download response that holds both the stream and properties."""
+    def __init__(
+        self,
+        stream: Any,
+        properties: BlobProperties,
+        response: "PipelineResponse"
+    ) -> None:
+        self._stream = stream
+        self.properties = properties
+        self.response = response.http_response
+        # Content-Length header contains the size of the response body
+        self.content_length = int(response.http_response.headers.get('Content-Length', 0))
+
+    def __iter__(self):
+        return iter(self._stream)
+
+
 def deserialize_blob_stream(
     response: "PipelineResponse",
     obj: Any,
     headers: Dict[str, Any]
-) -> Tuple["LocationMode", Any]:
+) -> Tuple["LocationMode", "_DownloadResponse"]:
     blob_properties = deserialize_blob_properties(response, obj, headers)
-    obj.properties = blob_properties
-    return response.http_response.location_mode, obj
+    download_response = _DownloadResponse(obj, blob_properties, response)
+    return response.http_response.location_mode, download_response
 
 
 def deserialize_container_properties(
