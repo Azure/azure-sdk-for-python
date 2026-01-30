@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
@@ -168,7 +169,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
-            feature_flags = []
+            feature_flags: AsyncItemPaged[ConfigurationSetting]
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 snapshot = await self._client.get_snapshot(select.snapshot_name)

@@ -114,9 +114,6 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    # Validate feature flag selectors don't use snapshots
-    feature_flag_selectors = kwargs.get("feature_flag_selectors")
-
     # Determine Key Vault usage
     uses_key_vault = (
         "keyvault_credential" in kwargs
