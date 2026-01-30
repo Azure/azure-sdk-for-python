@@ -83,13 +83,13 @@ class TestCallbackChatTargetPrompts:
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
         ) as mock_construct:
             # Setup memory mock
-            mock_memory.get_chat_messages_with_conversation_id.return_value = []
+            mock_memory.get_conversation.return_value = []
 
             # Setup construct_response mock
             mock_construct.return_value = mock_request
 
             # Call the method
-            response = await chat_target.send_prompt_async(prompt_request=mock_request)
+            response = await chat_target.send_prompt_async(message=mock_request)
 
             # Check that callback was called with correct parameters
             mock_callback.assert_called_once()
@@ -99,7 +99,7 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {}
 
             # Check memory usage
-            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")
+            mock_memory.get_conversation.assert_called_once_with(conversation_id="test-id")
 
     @pytest.mark.asyncio
     async def test_send_prompt_async_with_context_from_labels(self, chat_target, mock_callback):
@@ -120,13 +120,13 @@ class TestCallbackChatTargetPrompts:
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
         ) as mock_construct:
             # Setup memory mock
-            mock_memory.get_chat_messages_with_conversation_id.return_value = []
+            mock_memory.get_conversation.return_value = []
 
             # Setup construct_response mock
             mock_construct.return_value = mock_request
 
             # Call the method
-            response = await chat_target.send_prompt_async(prompt_request=mock_request)
+            response = await chat_target.send_prompt_async(message=mock_request)
 
             # Check that callback was called with correct parameters including context from labels
             mock_callback.assert_called_once()
@@ -136,7 +136,7 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {"contexts": ["test context data"]}
 
             # Check memory usage
-            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")
+            mock_memory.get_conversation.assert_called_once_with(conversation_id="test-id")
 
     def test_validate_request_multiple_pieces(self, chat_target):
         """Test _validate_request with multiple request pieces."""
