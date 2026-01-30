@@ -1,6 +1,4 @@
 parameters:
-- name: CondaArtifacts
-  type: object
 - name: DependsOn
   type: string
   default: Build
@@ -10,54 +8,69 @@ parameters:
 
 stages:
   - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
-    - ${{ each artifact in parameters.CondaArtifacts }}:
-      - stage: 'Release_${{artifact.name}}'
-        displayName: 'Release: ${{artifact.name}}'
-        dependsOn: ${{parameters.DependsOn}}
-        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
-        jobs:
-          - deployment: PublishCondaPackage
-            displayName: "Publish Conda Artifact: ${{artifact.name}}"
-            environment: package-publish
+    - stage: Release_Conda
+      displayName: 'Release Conda Packages'
+      dependsOn: ${{parameters.DependsOn}}
+      condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+      jobs:
+        - deployment: PublishCondaPackages
+          displayName: "Publish Conda Packages to Anaconda"
+          environment: package-publish
 
-            templateContext:
-              type: releaseJob
-              isProduction: true
-              inputs:
-              - input: pipelineArtifact
-                artifactName: ${{parameters.ArtifactName}}
-                targetPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+          templateContext:
+            type: releaseJob
+            isProduction: true
+            inputs:
+            - input: pipelineArtifact
+              artifactName: ${{parameters.ArtifactName}}
+              targetPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
-            pool:
-              name: azsdk-pool
-              image: ubuntu-24.04
-              os: linux
+          pool:
+            name: azsdk-pool
+            image: ubuntu-24.04
+            os: linux
 
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - checkout: self
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - checkout: self
 
-                    - task: UsePythonVersion@0
-                      inputs:
-                        versionSpec: '3.12'
+                  - task: UsePythonVersion@0
+                    inputs:
+                      versionSpec: '3.12'
 
-                    - pwsh: |
-                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-                      workingDirectory: $(Pipeline.Workspace)
-                      displayName: Output Visible Conda Artifacts
+                  - pwsh: |
+                      Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                    workingDirectory: $(Pipeline.Workspace)
+                    displayName: Output Visible Conda Artifacts
 
-                    - script: |
-                        set -e
-                        python -m pip install anaconda-client
-                      displayName: Install anaconda-client
+                  - script: |
+                      set -e
+                      python -m pip install anaconda-client
+                    displayName: Install anaconda-client
 
-                    - script: |
-                        set -e
-                        anaconda upload --user $CONDA_USERNAME --skip-existing --private $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.tar.bz2
-                        echo "Uploaded ${{artifact.name}} to Anaconda"
-                      displayName: 'Publish ${{artifact.name}} to Anaconda'
-                      env:
-                        ANACONDA_API_TOKEN: $(conda-release-apikey)
-                        CONDA_USERNAME: Microsoft
+                  - pwsh: |
+                      $packages = Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/noarch" -Filter "*.conda"
+                      foreach ($package in $packages) {
+                        Write-Host "Uploading: $($package.FullName)"
+                        $success = $false
+                        for ($attempt = 1; $attempt -le 3; $attempt++) {
+                          anaconda upload --user $env:CONDA_USERNAME --skip-existing --private $package.FullName
+                          if ($LASTEXITCODE -eq 0) {
+                            $success = $true
+                            break
+                          }
+                          Write-Host "Attempt $attempt failed, retrying..."
+                          Start-Sleep -Seconds 5
+                        }
+                        if (-not $success) {
+                          Write-Error "Failed to upload $($package.Name) after 3 attempts"
+                          exit 1
+                        }
+                      }
+                      Write-Host "Uploaded all conda packages to Anaconda"
+                    displayName: 'Publish all Conda packages to Anaconda'
+                    env:
+                      ANACONDA_API_TOKEN: $(conda-release-apikey)
+                      CONDA_USERNAME: Microsoft
