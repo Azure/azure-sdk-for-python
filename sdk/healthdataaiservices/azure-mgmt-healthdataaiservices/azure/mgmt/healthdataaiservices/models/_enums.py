@@ -32,6 +32,17 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class DeidServiceSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU name for the DeidService resource."""
+
+    FREE = "Free"
+    """Free tier with limited capabilities."""
+    BASIC = "Basic"
+    """Basic tier with standard capabilities."""
+    STANDARD = "Standard"
+    """Standard tier with full capabilities."""
+
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -60,7 +71,9 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -77,7 +90,7 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     """The private endpoint connection status."""
 
     PENDING = "Pending"
-    """Connectionaiting for approval or rejection"""
+    """Connection waiting for approval or rejection"""
     APPROVED = "Approved"
     """Connection approved"""
     REJECTED = "Rejected"
@@ -110,3 +123,18 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The public network access is enabled"""
     DISABLED = "Disabled"
     """The public network access is disabled"""
+
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This field is required to be implemented by the Resource Provider if the service has more than
+    one tier, but is not required on a PUT.
+    """
+
+    FREE = "Free"
+    """The Free service tier."""
+    BASIC = "Basic"
+    """The Basic service tier."""
+    STANDARD = "Standard"
+    """The Standard service tier."""
+    PREMIUM = "Premium"
+    """The Premium service tier."""

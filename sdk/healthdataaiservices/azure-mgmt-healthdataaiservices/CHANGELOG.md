@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (UnReleased)
+
+change log generation failed!!! You need to write it manually!!!
+
 ## 1.0.0 (2024-11-21)
 
 ### Breaking Changes
