@@ -333,3 +333,20 @@ def test_namespace_discovery_with_substantial_content():
         assert result == "test.module"
     finally:
         os.unlink(temp_file)
+
+
+@patch("ci_tools.parsing.parse_functions.read_setup_py_content")
+def test_is_stable_release(test_patch):
+    test_patch.return_value = """
+from setuptools import setup
+setup(name="azure-test", version="1.0.0")
+"""
+    result = ParsedSetup.from_path(setup_project_scenario)
+    assert result.is_stable_release() == True
+
+    test_patch.return_value = """
+from setuptools import setup
+setup(name="azure-test", version="1.0.0b1")
+"""
+    result = ParsedSetup.from_path(setup_project_scenario)
+    assert result.is_stable_release() == False

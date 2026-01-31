@@ -905,5 +905,3 @@ extends:
                           version: 1.0.0
                         - package: azure-mgmt-workloadssapvirtualinstance
                           version: 1.0.0
-
-
