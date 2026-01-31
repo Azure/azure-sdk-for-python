@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
@@ -82,7 +82,9 @@ with (
     scope = "user_123"
 
     # Add a memory to the memory store
-    user_message = EasyInputMessage(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
+    user_message = EasyInputMessage(
+        role="user", content="I prefer dark roast coffee and usually drink it in the morning"
+    )
     update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,

@@ -32,7 +32,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods the `.indexes` operations.
 
-The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-2025-11-15-preview).
+The client library uses version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects-v2/product-doc)
 | [Samples][samples]
@@ -62,12 +62,6 @@ To report an issue with the client library, or request additional features, plea
 
 ```bash
 pip install --pre azure-ai-projects
-```
-
-Note that the packages [openai](https://pypi.org/project/openai) and [azure-identity](https://pypi.org/project/azure-identity) also need to be installed if you intend to call `get_openai_client()`:
-
-```bash
-pip install openai azure-identity
 ```
 
 ## Key concepts
@@ -954,7 +948,7 @@ You can add an Application Insights Azure resource to your Microsoft Foundry pro
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
-pip install "azure-ai-projects>=2.0.0b1" azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
+pip install "azure-ai-projects>=2.0.0b4" opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
 ```
 
 You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
