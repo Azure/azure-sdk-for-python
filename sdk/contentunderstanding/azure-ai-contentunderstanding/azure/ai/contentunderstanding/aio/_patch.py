@@ -252,13 +252,12 @@ class ContentUnderstandingClient(GeneratedClient):
            matches Python's native string indexing behavior (len() and str[i] use code points).
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
-        # Set string_encoding to "codePoint" (matches Python's string indexing)
-        kwargs["string_encoding"] = "codePoint"
-
-        # Call parent implementation
+        # Call parent implementation with string_encoding set to "codePoint"
+        # (matches Python's string indexing)
         poller = await super().begin_analyze_binary(
             analyzer_id=analyzer_id,
             binary_input=binary_input,
+            string_encoding="codePoint",
             input_range=input_range,
             content_type=content_type,
             processing_location=processing_location,

@@ -105,9 +105,7 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         :rtype: AnalyzeLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: AnalyzeLROPoller[PollingReturnType_co] = object.__new__(
-            cls
-        )  # pyright: ignore[reportInvalidTypeArguments]
+        instance: "AnalyzeLROPoller[PollingReturnType_co]" = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance
