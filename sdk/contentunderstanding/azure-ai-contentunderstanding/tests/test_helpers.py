@@ -79,7 +79,7 @@ def new_simple_content_analyzer_object(
             description="schema description here",
             name="schema name here",
         ),
-        processing_location=ProcessingLocation.GLOBAL,
+        processing_location=ProcessingLocation.GLOBALEnum,
         models={"completion": "gpt-4.1"},  # Required when using field_schema
         tags=tags,
     )
@@ -109,7 +109,7 @@ def new_marketing_video_analyzer_object(
             return_details=True,
         ),
         description=description,
-        processing_location=ProcessingLocation.GLOBAL,
+        processing_location=ProcessingLocation.GLOBALEnum,
         models={"completion": "gpt-4.1"},  # Required when using field_schema
         tags=tags,
     )
@@ -460,7 +460,7 @@ def new_invoice_analyzer_object(
             description="Invoice field extraction schema",
             name="invoice_schema",
         ),
-        processing_location=ProcessingLocation.GLOBAL,
+        processing_location=ProcessingLocation.GLOBALEnum,
         models={"completion": "gpt-4.1"},  # Required when using field_schema
         tags=tags,
     )
