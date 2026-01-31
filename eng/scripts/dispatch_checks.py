@@ -42,7 +42,7 @@ class ProxyProcess:
 
 PROXY_STATUS_SUFFIX = "/Info/Available"
 PROXY_STARTUP_TIMEOUT = 60
-BASE_PROXY_PORT = 5000
+BASE_PROXY_PORT = 5050
 # Checks implemented via InstallAndTest all require shared recording restore behavior.
 INSTALL_AND_TEST_CHECKS = {"whl", "whl_no_aio", "sdist", "devtest", "optional", "latestdependency", "mindependency"}
 SHARED_RESTORE_ENV = "__shared_restore__"
@@ -69,58 +69,6 @@ def _normalize_newlines(text: str) -> str:
 
 def _checks_require_recording_restore(checks: List[str]) -> bool:
     return any(check in INSTALL_AND_TEST_CHECKS for check in checks)
-
-
-def _restore_package_recordings(packages: List[str], proxy_executable: str, assets_dir: Optional[str] = None) -> None:
-    # azure template has a fake tag for demonstration purposes, skip restore on that one.
-    unique_packages = [package for package in list(dict.fromkeys(packages)) if "azure-template" not in package]
-
-    for package in unique_packages:
-        assets_path = os.path.join(package, "assets.json")
-        if not os.path.exists(assets_path):
-            logger.debug(f"No assets.json found under {package}; skipping restore.")
-            continue
-        cmd = [proxy_executable, "restore", "-a", assets_path]
-        logger.info(f"Restoring recordings for {package} using assets file {assets_path}.")
-        try:
-            env = os.environ.copy()
-            if assets_dir:
-                env["PROXY_ASSETS_FOLDER"] = assets_dir
-            completed = subprocess.run(cmd, capture_output=True, text=True, check=True, env=env)
-            if completed.stdout:
-                logger.debug(completed.stdout.strip())
-            if completed.stderr:
-                logger.debug(completed.stderr.strip())
-        except subprocess.CalledProcessError as exc:
-            logger.error(f"Failed to restore recordings for {package}: {exc}")
-            if exc.stdout:
-                logger.error(exc.stdout.strip())
-            if exc.stderr:
-                logger.error(exc.stderr.strip())
-            raise
-
-
-def _prepopulate_check_asset_dirs(base_assets_dir: str, checks: List[str]) -> None:
-    if not in_ci():
-        return
-
-    if not base_assets_dir or not os.path.exists(base_assets_dir):
-        logger.warning(f"Base assets directory {base_assets_dir} missing; skipping per-check asset propagation.")
-        return
-
-    unique_checks = sorted(
-        {check.strip() for check in checks if check and check.strip() and check in INSTALL_AND_TEST_CHECKS}
-    )
-    for check in unique_checks:
-        destination = get_assets_directory(root_dir, check)
-        if os.path.abspath(destination) == os.path.abspath(base_assets_dir):
-            continue
-
-        if os.path.exists(destination):
-            shutil.rmtree(destination, ignore_errors=True)
-
-        logger.info(f"Prepopulating assets for check '{check}' in {destination}.")
-        shutil.copytree(base_assets_dir, destination, dirs_exist_ok=True)
 
 
 async def run_check(
@@ -504,15 +452,6 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         except Exception as exc:
             logger.error(f"Unable to prepare test proxy executable for recording restore: {exc}")
             sys.exit(1)
-
-        # base_assets_dir = get_assets_directory(root_dir, SHARED_RESTORE_ENV)
-        # try:
-        #     _restore_package_recordings(targeted_packages, proxy_executable, base_assets_dir)
-        # except subprocess.CalledProcessError:
-        #     logger.error("Recording restore pre-pass failed; aborting check execution.")
-        #     sys.exit(1)
-
-        # _prepopulate_check_asset_dirs(base_assets_dir, checks)
 
     logger.info(
         f"Running {len(checks)} check(s) across {len(targeted_packages)} packages (max_parallel={args.max_parallel})."

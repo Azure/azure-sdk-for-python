@@ -112,7 +112,16 @@ class Check(abc.ABC):
     def get_executable(self, isolate: bool, check_name: str, executable: str, package_folder: str) -> Tuple[str, str]:
         """Get the Python executable that should be used for this check."""
         proxy_url = get_proxy_url_for_check(check_name)
-        os.environ["PROXY_URL"] = proxy_url
+        if not os.getenv("PROXY_URL"):
+            os.environ["PROXY_URL"] = proxy_url
+        else:
+            current_url = os.getenv("PROXY_URL")
+            if current_url != proxy_url:
+                logger.debug(
+                    "PROXY_URL already set to %s, keeping existing assignment instead of %s",
+                    current_url,
+                    proxy_url,
+                )
         # Keep venvs under a shared repo-level folder to prevent nested import errors during pytest collection
         package_name = os.path.basename(os.path.normpath(package_folder))
         shared_venv_root = os.path.join(REPO_ROOT, ".venv", package_name)
