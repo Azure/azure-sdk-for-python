@@ -87,7 +87,9 @@ async def main() -> None:
         scope = "user_123"
 
         # Add a memory to the memory store
-        user_message = EasyInputMessage(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
+        user_message = EasyInputMessage(
+            role="user", content="I prefer dark roast coffee and usually drink it in the morning"
+        )
         update_poller = await project_client.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
