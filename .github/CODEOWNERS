@@ -232,8 +232,8 @@
 # PRLabel: %Data Factory
 /sdk/datalake/                                                       @ro-joowan
 
-# ServiceLabel: %Data Factory
-# PRLabel: %Data Factory
+# ServiceLabel: %Data Migration
+# PRLabel: %Data Migration
 /sdk/datamigration/                                                  @vchske
 
 # PRLabel: %Device Provisioning
