@@ -17,6 +17,7 @@ from ._models import (  # type: ignore
     DeidPropertiesUpdate,
     DeidService,
     DeidServiceProperties,
+    DeidServiceSku,
     DeidUpdate,
     ErrorAdditionalInfo,
     ErrorDetail,
@@ -42,12 +43,14 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     ActionType,
     CreatedByType,
+    DeidServiceSkuName,
     ManagedServiceIdentityType,
     Origin,
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
     ProvisioningState,
     PublicNetworkAccess,
+    SkuTier,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -57,6 +60,7 @@ __all__ = [
     "DeidPropertiesUpdate",
     "DeidService",
     "DeidServiceProperties",
+    "DeidServiceSku",
     "DeidUpdate",
     "ErrorAdditionalInfo",
     "ErrorDetail",
@@ -79,12 +83,14 @@ __all__ = [
     "UserAssignedIdentity",
     "ActionType",
     "CreatedByType",
+    "DeidServiceSkuName",
     "ManagedServiceIdentityType",
     "Origin",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
     "ProvisioningState",
     "PublicNetworkAccess",
+    "SkuTier",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
