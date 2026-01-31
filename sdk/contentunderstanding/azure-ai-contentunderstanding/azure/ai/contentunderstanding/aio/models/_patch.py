@@ -74,9 +74,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: AnalyzeAsyncLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: AnalyzeAsyncLROPoller[PollingReturnType_co] = object.__new__(
-            cls
-        )  # pyright: ignore[reportInvalidTypeArguments]
+        instance: "AnalyzeAsyncLROPoller[PollingReturnType_co]" = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance
