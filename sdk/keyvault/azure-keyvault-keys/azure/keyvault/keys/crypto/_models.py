@@ -178,8 +178,14 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
                 "(encrypt, verify) can be performed."
             )
 
-        e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
-        n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
+        e_bytes = self._key.e  # type: ignore[attr-defined]
+        n_bytes = self._key.n  # type: ignore[attr-defined]
+        
+        if e_bytes is None or n_bytes is None:
+            raise ValueError("RSA key components (e, n) are missing")
+            
+        e = int.from_bytes(e_bytes, "big")
+        n = int.from_bytes(n_bytes, "big")
         return RSAPublicNumbers(e, n)
 
     def public_bytes(self, encoding: Encoding, format: PublicFormat) -> bytes:
@@ -425,8 +431,14 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
             )
 
         # Fetch public numbers from JWK
-        e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
-        n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
+        e_bytes = self._key.e  # type: ignore[attr-defined]
+        n_bytes = self._key.n  # type: ignore[attr-defined]
+        
+        if e_bytes is None or n_bytes is None:
+            raise ValueError("RSA key components (e, n) are missing")
+            
+        e = int.from_bytes(e_bytes, "big")
+        n = int.from_bytes(n_bytes, "big")
         public_numbers = RSAPublicNumbers(e, n)
 
         # Fetch private numbers from JWK
