@@ -45,7 +45,7 @@ _LOGGER = logging.getLogger()
 CONTAINER_STARTUP_TIMEOUT = 60
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
-PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
+PROXY_CHECK_URL = PROXY_URL() + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
 AVAILABLE_TEST_PROXY_BINARIES = {
@@ -101,7 +101,7 @@ discovered_roots = []
 def _get_proxy_log_suffix() -> str:
     """Derive a log suffix based on the configured proxy port."""
 
-    proxy_url = os.getenv("PROXY_URL", PROXY_URL)
+    proxy_url = os.getenv("PROXY_URL", PROXY_URL())
     normalized = proxy_url if "://" in proxy_url else f"http://{proxy_url}"
     try:
         parsed = urlparse(normalized)
@@ -370,7 +370,7 @@ def start_test_proxy(request) -> None:
     """
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
-    requires_https = PROXY_URL.startswith("https://")
+    requires_https = PROXY_URL().startswith("https://")
 
     if requires_https:
         check_certificate_location(repo_root)
@@ -411,7 +411,7 @@ def start_test_proxy(request) -> None:
             passenv.update(os.environ)
 
             proc = subprocess.Popen(
-                shlex.split(f'{tool_name} start --storage-location="{root}" -- --urls "{PROXY_URL}"'),
+                shlex.split(f'{tool_name} start --storage-location="{root}" -- --urls "{PROXY_URL()}"'),
                 stdout=log or subprocess.DEVNULL,
                 stderr=log or subprocess.STDOUT,
                 env=passenv,

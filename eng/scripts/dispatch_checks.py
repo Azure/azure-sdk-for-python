@@ -229,6 +229,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
         if not is_check_enabled(package, check, CHECK_DEFAULTS.get(check, True)):
             logger.warning(f"Skipping disabled check {check} for package {package}")
             continue
+        logger.info(f"Assigning proxy port {next_proxy_port} to check {check} for package {package}")
         scheduled.append((package, check, next_proxy_port))
         next_proxy_port += 1
 

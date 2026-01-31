@@ -169,6 +169,9 @@ class InstallAndTest(Check):
 
     def get_env_defaults(self) -> Dict[str, str]:
         defaults: Dict[str, str] = {}
+
+        if os.getenv("PROXY_URL") is not None:
+            defaults["PROXY_URL"] = str(os.getenv("PROXY_URL"))
         if self.proxy_url:
             defaults["PROXY_URL"] = self.proxy_url
         return defaults
