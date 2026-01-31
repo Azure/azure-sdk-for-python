@@ -260,3 +260,54 @@ def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int
                 if package_name:
                     package_index[package_name] = (artifact_idx, checkout_idx)
     return package_index
+
+
+def get_valid_package_imports(package_name: str) -> List[str]:
+    """
+    Inspect the package's actual module structure and return only valid imports.
+
+    This avoids assuming all packages have .aio, .aio.operations, .models, and .operations
+    submodules, since not all packages have the same structure.
+
+    :param package_name: The name of the package (e.g., "azure-mgmt-advisor" or "azure-eventgrid").
+    :return: List of valid module names for import (e.g., ["azure.eventgrid", "azure.eventgrid.aio"]).
+    """
+    module_name = package_name.replace("-", ".")
+    imports = [module_name]
+
+    package_path = get_package_path(package_name)
+    if not package_path:
+        logger.warning(
+            f"Could not find package path for {package_name}, using base import only"
+        )
+        return imports
+
+    # Construct the path to the actual module directory
+    # e.g., azure-mgmt-advisor -> azure/mgmt/advisor
+    module_parts = module_name.split(".")
+    module_dir = os.path.join(package_path, *module_parts)
+
+    if not os.path.isdir(module_dir):
+        logger.warning(
+            f"Module directory not found for {package_name} at {module_dir}, using base import only"
+        )
+        return imports
+
+    # Check for common submodules and only add if they exist
+    submodules_to_check = ["aio", "models", "operations"]
+
+    for submodule_name in submodules_to_check:
+        submodule_path = os.path.join(module_dir, submodule_name)
+        if os.path.isdir(submodule_path) and os.path.exists(
+            os.path.join(submodule_path, "__init__.py")
+        ):
+            imports.append(f"{module_name}.{submodule_name}")
+
+    # Check for aio.operations (nested submodule)
+    aio_operations_path = os.path.join(module_dir, "aio", "operations")
+    if os.path.isdir(aio_operations_path) and os.path.exists(
+        os.path.join(aio_operations_path, "__init__.py")
+    ):
+        imports.append(f"{module_name}.aio.operations")
+
+    return imports

@@ -19,6 +19,7 @@ from conda_helper_functions import (
     get_package_path,
     get_bundle_name,
     map_bundle_to_packages,
+    get_valid_package_imports,
     PACKAGE_COL,
     VERSION_GA_COL,
     LATEST_GA_DATE_COL,
@@ -474,7 +475,6 @@ def generate_data_plane_meta_yaml(
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
     # TODO not sure if this is the best way to get these requirements
-    # TODO don't think this covers all possible import tests, e.g. azure.eventgrid, azure.eventgrid.aio <- when would I add that?
     if bundle_name:
         # handle grouped packages
         logger.info(
@@ -492,9 +492,11 @@ def generate_data_plane_meta_yaml(
             host_reqs.update(pkg_host_reqs)
             run_reqs.update(pkg_run_reqs)
 
-            pkg_imports.append(pkg.replace("-", "."))
+            # Get valid imports for this package (including .aio if it exists)
+            pkg_imports.extend(get_valid_package_imports(pkg))
         host_reqs = list(host_reqs)
         run_reqs = list(run_reqs)
+        pkg_imports = list(set(pkg_imports))  # deduplicate
 
         package_path = get_package_path(bundle_map[bundle_name][0])
         home_url, summary, description = get_package_metadata(
@@ -506,7 +508,8 @@ def generate_data_plane_meta_yaml(
         parsed_setup = ParsedSetup.from_path(package_path)
 
         host_reqs, run_reqs = get_package_requirements(parsed_setup)
-        pkg_imports = [package_name.replace("-", ".")]
+        # Get valid imports for this package (including .aio if it exists)
+        pkg_imports = get_valid_package_imports(package_name)
 
         home_url, summary, description = get_package_metadata(
             package_name, package_path
@@ -648,18 +651,13 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: List[str]) -> List[str]:
             logger.warning("Skipping package with missing name")
             continue
 
-        module_name = package_name.replace("-", ".")
-
-        imports = [
-            f"- {module_name}",
-            f"- {module_name}.aio",
-            f"- {module_name}.aio.operations",
-            f"- {module_name}.models",
-            f"- {module_name}.operations",
-        ]
-
-        new_imports.extend(imports)
-        logger.info(f"Generated import statements for {package_name}")
+        imports = get_valid_package_imports(package_name)
+        # Format imports for YAML with "- " prefix
+        formatted = [f"- {imp}" for imp in imports]
+        new_imports.extend(formatted)
+        logger.info(
+            f"Generated {len(imports)} import statements for {package_name}: {formatted}"
+        )
 
     all_imports = list(set(existing_imports + new_imports))
 
