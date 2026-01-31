@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.14.6 (2026-01-30)
+### 4.14.6 (2026-02-02)
 
 #### Bugs Fixed
 * Fixed async client crash (`AttributeError: 'NoneType' object has no attribute '_WritableLocations'`) during region discovery when `database_account` was `None`. See [PR 44939](https://github.com/Azure/azure-sdk-for-python/pull/44939)
