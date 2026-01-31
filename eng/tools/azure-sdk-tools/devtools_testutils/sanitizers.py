@@ -469,7 +469,7 @@ def add_batch_sanitizers(sanitizers: Dict[str, List[Optional[Dict[str, str]]]], 
     http_client = get_http_client()
     http_client.request(
         method="POST",
-        url="{}/Admin/AddSanitizers".format(PROXY_URL),
+        url="{}/Admin/AddSanitizers".format(PROXY_URL()),
         headers=headers_to_send,
         body=json.dumps(data).encode("utf-8"),
     )
@@ -501,7 +501,7 @@ def remove_batch_sanitizers(sanitizers: List[str], headers: Optional[Dict] = Non
     http_client = get_http_client()
     http_client.request(
         method="POST",
-        url="{}/Admin/RemoveSanitizers".format(PROXY_URL),
+        url="{}/Admin/RemoveSanitizers".format(PROXY_URL()),
         headers=headers_to_send,
         body=json.dumps(data).encode("utf-8"),
     )
@@ -718,7 +718,7 @@ def _send_matcher_request(matcher: str, headers: Dict, parameters: Optional[Dict
     http_client = get_http_client()
     http_client.request(
         method="POST",
-        url=f"{PROXY_URL}/Admin/SetMatcher",
+        url=f"{PROXY_URL()}/Admin/SetMatcher",
         headers=headers_to_send,
         body=json.dumps(parameters).encode("utf-8"),
     )
@@ -747,7 +747,7 @@ def _send_recording_options_request(parameters: Dict, headers: Optional[Dict] = 
     http_client = get_http_client()
     http_client.request(
         method="POST",
-        url=f"{PROXY_URL}/Admin/SetRecordingOptions",
+        url=f"{PROXY_URL()}/Admin/SetRecordingOptions",
         headers=headers_to_send,
         body=json.dumps(parameters).encode("utf-8"),
     )
@@ -771,7 +771,7 @@ def _send_reset_request(headers: Dict) -> None:
             headers_to_send[key] = headers[key]
 
     http_client = get_http_client()
-    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers_to_send)
+    http_client.request(method="POST", url=f"{PROXY_URL()}/Admin/Reset", headers=headers_to_send)
 
 
 def _send_sanitizer_request(sanitizer: str, parameters: Dict, headers: Optional[Dict] = None) -> None:
@@ -796,7 +796,7 @@ def _send_sanitizer_request(sanitizer: str, parameters: Dict, headers: Optional[
     http_client = get_http_client()
     http_client.request(
         method="POST",
-        url="{}/Admin/AddSanitizer".format(PROXY_URL),
+        url="{}/Admin/AddSanitizer".format(PROXY_URL()),
         headers=headers_to_send,
         body=json.dumps(parameters).encode("utf-8"),
     )
@@ -823,7 +823,7 @@ def _send_transform_request(transform: str, parameters: Dict, headers: Optional[
     http_client = get_http_client()
     http_client.request(
         method="POST",
-        url=f"{PROXY_URL}/Admin/AddTransform",
+        url=f"{PROXY_URL()}/Admin/AddTransform",
         headers=headers_to_send,
         body=json.dumps(parameters).encode("utf-8"),
     )

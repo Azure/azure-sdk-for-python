@@ -5,16 +5,22 @@ import sys
 import time
 import signal
 import shutil
+import shlex
+import subprocess
+import urllib.request
 from dataclasses import dataclass
-from typing import List
+from typing import IO, List, Optional
 
+from azpysdk.proxy_ports import get_proxy_port_for_check
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
+from devtools_testutils.proxy_startup import prepare_local_tool
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+ISOLATE_DIRS_TO_CLEAN: List[str] = []
 
 
 @dataclass
@@ -27,6 +33,44 @@ class CheckResult:
     stderr: str
 
 
+@dataclass
+class ProxyProcess:
+    port: int
+    process: subprocess.Popen
+    log_handle: Optional[IO[str]]
+
+
+PROXY_STATUS_SUFFIX = "/Info/Available"
+PROXY_STARTUP_TIMEOUT = 60
+BASE_PROXY_PORT = 5050
+# Checks implemented via InstallAndTest all require shared recording restore behavior.
+INSTALL_AND_TEST_CHECKS = {"whl", "whl_no_aio", "sdist", "devtest", "optional", "latestdependency", "mindependency"}
+SHARED_RESTORE_ENV = "__shared_restore__"
+
+
+def _cleanup_isolate_dirs() -> None:
+    if not ISOLATE_DIRS_TO_CLEAN:
+        return
+
+    for path in ISOLATE_DIRS_TO_CLEAN:
+        if not path:
+            continue
+        if os.path.exists(path):
+            try:
+                shutil.rmtree(path)
+            except Exception:
+                logger.warning(f"Failed to remove isolate dir {path}")
+    ISOLATE_DIRS_TO_CLEAN.clear()
+
+
+def _normalize_newlines(text: str) -> str:
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def _checks_require_recording_restore(checks: List[str]) -> bool:
+    return any(check in INSTALL_AND_TEST_CHECKS for check in checks)
+
+
 async def run_check(
     semaphore: asyncio.Semaphore,
     package: str,
@@ -34,6 +78,7 @@ async def run_check(
     base_args: List[str],
     idx: int,
     total: int,
+    proxy_port: int,
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -49,6 +94,8 @@ async def run_check(
     :type idx: int
     :param total: Total number of tasks (used for logging progress).
     :type total: int
+    :param proxy_port: Dedicated proxy port assigned to this check instance.
+    :type proxy_port: int
     :returns: A :class:`CheckResult` describing exit code, duration and captured output.
     :rtype: CheckResult
     """
@@ -56,12 +103,18 @@ async def run_check(
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
+        env = os.environ.copy()
+        env["PROXY_URL"] = f"http://localhost:{proxy_port}"
+
+        if in_ci():
+            env["PROXY_ASSETS_FOLDER"] = os.path.join(root_dir, ".assets_distributed", str(proxy_port))
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
                 cwd=package,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
+                env=env,
             )
         except Exception as ex:  # subprocess failed to launch
             logger.error(f"Failed to start check {check} for {package}: {ex}")
@@ -77,24 +130,28 @@ async def run_check(
         # Print captured output after completion to avoid interleaving
         header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
         trailer = "=" * len(header)
+        if in_ci():
+            print(f"##[group]{package} :: {check} :: {exit_code}")
+
         if stdout:
             print(header)
-            print(stdout.rstrip())
+            print(_normalize_newlines(stdout).rstrip())
             print(trailer)
         if stderr:
             print(header.replace("OUTPUT", "STDERR"))
-            print(stderr.rstrip())
+            print(_normalize_newlines(stderr).rstrip())
             print(trailer)
+
+        if in_ci():
+            print("##[endgroup]")
 
         # if we have any output collections to complete, do so now here
 
         # finally, we need to clean up any temp dirs created by --isolate
         if in_ci():
-            isolate_dir = os.path.join(package, f".venv_{check}")
-            try:
-                shutil.rmtree(isolate_dir)
-            except:
-                logger.warning(f"Failed to remove isolate dir {isolate_dir} for {package} / {check}")
+            package_name = os.path.basename(os.path.normpath(package))
+            isolate_dir = os.path.join(root_dir, ".venv", package_name, f".venv_{check}")
+            ISOLATE_DIRS_TO_CLEAN.append(isolate_dir)
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
@@ -144,7 +201,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
     tasks = []
     semaphore = asyncio.Semaphore(max_parallel)
     combos = [(p, c) for p in packages for c in checks]
-    total = len(combos)
+    scheduled: List[tuple] = []
 
     test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
     dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
@@ -167,11 +224,19 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
 
             replace_dev_reqs(destination_dev_req, pkg, wheel_dir)
 
-    for idx, (package, check) in enumerate(combos, start=1):
+    next_proxy_port = BASE_PROXY_PORT
+    for package, check in combos:
         if not is_check_enabled(package, check, CHECK_DEFAULTS.get(check, True)):
-            logger.warning(f"Skipping disabled check {check} ({idx}/{total}) for package {package}")
+            logger.warning(f"Skipping disabled check {check} for package {package}")
             continue
-        tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total)))
+        logger.info(f"Assigning proxy port {next_proxy_port} to check {check} for package {package}")
+        scheduled.append((package, check, next_proxy_port))
+        next_proxy_port += 1
+
+    total = len(scheduled)
+
+    for idx, (package, check, proxy_port) in enumerate(scheduled, start=1):
+        tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port)))
 
     # Handle Ctrl+C gracefully
     pending = set(tasks)
@@ -184,7 +249,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
         raise
     # Normalize exceptions
     norm_results: List[CheckResult] = []
-    for res, (package, check) in zip(results, combos):
+    for res, (package, check, _) in zip(results, scheduled):
         if isinstance(res, CheckResult):
             norm_results.append(res)
         elif isinstance(res, Exception):
@@ -381,14 +446,27 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         logger.error("No valid checks provided via -c/--checks.")
         sys.exit(2)
 
+    # ensure that the proxy exe is available before we start running checks that may need to populate it
+    if in_ci() and _checks_require_recording_restore(checks):
+        try:
+            proxy_executable = prepare_local_tool(root_dir)
+        except Exception as exc:
+            logger.error(f"Unable to prepare test proxy executable for recording restore: {exc}")
+            sys.exit(1)
+
     logger.info(
         f"Running {len(checks)} check(s) across {len(targeted_packages)} packages (max_parallel={args.max_parallel})."
     )
 
     configure_interrupt_handling()
+    proxy_processes: List[ProxyProcess] = []
     try:
+        if in_ci():
+            logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
         exit_code = asyncio.run(run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir))
     except KeyboardInterrupt:
         logger.error("Aborted by user.")
         exit_code = 130
+    finally:
+        _cleanup_isolate_dirs()
     sys.exit(exit_code)
