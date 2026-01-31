@@ -38,8 +38,8 @@ from urllib3.exceptions import (
 from ..runtime.pipeline import Pipeline
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl
 from ..exceptions import (
-    ServiceRequestError,
     ServiceResponseError,
+    ServiceResponseTimeoutError,
     IncompleteReadError,
     HttpResponseError,
     DecodeError,
@@ -162,6 +162,14 @@ class StreamDownloadGenerator:
             _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise HttpResponseError(err, error=err) from err
+        except requests.ConnectionError as err:
+            internal_response.close()
+            if err.args and isinstance(err.args[0], ReadTimeoutError):
+                raise ServiceResponseTimeoutError(err, error=err) from err
+            raise ServiceResponseError(err, error=err) from err
+        except requests.RequestException as err:
+            internal_response.close()
+            raise ServiceResponseError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download.")
             internal_response.close()
@@ -178,7 +186,7 @@ def _read_raw_stream(response, chunk_size=1):
         except CoreDecodeError as e:
             raise DecodeError(e, error=e) from e
         except ReadTimeoutError as e:
-            raise ServiceRequestError(e, error=e) from e
+            raise ServiceResponseTimeoutError(e, error=e) from e
     else:
         # Standard file-like object.
         while True:
