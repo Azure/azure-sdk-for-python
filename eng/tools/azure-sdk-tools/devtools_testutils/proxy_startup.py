@@ -100,8 +100,7 @@ discovered_roots = []
 
 def _get_proxy_log_suffix() -> str:
     """Derive a log suffix based on the configured proxy port."""
-
-    proxy_url = os.getenv("PROXY_URL", PROXY_URL())
+    proxy_url = PROXY_URL()
     normalized = proxy_url if "://" in proxy_url else f"http://{proxy_url}"
     try:
         parsed = urlparse(normalized)
