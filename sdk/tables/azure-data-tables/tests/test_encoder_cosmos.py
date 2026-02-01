@@ -72,7 +72,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -88,7 +91,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -108,7 +114,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -147,7 +156,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -170,7 +182,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -523,7 +538,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -597,7 +615,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_payload_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -647,7 +668,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                     verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)

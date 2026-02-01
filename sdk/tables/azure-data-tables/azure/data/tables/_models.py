@@ -161,7 +161,7 @@ class TableAnalyticsLogging:
                 generated.retention_policy
             ),
         )
-    
+
     def _to_generated(self) -> GeneratedLogging:
         return GeneratedLogging(
             version=self.version,
@@ -212,7 +212,7 @@ class TableMetrics:
                 generated.retention_policy
             ),
         )
-    
+
     def _to_generated(self) -> GeneratedMetrics:
         return GeneratedMetrics(
             version=self.version,
@@ -538,7 +538,7 @@ class TableItem:
         :param str name: Name of the Table
         """
         self.name = name
-    
+
     @classmethod
     def _from_generated(cls, generated: GenTableItem) -> "TableItem":
         return cls(name=generated.table_name)

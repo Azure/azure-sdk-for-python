@@ -129,7 +129,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             credential=credential,
             authentication_policy=auth_policy,
             policies=kwargs.pop("policies", self._policies),
-            **kwargs
+            **kwargs,
         )
         # Incompatible assignment when assigning a str value to a Literal type variable
         self._client._config.api_version = get_api_version(
