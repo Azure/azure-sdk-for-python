@@ -18,6 +18,7 @@ from ._generated.models import (
     Metrics as GeneratedMetrics,
     RetentionPolicy as GeneratedRetentionPolicy,
     CorsRule as GeneratedCorsRule,
+    TableProperties as GenTableItem,
 )
 from ._error import _process_table_error
 from ._decoder import TableEntityDecoder
@@ -28,7 +29,7 @@ def _return_context_and_deserialized(response, deserialized, response_headers):
     return response.context["location_mode"], deserialized, response_headers
 
 
-class TableAccessPolicy(GenAccessPolicy):
+class TableAccessPolicy:
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
@@ -85,7 +86,7 @@ class TableAccessPolicy(GenAccessPolicy):
         return f"TableAccessPolicy(start={self.start}, expiry={self.expiry}, permission={self.permission})"[1024:]
 
 
-class TableRetentionPolicy(GeneratedRetentionPolicy):
+class TableRetentionPolicy:
     """The retention policy which determines how long the associated data should persist."""
 
     enabled: bool
@@ -113,11 +114,17 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             days=generated.days,
         )
 
+    def _to_generated(self) -> GeneratedRetentionPolicy:
+        return GeneratedRetentionPolicy(
+            enabled=self.enabled,
+            days=self.days,
+        )
+
     def __repr__(self) -> str:
         return f"TableRetentionPolicy(enabled={self.enabled}, days={self.days})"[1024:]
 
 
-class TableAnalyticsLogging(GeneratedLogging):
+class TableAnalyticsLogging:
     """Azure Analytics Logging settings."""
 
     version: str
@@ -154,6 +161,15 @@ class TableAnalyticsLogging(GeneratedLogging):
                 generated.retention_policy
             ),
         )
+    
+    def _to_generated(self) -> GeneratedLogging:
+        return GeneratedLogging(
+            version=self.version,
+            delete=self.delete,
+            read=self.read,
+            write=self.write,
+            retention_policy=self.retention_policy._to_generated(),  # pylint: disable=protected-access
+        )
 
     def __repr__(self) -> str:
         return f"TableAnalyticsLogging(version={self.version}, delete={self.delete}, read={self.read}, \
@@ -162,7 +178,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         ]
 
 
-class TableMetrics(GeneratedMetrics):
+class TableMetrics:
     """A summary of request statistics grouped by API in hour or minute aggregates."""
 
     version: str
@@ -195,6 +211,14 @@ class TableMetrics(GeneratedMetrics):
             retention_policy=TableRetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
             ),
+        )
+    
+    def _to_generated(self) -> GeneratedMetrics:
+        return GeneratedMetrics(
+            version=self.version,
+            enabled=self.enabled,
+            include_apis=self.include_apis,
+            retention_policy=self.retention_policy._to_generated(),  # pylint: disable=protected-access
         )
 
     def __repr__(self) -> str:
@@ -514,12 +538,16 @@ class TableItem:
         :param str name: Name of the Table
         """
         self.name = name
+    
+    @classmethod
+    def _from_generated(cls, generated: GenTableItem) -> "TableItem":
+        return cls(name=generated.table_name)
 
     def __repr__(self) -> str:
         return f"TableItem(name={self.name})"[1024:]
 
 
-class TablePayloadFormat(object):
+class TablePayloadFormat:
     """
     Specifies the accepted content type of the response payload. More information
     can be found here: https://msdn.microsoft.com/library/azure/dn535600.aspx
@@ -563,7 +591,7 @@ class LocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY = "secondary"  #: Requests should be sent to the secondary location, if possible.
 
 
-class ResourceTypes(object):
+class ResourceTypes:
     """Specifies the resource types that are accessible with the account SAS."""
 
     service: bool
@@ -610,7 +638,7 @@ class ResourceTypes(object):
         return parsed
 
 
-class AccountSasPermissions(object):
+class AccountSasPermissions:
     """:class:`~AccountSasPermissions` class to be used with generate_account_sas."""
 
     read: bool

@@ -157,9 +157,9 @@ class TableServiceClient(AsyncTablesBaseClient):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         props = TableServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            logging=analytics_logging._to_generated() if analytics_logging is not None else analytics_logging,  # pylint:disable=protected-access
+            hour_metrics=hour_metrics._to_generated() if hour_metrics is not None else hour_metrics,  # pylint:disable=protected-access
+            minute_metrics=minute_metrics._to_generated() if minute_metrics is not None else minute_metrics,  # pylint:disable=protected-access
             cors=[c._to_generated() for c in cors] if cors is not None else cors,  # pylint:disable=protected-access
         )
         try:
@@ -259,7 +259,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in an account
         """
-        return self._client.table.query(top=results_per_page, **kwargs)
+        return self._client.table.query(top=results_per_page, cls=lambda objs: [TableItem._from_generated(o) for o in objs], **kwargs)
 
     @distributed_trace
     def query_tables(
@@ -290,7 +290,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :caption: Querying tables in an account given specific parameters
         """
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-        return self._client.table.query(filter=query_filter, top=results_per_page, **kwargs)
+        return self._client.table.query(filter=query_filter, top=results_per_page, cls=lambda objs: [TableItem._from_generated(o) for o in objs], **kwargs)
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.

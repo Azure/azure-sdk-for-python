@@ -27,7 +27,7 @@ from ._error import (
     _validate_tablename_error,
     _validate_key_values,
 )
-from ._generated.models import SignedIdentifier, TableProperties
+from ._generated.models import SignedIdentifier, TableProperties, AccessPolicy
 from ._serialize import (
     serialize_iso,
     _parameter_filter_substitution,
@@ -229,7 +229,7 @@ class TableClient(TablesBaseClient):
         for key, value in signed_identifiers.items():
             payload = None
             if value:
-                payload = TableAccessPolicy(
+                payload = AccessPolicy(
                     start=serialize_iso(value.start),
                     expiry=serialize_iso(value.expiry),
                     permission=value.permission,

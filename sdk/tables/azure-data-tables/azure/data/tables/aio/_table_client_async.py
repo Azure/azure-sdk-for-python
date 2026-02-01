@@ -22,7 +22,7 @@ from .._base_client import parse_connection_str, AudienceType
 from .._encoder import TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
 from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
-from .._generated.models import SignedIdentifier, TableProperties
+from .._generated.models import SignedIdentifier, TableProperties, AccessPolicy
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
     serialize_iso,
@@ -232,7 +232,7 @@ class TableClient(AsyncTablesBaseClient):
         for key, value in signed_identifiers.items():
             payload = None
             if value:
-                payload = TableAccessPolicy(
+                payload = AccessPolicy(
                     start=serialize_iso(value.start),
                     expiry=serialize_iso(value.expiry),
                     permission=value.permission,
