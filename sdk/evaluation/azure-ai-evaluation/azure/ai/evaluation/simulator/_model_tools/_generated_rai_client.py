@@ -162,7 +162,6 @@ class GeneratedRAIClient:
                 risk_category=risk_category,
                 lang=language,
                 strategy=strategy,
-                target_type=target,
                 headers=headers,
             )
 
