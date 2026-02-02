@@ -80,7 +80,6 @@ def build_agents_create_request(
             Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
             Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
             Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-            Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
         ]
     ] = None,
     **kwargs: Any
@@ -108,9 +107,7 @@ def build_agents_create_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_request(
-    agent_name: str, *, foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None, **kwargs: Any
-) -> HttpRequest:
+def build_agents_update_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -130,8 +127,6 @@ def build_agents_update_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if foundry_beta is not None:
-        _headers["Foundry-Beta"] = _SERIALIZER.header("foundry_beta", foundry_beta, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -170,7 +165,7 @@ def build_agents_create_from_manifest_request(  # pylint: disable=name-too-long
 
 
 def build_agents_update_from_manifest_request(  # pylint: disable=name-too-long
-    agent_name: str, *, foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None, **kwargs: Any
+    agent_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -191,8 +186,6 @@ def build_agents_update_from_manifest_request(  # pylint: disable=name-too-long
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if foundry_beta is not None:
-        _headers["Foundry-Beta"] = _SERIALIZER.header("foundry_beta", foundry_beta, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -200,14 +193,7 @@ def build_agents_update_from_manifest_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_request(
-    agent_name: str,
-    *,
-    foundry_beta: Optional[
-        Union[Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1], Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1]]
-    ] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_delete_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -226,8 +212,6 @@ def build_agents_delete_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if foundry_beta is not None:
-        _headers["Foundry-Beta"] = _SERIALIZER.header("foundry_beta", foundry_beta, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -278,7 +262,6 @@ def build_agents_create_version_request(
             Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
             Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
             Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-            Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
         ]
     ] = None,
     **kwargs: Any
@@ -1947,7 +1930,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         content_type: str = "application/json",
@@ -1971,12 +1953,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2004,7 +1984,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         content_type: str = "application/json",
@@ -2018,12 +1997,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2042,7 +2019,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         content_type: str = "application/json",
@@ -2056,12 +2032,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2082,7 +2056,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -2107,12 +2080,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2203,7 +2174,6 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2217,9 +2187,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2239,13 +2206,7 @@ class AgentsOperations:
 
     @overload
     def update(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition. If
         no changes, returns the existing agent version.
@@ -2254,9 +2215,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: JSON
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2267,13 +2225,7 @@ class AgentsOperations:
 
     @overload
     def update(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition. If
         no changes, returns the existing agent version.
@@ -2282,9 +2234,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2300,7 +2249,6 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2315,9 +2263,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2359,7 +2304,6 @@ class AgentsOperations:
 
         _request = build_agents_update_request(
             agent_name=agent_name,
-            foundry_beta=foundry_beta,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2655,7 +2599,6 @@ class AgentsOperations:
         *,
         manifest_id: str,
         parameter_values: dict[str, Any],
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2671,9 +2614,6 @@ class AgentsOperations:
         :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
          Agent. Required.
         :paramtype parameter_values: dict[str, any]
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2693,13 +2633,7 @@ class AgentsOperations:
 
     @overload
     def update_from_manifest(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition. If no changes, returns the existing agent version.
@@ -2708,9 +2642,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: JSON
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2721,13 +2652,7 @@ class AgentsOperations:
 
     @overload
     def update_from_manifest(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition. If no changes, returns the existing agent version.
@@ -2736,9 +2661,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2755,7 +2677,6 @@ class AgentsOperations:
         *,
         manifest_id: str = _Unset,
         parameter_values: dict[str, Any] = _Unset,
-        foundry_beta: Optional[Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2772,9 +2693,6 @@ class AgentsOperations:
         :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
          Agent. Required.
         :paramtype parameter_values: dict[str, any]
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.MEMORY_STORES_V1
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2823,7 +2741,6 @@ class AgentsOperations:
 
         _request = build_agents_update_from_manifest_request(
             agent_name=agent_name,
-            foundry_beta=foundry_beta,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2866,27 +2783,11 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(
-        self,
-        agent_name: str,
-        *,
-        foundry_beta: Optional[
-            Union[
-                Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1], Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1]
-            ]
-        ] = None,
-        **kwargs: Any
-    ) -> _models.DeleteAgentResponse:
+    def delete(self, agent_name: str, **kwargs: Any) -> _models.DeleteAgentResponse:
         """Deletes an agent.
 
         :param agent_name: The name of the agent to delete. Required.
         :type agent_name: str
-        :keyword foundry_beta: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is either a
-         Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1] type or a
-         Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1] type. Default value is None.
-        :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
-         ~azure.ai.projects.models.HOSTED_AGENTS_V1
         :return: DeleteAgentResponse. The DeleteAgentResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DeleteAgentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2906,7 +2807,6 @@ class AgentsOperations:
 
         _request = build_agents_delete_request(
             agent_name=agent_name,
-            foundry_beta=foundry_beta,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2953,10 +2853,9 @@ class AgentsOperations:
         kind: Optional[Union[str, _models.AgentKind]] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentsPagedResultAgentObject:
+    ) -> ItemPaged["_models.AgentDetails"]:
         """Returns the list of all agents.
 
         :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
@@ -2970,23 +2869,21 @@ class AgentsOperations:
          ascending order and``desc``
          for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword after: A cursor for use in pagination. ``after`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include after=obj_foo in order to fetch the next page of the list. Default
-         value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: AgentsPagedResultAgentObject. The AgentsPagedResultAgentObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentsPagedResultAgentObject
+        :return: An iterator like instance of AgentDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentDetails]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2995,55 +2892,51 @@ class AgentsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.AgentsPagedResultAgentObject] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_request(
-            kind=kind,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            _request = build_agents_list_request(
+                kind=kind,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
             )
-            raise HttpResponseError(response=response, model=error)
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentsPagedResultAgentObject, response.json())
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.AgentDetails], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        return deserialized  # type: ignore
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_version(
@@ -3056,7 +2949,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         content_type: str = "application/json",
@@ -3080,12 +2972,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3114,7 +3004,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         content_type: str = "application/json",
@@ -3135,12 +3024,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3160,7 +3047,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         content_type: str = "application/json",
@@ -3181,12 +3067,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3207,7 +3091,6 @@ class AgentsOperations:
                 Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
                 Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-                Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1],
             ]
         ] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -3232,12 +3115,10 @@ class AgentsOperations:
          modifying persisted preview resources. Is one of the following types:
          Literal[FoundryPreviewOptInKeys.CONTAINER_AGENTS_V1],
          Literal[FoundryPreviewOptInKeys.HOSTED_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1],
-         Literal[FoundryPreviewOptInKeys.MEMORY_STORES_V1] Default value is None.
+         Literal[FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1] Default value is None.
         :paramtype foundry_beta: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1 or str or
          ~azure.ai.projects.models.HOSTED_AGENTS_V1 or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1 or str or
-         ~azure.ai.projects.models.MEMORY_STORES_V1
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.

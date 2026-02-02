@@ -109,9 +109,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
+        method_added_on="v1",
+        params_added_on={"v1": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["v1"],
     )
     async def begin_update_memories(
         self,

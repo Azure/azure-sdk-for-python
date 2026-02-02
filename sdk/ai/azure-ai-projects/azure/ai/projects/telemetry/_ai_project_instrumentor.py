@@ -744,7 +744,7 @@ class _AIAgentsInstrumentorPreview:
         if text:
             # Handle different types of text objects
             if hasattr(text, "format"):
-                # Azure AI Agents PromptAgentDefinitionText model object
+                # Azure AI Agents PromptAgentDefinitionTextOptions model object
                 format_info = getattr(text, "format", None)
                 if format_info:
                     if hasattr(format_info, "type"):

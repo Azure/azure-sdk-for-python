@@ -13,7 +13,6 @@
         "azure.ai.projects.models.AgenticIdentityPreviewCredentials": "Azure.AI.Projects.AgenticIdentityPreviewCredentials",
         "azure.ai.projects.models.AgentObjectVersions": "Azure.AI.Projects.AgentObject.versions.anonymous",
         "azure.ai.projects.models.AgentReference": "Azure.AI.Projects.AgentReference",
-        "azure.ai.projects.models.AgentsPagedResultAgentObject": "Azure.AI.Projects.AgentsPagedResult",
         "azure.ai.projects.models.EvaluationTaxonomyInput": "Azure.AI.Projects.EvaluationTaxonomyInput",
         "azure.ai.projects.models.AgentTaxonomyInput": "Azure.AI.Projects.AgentTaxonomyInput",
         "azure.ai.projects.models.AgentVersionDetails": "Azure.AI.Projects.AgentVersionObject",

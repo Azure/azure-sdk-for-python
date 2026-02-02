@@ -500,51 +500,6 @@ class AgentReference(_Model):
         self.type: Literal["agent_reference"] = "agent_reference"
 
 
-class AgentsPagedResultAgentObject(_Model):
-    """The response data for a requested list of items.
-
-    :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.models.AgentDetails]
-    :ivar first_id: The first ID represented in this list.
-    :vartype first_id: str
-    :ivar last_id: The last ID represented in this list.
-    :vartype last_id: str
-    :ivar has_more: A value indicating whether there are additional values available not captured
-     in this list. Required.
-    :vartype has_more: bool
-    """
-
-    data: list["_models.AgentDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The requested list of items. Required."""
-    first_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The first ID represented in this list."""
-    last_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The last ID represented in this list."""
-    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A value indicating whether there are additional values available not captured in this list.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        data: list["_models.AgentDetails"],
-        has_more: bool,
-        first_id: Optional[str] = None,
-        last_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EvaluationTaxonomyInput(_Model):
     """Input configuration for the evaluation taxonomy.
 
@@ -7885,7 +7840,7 @@ class ItemResource(_Model):
      "function_call_output", "image_generation_call", "code_interpreter_call", "local_shell_call",
      "local_shell_call_output", "shell_call", "shell_call_output", "apply_patch_call",
      "apply_patch_call_output", "mcp_list_tools", "mcp_approval_request", "mcp_approval_response",
-     "mcp_call", "structured_outputs", "oauth_consent_request", "memory_search_preview_call", and
+     "mcp_call", "structured_outputs", "oauth_consent_request", "memory_search_call", and
      "workflow_preview_action".
     :vartype type: str or ~azure.ai.projects.models.ItemResourceType
     :ivar agent_reference: The agent that created the item.
@@ -7902,7 +7857,7 @@ class ItemResource(_Model):
      \"local_shell_call\", \"local_shell_call_output\", \"shell_call\", \"shell_call_output\",
      \"apply_patch_call\", \"apply_patch_call_output\", \"mcp_list_tools\",
      \"mcp_approval_request\", \"mcp_approval_response\", \"mcp_call\", \"structured_outputs\",
-     \"oauth_consent_request\", \"memory_search_preview_call\", and \"workflow_preview_action\"."""
+     \"oauth_consent_request\", \"memory_search_call\", and \"workflow_preview_action\"."""
     agent_reference: Optional["_models.AgentReference"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10171,8 +10126,8 @@ class MemorySearchToolCallItemResource(ItemResource, discriminator="memory_searc
     :vartype agent_reference: ~azure.ai.projects.models.AgentReference
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
-    :ivar type: Required. Default value is "memory_search_call".
-    :vartype type: str
+    :ivar type: Required. MEMORY_SEARCH_CALL.
+    :vartype type: str or ~azure.ai.projects.models.MEMORY_SEARCH_CALL
     :ivar status: The status of the memory search tool call. One of ``in_progress``, ``searching``,
      ``completed``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["incomplete"],
@@ -10182,8 +10137,8 @@ class MemorySearchToolCallItemResource(ItemResource, discriminator="memory_searc
     :vartype results: list[~azure.ai.projects.models.MemorySearchItem]
     """
 
-    type: Literal["memory_search_call"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"memory_search_call\"."""
+    type: Literal[ItemResourceType.MEMORY_SEARCH_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. MEMORY_SEARCH_CALL."""
     status: Literal["in_progress", "searching", "completed", "incomplete", "failed"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10215,7 +10170,7 @@ class MemorySearchToolCallItemResource(ItemResource, discriminator="memory_searc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "memory_search_call"  # type: ignore
+        self.type = ItemResourceType.MEMORY_SEARCH_CALL  # type: ignore
 
 
 class MemoryStoreDefinition(_Model):

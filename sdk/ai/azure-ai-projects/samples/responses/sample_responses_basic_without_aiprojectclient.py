@@ -34,8 +34,7 @@ load_dotenv()
 
 openai = OpenAI(
     api_key=get_bearer_token_provider(DefaultAzureCredential(), "https://ai.azure.com/.default"),
-    base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai",
-    default_query={"api-version": "2025-11-15-preview"},
+    base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai/v1",
 )
 
 response = openai.responses.create(

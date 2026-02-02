@@ -685,8 +685,8 @@ class ItemResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """STRUCTURED_OUTPUTS."""
     OAUTH_CONSENT_REQUEST = "oauth_consent_request"
     """OAUTH_CONSENT_REQUEST."""
-    MEMORY_SEARCH_PREVIEW_CALL = "memory_search_preview_call"
-    """MEMORY_SEARCH_PREVIEW_CALL."""
+    MEMORY_SEARCH_CALL = "memory_search_call"
+    """MEMORY_SEARCH_CALL."""
     WORKFLOW_PREVIEW_ACTION = "workflow_preview_action"
     """WORKFLOW_PREVIEW_ACTION."""
 

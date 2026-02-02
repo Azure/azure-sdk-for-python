@@ -12,7 +12,7 @@ from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     TextResponseFormatJsonSchema,
-    PromptAgentDefinitionText,
+    PromptAgentDefinitionTextOptions,
 )
 
 
@@ -148,7 +148,7 @@ class TestAgentResponsesCrudAsync(TestBase):
                 agent_name="MyAgent",
                 definition=PromptAgentDefinition(
                     model=model,
-                    text=PromptAgentDefinitionText(
+                    text=PromptAgentDefinitionTextOptions(
                         format=TextResponseFormatJsonSchema(
                             name="CalendarEvent", schema=CalendarEvent.model_json_schema()
                         )

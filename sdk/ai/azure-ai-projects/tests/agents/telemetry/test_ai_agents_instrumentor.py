@@ -10,7 +10,7 @@ from typing import Optional
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 
 from azure.ai.projects.models import (
     Reasoning,
@@ -231,7 +231,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 #     ),
                 # ],
                 # # Text response configuration
-                # text=PromptAgentDefinitionText(format=ResponseTextFormatConfigurationText()),
+                # text=PromptAgentDefinitionTextOptions(format=ResponseTextFormatConfigurationText()),
             )
 
             agent = project_client.agents.create_version(agent_name="myagent", definition=agent_definition)
@@ -323,7 +323,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 #     ),
                 # ],
                 # Text response configuration
-                # text=PromptAgentDefinitionText(format=ResponseTextFormatConfigurationText()),
+                # text=PromptAgentDefinitionTextOptions(format=ResponseTextFormatConfigurationText()),
             )
 
             agent = project_client.agents.create_version(agent_name="myagent", definition=agent_definition)
@@ -535,7 +535,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
@@ -621,7 +621,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
@@ -694,7 +694,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 # No instructions provided
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
@@ -776,7 +776,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 # No instructions provided
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,

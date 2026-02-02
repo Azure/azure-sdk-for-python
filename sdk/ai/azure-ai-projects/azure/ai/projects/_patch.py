@@ -26,43 +26,39 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
-    :ivar memory_stores: MemoryStoresOperations operations
-    :vartype memory_stores: azure.ai.projects.operations.MemoryStoresOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
-    :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
-    :ivar evaluation_rules: EvaluationRulesOperations operations
-    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :ivar evaluation_taxonomies: EvaluationTaxonomiesOperations operations
     :vartype evaluation_taxonomies: azure.ai.projects.operations.EvaluationTaxonomiesOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :ivar evaluators: EvaluatorsOperations operations
     :vartype evaluators: azure.ai.projects.operations.EvaluatorsOperations
+    :ivar indexes: IndexesOperations operations
+    :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :ivar insights: InsightsOperations operations
     :vartype insights: azure.ai.projects.operations.InsightsOperations
+    :ivar memory_stores: MemoryStoresOperations operations
+    :vartype memory_stores: azure.ai.projects.operations.MemoryStoresOperations
+    :ivar red_teams: RedTeamsOperations operations
+    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
     :ivar schedules: SchedulesOperations operations
     :vartype schedules: azure.ai.projects.operations.SchedulesOperations
     :param endpoint: Foundry Project endpoint in the form
-     ``https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}``. If
-     you only have one Project in your Foundry Hub, or to target the default Project in your Hub,
-     use the form
-     ``https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project``. Required.
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
+     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-11-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
-    :keyword user_agent: Optional string identifying the caller. This string will show up at the front of the "User-Agent" HTTP request header in all network calls this client makes. If an OpenAI client was obtained by calling get_openai_client(), this string will also show up at the front of the "User-Agent" request header in network calls that OpenAI client makes.
     """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
@@ -102,8 +98,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         The OpenAI client constructor is called with:
 
-        * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai" appended.
-        * ``api-version`` set to "2025-05-15-preview" by default, unless overridden by the ``api_version`` keyword argument.
+        * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient constructor, with scope "https://ai.azure.com/.default".
 
         .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
@@ -116,10 +111,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        base_url = self._config.endpoint.rstrip("/") + "/openai"  # pylint: disable=protected-access
-
-        if "default_query" not in kwargs:
-            kwargs["default_query"] = {"api-version": "2025-11-15-preview"}
+        base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long

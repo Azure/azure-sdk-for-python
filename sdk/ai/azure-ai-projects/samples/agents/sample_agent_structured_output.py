@@ -37,7 +37,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    PromptAgentDefinitionText,
+    PromptAgentDefinitionTextOptions,
     TextResponseFormatJsonSchema,
 )
 from pydantic import BaseModel, Field
@@ -64,7 +64,7 @@ with (
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            text=PromptAgentDefinitionText(
+            text=PromptAgentDefinitionTextOptions(
                 format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
             ),
             instructions="""
