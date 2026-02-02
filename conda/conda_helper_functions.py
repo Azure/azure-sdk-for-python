@@ -11,6 +11,7 @@ from ci_tools.logging import logger
 import urllib.request
 from datetime import datetime
 from ci_tools.parsing import ParsedSetup
+from packaging.version import Version
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SDK_DIR = os.path.join(ROOT_DIR, "sdk")
@@ -60,7 +61,7 @@ def get_bundle_name(package_name: str) -> Optional[str]:
     conda_config = parsed.get_conda_config()
 
     if not conda_config:
-        if parsed.is_stable_release():
+        if is_stable_on_pypi(package_name):
             raise Exception(
                 f"Stable release package {package_name} needs a conda config"
             )
@@ -217,6 +218,34 @@ def package_needs_update(
         logger.error(
             f"Date parsing error for package {package_row.get(PACKAGE_COL)}: {e}"
         )
+        return False
+
+
+def is_stable_on_pypi(package_name: str) -> bool:
+    """
+    Check if a package has a stable (GA) release on PyPI.
+
+    Uses PEP 440 version parsing to determine if the latest version is a pre-release.
+
+    :param package_name: The name of the package to check.
+    :return: True if the latest PyPI version is stable, False otherwise.
+    """
+    pypi_url = f"https://pypi.org/pypi/{package_name}/json"
+    try:
+        with urllib.request.urlopen(pypi_url, timeout=10) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            latest_version = data["info"]["version"]
+            parsed_version = Version(latest_version)
+
+            if parsed_version.is_prerelease:
+                logger.debug(f"Package {package_name} version {latest_version} is pre-release")
+                return False
+
+            logger.debug(f"Package {package_name} version {latest_version} is stable")
+            return True
+
+    except Exception as e:
+        logger.warning(f"Failed to check PyPI for {package_name}: {e}")
         return False
 
 
