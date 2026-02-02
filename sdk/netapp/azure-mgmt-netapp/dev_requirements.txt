@@ -1,5 +1,5 @@
 -e ../../../eng/tools/azure-sdk-tools
--e ../../../sdk/identity/azure-identity
--e ../../network/azure-mgmt-network
--e ../../resources/azure-mgmt-resource
+../../../sdk/identity/azure-identity
+../../network/azure-mgmt-network
+../../resources/azure-mgmt-resource
 aiohttp
