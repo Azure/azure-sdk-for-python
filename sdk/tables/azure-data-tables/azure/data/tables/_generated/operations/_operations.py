@@ -64,7 +64,6 @@ def build_table_query_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
@@ -85,7 +84,6 @@ def build_table_query_request(
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -114,12 +112,12 @@ def build_table_create_request(
         _params["$format"] = _SERIALIZER.query("format", format, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     if prefer is not None:
         _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -130,6 +128,7 @@ def build_table_delete_request(table: str, **kwargs: Any) -> HttpRequest:
 
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/Tables('{table}')"
     path_format_arguments = {
@@ -161,7 +160,6 @@ def build_table_query_entities_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
@@ -191,7 +189,6 @@ def build_table_query_entities_request(
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -213,7 +210,6 @@ def build_table_query_entity_with_partition_and_row_key_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
@@ -239,7 +235,6 @@ def build_table_query_entity_with_partition_and_row_key_request(  # pylint: disa
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -263,6 +258,7 @@ def build_table_update_entity_request(
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     path_format_arguments = {
@@ -279,9 +275,9 @@ def build_table_update_entity_request(
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
+    _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
@@ -310,6 +306,7 @@ def build_table_merge_entity_request(
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     path_format_arguments = {
@@ -326,9 +323,9 @@ def build_table_merge_entity_request(
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
+    _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
@@ -354,9 +351,9 @@ def build_table_delete_entity_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     path_format_arguments = {
@@ -373,7 +370,6 @@ def build_table_delete_entity_request(
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
@@ -417,12 +413,12 @@ def build_table_insert_entity_request(
         _params["$format"] = _SERIALIZER.query("format", format, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     if prefer is not None:
         _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -432,7 +428,6 @@ def build_table_get_access_policy_request(table: str, *, timeout: Optional[int] 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -449,7 +444,6 @@ def build_table_get_access_policy_request(table: str, *, timeout: Optional[int] 
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -475,8 +469,8 @@ def build_table_set_access_policy_request(table: str, *, timeout: Optional[int] 
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -495,8 +489,8 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -505,7 +499,6 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -517,7 +510,6 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -528,7 +520,6 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -540,7 +531,6 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -591,13 +581,12 @@ class TableOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables._generated.models.TableProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[list[_models.TableProperties]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -617,7 +606,6 @@ class TableOperations:
                 filter=filter,
                 next_table_name=_continuation_token,
                 data_service_version=data_service_version,
-                content_type=content_type,
                 api_version=self._config.api_version,
                 headers=_headers,
                 params=_params,
@@ -663,15 +651,18 @@ class TableOperations:
         self,
         table_properties: _models.TableProperties,
         *,
+        content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         prefer: Optional[Union[str, _models.ResponseFormat]] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
 
         :param table_properties: The table properties to create. Required.
         :type table_properties: ~azure.data.tables._generated.models.TableProperties
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword format: Specifies the metadata format for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
@@ -680,9 +671,6 @@ class TableOperations:
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
         :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -693,15 +681,18 @@ class TableOperations:
         self,
         table_properties: JSON,
         *,
+        content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         prefer: Optional[Union[str, _models.ResponseFormat]] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
 
         :param table_properties: The table properties to create. Required.
         :type table_properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword format: Specifies the metadata format for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
@@ -710,9 +701,6 @@ class TableOperations:
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
         :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -723,15 +711,18 @@ class TableOperations:
         self,
         table_properties: IO[bytes],
         *,
+        content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         prefer: Optional[Union[str, _models.ResponseFormat]] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
 
         :param table_properties: The table properties to create. Required.
         :type table_properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword format: Specifies the metadata format for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
@@ -740,9 +731,6 @@ class TableOperations:
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
         :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -846,6 +834,7 @@ class TableOperations:
                 "str", response.headers.get("x-ms-client-request-id")
             )
             response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -978,13 +967,12 @@ class TableOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.TableEntityQueryResponse] = kwargs.pop("cls", None)
 
         _request = build_table_query_entities_request(
@@ -997,7 +985,6 @@ class TableOperations:
             next_partition_key=next_partition_key,
             next_row_key=next_row_key,
             data_service_version=data_service_version,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1096,13 +1083,12 @@ class TableOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_table_query_entity_with_partition_and_row_key_request(
@@ -1114,7 +1100,6 @@ class TableOperations:
             select=select,
             filter=filter,
             data_service_version=data_service_version,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1178,8 +1163,8 @@ class TableOperations:
         row_key: str,
         table_entity_properties: Optional[dict[str, Any]] = None,
         *,
-        content_type: str = "application/json",
         timeout: Optional[int] = None,
+        content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1194,11 +1179,11 @@ class TableOperations:
         :type row_key: str
         :param table_entity_properties: The properties for the table entity. Default value is None.
         :type table_entity_properties: dict[str, any]
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1217,8 +1202,8 @@ class TableOperations:
         row_key: str,
         table_entity_properties: Optional[IO[bytes]] = None,
         *,
-        content_type: str = "application/json",
         timeout: Optional[int] = None,
+        content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1233,11 +1218,11 @@ class TableOperations:
         :type row_key: str
         :param table_entity_properties: The properties for the table entity. Default value is None.
         :type table_entity_properties: IO[bytes]
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1371,8 +1356,8 @@ class TableOperations:
         row_key: str,
         table_entity_properties: Optional[dict[str, Any]] = None,
         *,
-        content_type: str = "application/json",
         timeout: Optional[int] = None,
+        content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1387,11 +1372,11 @@ class TableOperations:
         :type row_key: str
         :param table_entity_properties: The properties for the table entity. Default value is None.
         :type table_entity_properties: dict[str, any]
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1410,8 +1395,8 @@ class TableOperations:
         row_key: str,
         table_entity_properties: Optional[IO[bytes]] = None,
         *,
-        content_type: str = "application/json",
         timeout: Optional[int] = None,
+        content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1426,11 +1411,11 @@ class TableOperations:
         :type row_key: str
         :param table_entity_properties: The properties for the table entity. Default value is None.
         :type table_entity_properties: IO[bytes]
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1600,13 +1585,12 @@ class TableOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_table_delete_entity_request(
@@ -1617,7 +1601,6 @@ class TableOperations:
             match_condition=match_condition,
             timeout=timeout,
             data_service_version=data_service_version,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1659,10 +1642,10 @@ class TableOperations:
         table: str,
         table_entity_properties: Optional[dict[str, Any]] = None,
         *,
+        content_type: str = "application/json",
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         prefer: Optional[Union[str, _models.ResponseFormat]] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1671,6 +1654,9 @@ class TableOperations:
         :type table: str
         :param table_entity_properties: The entity properties to insert. Default value is None.
         :type table_entity_properties: dict[str, any]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword format: Specifies the metadata format for the response. Known values are:
@@ -1681,9 +1667,6 @@ class TableOperations:
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
         :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1695,10 +1678,10 @@ class TableOperations:
         table: str,
         table_entity_properties: Optional[IO[bytes]] = None,
         *,
+        content_type: str = "application/json",
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         prefer: Optional[Union[str, _models.ResponseFormat]] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1707,6 +1690,9 @@ class TableOperations:
         :type table: str
         :param table_entity_properties: The entity properties to insert. Default value is None.
         :type table_entity_properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword format: Specifies the metadata format for the response. Known values are:
@@ -1717,9 +1703,6 @@ class TableOperations:
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
         :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1835,6 +1818,7 @@ class TableOperations:
             )
             response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1881,16 +1865,14 @@ class TableOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _request = build_table_get_access_policy_request(
             table=table,
             timeout=timeout,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2117,15 +2099,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
 
         _request = build_service_get_properties_request(
             timeout=timeout,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2193,15 +2173,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.TableServiceStats] = kwargs.pop("cls", None)
 
         _request = build_service_get_statistics_request(
             timeout=timeout,
-            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
