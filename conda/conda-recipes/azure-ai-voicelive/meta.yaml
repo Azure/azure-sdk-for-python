@@ -1,0 +1,50 @@
+{% set name = "azure-ai-voicelive" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('VOICELIVE_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - isodate>=0.6.1
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - typing-extensions>=4.6.0
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+  run:
+    - isodate>=0.6.1
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - typing-extensions>=4.6.0
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+test:
+  imports:
+    - azure.ai.voicelive
+    - azure.ai.voicelive.aio
+    - azure.ai.voicelive.models
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-voicelive"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Ai Voicelive Client Library for Python"
+  description: |
+    This is the Microsoft Azure Ai Voicelive Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/ai for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

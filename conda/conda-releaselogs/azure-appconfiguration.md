@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-appconfiguration-1.7.2
+- azure-appconfiguration-1.8.0
 
 ## 2025.09.01
 
