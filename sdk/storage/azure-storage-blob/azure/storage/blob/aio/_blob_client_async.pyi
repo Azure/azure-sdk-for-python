@@ -35,7 +35,7 @@ from ._container_client_async import ContainerClient
 from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
 from .._encryption import StorageEncryptionMixin
-from .._generated.models import RehydratePriority
+from .._generated.azure.storage.blobs.models import RehydratePriority
 from .._models import (
     BlobType,
     BlobBlock,

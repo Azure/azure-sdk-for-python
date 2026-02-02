@@ -105,13 +105,11 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         :return: None
         :rtype: None
         """
-        mod_conditions = get_modify_conditions(kwargs)
         try:
             response: Any = self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
-                modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -166,7 +164,7 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             response: Any = self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -219,7 +217,7 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             response: Any = self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -272,7 +270,7 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
                 timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -334,7 +332,7 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             response = self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 break_period=lease_break_period,
-                modified_access_conditions=mod_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:

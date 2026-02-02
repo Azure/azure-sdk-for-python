@@ -58,8 +58,8 @@ from ._deserialize import (
 )
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from ._generated import AzureBlobStorage
-from ._generated.models import CpkInfo
+from ._generated.azure.storage.blobs import CombinedBlobClient as AzureBlobStorage
+from ._generated.azure.storage.blobs.models import CpkInfo
 from ._lease import BlobLeaseClient
 from ._models import BlobBlock, BlobProperties, BlobQueryError, BlobType, PageRange, PageRangePaged
 from ._quick_query_helper import BlobQueryReader
@@ -68,6 +68,7 @@ from ._shared.response_handlers import process_storage_error, return_response_he
 from ._serialize import (
     get_access_conditions,
     get_api_version,
+    get_cpk_info,
     get_modify_conditions,
     get_version_id
 )
@@ -870,7 +871,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options, delimiter = _quick_query_options(self.snapshot, query_expression, **kwargs)
         try:
-            headers, raw_response_body = self._client.blob.query(**options)
+            headers, raw_response_body = self._client.block_blob.query(**options)
         except HttpResponseError as error:
             process_storage_error(error)
         return BlobQueryReader(
@@ -1115,12 +1116,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+        cpk_info = get_cpk_info(cpk)
+        if cpk and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         try:
             cls_method = kwargs.pop('cls', None)
             if cls_method:
@@ -1129,10 +1127,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 timeout=kwargs.pop('timeout', None),
                 version_id=version_id,
                 snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                lease_id=access_conditions,
+                **mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
+                **cpk_info,
                 **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
@@ -1258,7 +1256,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return cast(Dict[str, Union[str, datetime]], self._client.blob.set_metadata(**options))
+            return cast(Dict[str, Union[str, datetime]], self._client.blob.set_metadata(metadata=metadata, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1292,10 +1290,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return cast(Dict[str, str], self._client.blob.set_immutability_policy(
-            cls=return_response_headers, version_id=version_id, **kwargs))
+            expiry=immutability_policy.expiry_time,
+            immutability_policy_mode=immutability_policy.policy_mode,
+            version_id=version_id,
+            cls=return_response_headers,
+            **kwargs))
 
     @distributed_trace
     def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1344,7 +1344,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         version_id = get_version_id(self.version_id, kwargs)
         return cast(Dict[str, Union[str, datetime, bool]], self._client.blob.set_legal_hold(
-            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+            legal_hold=legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace
     def create_page_blob(
@@ -1449,7 +1449,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
         try:
-            return cast(Dict[str, Any], self._client.page_blob.create(**options))
+            return cast(Dict[str, Any], self._client.page_blob.create(size=size, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1983,8 +1983,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 tier=standard_blob_tier,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
-                lease_access_conditions=access_conditions,
+                **mod_conditions,
+                lease_id=access_conditions,
                 version_id=version_id,
                 **kwargs)
         except HttpResponseError as error:
@@ -2176,8 +2176,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 list_type=block_list_type,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                lease_id=access_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2331,8 +2331,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             self._client.blob.set_tier(
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                lease_id=access_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2819,7 +2819,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _resize_blob_options(size=size, **kwargs)
         try:
-            return cast(Dict[str, Any], self._client.page_blob.resize(**options))
+            return cast(Dict[str, Any], self._client.page_blob.resize(size=size, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
