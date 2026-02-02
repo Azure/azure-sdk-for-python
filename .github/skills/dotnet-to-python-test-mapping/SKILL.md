@@ -1,6 +1,6 @@
 ---
 name: Dotnet-to-Python test mapping
-description: Map an Azure SDK for .NET test case to its equivalent Azure SDK for Python test (same service area), then implement or update the Python test under sdk\...\tests. Use when a user provides a .NET test file path/URL and asks for the corresponding Python test.
+description: Map an Azure SDK for .NET test case to its equivalent Azure SDK for Python test (same service area), then implement or update the Python test under sdk/.../tests. Use when a user provides a .NET test file path/URL and asks for the corresponding Python test.
 ---
 
 ## Purpose
@@ -9,7 +9,7 @@ You help translate a single Azure SDK for .NET test scenario into the equivalent
 ## When to use
 Use this skill when the user:
 - links to a .NET test file (GitHub URL or local path), and
-- asks to find/create/update the equivalent Python test in `C:\dev\azure-sdk-for-python\sdk\...\tests`.
+- asks to find/create/update the equivalent Python test in `C:/dev/azure-sdk-for-python/sdk/.../tests`.
 
 ## Inputs you should request (only if missing)
 1. Confirmation that the .NET test is valid and can run successfully in **live mode**.
@@ -21,7 +21,7 @@ Use this skill when the user:
    - Summarize required resources, operations, and assertions.
 
 2. **Locate the Python package & tests folder**
-   - Find the matching Python management/data-plane package under `sdk\`.
+   - Find the matching Python management/data-plane package under `sdk/`.
    - Verify the target tests folder exists.
 
 3. **Find an existing Python analogue**
@@ -37,5 +37,5 @@ Use this skill when the user:
 
 ## Example mapping
 - .NET: `sdk/resources/Azure.ResourceManager.Resources/tests/Scenario/DataBoundaryOperationsTests.cs`
-- Python target folder: `sdk\resources\azure-mgmt-resource\tests`
-- Python analogue: `sdk\resources\azure-mgmt-resource\tests\test_data_boundary_scenario_test.py`
+- Python target folder: `sdk/resources/azure-mgmt-resource/tests`
+- Python analogue: `sdk/resources/azure-mgmt-resource/tests/test_data_boundary_scenario_test.py`
