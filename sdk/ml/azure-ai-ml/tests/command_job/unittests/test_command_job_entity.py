@@ -243,3 +243,91 @@ class TestCommandJobEntity:
         assert job_prop.resources.locations == ["westus"]
         assert hasattr(job_prop.resources, "docker_args_list") == False
         assert from_rest_job.resources.docker_args == "--shm-size=1g"
+
+    def test_optional_inputs_with_none_and_empty_string(self) -> None:
+        """Test that optional inputs with None or empty string values are not sent to REST API."""
+        # Test with None value - should be excluded from REST inputs
+        inputs_with_none = {
+            "required_input": "value1",
+            "optional_input": None,
+        }
+        command_job = CommandJob(
+            display_name="test-optional-inputs",
+            command='echo "hello world"',
+            environment="AzureML-Minimal:1",
+            compute="cpu-cluster",
+            inputs=inputs_with_none,
+        )
+        rest_obj = command_job._to_rest_object()
+        # None values should not be in the REST inputs
+        assert "required_input" in rest_obj.properties.inputs
+        assert "optional_input" not in rest_obj.properties.inputs
+
+        # Test with empty string value - should be excluded from REST inputs
+        inputs_with_empty_string = {
+            "required_input": "value1",
+            "optional_input": "",
+        }
+        command_job_empty = CommandJob(
+            display_name="test-optional-inputs-empty",
+            command='echo "hello world"',
+            environment="AzureML-Minimal:1",
+            compute="cpu-cluster",
+            inputs=inputs_with_empty_string,
+        )
+        rest_obj_empty = command_job_empty._to_rest_object()
+        # Empty string values should not be in the REST inputs
+        assert "required_input" in rest_obj_empty.properties.inputs
+        assert "optional_input" not in rest_obj_empty.properties.inputs
+
+        # Test with non-empty value - should be included in REST inputs
+        inputs_with_value = {
+            "required_input": "value1",
+            "optional_input": "value2",
+        }
+        command_job_value = CommandJob(
+            display_name="test-optional-inputs-value",
+            command='echo "hello world"',
+            environment="AzureML-Minimal:1",
+            compute="cpu-cluster",
+            inputs=inputs_with_value,
+        )
+        rest_obj_value = command_job_value._to_rest_object()
+        # Non-empty values should be in the REST inputs
+        assert "required_input" in rest_obj_value.properties.inputs
+        assert "optional_input" in rest_obj_value.properties.inputs
+        assert rest_obj_value.properties.inputs["optional_input"].value == "value2"
+
+        # Test with dict containing None value - should be excluded from REST inputs
+        inputs_with_dict_none = {
+            "required_input": "value1",
+            "optional_input": {"value": None},
+        }
+        command_job_dict_none = CommandJob(
+            display_name="test-optional-inputs-dict-none",
+            command='echo "hello world"',
+            environment="AzureML-Minimal:1",
+            compute="cpu-cluster",
+            inputs=inputs_with_dict_none,
+        )
+        rest_obj_dict_none = command_job_dict_none._to_rest_object()
+        # Dict with None value should not be in the REST inputs
+        assert "required_input" in rest_obj_dict_none.properties.inputs
+        assert "optional_input" not in rest_obj_dict_none.properties.inputs
+
+        # Test with dict containing empty string - should be excluded from REST inputs
+        inputs_with_dict_empty = {
+            "required_input": "value1",
+            "optional_input": {"value": ""},
+        }
+        command_job_dict_empty = CommandJob(
+            display_name="test-optional-inputs-dict-empty",
+            command='echo "hello world"',
+            environment="AzureML-Minimal:1",
+            compute="cpu-cluster",
+            inputs=inputs_with_dict_empty,
+        )
+        rest_obj_dict_empty = command_job_dict_empty._to_rest_object()
+        # Dict with empty string should not be in the REST inputs
+        assert "required_input" in rest_obj_dict_empty.properties.inputs
+        assert "optional_input" not in rest_obj_dict_empty.properties.inputs
