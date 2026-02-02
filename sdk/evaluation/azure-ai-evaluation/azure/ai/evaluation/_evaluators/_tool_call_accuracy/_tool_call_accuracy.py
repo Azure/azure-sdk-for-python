@@ -162,16 +162,43 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         query = kwargs.get("query")
         response = kwargs.get("response")
         # TODO : Support classes that represents tool calls, messages etc once client side definitions are available
+
+        # Initially try to extract tool calls from the response whether or not tool_calls parameter is provided
         if response:
-            parsed_tool_calls = self._parse_tools_from_response(response)
-            if parsed_tool_calls:
-                tool_calls = parsed_tool_calls
+            try:
+                parsed_tool_calls = self._parse_tools_from_response(response, ensure_arguments=True)
+                if parsed_tool_calls:
+                    tool_calls = parsed_tool_calls
+            except EvaluationException as e:
+                raise EvaluationException(
+                    message=e.message,
+                    category=e.category,
+                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                    blame=ErrorBlame.USER_ERROR,
+                ) from e
 
         if not tool_calls:
-            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
+            raise EvaluationException(
+                message=self._NO_TOOL_CALLS_MESSAGE,
+                category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
+
+        # Validate that all tool calls have the "arguments" key
+        for tool_call in tool_calls:
+            if isinstance(tool_call, dict):
+                if "arguments" not in tool_call:
+                    raise EvaluationException(
+                        message=f"Tool call missing 'arguments' field: {tool_call}",
+                        category=ErrorCategory.MISSING_FIELD,
+                        target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                        blame=ErrorBlame.USER_ERROR,
+                    )
+
         if not isinstance(tool_definitions, list):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
@@ -179,15 +206,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             needed_tool_definitions = self._extract_needed_tool_definitions(
                 tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
             )
-        except EvaluationException as e:
-            # Check if this is because no tool definitions were provided at all
-            if len(tool_definitions) == 0:
-                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
-            else:
-                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+        except EvaluationException:
+            # Re-raise the exception from _extract_needed_tool_definitions as it already has specific error details
+            raise
 
+        # Check if no tool definitions were found at all (including built-in tools)
         if len(needed_tool_definitions) == 0:
-            return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+            raise EvaluationException(
+                message=self._NO_TOOL_DEFINITIONS_MESSAGE,
+                category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         return {
             "query": query,
@@ -227,7 +257,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
                     internal_message="Invalid score value.",
-                    category=ErrorCategory.FAILED_EXECUTION,
+                    category=ErrorCategory.INVALID_VALUE,
                     target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
@@ -271,9 +301,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
-        if isinstance(eval_input, dict) and eval_input.get("error_message"):
-            # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

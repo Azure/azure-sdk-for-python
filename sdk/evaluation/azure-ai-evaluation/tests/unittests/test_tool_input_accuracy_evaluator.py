@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorCategory, EvaluationException
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -423,15 +423,14 @@ class TestToolInputAccuracyEvaluator:
         response = [{"role": "assistant", "content": "I can help you with that."}]
         tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
+        assert "no tool calls found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
-    def test_evaluate_no_tool_definitions(self, mock_model_config):
+    def test_evaluate_no_tool_definitions_throws_exception(self, mock_model_config):
         """Test evaluation when no tool definitions are provided."""
         evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
@@ -452,15 +451,15 @@ class TestToolInputAccuracyEvaluator:
         ]
         tool_definitions = []
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in result[f"{key}_reason"]
+        # The error message should mention the specific tool that's missing
+        assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
-    def test_evaluate_missing_tool_definitions(self, mock_model_config):
+    def test_evaluate_missing_tool_definitions_throws_exception(self, mock_model_config):
         """Test evaluation when tool definitions are missing for some tool calls."""
         evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
@@ -481,13 +480,13 @@ class TestToolInputAccuracyEvaluator:
         ]
         tool_definitions = [{"name": "different_function", "type": "function", "description": "A different function"}]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
+        # The error should mention the specific tool that's missing
+        assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
     def test_evaluate_invalid_result_value(self, mock_model_config):
         """Test that invalid result values raise an exception."""
@@ -533,13 +532,13 @@ class TestToolInputAccuracyEvaluator:
         query = "Get weather"
         tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
 
-        result = evaluator(query=query, response=None, tool_definitions=tool_definitions)
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=None, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert "Response parameter is required" in result[f"{key}_reason"]
+        # The error message should mention the specific tool that's missing
+        assert "response is required" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.MISSING_FIELD
 
     def test_parameter_extraction_accuracy_calculation(self, mock_model_config):
         """Test the parameter extraction accuracy calculation."""
@@ -695,3 +694,46 @@ class TestToolInputAccuracyEvaluator:
             evaluator(response=response, tool_definitions=tool_definitions)
 
         assert "Query is a required input" in str(exc_info.value)
+
+    def test_evaluate_missing_arguments_field(self, mock_model_config):
+        """Test that an exception is raised when response contains tool calls without arguments field."""
+        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        query = "What's the weather in Paris?"
+        # Response with tool call missing the 'arguments' field
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "get_weather",
+                        # Missing 'arguments' field here
+                    }
+                ],
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information for a location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for.",
+                        }
+                    },
+                },
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
+
+        assert "Tool call missing 'arguments' field" in str(exc_info.value)
+        assert exc_info.value.category is ErrorCategory.MISSING_FIELD
