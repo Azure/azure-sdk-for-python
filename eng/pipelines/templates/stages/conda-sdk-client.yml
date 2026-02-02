@@ -35,6 +35,10 @@ parameters:
     displayName: azure-ai-formrecognizer
     type: boolean
     default: false
+  - name: release_azure_ai_voicelive
+    displayName: azure-ai-voicelive
+    type: boolean
+    default: false
   - name: release_azure_ai_language_conversations
     displayName: azure-ai-language-conversations
     type: boolean
