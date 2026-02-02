@@ -41,6 +41,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    FoundryPreviewOptInKeys,
     MemoryStoreDefaultDefinition,
     MemorySearchPreviewTool,
     PromptAgentDefinition,
@@ -63,7 +64,9 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.memory_stores.delete(memory_store_name)
+            await project_client.memory_stores.delete(
+                memory_store_name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+            )
             print(f"Memory store `{memory_store_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -80,6 +83,7 @@ async def main() -> None:
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
+            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
         )
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
@@ -141,7 +145,9 @@ async def main() -> None:
         await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")
 
-        await project_client.memory_stores.delete(memory_store.name)
+        await project_client.memory_stores.delete(
+            memory_store.name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+        )
         print("Memory store deleted")
 
 

@@ -33,7 +33,7 @@ from dotenv import load_dotenv
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import MemoryStoreDefaultDefinition
+from azure.ai.projects.models import FoundryPreviewOptInKeys, MemoryStoreDefaultDefinition
 
 load_dotenv()
 
@@ -47,7 +47,7 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        project_client.memory_stores.delete(memory_store_name)
+        project_client.memory_stores.delete(memory_store_name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1)
         print(f"Memory store `{memory_store_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -58,24 +58,37 @@ with (
         embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
     )
     memory_store = project_client.memory_stores.create(
-        name=memory_store_name, description="Example memory store for conversations", definition=definition
+        name=memory_store_name,
+        description="Example memory store for conversations",
+        definition=definition,
+        foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
     )
     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
     # Get Memory Store
-    get_store = project_client.memory_stores.get(memory_store.name)
+    get_store = project_client.memory_stores.get(
+        memory_store.name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+    )
     print(f"Retrieved: {get_store.name} ({get_store.id}): {get_store.description}")
 
     # Update Memory Store
-    updated_store = project_client.memory_stores.update(name=memory_store.name, description="Updated description")
+    updated_store = project_client.memory_stores.update(
+        name=memory_store.name,
+        description="Updated description",
+        foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
+    )
     print(f"Updated: {updated_store.name} ({updated_store.id}): {updated_store.description}")
 
     # List Memory Store
-    memory_stores = list(project_client.memory_stores.list(limit=10))
+    memory_stores = list(
+        project_client.memory_stores.list(limit=10, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1)
+    )
     print(f"Found {len(memory_stores)} memory stores")
     for store in memory_stores:
         print(f"  - {store.name} ({store.id}): {store.description}")
 
     # Delete Memory Store
-    delete_response = project_client.memory_stores.delete(memory_store.name)
+    delete_response = project_client.memory_stores.delete(
+        memory_store.name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+    )
     print(f"Deleted: {delete_response.deleted}")

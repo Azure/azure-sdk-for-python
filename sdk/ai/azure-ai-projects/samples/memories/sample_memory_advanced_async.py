@@ -40,6 +40,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     EasyInputMessage,
+    FoundryPreviewOptInKeys,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
@@ -60,7 +61,9 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.memory_stores.delete(memory_store_name)
+            await project_client.memory_stores.delete(
+                memory_store_name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+            )
             print(f"Memory store `{memory_store_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -80,6 +83,7 @@ async def main() -> None:
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
+            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
         )
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
@@ -96,6 +100,7 @@ async def main() -> None:
             scope=scope,
             items=[user_message],  # Pass conversation items that you want to add to memory
             update_delay=300,  # Keep default inactivity delay before starting update
+            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
         )
         print(
             f"Scheduled memory update operation (Update ID: {update_poller.update_id}, Status: {update_poller.status()})"
@@ -109,6 +114,7 @@ async def main() -> None:
             items=[new_message],
             previous_update_id=update_poller.update_id,  # Extend from previous update ID
             update_delay=0,  # Trigger update immediately without waiting for inactivity
+            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
         )
         print(
             f"Scheduled memory update operation (Update ID: {new_update_poller.update_id}, Status: {new_update_poller.status()})"
@@ -131,7 +137,11 @@ async def main() -> None:
         # Retrieve memories from the memory store
         query_message = EasyInputMessage(role="user", content="What are my morning coffee preferences?")
         search_response = await project_client.memory_stores.search_memories(
-            name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
+            name=memory_store.name,
+            scope=scope,
+            items=[query_message],
+            options=MemorySearchOptions(max_memories=5),
+            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
         )
         print(f"Found {len(search_response.memories)} memories")
         for memory in search_response.memories:
@@ -148,17 +158,22 @@ async def main() -> None:
             items=[agent_message, followup_query],
             previous_search_id=search_response.search_id,
             options=MemorySearchOptions(max_memories=5),
+            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
         )
         print(f"Found {len(followup_search_response.memories)} memories")
         for memory in followup_search_response.memories:
             print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
         # Delete memories for the current scope
-        await project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
+        await project_client.memory_stores.delete_scope(
+            name=memory_store.name, scope=scope, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+        )
         print(f"Deleted memories for scope '{scope}'")
 
         # Delete memory store
-        await project_client.memory_stores.delete(memory_store.name)
+        await project_client.memory_stores.delete(
+            memory_store.name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+        )
         print(f"Deleted memory store `{memory_store.name}`")
 
 
