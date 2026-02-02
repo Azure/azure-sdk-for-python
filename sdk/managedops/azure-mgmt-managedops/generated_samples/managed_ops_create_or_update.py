@@ -43,7 +43,7 @@ def main():
                         "logAnalyticsWorkspaceId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.OperationalInsights/workspaces/00000000-0000-0000-0000-000000000000-Default"
                     },
                     "userAssignedManagedIdentityId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myManagedIdentity",
-                },
+                }
             }
         },
     ).result()
