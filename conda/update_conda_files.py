@@ -404,9 +404,9 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
         "azure-identity",
         "azure-core",
         "python",
-        "aiohttp",
-        "requests-oauthlib >=0.5.0",
-        "cryptography",
+        # "aiohttp",
+        # "requests-oauthlib >=0.5.0",
+        # "cryptography",
     ]:
         req_name = format_requirement(essential_req)
         host_requirements.add(req_name)
