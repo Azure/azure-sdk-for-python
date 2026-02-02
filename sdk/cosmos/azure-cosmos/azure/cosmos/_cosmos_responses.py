@@ -11,11 +11,12 @@ from azure.core.utils import CaseInsensitiveDict
 class CosmosItemPaged(ItemPaged[dict[str, Any]]):
     """A custom ItemPaged class that provides access to response headers from query operations.
 
-    This class wraps the standard ItemPaged and stores a reference to the underlying
-    QueryIterable to expose response headers captured during pagination.
+    This class wraps the standard ItemPaged and provides thread-safe access to response
+    headers captured during pagination via a shared list populated by __QueryFeed.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
         super().__init__(*args, **kwargs)
         self._query_iterable: Optional[Any] = None
 
@@ -34,15 +35,13 @@ class CosmosItemPaged(ItemPaged[dict[str, Any]]):
         """Returns a list of response headers captured from each page of results.
 
         Each element in the list corresponds to the headers from one page fetch.
-        Headers are only available after iterating through the results.
+        Headers are captured as pages are fetched during iteration.
 
         :return: List of response headers from each page
         :rtype: List[~azure.core.utils.CaseInsensitiveDict]
         """
-        if self._query_iterable is None:
-            return []
-        if hasattr(self._query_iterable, 'get_response_headers'):
-            return self._query_iterable.get_response_headers()
+        if self._response_headers_list is not None:
+            return [h.copy() for h in self._response_headers_list]
         return []
 
     def get_last_response_headers(self) -> CaseInsensitiveDict:
@@ -51,21 +50,20 @@ class CosmosItemPaged(ItemPaged[dict[str, Any]]):
         :return: Response headers from the last page, or empty dict if no pages have been fetched
         :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
-        if self._query_iterable is None:
-            return CaseInsensitiveDict()
-        if hasattr(self._query_iterable, 'get_last_response_headers'):
-            return self._query_iterable.get_last_response_headers()
+        if self._response_headers_list and len(self._response_headers_list) > 0:
+            return self._response_headers_list[-1].copy()
         return CaseInsensitiveDict()
 
 
 class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
     """A custom AsyncItemPaged class that provides access to response headers from async query operations.
 
-    This class wraps the standard AsyncItemPaged and stores a reference to the underlying
-    QueryIterable to expose response headers captured during pagination.
+    This class wraps the standard AsyncItemPaged and provides thread-safe access to response
+    headers captured during pagination via a shared list populated by __QueryFeed.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
         super().__init__(*args, **kwargs)
         self._query_iterable: Optional[Any] = None
 
@@ -84,15 +82,13 @@ class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
         """Returns a list of response headers captured from each page of results.
 
         Each element in the list corresponds to the headers from one page fetch.
-        Headers are only available after iterating through the results.
+        Headers are captured as pages are fetched during iteration.
 
         :return: List of response headers from each page
         :rtype: List[~azure.core.utils.CaseInsensitiveDict]
         """
-        if self._query_iterable is None:
-            return []
-        if hasattr(self._query_iterable, 'get_response_headers'):
-            return self._query_iterable.get_response_headers()
+        if self._response_headers_list is not None:
+            return [h.copy() for h in self._response_headers_list]
         return []
 
     def get_last_response_headers(self) -> CaseInsensitiveDict:
@@ -101,10 +97,8 @@ class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
         :return: Response headers from the last page, or empty dict if no pages have been fetched
         :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
-        if self._query_iterable is None:
-            return CaseInsensitiveDict()
-        if hasattr(self._query_iterable, 'get_last_response_headers'):
-            return self._query_iterable.get_last_response_headers()
+        if self._response_headers_list and len(self._response_headers_list) > 0:
+            return self._response_headers_list[-1].copy()
         return CaseInsensitiveDict()
 
 

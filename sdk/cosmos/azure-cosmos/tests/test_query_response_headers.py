@@ -2,8 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import os
+import threading
 import unittest
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pytest
 
@@ -275,6 +277,170 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 # Modifying one should not affect the other
                 headers1[0]["test-key"] = "test-value"
                 self.assertNotIn("test-key", headers2[0])
+
+        finally:
+            self.created_db.delete_container(created_collection.id)
+
+    def test_query_response_headers_thread_safety(self):
+        """Test that response headers are captured correctly when multiple queries run concurrently.
+        
+        This test verifies that each query operation captures its own headers independently,
+        without interference from concurrent queries. This is the key thread-safety guarantee.
+        """
+        created_collection = self.created_db.create_container(
+            "test_headers_thread_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
+        try:
+            # Create items with different partition keys to ensure different queries
+            num_partitions = 5
+            items_per_partition = 10
+            for pk_idx in range(num_partitions):
+                for item_idx in range(items_per_partition):
+                    created_collection.create_item(
+                        body={"pk": f"partition_{pk_idx}", "id": f"item_{pk_idx}_{item_idx}", "value": item_idx}
+                    )
+
+            # Results storage - each thread will store its query results here
+            results = {}
+            errors = []
+            lock = threading.Lock()
+
+            def run_query(partition_key: str, thread_id: int):
+                """Run a query and capture its headers."""
+                try:
+                    query = "SELECT * FROM c WHERE c.pk = @pk"
+                    query_iterable = created_collection.query_items(
+                        query=query,
+                        parameters=[{"name": "@pk", "value": partition_key}],
+                        partition_key=partition_key,
+                        max_item_count=2,  # Small page size to ensure multiple pages
+                        populate_query_metrics=True
+                    )
+
+                    # Consume all items
+                    items = list(query_iterable)
+                    headers = query_iterable.get_response_headers()
+
+                    with lock:
+                        results[thread_id] = {
+                            "partition_key": partition_key,
+                            "item_count": len(items),
+                            "header_count": len(headers),
+                            "headers": headers
+                        }
+                except Exception as e:
+                    with lock:
+                        errors.append((thread_id, str(e)))
+
+            # Run multiple queries concurrently
+            num_threads = 10
+            with ThreadPoolExecutor(max_workers=num_threads) as executor:
+                futures = []
+                for i in range(num_threads):
+                    partition_key = f"partition_{i % num_partitions}"
+                    futures.append(executor.submit(run_query, partition_key, i))
+                
+                # Wait for all to complete
+                for future in as_completed(futures):
+                    future.result()  # This will raise if the thread raised
+
+            # Verify no errors occurred
+            self.assertEqual(len(errors), 0, f"Errors occurred: {errors}")
+
+            # Verify all threads got results
+            self.assertEqual(len(results), num_threads)
+
+            # Verify each thread captured headers correctly
+            for thread_id, result in results.items():
+                self.assertEqual(result["item_count"], items_per_partition,
+                    f"Thread {thread_id} got wrong item count")
+                self.assertGreater(result["header_count"], 0,
+                    f"Thread {thread_id} should have captured headers")
+                
+                # Verify headers contain expected keys (basic sanity check)
+                for header_dict in result["headers"]:
+                    self.assertIn("x-ms-request-charge", header_dict,
+                        f"Thread {thread_id} headers missing x-ms-request-charge")
+
+            # Verify that different threads have independent header lists
+            # (modifying one doesn't affect others)
+            if len(results) >= 2:
+                thread_ids = list(results.keys())
+                headers_0 = results[thread_ids[0]]["headers"]
+                headers_1 = results[thread_ids[1]]["headers"]
+                
+                # They should be different objects
+                self.assertIsNot(headers_0, headers_1)
+                if len(headers_0) > 0 and len(headers_1) > 0:
+                    self.assertIsNot(headers_0[0], headers_1[0])
+
+        finally:
+            self.created_db.delete_container(created_collection.id)
+
+    def test_query_response_headers_concurrent_same_container(self):
+        """Test concurrent queries on the same container with overlapping execution.
+        
+        This test specifically targets the race condition that would occur if headers
+        were captured from a shared client.last_response_headers after fetch_next_block().
+        """
+        created_collection = self.created_db.create_container(
+            "test_headers_concurrent_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
+        try:
+            # Create enough items to ensure multiple pages
+            for i in range(50):
+                created_collection.create_item(body={"pk": "shared", "id": f"item_{i}", "value": i})
+
+            barrier = threading.Barrier(5)  # Synchronize 5 threads
+            results = {}
+            lock = threading.Lock()
+
+            def run_synchronized_query(thread_id: int):
+                """Run a query with synchronization to maximize overlap."""
+                query_iterable = created_collection.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk",
+                    parameters=[{"name": "@pk", "value": "shared"}],
+                    partition_key="shared",
+                    max_item_count=5,  # Small pages = more fetches
+                    populate_query_metrics=True
+                )
+
+                # Wait for all threads to be ready
+                barrier.wait()
+
+                # Now all threads fetch concurrently
+                items = list(query_iterable)
+                headers = query_iterable.get_response_headers()
+
+                with lock:
+                    results[thread_id] = {
+                        "item_count": len(items),
+                        "header_count": len(headers),
+                        "request_charges": [
+                            float(h.get("x-ms-request-charge", 0)) for h in headers
+                        ]
+                    }
+
+            threads = []
+            for i in range(5):
+                t = threading.Thread(target=run_synchronized_query, args=(i,))
+                threads.append(t)
+                t.start()
+
+            for t in threads:
+                t.join(timeout=60)
+
+            # Verify all threads completed and got correct results
+            self.assertEqual(len(results), 5)
+            for thread_id, result in results.items():
+                self.assertEqual(result["item_count"], 50,
+                    f"Thread {thread_id} should have gotten all 50 items")
+                self.assertGreater(result["header_count"], 0,
+                    f"Thread {thread_id} should have captured headers")
+                # Each request should have a positive request charge
+                for charge in result["request_charges"]:
+                    self.assertGreater(charge, 0,
+                        f"Thread {thread_id} should have positive request charges")
 
         finally:
             self.created_db.delete_container(created_collection.id)
