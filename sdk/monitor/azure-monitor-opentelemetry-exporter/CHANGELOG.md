@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b47 (2026-02-02)
+## 1.0.0b47 (2026-02-03)
 
 ### Features Added
 - Rename metric names for customer sdk stats and set it on by default
