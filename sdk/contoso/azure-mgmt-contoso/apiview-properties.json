@@ -1,0 +1,33 @@
+{
+    "CrossLanguagePackageId": "Microsoft.Contoso",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.contoso.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.contoso.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.mgmt.contoso.models.Employee": "Microsoft.Contoso.Employee",
+        "azure.mgmt.contoso.models.EmployeeProperties": "Microsoft.Contoso.EmployeeProperties",
+        "azure.mgmt.contoso.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.contoso.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.contoso.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.contoso.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.contoso.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.contoso.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.contoso.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.contoso.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.contoso.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.contoso.models.ProvisioningState": "Microsoft.Contoso.ProvisioningState",
+        "azure.mgmt.contoso.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.contoso.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.contoso.operations.EmployeesOperations.get": "Microsoft.Contoso.Employees.get",
+        "azure.mgmt.contoso.aio.operations.EmployeesOperations.get": "Microsoft.Contoso.Employees.get",
+        "azure.mgmt.contoso.operations.EmployeesOperations.begin_create_or_update": "Microsoft.Contoso.Employees.createOrUpdate",
+        "azure.mgmt.contoso.aio.operations.EmployeesOperations.begin_create_or_update": "Microsoft.Contoso.Employees.createOrUpdate",
+        "azure.mgmt.contoso.operations.EmployeesOperations.update": "Microsoft.Contoso.Employees.update",
+        "azure.mgmt.contoso.aio.operations.EmployeesOperations.update": "Microsoft.Contoso.Employees.update",
+        "azure.mgmt.contoso.operations.EmployeesOperations.begin_delete": "Microsoft.Contoso.Employees.delete",
+        "azure.mgmt.contoso.aio.operations.EmployeesOperations.begin_delete": "Microsoft.Contoso.Employees.delete",
+        "azure.mgmt.contoso.operations.EmployeesOperations.list_by_resource_group": "Microsoft.Contoso.Employees.listByResourceGroup",
+        "azure.mgmt.contoso.aio.operations.EmployeesOperations.list_by_resource_group": "Microsoft.Contoso.Employees.listByResourceGroup",
+        "azure.mgmt.contoso.operations.EmployeesOperations.list_by_subscription": "Microsoft.Contoso.Employees.listBySubscription",
+        "azure.mgmt.contoso.aio.operations.EmployeesOperations.list_by_subscription": "Microsoft.Contoso.Employees.listBySubscription"
+    }
+}
