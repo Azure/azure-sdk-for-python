@@ -9,6 +9,7 @@ Tests for ResponsesInstrumentor with MCP agents.
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import SPAN_NAME_INVOKE_AGENT
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -108,11 +109,11 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
                 for item in items:
-                    pass  # Just iterate to consume items
+                    pass  # Iterate to consume items
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 2, "Should have two response spans (initial + approval)"
 
                 # Validate first response span (MCP tool trigger)
@@ -400,7 +401,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 2, "Should have two response spans (initial + approval)"
 
                 # Validate first response span (MCP tool trigger)
@@ -683,7 +684,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 2, "Should have two response spans (initial + approval)"
 
                 # Validate first response span
@@ -922,7 +923,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Check spans
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 2, "Should have two response spans (initial + approval)"
 
                 # Validate first response span
