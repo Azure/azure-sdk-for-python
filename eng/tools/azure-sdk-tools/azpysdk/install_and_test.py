@@ -116,7 +116,9 @@ class InstallAndTest(Check):
         cwd: Optional[str] = None,
     ) -> int:
         pytest_command = ["-m", "pytest", *pytest_args]
-        environment = {"PYTHONPYCACHEPREFIX": staging_directory}
+
+        environment = os.environ.copy()
+        environment.update({"PYTHONPYCACHEPREFIX": staging_directory})
 
         pytest_result = self.run_venv_command(
             executable,
