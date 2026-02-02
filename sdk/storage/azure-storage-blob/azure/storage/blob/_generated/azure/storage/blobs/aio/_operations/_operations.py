@@ -8325,7 +8325,7 @@ class _BlockBlobClientOperationsMixin(
         self,
         body: bytes,
         *,
-        block_id: bytes,
+        block_id: str,
         content_length: int,
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
@@ -8346,7 +8346,7 @@ class _BlockBlobClientOperationsMixin(
         :keyword block_id: A valid Base64 string value that identifies the block. Prior to encoding,
          the string must be less than or equal to 64 bytes in size. For a given blob, the length of the
          value specified for the blockid parameter must be the same size for each block. Required.
-        :paramtype block_id: bytes
+        :paramtype block_id: str
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
@@ -8484,7 +8484,7 @@ class _BlockBlobClientOperationsMixin(
     async def stage_block_from_url(  # pylint: disable=too-many-locals
         self,
         *,
-        block_id: bytes,
+        block_id: str,
         content_length: int,
         source_url: str,
         source_range: Optional[str] = None,
@@ -8513,7 +8513,7 @@ class _BlockBlobClientOperationsMixin(
         :keyword block_id: A valid Base64 string value that identifies the block. Prior to encoding,
          the string must be less than or equal to 64 bytes in size. For a given blob, the length of the
          value specified for the blockid parameter must be the same size for each block. Required.
-        :paramtype block_id: bytes
+        :paramtype block_id: str
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword source_url: Specify a URL to the copy source. Required.
