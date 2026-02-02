@@ -635,7 +635,7 @@ class TableServiceStats(_Model):
     )
     """Geo-Replication information for the Secondary Storage Service."""
 
-    _xml = {"attribute": False, "name": "TableServiceStats", "text": False, "unwrapped": False}
+    _xml = {"attribute": False, "name": "StorageServiceStats", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
