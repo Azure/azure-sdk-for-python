@@ -26,6 +26,7 @@ USAGE:
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
 """
+
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient, ArtifactManifestOrder
@@ -48,12 +49,15 @@ class DeleteImages(object):
                 # Keep the three most recent images, delete everything else
                 manifest_count = 0
                 for manifest in client.list_manifest_properties(
-                    repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
+                    repository,
+                    order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING,
                 ):
                     manifest_count += 1
                     if manifest_count > 3:
                         # Make sure will have the permission to delete the manifest later
-                        client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)
+                        client.update_manifest_properties(
+                            repository, manifest.digest, can_write=True, can_delete=True
+                        )
                         print(f"Deleting {repository}:{manifest.digest}")
                         client.delete_manifest(repository, manifest.digest)
         # [END delete_manifests]

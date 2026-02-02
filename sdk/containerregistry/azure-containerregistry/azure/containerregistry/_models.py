@@ -81,7 +81,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         except ValueError:
             pass
         self._repository_name = kwargs.get("repository_name", "")
-        self._registry = kwargs.get("registry","")
+        self._registry = kwargs.get("registry", "")
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
         self.can_delete = kwargs.get("can_delete")
@@ -90,7 +90,9 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
+    def _from_generated(
+        cls, generated: ManifestAttributesBase, **kwargs
+    ) -> "ArtifactManifestProperties":
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -99,10 +101,26 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
             operating_system=generated.operating_system,
             size_in_bytes=generated.size,
             tags=generated.tags,
-            can_delete=None if generated.changeable_attributes is None else generated.changeable_attributes.can_delete,
-            can_read=None if generated.changeable_attributes is None else generated.changeable_attributes.can_read,
-            can_write=None if generated.changeable_attributes is None else generated.changeable_attributes.can_write,
-            can_list=None if generated.changeable_attributes is None else generated.changeable_attributes.can_list,
+            can_delete=(
+                None
+                if generated.changeable_attributes is None
+                else generated.changeable_attributes.can_delete
+            ),
+            can_read=(
+                None
+                if generated.changeable_attributes is None
+                else generated.changeable_attributes.can_read
+            ),
+            can_write=(
+                None
+                if generated.changeable_attributes is None
+                else generated.changeable_attributes.can_write
+            ),
+            can_list=(
+                None
+                if generated.changeable_attributes is None
+                else generated.changeable_attributes.can_list
+            ),
             repository_name=kwargs.get("repository_name"),
             registry=kwargs.get("registry"),
         )
@@ -212,7 +230,9 @@ class RepositoryProperties:
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedRepositoryProperties) -> "RepositoryProperties":
+    def _from_generated(
+        cls, generated: GeneratedRepositoryProperties
+    ) -> "RepositoryProperties":
         return cls(
             created_on=generated.created_on,
             last_updated_on=generated.last_updated_on,
@@ -308,7 +328,9 @@ class ArtifactTagProperties:
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: TagAttributesBase, **kwargs) -> "ArtifactTagProperties":
+    def _from_generated(
+        cls, generated: TagAttributesBase, **kwargs
+    ) -> "ArtifactTagProperties":
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,

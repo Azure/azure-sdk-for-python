@@ -26,6 +26,7 @@ USAGE:
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
 """
+
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
@@ -54,7 +55,9 @@ class HelloWorld(object):
                         print(tag.name)
 
                         # Make sure will have the permission to delete the repository later
-                        client.update_manifest_properties(repository_name, tag.name, can_write=True, can_delete=True)
+                        client.update_manifest_properties(
+                            repository_name, tag.name, can_write=True, can_delete=True
+                        )
 
                     print("Deleting " + repository_name)
                     # [START delete_repository]
