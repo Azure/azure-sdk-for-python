@@ -29,7 +29,7 @@ OPTIONAL ENV VARS:
 
 # [START text_custom_entities_async]
 import os
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient

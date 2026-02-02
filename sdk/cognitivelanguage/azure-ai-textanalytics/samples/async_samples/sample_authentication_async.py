@@ -27,7 +27,7 @@ USAGE:
     2) AZURE_TEXT_KEY - your Text Analytics API key
 """
 
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio
 
 
 async def sample_authentication_api_key_async():
