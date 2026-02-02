@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.managedops import ManagedOpsClient
+from azure.mgmt.managedops import ManagedOpsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -16,7 +16,7 @@ AZURE_LOCATION = "eastus"
 @pytest.mark.live_test_only
 class TestManagedOpsManagedOpsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ManagedOpsClient)
+        self.client = self.create_mgmt_client(ManagedOpsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
