@@ -233,6 +233,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
+        super(GeneratedLogging, self).__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -386,6 +387,7 @@ class CorsRule(GeneratedCorsRule):
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+        super(GeneratedCorsRule, self).__init__(**kwargs)
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
