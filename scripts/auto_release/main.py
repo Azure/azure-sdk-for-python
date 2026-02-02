@@ -218,6 +218,15 @@ class CodegenTestPR:
             "azure-mgmt-recoveryservicesbackup-passivestamp",
             "azure-mgmt-certificateregistration",
             "azure-mgmt-domainregistration",
+            "azure-mgmt-resource-changes",
+            "azure-mgmt-resource-databoundaries",
+            "azure-mgmt-resource-features",
+            "azure-mgmt-resource-links",
+            "azure-mgmt-resource-locks",
+            "azure-mgmt-resource-managedapplications",
+            "azure-mgmt-resource-policy",
+            "azure-mgmt-resource-privatelinks",
+            "azure-mgmt-resource-subscriptions",
         ]:
             return
         if self.from_swagger:
