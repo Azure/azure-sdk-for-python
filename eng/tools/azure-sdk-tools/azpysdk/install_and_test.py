@@ -123,7 +123,7 @@ class InstallAndTest(Check):
         pytest_result = self.run_venv_command(
             executable,
             pytest_command,
-            cwd=(cwd or staging_directory),
+            cwd=package_dir,
             immediately_dump=True,
             additional_environment_settings=environment,
         )
