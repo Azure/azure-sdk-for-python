@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing import Any, Awaitable, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
@@ -33,16 +32,14 @@ class TablesClient:
     :param url: The host name of the tables account, e.g. accountName.table.core.windows.net.
      Required.
     :type url: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version. Default value is "2019-02-02". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, url: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
+    def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{url}"
         self._config = TablesClientConfiguration(url=url, credential=credential, **kwargs)
 

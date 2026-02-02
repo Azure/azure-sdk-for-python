@@ -93,7 +93,7 @@ def build_table_query_request(
 def build_table_create_request(
     *,
     format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-    echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+    prefer: Optional[Union[str, _models.ResponseFormat]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -116,8 +116,8 @@ def build_table_create_request(
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
-    if echo_content is not None:
-        _headers["Prefer"] = _SERIALIZER.header("echo_content", echo_content, "str")
+    if prefer is not None:
+        _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -375,7 +375,7 @@ def build_table_insert_entity_request(
     *,
     timeout: Optional[int] = None,
     format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-    echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+    prefer: Optional[Union[str, _models.ResponseFormat]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -405,8 +405,8 @@ def build_table_insert_entity_request(
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
-    if echo_content is not None:
-        _headers["Prefer"] = _SERIALIZER.header("echo_content", echo_content, "str")
+    if prefer is not None:
+        _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -623,11 +623,18 @@ class TableOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.TablesError,
-                    response,
-                )
+                if "xml" in error_type:
+                    error = _failsafe_deserialize_xml(
+                        _models.TablesServiceError,
+                        response,
+                    )
+                else:
+                    error = _failsafe_deserialize(
+                        _models.TablesError,
+                        response,
+                    )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -641,7 +648,7 @@ class TableOperations:
         *,
         content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -655,10 +662,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -671,7 +678,7 @@ class TableOperations:
         *,
         content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -685,10 +692,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -701,7 +708,7 @@ class TableOperations:
         *,
         content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -715,10 +722,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -730,7 +737,7 @@ class TableOperations:
         table_properties: Union[_models.TableProperties, JSON, IO[bytes]],
         *,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -743,10 +750,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -777,7 +784,7 @@ class TableOperations:
 
         _request = build_table_create_request(
             format=format,
-            echo_content=echo_content,
+            prefer=prefer,
             data_service_version=data_service_version,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -803,11 +810,18 @@ class TableOperations:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -887,11 +901,18 @@ class TableOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -995,11 +1016,18 @@ class TableOperations:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1110,11 +1138,18 @@ class TableOperations:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1317,11 +1352,18 @@ class TableOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1510,11 +1552,18 @@ class TableOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1606,11 +1655,18 @@ class TableOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1633,7 +1689,7 @@ class TableOperations:
         content_type: str = "application/json",
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1651,10 +1707,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+        :keyword prefer: Specifies whether the response should include the inserted entity in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1669,7 +1725,7 @@ class TableOperations:
         content_type: str = "application/json",
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1687,10 +1743,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+        :keyword prefer: Specifies whether the response should include the inserted entity in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1704,7 +1760,7 @@ class TableOperations:
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1720,10 +1776,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+        :keyword prefer: Specifies whether the response should include the inserted entity in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1760,7 +1816,7 @@ class TableOperations:
             table=table,
             timeout=timeout,
             format=format,
-            echo_content=echo_content,
+            prefer=prefer,
             data_service_version=data_service_version,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1786,11 +1842,18 @@ class TableOperations:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.TablesError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -1883,11 +1946,18 @@ class TableOperations:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.TablesServiceError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1963,11 +2033,18 @@ class TableOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.TablesServiceError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2051,11 +2128,18 @@ class ServiceOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.TablesServiceError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2116,11 +2200,18 @@ class ServiceOperations:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
+            error_type = response.headers.get("Content-Type", "application/json").split(";")[0]
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.TablesServiceError,
-                response,
-            )
+            if "xml" in error_type:
+                error = _failsafe_deserialize_xml(
+                    _models.TablesServiceError,
+                    response,
+                )
+            else:
+                error = _failsafe_deserialize(
+                    _models.TablesError,
+                    response,
+                )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

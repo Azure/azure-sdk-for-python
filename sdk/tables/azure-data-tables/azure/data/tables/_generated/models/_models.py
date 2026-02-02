@@ -598,7 +598,7 @@ class TableServiceProperties(_Model):
     )
     """The CORS properties."""
 
-    _xml = {"attribute": False, "name": "TableServiceProperties", "text": False, "unwrapped": False}
+    _xml = {"attribute": False, "name": "StorageServiceProperties", "text": False, "unwrapped": False}
 
     @overload
     def __init__(

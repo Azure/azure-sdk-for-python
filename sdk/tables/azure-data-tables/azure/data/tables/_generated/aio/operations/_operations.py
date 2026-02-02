@@ -181,7 +181,7 @@ class TableOperations:
         *,
         content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -195,10 +195,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -211,7 +211,7 @@ class TableOperations:
         *,
         content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -225,10 +225,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -241,7 +241,7 @@ class TableOperations:
         *,
         content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -255,10 +255,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -270,7 +270,7 @@ class TableOperations:
         table_properties: Union[_models.TableProperties, JSON, IO[bytes]],
         *,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[_models.TableResponse]:
         """Creates a new table under the given account.
@@ -283,10 +283,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the created table in the
+        :keyword prefer: Specifies whether the response should include the created table in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: TableResponse or None. The TableResponse is compatible with MutableMapping
         :rtype: ~azure.data.tables._generated.models.TableResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -317,7 +317,7 @@ class TableOperations:
 
         _request = build_table_create_request(
             format=format,
-            echo_content=echo_content,
+            prefer=prefer,
             data_service_version=data_service_version,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1173,7 +1173,7 @@ class TableOperations:
         content_type: str = "application/json",
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1191,10 +1191,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+        :keyword prefer: Specifies whether the response should include the inserted entity in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1209,7 +1209,7 @@ class TableOperations:
         content_type: str = "application/json",
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1227,10 +1227,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+        :keyword prefer: Specifies whether the response should include the inserted entity in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1244,7 +1244,7 @@ class TableOperations:
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        echo_content: Optional[Union[str, _models.ResponseFormat]] = None,
+        prefer: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
     ) -> Optional[dict[str, Any]]:
         """Insert entity in a table.
@@ -1260,10 +1260,10 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.data.tables._generated.models.OdataMetadataFormat
-        :keyword echo_content: Specifies whether the response should include the inserted entity in the
+        :keyword prefer: Specifies whether the response should include the inserted entity in the
          payload. Possible values are return-no-content and return-content. Known values are:
          "return-no-content" and "return-content". Default value is None.
-        :paramtype echo_content: str or ~azure.data.tables._generated.models.ResponseFormat
+        :paramtype prefer: str or ~azure.data.tables._generated.models.ResponseFormat
         :return: dict mapping str to any or None
         :rtype: dict[str, any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1300,7 +1300,7 @@ class TableOperations:
             table=table,
             timeout=timeout,
             format=format,
-            echo_content=echo_content,
+            prefer=prefer,
             data_service_version=data_service_version,
             content_type=content_type,
             api_version=self._config.api_version,
