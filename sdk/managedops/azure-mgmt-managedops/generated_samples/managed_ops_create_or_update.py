@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.managedops import ManagedOpsClient
+from azure.mgmt.managedops import ManagedOpsMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.managedops import ManagedOpsClient
 
 
 def main():
-    client = ManagedOpsClient(
+    client = ManagedOpsMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

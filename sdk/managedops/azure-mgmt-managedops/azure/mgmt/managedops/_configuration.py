@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ManagedOpsClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ManagedOpsClient.
+class ManagedOpsMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for ManagedOpsMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

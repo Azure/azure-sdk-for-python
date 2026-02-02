@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ManagedOpsClientConfiguration
+from ._configuration import ManagedOpsMgmtClientConfiguration
 from .operations import ManagedOpsOperations, Operations
 
 if TYPE_CHECKING:
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ManagedOpsClient:
+class ManagedOpsMgmtClient:
     """Managed Operations API.
 
     :ivar operations: Operations operations
@@ -65,7 +65,7 @@ class ManagedOpsClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ManagedOpsClientConfiguration(
+        self._config = ManagedOpsMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
