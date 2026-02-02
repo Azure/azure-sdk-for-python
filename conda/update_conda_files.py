@@ -389,7 +389,7 @@ def format_requirement(req: str) -> str:
     if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
         return f"{name_unpinned} >={{{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}}}"
 
-    # translate compatible release (~=) to >= for yml 
+    # translate compatible release (~=) to >= for yml
     req = req.replace("~=", ">=")
     return req
 
@@ -474,7 +474,6 @@ def generate_data_plane_meta_yaml(
     src_distr_name = recipe_name.split("-")[-1].upper()
     src_distribution_env_var = f"{src_distr_name}_SOURCE_DISTRIBUTION"
 
-    # TODO not sure if this is the best way to get these requirements
     if bundle_name:
         # handle grouped packages
         logger.info(
@@ -577,7 +576,7 @@ def add_new_data_plane_packages(
     for package_name in new_data_plane_names:
         logger.info(f"Adding new data plane meta.yaml for: {package_name}")
 
-        file_name = package_name
+        folder_name = package_name
         bundle_name = get_bundle_name(package_name)
         if bundle_name:
             if bundle_name in bundles_processed:
@@ -585,9 +584,9 @@ def add_new_data_plane_packages(
                     f"Meta.yaml for bundle {bundle_name} already created, skipping {package_name}"
                 )
                 continue
-            file_name = bundle_name
+            folder_name = bundle_name
 
-        pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, file_name, "meta.yaml")
+        pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, folder_name, "meta.yaml")
         os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
 
         try:
@@ -815,13 +814,11 @@ def update_data_plane_release_logs(
         bundle_name = get_bundle_name(package_name)
         # check for bundle
         if bundle_name:
-            release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{bundle_name}.md")
             display_name = bundle_name
         else:
-            release_log_path = os.path.join(
-                CONDA_RELEASE_LOGS_DIR, f"{package_name}.md"
-            )
-            display_name = package_name  # for release log logic below
+            display_name = package_name
+
+        release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{display_name}.md")
 
         if not os.path.exists(release_log_path):
             # Add brand new release log file
