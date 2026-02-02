@@ -96,7 +96,7 @@ class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpRespo
             token = tracer._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
             request.context[self._SUPPRESSION_TOKEN] = token
         except Exception as err:  # pylint: disable=broad-except
-            _LOGGER.warning("Unable to start HTTP span: %s", err)
+            _LOGGER.warning("Unable to start HTTP span: %s", err)  # pylint: disable=do-not-log-exceptions-if-not-debug
 
     def on_response(
         self,

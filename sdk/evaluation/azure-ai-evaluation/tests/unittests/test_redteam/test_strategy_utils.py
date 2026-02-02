@@ -131,6 +131,43 @@ class TestChatTargetFunctions:
         )
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_azure_openai_with_credential(self, mock_openai_chat_target):
+        """Test getting chat target from an Azure OpenAI configuration with TokenCredential."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        # Create a mock credential that behaves like TokenCredential
+        mock_credential = MagicMock()
+        mock_token = MagicMock()
+        mock_token.token = "test-access-token"
+        mock_credential.get_token.return_value = mock_token
+
+        config = {
+            "azure_deployment": "gpt-35-turbo",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "credential": mock_credential,
+        }
+
+        result = get_chat_target(config)
+
+        # Verify OpenAIChatTarget was called with a callable for api_key
+        mock_openai_chat_target.assert_called_once()
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert call_kwargs["model_name"] == "gpt-35-turbo"
+        assert call_kwargs["endpoint"] == "https://example.openai.azure.com"
+        assert call_kwargs["api_version"] == "2024-06-01"
+        # api_key should be a callable (token provider)
+        assert callable(call_kwargs["api_key"])
+
+        # Verify the token provider returns the expected token
+        token_provider = call_kwargs["api_key"]
+        token = token_provider()
+        assert token == "test-access-token"
+        mock_credential.get_token.assert_called_with("https://cognitiveservices.azure.com/.default")
+
+        assert result == mock_instance
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_openai(self, mock_openai_chat_target):
         """Test getting chat target from an OpenAI configuration."""
         mock_instance = MagicMock()

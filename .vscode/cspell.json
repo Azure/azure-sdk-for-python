@@ -103,6 +103,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
+    "sdk/storage/azure-storage-file-datalake/tests/**",
     "sdk/projects/azure-projects/tests/test_infra/**",
     "sdk/projects/azure-projects/samples/**/*.html",
     "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
