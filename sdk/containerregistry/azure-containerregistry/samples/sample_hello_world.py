@@ -54,7 +54,7 @@ class HelloWorld(object):
                         print(tag.name)
 
                         # Make sure will have the permission to delete the repository later
-                        client.update_manifest_properties(repository_name, tag.name, can_write=True, can_delete=True)  # type: ignore[arg-type]
+                        client.update_manifest_properties(repository_name, tag.name, can_write=True, can_delete=True)
 
                     print("Deleting " + repository_name)
                     # [START delete_repository]

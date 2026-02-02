@@ -72,18 +72,18 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
             self._architecture = ArtifactArchitecture(self._architecture)
         except ValueError:
             pass
-        self._created_on: Optional[datetime] = kwargs.get("created_on", None)
-        self._digest: Optional[str] = kwargs.get("digest", None)
-        self._last_updated_on: Optional[datetime] = kwargs.get("last_updated_on", None)
-        self._operating_system: Optional[ArtifactOperatingSystem] = kwargs.get("operating_system", None)
+        self._created_on = kwargs.get("created_on", datetime.min)
+        self._digest = kwargs.get("digest", "")
+        self._last_updated_on = kwargs.get("last_updated_on", datetime.min)
+        self._operating_system = kwargs.get("operating_system", None)
         try:
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
         except ValueError:
             pass
-        self._repository_name: Optional[str] = kwargs.get("repository_name", None)
-        self._registry: Optional[str] = kwargs.get("registry", None)
-        self._size_in_bytes: Optional[int] = kwargs.get("size_in_bytes", None)
-        self._tags: Optional[List[str]] = kwargs.get("tags", None)
+        self._repository_name = kwargs.get("repository_name", "")
+        self._registry = kwargs.get("registry","")
+        self._size_in_bytes = kwargs.get("size_in_bytes", None)
+        self._tags = kwargs.get("tags", None)
         self.can_delete = kwargs.get("can_delete")
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
@@ -124,26 +124,26 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         return self._architecture
 
     @property
-    def created_on(self) -> Optional[datetime]:
+    def created_on(self) -> datetime:
         """Time and date an artifact was created.
 
-        :rtype: ~datetime.datetime or None
+        :rtype: ~datetime.datetime
         """
         return self._created_on
 
     @property
-    def digest(self) -> Optional[str]:
+    def digest(self) -> str:
         """Digest for the artifact.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._digest
 
     @property
-    def last_updated_on(self) -> Optional[datetime]:
+    def last_updated_on(self) -> datetime:
         """Time and date an artifact was last updated.
 
-        :rtype: ~datetime.datetime or None
+        :rtype: ~datetime.datetime
         """
         return self._last_updated_on
 
@@ -156,10 +156,10 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         return self._operating_system
 
     @property
-    def repository_name(self) -> Optional[str]:
+    def repository_name(self) -> str:
         """Repository name the artifact belongs to.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._repository_name
 
@@ -185,7 +185,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
 
         :rtype: str
         """
-        return f"{_host_only(cast(str, self._registry))}/{self._repository_name}{':' if _is_tag(cast(str, self._digest)) else '@'}{_strip_alg(self._digest)}"  # pylint: disable=line-too-long
+        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}"  # pylint: disable=line-too-long
 
 
 class RepositoryProperties:
@@ -297,11 +297,11 @@ class ArtifactTagProperties:
     """Write Permissions for a tag."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self._created_on = kwargs.get("created_on", None)
-        self._digest = kwargs.get("digest", None)
-        self._last_updated_on = kwargs.get("last_updated_on", None)
-        self._name = kwargs.get("name", None)
-        self._repository_name = kwargs.get("repository_name", None)
+        self._created_on = kwargs.get("created_on", datetime.min)
+        self._digest = kwargs.get("digest", "")
+        self._last_updated_on = kwargs.get("last_updated_on", datetime.min)
+        self._name = kwargs.get("name", "")
+        self._repository_name = kwargs.get("repository_name", "")
         self.can_delete = kwargs.get("can_delete")
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
@@ -330,42 +330,42 @@ class ArtifactTagProperties:
         )
 
     @property
-    def created_on(self) -> Optional[datetime]:
+    def created_on(self) -> datetime:
         """Time and date the tag was created.
 
-        :rtype: ~datetime.datetime or None
+        :rtype: ~datetime.datetime
         """
         return self._created_on
 
     @property
-    def digest(self) -> Optional[str]:
+    def digest(self) -> str:
         """Digest for the tag.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._digest
 
     @property
-    def last_updated_on(self) -> Optional[datetime]:
+    def last_updated_on(self) -> datetime:
         """Time and date the tag was last updated.
 
-        :rtype: ~datetime.datetime or None
+        :rtype: ~datetime.datetime
         """
         return self._last_updated_on
 
     @property
-    def name(self) -> Optional[str]:
+    def name(self) -> str:
         """Name of the tag.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._name
 
     @property
-    def repository_name(self) -> Optional[str]:
+    def repository_name(self) -> str:
         """Repository name the tag belongs to.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._repository_name
 

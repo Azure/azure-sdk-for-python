@@ -55,11 +55,11 @@ class DeleteImagesAsync(object):
                     if manifest_count > 3:
                         # Make sure will have the permission to delete the manifest later
                         await client.update_manifest_properties(
-                            repository, manifest.digest, can_write=True, can_delete=True  # type: ignore[arg-type]
+                            repository, manifest.digest, can_write=True, can_delete=True
                         )
 
                         print(f"Deleting {repository}:{manifest.digest}")
-                        await client.delete_manifest(repository, manifest.digest)  # type: ignore[arg-type]
+                        await client.delete_manifest(repository, manifest.digest)
 
 
 async def main():
