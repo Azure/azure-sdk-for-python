@@ -9050,14 +9050,14 @@ class SchedulesOperations:
 
     @overload
     def create_or_update(
-        self, id: str, resource: _models.Schedule, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, id: str, schedule: _models.Schedule, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param resource: The resource instance. Required.
-        :type resource: ~azure.ai.projects.models.Schedule
+        :param schedule: The resource instance. Required.
+        :type schedule: ~azure.ai.projects.models.Schedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9068,14 +9068,14 @@ class SchedulesOperations:
 
     @overload
     def create_or_update(
-        self, id: str, resource: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, id: str, schedule: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param resource: The resource instance. Required.
-        :type resource: JSON
+        :param schedule: The resource instance. Required.
+        :type schedule: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9086,14 +9086,14 @@ class SchedulesOperations:
 
     @overload
     def create_or_update(
-        self, id: str, resource: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, id: str, schedule: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param resource: The resource instance. Required.
-        :type resource: IO[bytes]
+        :param schedule: The resource instance. Required.
+        :type schedule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9104,15 +9104,15 @@ class SchedulesOperations:
 
     @distributed_trace
     def create_or_update(
-        self, id: str, resource: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
+        self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param resource: The resource instance. Is one of the following types: Schedule, JSON,
+        :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
          IO[bytes] Required.
-        :type resource: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
+        :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9133,10 +9133,10 @@ class SchedulesOperations:
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(schedule, (IOBase, bytes)):
+            _content = schedule
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_schedules_create_or_update_request(
             id=id,
