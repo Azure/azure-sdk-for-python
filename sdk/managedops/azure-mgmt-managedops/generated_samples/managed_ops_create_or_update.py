@@ -44,7 +44,6 @@ def main():
                     },
                     "userAssignedManagedIdentityId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myManagedIdentity",
                 },
-                "sku": {"name": "ManagedOps", "tier": "Essential"},
             }
         },
     ).result()
