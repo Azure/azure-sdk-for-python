@@ -197,9 +197,6 @@ def package_needs_update(
     )
 
     if not compare_date:
-        if not is_new and package_row.get(PACKAGE_COL) == "uamqp":
-            return True  # uamqp is an exception
-
         logger.debug(
             f"Package {package_row.get(PACKAGE_COL)} is skipped due to missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
         )
