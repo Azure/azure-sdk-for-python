@@ -456,6 +456,8 @@ def build_table_set_access_policy_request(table: str, *, timeout: Optional[int] 
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    accept = _headers.pop("Accept", "application/xml")
+
     # Construct URL
     _url = "/{table}?comp=acl"
     path_format_arguments = {
@@ -471,6 +473,7 @@ def build_table_set_access_policy_request(table: str, *, timeout: Optional[int] 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -481,6 +484,8 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    accept = _headers.pop("Accept", "application/xml")
+
     # Construct URL
     _url = "/?restype=service&comp=properties"
 
@@ -491,6 +496,7 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1845,7 +1851,7 @@ class TableOperations:
     @distributed_trace
     def get_access_policy(
         self, table: str, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> list[_models.SignedIdentifier]:
+    ) -> _models.SignedIdentifiers:
         """Retrieves details about any stored access policies specified on the table that may be used with
         Shared Access Signatures.
 
@@ -1853,8 +1859,8 @@ class TableOperations:
         :type table: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :return: SignedIdentifier
-        :rtype: ~azure.data.tables._generated.models.SignedIdentifier
+        :return: SignedIdentifiers. The SignedIdentifiers is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.SignedIdentifiers
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1868,7 +1874,7 @@ class TableOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SignedIdentifiers] = kwargs.pop("cls", None)
 
         _request = build_table_get_access_policy_request(
             table=table,
@@ -1914,7 +1920,7 @@ class TableOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize_xml(list[_models.SignedIdentifier], response.text())
+            deserialized = _deserialize_xml(_models.SignedIdentifiers, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1923,14 +1929,14 @@ class TableOperations:
 
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
-        self, table: str, table_acl: list[_models.SignedIdentifier], *, timeout: Optional[int] = None, **kwargs: Any
+        self, table: str, table_acl: _models.SignedIdentifiers, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param table: The name of the table. Required.
         :type table: str
         :param table_acl: The access control list for the table. Required.
-        :type table_acl: ~azure.data.tables._generated.models.SignedIdentifier
+        :type table_acl: ~azure.data.tables._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :return: None

@@ -27,7 +27,7 @@ from ._error import (
     _validate_tablename_error,
     _validate_key_values,
 )
-from ._generated.models import SignedIdentifier, TableProperties, AccessPolicy
+from ._generated.models import SignedIdentifier, TableProperties, AccessPolicy, SignedIdentifiers
 from ._serialize import (
     serialize_iso,
     _parameter_filter_substitution,
@@ -204,16 +204,18 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
+            raise
         output: Dict[str, Optional[TableAccessPolicy]] = {}
-        for identifier in cast(List[SignedIdentifier], identifiers):
-            if identifier.access_policy:
-                output[identifier.id] = TableAccessPolicy(
-                    start=deserialize_iso(identifier.access_policy.start),
-                    expiry=deserialize_iso(identifier.access_policy.expiry),
-                    permission=identifier.access_policy.permission,
-                )
-            else:
-                output[identifier.id] = None
+        if identifiers.identifiers:
+            for identifier in identifiers.identifiers:
+                if identifier.access_policy:
+                    output[identifier.id] = TableAccessPolicy(
+                        start=deserialize_iso(identifier.access_policy.start),
+                        expiry=deserialize_iso(identifier.access_policy.expiry),
+                        permission=identifier.access_policy.permission,
+                    )
+                else:
+                    output[identifier.id] = None
         return output
 
     @distributed_trace
@@ -236,7 +238,8 @@ class TableClient(TablesBaseClient):
                 )
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
-            self._client.table.set_access_policy(table=self.table_name, table_acl=identifiers or None, **kwargs)
+            signed_ids = SignedIdentifiers(identifiers=identifiers)
+            self._client.table.set_access_policy(table=self.table_name, table_acl=signed_ids, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)

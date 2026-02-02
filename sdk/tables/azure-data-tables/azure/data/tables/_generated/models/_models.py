@@ -410,6 +410,39 @@ class SignedIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SignedIdentifiers(_Model):
+    """Represents an array of signed identifiers.
+
+    :ivar identifiers: The signed identifiers. Required.
+    :vartype identifiers: ~azure.data.tables._generated.models.SignedIdentifier
+    """
+
+    identifiers: list["_models.SignedIdentifier"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "identifiers", "name": "identifiers", "text": False, "unwrapped": True},
+    )
+    """The signed identifiers. Required."""
+
+    _xml = {"attribute": False, "name": "SignedIdentifiers", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identifiers: list["_models.SignedIdentifier"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TableEntityQueryResponse(_Model):
     """The properties for the table entity query response.
 
