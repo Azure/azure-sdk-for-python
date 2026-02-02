@@ -9,7 +9,13 @@ import json
 import pytest
 from typing import Optional, Tuple
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import SPAN_NAME_CHAT, SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_CHAT,
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_CHAT,
+    SPAN_NAME_INVOKE_AGENT,
+    set_use_message_events,
+)
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from openai import OpenAI
@@ -187,12 +193,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         finally:
             self.cleanup()
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
-    def test_sync_non_streaming_with_content_recording(self, **kwargs):
-        """Test synchronous non-streaming responses with content recording enabled."""
+    def _test_sync_non_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous non-streaming responses with content recording enabled."""
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -232,7 +236,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -245,34 +249,68 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+        # Check span events or attributes based on mode
+        if use_events:
+            # Check span events
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+        else:
+            # Check span attributes for message content
+            assert "gen_ai.input.messages" in span.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span.attributes  # type: ignore
+            
+            # Verify input messages attribute
+            input_messages = json.loads(span.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "user"
+            assert len(input_messages[0]["parts"]) == 1
+            assert input_messages[0]["parts"][0]["type"] == "text"
+            assert input_messages[0]["parts"][0]["content"] == "Write a short poem about AI"
+            
+            # Verify output messages attribute
+            output_messages = json.loads(span.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert len(output_messages[0]["parts"]) == 1
+            assert output_messages[0]["parts"][0]["type"] == "text"
+            assert "content" in output_messages[0]["parts"][0]
+            assert len(output_messages[0]["parts"][0]["content"]) > 0
+            assert "finish_reason" in output_messages[0]
 
-    @pytest.mark.usefixtures("instrument_without_content")
+    @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
-    def test_sync_non_streaming_without_content_recording(self, **kwargs):
-        """Test synchronous non-streaming responses with content recording disabled."""
+    def test_sync_non_streaming_with_content_recording_events(self, **kwargs):
+        """Test synchronous non-streaming responses with content recording enabled (event mode)."""
+        self._test_sync_non_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_non_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test synchronous non-streaming responses with content recording enabled (attribute mode)."""
+        self._test_sync_non_streaming_with_content_recording_impl(False, **kwargs)
+
+    def _test_sync_non_streaming_without_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous non-streaming responses with content recording disabled."""
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -312,7 +350,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -325,36 +363,69 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events (should not contain content, but should have role and finish_reason)
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+        # Check span events or attributes based on mode (no content)
+        if use_events:
+            # Check span events (should not contain content, but should have role and finish_reason)
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+        else:
+            # Check span attributes for message content (without actual content)
+            assert "gen_ai.input.messages" in span.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span.attributes  # type: ignore
+            
+            # Verify input messages attribute (no content)
+            input_messages = json.loads(span.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "user"
+            assert len(input_messages[0]["parts"]) == 1
+            assert input_messages[0]["parts"][0]["type"] == "text"
+            assert "content" not in input_messages[0]["parts"][0]  # Content should be omitted
+            
+            # Verify output messages attribute (no content)
+            output_messages = json.loads(span.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert len(output_messages[0]["parts"]) == 1
+            assert output_messages[0]["parts"][0]["type"] == "text"
+            assert "content" not in output_messages[0]["parts"][0]  # Content should be omitted
+            assert "finish_reason" in output_messages[0]
 
-    @pytest.mark.usefixtures("instrument_with_content")
+    @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
-    def test_sync_streaming_with_content_recording(self, **kwargs):
-        """Test synchronous streaming responses with content recording enabled."""
+    def test_sync_non_streaming_without_content_recording_events(self, **kwargs):
+        """Test synchronous non-streaming responses with content recording disabled (event mode)."""
+        self._test_sync_non_streaming_without_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_non_streaming_without_content_recording_attributes(self, **kwargs):
+        """Test synchronous non-streaming responses with content recording disabled (attribute mode)."""
+        self._test_sync_non_streaming_without_content_recording_impl(False, **kwargs)
+
+    def _test_sync_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous streaming responses with content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -402,7 +473,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -415,27 +486,90 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events (should include assistant message for streaming)
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+        # Check span events or attributes based on mode (should include assistant message for streaming)
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+        else:
+            # Check span attributes for message content
+            assert "gen_ai.input.messages" in span.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span.attributes  # type: ignore
+            
+            # Verify input messages attribute
+            input_messages = json.loads(span.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "user"
+            assert len(input_messages[0]["parts"]) == 1
+            assert input_messages[0]["parts"][0]["type"] == "text"
+            assert input_messages[0]["parts"][0]["content"] == "Write a short poem about AI"
+            
+            # Verify output messages attribute
+            output_messages = json.loads(span.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert len(output_messages[0]["parts"]) == 1
+            assert output_messages[0]["parts"][0]["type"] == "text"
+            assert "content" in output_messages[0]["parts"][0]
+            assert len(output_messages[0]["parts"][0]["content"]) > 0
+            assert "finish_reason" in output_messages[0]
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_with_content_recording_non_streaming_events(self, **kwargs):
+        """Test synchronous function tool usage with content recording enabled, non-streaming (event mode)."""
+        self._test_sync_function_tool_with_content_recording_non_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_with_content_recording_non_streaming_attributes(self, **kwargs):
+        """Test synchronous function tool usage with content recording enabled, non-streaming (attribute mode)."""
+        self._test_sync_function_tool_with_content_recording_non_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_non_streaming_without_conversation_events(self, **kwargs):
+        """Test synchronous non-streaming responses without conversation parameter (event mode)."""
+        self._test_sync_non_streaming_without_conversation_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_non_streaming_without_conversation_attributes(self, **kwargs):
+        """Test synchronous non-streaming responses without conversation parameter (attribute mode)."""
+        self._test_sync_non_streaming_without_conversation_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_streaming_with_content_recording_events(self, **kwargs):
+        """Test synchronous streaming responses with content recording enabled (event mode)."""
+        self._test_sync_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test synchronous streaming responses with content recording enabled (attribute mode)."""
+        self._test_sync_streaming_with_content_recording_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -487,6 +621,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_list_conversation_items_with_content_recording(self, **kwargs):
         """Test synchronous list_conversation_items with content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -563,6 +698,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_list_conversation_items_without_content_recording(self, **kwargs):
         """Test synchronous list_conversation_items with content recording disabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -669,12 +805,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             exporter.shutdown()
             trace._TRACER_PROVIDER = None
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
-    def test_sync_non_streaming_without_conversation(self, **kwargs):
-        """Test synchronous non-streaming responses without conversation parameter."""
+    def _test_sync_non_streaming_without_conversation_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous non-streaming responses without conversation parameter."""
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -708,7 +842,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes - should NOT have conversation.id
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -720,36 +854,55 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+        # Check span events or attributes based on mode
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+        else:
+            # Check span attributes for message content
+            assert "gen_ai.input.messages" in span.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span.attributes  # type: ignore
+            
+            # Verify input messages attribute
+            input_messages = json.loads(span.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "user"
+            assert len(input_messages[0]["parts"]) == 1
+            assert input_messages[0]["parts"][0]["type"] == "text"
+            assert input_messages[0]["parts"][0]["content"] == "Write a short poem about AI"
+            
+            # Verify output messages attribute
+            output_messages = json.loads(span.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert len(output_messages[0]["parts"]) == 1
+            assert output_messages[0]["parts"][0]["type"] == "text"
+            assert "content" in output_messages[0]["parts"][0]
+            assert len(output_messages[0]["parts"][0]["content"]) > 0
+            assert "finish_reason" in output_messages[0]
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_function_tool_with_content_recording_non_streaming(self, **kwargs):
-        """Test synchronous function tool usage with content recording enabled (non-streaming)."""
+    def _test_sync_function_tool_with_content_recording_non_streaming_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous function tool usage with content recording (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -841,7 +994,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -854,33 +1007,53 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
         assert attributes_match == True
 
-        # Check events for first span - user message and assistant tool call
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+        # Check events or attributes for first span - user message and assistant tool call
+        if use_events:
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
+        else:
+            # Check span attributes
+            assert "gen_ai.input.messages" in span1.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span1.attributes  # type: ignore
+            
+            # Verify input messages - user question
+            input_messages = json.loads(span1.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "user"
+            assert input_messages[0]["parts"][0]["type"] == "text"
+            assert input_messages[0]["parts"][0]["content"] == "What's the weather in Seattle?"
+            
+            # Verify output messages - assistant tool call
+            output_messages = json.loads(span1.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert output_messages[0]["parts"][0]["type"] == "tool_call"
+            assert output_messages[0]["parts"][0]["content"]["type"] == "function_call"
+            assert "id" in output_messages[0]["parts"][0]["content"]
+            assert output_messages[0]["parts"][0]["content"]["function"]["name"] == "get_weather"
+            assert "arguments" in output_messages[0]["parts"][0]["content"]["function"]
 
         # Validate second span (tool output + final response)
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -893,36 +1066,57 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
         assert attributes_match == True
 
-        # Check events for second span - tool output and assistant response
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+        # Check events or attributes for second span - tool output and assistant response
+        if use_events:
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+        else:
+            # Check span attributes
+            assert "gen_ai.input.messages" in span2.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span2.attributes  # type: ignore
+            
+            # Verify input messages - tool output
+            input_messages = json.loads(span2.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "tool"
+            assert input_messages[0]["parts"][0]["type"] == "tool_call_output"
+            assert input_messages[0]["parts"][0]["content"]["type"] == "function_call_output"
+            assert "id" in input_messages[0]["parts"][0]["content"]
+            output_data = json.loads(input_messages[0]["parts"][0]["content"]["output"])
+            assert output_data["temperature"] == "72°F"
+            assert output_data["condition"] == "sunny"
+            
+            # Verify output messages - assistant final response
+            output_messages = json.loads(span2.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert output_messages[0]["parts"][0]["type"] == "text"
+            assert "content" in output_messages[0]["parts"][0]
+            assert len(output_messages[0]["parts"][0]["content"]) > 0
+            assert "finish_reason" in output_messages[0]
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_function_tool_with_content_recording_streaming(self, **kwargs):
-        """Test synchronous function tool usage with content recording enabled (streaming)."""
+    def _test_sync_function_tool_with_content_recording_streaming_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous function tool usage with content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1037,7 +1231,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1076,7 +1270,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1111,14 +1305,26 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.usefixtures("instrument_without_content")
+    @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_function_tool_without_content_recording_non_streaming(self, **kwargs):
-        """Test synchronous function tool usage without content recording (non-streaming)."""
+    def test_sync_function_tool_with_content_recording_streaming_events(self, **kwargs):
+        """Test synchronous function tool usage with content recording enabled, streaming (event mode)."""
+        self._test_sync_function_tool_with_content_recording_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_with_content_recording_streaming_attributes(self, **kwargs):
+        """Test synchronous function tool usage with content recording enabled, streaming (attribute mode)."""
+        self._test_sync_function_tool_with_content_recording_streaming_impl(False, **kwargs)
+
+    def _test_sync_function_tool_without_content_recording_non_streaming_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous function tool usage without content recording (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1209,7 +1415,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1248,7 +1454,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1283,14 +1489,12 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.usefixtures("instrument_without_content")
-    @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_function_tool_without_content_recording_streaming(self, **kwargs):
-        """Test synchronous function tool usage without content recording (streaming)."""
+    def _test_sync_function_tool_without_content_recording_streaming_impl(self, use_events, **kwargs):
+        """Implementation for testing synchronous function tool usage without content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1399,7 +1603,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1438,7 +1642,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1473,6 +1677,34 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_non_streaming_events(self, **kwargs):
+        """Test synchronous function tool usage without content recording, non-streaming (event mode)."""
+        self._test_sync_function_tool_without_content_recording_non_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_non_streaming_attributes(self, **kwargs):
+        """Test synchronous function tool usage without content recording, non-streaming (attribute mode)."""
+        self._test_sync_function_tool_without_content_recording_non_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_streaming_events(self, **kwargs):
+        """Test synchronous function tool usage without content recording, streaming (event mode)."""
+        self._test_sync_function_tool_without_content_recording_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_streaming_attributes(self, **kwargs):
+        """Test synchronous function tool usage without content recording, streaming (attribute mode)."""
+        self._test_sync_function_tool_without_content_recording_streaming_impl(False, **kwargs)
+
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -1481,6 +1713,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1630,6 +1863,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1777,6 +2011,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
         """Test synchronous non-streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1824,7 +2059,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1873,6 +2108,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
         """Test synchronous streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1928,7 +2164,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1977,6 +2213,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
         """Test synchronous non-streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -2024,7 +2261,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -2073,6 +2310,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_multiple_text_inputs_without_content_recording_streaming(self, **kwargs):
         """Test synchronous streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
@@ -2123,7 +2361,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -3423,7 +3661,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -3496,7 +3734,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -3620,7 +3858,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -4516,7 +4754,7 @@ trigger:
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
             ("gen_ai.provider.name", "azure.openai"),
@@ -4593,7 +4831,7 @@ trigger:
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
             ("gen_ai.provider.name", "azure.openai"),

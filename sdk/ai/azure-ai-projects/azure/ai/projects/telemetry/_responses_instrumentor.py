@@ -33,9 +33,11 @@ from ._utils import (
     GEN_AI_CONVERSATION_ITEM_EVENT,
     GEN_AI_CONVERSATION_ITEM_ID,
     GEN_AI_EVENT_CONTENT,
+    GEN_AI_INPUT_MESSAGES,
     GEN_AI_OPENAI_RESPONSE_SERVICE_TIER,
     GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT,
     GEN_AI_OPERATION_NAME,
+    GEN_AI_OUTPUT_MESSAGES,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_REQUEST_MODEL,
     GEN_AI_REQUEST_TOOLS,
@@ -48,13 +50,18 @@ from ._utils import (
     GEN_AI_USAGE_OUTPUT_TOKENS,
     GEN_AI_USER_MESSAGE_EVENT,
     GEN_AI_WORKFLOW_ACTION_EVENT,
+    OPERATION_NAME_CHAT,
+    OPERATION_NAME_INVOKE_AGENT,
     OperationName,
     SERVER_ADDRESS,
     SERVER_PORT,
     SPAN_NAME_CHAT,
     SPAN_NAME_INVOKE_AGENT,
+    get_use_message_events,
     start_span,
 )
+
+
 
 _Unset: Any = object()
 
@@ -534,6 +541,35 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         #     attrs[GEN_AI_MESSAGE_ROLE] = message_role
         return attrs
 
+    def _append_to_message_attribute(
+        self,
+        span: "AbstractSpan",
+        attribute_name: str,
+        new_messages: List[Dict[str, Any]],
+    ) -> None:
+        """Helper to append messages to an existing attribute, combining with previous messages."""
+        # Get existing attribute value
+        existing_value = span.span_instance.attributes.get(attribute_name) if span.span_instance.attributes else None
+        
+        if existing_value:
+            # Parse existing JSON array
+            try:
+                existing_messages = json.loads(existing_value)
+                if not isinstance(existing_messages, list):
+                    existing_messages = []
+            except (json.JSONDecodeError, TypeError):
+                existing_messages = []
+            
+            # Append new messages
+            combined_messages = existing_messages + new_messages
+        else:
+            # No existing value, just use new messages
+            combined_messages = new_messages
+        
+        # Set the combined value
+        combined_json = json.dumps(combined_messages, ensure_ascii=False)
+        span.span_instance.set_attribute(attribute_name, combined_json)
+
     def _add_message_event(
         self,
         span: "AbstractSpan",
@@ -542,7 +578,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
         finish_reason: Optional[str] = None,
     ) -> None:
-        """Add a message event to the span."""
+        """Add a message event or attribute to the span based on configuration."""
         content_array: List[Dict[str, Any]] = []
 
         # Always include role and finish_reason, only include actual content if tracing is enabled
@@ -567,23 +603,38 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             content_array.append(role_obj)
 
-        attributes = self._create_event_attributes(
-            conversation_id=conversation_id,
-            message_role=role,
-        )
-        # Store as JSON array directly without outer wrapper
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+        # Serialize the content array to JSON
+        json_content = json.dumps(content_array, ensure_ascii=False)
 
-        # Map role to appropriate event name constant
-        if role == "user":
-            event_name = GEN_AI_USER_MESSAGE_EVENT
-        elif role == "assistant":
-            event_name = GEN_AI_ASSISTANT_MESSAGE_EVENT
+        if get_use_message_events():
+            # Original event-based implementation
+            attributes = self._create_event_attributes(
+                conversation_id=conversation_id,
+                message_role=role,
+            )
+            # Store as JSON array directly without outer wrapper
+            attributes[GEN_AI_EVENT_CONTENT] = json_content
+
+            # Map role to appropriate event name constant
+            if role == "user":
+                event_name = GEN_AI_USER_MESSAGE_EVENT
+            elif role == "assistant":
+                event_name = GEN_AI_ASSISTANT_MESSAGE_EVENT
+            else:
+                # Fallback for any other roles (shouldn't happen in practice)
+                event_name = f"gen_ai.{role}.message"
+
+            span.span_instance.add_event(name=event_name, attributes=attributes)
         else:
-            # Fallback for any other roles (shouldn't happen in practice)
-            event_name = f"gen_ai.{role}.message"
+            # New attribute-based implementation
+            # Append messages to the appropriate attribute (accumulating multiple messages)
+            if role in ("user", "tool"):
+                # User and tool messages go to input.messages
+                self._append_to_message_attribute(span, GEN_AI_INPUT_MESSAGES, content_array)
+            elif role == "assistant":
+                # Assistant messages go to output.messages
+                self._append_to_message_attribute(span, GEN_AI_OUTPUT_MESSAGES, content_array)
 
-        span.span_instance.add_event(name=event_name, attributes=attributes)
 
     def _add_tool_message_events(  # pylint: disable=too-many-branches
         self,
@@ -975,17 +1026,24 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         tool_call: Dict[str, Any],
         conversation_id: Optional[str] = None,
     ) -> None:
-        """Helper to emit a single tool call event."""
+        """Helper to emit a single tool call event or attribute."""
         # Wrap tool call in parts array
         parts = [{"type": "tool_call", "content": tool_call}]
         content_array = [{"role": "assistant", "parts": parts}]
-        attributes = self._create_event_attributes(
-            conversation_id=conversation_id,
-            message_role="assistant",
-        )
-        # Store as JSON array directly without outer wrapper
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-        span.span_instance.add_event(name=GEN_AI_ASSISTANT_MESSAGE_EVENT, attributes=attributes)
+        
+        if get_use_message_events():
+            # Original event-based implementation
+            json_content = json.dumps(content_array, ensure_ascii=False)
+            attributes = self._create_event_attributes(
+                conversation_id=conversation_id,
+                message_role="assistant",
+            )
+            # Store as JSON array directly without outer wrapper
+            attributes[GEN_AI_EVENT_CONTENT] = json_content
+            span.span_instance.add_event(name=GEN_AI_ASSISTANT_MESSAGE_EVENT, attributes=attributes)
+        else:
+            # New attribute-based implementation - tool calls are output messages
+            self._append_to_message_attribute(span, GEN_AI_OUTPUT_MESSAGES, content_array)
 
     def _emit_tool_output_event(
         self,
@@ -993,19 +1051,26 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         tool_output: Dict[str, Any],
         conversation_id: Optional[str] = None,
     ) -> None:
-        """Helper to emit a single tool output event."""
+        """Helper to emit a single tool output event or attribute."""
         # Wrap tool output in parts array
         # Tool outputs are inputs TO the model (from tool execution), so use role "tool"
         parts = [{"type": "tool_call_output", "content": tool_output}]
         content_array = [{"role": "tool", "parts": parts}]
-        attributes = self._create_event_attributes(
-            conversation_id=conversation_id,
-            message_role="tool",
-        )
-        # Store as JSON array directly without outer wrapper
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-        # Tool outputs are inputs to the model, so use input.messages event
-        span.span_instance.add_event(name=GEN_AI_USER_MESSAGE_EVENT, attributes=attributes)
+        
+        if get_use_message_events():
+            # Original event-based implementation
+            json_content = json.dumps(content_array, ensure_ascii=False)
+            attributes = self._create_event_attributes(
+                conversation_id=conversation_id,
+                message_role="tool",
+            )
+            # Store as JSON array directly without outer wrapper
+            attributes[GEN_AI_EVENT_CONTENT] = json_content
+            # Tool outputs are inputs to the model, so use input.messages event
+            span.span_instance.add_event(name=GEN_AI_USER_MESSAGE_EVENT, attributes=attributes)
+        else:
+            # New attribute-based implementation - tool outputs are input messages
+            self._append_to_message_attribute(span, GEN_AI_INPUT_MESSAGES, content_array)
 
     def _add_tool_call_events(  # pylint: disable=too-many-branches
         self,
@@ -1486,10 +1551,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Build span name: agent case uses "invoke_agent", non-agent case uses "chat"
         if assistant_name:
             span_name = f"{SPAN_NAME_INVOKE_AGENT} {assistant_name}"
+            operation_name_value = OPERATION_NAME_INVOKE_AGENT
         elif model:
             span_name = f"{SPAN_NAME_CHAT} {model}"
+            operation_name_value = OPERATION_NAME_CHAT
         else:
             span_name = OperationName.RESPONSES.value
+            operation_name_value = OperationName.RESPONSES.value
 
         span = start_span(
             operation_name=OperationName.RESPONSES,
@@ -1504,7 +1572,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Set operation name attribute (start_span doesn't set this automatically)
             self._set_attributes(
                 span,
-                (GEN_AI_OPERATION_NAME, OperationName.RESPONSES.value),
+                (GEN_AI_OPERATION_NAME, operation_name_value),
             )
 
             # Set response-specific attributes that start_span doesn't handle

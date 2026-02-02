@@ -8,7 +8,13 @@ import os
 import json
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import SPAN_NAME_CHAT, SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_CHAT,
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_CHAT,
+    SPAN_NAME_INVOKE_AGENT,
+    set_use_message_events,
+)
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
@@ -38,6 +44,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_non_streaming_with_content_recording(self, **kwargs):
         """Test asynchronous non-streaming responses with content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -79,7 +86,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -169,7 +176,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -257,6 +264,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_list_conversation_items_with_content_recording(self, **kwargs):
         """Test asynchronous list_conversation_items with content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -339,6 +347,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -455,7 +464,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -494,7 +503,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -537,6 +546,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -647,7 +657,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -686,7 +696,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -727,6 +737,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -774,7 +785,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -823,6 +834,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -878,7 +890,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -927,6 +939,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -974,7 +987,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -2313,7 +2326,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -2366,6 +2379,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_responses_stream_method_with_content_recording(self, **kwargs):
         """Test async responses.stream() method with content recording enabled."""
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2405,7 +2419,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -2485,7 +2499,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -2528,6 +2542,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2616,7 +2631,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -3361,7 +3376,7 @@ trigger:
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
             ("gen_ai.provider.name", "azure.openai"),
@@ -3440,7 +3455,7 @@ trigger:
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
             ("gen_ai.provider.name", "azure.openai"),

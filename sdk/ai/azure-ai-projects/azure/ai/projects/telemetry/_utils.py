@@ -91,6 +91,10 @@ GEN_AI_CONVERSATION_ITEM_EVENT = "gen_ai.conversation.item"
 GEN_AI_SYSTEM_INSTRUCTION_EVENT = "gen_ai.system.instructions"
 GEN_AI_AGENT_WORKFLOW_EVENT = "gen_ai.agent.workflow"
 
+# Attribute names for messages (when USE_MESSAGE_EVENTS = False)
+GEN_AI_INPUT_MESSAGES = "gen_ai.input.messages"
+GEN_AI_OUTPUT_MESSAGES = "gen_ai.output.messages"
+
 # Metric names
 GEN_AI_CLIENT_OPERATION_DURATION = "gen_ai.client.operation.duration"
 GEN_AI_CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage"
@@ -106,6 +110,31 @@ AGENT_TYPE_UNKNOWN = "unknown"
 # Span name prefixes for responses API operations
 SPAN_NAME_INVOKE_AGENT = "invoke_agent"
 SPAN_NAME_CHAT = "chat"
+
+# Operation names for gen_ai.operation.name attribute
+OPERATION_NAME_INVOKE_AGENT = "invoke_agent"
+OPERATION_NAME_CHAT = "chat"
+
+# Configuration: Controls whether input/output messages are emitted as events or attributes
+# Can be set at runtime for testing purposes (internal use only)
+# Set to True for event-based, False for attribute-based (default)
+_use_message_events = False
+
+
+def get_use_message_events() -> bool:
+    """Get the current message tracing mode (events vs attributes)."""
+    return _use_message_events
+
+
+def set_use_message_events(use_events: bool) -> None:
+    """
+    Set the message tracing mode at runtime.
+    
+    Args:
+        use_events: True to use events (default), False to use attributes
+    """
+    global _use_message_events
+    _use_message_events = use_events
 
 
 class OperationName(Enum):

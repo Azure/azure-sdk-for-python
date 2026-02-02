@@ -10,7 +10,7 @@ import os
 import pytest
 from io import BytesIO
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import OPERATION_NAME_INVOKE_AGENT, SPAN_NAME_INVOKE_AGENT
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -118,7 +118,7 @@ Return Policy: 30-day return policy with no questions asked
                 span = spans[0]
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
@@ -326,7 +326,7 @@ Return Policy: 30-day return policy with no questions asked
                 span = spans[0]
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
@@ -538,7 +538,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
@@ -742,7 +742,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
