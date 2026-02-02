@@ -21,7 +21,7 @@ from azure.search.documents.indexes.models import (
     WebKnowledgeSourceParameters,
 )
 
-from azure.search.documents.knowledgebase.models import (
+from azure.search.documents.knowledgebases.models import (
     KnowledgeRetrievalMediumReasoningEffort,
     KnowledgeRetrievalMinimalReasoningEffort,
 )

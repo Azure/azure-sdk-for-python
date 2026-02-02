@@ -12,11 +12,11 @@ from devtools_testutils import AzureRecordedTestCase, get_credential
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 from azure.search.documents.indexes.models import (
     EntityLinkingSkill,
-    EntityRecognitionSkill,
+    EntityRecognitionSkillV3 as EntityRecognitionSkill,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
     SearchIndexerSkillset,
-    SentimentSkill,
+    SentimentSkillV3 as SentimentSkill,
 )
 from azure.search.documents.indexes.aio import SearchIndexerClient
 
