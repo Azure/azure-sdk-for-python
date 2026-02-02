@@ -220,7 +220,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         }
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
-        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
+        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", None)
         if self._feature_flag_selectors is None:
             self._feature_flag_selectors = [SettingSelector(key_filter="*")]
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}

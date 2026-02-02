@@ -165,7 +165,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     async def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], **kwargs
     ) -> List[FeatureFlagConfigurationSetting]:
-        loaded_feature_flags = []
+        loaded_feature_flags: List[FeatureFlagConfigurationSetting] = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
@@ -185,14 +185,9 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     tags_filter=select.tag_filters,
                     **kwargs,
                 )
-            async for feature_flag in feature_flags:
-                if isinstance(feature_flag, FeatureFlagConfigurationSetting):
-                    loaded_feature_flags.append(feature_flag)
-                if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
-                    # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
-                    # mistake, so we should ignore it, or it was loaded via snapshot.
-                    continue
-                loaded_feature_flags.append(feature_flag)
+            loaded_feature_flags.extend(
+                [ff async for ff in feature_flags if isinstance(ff, FeatureFlagConfigurationSetting)]
+            )
 
         return loaded_feature_flags
 

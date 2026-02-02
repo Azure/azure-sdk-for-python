@@ -374,8 +374,8 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                     "SnapshotOnlyFeature" in feature_flag_ids
                 ), "SnapshotOnlyFeature should be loaded as FF from snapshot"
 
-                # Verify exactly 2 feature flags are loaded (the regular ones)
-                assert len(feature_flags) == 2, f"Expected 2 feature flags, got {len(feature_flags)}"
+                # Verify exactly 1 feature flag is loaded (the snapshot-only one)
+                assert len(feature_flags) == 1, f"Expected 1 feature flag, got {len(feature_flags)}"
 
             # Modify the feature flags in the snapshot
             modified_feature_flags = [
