@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
     _DEFAULT_AAD_SCOPE,
@@ -438,3 +439,8 @@ def get_compute_type():
 
 def _get_sha256_hash(input_str: str) -> str:
     return hashlib.sha256(input_str.encode("utf-8")).hexdigest()
+
+
+def _get_application_id(connection_string: Optional[str]) -> Optional[str]:
+    parsed_connection_string = ConnectionStringParser(connection_string)
+    return parsed_connection_string.application_id

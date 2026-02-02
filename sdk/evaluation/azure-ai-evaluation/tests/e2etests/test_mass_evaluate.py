@@ -388,7 +388,8 @@ class TestMassEvaluate:
             # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
             assert len(row_result_df.keys()) >= 33
         else:
-            assert len(row_result_df.keys()) == 88
+            # 98 columns: includes evaluation_per_turn fields for all evaluators
+            assert len(row_result_df.keys()) == 98
         known_keys = [
             "outputs.content_safety.hate_unfairness",
             "outputs.content_safety.hate_unfairness_score",

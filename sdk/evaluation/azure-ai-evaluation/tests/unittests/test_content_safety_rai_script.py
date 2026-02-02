@@ -399,7 +399,7 @@ class TestContentSafetyEvaluator:
     @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
     @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
     @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
-    @patch("azure.ai.evaluation._common.rai_service.get_http_client")
+    @patch("azure.ai.evaluation._common.rai_service.get_sync_http_client_with_retry")
     async def test_evaluate_with_rai_service_sync(
         self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock, cred_mock
     ):

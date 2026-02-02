@@ -8,6 +8,7 @@ import os
 import json
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import SPAN_NAME_CHAT, SPAN_NAME_INVOKE_AGENT
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
@@ -71,7 +72,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -161,7 +162,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -447,7 +448,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
@@ -639,7 +640,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call) - no content
@@ -766,7 +767,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -870,7 +871,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -966,7 +967,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1065,7 +1066,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1135,7 +1136,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1205,7 +1206,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1275,7 +1276,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1354,7 +1355,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1428,7 +1429,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1502,7 +1503,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1576,7 +1577,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1659,7 +1660,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1737,7 +1738,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1815,7 +1816,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1893,7 +1894,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1979,7 +1980,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2061,7 +2062,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2143,7 +2144,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2225,7 +2226,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2305,7 +2306,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2397,7 +2398,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2477,7 +2478,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2608,7 +2609,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
@@ -2762,7 +2763,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span - should have events with tool call structure but no details
@@ -2877,7 +2878,7 @@ trigger:
 
         # Verify workflow action events
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -2899,30 +2900,38 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items
-        for event in list_workflow_events:
+        # Verify conversation item event content structure - check for workflow items
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # With content recording ON, action_id should be present
-            assert "action_id" in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # With content recording ON, action_id and previous_action_id should be present
+                    assert (
+                        "action_id" in part["content"]
+                    ), "action_id should be present when content recording is enabled"
+                    assert (
+                        "previous_action_id" in part["content"]
+                    ), "previous_action_id should be present when content recording is enabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -2985,7 +2994,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3007,34 +3016,45 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
             # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            assert (
+                "action_id" not in part["content"]
+            ), "action_id should not be present when content recording is disabled"
+            assert (
+                "previous_action_id" not in part["content"]
+            ), "previous_action_id should not be present when content recording is disabled"
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items (content recording OFF)
-        for event in list_workflow_events:
+        # Verify conversation item event content structure (content recording OFF)
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # action_id and previous_action_id should NOT be present when content recording is off
+                    assert (
+                        "action_id" not in part["content"]
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in part["content"]
+                    ), "previous_action_id should not be present when content recording is disabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -3102,7 +3122,7 @@ trigger:
 
         # Verify workflow action events in streaming mode
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3124,30 +3144,38 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items
-        for event in list_workflow_events:
+        # Verify conversation item event content structure - check for workflow items
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # With content recording ON, action_id should be present
-            assert "action_id" in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # With content recording ON, action_id and previous_action_id should be present
+                    assert (
+                        "action_id" in part["content"]
+                    ), "action_id should be present when content recording is enabled"
+                    assert (
+                        "previous_action_id" in part["content"]
+                    ), "previous_action_id should be present when content recording is enabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -3215,7 +3243,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3237,34 +3265,45 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
             # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            assert (
+                "action_id" not in part["content"]
+            ), "action_id should not be present when content recording is disabled"
+            assert (
+                "previous_action_id" not in part["content"]
+            ), "previous_action_id should not be present when content recording is disabled"
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items (content recording OFF)
-        for event in list_workflow_events:
+        # Verify conversation item event content structure (content recording OFF)
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # action_id and previous_action_id should NOT be present when content recording is off
+                    assert (
+                        "action_id" not in part["content"]
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in part["content"]
+                    ), "previous_action_id should not be present when content recording is disabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -3315,7 +3354,7 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes
@@ -3394,7 +3433,7 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes
