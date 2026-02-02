@@ -4,7 +4,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, protected-access
 import functools
 import hashlib
 import json
@@ -209,7 +209,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         skip_quote=True,
                     ),
                 }
-                url = self._client._client.format_url(
+                url = self._client._client.format_url( # pylint: disable=protected-access
                     url, **path_format_arguments
                 )  # pylint: disable=protected-access
                 # Construct parameters
@@ -241,7 +241,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         skip_quote=True,
                     ),
                 }
-                url = self._client._client.format_url(
+                url = self._client._client.format_url(  # pylint: disable=protected-access
                     url, **path_format_arguments
                 )  # pylint: disable=protected-access
                 request = self._client._client.get(  # pylint: disable=protected-access

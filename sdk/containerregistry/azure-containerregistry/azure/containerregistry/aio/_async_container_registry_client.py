@@ -4,7 +4,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, protected-access
 import functools
 import hashlib
 import json
