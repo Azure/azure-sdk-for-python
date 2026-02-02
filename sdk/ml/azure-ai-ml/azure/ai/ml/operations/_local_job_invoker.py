@@ -37,6 +37,16 @@ from azure.core.exceptions import AzureError
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
 
+# Trusted Azure ML execution service domain suffixes.
+# These are the only domains to which the SDK will send authentication tokens
+# for local job execution. This prevents credential theft via malicious job configs.
+_TRUSTED_EXECUTION_SERVICE_DOMAINS = (
+    ".api.azureml.ms",  # Azure public cloud
+    ".ml.azure.com",  # Azure ML portal
+    ".api.ml.azure.cn",  # Azure China cloud
+    ".api.ml.azure.us",  # Azure US Government cloud
+)
+
 
 def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: Any) -> Path:
     temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR, job_definition.name)
@@ -120,6 +130,45 @@ def invoke_command(project_temp_dir: Path) -> None:
     )
 
 
+def _is_trusted_execution_service_endpoint(url: str) -> bool:
+    """Validate that a URL belongs to a trusted Azure ML execution service domain.
+
+    This security check ensures that authentication tokens are only sent to
+    legitimate Azure ML endpoints, preventing credential theft via malicious
+    job configurations that could redirect requests to attacker-controlled servers.
+
+    :param url: The URL to validate
+    :type url: str
+    :return: True if the URL is from a trusted Azure domain, False otherwise
+    :rtype: bool
+    """
+    try:
+        parsed = urllib.parse.urlparse(url)
+        hostname = parsed.hostname
+
+        if not hostname:
+            module_logger.warning("Could not extract hostname from execution service URL: %s", url)
+            return False
+
+        hostname = hostname.lower()
+
+        # Check if the hostname ends with one of the trusted domain suffixes
+        for trusted_domain in _TRUSTED_EXECUTION_SERVICE_DOMAINS:
+            if hostname.endswith(trusted_domain):
+                return True
+
+        module_logger.warning(
+            "Execution service endpoint '%s' is not from a trusted Azure domain. Trusted domains: %s",
+            hostname,
+            ", ".join(_TRUSTED_EXECUTION_SERVICE_DOMAINS),
+        )
+        return False
+
+    except Exception as e:  # pylint: disable=broad-except
+        module_logger.warning("Failed to validate execution service endpoint URL: %s", e)
+        return False
+
+
 def get_execution_service_response(
     job_definition: JobBaseData, token: str, requests_pipeline: HttpPipeline
 ) -> Tuple[Dict[str, str], str]:
@@ -138,16 +187,37 @@ def get_execution_service_response(
     :type requests_pipeline: HttpPipeline
     :return: Execution service response and snapshot ID
     :rtype: Tuple[Dict[str, str], str]
+    :raises JobException: If the execution service endpoint is not from a trusted Azure domain
     """
     try:
         local = job_definition.properties.services.get("Local", None)
 
         (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
+
+        # SECURITY: Validate that the endpoint URL is from a trusted Azure domain
+        # before sending authentication credentials. This prevents credential theft
+        # via malicious job configurations that could point to attacker-controlled servers.
+        if not _is_trusted_execution_service_endpoint(url):
+            msg = (
+                "The local job execution service endpoint is not from a trusted Azure domain. "
+                "For security, credentials will not be sent to untrusted endpoints. "
+                "Ensure your job configuration specifies a valid Azure ML execution service URL."
+            )
+            raise JobException(
+                message=msg,
+                target=ErrorTarget.LOCAL_JOB,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         body = urllib.parse.unquote_plus(encodedBody)
         body_dict: Dict = json.loads(body)
         response = requests_pipeline.post(url, json=body_dict, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
         return (response.content, body_dict.get("SnapshotId", None))  # type: ignore[return-value]
+    except JobException:
+        # Re-raise JobException without wrapping (e.g., from endpoint validation)
+        raise
     except AzureError as err:
         raise SystemExit(err) from err
     except Exception as e:
