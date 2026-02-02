@@ -42,7 +42,7 @@ from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+from azure.ai.ml.entities._credentials import AadCredentialConfiguration, NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
@@ -107,7 +107,7 @@ def get_datastore_info(
     )
 
     try:
-        if isinstance(datastore.credentials, NoneCredentialConfiguration):
+        if isinstance(datastore.credentials, (NoneCredentialConfiguration, AadCredentialConfiguration)):
             module_logger.debug("Identity-based datastore detected. Skipping _list_secrets call")
             datastore_info["credential"] = operations._credential
         else:
