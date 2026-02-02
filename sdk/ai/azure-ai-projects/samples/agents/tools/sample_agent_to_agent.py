@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Agent-to-Agent (A2A) capabilities
-    using the A2ATool and synchronous Azure AI Projects client. The agent can communicate
+    using the A2APreviewTool and synchronous Azure AI Projects client. The agent can communicate
     with other agents and provide responses based on inter-agent interactions using the
     A2A protocol (https://a2a-protocol.org/latest/).
 
@@ -24,6 +25,9 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
+    4) A2A_ENDPOINT - (Optional) If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
+       endpoint on the tool.
+    5) A2A_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
@@ -32,7 +36,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    A2ATool,
+    A2APreviewTool,
 )
 
 load_dotenv()
@@ -46,9 +50,12 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = A2ATool(
+    tool = A2APreviewTool(
         project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
     )
+    # If the connection is missing target, we need to set the A2A endpoint URL.
+    if os.environ.get("A2A_ENDPOINT"):
+        tool.base_url = os.environ["A2A_ENDPOINT"]
     # [END tool_declaration]
 
     agent = project_client.agents.create_version(
@@ -79,9 +86,14 @@ with (
             print(f"\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             item = event.item
-            if item.type == "remote_function_call":  # TODO: support remote_function_call schema
-                print(f"Call ID: {getattr(item, 'call_id')}")
-                print(f"Label: {getattr(item, 'label')}")
+            if item.type == "a2a_preview_call":
+                print(f"Request ID: {getattr(item, 'id')}")
+                if hasattr(item, "model_extra"):
+                    extra = getattr(item, "model_extra")
+                    if isinstance(extra, dict):
+                        print(f"Arguments: {extra['arguments']}")
+            elif item.type == "a2a_preview_call_output":
+                print(f"Response ID: {getattr(item, 'id')}")
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")

@@ -108,6 +108,8 @@ with (
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 
-    # The model should be able to give a response!
-    print("Final output:")
-    print("\n" + response.output_text)
+    print(f"Agent response: {response.output_text}")
+
+    print("\nCleaning up...")
+    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+    print("Agent deleted")

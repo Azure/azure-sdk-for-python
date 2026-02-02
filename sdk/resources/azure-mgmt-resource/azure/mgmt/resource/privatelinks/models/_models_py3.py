@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from collections.abc import MutableMapping
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -82,8 +84,8 @@ class ErrorResponse(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorResponse"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class PrivateLinkAssociation(_serialization.Model):
@@ -141,7 +143,7 @@ class PrivateLinkAssociationGetResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkAssociation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkAssociation"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkAssociation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: private link association information.
         :paramtype value: list[~azure.mgmt.resource.privatelinks.models.PrivateLinkAssociation]
@@ -320,7 +322,7 @@ class ResourceManagementPrivateLinkEndpointConnections(_serialization.Model):  #
         "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[str]"},
     }
 
-    def __init__(self, *, private_endpoint_connections: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, private_endpoint_connections: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword private_endpoint_connections: The private endpoint connections.
         :paramtype private_endpoint_connections: list[str]
@@ -340,7 +342,7 @@ class ResourceManagementPrivateLinkListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ResourceManagementPrivateLink]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ResourceManagementPrivateLink"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ResourceManagementPrivateLink"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of resource management private links.
         :paramtype value: list[~azure.mgmt.resource.privatelinks.models.ResourceManagementPrivateLink]

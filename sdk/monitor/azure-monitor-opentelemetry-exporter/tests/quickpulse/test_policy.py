@@ -8,7 +8,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._policy import _Quickpulse
 
 
 class TestQuickpulseRedirectPolicy(unittest.TestCase):
-
     def test_get_redirect_location(self):
         policy = _QuickpulseRedirectPolicy()
         pipeline_resp_mock = mock.Mock()

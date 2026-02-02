@@ -300,7 +300,7 @@ class AioHttpStreamDownloadGenerator(collections.abc.AsyncIterator):
         except aiohttp.client_exceptions.ClientPayloadError as err:
             # This is the case that server closes connection before we finish the reading. aiohttp library
             # raises ClientPayloadError.
-            _LOGGER.warning("Incomplete download: %s", err)
+            _LOGGER.warning("Incomplete download.")
             internal_response.close()
             raise IncompleteReadError(err, error=err) from err
         except aiohttp.client_exceptions.ClientResponseError as err:
@@ -309,7 +309,7 @@ class AioHttpStreamDownloadGenerator(collections.abc.AsyncIterator):
             raise ServiceResponseError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
+        except Exception:
+            _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise

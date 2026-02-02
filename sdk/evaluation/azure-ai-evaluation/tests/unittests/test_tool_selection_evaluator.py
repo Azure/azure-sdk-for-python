@@ -284,3 +284,37 @@ class TestToolSelectionEvaluator:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         assert "Invalid score value" in str(exc_info.value)
+
+    def test_evaluate_tool_selection_missing_query(self, mock_model_config):
+        """Test that evaluator raises exception when query is None or missing."""
+        evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_weather",
+                "name": "get_weather",
+                "arguments": {"location": "current"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
+            }
+        ]
+
+        # Test with query=None
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=None, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)
+
+        # Test with query not provided at all
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)

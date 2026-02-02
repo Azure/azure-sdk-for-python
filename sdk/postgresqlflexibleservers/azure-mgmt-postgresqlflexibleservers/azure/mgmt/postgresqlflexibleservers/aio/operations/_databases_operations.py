@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -42,7 +42,8 @@ from ...operations._databases_operations import (
 from .._configuration import PostgreSQLManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class DatabasesOperations:
@@ -119,18 +120,24 @@ class DatabasesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -150,16 +157,17 @@ class DatabasesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
-        """Creates a new database or updates an existing database.
+        """Creates a new database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param database_name: The name of the database. Required.
+        :param database_name: Name of the database (case-sensitive). Exact database names can be
+         retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
-        :param parameters: The required parameters for creating or updating a database. Required.
+        :param parameters: Parameters required to create a new database. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Database
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -182,16 +190,17 @@ class DatabasesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
-        """Creates a new database or updates an existing database.
+        """Creates a new database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param database_name: The name of the database. Required.
+        :param database_name: Name of the database (case-sensitive). Exact database names can be
+         retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
-        :param parameters: The required parameters for creating or updating a database. Required.
+        :param parameters: Parameters required to create a new database. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -212,17 +221,18 @@ class DatabasesOperations:
         parameters: Union[_models.Database, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
-        """Creates a new database or updates an existing database.
+        """Creates a new database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param database_name: The name of the database. Required.
+        :param database_name: Name of the database (case-sensitive). Exact database names can be
+         retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
-        :param parameters: The required parameters for creating or updating a database. Is either a
-         Database type or a IO[bytes] type. Required.
+        :param parameters: Parameters required to create a new database. Is either a Database type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Database or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
@@ -317,18 +327,24 @@ class DatabasesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -341,14 +357,15 @@ class DatabasesOperations:
     async def begin_delete(
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a database.
+        """Deletes an existing database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param database_name: The name of the database. Required.
+        :param database_name: Name of the database (case-sensitive). Exact database names can be
+         retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -401,14 +418,15 @@ class DatabasesOperations:
     async def get(
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
     ) -> _models.Database:
-        """Gets information about a database.
+        """Gets information about an existing database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param database_name: The name of the database. Required.
+        :param database_name: Name of the database (case-sensitive). Exact database names can be
+         retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
         :return: Database or the result of cls(response)
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Database
@@ -448,7 +466,10 @@ class DatabasesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Database", pipeline_response.http_response)
@@ -461,8 +482,8 @@ class DatabasesOperations:
     @distributed_trace
     def list_by_server(
         self, resource_group_name: str, server_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Database"]:
-        """List all the databases in a given server.
+    ) -> AsyncItemPaged["_models.Database"]:
+        """Lists all databases in a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -478,7 +499,7 @@ class DatabasesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.DatabaseListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DatabaseList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -519,7 +540,7 @@ class DatabasesOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DatabaseListResult", pipeline_response)
+            deserialized = self._deserialize("DatabaseList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -536,7 +557,10 @@ class DatabasesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with SharePoint capabilities
-    using the SharepointAgentTool and synchronous Azure AI Projects client. The agent can search
+    using the SharepointPreviewTool and synchronous Azure AI Projects client. The agent can search
     SharePoint content and provide responses with relevant information from SharePoint sites.
 
 USAGE:
@@ -24,6 +24,7 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) SHAREPOINT_PROJECT_CONNECTION_ID - The SharePoint project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
+    4) SHAREPOINT_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
@@ -32,7 +33,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    SharepointAgentTool,
+    SharepointPreviewTool,
     SharepointGroundingToolParameters,
     ToolProjectConnection,
 )
@@ -47,7 +48,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # [START tool_declaration]
-    tool = SharepointAgentTool(
+    tool = SharepointPreviewTool(
         sharepoint_grounding_preview=SharepointGroundingToolParameters(
             project_connections=[
                 ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
@@ -67,7 +68,10 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question corresponded to the documents in SharePoint:\n")
+    # Get user input from environment variable or prompt
+    user_input = os.environ.get("SHAREPOINT_USER_INPUT")
+    if not user_input:
+        user_input = input("Enter your question corresponded to the documents in SharePoint:\n")
 
     # Send initial request that will trigger the SharePoint tool
     stream_response = openai_client.responses.create(
@@ -97,7 +101,7 @@ with (
                             )
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+            print(f"Agent response: {event.response.output_text}")
 
     print("Cleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

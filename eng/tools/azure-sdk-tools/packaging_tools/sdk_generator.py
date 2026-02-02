@@ -5,11 +5,11 @@ import argparse
 import json
 import logging
 from pathlib import Path
+import subprocess
 from subprocess import check_call
 import shutil
 import re
 import os
-from functools import partial
 import multiprocessing
 
 try:
@@ -26,8 +26,6 @@ from .swaggertosdk.SwaggerToSdkCore import (
 from .generate_sdk import generate
 from .generate_utils import (
     get_package_names,
-    generate_packaging_files,
-    update_servicemetadata,
     judge_tag_preview,
     format_samples_and_tests,
     gen_dpg,
@@ -35,8 +33,10 @@ from .generate_utils import (
     gen_typespec,
     del_outdated_generated_files,
 )
-from .conf import CONF_NAME
-from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info, check_file
+from .package_utils import create_package, check_file
+from .sdk_changelog import main as sdk_changelog_generate
+from .sdk_update_version import main as sdk_update_version
+from .sdk_update_metadata import main as sdk_update_metadata
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -110,13 +110,13 @@ def main(generate_input, generate_output):
     run_in_pipeline = data.get("runMode") is not None
     for input_type, readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
-        config = None
+        codegen_config = None
         try:
             code_generation_start_time = time.time()
             if input_type == "relatedTypeSpecProjectFolder":
                 if run_in_pipeline:
                     del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
-                config = gen_typespec(
+                codegen_config = gen_typespec(
                     readme_or_tsp,
                     spec_folder,
                     data["headSha"],
@@ -127,7 +127,7 @@ def main(generate_input, generate_output):
             elif "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
-                config = generate(
+                codegen_config = generate(
                     CONFIG_FILE,
                     sdk_folder,
                     [],
@@ -137,7 +137,9 @@ def main(generate_input, generate_output):
                     python_tag=python_tag,
                 )
             else:
-                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+                codegen_config = gen_dpg(
+                    readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder)
+                )
             _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"Fail to generate sdk for {readme_or_tsp}: {str(e)}")
@@ -145,7 +147,8 @@ def main(generate_input, generate_output):
                 "======================================= What Can I do (begin) ========================================================================",
                 f"Fail to generate sdk for {readme_or_tsp}. If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
                 "If it happens for all SDK automations, please double check your Swagger / Typespec, and check whether there is error in ModelValidation and LintDiff. ",
-                "If it happens to Python alone, you can open an issue to https://github.com/microsoft/typespec/issues. Please include the link of this Pull Request in the issue.",
+                "If it happens to Python alone, you can seek support in teams channel https://aka.ms/azsdk/support/python-teams-channel or open an issue in ",
+                "https://github.com/microsoft/typespec/issues. Please include the link of this Pull Request in the issue.",
                 "======================================= What Can I do (end) =========================================================================",
             ]:
                 _LOGGER.error(hint_message)
@@ -182,7 +185,6 @@ def main(generate_input, generate_output):
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
-                    package_entry["allowInvalidNextVersion"] = data.get("allowInvalidNextVersion", False)
                     result[package_name] = package_entry
                 else:
                     result[package_name]["path"].append(folder_name)
@@ -191,34 +193,11 @@ def main(generate_input, generate_output):
                 _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
                 continue
 
-            # Generate packaging files
-            try:
-                generate_packaging_files(package_name, folder_name)
-            except Exception as e:
-                _LOGGER.warning(f"Fail to generate packaging files for {package_name} in {readme_or_tsp}: {str(e)}")
-
             # format samples and tests
             try:
                 format_samples_and_tests(sdk_code_path)
             except Exception as e:
                 _LOGGER.warning(f"Fail to format samples and tests for {package_name} in {readme_or_tsp}: {str(e)}")
-
-            # Update metadata
-            try:
-                if config is not None:
-                    update_servicemetadata(
-                        sdk_folder,
-                        data,
-                        config,
-                        folder_name,
-                        package_name,
-                        spec_folder,
-                        readme_or_tsp,
-                    )
-                else:
-                    _LOGGER.warning(f"Skip metadata update for {package_name} as config is not available")
-            except Exception as e:
-                _LOGGER.warning(f"Fail to update meta: {str(e)}")
 
             # Setup package locally
             try:
@@ -230,52 +209,29 @@ def main(generate_input, generate_output):
                 _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Changelog generation
-            try:
-                last_version, last_stable_release = get_version_info(package_name, result[package_name]["tagIsStable"])
-                change_log_func = partial(
-                    change_log_generate,
-                    package_name,
-                    last_version,
-                    result[package_name]["tagIsStable"],
-                    last_stable_release=last_stable_release,
-                    prefolder=folder_name,
-                )
+            sdk_changelog_generate(
+                Path(sdk_code_path).absolute(),
+                enable_changelog=data.get("enableChangelog", True),
+                package_result=result[package_name],
+            )
 
-                changelog_generation_start_time = time.time()
-                try:
-                    if data.get("enableChangelog", True):
-                        md_output = execute_func_with_timeout(change_log_func)
-                    else:
-                        md_output = "skip changelog generation"
-                except multiprocessing.TimeoutError:
-                    md_output = "change log generation was timeout!!! You need to write it manually!!!"
-                except:
-                    md_output = "change log generation failed!!! You need to write it manually!!!"
-                finally:
-                    for file in ["stable.json", "current.json"]:
-                        file_path = Path(sdk_folder, folder_name, package_name, file)
-                        if file_path.exists():
-                            os.remove(file_path)
-                            _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
+            # update version in _version.py and CHANGELOG.md
+            sdk_update_version(Path(sdk_code_path).absolute(), package_result=result[package_name])
 
-                _LOGGER.info(
-                    f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds"
-                )
-                result[package_name]["changelog"] = {
-                    "content": md_output,
-                    "hasBreakingChange": "Breaking Changes" in md_output,
-                    "breakingChangeItems": extract_breaking_change(md_output),
-                }
-                result[package_name]["version"] = last_version
-
-                _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
-            except Exception as e:
-                _LOGGER.warning(f"Fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
+            # update metadata files including "_metadata.json/pyproject.toml/setup.py/dev_requirements.txt"
+            sdk_update_metadata(
+                Path(sdk_code_path).absolute(),
+                pipeline_input=data,
+                codegen_config=codegen_config,
+                spec_folder=spec_folder,
+                readme_or_tsp=readme_or_tsp,
+            )
 
             # Generate ApiView
             if data.get("runMode") in ["spec-pull-request"]:
                 apiview_start_time = time.time()
                 try:
+                    _LOGGER.info("install dependencies for apiview generation")
                     package_path = Path(sdk_folder, folder_name, package_name)
                     check_call(
                         [
@@ -295,7 +251,16 @@ def main(generate_input, generate_output):
                     cross_language_mapping_path = Path(package_path, "apiview-properties.json")
                     if cross_language_mapping_path.exists():
                         cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
-                    check_call(cmds, cwd=package_path, timeout=600)
+
+                    _LOGGER.info(f"generate apiview file for package {package_name}")
+                    check_call(
+                        cmds,
+                        cwd=package_path,
+                        timeout=600,
+                        # known issue that higher python version meet install warning with lower pylint.
+                        # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
+                        stderr=subprocess.DEVNULL,
+                    )
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:
                             result[package_name]["apiViewArtifact"] = str(Path(package_path, file))

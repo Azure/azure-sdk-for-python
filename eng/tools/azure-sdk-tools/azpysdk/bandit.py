@@ -11,6 +11,8 @@ from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.logging import logger
 from ci_tools.functions import install_into_venv, get_pip_command
 
+BANDIT_VERSION = "1.6.2"
+
 
 class bandit(Check):
     def __init__(self) -> None:
@@ -44,9 +46,10 @@ class bandit(Check):
             self.install_dev_reqs(executable, args, package_dir)
 
             try:
-                install_into_venv(executable, ["bandit"], package_dir)
+                # pbr is required by the pinned version of bandit
+                install_into_venv(executable, [f"bandit=={BANDIT_VERSION}", "pbr"], package_dir)
             except CalledProcessError as e:
-                logger.error(f"Failed to install bandit: {e}")
+                logger.error(f"Failed to install bandit and dependencies: {e}")
                 return e.returncode
 
             self.pip_freeze(executable)

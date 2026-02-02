@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with OpenAPI tool capabilities
-    using the OpenApiAgentTool with project connection authentication. The agent can
+    using the OpenApiTool with project connection authentication. The agent can
     call external APIs defined by OpenAPI specifications, using credentials stored in
     an Azure AI Project connection.
 
@@ -34,10 +34,8 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    OpenApiAgentTool,
+    OpenApiTool,
     OpenApiFunctionDefinition,
-    OpenApiAnonymousAuthDetails,
-    OpenApiManagedAuthDetails,
     OpenApiProjectConnectionAuthDetails,
     OpenApiProjectConnectionSecurityScheme,
 )
@@ -60,7 +58,7 @@ with (
     with open(tripadvisor_asset_file_path, "r") as f:
         openapi_tripadvisor = jsonref.loads(f.read())
 
-    tool = OpenApiAgentTool(
+    tool = OpenApiTool(
         openapi=OpenApiFunctionDefinition(
             name="tripadvisor",
             spec=openapi_tripadvisor,
@@ -88,7 +86,8 @@ with (
         input="Recommend me 5 top hotels in paris, France",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
-    print(f"Response created: {response.output_text}")
+    # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
+    print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

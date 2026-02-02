@@ -50,6 +50,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "avsDataStore": "str",
                     "backupId": "str",
                     "baremetalTenantId": "str",
+                    "breakthroughMode": "str",
                     "capacityPoolResourceId": "str",
                     "cloneProgress": 0,
                     "coolAccess": bool,
@@ -58,11 +59,19 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "coolnessPeriod": 0,
                     "dataProtection": {
                         "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
+                        "ransomwareProtection": {
+                            "actualRansomwareProtectionState": "str",
+                            "desiredRansomwareProtectionState": "str",
+                        },
                         "replication": {
                             "destinationReplications": [
                                 {"region": "str", "replicationType": "str", "resourceId": "str", "zone": "str"}
                             ],
                             "endpointType": "str",
+                            "externalReplicationSetupInfo": "str",
+                            "externalReplicationSetupStatus": "str",
+                            "mirrorState": "str",
+                            "relationshipStatus": "str",
                             "remotePath": {"externalHostName": "str", "serverName": "str", "volumeName": "str"},
                             "remoteVolumeRegion": "str",
                             "remoteVolumeResourceId": "str",
@@ -109,7 +118,10 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "isRestoring": bool,
                     "kerberosEnabled": bool,
                     "keyVaultPrivateEndpointResourceId": "str",
+                    "language": "str",
+                    "largeVolumeType": "str",
                     "ldapEnabled": bool,
+                    "ldapServerType": "str",
                     "maximumNumberOfFiles": 0,
                     "mountTargets": [
                         {"fileSystemId": "str", "ipAddress": "str", "mountTargetId": "str", "smbServerFqdn": "str"}
@@ -177,6 +189,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "coolnessPeriod": 0,
                     "dataProtection": {
                         "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
+                        "ransomwareProtection": {"desiredRansomwareProtectionState": "str"},
                         "snapshot": {"snapshotPolicyId": "str"},
                     },
                     "defaultGroupQuotaInKiBs": 0,
@@ -528,6 +541,19 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_volumes_begin_revert_relocation(self, resource_group):
         response = self.client.volumes.begin_revert_relocation(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            pool_name="str",
+            volume_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_volumes_begin_list_quota_report(self, resource_group):
+        response = self.client.volumes.begin_list_quota_report(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",

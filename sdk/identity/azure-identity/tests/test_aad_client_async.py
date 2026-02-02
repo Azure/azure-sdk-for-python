@@ -14,7 +14,7 @@ from msal import TokenCache
 import pytest
 
 from helpers import build_aad_response, mock_response
-from helpers_async import get_completed_future
+from helpers_async import get_completed_future, AsyncMockTransport
 from test_certificate_credential import PEM_CERT_PATH
 
 pytestmark = pytest.mark.asyncio

@@ -11,7 +11,6 @@ from azure.monitor.opentelemetry.exporter.export.trace._sampling import (
 
 # pylint: disable=protected-access
 class TestApplicationInsightsSampler(unittest.TestCase):
-
     def test_constructor(self):
         sampler = ApplicationInsightsSampler()
         self.assertEqual(sampler._ratio, 1.0)

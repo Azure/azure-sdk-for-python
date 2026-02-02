@@ -60,4 +60,5 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
 def _get_process_time_normalized(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(_get_quickpulse_last_process_cpu(), {})
 
+
 # cSpell:enable

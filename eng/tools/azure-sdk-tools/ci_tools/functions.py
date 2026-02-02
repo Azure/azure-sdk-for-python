@@ -92,6 +92,13 @@ omit_function_dict = {
 
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    """
+    Unzips a zip or tar.gz file to a given location.
+
+    :param path_to_zip_file: The path to the zip or tar.gz file.
+    :param extract_location: The directory where the contents will be extracted.
+    :return: The path to the directory where the archive was extracted.
+    """
     if path_to_zip_file.endswith(".zip"):
         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
             zip_ref.extractall(extract_location)
@@ -512,7 +519,7 @@ def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
-    # we do not use get_pip_command here because uv pip doesn't have an uninstall command
+    # use uninstall_from_venv() for uv venvs
     exe = python_executable or sys.executable
     command = [exe, "-m", "pip", "uninstall", "-y"]
 
@@ -558,7 +565,27 @@ def install_into_venv(venv_path_or_executable: str, requirements: List[str], wor
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
+
     # todo: clean this up so that we're using run_logged from #42862
+    subprocess.check_call(cmd, cwd=working_directory)
+
+
+def uninstall_from_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
+    """
+    Uninstalls the requirements from an existing venv (venv_path) without activating it.
+    """
+    py = get_venv_python(venv_path_or_executable)
+    pip_cmd = get_pip_command(py)
+
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["uninstall"]
+    if pip_cmd[0] != "uv":
+        cmd += ["-y"]
+    cmd.extend(install_targets)
+
+    if pip_cmd[0] == "uv":
+        cmd += ["--python", py]
+
     subprocess.check_call(cmd, cwd=working_directory)
 
 
@@ -566,8 +593,8 @@ def pip_install_requirements_file(requirements_file: str, python_executable: Opt
     return pip_install(["-r", requirements_file], True, python_executable)
 
 
-def get_pip_list_output(python_executable: Optional[str] = None):
-    """Uses the invoking python executable to get the output from pip list."""
+def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
+    """Uses the invoking python executable to get the output from pip freeze."""
     exe = python_executable or sys.executable
 
     pip_cmd = get_pip_command(exe)
@@ -580,16 +607,27 @@ def get_pip_list_output(python_executable: Optional[str] = None):
 
     stdout, stderr = out.communicate()
 
-    collected_output = {}
+    collected_output = []
 
     if stdout and (stderr is None):
-        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
-        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
+        for line in stdout.decode("utf-8").split(os.linesep):
             if line:
-                package, version = re.split("==", line)
-                collected_output[package] = version
+                collected_output.append(line)
     else:
         raise Exception(stderr)
+
+    return collected_output
+
+
+def get_pip_list_output(python_executable: Optional[str] = None):
+    """Uses the invoking python executable to get the output from pip list."""
+    pip_output = run_pip_freeze(python_executable)
+
+    collected_output = {}
+    for line in pip_output:
+        if "==" in line:
+            package, version = re.split("==", line)
+            collected_output[package] = version
 
     return collected_output
 

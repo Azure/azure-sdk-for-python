@@ -63,3 +63,7 @@ dev = [
     "parameterized>=0.7.3",
     "python-dateutil>=2.8.0",
 ]
+
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-keyvault"

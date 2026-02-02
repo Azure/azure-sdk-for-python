@@ -24,7 +24,6 @@ MESSAGE2 = "MESSAGE2"
 
 
 def set_up(file_path, is_diagnostics_enabled=True):
-
     patch(
         "azure.monitor.opentelemetry._diagnostics.status_logger._STATUS_LOG_PATH",
         file_path,
@@ -92,7 +91,6 @@ def check_file_is_empty(file_path):
 
 
 class TestStatusLogger:
-
     def test_log_status_success(self, temp_file_path):
         set_up(temp_file_path, is_diagnostics_enabled=True)
         AzureStatusLogger.log_status(False, MESSAGE1)

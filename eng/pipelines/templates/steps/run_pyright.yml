@@ -11,27 +11,31 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Pyright'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
-        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="pyright"
+        --check="pyright"
         --disable-compatibility-filter
-        --disablecov
         ${{ parameters.AdditionalTestArgs }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
 
   - task: PythonScript@0
     displayName: 'Run verifytypes'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
-        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="verifytypes"
+        --check="verifytypes"
         --disable-compatibility-filter
-        --disablecov
         ${{ parameters.AdditionalTestArgs }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))

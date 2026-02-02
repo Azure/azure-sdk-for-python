@@ -24,7 +24,7 @@ class TestContainerServicePrivateLinkResourcesOperations(AzureMgmtRecordedTestCa
         response = self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-10-01",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself

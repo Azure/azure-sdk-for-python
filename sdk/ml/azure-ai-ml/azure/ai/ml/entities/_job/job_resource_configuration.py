@@ -137,7 +137,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self.shm_size = shm_size
         self.max_instance_count = max_instance_count
         self.docker_args = docker_args
-        self._properties = None
+        self._properties: Optional[Properties] = None
         self.properties = properties
 
     @property
@@ -149,11 +149,11 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         return self._properties
 
     @properties.setter
-    def properties(self, properties: Dict[str, Any]) -> None:
+    def properties(self, properties: Optional[Dict[str, Any]]) -> None:
         """Sets the properties of the job.
 
         :param properties: A dictionary of properties for the job.
-        :type properties: Dict[str, Any]
+        :type properties: Optional[Dict[str, Any]]
         :raises TypeError: Raised if properties is not a dictionary type.
         """
         if properties is None:

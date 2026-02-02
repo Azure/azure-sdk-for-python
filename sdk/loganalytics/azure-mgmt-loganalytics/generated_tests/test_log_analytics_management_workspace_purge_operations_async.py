@@ -21,12 +21,12 @@ class TestLogAnalyticsManagementWorkspacePurgeOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_purge(self, resource_group):
+    async def test_workspace_purge_purge(self, resource_group):
         response = await self.client.workspace_purge.purge(
             resource_group_name=resource_group.name,
             workspace_name="str",
             body={"filters": [{"column": "str", "key": "str", "operator": "str", "value": {}}], "table": "str"},
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestLogAnalyticsManagementWorkspacePurgeOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_purge_status(self, resource_group):
+    async def test_workspace_purge_get_purge_status(self, resource_group):
         response = await self.client.workspace_purge.get_purge_status(
             resource_group_name=resource_group.name,
             workspace_name="str",
             purge_id="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

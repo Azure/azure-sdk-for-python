@@ -28,9 +28,9 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the Agent's AI model,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory,
+    3) MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
-    4) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory,
+    4) MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -42,7 +42,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
-    MemorySearchTool,
+    MemorySearchPreviewTool,
     PromptAgentDefinition,
     MemoryStoreDefaultOptions,
 )
@@ -70,8 +70,8 @@ async def main() -> None:
 
         # Create a memory store
         definition = MemoryStoreDefaultDefinition(
-            chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
-            embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
+            chat_model=os.environ["MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"],
+            embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
             options=MemoryStoreDefaultOptions(
                 user_profile_enabled=True, chat_summary_enabled=True
             ),  # Note: This line will not be needed once the service is fixed to use correct defaults
@@ -94,7 +94,7 @@ async def main() -> None:
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="You are a helpful assistant that answers general questions",
                 tools=[
-                    MemorySearchTool(
+                    MemorySearchPreviewTool(
                         memory_store_name=memory_store.name,
                         scope=scope,
                         update_delay=1,  # Wait 1 second of inactivity before updating memories

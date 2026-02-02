@@ -101,7 +101,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         return self._transformer_params
 
     @transformer_params.setter
-    def transformer_params(self, value: Dict[str, List[ColumnTransformer]]) -> None:
+    def transformer_params(self, value: Optional[Dict[str, List[ColumnTransformer]]]) -> None:
         self._transformer_params = (
             None
             if not value
@@ -114,7 +114,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         return self._blocked_transformers
 
     @blocked_transformers.setter
-    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]) -> None:
+    def blocked_transformers(self, blocked_transformers_list: Optional[List[Union[BlockedTransformers, str]]]) -> None:
         self._blocked_transformers = (
             None
             if blocked_transformers_list is None

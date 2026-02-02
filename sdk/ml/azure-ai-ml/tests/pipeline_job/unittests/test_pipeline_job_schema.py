@@ -1428,6 +1428,11 @@ class TestPipelineJobSchema:
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
         )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        # Prevent token refresh check which fails on Windows with Mock credentials
+        mocker.patch(
+            "azure.mgmt.core.policies._authentication.ARMChallengeAuthenticationPolicy._need_new_token",
+            return_value=False,
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline)
 
         automl_job = pipeline.jobs[job_key]

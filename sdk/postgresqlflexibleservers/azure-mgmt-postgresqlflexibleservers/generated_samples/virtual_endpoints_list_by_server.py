@@ -32,13 +32,13 @@ def main():
     )
 
     response = client.virtual_endpoints.list_by_server(
-        resource_group_name="testrg",
-        server_name="pgtestsvc4",
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/VirtualEndpointsListByServer.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/VirtualEndpointsListByServer.json
 if __name__ == "__main__":
     main()

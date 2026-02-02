@@ -654,6 +654,10 @@ class Model(_MyMutableMapping):
                 if not rf._rest_name_input:
                     rf._rest_name_input = attr
             cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
+            cls._backcompat_attr_to_rest_field: typing.Dict[str, _RestField] = {
+                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
+                for attr, rf in cls._attr_to_rest_field.items()
+            }
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
         return super().__new__(cls)
@@ -662,6 +666,16 @@ class Model(_MyMutableMapping):
         for base in cls.__bases__:
             if hasattr(base, "__mapping__"):
                 base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore
+
+    @classmethod
+    def _get_backcompat_attribute_name(cls, _attr_to_rest_field: typing.Dict[str, "_RestField"], attr_name: str) -> str:
+        rest_field = _attr_to_rest_field.get(attr_name)  # pylint: disable=protected-access
+        if rest_field is None:
+            return attr_name
+        original_tsp_name = getattr(rest_field, "_original_tsp_name", None)  # pylint: disable=protected-access
+        if original_tsp_name:
+            return original_tsp_name
+        return attr_name
 
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional["_RestField"]:
@@ -998,6 +1012,7 @@ class _RestField:
         format: typing.Optional[str] = None,
         is_multipart_file_input: bool = False,
         xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        original_tsp_name: typing.Optional[str] = None,
     ):
         self._type = type
         self._rest_name_input = name
@@ -1009,6 +1024,7 @@ class _RestField:
         self._format = format
         self._is_multipart_file_input = is_multipart_file_input
         self._xml = xml if xml is not None else {}
+        self._original_tsp_name = original_tsp_name
 
     @property
     def _class_type(self) -> typing.Any:
@@ -1060,6 +1076,7 @@ def rest_field(
     format: typing.Optional[str] = None,
     is_multipart_file_input: bool = False,
     xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    original_tsp_name: typing.Optional[str] = None,
 ) -> typing.Any:
     return _RestField(
         name=name,
@@ -1069,6 +1086,7 @@ def rest_field(
         format=format,
         is_multipart_file_input=is_multipart_file_input,
         xml=xml,
+        original_tsp_name=original_tsp_name,
     )
 
 

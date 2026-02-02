@@ -20,18 +20,17 @@ from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
 
 
 class TestFilter(unittest.TestCase):
-
-    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._filter._parse_document_filter_configuration')
-    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._filter._clear_quickpulse_projection_map')
-    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._filter._parse_metric_filter_configuration')
-    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._filter._set_quickpulse_etag')
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._parse_document_filter_configuration")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._clear_quickpulse_projection_map")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._parse_metric_filter_configuration")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._set_quickpulse_etag")
     def test_update_filter_configuration(self, mock_set_etag, mock_parse_metric, mock_clear_projection, mock_parse_doc):
         etag = "new_etag"
         config = {"key": "value"}
         config_bytes = json.dumps(config).encode("utf-8")
-        
+
         _update_filter_configuration(etag, config_bytes)
-        
+
         mock_clear_projection.assert_called_once()
         mock_parse_metric.assert_called_once_with(config)
         mock_parse_doc.assert_called_once_with(config)
@@ -43,7 +42,7 @@ class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_derived_metric_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DerivedMetricInfo")
     def test_parse_metric_filter_configuration(
-        self, dict_mock, validate_mock, rename_mock,  init_projection_mock, set_metric_info_mock
+        self, dict_mock, validate_mock, rename_mock, init_projection_mock, set_metric_info_mock
     ):
         test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
         test_config_dict = json.loads(test_config_bytes.decode())
@@ -68,7 +67,7 @@ class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_derived_metric_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DerivedMetricInfo")
     def test_parse_metric_filter_configuration_invalid(
-        self, dict_mock, validate_mock, rename_mock,  init_projection_mock, set_metric_info_mock
+        self, dict_mock, validate_mock, rename_mock, init_projection_mock, set_metric_info_mock
     ):
         test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
         test_config_dict = json.loads(test_config_bytes.decode())
@@ -88,9 +87,7 @@ class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_document_filter_group_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DocumentStreamInfo")
-    def test_parse_doc_filter_configuration(
-        self, dict_mock, validate_mock, rename_mock, set_doc_info_mock
-    ):
+    def test_parse_doc_filter_configuration(self, dict_mock, validate_mock, rename_mock, set_doc_info_mock):
         test_config_bytes = '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, { "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, { "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, { "TelemetryType": "Exception", "Filters": { "Filters": [] } }, { "TelemetryType": "Event", "Filters": { "Filters": [] } }, { "TelemetryType": "Trace", "Filters": { "Filters": [] } }, { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}'.encode()
         test_config_dict = json.loads(test_config_bytes.decode())
         doc_stream_mock = mock.Mock()
@@ -105,9 +102,7 @@ class TestFilter(unittest.TestCase):
         validate_mock.assert_called_once_with(filter_group_mock)
         rename_mock.assert_called_once_with(filter_group_mock.filters)
         doc_infos = {}
-        doc_infos_inner = {
-            "26a.7cf471b0": [filter_group_mock.filters]
-        }
+        doc_infos_inner = {"26a.7cf471b0": [filter_group_mock.filters]}
         doc_infos[TelemetryType.REQUEST] = doc_infos_inner
         set_doc_info_mock.assert_called_once_with(doc_infos)
 
@@ -115,9 +110,7 @@ class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._rename_exception_fields_for_filtering")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._validate_document_filter_group_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter.DocumentStreamInfo")
-    def test_parse_doc_filter_configuration_invalid(
-        self, dict_mock, validate_mock, rename_mock, set_doc_info_mock
-    ):
+    def test_parse_doc_filter_configuration_invalid(self, dict_mock, validate_mock, rename_mock, set_doc_info_mock):
         test_config_bytes = '{"DocumentStreams": [ { "Id": "26a.7cf471b0", "DocumentFilterGroups": [ { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" }, { "FieldName": "Url", "Predicate": "Contains", "Comparand": "privacy" } ] } }, { "TelemetryType": "Dependency", "Filters": { "Filters": [ { "FieldName": "Success", "Predicate": "Equal", "Comparand": "true" } ] } }, { "TelemetryType": "Exception", "Filters": { "Filters": [] } }, { "TelemetryType": "Event", "Filters": { "Filters": [] } }, { "TelemetryType": "Trace", "Filters": { "Filters": [] } }, { "TelemetryType": "Request", "Filters": { "Filters": [ { "FieldName": "Duration", "Predicate": "LessThan", "Comparand": "0.0:0:0.015" } ] } } ] } ]}'.encode()
         test_config_dict = json.loads(test_config_bytes.decode())
         doc_stream_mock = mock.Mock()

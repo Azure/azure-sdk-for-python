@@ -15,7 +15,7 @@ from ci_tools.scenario.generation import create_package_and_install
 
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.391"
+PYRIGHT_VERSION = "1.1.405"
 REPO_ROOT = discover_repo_root()
 
 
@@ -134,8 +134,11 @@ class pyright(Check):
             commands.extend(paths)
 
             try:
-                check_call(commands)
+                self.run_venv_command(executable, commands[1:], package_dir, check=True)
+                logger.info(f"Pyright check passed for {package_name}.")
             except CalledProcessError as error:
+                logger.error("Pyright reported issues:")
+                logger.error(error.stdout)
                 if (
                     args.next
                     and in_ci()

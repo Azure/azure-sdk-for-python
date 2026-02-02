@@ -20,7 +20,7 @@ class SparkJobEntryMixin:
     )
 
     def __init__(self, **kwargs: Any):
-        self._entry = None
+        self._entry: Optional[Union[Dict[str, str], SparkJobEntry]] = None
         self.entry = kwargs.get("entry", None)
 
     @property

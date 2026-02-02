@@ -459,6 +459,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/VolumeGroups_Create_Oracle.json
+# x-ms-original-file: 2025-09-01-preview/VolumeGroups_Create_Oracle.json
 if __name__ == "__main__":
     main()

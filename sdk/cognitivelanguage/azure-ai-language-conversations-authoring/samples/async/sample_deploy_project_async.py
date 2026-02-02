@@ -9,6 +9,14 @@ FILE: sample_deploy_project_async.py
 DESCRIPTION:
     This sample demonstrates how to deploy a trained model to a deployment slot
     in a Conversation Authoring project (async).
+
+    NOTE ABOUT API VERSIONS:
+      - In the 2025-11-01 GA service version:
+          * `azureResourceIds` is a list of strings (resource IDs).
+      - In the 2025-11-15-preview service version:
+          * `azureResourceIds` is a list of AssignedProjectResource objects
+            (includes resource ID, region, and optional data-generation settings).
+
 USAGE:
     python sample_deploy_project_async.py
 
@@ -35,24 +43,74 @@ import asyncio
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import CreateDeploymentDetails
+from azure.ai.language.conversations.authoring.models import (
+    CreateDeploymentDetails,
+    AssignedProjectResource,
+    # DataGenerationConnectionInfo,  # uncomment if you need AOAI data generation settings
+)
 
 
 async def sample_deploy_project_async():
-    # settings
+    # Settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
     deployment_name = os.environ.get("DEPLOYMENT_NAME", "<deployment-name>")
     trained_model_label = os.environ.get("TRAINED_MODEL", "<trained-model-label>")
 
     credential = DefaultAzureCredential()
+
+    # 1) 2025-11-01 GA:
+    # async with ConversationAuthoringClient(
+    #     endpoint,
+    #     credential=credential,
+    #     api_version="2025-11-01",
+    # ) as client:
+
+    # 2) 2025-11-15-preview (current default):
     async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
-        # build deployment request
+        # Minimal request (works for both versions).
         details = CreateDeploymentDetails(trained_model_label=trained_model_label)
 
-        # start deploy (async long-running operation)
+        # --- Example for 2025-11-01 GA: azureResourceIds as list[str] ----------------
+        #
+        # azure_resource_ids = [
+        #     "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/"
+        #     "providers/Microsoft.CognitiveServices/accounts/<language-or-ai-account-name>",
+        #     "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/"
+        #     "providers/Microsoft.CognitiveServices/accounts/<another-account-name>",
+        # ]
+        #
+        # details = CreateDeploymentDetails(
+        #     trained_model_label=trained_model_label,
+        #     azure_resource_ids=azure_resource_ids,
+        # )
+
+        # --- Example for 2025-11-15-preview: azureResourceIds as AssignedProjectResource --
+        #
+        # assigned_resource = AssignedProjectResource(
+        #     resource_id=(
+        #         "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/"
+        #         "providers/Microsoft.CognitiveServices/accounts/<language-or-ai-account-name>"
+        #     ),
+        #     region="<region-name>",  # e.g. "westus2"
+        #     # assigned_aoai_resource=DataGenerationConnectionInfo(
+        #     #     kind="AzureOpenAI",
+        #     #     deployment_name="<aoai-deployment-name>",
+        #     #     resource_id=(
+        #     #         "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/"
+        #     #         "providers/Microsoft.CognitiveServices/accounts/<aoai-account-name>"
+        #     #     ),
+        #     # ),
+        # )
+        #
+        # details = CreateDeploymentDetails(
+        #     trained_model_label=trained_model_label,
+        #     azure_resource_ids=[assigned_resource],
+        # )
+
+        # Start deploy
         poller = await project_client.deployment.begin_deploy_project(
             deployment_name=deployment_name,
             body=details,

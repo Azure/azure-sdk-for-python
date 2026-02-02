@@ -49,8 +49,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=self.use_multiple_write_locations)
         await self.client.__aenter__()
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
-        if self.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     async def asyncTearDown(self):
         await self.client.close()

@@ -23,8 +23,8 @@ class TestContainerAppAgents(TestBase):
     )
     def test_container_app_agent(self, **kwargs):
 
-        container_app_resource_id = kwargs.pop("azure_ai_projects_tests_container_app_resource_id")
-        ingress_subdomain_suffix = kwargs.pop("azure_ai_projects_tests_container_ingress_subdomain_suffix")
+        container_app_resource_id = kwargs.pop("container_app_resource_id")
+        ingress_subdomain_suffix = kwargs.pop("container_ingress_subdomain_suffix")
 
         projects_client = self.create_client(operation_group="container", **kwargs)
         openai_client = projects_client.get_openai_client()

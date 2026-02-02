@@ -12,6 +12,7 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Union
 
+from azure.core.credentials import TokenCredential
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
@@ -36,6 +37,63 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
+
+
+def check_default_deployment_template(deployment: Deployment, credential: Optional[TokenCredential]) -> None:
+    """Check if a registry model has a default deployment template and log if found.
+
+    :param Deployment deployment: Endpoint deployment object.
+    :param credential: Credential for registry operations.
+    :type credential: Optional[TokenCredential]
+    """
+    if not (credential and deployment.model and is_registry_id_for_resource(deployment.model)):
+        return
+
+    try:
+        import re
+        from azure.ai.ml.constants._common import REGISTRY_VERSION_PATTERN
+        from azure.ai.ml.entities._assets._artifacts.model import Model
+        from azure.ai.ml._utils._registry_utils import get_registry_client
+
+        match = re.match(REGISTRY_VERSION_PATTERN, deployment.model, re.IGNORECASE)
+        if not match:
+            return
+
+        registry_name = match.group(1)
+        model_name = match.group(3)
+        model_version = match.group(4)
+
+        try:
+            service_client, resource_group_name, _, _ = get_registry_client(
+                credential=credential,
+                registry_name=registry_name,
+            )
+
+            model_version_data = service_client.model_versions.get(
+                name=model_name,
+                version=model_version,
+                registry_name=registry_name,
+                resource_group_name=resource_group_name,
+            )
+
+            model = Model._from_rest_object(model_version_data)
+
+            if hasattr(model, "default_deployment_template") and model.default_deployment_template:
+                module_logger.info(
+                    "\nModel '%s' (version %s) from registry '%s' has a "
+                    "default deployment template configured.\n"
+                    "The deployment will use the default deployment template settings, "
+                    "and some deployment parameters may be ignored.\n"
+                    "Default deployment template: %s\n",
+                    model_name,
+                    model_version,
+                    registry_name,
+                    model.default_deployment_template.asset_id,
+                )
+        except Exception:  # pylint: disable=broad-except
+            pass
+    except Exception:  # pylint: disable=broad-except
+        pass
 
 
 def get_duration(start_time: float) -> None:
@@ -134,11 +192,15 @@ def validate_response(response: HttpResponse) -> None:
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
 
 
-def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
+def upload_dependencies(
+    deployment: Deployment, orchestrators: OperationOrchestrator, credential: Optional[TokenCredential] = None
+) -> None:
     """Upload code, dependency, model dependencies. For BatchDeployment only register compute.
 
     :param Deployment deployment: Endpoint deployment object.
     :param OperationOrchestrator orchestrators: Operation Orchestrator.
+    :param credential: Optional credential for registry operations.
+    :type credential: Optional[TokenCredential]
     """
 
     module_logger.debug("Uploading the dependencies for deployment %s", deployment.name)
@@ -166,6 +228,9 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             if deployment.environment
             else None
         )
+
+    check_default_deployment_template(deployment, credential)
+
     if not is_registry_id_for_resource(deployment.model):
         deployment.model = (
             orchestrators.get_asset_arm_id(deployment.model, azureml_type=AzureMLResourceType.MODEL)

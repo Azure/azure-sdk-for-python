@@ -8,12 +8,11 @@
 # example snippets, take into consideration how this might affect
 # the readability and usability of the reference documentation.
 
+import os
+
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
-from typing import Dict, Any
-
-import os
 
 url = os.environ["ACCOUNT_URI"]
 key = os.environ["ACCOUNT_KEY"]
@@ -361,3 +360,21 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0])
 for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
     print(json.dumps(queried_item, indent=True))
 # [END query_items_change_feed_from_beginning]
+
+# configure availability strategy config on request level
+# [START read_item_with_availability_strategy_config]
+strategy = {'threshold_ms':500, 'threshold_steps_ms':100}
+container.read_item(
+    item="id1",
+    partition_key="pk1",
+    availability_strategy_config=strategy)
+# [END read_item_with_availability_strategy_config]
+
+# disable availability strategy config on request level
+# [START read_item_with_disabled_availability_strategy_config]
+container.read_item(
+    item="id1",
+    partition_key="pk1",
+    availability_strategy_config=None
+)
+# [END read_item_with_disabled_availability_strategy_config]

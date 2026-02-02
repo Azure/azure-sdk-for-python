@@ -26,13 +26,13 @@ class TestQuickpulseLogRecordProcessor(unittest.TestCase):
     def test_emit(self, mock_get_manager):
         mock_manager = mock.Mock()
         mock_get_manager.return_value = mock_manager
-        
+
         processor = _QuickpulseLogRecordProcessor()
-        log_data = mock.Mock()
-        processor.on_emit(log_data)
-        
+        readable_log_record = mock.Mock()
+        processor.on_emit(readable_log_record)
+
         mock_get_manager.assert_called_once()
-        mock_manager._record_log_record.assert_called_once_with(log_data)
+        mock_manager._record_log_record.assert_called_once_with(readable_log_record)
 
 
 class TestQuickpulseSpanProcessor(unittest.TestCase):
@@ -56,4 +56,3 @@ class TestQuickpulseSpanProcessor(unittest.TestCase):
         span = mock.Mock()
         processor.on_end(span)
         mock_manager._record_span.assert_called_once_with(span)
-

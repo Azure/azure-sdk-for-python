@@ -245,7 +245,7 @@ class TestConvertDictToDeploymentTemplate(unittest.TestCase):
             "name": "test-template",
             "version": "1.0",
             "environmentId": "azureml:test-env:1",
-            "allowedInstanceType": ["Standard_DS2_v2", "Standard_DS3_v2"],
+            "allowedInstanceTypes": ["Standard_DS2_v2", "Standard_DS3_v2"],
             "defaultInstanceType": "Standard_DS2_v2",
             "deploymentTemplateType": "model_deployment",
             "instanceCount": "5",
@@ -254,7 +254,7 @@ class TestConvertDictToDeploymentTemplate(unittest.TestCase):
         result = self.ops._convert_dict_to_deployment_template(dict_data)
 
         self.assertEqual(result.environment, "azureml:test-env:1")
-        self.assertEqual(result.allowed_instance_type, ["Standard_DS2_v2", "Standard_DS3_v2"])
+        self.assertEqual(result.allowed_instance_types, ["Standard_DS2_v2", "Standard_DS3_v2"])
         self.assertEqual(result.default_instance_type, "Standard_DS2_v2")
         self.assertEqual(result.deployment_template_type, "model_deployment")
         self.assertEqual(result.instance_count, 5)

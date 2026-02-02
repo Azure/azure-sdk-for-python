@@ -18,8 +18,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
 )
 
 __all__ = [
-    'StatsbeatConfig',
-    'StatsbeatManager', 
-    'collect_statsbeat_metrics',
-    'shutdown_statsbeat_metrics',
+    "StatsbeatConfig",
+    "StatsbeatManager",
+    "collect_statsbeat_metrics",
+    "shutdown_statsbeat_metrics",
 ]

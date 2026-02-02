@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with OpenAPI tool capabilities
-    using the OpenApiAgentTool and synchronous Azure AI Projects client. The agent can
+    using the OpenApiTool and synchronous Azure AI Projects client. The agent can
     call external APIs defined by OpenAPI specifications.
 
 USAGE:
@@ -31,7 +31,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    OpenApiAgentTool,
+    OpenApiTool,
     OpenApiFunctionDefinition,
     OpenApiAnonymousAuthDetails,
 )
@@ -52,11 +52,11 @@ with (
     with open(weather_asset_file_path, "r") as f:
         openapi_weather = jsonref.loads(f.read())
 
-    tool = OpenApiAgentTool(
+    tool = OpenApiTool(
         openapi=OpenApiFunctionDefinition(
             name="get_weather",
             spec=openapi_weather,
-            description="Retrieve weather information for a location",
+            description="Retrieve weather information for a location.",
             auth=OpenApiAnonymousAuthDetails(),
         )
     )
@@ -73,10 +73,10 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="What is the name and population of the country that uses currency with abbreviation THB?",
+        input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
-    print(f"Response created: {response.output_text}")
+    print(f"Agent response: {response.output_text}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

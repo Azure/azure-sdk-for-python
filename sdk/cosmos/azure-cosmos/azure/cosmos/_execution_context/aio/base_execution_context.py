@@ -25,9 +25,12 @@ database service.
 
 from collections import deque
 import copy
+import logging
 
 from ...aio import _retry_utility_async
-from ... import http_constants
+from ... import http_constants, exceptions
+
+_LOGGER = logging.getLogger(__name__)
 
 # pylint: disable=protected-access
 
@@ -136,12 +139,64 @@ class _QueryExecutionContextBase(object):
         # ExecuteAsync passes retry context parameters (timeout, operation start time, logger, etc.)
         # The callback need to accept these parameters even if unused
         # Removing **kwargs results in a TypeError when ExecuteAsync tries to pass these parameters
-        async def callback(**kwargs):  # pylint: disable=unused-argument
-            return await self._fetch_items_helper_no_retries(fetch_function)
+        async def execute_fetch():
+            async def callback(**kwargs):  # pylint: disable=unused-argument
+                return await self._fetch_items_helper_no_retries(fetch_function)
 
-        return await _retry_utility_async.ExecuteAsync(
-            self._client, self._client._global_endpoint_manager, callback, **self._options
+            return await _retry_utility_async.ExecuteAsync(
+                self._client, self._client._global_endpoint_manager, callback, **self._options
+            )
+
+        # Check if this is an internal partition key range fetch - skip 410 retry logic to avoid recursion
+        # When we call refresh_routing_map_provider(), it triggers _ReadPartitionKeyRanges which would
+        # come through this same code path. If that also gets a 410 and tries to refresh, we get infinite recursion.
+        is_pk_range_fetch = self._options.get("_internal_pk_range_fetch", False)
+        if is_pk_range_fetch:
+            # For partition key range queries, just execute without 410 partition split retry
+            # The underlying retry utility will still handle other transient errors
+            _LOGGER.debug("Partition split retry (async): Skipping 410 retry for internal PK range fetch")
+            return await execute_fetch()
+
+        max_retries = 3
+        attempt = 0
+
+        while attempt <= max_retries:
+            try:
+                return await execute_fetch()
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    attempt += 1
+                    if attempt > max_retries:
+                        _LOGGER.error(
+                            "Partition split retry (async): Exhausted all %d retries. "
+                            "state: _has_started=%s, _continuation=%s",
+                            max_retries, self._has_started, self._continuation
+                        )
+                        raise  # Exhausted retries, propagate error
+
+                    _LOGGER.warning(
+                        "Partition split retry (async): 410 error (sub_status=%s). Attempt %d of %d. "
+                        "Refreshing routing map and resetting state.",
+                        getattr(e, 'sub_status', 'N/A'),
+                        attempt,
+                        max_retries
+                    )
+
+                    # Refresh routing map to get new partition key ranges
+                    self._client.refresh_routing_map_provider()
+                    # Reset execution context state to allow retry from the beginning
+                    self._has_started = False
+                    self._continuation = None
+                    # Retry immediately (no backoff needed for partition splits)
+                    continue
+                raise  # Not a partition split error, propagate immediately
+
+        # This should never be reached, but added for safety
+        _LOGGER.warning(
+            "Partition split retry (async): Unexpectedly exited retry loop without returning results. "
+            "This indicates a potential logic error."
         )
+        return []
 
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):

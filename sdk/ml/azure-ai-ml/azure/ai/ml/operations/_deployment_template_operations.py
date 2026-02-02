@@ -8,13 +8,13 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import DeploymentTemplate
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -51,10 +51,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         """
         try:
             # Import here to avoid circular dependencies
+            from azure.ai.ml.operations import RegistryOperations
             from azure.ai.ml._restclient.v2022_10_01_preview import (
                 AzureMachineLearningWorkspaces as ServiceClient102022,
             )
-            from azure.ai.ml.operations import RegistryOperations
 
             # Try to get credential from service client or operation config
             credential = None
@@ -91,7 +91,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     return f"https://{region}.api.azureml.ms"
 
         except Exception as e:
-            module_logger.debug("Could not determine registry region dynamically: %s. Using default.", e)
+            module_logger.warning("Could not determine registry region dynamically: %s. Using default.", e)
 
         # Fallback to default region if unable to determine dynamically
         return f"https://int.experiments.azureml-test.net"
@@ -139,10 +139,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             raise ValueError("environment is required but was not found in the data")
 
         # Handle field name variations for constructor parameters
-        allowed_instance_type = get_field_value(data, "allowed_instance_type", "allowedInstanceType")
-        if isinstance(allowed_instance_type, str):
+        allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceTypes")
+        if isinstance(allowed_instance_types, str):
             # Convert space-separated string to list
-            allowed_instance_type = allowed_instance_type.split()
+            allowed_instance_types = allowed_instance_types.split()
 
         default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
         deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")
@@ -252,7 +252,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             code_configuration=code_configuration,
             environment_variables=environment_variables,
             app_insights_enabled=app_insights_enabled,
-            allowed_instance_type=allowed_instance_type,
+            allowed_instance_types=allowed_instance_types,
             default_instance_type=default_instance_type,
             scoring_port=scoring_port,
             scoring_path=scoring_path,
@@ -337,7 +337,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             )
             return DeploymentTemplate._from_rest_object(result)
         except Exception as e:
-            module_logger.debug("DeploymentTemplate get operation failed: %s", e)
+            module_logger.warning("DeploymentTemplate get operation failed: %s", e)
             raise ResourceNotFoundError(f"DeploymentTemplate {name}:{version} not found") from e
 
     @distributed_trace
@@ -351,27 +351,31 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :return: DeploymentTemplate object representing the created or updated resource.
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         """
-        # Ensure we have a DeploymentTemplate object
-        if not isinstance(deployment_template, DeploymentTemplate):
-            raise ValueError("deployment_template must be a DeploymentTemplate object")
+        try:
+            # Ensure we have a DeploymentTemplate object
+            if not isinstance(deployment_template, DeploymentTemplate):
+                raise ValueError("deployment_template must be a DeploymentTemplate object")
 
-        if hasattr(self._service_client, "deployment_templates"):
-            endpoint = self._get_registry_endpoint()
+            if hasattr(self._service_client, "deployment_templates"):
+                endpoint = self._get_registry_endpoint()
 
-            rest_object = deployment_template._to_rest_object()
-            self._service_client.deployment_templates.begin_create(
-                endpoint=endpoint,
-                subscription_id=self._operation_scope.subscription_id,
-                resource_group_name=self._operation_scope.resource_group_name,
-                registry_name=self._operation_scope.registry_name,
-                name=deployment_template.name,
-                version=deployment_template.version,
-                body=rest_object,
-                **kwargs,
-            )
-            return deployment_template
-        else:
-            raise RuntimeError("DeploymentTemplate service not available")
+                rest_object = deployment_template._to_rest_object()
+                self._service_client.deployment_templates.begin_create(
+                    endpoint=endpoint,
+                    subscription_id=self._operation_scope.subscription_id,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    registry_name=self._operation_scope.registry_name,
+                    name=deployment_template.name,
+                    version=deployment_template.version,
+                    body=rest_object,
+                    **kwargs,
+                )
+                return deployment_template
+            else:
+                raise RuntimeError("DeploymentTemplate service not available")
+        except Exception as e:
+            module_logger.error("DeploymentTemplate create_or_update operation failed: %s", e)
+            raise
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
@@ -403,7 +407,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         except ResourceNotFoundError:
             raise
         except Exception as e:
-            module_logger.debug("DeploymentTemplate delete operation failed: %s", e)
+            module_logger.error("DeploymentTemplate delete operation failed: %s", e)
             raise
 
     @distributed_trace
@@ -419,14 +423,18 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         :raises: ~azure.core.exceptions.ResourceNotFoundError if deployment template not found.
         """
-        # Get the existing template
-        template = self.get(name=name, version=version, **kwargs)
+        try:
+            # Get the existing template
+            template = self.get(name=name, version=version, **kwargs)
 
-        # Set stage to Archived
-        template.stage = "Archived"
+            # Set stage to Archived
+            template.stage = "Archived"
 
-        # Update the template using create_or_update
-        return self.create_or_update(template, **kwargs)
+            # Update the template using create_or_update
+            return self.create_or_update(template, **kwargs)
+        except Exception as e:
+            module_logger.error("DeploymentTemplate archive operation failed: %s", e)
+            raise
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Restore", ActivityType.PUBLICAPI)
@@ -441,11 +449,15 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         :raises: ~azure.core.exceptions.ResourceNotFoundError if deployment template not found.
         """
-        # Get the existing template
-        template = self.get(name=name, version=version, **kwargs)
+        try:
+            # Get the existing template
+            template = self.get(name=name, version=version, **kwargs)
 
-        # Set stage to Development
-        template.stage = "Development"
+            # Set stage to Development
+            template.stage = "Development"
 
-        # Update the template using create_or_update
-        return self.create_or_update(template, **kwargs)
+            # Update the template using create_or_update
+            return self.create_or_update(template, **kwargs)
+        except Exception as e:
+            module_logger.error("DeploymentTemplate restore operation failed: %s", e)
+            raise

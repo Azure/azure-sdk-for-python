@@ -14,7 +14,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._cpu import (
 
 
 class TestCpu(unittest.TestCase):
-
     def test_process_memory(self):
         with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu.PROCESS") as process_mock:
             memory = collections.namedtuple("memory", "rss")
@@ -50,5 +49,6 @@ class TestCpu(unittest.TestCase):
         obs = next(time)
         num_cpus = psutil.cpu_count()
         self.assertAlmostEqual(obs.value, 1.2 / num_cpus, delta=1)
+
 
 # cSpell:enable

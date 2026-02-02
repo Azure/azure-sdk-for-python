@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 # pyright: ignore
 def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ignore
     config = StatsbeatConfig.from_exporter(exporter)
@@ -44,10 +45,7 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     manager = get_statsbeat_manager()
 
     # Check if SDK stats should be enabled based on configuration
-    sdk_stats_enabled = evaluate_feature(
-        _ONE_SETTINGS_FEATURE_SDK_STATS,
-        settings
-    )
+    sdk_stats_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_SDK_STATS, settings)
     if sdk_stats_enabled:
         current_config = manager.get_current_config()
         # Since config is preserved between shutdowns,

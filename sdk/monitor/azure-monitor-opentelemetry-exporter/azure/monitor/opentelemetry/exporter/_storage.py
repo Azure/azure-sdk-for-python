@@ -22,9 +22,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
 
 logger = logging.getLogger(__name__)
 
-ICACLS_PATH = os.path.join(
-    os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe"
-)
+ICACLS_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe")
+
 
 def _fmt(timestamp: datetime.datetime) -> str:
     return timestamp.strftime("%Y-%m-%dT%H%M%S.%f")
@@ -37,11 +36,13 @@ def _now() -> datetime.datetime:
 def _seconds(seconds: int) -> datetime.timedelta:
     return datetime.timedelta(seconds=seconds)
 
+
 class StorageExportResult(Enum):
     LOCAL_FILE_BLOB_SUCCESS = 0
     CLIENT_STORAGE_DISABLED = 1
     CLIENT_PERSISTENCE_CAPACITY_REACHED = 2
     CLIENT_READONLY = 3
+
 
 # pylint: disable=broad-except
 class LocalFileBlob:
@@ -80,7 +81,7 @@ class LocalFileBlob:
         except Exception as ex:
             return str(ex)
 
-    def lease(self, period: int) -> Optional['LocalFileBlob']:
+    def lease(self, period: int) -> Optional["LocalFileBlob"]:
         timestamp = _now() + _seconds(period)
         fullpath: str = self.fullpath
         if fullpath.endswith(".lock"):
@@ -129,15 +130,12 @@ class LocalFileStorage:
             self._maintenance_task.cancel()
             self._maintenance_task.join()
 
-    def __enter__(self) -> 'LocalFileStorage':
+    def __enter__(self) -> "LocalFileStorage":
         return self
 
     # pylint: disable=redefined-builtin
     def __exit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[Any]
+        self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], traceback: Optional[Any]
     ) -> None:
         self.close()
 
@@ -225,7 +223,6 @@ class LocalFileStorage:
         except Exception as ex:
             return str(ex)
 
-
     def _check_and_set_folder_permissions(self) -> bool:
         """
         Validate and set folder permissions where the telemetry data will be stored.
@@ -239,9 +236,7 @@ class LocalFileStorage:
             if os.name == "nt":
                 user = self._get_current_user()
                 if not user:
-                    logger.warning(
-                        "Failed to retrieve current user. Skipping folder permission setup."
-                    )
+                    logger.warning("Failed to retrieve current user. Skipping folder permission setup.")
                     return False
                 result = subprocess.run(
                     [
@@ -263,7 +258,7 @@ class LocalFileStorage:
                 os.chmod(self._path, 0o700)
                 return True
         except OSError as error:
-            if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
+            if getattr(error, "errno", None) == errno.EROFS:  # cspell:disable-line
                 set_local_storage_setup_state_readonly()
             else:
                 set_local_storage_setup_state_exception(str(error))
@@ -293,9 +288,7 @@ class LocalFileStorage:
                             "Persistent storage max capacity has been "
                             "reached. Currently at {}KB. Telemetry will be "
                             "lost. Please consider increasing the value of "
-                            "'storage_max_size' in exporter config.".format(
-                                str(size / 1024)
-                            )
+                            "'storage_max_size' in exporter config.".format(str(size / 1024))
                         )
                         return False
         return True

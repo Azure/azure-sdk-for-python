@@ -84,6 +84,7 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
             endpoint=self._config.endpoint,
             credential=self._config.credential,
             project_name=project_name,
+            api_version=self._config.api_version,
         )
 
 

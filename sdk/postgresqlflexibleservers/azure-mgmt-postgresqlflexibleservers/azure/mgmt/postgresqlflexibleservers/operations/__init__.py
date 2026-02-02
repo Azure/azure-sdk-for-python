@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,32 +12,27 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._administrators_operations import AdministratorsOperations  # type: ignore
-from ._backups_operations import BackupsOperations  # type: ignore
-from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations  # type: ignore
-from ._server_capabilities_operations import ServerCapabilitiesOperations  # type: ignore
-from ._check_name_availability_operations import CheckNameAvailabilityOperations  # type: ignore
-from ._check_name_availability_with_location_operations import CheckNameAvailabilityWithLocationOperations  # type: ignore
+from ._administrators_microsoft_entra_operations import AdministratorsMicrosoftEntraOperations  # type: ignore
+from ._advanced_threat_protection_settings_operations import AdvancedThreatProtectionSettingsOperations  # type: ignore
+from ._server_threat_protection_settings_operations import ServerThreatProtectionSettingsOperations  # type: ignore
+from ._backups_automatic_and_on_demand_operations import BackupsAutomaticAndOnDemandOperations  # type: ignore
+from ._capabilities_by_location_operations import CapabilitiesByLocationOperations  # type: ignore
+from ._capabilities_by_server_operations import CapabilitiesByServerOperations  # type: ignore
+from ._captured_logs_operations import CapturedLogsOperations  # type: ignore
 from ._configurations_operations import ConfigurationsOperations  # type: ignore
 from ._databases_operations import DatabasesOperations  # type: ignore
 from ._firewall_rules_operations import FirewallRulesOperations  # type: ignore
-from ._servers_operations import ServersOperations  # type: ignore
-from ._flexible_server_operations import FlexibleServerOperations  # type: ignore
-from ._ltr_backup_operations_operations import LtrBackupOperationsOperations  # type: ignore
+from ._backups_long_term_retention_operations import BackupsLongTermRetentionOperations  # type: ignore
 from ._migrations_operations import MigrationsOperations  # type: ignore
-from ._postgre_sql_management_client_operations import PostgreSQLManagementClientOperationsMixin  # type: ignore
+from ._name_availability_operations import NameAvailabilityOperations  # type: ignore
 from ._operations import Operations  # type: ignore
-from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOperations  # type: ignore
+from ._private_dns_zone_suffix_operations import PrivateDnsZoneSuffixOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
-from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
 from ._quota_usages_operations import QuotaUsagesOperations  # type: ignore
 from ._replicas_operations import ReplicasOperations  # type: ignore
-from ._log_files_operations import LogFilesOperations  # type: ignore
-from ._server_threat_protection_settings_operations import ServerThreatProtectionSettingsOperations  # type: ignore
+from ._servers_operations import ServersOperations  # type: ignore
 from ._tuning_options_operations import TuningOptionsOperations  # type: ignore
-from ._tuning_index_operations import TuningIndexOperations  # type: ignore
-from ._tuning_configuration_operations import TuningConfigurationOperations  # type: ignore
 from ._virtual_endpoints_operations import VirtualEndpointsOperations  # type: ignore
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations  # type: ignore
 
@@ -47,32 +41,27 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AdministratorsOperations",
-    "BackupsOperations",
-    "LocationBasedCapabilitiesOperations",
-    "ServerCapabilitiesOperations",
-    "CheckNameAvailabilityOperations",
-    "CheckNameAvailabilityWithLocationOperations",
+    "AdministratorsMicrosoftEntraOperations",
+    "AdvancedThreatProtectionSettingsOperations",
+    "ServerThreatProtectionSettingsOperations",
+    "BackupsAutomaticAndOnDemandOperations",
+    "CapabilitiesByLocationOperations",
+    "CapabilitiesByServerOperations",
+    "CapturedLogsOperations",
     "ConfigurationsOperations",
     "DatabasesOperations",
     "FirewallRulesOperations",
-    "ServersOperations",
-    "FlexibleServerOperations",
-    "LtrBackupOperationsOperations",
+    "BackupsLongTermRetentionOperations",
     "MigrationsOperations",
-    "PostgreSQLManagementClientOperationsMixin",
+    "NameAvailabilityOperations",
     "Operations",
-    "GetPrivateDnsZoneSuffixOperations",
+    "PrivateDnsZoneSuffixOperations",
     "PrivateEndpointConnectionsOperations",
-    "PrivateEndpointConnectionOperations",
     "PrivateLinkResourcesOperations",
     "QuotaUsagesOperations",
     "ReplicasOperations",
-    "LogFilesOperations",
-    "ServerThreatProtectionSettingsOperations",
+    "ServersOperations",
     "TuningOptionsOperations",
-    "TuningIndexOperations",
-    "TuningConfigurationOperations",
     "VirtualEndpointsOperations",
     "VirtualNetworkSubnetUsageOperations",
 ]

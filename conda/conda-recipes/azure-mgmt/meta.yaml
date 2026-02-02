@@ -17,7 +17,6 @@ requirements:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
@@ -27,7 +26,6 @@ requirements:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
@@ -355,6 +353,11 @@ test:
     - azure.mgmt.dnsresolver.aio.operations
     - azure.mgmt.dnsresolver.models
     - azure.mgmt.dnsresolver.operations
+    - azure.mgmt.durabletask
+    - azure.mgmt.durabletask.aio
+    - azure.mgmt.durabletask.aio.operations
+    - azure.mgmt.durabletask.models
+    - azure.mgmt.durabletask.operations
     - azure.mgmt.dynatrace
     - azure.mgmt.dynatrace.aio
     - azure.mgmt.dynatrace.aio.operations
@@ -692,6 +695,11 @@ test:
     - azure.mgmt.peering.aio.operations
     - azure.mgmt.peering.models
     - azure.mgmt.peering.operations
+    - azure.mgmt.playwright
+    - azure.mgmt.playwright.aio
+    - azure.mgmt.playwright.aio.operations
+    - azure.mgmt.playwright.models
+    - azure.mgmt.playwright.operations
     - azure.mgmt.playwrighttesting
     - azure.mgmt.playwrighttesting.aio
     - azure.mgmt.playwrighttesting.aio.operations
@@ -830,6 +838,11 @@ test:
     - azure.mgmt.resource.features.v2021_07_01.aio.operations
     - azure.mgmt.resource.features.v2021_07_01.models
     - azure.mgmt.resource.features.v2021_07_01.operations
+    - azure.mgmt.resourcegraph
+    - azure.mgmt.resourcegraph.aio
+    - azure.mgmt.resourcegraph.aio.operations
+    - azure.mgmt.resourcegraph.models
+    - azure.mgmt.resourcegraph.operations
     - azure.mgmt.resource.links
     - azure.mgmt.resource.links.aio
     - azure.mgmt.resource.links.v2016_09_01
@@ -939,6 +952,11 @@ test:
     - azure.mgmt.signalr.aio.operations
     - azure.mgmt.signalr.models
     - azure.mgmt.signalr.operations
+    - azure.mgmt.sitemanager
+    - azure.mgmt.sitemanager.aio
+    - azure.mgmt.sitemanager.aio.operations
+    - azure.mgmt.sitemanager.models
+    - azure.mgmt.sitemanager.operations
     - azure.mgmt.sphere
     - azure.mgmt.sphere.aio
     - azure.mgmt.sphere.aio.operations
@@ -969,6 +987,11 @@ test:
     - azure.mgmt.storagecache.aio.operations
     - azure.mgmt.storagecache.models
     - azure.mgmt.storagecache.operations
+    - azure.mgmt.storagediscovery
+    - azure.mgmt.storagediscovery.aio
+    - azure.mgmt.storagediscovery.aio.operations
+    - azure.mgmt.storagediscovery.models
+    - azure.mgmt.storagediscovery.operations
     - azure.mgmt.storagemover
     - azure.mgmt.storagemover.aio
     - azure.mgmt.storagemover.aio.operations

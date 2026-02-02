@@ -132,26 +132,3 @@ class whl(Check):
             install_into_venv(executable, ["-r", TEST_TOOLS_REQUIREMENTS], package_dir)
         else:
             logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
-
-    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
-        log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
-        junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
-
-        default_args = [
-            "-rsfE",
-            f"--junitxml={junit_path}",
-            "--verbose",
-            "--cov-branch",
-            "--durations=10",
-            "--ignore=azure",
-            "--ignore=.tox",
-            "--ignore-glob=.venv*",
-            "--ignore=build",
-            "--ignore=.eggs",
-            "--ignore=samples",
-            f"--log-cli-level={log_level}",
-        ]
-
-        additional = args.pytest_args if args.pytest_args else []
-
-        return [*default_args, *additional, package_dir]

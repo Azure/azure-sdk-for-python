@@ -22,8 +22,8 @@
 """Internal methods for executing functions in the Azure Cosmos database service.
 """
 import json
-import time
 import logging
+import time
 from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
@@ -40,10 +40,14 @@ from . import _session_retry_policy
 from . import _timeout_failover_retry_policy
 from . import exceptions
 from ._constants import _Constants
+from ._cosmos_http_logging_policy import _log_diagnostics_error
+from ._global_partition_endpoint_manager_per_partition_automatic_failover import \
+    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover
+from ._request_object import RequestObject
+from ._routing.routing_range import PartitionKeyRangeWrapper
 from .documents import _OperationType
 from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
-from ._cosmos_http_logging_policy import _log_diagnostics_error
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 # cspell:ignore PPAF,ppaf,ppcb
@@ -132,7 +136,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
-                global_endpoint_manager.record_success(args[0], pk_range_wrapper)
+                _record_success_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
             # Check timeout after successful execution
@@ -229,12 +233,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 if args:
                     # record the failure for circuit breaker tracking
-                    global_endpoint_manager.record_ppcb_failure(args[0], pk_range_wrapper)
+                    _record_ppcb_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
                     # record the failure for ppaf/circuit breaker tracking
-                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
+
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
@@ -269,7 +274,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
@@ -278,8 +283,29 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+
+def _record_success_if_request_not_cancelled(
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+        pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
+    if not request_params.should_cancel_request():
+        global_endpoint_manager.record_success(request_params, pk_range_wrapper)
+
+def _record_failure_if_request_not_cancelled(
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+        pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
+    if not request_params.should_cancel_request():
+        global_endpoint_manager.record_failure(request_params, pk_range_wrapper)
+
+def _record_ppcb_failure_if_request_not_cancelled(
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+        pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
+    if not request_params.should_cancel_request():
+        global_endpoint_manager.record_ppcb_failure(request_params, pk_range_wrapper)
 
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
@@ -414,7 +440,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 if retry_settings['read'] > 0:
                     # record the failure for circuit breaker tracking for retries in connection retry policy
                     # retries in the execute function will mark those failures
-                    global_endpoint_manager.record_failure(request_params)
+                    _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager, None)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
@@ -429,7 +455,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                         request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
-                    global_endpoint_manager.record_failure(request_params)
+                    _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager, None)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)

@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import base64
 import logging
 import threading
 import uuid
@@ -31,6 +30,7 @@ from typing import TypeVar, Generic, Any, Callable, Optional, Tuple, List
 from azure.core.exceptions import AzureError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
+from ._utils import _encode_continuation_token, _decode_continuation_token
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
@@ -162,9 +162,7 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
         :rtype: str
         :return: An opaque continuation token
         """
-        import pickle
-
-        return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
+        return _encode_continuation_token(self._initial_response)
 
     @classmethod
     def from_continuation_token(
@@ -182,9 +180,8 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from None
-        import pickle
 
-        initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
+        initial_response = _decode_continuation_token(continuation_token)
         return None, initial_response, deserialization_callback
 
 

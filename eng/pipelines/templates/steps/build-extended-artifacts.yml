@@ -67,13 +67,17 @@ steps:
       displayName: 'Generate Docs'
       condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
       inputs:
-        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        scriptPath: 'eng/scripts/dispatch_checks.py'
         arguments: >-
           "$(TargetingString)"
           --service="${{ parameters.ServiceDirectory }}"
-          --toxenv=sphinx
+          --checks="sphinx"
           --wheel_dir="$(Build.ArtifactStagingDirectory)"
-
+      env:
+        TOX_PIP_IMPL: "uv"
+        VIRTUAL_ENV: ""
+        PYTHONHOME: ""
+        
   - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
     - template: /eng/pipelines/templates/steps/run_apistub.yml
       parameters:

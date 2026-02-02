@@ -252,11 +252,12 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         return self._resources
 
     @resources.setter
-    def resources(self, value: Union[JobResourceConfiguration, Dict]) -> None:
+    def resources(self, value: Optional[Union[JobResourceConfiguration, Dict]]) -> None:
         """Set the resource configuration for the parallel job.
 
         :param value: The resource configuration for the parallel job.
-        :type value: ~azure.ai.ml.entities._job.job_resource_configuration.JobResourceConfiguration or dict
+        :type value: Optional[Union[
+            ~azure.ai.ml.entities._job.job_resource_configuration.JobResourceConfiguration, dict]]
         """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
@@ -316,11 +317,11 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         return self._task  # type: ignore
 
     @task.setter
-    def task(self, value: Union[ParallelTask, Dict]) -> None:
+    def task(self, value: Optional[Union[ParallelTask, Dict]]) -> None:
         """Set the parallel task.
 
         :param value: The parallel task.
-        :type value: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask or dict
+        :type value: Optional[Union[~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask, dict]]
         """
         # base path should be reset if task is set via sdk
         self._base_path: Optional[Union[str, os.PathLike]] = None
@@ -360,16 +361,18 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
+        # Use local variable for type narrowing
+        resources = self.resources
         if instance_type is not None:
-            self.resources.instance_type = instance_type
+            resources.instance_type = instance_type
         if instance_count is not None:
-            self.resources.instance_count = instance_count
+            resources.instance_count = instance_count
         if properties is not None:
-            self.resources.properties = properties
+            resources.properties = properties
         if docker_args is not None:
-            self.resources.docker_args = docker_args
+            resources.docker_args = docker_args
         if shm_size is not None:
-            self.resources.shm_size = shm_size
+            resources.shm_size = shm_size
 
         # Save the resources to internal component as well, otherwise calling sweep() will loose the settings
         if isinstance(self.component, Component):

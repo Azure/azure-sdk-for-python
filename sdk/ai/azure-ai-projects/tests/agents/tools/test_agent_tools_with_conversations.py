@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,14 +12,13 @@ within the context of conversations, testing conversation state management with 
 """
 
 import json
-import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterToolAuto,
+    CodeInterpreterContainerAuto,
     PromptAgentDefinition,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
@@ -27,10 +27,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 class TestAgentToolsWithConversations(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_function_tool_with_conversation(self, **kwargs):
         """
         Test using FunctionTool within a conversation.
@@ -42,7 +39,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Using conversation_id parameter
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -192,10 +189,7 @@ class TestAgentToolsWithConversations(TestBase):
             print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_file_search_with_conversation(self, **kwargs):
         """
         Test using FileSearchTool within a conversation.
@@ -206,7 +200,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Conversation context retention
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -312,10 +306,7 @@ Widget C:
             print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_code_interpreter_with_conversation(self, **kwargs):
         """
         Test using CodeInterpreterTool within a conversation.
@@ -326,7 +317,7 @@ Widget C:
         - Variables/state persistence across turns
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -338,7 +329,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a data analysis assistant. Use Python to perform calculations.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[]))],
                 ),
                 description="Code interpreter agent for conversation testing.",
             )
@@ -394,11 +385,10 @@ Widget C:
             openai_client.conversations.delete(conversation_id=conversation.id)
             print("Cleanup completed")
 
+    # To run this test only:
+    # pytest tests/agents/tools/test_agent_tools_with_conversations.py::TestAgentToolsWithConversations::test_code_interpreter_with_file_in_conversation -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_code_interpreter_with_file_in_conversation(self, **kwargs):
         """
         Test using CodeInterpreterTool with file upload within a conversation.
@@ -412,7 +402,7 @@ Widget C:
         - Server-side code execution with file access and chart generation
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
         import os
 
         with (
@@ -428,7 +418,7 @@ Widget C:
             )
 
             # Upload file using open() with rb mode, just like the sample
-            with open(asset_file_path, "rb") as f:
+            with self.open_with_lf(asset_file_path, "rb") as f:
                 uploaded_file = openai_client.files.create(file=f, purpose="assistants")
             print(f"File uploaded: {uploaded_file.id}")
 
@@ -438,7 +428,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[uploaded_file.id]))],
+                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[uploaded_file.id]))],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )

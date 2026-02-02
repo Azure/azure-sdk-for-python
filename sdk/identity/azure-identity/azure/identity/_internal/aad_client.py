@@ -14,6 +14,7 @@ from .pipeline import build_pipeline
 
 
 class AadClient(AadClientBase):
+
     def __enter__(self) -> "AadClient":
         self._pipeline.__enter__()
         return self

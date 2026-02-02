@@ -10,11 +10,14 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    AzureAISearchAgentTool,
+    AzureAISearchTool,
     AzureAISearchToolResource,
     AISearchIndexResource,
     AzureAISearchQueryType,
 )
+
+# The tests in this file rely on an existing Azure AI Search project connection that has been populated with the following document:
+# https://arxiv.org/pdf/2508.03680
 
 
 class TestAgentAISearch(TestBase):
@@ -57,7 +60,7 @@ class TestAgentAISearch(TestBase):
         significantly faster (~3x) and provides the same coverage.
         See test_agent_ai_search_async.py::test_agent_ai_search_question_answering_async_parallel
 
-        This test verifies that an agent can be created with AzureAISearchAgentTool,
+        This test verifies that an agent can be created with AzureAISearchTool,
         use it to search indexed content, and provide accurate answers to questions
         based on the search results.
 
@@ -78,17 +81,17 @@ class TestAgentAISearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Get AI Search connection and index from environment
-        ai_search_connection_id = kwargs.get("azure_ai_projects_tests_ai_search_project_connection_id")
-        ai_search_index_name = kwargs.get("azure_ai_projects_tests_ai_search_index_name")
+        ai_search_connection_id = kwargs.get("ai_search_project_connection_id")
+        ai_search_index_name = kwargs.get("ai_search_index_name")
 
         if not ai_search_connection_id:
-            pytest.skip("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("ai_search_project_connection_id environment variable not set")
 
         if not ai_search_index_name:
-            pytest.skip("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_INDEX_NAME environment variable not set")
+            pytest.fail("ai_search_index_name environment variable not set")
 
         assert isinstance(ai_search_connection_id, str), "ai_search_connection_id must be a string"
         assert isinstance(ai_search_index_name, str), "ai_search_index_name must be a string"
@@ -97,9 +100,11 @@ class TestAgentAISearch(TestBase):
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
+            agent_name = "ai-search-qa-agent"
+
             # Create agent with Azure AI Search tool
             agent = project_client.agents.create_version(
-                agent_name="ai-search-qa-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="""You are a helpful assistant that answers true/false questions based on the provided search results.
@@ -107,7 +112,7 @@ class TestAgentAISearch(TestBase):
                 Respond with only 'True' or 'False' based on what you find in the search results.
                 If you cannot find clear evidence in the search results, answer 'False'.""",
                     tools=[
-                        AzureAISearchAgentTool(
+                        AzureAISearchTool(
                             azure_ai_search=AzureAISearchToolResource(
                                 indexes=[
                                     AISearchIndexResource(
@@ -122,10 +127,7 @@ class TestAgentAISearch(TestBase):
                 ),
                 description="Agent for testing AI Search question answering.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "ai-search-qa-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Test each question
             correct_answers = 0

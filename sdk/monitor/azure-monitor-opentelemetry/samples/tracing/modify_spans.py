@@ -11,7 +11,6 @@ from opentelemetry.sdk.trace import SpanProcessor
 
 # Define a custom processor to modify your spans
 class SpanEnrichingProcessor(SpanProcessor):
-
     def on_end(self, span):
         # Prefix the span name with the string "Updated-".
         span._name = "Updated-" + span.name
