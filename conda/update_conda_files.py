@@ -383,14 +383,14 @@ def determine_service_info(
 
 def format_requirement(req: str) -> str:
     """Format a requirement string for conda meta.yaml."""
-    name_unpinned = re.split(r"[>=<!]", req)[0].strip()
+    name_unpinned = re.split(r"[>=<!~]", req)[0].strip()
 
     # assuming this always applies to all azure-* reqs
     if name_unpinned.startswith("azure-") or name_unpinned in ["msrest"]:
         return f"{name_unpinned} >={{{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}}}"
 
-    # filter out ~ for yml format
-    req = req.replace("~", "")
+    # translate compatible release (~=) to >= for yml 
+    req = req.replace("~=", ">=")
     return req
 
 
@@ -816,17 +816,18 @@ def update_data_plane_release_logs(
         # check for bundle
         if bundle_name:
             release_log_path = os.path.join(CONDA_RELEASE_LOGS_DIR, f"{bundle_name}.md")
+            display_name = bundle_name
         else:
             release_log_path = os.path.join(
                 CONDA_RELEASE_LOGS_DIR, f"{package_name}.md"
             )
-            bundle_name = package_name  # for release log logic below
+            display_name = package_name  # for release log logic below
 
         if not os.path.exists(release_log_path):
             # Add brand new release log file
-            logger.info(f"Creating new release log for: {bundle_name}")
+            logger.info(f"Creating new release log for: {display_name}")
 
-            title_parts = bundle_name.replace("azure-", "").split("-")
+            title_parts = display_name.replace("azure-", "").split("-")
             title = " ".join(word.title() for word in title_parts)
 
             content = f"# Azure {title} client library for Python (conda)\n\n"
@@ -849,14 +850,14 @@ def update_data_plane_release_logs(
             try:
                 with open(release_log_path, "w") as f:
                     f.write(content)
-                logger.info(f"Created new release log for {bundle_name}")
+                logger.info(f"Created new release log for {display_name}")
             except Exception as e:
-                logger.error(f"Failed to create release log for {bundle_name}: {e}")
-                result.append(bundle_name)
+                logger.error(f"Failed to create release log for {display_name}: {e}")
+                result.append(display_name)
 
         else:
             logger.info(
-                f"Release log for {bundle_name} already exists, check that new package {package_name} is included"
+                f"Release log for {display_name} already exists, check that new package {package_name} is included"
             )
 
     return result
@@ -1103,13 +1104,14 @@ if __name__ == "__main__":
         for pkg_name in mgmt_plane_release_log_results:
             print(f"- {pkg_name}")
 
-    print("\n=== Manual Steps for New Data Plane Packages ===")
-    print(
-        "- A dummy placeholder library needs to be requested on Conda for new data plane packages."
-    )
-    print("- A new AKA link needs to be created for each new release log.")
-    print(
-        "\nSee the generated PR description for further details. The new data plane package names are:"
-    )
-    for pkg_name in new_data_plane_names:
-        print(f"{pkg_name}")
+    if len(new_data_plane_names) > 0:
+        print("\n=== Manual Steps for New Data Plane Packages ===")
+        print(
+            "- A dummy placeholder library needs to be requested on Conda for new data plane packages."
+        )
+        print("- A new AKA link needs to be created for each new release log.")
+        print(
+            "\nSee the generated PR description for further details. The new data plane package names are:"
+        )
+        for pkg_name in new_data_plane_names:
+            print(f"{pkg_name}")
