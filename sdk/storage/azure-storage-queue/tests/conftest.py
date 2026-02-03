@@ -24,7 +24,6 @@ def add_sanitizers(test_proxy):
     tenant_id = os.environ.get("STORAGE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex="sktid", value="00000000-0000-0000-0000-000000000000")
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_oauth_response_sanitizer()
@@ -34,3 +33,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=r'"EncryptionLibrary": "Python .*?"', value='"EncryptionLibrary": "Python x.x.x"')
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
+    add_uri_regex_sanitizer(
+        regex=r"([?&]sktid=)[^&#]+",
+        value=r"\g<1>00000000-0000-0000-0000-000000000000",
+    )
