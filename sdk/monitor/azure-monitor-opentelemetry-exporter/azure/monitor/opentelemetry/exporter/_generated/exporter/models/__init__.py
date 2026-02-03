@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AvailabilityData,
     MessageData,
     MetricDataPoint,
     MetricsData,
@@ -43,6 +44,7 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AvailabilityData",
     "MessageData",
     "MetricDataPoint",
     "MetricsData",

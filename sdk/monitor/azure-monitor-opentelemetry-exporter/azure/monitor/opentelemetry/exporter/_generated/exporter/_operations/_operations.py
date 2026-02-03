@@ -67,8 +67,7 @@ class _AzureMonitorExporterClientOperationsMixin(
     ) -> _models.TrackResponse:
         """Track telemetry events.
 
-        This operation sends a sequence of telemetry events that will be monitored by
-        Azure Monitor.
+        This operation sends a sequence of telemetry events that will be monitored by Azure Monitor.
 
         :param body: The list of telemetry events to track. Required.
         :type body: list[~exporter.models.TelemetryItem]
@@ -86,8 +85,7 @@ class _AzureMonitorExporterClientOperationsMixin(
     ) -> _models.TrackResponse:
         """Track telemetry events.
 
-        This operation sends a sequence of telemetry events that will be monitored by
-        Azure Monitor.
+        This operation sends a sequence of telemetry events that will be monitored by Azure Monitor.
 
         :param body: The list of telemetry events to track. Required.
         :type body: list[JSON]
@@ -103,8 +101,7 @@ class _AzureMonitorExporterClientOperationsMixin(
     def track(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.TrackResponse:
         """Track telemetry events.
 
-        This operation sends a sequence of telemetry events that will be monitored by
-        Azure Monitor.
+        This operation sends a sequence of telemetry events that will be monitored by Azure Monitor.
 
         :param body: The list of telemetry events to track. Required.
         :type body: IO[bytes]
@@ -122,8 +119,7 @@ class _AzureMonitorExporterClientOperationsMixin(
     ) -> _models.TrackResponse:
         """Track telemetry events.
 
-        This operation sends a sequence of telemetry events that will be monitored by
-        Azure Monitor.
+        This operation sends a sequence of telemetry events that will be monitored by Azure Monitor.
 
         :param body: The list of telemetry events to track. Is one of the following types:
          [TelemetryItem], [JSON], IO[bytes] Required.

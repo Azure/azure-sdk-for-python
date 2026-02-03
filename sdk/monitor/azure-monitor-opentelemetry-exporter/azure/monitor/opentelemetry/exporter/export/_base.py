@@ -587,11 +587,20 @@ _MONITOR_DOMAIN_MAPPING = {
 def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
     # item.data.base_data is of type MonitorDomain instead of a child class
     if hasattr(item, "data") and item.data is not None:
-        if hasattr(item.data, "base_data") and isinstance(item.data.base_data, MonitorDomain):
-            if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
-                base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
-                if base_type:
-                    item.data.base_data = base_type(item.data.base_data.as_dict())
+        if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
+            base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
+            if base_type and hasattr(item.data, "base_data"):
+                base_data = item.data.base_data
+                base_data_dict = None
+                if isinstance(base_data, base_type):
+                    return item
+                if isinstance(base_data, MonitorDomain):
+                    base_data_dict = base_data.as_dict()
+                elif isinstance(base_data, dict):
+                    base_data_dict = base_data
+
+                if base_data_dict is not None:
+                    item.data.base_data = base_type(base_data_dict)
     return item
 
 

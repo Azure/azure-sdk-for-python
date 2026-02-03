@@ -22,7 +22,7 @@ class AzureMonitorExporterClientConfiguration:  # pylint: disable=too-many-insta
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param host: Application Insights' Breeze endpoint. Default value is
+    :param host: Application Insights' Breeze host. Default value is
      "https://dc.services.visualstudio.com".
     :type host: str
     :param credential: Credential used to authenticate requests to the service. Default value is

@@ -28,7 +28,7 @@ class AzureMonitorExporterClient(_AzureMonitorExporterClientOperationsMixin):
     :param credential: Credential used to authenticate requests to the service. Default value is
      None.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword host: Application Insights' Breeze endpoint. Default value is
+    :keyword host: Application Insights' Breeze host. Default value is
      "https://dc.services.visualstudio.com".
     :paramtype host: str
     :keyword api_version: The service API version. Known values are "v2.1" and None. Default value
