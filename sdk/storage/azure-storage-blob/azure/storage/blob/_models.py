@@ -233,12 +233,12 @@ class BlobAnalyticsLogging(GeneratedLogging):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super(GeneratedLogging, self).__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
 
     @classmethod
     def _from_generated(cls, generated):
@@ -279,11 +279,11 @@ class Metrics(GeneratedMetrics):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super(GeneratedMetrics, self).__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
+        self.include_apis = kwargs.get('include_apis', None)
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
 
     @classmethod
     def _from_generated(cls, generated):
@@ -321,7 +321,7 @@ class StaticWebsite(GeneratedStaticWebsite):
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super(GeneratedStaticWebsite, self).__init__(**kwargs)
+
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
             self.index_document = kwargs.get('index_document')
@@ -387,7 +387,7 @@ class CorsRule(GeneratedCorsRule):
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        super(GeneratedCorsRule, self).__init__(**kwargs)
+
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
@@ -1060,10 +1060,10 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
-        super(GenAccessPolicy, self).__init__()
         self.start = start
         self.expiry = expiry
         self.permission = permission
+        super(GenAccessPolicy, self).__init__()
 
 
 class BlobSasPermissions(object):
