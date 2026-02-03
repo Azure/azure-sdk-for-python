@@ -581,13 +581,8 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     """Determine if error message indicates ingestion-side sampling rejection.
 
     When the server rejects telemetry due to ingestion sampling, the error message
-    will contain sampling-related keywords. These items should not be retried or persisted
+    will be "Telemetry sampled out." These items should not be retried or persisted
     because the server will always reject them based on sampling rules.
-
-    Checks for common sampling-related rejection messages from Breeze:
-    - "sampled out"
-    - "sampling"
-    - "filtered by sampling"
 
     :param str message: Error message from the server
     :return: True if the error indicates a sampling rejection
@@ -595,12 +590,7 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     """
     if message is None:
         return False
-    lower_message = message.lower()
-    return (
-        "sampled out" in lower_message
-        or "sampling" in lower_message
-        or "filtered by sampling" in lower_message
-    )
+    return message == "Telemetry sampled out."
 
 
 _MONITOR_DOMAIN_MAPPING = {

@@ -746,17 +746,17 @@ class TestBaseExporter(unittest.TestCase):
                 items_received=3,
                 items_accepted=0,
                 errors=[
-                    # This item should NOT be retried due to sampling rejection (sampled out)
+                    # This item should NOT be retried due to sampling rejection
                     TelemetryErrorDetails(
                         index=0,
                         status_code=500,
-                        message="Sampled out by ingestion sampling",
+                        message="Telemetry sampled out.",
                     ),
-                    # This item should NOT be retried due to sampling rejection (filtered by sampling)
+                    # This item should NOT be retried due to sampling rejection
                     TelemetryErrorDetails(
                         index=1,
                         status_code=500,
-                        message="Filtered by sampling policy",
+                        message="Telemetry sampled out.",
                     ),
                     # This item should be retried (normal timeout error)
                     TelemetryErrorDetails(
@@ -791,12 +791,12 @@ class TestBaseExporter(unittest.TestCase):
                     TelemetryErrorDetails(
                         index=0,
                         status_code=500,
-                        message="Sampled out by ingestion sampling",
+                        message="Telemetry sampled out.",
                     ),
                     TelemetryErrorDetails(
                         index=1,
                         status_code=500,
-                        message="Filtered by sampling policy",
+                        message="Telemetry sampled out.",
                     ),
                 ],
             )
@@ -807,16 +807,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_is_sampling_rejection_true(self):
         """Test that _is_sampling_rejection correctly identifies sampling rejection messages."""
-        # Test "sampled out" pattern
-        self.assertTrue(_is_sampling_rejection("Sampled out by ingestion sampling"))
-        self.assertTrue(_is_sampling_rejection("SAMPLED OUT"))
-        # Test "sampling" pattern
-        self.assertTrue(_is_sampling_rejection("Filtered by sampling policy"))
-        self.assertTrue(_is_sampling_rejection("Item rejected due to sampling"))
-        self.assertTrue(_is_sampling_rejection("SAMPLING"))
-        # Test "filtered by sampling" pattern
-        self.assertTrue(_is_sampling_rejection("filtered by sampling"))
-        self.assertTrue(_is_sampling_rejection("FILTERED BY SAMPLING"))
+        self.assertTrue(_is_sampling_rejection("Telemetry sampled out."))
 
     def test_is_sampling_rejection_false(self):
         """Test that _is_sampling_rejection returns False for non-sampling messages."""
@@ -825,6 +816,10 @@ class TestBaseExporter(unittest.TestCase):
         self.assertFalse(_is_sampling_rejection("Timeout error"))
         self.assertFalse(_is_sampling_rejection(""))
         self.assertFalse(_is_sampling_rejection(None))
+        # Similar messages that don't match exactly should return False
+        self.assertFalse(_is_sampling_rejection("Telemetry sampled out"))  # Missing period
+        self.assertFalse(_is_sampling_rejection("telemetry sampled out."))  # Lowercase
+        self.assertFalse(_is_sampling_rejection("Sampled out"))
 
     def test_transmission_400(self):
         with mock.patch("requests.Session.request") as post:
