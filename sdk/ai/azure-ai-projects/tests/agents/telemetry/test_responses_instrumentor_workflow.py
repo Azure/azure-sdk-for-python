@@ -240,7 +240,7 @@ trigger:
                     extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
                     input="1 + 1 = ?",
                     stream=False,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Verify response has output
@@ -404,7 +404,7 @@ trigger:
                     extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
                     input="1 + 1 = ?",
                     stream=False,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Verify response has output
@@ -570,7 +570,7 @@ trigger:
                     extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
                     input="1 + 1 = ?",
                     stream=True,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Consume stream
@@ -737,7 +737,7 @@ trigger:
                     extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
                     input="1 + 1 = ?",
                     stream=True,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Consume stream

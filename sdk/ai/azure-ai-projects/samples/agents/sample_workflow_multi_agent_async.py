@@ -152,7 +152,7 @@ trigger:
             extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
-            metadata={"x-ms-debug-mode-enabled": "1"},
+            # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
         )
 
         async for event in stream:
