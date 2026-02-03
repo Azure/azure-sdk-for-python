@@ -34,6 +34,7 @@ class TestTableServiceStatsCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase
     @staticmethod
     def override_response_body_with_live_status(response):
         response.http_response.text = lambda: SERVICE_LIVE_RESP_BODY
+
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator_async

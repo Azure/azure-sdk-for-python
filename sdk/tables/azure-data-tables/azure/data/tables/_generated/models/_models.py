@@ -410,7 +410,7 @@ class SignedIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifiersRequest(_Model):
+class SignedIdentifiers(_Model):
     """The set signed identifiers request.
 
     :ivar identifiers: Represents an array of signed identifiers. Required.
@@ -419,7 +419,13 @@ class SignedIdentifiersRequest(_Model):
 
     identifiers: list["_models.SignedIdentifier"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "identifiers", "name": "identifiers", "text": False, "unwrapped": True},
+        xml={
+            "attribute": False,
+            "itemsName": "SignedIdentifier",
+            "name": "SignedIdentifier",
+            "text": False,
+            "unwrapped": True,
+        },
     )
     """Represents an array of signed identifiers. Required."""
 

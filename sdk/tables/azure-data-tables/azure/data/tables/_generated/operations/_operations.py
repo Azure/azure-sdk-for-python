@@ -1851,7 +1851,7 @@ class TableOperations:
     @distributed_trace
     def get_access_policy(
         self, table: str, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> list[_models.SignedIdentifier]:
+    ) -> _models.SignedIdentifiers:
         """Retrieves details about any stored access policies specified on the table that may be used with
         Shared Access Signatures.
 
@@ -1859,8 +1859,8 @@ class TableOperations:
         :type table: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :return: SignedIdentifier
-        :rtype: ~azure.data.tables._generated.models.SignedIdentifier
+        :return: SignedIdentifiers. The SignedIdentifiers is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.SignedIdentifiers
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1874,7 +1874,7 @@ class TableOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SignedIdentifiers] = kwargs.pop("cls", None)
 
         _request = build_table_get_access_policy_request(
             table=table,
@@ -1920,7 +1920,7 @@ class TableOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize_xml(list[_models.SignedIdentifier], response.text())
+            deserialized = _deserialize_xml(_models.SignedIdentifiers, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1929,14 +1929,14 @@ class TableOperations:
 
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
-        self, table: str, table_acl: _models.SignedIdentifiersRequest, *, timeout: Optional[int] = None, **kwargs: Any
+        self, table: str, table_acl: _models.SignedIdentifiers, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param table: The name of the table. Required.
         :type table: str
         :param table_acl: The access control list for the table. Required.
-        :type table_acl: ~azure.data.tables._generated.models.SignedIdentifiersRequest
+        :type table_acl: ~azure.data.tables._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :return: None

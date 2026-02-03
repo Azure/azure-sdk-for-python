@@ -489,6 +489,7 @@ class TableTestCase(object):
     def override_response_body_with_live_status(response):
         response.http_response.text = lambda: SERVICE_LIVE_RESP_BODY
 
+
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):
         self.status = status
