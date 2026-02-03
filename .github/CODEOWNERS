@@ -307,11 +307,6 @@
 # PRLabel: %Maps
 /sdk/maps/                                                           @dubiety @andykao1213
 
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
-/sdk/remoterendering/                                                @FlorianBorn71
-
 # ServiceLabel: %Online Experimentation
 # PRLabel: %Online Experimentation
 /sdk/onlineexperimentation/                                          @Azure/azure-sdk-write-onlineexperimentation

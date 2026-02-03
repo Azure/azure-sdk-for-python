@@ -113,7 +113,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.1
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.3.0
 - azure-mgmt-mongocluster-1.1.0
 - azure-mgmt-mongodbatlas-1.0.0
@@ -305,7 +304,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.3.0
 - azure-mgmt-mongocluster-1.0.0
 - azure-mgmt-mongodbatlas-1.0.0
@@ -490,7 +488,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.3.0
 - azure-mgmt-mongocluster-1.0.0
 - azure-mgmt-monitor-6.0.2
@@ -670,7 +667,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.3.0
 - azure-mgmt-mongocluster-1.0.0
 - azure-mgmt-monitor-6.0.2
@@ -846,7 +842,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.3.0
 - azure-mgmt-mongocluster-1.0.0
 - azure-mgmt-monitor-6.0.2
@@ -1014,7 +1009,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.3.0
 - azure-mgmt-monitor-6.0.2
 - azure-mgmt-msi-7.0.0
@@ -1177,7 +1171,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.2.0
 - azure-mgmt-monitor-6.0.2
 - azure-mgmt-msi-7.0.0
@@ -1337,7 +1330,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.1.0
 - azure-mgmt-monitor-6.0.2
 - azure-mgmt-msi-7.0.0
@@ -1493,7 +1485,6 @@
 - azure-mgmt-maps-2.1.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.1.0
 - azure-mgmt-monitor-6.0.2
 - azure-mgmt-msi-7.0.0
@@ -1638,7 +1629,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-3.0.0
 - azure-mgmt-monitor-6.0.2
 - azure-mgmt-msi-7.0.0
@@ -1776,7 +1766,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-2.0.0
 - azure-mgmt-monitor-6.0.1
 - azure-mgmt-msi-7.0.0
@@ -1904,7 +1893,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.2.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-mobilenetwork-2.0.0
 - azure-mgmt-monitor-5.0.1
 - azure-mgmt-msi-7.0.0
@@ -2024,7 +2012,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.1.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-monitor-5.0.1
 - azure-mgmt-netapp-9.0.1
 - azure-mgmt-network-22.1.0
@@ -2137,7 +2124,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-10.0.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-monitor-4.0.1
 - azure-mgmt-netapp-8.1.0
 - azure-mgmt-network-21.0.1
@@ -2244,7 +2230,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-9.0.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-monitor-3.1.0
 - azure-mgmt-netapp-7.0.0
 - azure-mgmt-network-20.0.0
@@ -2341,7 +2326,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-8.0.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-monitor-3.0.0
 - azure-mgmt-netapp-6.0.1
 - azure-mgmt-network-19.3.0
@@ -2432,7 +2416,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-8.0.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-monitor-3.0.0
 - azure-mgmt-netapp-5.1.0
 - azure-mgmt-network-19.3.0
@@ -2518,7 +2501,6 @@
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
 - azure-mgmt-media-8.0.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-monitor-2.0.0
 - azure-mgmt-netapp-4.0.0
 - azure-mgmt-network-19.0.0
@@ -2598,7 +2580,6 @@
 - azure-mgmt-managedservices-6.0.0
 - azure-mgmt-maps-2.0.0
 - azure-mgmt-marketplaceordering-1.1.0
-- azure-mgmt-mixedreality-1.0.0
 - azure-mgmt-monitor-2.0.0
 - azure-mgmt-netapp-2.0.0
 - azure-mgmt-network-19.0.0

@@ -889,10 +889,6 @@
         "version": "10.2.0"
       },
       {
-        "package": "azure-mgmt-mixedreality",
-        "version": "1.0.0"
-      },
-      {
         "package": "azure-mgmt-mobilenetwork",
         "version": "3.3.0"
       },
