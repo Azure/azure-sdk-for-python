@@ -233,6 +233,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -249,7 +250,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
             delete=getattr(generated, 'delete'),
             read=getattr(generated, 'read'),
             write=getattr(generated, 'write'),
-            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retentionPolicy'))  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy'))  # pylint: disable=protected-access
         )
 
 
@@ -279,6 +280,7 @@ class Metrics(GeneratedMetrics):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis', None)
@@ -292,8 +294,8 @@ class Metrics(GeneratedMetrics):
         return cls(
             version=getattr(generated, 'version', None) or '1.0',
             enabled=getattr(generated, 'enabled') or False,
-            include_apis=getattr(generated, 'includeApis', None),
-            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retentionPolicy', None))  # pylint: disable=protected-access
+            include_apis=getattr(generated, 'include_apis', None),
+            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy', None))  # pylint: disable=protected-access
         )
 
 
@@ -321,7 +323,7 @@ class StaticWebsite(GeneratedStaticWebsite):
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
-
+        super().__init__(**kwargs)
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
             self.index_document = kwargs.get('index_document')
@@ -338,9 +340,9 @@ class StaticWebsite(GeneratedStaticWebsite):
             return cls()
         return cls(
             enabled=getattr(generated, 'enabled'),
-            index_document=getattr(generated, 'indexDocument', None),
-            error_document404_path=getattr(generated, 'errorDocument404Path', None),
-            default_index_document_path=getattr(generated, 'defaultIndexDocumentPath', None)
+            index_document=getattr(generated, 'index_document', None),
+            error_document404_path=getattr(generated, 'error_document404_path', None),
+            default_index_document_path=getattr(generated, 'default_index_document_path', None)
         )
 
 
@@ -387,7 +389,7 @@ class CorsRule(GeneratedCorsRule):
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-
+        super().__init__(**kwargs)
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
@@ -415,11 +417,11 @@ class CorsRule(GeneratedCorsRule):
     @classmethod
     def _from_generated(cls, generated):
         return cls(
-            [getattr(generated, 'allowedOrigins')],
-            [getattr(generated, 'allowedMethods')],
-            allowed_headers=[getattr(generated, 'allowedHeaders')],
-            exposed_headers=[getattr(generated, 'exposedHeaders')],
-            max_age_in_seconds=getattr(generated, 'maxAgeInSeconds'),
+            [getattr(generated, 'allowed_origins')],
+            [getattr(generated, 'allowed_methods')],
+            allowed_headers=[getattr(generated, 'allowed_headers')],
+            exposed_headers=[getattr(generated, 'exposed_headers')],
+            max_age_in_seconds=getattr(generated, 'max_age_in_seconds'),
         )
 
 
