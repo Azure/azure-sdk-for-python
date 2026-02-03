@@ -13,7 +13,7 @@ Use this skill when the user:
 
 ## Inputs you should request (only if missing)
 Only ask the user for extra inputs when you truly cannot derive them from repo search.
-1. Confirmation that the .NET test is valid and can run successfully in **live mode**.
+1. **Only if** the .NET test file path does **not** contain `Scenario` or `ScenarioTests` folder, ask the user to confirm whether the test can run successfully in **live mode**. Otherwise, skip asking.
 2. If user does not provide a Python SDK repo folder, otherwise infer the correct package and tests folder.
 
 ## Workflow
