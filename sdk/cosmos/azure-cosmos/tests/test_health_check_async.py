@@ -89,7 +89,11 @@ class TestHealthCheckAsync:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
             await client.__aenter__()
-            await asyncio.sleep(10) # give some time for the background health check to complete
+            # Poll until the background health check marks endpoints as unavailable
+            start_time = time.time()
+            while (len(client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) < len(REGIONS)
+                   and time.time() - start_time < 10):
+                await asyncio.sleep(0.1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
