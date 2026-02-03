@@ -23,6 +23,8 @@ SDK_TO_REST = {
     DistributionType.TENSORFLOW: RestDistributionType.TENSOR_FLOW,
     DistributionType.PYTORCH: RestDistributionType.PY_TORCH,
     DistributionType.RAY: RestDistributionType.RAY,
+    # Support legacy alias - maps to the same REST type as PYTORCH
+    DistributionType.TORCH_DISTRIBUTED: RestDistributionType.PY_TORCH,
 }
 
 
