@@ -110,9 +110,11 @@ def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
     conditions: ModifiedAccessConditions = {}
     if_modified_since = kwargs.pop('if_modified_since', None)
     if_unmodified_since = kwargs.pop('if_unmodified_since', None)
-    etag = kwargs.pop('etag', None)
-    match_condition = kwargs.pop('match_condition', None)
+    etag = kwargs.get('etag', None)
+    match_condition = kwargs.get('match_condition', None)
     if_tags = kwargs.pop('if_tags_match_condition', None)
+    # Call _get_match_headers to validate etag/match_condition combinations
+    _get_match_headers(kwargs, 'match_condition', 'etag')
     if if_modified_since is not None:
         conditions['if_modified_since'] = if_modified_since
     if if_unmodified_since is not None:
@@ -132,6 +134,8 @@ def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessCond
     if_unmodified_since = kwargs.pop('if_unmodified_since', None)
     etag = kwargs.pop('etag', None)
     match_condition = kwargs.pop('match_condition', None)
+    # Call _get_match_headers to validate etag/match_condition combinations
+    _get_match_headers(kwargs, 'match_condition', 'etag')
     if if_modified_since is not None:
         conditions['if_modified_since'] = if_modified_since
     if if_unmodified_since is not None:
@@ -150,6 +154,8 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditi
     source_etag = kwargs.pop('source_etag', None)
     source_match_condition = kwargs.pop('source_match_condition', None)
     source_if_tags = kwargs.pop('source_if_tags_match_condition', None)
+    # Call _get_match_headers to validate etag/match_condition combinations
+    _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
     if source_if_modified_since is not None:
         conditions['source_if_modified_since'] = source_if_modified_since
     if source_if_unmodified_since is not None:
