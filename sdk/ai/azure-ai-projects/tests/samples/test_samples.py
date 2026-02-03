@@ -41,6 +41,9 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_mcp_with_project_connection.py",
                 "sample_agent_openapi_with_project_connection.py",
                 "sample_agent_to_agent.py",
+                "sample_agent_web_search.py",
+                "sample_agent_web_search_preview.py",
+                "sample_agent_web_search_with_custom_search.py",
             ],
         ),
     )
@@ -53,4 +56,5 @@ class TestSamples(AzureRecordedTestCase):
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
             project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )

@@ -25,7 +25,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents/tools",
-            samples_to_skip=["sample_agent_mcp_with_project_connection_async.py"],
+            samples_to_skip=[],
         ),
     )
     @SamplePathPasser()
@@ -42,4 +42,5 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
             project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )

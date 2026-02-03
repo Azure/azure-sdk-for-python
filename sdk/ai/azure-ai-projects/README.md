@@ -20,7 +20,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * Model Context Protocol (MCP)
   * OpenAPI
   * SharePoint
-  * Web Search
+  * Web Search/Web Search Preview
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
 * **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
 * **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
@@ -282,9 +282,9 @@ if image_data and image_data[0]:
 
 See the full sample in file `\agents\tools\sample_agent_image_generation.py` in the [Samples][samples] folder.
 
-**Web Search**
+**Web Search/Web Search Preview**
 
-Perform general web searches to retrieve current information from the internet. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-web-search)
+Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option is in the documentation: https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases.
 
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
 
@@ -295,6 +295,34 @@ tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city
 <!-- END SNIPPET -->
 
 See the full sample in file `\agents\tools\sample_agent_web_search.py` in the [Samples][samples] folder.
+
+<!-- SNIPPET:sample_agent_web_search_preview.tool_declaration -->
+
+```python
+tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
+```
+
+<!-- END SNIPPET -->
+
+See the full sample in file `\agents\tools\sample_agent_web_search_preview.py` in the [Samples][samples] folder.
+
+Use the GA Web Search tool with a Bing Custom Search connection to scope results to your custom search instance:
+
+<!-- SNIPPET:sample_agent_web_search_with_custom_search.tool_declaration -->
+
+```python
+tool = WebSearchTool(
+    custom_search_configuration=WebSearchConfiguration(
+        project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
+        instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
+    )
+)
+```
+
+<!-- END SNIPPET -->
+
+See the full sample in file `\agents\tools\sample_agent_web_search_with_custom_search.py` in the [Samples][samples] folder.
+
 
 **Computer Use**
 
