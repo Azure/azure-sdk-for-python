@@ -121,19 +121,23 @@ OPERATION_NAME_CHAT = "chat"
 _use_message_events = False
 
 
-def get_use_message_events() -> bool:
-    """Get the current message tracing mode (events vs attributes)."""
+def _get_use_message_events() -> bool:
+    """Get the current message tracing mode (events vs attributes). Internal use only.
+    
+    :return: True if using events, False if using attributes
+    :rtype: bool
+    """
     return _use_message_events
 
 
-def set_use_message_events(use_events: bool) -> None:
+def _set_use_message_events(use_events: bool) -> None:
     """
-    Set the message tracing mode at runtime.
-    
-    Args:
-        use_events: True to use events (default), False to use attributes
+    Set the message tracing mode at runtime. Internal use only.
+
+    :param use_events: True to use events (default), False to use attributes
+    :type use_events: bool
     """
-    global _use_message_events
+    global _use_message_events  # pylint: disable=global-statement
     _use_message_events = use_events
 
 

@@ -9,7 +9,11 @@ Tests for ResponsesInstrumentor with workflow agents.
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import OPERATION_NAME_INVOKE_AGENT, SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+)
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -189,6 +193,7 @@ trigger:
     def test_sync_workflow_non_streaming_with_content_recording(self, **kwargs):
         """Test synchronous workflow agent with non-streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -353,6 +358,7 @@ trigger:
     def test_sync_workflow_non_streaming_without_content_recording(self, **kwargs):
         """Test synchronous workflow agent with non-streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -519,6 +525,7 @@ trigger:
     def test_sync_workflow_streaming_with_content_recording(self, **kwargs):
         """Test synchronous workflow agent with streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -686,6 +693,7 @@ trigger:
     def test_sync_workflow_streaming_without_content_recording(self, **kwargs):
         """Test synchronous workflow agent with streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",

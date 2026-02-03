@@ -9,7 +9,11 @@ Async tests for ResponsesInstrumentor with MCP agents.
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import OPERATION_NAME_INVOKE_AGENT, SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+)
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -34,12 +38,15 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
     # Async MCP Agent Tests - Non-Streaming
     # ========================================
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_mcp_non_streaming_with_content_recording(self, **kwargs):
-        """Test asynchronous MCP agent with non-streaming and content recording enabled."""
+    async def _test_async_mcp_non_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous MCP agent with non-streaming and content recording enabled.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+                       Note: MCP tests currently only validate event mode regardless of this setting.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -121,6 +128,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 span1 = spans[0]
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -131,72 +139,84 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_1.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
 
                 # Comprehensive event validation for first span - verify content IS present
                 from collections.abc import Mapping
 
-                for event in span1.events:
-                    if event.name == "gen_ai.input.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in span1.events:
+                        if event.name == "gen_ai.input.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        assert isinstance(data, list) and len(data) > 0
-                        # Validate content fields ARE present
-                        for entry in data:
-                            if entry.get("role") == "user":
-                                parts = entry.get("parts")
-                                assert isinstance(parts, list) and len(parts) > 0
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" in part
-                                            and isinstance(part["content"], str)
-                                            and part["content"].strip() != ""
-                                        ), "Text content should be present when content recording is enabled"
-                    elif event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                            data = json.loads(content)
+                            assert isinstance(data, list) and len(data) > 0
+                            # Validate content fields ARE present
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    assert isinstance(parts, list) and len(parts) > 0
+                                    for part in parts:
+                                        if part.get("type") == "text":
+                                            assert (
+                                                "content" in part
+                                                and isinstance(part["content"], str)
+                                                and part["content"].strip() != ""
+                                            ), "Text content should be present when content recording is enabled"
+                        elif event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        assert isinstance(data, list) and len(data) > 0
-                        first = data[0]
-                        assert first.get("role") in ("assistant", "tool")
-                        parts = first.get("parts")
-                        assert isinstance(parts, list) and len(parts) > 0
-                        # Check for MCP-specific content
-                        for part in parts:
-                            if part.get("type") == "tool_call":
-                                tool_content = part.get("content")
-                                assert isinstance(tool_content, dict)
-                                tool_type = tool_content.get("type")
-                                if tool_type in ("mcp_list_tools", "mcp_approval_request"):
-                                    assert "id" in tool_content
-                                    if tool_type == "mcp_list_tools":
-                                        assert (
-                                            "server_label" in tool_content
-                                        ), "server_label should be present for mcp_list_tools when content recording is enabled"
-                                    elif tool_type == "mcp_approval_request":
-                                        assert (
-                                            "name" in tool_content
-                                        ), "name should be present for mcp_approval_request when content recording is enabled"
-                                        assert (
-                                            "server_label" in tool_content
-                                        ), "server_label should be present for mcp_approval_request when content recording is enabled"
-                                        assert (
-                                            "arguments" in tool_content
-                                        ), "arguments should be present for mcp_approval_request when content recording is enabled"
+                            data = json.loads(content)
+                            assert isinstance(data, list) and len(data) > 0
+                            first = data[0]
+                            assert first.get("role") in ("assistant", "tool")
+                            parts = first.get("parts")
+                            assert isinstance(parts, list) and len(parts) > 0
+                            # Check for MCP-specific content
+                            for part in parts:
+                                if part.get("type") == "tool_call":
+                                    tool_content = part.get("content")
+                                    assert isinstance(tool_content, dict)
+                                    tool_type = tool_content.get("type")
+                                    if tool_type in ("mcp_list_tools", "mcp_approval_request"):
+                                        assert "id" in tool_content
+                                        if tool_type == "mcp_list_tools":
+                                            assert (
+                                                "server_label" in tool_content
+                                            ), "server_label should be present for mcp_list_tools when content recording is enabled"
+                                        elif tool_type == "mcp_approval_request":
+                                            assert (
+                                                "name" in tool_content
+                                            ), "name should be present for mcp_approval_request when content recording is enabled"
+                                            assert (
+                                                "server_label" in tool_content
+                                            ), "server_label should be present for mcp_approval_request when content recording is enabled"
+                                            assert (
+                                                "arguments" in tool_content
+                                            ), "arguments should be present for mcp_approval_request when content recording is enabled"
 
                 # Validate second response span (approval response)
                 span2 = spans[1]
                 expected_attributes_2 = [
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
@@ -208,113 +228,126 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_2.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
 
                 # Validate MCP approval response and call in second span
-                for event in span2.events:
-                    if event.name == "gen_ai.input.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                # Only validate events when use_events is True
+                if use_events:
+                    for event in span2.events:
+                        if event.name == "gen_ai.input.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        # Check for MCP approval response content
-                        for entry in data:
-                            if entry.get("role") == "user":
+                            data = json.loads(content)
+                            # Check for MCP approval response content
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            assert isinstance(mcp_content, dict)
+                                            if mcp_content.get("type") == "mcp_approval_response":
+                                                assert "id" in mcp_content
+                                                assert (
+                                                    "approval_request_id" in mcp_content
+                                                ), "approval_request_id should be present when content recording is enabled"
+                        elif event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
+
+                            data = json.loads(content)
+                            # Check for MCP call content
+                            for entry in data:
                                 parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        assert isinstance(mcp_content, dict)
-                                        if mcp_content.get("type") == "mcp_approval_response":
-                                            assert "id" in mcp_content
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "tool_call":
+                                            tool_content = part.get("content")
+                                            if tool_content and tool_content.get("type") == "mcp_call":
+                                                assert "id" in tool_content
+                                                assert (
+                                                    "name" in tool_content
+                                                ), "name should be present for mcp_call when content recording is enabled"
+                                                assert (
+                                                    "arguments" in tool_content
+                                                ), "arguments should be present for mcp_call when content recording is enabled"
+                                                assert (
+                                                    "server_label" in tool_content
+                                                ), "server_label should be present for mcp_call when content recording is enabled"
+                                        elif part.get("type") == "text":
                                             assert (
-                                                "approval_request_id" in mcp_content
-                                            ), "approval_request_id should be present when content recording is enabled"
-                    elif event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
-
-                        data = json.loads(content)
-                        # Check for MCP call content
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "tool_call":
-                                        tool_content = part.get("content")
-                                        if tool_content and tool_content.get("type") == "mcp_call":
-                                            assert "id" in tool_content
-                                            assert (
-                                                "name" in tool_content
-                                            ), "name should be present for mcp_call when content recording is enabled"
-                                            assert (
-                                                "arguments" in tool_content
-                                            ), "arguments should be present for mcp_call when content recording is enabled"
-                                            assert (
-                                                "server_label" in tool_content
-                                            ), "server_label should be present for mcp_call when content recording is enabled"
-                                    elif part.get("type") == "text":
-                                        assert (
-                                            "content" in part
-                                        ), "text content should be present when content recording is enabled"
+                                                "content" in part
+                                            ), "text content should be present when content recording is enabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
                 assert len(list_spans) == 1, "Should have one list_conversation_items span"
                 list_span = list_spans[0]
 
-                for event in list_span.events:
-                    if event.name == "gen_ai.conversation.item":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in list_span.events:
+                        if event.name == "gen_ai.conversation.item":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        # Validate MCP content in conversation items
-                        for entry in data:
-                            if entry.get("role") == "user":
-                                parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" in part
-                                        ), "text content should be present in conversation items when content recording is enabled"
-                                    elif part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        if mcp_content and mcp_content.get("type") == "mcp_approval_response":
+                            data = json.loads(content)
+                            # Validate MCP content in conversation items
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "text":
                                             assert (
-                                                "approval_request_id" in mcp_content
-                                            ), "approval_request_id should be present when content recording is enabled"
-                            elif entry.get("role") == "assistant":
-                                parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" in part
-                                        ), "text content should be present in conversation items when content recording is enabled"
-                                    elif part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        if mcp_content:
-                                            mcp_type = mcp_content.get("type")
-                                            if mcp_type in ("mcp_list_tools", "mcp_call", "mcp_approval_request"):
-                                                assert "id" in mcp_content
-                                                if mcp_type == "mcp_call":
-                                                    assert (
-                                                        "name" in mcp_content
-                                                    ), "name should be present for mcp_call in conversation items"
-                                                    assert (
-                                                        "server_label" in mcp_content
-                                                    ), "server_label should be present for mcp_call in conversation items"
-                    else:
-                        assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
+                                                "content" in part
+                                            ), "text content should be present in conversation items when content recording is enabled"
+                                        elif part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            if mcp_content and mcp_content.get("type") == "mcp_approval_response":
+                                                assert (
+                                                    "approval_request_id" in mcp_content
+                                                ), "approval_request_id should be present when content recording is enabled"
+                                elif entry.get("role") == "assistant":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "text":
+                                            assert (
+                                                "content" in part
+                                            ), "text content should be present in conversation items when content recording is enabled"
+                                        elif part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            if mcp_content:
+                                                mcp_type = mcp_content.get("type")
+                                                if mcp_type in ("mcp_list_tools", "mcp_call", "mcp_approval_request"):
+                                                    assert "id" in mcp_content
+                                                    if mcp_type == "mcp_call":
+                                                        assert (
+                                                            "name" in mcp_content
+                                                        ), "name should be present for mcp_call in conversation items"
+                                                        assert (
+                                                            "server_label" in mcp_content
+                                                        ), "server_label should be present for mcp_call in conversation items"
+                        else:
+                            assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
                 # Cleanup
                 await openai_client.conversations.delete(conversation_id=conversation.id)
@@ -322,12 +355,29 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
             finally:
                 await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
-    @pytest.mark.usefixtures("instrument_without_content")
+    @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_mcp_non_streaming_without_content_recording(self, **kwargs):
-        """Test asynchronous MCP agent with non-streaming and content recording disabled."""
+    async def test_async_mcp_non_streaming_with_content_recording_events(self, **kwargs):
+        """Test asynchronous MCP agent with non-streaming and content recording enabled (event-based messages)."""
+        await self._test_async_mcp_non_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_mcp_non_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test asynchronous MCP agent with non-streaming and content recording enabled (attribute-based messages)."""
+        await self._test_async_mcp_non_streaming_with_content_recording_impl(False, **kwargs)
+
+    async def _test_async_mcp_non_streaming_without_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous MCP agent with non-streaming and content recording disabled.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+                       Note: MCP tests currently only validate event mode regardless of this setting.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -409,6 +459,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 span1 = spans[0]
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -419,67 +470,79 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_1.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
 
                 # Comprehensive event validation for first span - verify content is NOT present
                 from collections.abc import Mapping
 
-                for event in span1.events:
-                    if event.name == "gen_ai.input.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in span1.events:
+                        if event.name == "gen_ai.input.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        assert isinstance(data, list) and len(data) > 0
-                        # Validate content fields are NOT present
-                        for entry in data:
-                            if entry.get("role") == "user":
-                                parts = entry.get("parts")
-                                assert isinstance(parts, list) and len(parts) > 0
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" not in part
-                                        ), "Text content should NOT be present when content recording is disabled"
-                    elif event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                            data = json.loads(content)
+                            assert isinstance(data, list) and len(data) > 0
+                            # Validate content fields are NOT present
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    assert isinstance(parts, list) and len(parts) > 0
+                                    for part in parts:
+                                        if part.get("type") == "text":
+                                            assert (
+                                                "content" not in part
+                                            ), "Text content should NOT be present when content recording is disabled"
+                        elif event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        assert isinstance(data, list) and len(data) > 0
-                        first = data[0]
-                        assert first.get("role") in ("assistant", "tool")
-                        parts = first.get("parts")
-                        assert isinstance(parts, list) and len(parts) > 0
-                        # Check for MCP-specific content - should have type and id but not detailed fields
-                        for part in parts:
-                            if part.get("type") == "tool_call":
-                                tool_content = part.get("content")
-                                assert isinstance(tool_content, dict)
-                                tool_type = tool_content.get("type")
-                                if tool_type in ("mcp_list_tools", "mcp_approval_request"):
-                                    assert "id" in tool_content
-                                    if tool_type == "mcp_list_tools":
-                                        # server_label might be present but other details should not
-                                        pass
-                                    elif tool_type == "mcp_approval_request":
-                                        # Should not have name, arguments when content recording is disabled
-                                        assert (
-                                            "name" not in tool_content
-                                        ), "name should NOT be present for mcp_approval_request when content recording is disabled"
-                                        assert (
-                                            "arguments" not in tool_content
-                                        ), "arguments should NOT be present for mcp_approval_request when content recording is disabled"
+                            data = json.loads(content)
+                            assert isinstance(data, list) and len(data) > 0
+                            first = data[0]
+                            assert first.get("role") in ("assistant", "tool")
+                            parts = first.get("parts")
+                            assert isinstance(parts, list) and len(parts) > 0
+                            # Check for MCP-specific content - should have type and id but not detailed fields
+                            for part in parts:
+                                if part.get("type") == "tool_call":
+                                    tool_content = part.get("content")
+                                    assert isinstance(tool_content, dict)
+                                    tool_type = tool_content.get("type")
+                                    if tool_type in ("mcp_list_tools", "mcp_approval_request"):
+                                        assert "id" in tool_content
+                                        if tool_type == "mcp_list_tools":
+                                            # server_label might be present but other details should not
+                                            pass
+                                        elif tool_type == "mcp_approval_request":
+                                            # Should not have name, arguments when content recording is disabled
+                                            assert (
+                                                "name" not in tool_content
+                                            ), "name should NOT be present for mcp_approval_request when content recording is disabled"
+                                            assert (
+                                                "arguments" not in tool_content
+                                            ), "arguments should NOT be present for mcp_approval_request when content recording is disabled"
 
                 # Validate second response span (approval response)
                 span2 = spans[1]
                 expected_attributes_2 = [
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
@@ -491,104 +554,117 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_2.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
 
                 # Validate MCP approval response and call in second span - content should be minimal
-                for event in span2.events:
-                    if event.name == "gen_ai.input.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                # Only validate events when use_events is True
+                if use_events:
+                    for event in span2.events:
+                        if event.name == "gen_ai.input.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        # Check for MCP approval response content - should be minimal
-                        for entry in data:
-                            if entry.get("role") == "user":
+                            data = json.loads(content)
+                            # Check for MCP approval response content - should be minimal
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            assert isinstance(mcp_content, dict)
+                                            if mcp_content.get("type") == "mcp_approval_response":
+                                                assert "id" in mcp_content
+                                                # approval_request_id might not be present when content recording is disabled
+                        elif event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
+
+                            data = json.loads(content)
+                            # Check for MCP call content - should be minimal
+                            for entry in data:
                                 parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        assert isinstance(mcp_content, dict)
-                                        if mcp_content.get("type") == "mcp_approval_response":
-                                            assert "id" in mcp_content
-                                            # approval_request_id might not be present when content recording is disabled
-                    elif event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
-
-                        data = json.loads(content)
-                        # Check for MCP call content - should be minimal
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "tool_call":
-                                        tool_content = part.get("content")
-                                        if tool_content and tool_content.get("type") == "mcp_call":
-                                            assert "id" in tool_content
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "tool_call":
+                                            tool_content = part.get("content")
+                                            if tool_content and tool_content.get("type") == "mcp_call":
+                                                assert "id" in tool_content
+                                                assert (
+                                                    "name" not in tool_content
+                                                ), "name should NOT be present for mcp_call when content recording is disabled"
+                                                assert (
+                                                    "arguments" not in tool_content
+                                                ), "arguments should NOT be present for mcp_call when content recording is disabled"
+                                        elif part.get("type") == "text":
                                             assert (
-                                                "name" not in tool_content
-                                            ), "name should NOT be present for mcp_call when content recording is disabled"
-                                            assert (
-                                                "arguments" not in tool_content
-                                            ), "arguments should NOT be present for mcp_call when content recording is disabled"
-                                    elif part.get("type") == "text":
-                                        assert (
-                                            "content" not in part
-                                        ), "text content should NOT be present when content recording is disabled"
+                                                "content" not in part
+                                            ), "text content should NOT be present when content recording is disabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
                 assert len(list_spans) == 1, "Should have one list_conversation_items span"
                 list_span = list_spans[0]
 
-                for event in list_span.events:
-                    if event.name == "gen_ai.conversation.item":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in list_span.events:
+                        if event.name == "gen_ai.conversation.item":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        # Validate MCP content in conversation items - should be minimal
-                        for entry in data:
-                            if entry.get("role") == "user":
-                                parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" not in part
-                                        ), "text content should NOT be present in conversation items when content recording is disabled"
-                                    elif part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        if mcp_content and mcp_content.get("type") == "mcp_approval_response":
-                                            # Should have id but might not have other details
-                                            assert "id" in mcp_content
-                            elif entry.get("role") == "assistant":
-                                parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" not in part
-                                        ), "text content should NOT be present in conversation items when content recording is disabled"
-                                    elif part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        if mcp_content:
-                                            mcp_type = mcp_content.get("type")
-                                            if mcp_type == "mcp_call":
+                            data = json.loads(content)
+                            # Validate MCP content in conversation items - should be minimal
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "text":
+                                            assert (
+                                                "content" not in part
+                                            ), "text content should NOT be present in conversation items when content recording is disabled"
+                                        elif part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            if mcp_content and mcp_content.get("type") == "mcp_approval_response":
+                                                # Should have id but might not have other details
                                                 assert "id" in mcp_content
-                                                # Should not have name, server_label, arguments when content recording is disabled
-                                                assert (
-                                                    "name" not in mcp_content
-                                                ), "name should NOT be present for mcp_call in conversation items when content recording is disabled"
-                    else:
-                        assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
+                                elif entry.get("role") == "assistant":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "text":
+                                            assert (
+                                                "content" not in part
+                                            ), "text content should NOT be present in conversation items when content recording is disabled"
+                                        elif part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            if mcp_content:
+                                                mcp_type = mcp_content.get("type")
+                                                if mcp_type == "mcp_call":
+                                                    assert "id" in mcp_content
+                                                    # Should not have name, server_label, arguments when content recording is disabled
+                                                    assert (
+                                                        "name" not in mcp_content
+                                                    ), "name should NOT be present for mcp_call in conversation items when content recording is disabled"
+                        else:
+                            assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
                 # Cleanup
                 await openai_client.conversations.delete(conversation_id=conversation.id)
@@ -596,16 +672,33 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
             finally:
                 await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_mcp_non_streaming_without_content_recording_events(self, **kwargs):
+        """Test asynchronous MCP agent with non-streaming and content recording disabled (event-based messages)."""
+        await self._test_async_mcp_non_streaming_without_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_mcp_non_streaming_without_content_recording_attributes(self, **kwargs):
+        """Test asynchronous MCP agent with non-streaming and content recording disabled (attribute-based messages)."""
+        await self._test_async_mcp_non_streaming_without_content_recording_impl(False, **kwargs)
+
     # ========================================
     # Async MCP Agent Tests - Streaming
     # ========================================
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_mcp_streaming_with_content_recording(self, **kwargs):
-        """Test asynchronous MCP agent with streaming and content recording enabled."""
+    async def _test_async_mcp_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous MCP agent with streaming and content recording enabled.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+                       Note: MCP tests currently only validate event mode regardless of this setting.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -696,6 +789,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -706,53 +800,64 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_1.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
 
                 # Comprehensive event validation - verify content IS present
                 from collections.abc import Mapping
 
-                for event in span1.events:
-                    if event.name == "gen_ai.input.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in span1.events:
+                        if event.name == "gen_ai.input.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        for entry in data:
-                            if entry.get("role") == "user":
+                            data = json.loads(content)
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "text":
+                                            assert (
+                                                "content" in part
+                                                and isinstance(part["content"], str)
+                                                and part["content"].strip() != ""
+                                            ), "Text content should be present when content recording is enabled"
+                        elif event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
+
+                            data = json.loads(content)
+                            for entry in data:
                                 parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" in part
-                                            and isinstance(part["content"], str)
-                                            and part["content"].strip() != ""
-                                        ), "Text content should be present when content recording is enabled"
-                    elif event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
-
-                        data = json.loads(content)
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "tool_call":
-                                        tool_content = part.get("content")
-                                        if tool_content:
-                                            tool_type = tool_content.get("type")
-                                            if tool_type == "mcp_approval_request":
-                                                assert (
-                                                    "name" in tool_content
-                                                ), "name should be present for mcp_approval_request when content recording is enabled"
-                                                assert (
-                                                    "arguments" in tool_content
-                                                ), "arguments should be present for mcp_approval_request when content recording is enabled"
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "tool_call":
+                                            tool_content = part.get("content")
+                                            if tool_content:
+                                                tool_type = tool_content.get("type")
+                                                if tool_type == "mcp_approval_request":
+                                                    assert (
+                                                        "name" in tool_content
+                                                    ), "name should be present for mcp_approval_request when content recording is enabled"
+                                                    assert (
+                                                        "arguments" in tool_content
+                                                    ), "arguments should be present for mcp_approval_request when content recording is enabled"
 
                 # Validate second response span
                 span2 = spans[1]
@@ -761,6 +866,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 assert response_id_2 is not None
 
                 expected_attributes_2 = [
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
@@ -772,66 +878,78 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_2.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
 
                 # Validate second span events
-                for event in span2.events:
-                    if event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in span2.events:
+                        if event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "tool_call":
-                                        tool_content = part.get("content")
-                                        if tool_content and tool_content.get("type") == "mcp_call":
+                            data = json.loads(content)
+                            for entry in data:
+                                parts = entry.get("parts")
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "tool_call":
+                                            tool_content = part.get("content")
+                                            if tool_content and tool_content.get("type") == "mcp_call":
+                                                assert (
+                                                    "name" in tool_content
+                                                ), "name should be present for mcp_call when content recording is enabled"
+                                                assert (
+                                                    "arguments" in tool_content
+                                                ), "arguments should be present for mcp_call when content recording is enabled"
+                                        elif part.get("type") == "text":
                                             assert (
-                                                "name" in tool_content
-                                            ), "name should be present for mcp_call when content recording is enabled"
-                                            assert (
-                                                "arguments" in tool_content
-                                            ), "arguments should be present for mcp_call when content recording is enabled"
-                                    elif part.get("type") == "text":
-                                        assert (
-                                            "content" in part
-                                        ), "text content should be present when content recording is enabled"
+                                                "content" in part
+                                            ), "text content should be present when content recording is enabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
                 assert len(list_spans) == 1
                 list_span = list_spans[0]
 
-                for event in list_span.events:
-                    if event.name == "gen_ai.conversation.item":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in list_span.events:
+                        if event.name == "gen_ai.conversation.item":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" in part
-                                        ), "text content should be present in conversation items when content recording is enabled"
-                                    elif part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        if mcp_content and mcp_content.get("type") == "mcp_call":
+                            data = json.loads(content)
+                            for entry in data:
+                                parts = entry.get("parts")
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "text":
                                             assert (
-                                                "name" in mcp_content
-                                            ), "name should be present for mcp_call in conversation items when content recording is enabled"
-                    else:
-                        assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
+                                                "content" in part
+                                            ), "text content should be present in conversation items when content recording is enabled"
+                                        elif part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            if mcp_content and mcp_content.get("type") == "mcp_call":
+                                                assert (
+                                                    "name" in mcp_content
+                                                ), "name should be present for mcp_call in conversation items when content recording is enabled"
+                        else:
+                            assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
                 # Cleanup
                 await openai_client.conversations.delete(conversation_id=conversation.id)
@@ -839,12 +957,29 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
             finally:
                 await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
-    @pytest.mark.usefixtures("instrument_without_content")
+    @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_mcp_streaming_without_content_recording(self, **kwargs):
-        """Test asynchronous MCP agent with streaming and content recording disabled."""
+    async def test_async_mcp_streaming_with_content_recording_events(self, **kwargs):
+        """Test asynchronous MCP agent with streaming and content recording enabled (event-based messages)."""
+        await self._test_async_mcp_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_mcp_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test asynchronous MCP agent with streaming and content recording enabled (attribute-based messages)."""
+        await self._test_async_mcp_streaming_with_content_recording_impl(False, **kwargs)
+
+    async def _test_async_mcp_streaming_without_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous MCP agent with streaming and content recording disabled.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+                       Note: MCP tests currently only validate event mode regardless of this setting.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -935,6 +1070,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -945,51 +1081,62 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_1.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
 
                 # Comprehensive event validation - verify content is NOT present
                 from collections.abc import Mapping
 
-                for event in span1.events:
-                    if event.name == "gen_ai.input.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in span1.events:
+                        if event.name == "gen_ai.input.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        for entry in data:
-                            if entry.get("role") == "user":
+                            data = json.loads(content)
+                            for entry in data:
+                                if entry.get("role") == "user":
+                                    parts = entry.get("parts")
+                                    for part in parts:
+                                        if part.get("type") == "text":
+                                            assert (
+                                                "content" not in part
+                                            ), "Text content should NOT be present when content recording is disabled"
+                        elif event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
+
+                            data = json.loads(content)
+                            for entry in data:
                                 parts = entry.get("parts")
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" not in part
-                                        ), "Text content should NOT be present when content recording is disabled"
-                    elif event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
-
-                        data = json.loads(content)
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "tool_call":
-                                        tool_content = part.get("content")
-                                        if tool_content:
-                                            tool_type = tool_content.get("type")
-                                            if tool_type == "mcp_approval_request":
-                                                assert (
-                                                    "name" not in tool_content
-                                                ), "name should NOT be present for mcp_approval_request when content recording is disabled"
-                                                assert (
-                                                    "arguments" not in tool_content
-                                                ), "arguments should NOT be present for mcp_approval_request when content recording is disabled"
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "tool_call":
+                                            tool_content = part.get("content")
+                                            if tool_content:
+                                                tool_type = tool_content.get("type")
+                                                if tool_type == "mcp_approval_request":
+                                                    assert (
+                                                        "name" not in tool_content
+                                                    ), "name should NOT be present for mcp_approval_request when content recording is disabled"
+                                                    assert (
+                                                        "arguments" not in tool_content
+                                                    ), "arguments should NOT be present for mcp_approval_request when content recording is disabled"
 
                 # Validate second response span
                 span2 = spans[1]
@@ -998,6 +1145,7 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 assert response_id_2 is not None
 
                 expected_attributes_2 = [
+                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
@@ -1009,69 +1157,95 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                     ("gen_ai.usage.input_tokens", "+"),
                     ("gen_ai.usage.output_tokens", "+"),
                 ]
+
+                # Add message attributes when not using events
+                if not use_events:
+                    expected_attributes_2.extend(
+                        [
+                            ("gen_ai.input.messages", ""),
+                            ("gen_ai.output.messages", ""),
+                        ]
+                    )
+
                 assert GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
 
                 # Validate second span events - content should be minimal
-                for event in span2.events:
-                    if event.name == "gen_ai.output.messages":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in span2.events:
+                        if event.name == "gen_ai.output.messages":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "tool_call":
-                                        tool_content = part.get("content")
-                                        if tool_content and tool_content.get("type") == "mcp_call":
+                            data = json.loads(content)
+                            for entry in data:
+                                parts = entry.get("parts")
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "tool_call":
+                                            tool_content = part.get("content")
+                                            if tool_content and tool_content.get("type") == "mcp_call":
+                                                assert (
+                                                    "name" not in tool_content
+                                                ), "name should NOT be present for mcp_call when content recording is disabled"
+                                                assert (
+                                                    "arguments" not in tool_content
+                                                ), "arguments should NOT be present for mcp_call when content recording is disabled"
+                                        elif part.get("type") == "text":
                                             assert (
-                                                "name" not in tool_content
-                                            ), "name should NOT be present for mcp_call when content recording is disabled"
-                                            assert (
-                                                "arguments" not in tool_content
-                                            ), "arguments should NOT be present for mcp_call when content recording is disabled"
-                                    elif part.get("type") == "text":
-                                        assert (
-                                            "content" not in part
-                                        ), "text content should NOT be present when content recording is disabled"
+                                                "content" not in part
+                                            ), "text content should NOT be present when content recording is disabled"
 
                 # Check list_conversation_items span
                 list_spans = self.exporter.get_spans_by_name("list_conversation_items")
                 assert len(list_spans) == 1
                 list_span = list_spans[0]
 
-                for event in list_span.events:
-                    if event.name == "gen_ai.conversation.item":
-                        attrs = event.attributes
-                        assert attrs is not None and isinstance(attrs, Mapping)
-                        content = attrs.get("gen_ai.event.content")
-                        assert isinstance(content, str) and content.strip() != ""
-                        import json
+                if use_events:
+                    for event in list_span.events:
+                        if event.name == "gen_ai.conversation.item":
+                            attrs = event.attributes
+                            assert attrs is not None and isinstance(attrs, Mapping)
+                            content = attrs.get("gen_ai.event.content")
+                            assert isinstance(content, str) and content.strip() != ""
+                            import json
 
-                        data = json.loads(content)
-                        for entry in data:
-                            parts = entry.get("parts")
-                            if parts:
-                                for part in parts:
-                                    if part.get("type") == "text":
-                                        assert (
-                                            "content" not in part
-                                        ), "text content should NOT be present in conversation items when content recording is disabled"
-                                    elif part.get("type") == "mcp":
-                                        mcp_content = part.get("content")
-                                        if mcp_content and mcp_content.get("type") == "mcp_call":
+                            data = json.loads(content)
+                            for entry in data:
+                                parts = entry.get("parts")
+                                if parts:
+                                    for part in parts:
+                                        if part.get("type") == "text":
                                             assert (
-                                                "name" not in mcp_content
-                                            ), "name should NOT be present for mcp_call in conversation items when content recording is disabled"
-                    else:
-                        assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
+                                                "content" not in part
+                                            ), "text content should NOT be present in conversation items when content recording is disabled"
+                                        elif part.get("type") == "mcp":
+                                            mcp_content = part.get("content")
+                                            if mcp_content and mcp_content.get("type") == "mcp_call":
+                                                assert (
+                                                    "name" not in mcp_content
+                                                ), "name should NOT be present for mcp_call in conversation items when content recording is disabled"
+                        else:
+                            assert False, f"Unexpected event name in list_conversation_items span: {event.name}"
 
                 # Cleanup
                 await openai_client.conversations.delete(conversation_id=conversation.id)
 
             finally:
                 await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_mcp_streaming_without_content_recording_events(self, **kwargs):
+        """Test asynchronous MCP agent with streaming and content recording disabled (event-based messages)."""
+        await self._test_async_mcp_streaming_without_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_mcp_streaming_without_content_recording_attributes(self, **kwargs):
+        """Test asynchronous MCP agent with streaming and content recording disabled (attribute-based messages)."""
+        await self._test_async_mcp_streaming_without_content_recording_impl(False, **kwargs)

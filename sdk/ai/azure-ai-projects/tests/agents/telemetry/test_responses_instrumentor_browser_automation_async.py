@@ -9,7 +9,11 @@ Async tests for ResponsesInstrumentor with browser automation agents.
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import OPERATION_NAME_INVOKE_AGENT, SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+)
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -41,6 +45,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_non_streaming_with_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with non-streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -172,6 +177,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_non_streaming_without_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with non-streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -297,6 +303,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_streaming_with_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
         )
@@ -421,6 +428,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_streaming_without_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
         )

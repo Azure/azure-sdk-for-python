@@ -57,10 +57,9 @@ from ._utils import (
     SERVER_PORT,
     SPAN_NAME_CHAT,
     SPAN_NAME_INVOKE_AGENT,
-    get_use_message_events,
+    _get_use_message_events,
     start_span,
 )
-
 
 
 _Unset: Any = object()
@@ -550,7 +549,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """Helper to append messages to an existing attribute, combining with previous messages."""
         # Get existing attribute value
         existing_value = span.span_instance.attributes.get(attribute_name) if span.span_instance.attributes else None
-        
+
         if existing_value:
             # Parse existing JSON array
             try:
@@ -559,16 +558,16 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     existing_messages = []
             except (json.JSONDecodeError, TypeError):
                 existing_messages = []
-            
+
             # Append new messages
             combined_messages = existing_messages + new_messages
         else:
             # No existing value, just use new messages
             combined_messages = new_messages
-        
+
         # Set the combined value
         combined_json = json.dumps(combined_messages, ensure_ascii=False)
-        span.span_instance.set_attribute(attribute_name, combined_json)
+        span.add_attribute(attribute_name, combined_json)
 
     def _add_message_event(
         self,
@@ -606,7 +605,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Serialize the content array to JSON
         json_content = json.dumps(content_array, ensure_ascii=False)
 
-        if get_use_message_events():
+        if _get_use_message_events():
             # Original event-based implementation
             attributes = self._create_event_attributes(
                 conversation_id=conversation_id,
@@ -634,7 +633,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             elif role == "assistant":
                 # Assistant messages go to output.messages
                 self._append_to_message_attribute(span, GEN_AI_OUTPUT_MESSAGES, content_array)
-
 
     def _add_tool_message_events(  # pylint: disable=too-many-branches
         self,
@@ -722,15 +720,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Always include parts array with type and id, even when content recording is disabled
         content_array = [{"role": "tool", "parts": parts}] if parts else []
 
-        attributes = self._create_event_attributes(
-            conversation_id=conversation_id,
-            message_role="tool",
-        )
-        # Store as JSON array directly without outer wrapper
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+        if _get_use_message_events():
+            # Event-based mode: add events
+            attributes = self._create_event_attributes(
+                conversation_id=conversation_id,
+                message_role="tool",
+            )
+            # Store as JSON array directly without outer wrapper
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
 
-        # Use "tool" for the event name: gen_ai.tool.message
-        span.span_instance.add_event(name=GEN_AI_TOOL_MESSAGE_EVENT, attributes=attributes)
+            # Use "tool" for the event name: gen_ai.tool.message
+            span.span_instance.add_event(name=GEN_AI_TOOL_MESSAGE_EVENT, attributes=attributes)
+        else:
+            # Attribute-based mode: append to input messages (tool outputs are inputs to the model)
+            self._append_to_message_attribute(span, GEN_AI_INPUT_MESSAGES, content_array)
 
     def _add_mcp_response_events(
         self,
@@ -799,15 +802,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Always include parts array with type and id, even when content recording is disabled
         content_array = [{"role": "user", "parts": parts}] if parts else []
 
-        attributes = self._create_event_attributes(
-            conversation_id=conversation_id,
-            message_role="user",
-        )
-        # Store as JSON array directly without outer wrapper
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+        if _get_use_message_events():
+            # Event-based mode: add events
+            attributes = self._create_event_attributes(
+                conversation_id=conversation_id,
+                message_role="user",
+            )
+            # Store as JSON array directly without outer wrapper
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
 
-        # Use user message event name since MCP responses are user inputs
-        span.span_instance.add_event(name=GEN_AI_USER_MESSAGE_EVENT, attributes=attributes)
+            # Use user message event name since MCP responses are user inputs
+            span.span_instance.add_event(name=GEN_AI_USER_MESSAGE_EVENT, attributes=attributes)
+        else:
+            # Attribute-based mode: append to input messages (MCP responses are user inputs)
+            self._append_to_message_attribute(span, GEN_AI_INPUT_MESSAGES, content_array)
 
     def _add_workflow_action_events(
         self,
@@ -991,25 +999,36 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     role_obj["parts"] = parts
                 content_array = [role_obj]
 
-                # Create event attributes
-                attributes = self._create_event_attributes(
-                    conversation_id=conversation_id,
-                    message_role=role,
-                )
-                # Store as JSON array directly without outer wrapper
-                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+                if _get_use_message_events():
+                    # Event-based mode
+                    # Create event attributes
+                    attributes = self._create_event_attributes(
+                        conversation_id=conversation_id,
+                        message_role=role,
+                    )
+                    # Store as JSON array directly without outer wrapper
+                    attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
 
-                # Map role to appropriate event name constant
-                if role == "user":
-                    event_name = GEN_AI_USER_MESSAGE_EVENT
-                elif role == "assistant":
-                    event_name = GEN_AI_ASSISTANT_MESSAGE_EVENT
+                    # Map role to appropriate event name constant
+                    if role == "user":
+                        event_name = GEN_AI_USER_MESSAGE_EVENT
+                    elif role == "assistant":
+                        event_name = GEN_AI_ASSISTANT_MESSAGE_EVENT
+                    else:
+                        # Fallback for any other roles (shouldn't happen in practice)
+                        event_name = f"gen_ai.{role}.message"
+
+                    # Add the event
+                    span.span_instance.add_event(name=event_name, attributes=attributes)
                 else:
-                    # Fallback for any other roles (shouldn't happen in practice)
-                    event_name = f"gen_ai.{role}.message"
-
-                # Add the event
-                span.span_instance.add_event(name=event_name, attributes=attributes)
+                    # Attribute-based mode
+                    # Append messages to the appropriate attribute
+                    if role in ("user", "tool"):
+                        # User and tool messages go to input.messages
+                        self._append_to_message_attribute(span, GEN_AI_INPUT_MESSAGES, content_array)
+                    elif role == "assistant":
+                        # Assistant messages go to output.messages
+                        self._append_to_message_attribute(span, GEN_AI_OUTPUT_MESSAGES, content_array)
 
             except Exception:  # pylint: disable=broad-exception-caught
                 # Skip items that can't be processed
@@ -1030,8 +1049,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Wrap tool call in parts array
         parts = [{"type": "tool_call", "content": tool_call}]
         content_array = [{"role": "assistant", "parts": parts}]
-        
-        if get_use_message_events():
+
+        if _get_use_message_events():
             # Original event-based implementation
             json_content = json.dumps(content_array, ensure_ascii=False)
             attributes = self._create_event_attributes(
@@ -1056,8 +1075,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Tool outputs are inputs TO the model (from tool execution), so use role "tool"
         parts = [{"type": "tool_call_output", "content": tool_output}]
         content_array = [{"role": "tool", "parts": parts}]
-        
-        if get_use_message_events():
+
+        if _get_use_message_events():
             # Original event-based implementation
             json_content = json.dumps(content_array, ensure_ascii=False)
             attributes = self._create_event_attributes(
