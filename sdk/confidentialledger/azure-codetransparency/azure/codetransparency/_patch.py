@@ -11,7 +11,7 @@ import os
 import re
 import tempfile
 import random
-from typing import Any, Union
+from typing import Any, Union, Optional
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
@@ -45,7 +45,7 @@ class CodeTransparencyClient(GeneratedClient):
     :keyword ledger_certificate_path: The path to the Ledger's TLS certificate. If this
         file does not exist yet, the Ledger's TLS certificate will be fetched and saved
         to this file.
-    :paramtype ledger_certificate_path: Union[bytes, str, os.PathLike]
+    :paramtype ledger_certificate_path: Optional[Union[str, os.PathLike]]
     :keyword api_version: Api Version.
     :paramtype api_version: str
     """
@@ -55,7 +55,7 @@ class CodeTransparencyClient(GeneratedClient):
         endpoint: str,
         credential: AzureKeyCredential,
         *,
-        ledger_certificate_path: Union[bytes, str, os.PathLike, None] = None,
+        ledger_certificate_path: Optional[Union[str, os.PathLike]] = None,
         **kwargs: Any,
     ) -> None:
 
