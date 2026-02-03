@@ -224,14 +224,14 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         self,
         entry: bytes,
         **kwargs: Any,
-    ) -> LROPoller[Optional[bytes]]:
+    ) -> LROPoller[bytes]:
         """Writes an entry and returns a poller to wait for it to be durably committed. The
         poller returns the result for the initial call to create the entry.
 
         :param entry: Entry in the form of CoseSign1 message. Required.
         :type entry: bytes
         :return: Operation in CBOR format.
-        :rtype: ~azure.core.polling.LROPoller[Optional[bytes]]
+        :rtype: ~azure.core.polling.LROPoller[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -260,21 +260,21 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         self,
         operation_id,  # type: str
         **kwargs,  # type: Any
-    ) -> LROPoller[Optional[bytes]]:
+    ) -> LROPoller[bytes]:
         """Creates a poller that queries the state of the specified operation until it is
         complete, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
 
         :param operation_id: Identifies async operation. Required.
         :type operation_id: str
-        :return: An instance of LROPoller returning a TransactionStatus object describing the transaction status.
-        :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.TransactionStatus]
+        :return: An instance of LROPoller returning a Operation object describing the Entry status.
+        :rtype: ~azure.core.polling.LROPoller[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _ = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", 0.8)
 
-        def operation() -> Optional[bytes]:
+        def operation() -> bytes:
             op = self.get_operation(operation_id=operation_id, **kwargs)
             op_bytes = b"".join(op)
             return op_bytes
