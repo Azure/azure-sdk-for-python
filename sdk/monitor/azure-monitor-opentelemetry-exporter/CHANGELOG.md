@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b47 (Unreleased)
+## 1.0.0b47 (2026-02-03)
 
 ### Features Added
 - Rename metric names for customer sdk stats and set it on by default
@@ -8,9 +8,7 @@
 - Add auto detection for application ID from connection string if not set 
   ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
 - Add support for user id and authId
-([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
-
-### Breaking Changes
+  ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
 
 ### Bugs Fixed
 - Add custom metric mapping for customer sdkstats metric names to preserve casing
@@ -19,10 +17,12 @@
   ([#44852](https://github.com/Azure/azure-sdk-for-python/pull/44852))
 
 ### Other Changes
+- Feature tracking for when customer sdkstats is disabled by the user
+  ([#44888](https://github.com/Azure/azure-sdk-for-python/pull/44888))
 - Update maximum size of custom properties
-([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
+  ([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
 - Declare support for Python 3.13 and 3.14
-([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
+  ([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
 
 ## 1.0.0b46 (2025-12-04)
 

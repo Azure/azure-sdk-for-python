@@ -1,5 +1,19 @@
 # Release History
 
+## 1.8.6 (Unreleased)
+
+### Features Added
+
+- Enable live metrics by default
+  ([#44902](https://github.com/Azure/azure-sdk-for-python/pull/44902))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Add missing copyright headers and ensure consistent formatting across files.
+
 ## 1.8.5 (2026-01-28)
 
 ### Features Added
