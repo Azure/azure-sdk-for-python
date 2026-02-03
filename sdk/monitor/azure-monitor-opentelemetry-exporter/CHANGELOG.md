@@ -2,6 +2,12 @@
 
 ## 1.0.0b48 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
 ### Other Changes
 - Fix Ingestion-Side Sampling Disk Persist Behavior
   ([#44980](https://github.com/Azure/azure-sdk-for-python/pull/44980))
