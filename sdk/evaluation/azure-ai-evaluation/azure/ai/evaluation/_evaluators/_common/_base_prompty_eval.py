@@ -70,6 +70,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         **kwargs,
     ) -> None:
         self._result_key = result_key
+        self.dummy = "This is a dummy variable to make sure expected branch is installed"
         self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
         self._prompty_file = prompty_file
         self._threshold = threshold
