@@ -410,10 +410,10 @@ class SignedIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifiers(_Model):
-    """Represents an array of signed identifiers.
+class SignedIdentifiersRequest(_Model):
+    """The set signed identifiers request.
 
-    :ivar identifiers: The signed identifiers. Required.
+    :ivar identifiers: Represents an array of signed identifiers. Required.
     :vartype identifiers: ~azure.data.tables._generated.models.SignedIdentifier
     """
 
@@ -421,7 +421,7 @@ class SignedIdentifiers(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "itemsName": "identifiers", "name": "identifiers", "text": False, "unwrapped": True},
     )
-    """The signed identifiers. Required."""
+    """Represents an array of signed identifiers. Required."""
 
     _xml = {"attribute": False, "name": "SignedIdentifiers", "text": False, "unwrapped": False}
 
