@@ -94,16 +94,17 @@ class AadClientBase(abc.ABC):
         )
 
         cache = self._get_cache(**kwargs)
+        now = int(time.time())
         for token in cache.search(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
             query={"client_id": self._client_id, "realm": tenant},
         ):
             expires_on = int(token["expires_on"])
-            if expires_on > int(time.time()):
+            if expires_on > now:
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
-                expires_in = expires_on - int(time.time())
-                refresh_on_msg = f", refresh in {refresh_on - int(time.time())}s" if refresh_on else ""
+                expires_in = expires_on - now
+                refresh_on_msg = f", refresh in {refresh_on - now}s" if refresh_on else ""
                 _LOGGER.debug(
                     "Access token found in cache for scopes %s (tenant: %s, expires in %ss%s, cache ID: %s)",
                     list(scopes),
