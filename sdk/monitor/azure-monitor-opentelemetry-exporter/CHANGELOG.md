@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b48 (Unreleased)
+
+### Other Changes
+- Fix Ingestion-Side Sampling Disk Persist Behavior
+  ([#37214]https://github.com/Azure/azure-sdk-for-js/pull/37214)
+
 ## 1.0.0b47 (2026-02-03)
 
 ### Features Added
